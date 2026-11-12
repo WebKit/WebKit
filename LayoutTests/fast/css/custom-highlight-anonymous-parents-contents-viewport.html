@@ -1,0 +1,40 @@
+<!doctype html> <!-- webkit-test-runner [ viewWidth=200 viewHeight=600 ] -->
+<meta charset="utf-8">
+<title>Viewport units in a boxless originating element's highlight style update after resize</title>
+<link rel="help" href="https://drafts.csswg.org/css-pseudo-4/#highlight-cascade">
+<link rel="issue" href="https://bugs.webkit.org/show_bug.cgi?id=307455">
+<link rel="match" href="custom-highlight-anonymous-parents-contents-viewport-expected.html">
+<style>
+@font-face { font-family: Ahem; src: url("../../resources/Ahem.ttf"); }
+body { font: 20px Ahem; color: black; background: white; }
+.origin { display: contents; }
+.origin::highlight(probe) { color: white; background-color: lime; text-shadow: 10vw 0 red; }
+</style>
+<span id="origin" class="origin">TEXT</span>
+<script>
+window.testRunner?.waitUntilDone();
+const nextFrame = () => new Promise(requestAnimationFrame);
+const resizeToAndWait = async (width, height) => {
+    // Leave the rendering update before synchronously resizing the view.
+    await new Promise(resolve => setTimeout(resolve, 0));
+    if (window.testRunner?.isWebKit2)
+        testRunner.setViewSize(width, height);
+    else
+        window.resizeTo(width, height);
+    while (innerWidth !== width || innerHeight !== height)
+        await nextFrame();
+};
+(async () => {
+    await resizeToAndWait(200, 600);
+    const range = new Range();
+    range.selectNodeContents(document.getElementById('origin').firstChild);
+    CSS.highlights.set('probe', new Highlight(range));
+    await document.fonts.ready;
+    await nextFrame();
+    await nextFrame();
+    await resizeToAndWait(600, 600);
+    await nextFrame();
+    await nextFrame();
+    window.testRunner?.notifyDone();
+})();
+</script>
