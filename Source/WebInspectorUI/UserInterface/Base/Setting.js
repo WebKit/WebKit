@@ -203,6 +203,7 @@ WI.settings = {
     enableNarrowLayoutMode: new WI.Setting("enable-narrow-layout-mode", true),
     flexOverlayShowOrderNumbers: new WI.Setting("flex-overlay-show-order-numbers", false),
     frontendAppearance: new WI.Setting("frontend-appearance", "system"),
+    globalDebuggerPauseEnabled: new WI.Setting("global-debugger-pause-enabled", true),
     gridOverlayShowAreaNames: new WI.Setting("grid-overlay-show-area-names", false),
     gridOverlayShowExtendedGridLines: new WI.Setting("grid-overlay-show-extended-grid-lines", false),
     gridOverlayShowLineNames: new WI.Setting("grid-overlay-show-line-names", false),

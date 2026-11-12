@@ -1,0 +1,18 @@
+Tests that turning global pause on during a navigation of the main frame does not hold the page, and that a navigation that does not commit does not open a session while global pause is off.
+
+
+
+== Running test suite: SiteIsolation.Debugger.PauseSessionOptOutDuringNavigation
+-- Running test case: SiteIsolation.Debugger.PauseSessionOptOutDuringNavigation.Setup
+PASS: Should find the frame target of the cross-site frame.
+
+-- Running test case: SiteIsolation.Debugger.PauseSessionOptOutDuringNavigation.EnabledDuringNavigation
+PASS: No session should open while the navigation is pending.
+PASS: The main frame's interval while the navigation is pending should advance.
+PASS: The main frame's interval should not advance after the navigation was cancelled.
+
+-- Running test case: SiteIsolation.Debugger.PauseSessionOptOutDuringNavigation.NavigationCancelledWhileDisabled
+PASS: No session should open after the navigation was cancelled.
+PASS: The main frame's interval after the navigation was cancelled should advance.
+PASS: The main frame's interval should not advance after global pause was turned on.
+

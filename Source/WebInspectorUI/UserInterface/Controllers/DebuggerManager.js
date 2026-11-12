@@ -52,6 +52,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         WI.networkManager.addEventListener(WI.NetworkManager.Event.FrameWasRemoved, this._frameWasRemoved, this);
 
         WI.settings.blackboxBreakpointEvaluations.addEventListener(WI.Setting.Event.Changed, this._handleBlackboxBreakpointEvaluationsChange, this);
+        WI.settings.globalDebuggerPauseEnabled.addEventListener(WI.Setting.Event.Changed, this._handleGlobalDebuggerPauseEnabledSettingChanged, this);
 
         if (WI.engineeringSettingsAllowed()) {
             WI.settings.engineeringShowInternalScripts.addEventListener(WI.Setting.Event.Changed, this._handleEngineeringShowInternalScriptsSettingChanged, this);
@@ -221,6 +222,9 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         // Initialize global state.
         target.DebuggerAgent.enable();
         target.DebuggerAgent.setBreakpointsActive(this._breakpointsEnabledSetting.value);
+
+        if (target instanceof WI.PageTarget && target.hasCommand("Target.setGlobalDebuggerPauseEnabled"))
+            target.TargetAgent.setGlobalDebuggerPauseEnabled(WI.settings.globalDebuggerPauseEnabled.value);
 
         if (WI.SymbolicBreakpoint.supported(target)) {
             for (let breakpoint of this._symbolicBreakpoints) {
@@ -1808,6 +1812,12 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
     {
         for (let target of this.#allSupportedTargets())
             this._setBlackboxBreakpointEvaluations(target);
+    }
+
+    _handleGlobalDebuggerPauseEnabledSettingChanged(event)
+    {
+        if (WI.backendTarget?.hasCommand("Target.setGlobalDebuggerPauseEnabled"))
+            WI.backendTarget.TargetAgent.setGlobalDebuggerPauseEnabled(WI.settings.globalDebuggerPauseEnabled.value);
     }
 
     _handleEngineeringShowInternalScriptsSettingChanged(event)

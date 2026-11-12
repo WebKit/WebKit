@@ -81,6 +81,11 @@ window.GlobalPause = {
         });
     },
 
+    pageTarget()
+    {
+        return WI.backendTarget;
+    },
+
     processIdentifier(target)
     {
         return target.identifier.split("-").pop();
