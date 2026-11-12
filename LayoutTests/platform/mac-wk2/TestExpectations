@@ -2702,3 +2702,5 @@ webkit.org/b/329900 [ Sequoia+ Debug arm64 ] http/tests/site-isolation/inspector
 webkit.org/b/329901 [ Sequoia+ Debug arm64 ] http/tests/security/xss-DENIED-xsl-document-securityOrigin.xml [ Pass Failure Timeout ]
 
 webkit.org/b/331276 [ Debug arm64 ] http/tests/security/contentSecurityPolicy/blob-url-inherits-multiple-csp-policies.html [ Pass Failure ]
+
+webkit.org/b/331277 [ Sequoia+ arm64 ] fast/forms/datetimelocal/datetimelocal-editable-components/datetimelocal-editable-components-focus-and-blur-events.html [ Pass Failure ]
