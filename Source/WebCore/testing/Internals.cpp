@@ -761,6 +761,9 @@ void Internals::resetToConsistentState(Page& page)
     page.setLowPowerModeEnabledOverrideForTesting(std::nullopt);
     page.setAggressiveThermalMitigationEnabledForTesting(std::nullopt);
     page.setOutsideViewportThrottlingEnabledForTesting(false);
+#if ENABLE(ACCESSIBILITY_VIDEO_AUTOPLAY_CONTROL)
+    page.setVideoAutoplayPreviewsEnabled(true);
+#endif
 
 #if USE(QUICK_LOOK)
     MockPreviewLoaderClient::singleton().setPassword(emptyString());
