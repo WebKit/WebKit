@@ -138,7 +138,6 @@ const TestFeatures& TestOptions::defaults()
             { "TabsToLinks", false },
             { "TextAutosizingEnabled", false },
             { "TextAutosizingUsesIdempotentMode", false },
-            { "TextEffectsEnabled", false },
 #if ENABLE(UNIFIED_PDF)
             { "UnifiedPDFEnabled", unifiedPDFEnabledValue },
 #endif
