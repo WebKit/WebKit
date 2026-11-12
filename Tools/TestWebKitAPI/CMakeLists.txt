@@ -80,6 +80,7 @@ set(TestWTF_SOURCES
     Tests/WTF/EnumeratedArray.cpp
     Tests/WTF/EscapableByteSpan.cpp
     Tests/WTF/FastFloat.cpp
+    Tests/WTF/FastMalloc.cpp
     Tests/WTF/FileSystem.cpp
     Tests/WTF/FormattedLogging.cpp
     Tests/WTF/FixedBitVector.cpp

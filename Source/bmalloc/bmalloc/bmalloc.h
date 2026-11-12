@@ -233,7 +233,7 @@ BINLINE void* tryMemalign(size_t alignment, size_t size, CompactAllocationMode m
 #else
     BUNUSED(mode);
     BUNUSED(kind);
-    return ::aligned_alloc(alignment, size);
+    return systemAlignedAlloc(alignment, size);
 #endif
 }
 
@@ -262,7 +262,7 @@ BINLINE void* memalign(size_t alignment, size_t size, CompactAllocationMode mode
 #else
     BUNUSED(mode);
     BUNUSED(kind);
-    void* memory = ::aligned_alloc(alignment, size);
+    void* memory = systemAlignedAlloc(alignment, size);
     RELEASE_BASSERT(memory);
     return memory;
 #endif
@@ -291,7 +291,7 @@ BINLINE void* tryZeroedMemalign(size_t alignment, size_t size, CompactAllocation
 #else
     BUNUSED(mode);
     BUNUSED(kind);
-    void* memory = ::aligned_alloc(alignment, size);
+    void* memory = systemAlignedAlloc(alignment, size);
     if (memory) [[likely]]
         memset(memory, 0, size);
     return memory;
@@ -323,7 +323,7 @@ BINLINE void* zeroedMemalign(size_t alignment, size_t size, CompactAllocationMod
 #else
     BUNUSED(mode);
     BUNUSED(kind);
-    void* memory = ::aligned_alloc(alignment, size);
+    void* memory = systemAlignedAlloc(alignment, size);
     RELEASE_BASSERT(memory);
     memset(memory, 0, size);
     return memory;
