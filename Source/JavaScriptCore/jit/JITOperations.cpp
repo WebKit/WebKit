@@ -2993,7 +2993,11 @@ JSC_DEFINE_JIT_OPERATION(operationOptimize, UGPRPair, (VM* vmPointer, uint32_t b
         CompilationResult result = DFG::compile(
             vm, replacementCodeBlock, nullptr, Options::forceUnlinkedDFG() ? JITCompilationMode::UnlinkedDFG : JITCompilationMode::DFG, bytecodeIndex,
             WTF::move(mustHandleValues), JITToDFGDeferredCompilationCallback::create());
-        
+
+        // The counter has not been reset yet. Do that now.
+        if (result == CompilationResult::CompilationDeferred)
+            codeBlock->setOptimizationThresholdBasedOnCompilationResult(result);
+
         if (result != CompilationResult::CompilationSuccessful) {
             CODEBLOCK_LOG_EVENT(codeBlock, "delayOptimizeToDFG", ("compilation failed"));
             OPERATION_RETURN(scope, encodeResult(nullptr, nullptr));
