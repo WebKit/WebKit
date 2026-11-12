@@ -84,7 +84,7 @@ private:
     void toplevelStateChanged(WPEToplevelState previousState, WPEToplevelState);
 
 #if ENABLE(POINTER_LOCK)
-    void requestPointerLock() override;
+    bool requestPointerLock() override;
     void didLosePointerLock() override;
 #endif
 

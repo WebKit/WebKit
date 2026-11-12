@@ -694,10 +694,13 @@ void ViewPlatform::setCursor(const WebCore::Cursor& cursor)
 }
 
 #if ENABLE(POINTER_LOCK)
-void ViewPlatform::requestPointerLock()
+bool ViewPlatform::requestPointerLock()
 {
-    if (wpe_view_lock_pointer(m_wpeView.get()))
-        setCursor(WebCore::noneCursor());
+    if (!wpe_view_lock_pointer(m_wpeView.get()))
+        return false;
+
+    setCursor(WebCore::noneCursor());
+    return true;
 }
 
 void ViewPlatform::didLosePointerLock()
