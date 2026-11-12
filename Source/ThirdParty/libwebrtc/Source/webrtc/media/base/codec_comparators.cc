@@ -94,7 +94,7 @@ bool IsSameCodecSpecific(const std::string& name1,
                          const std::string& name2,
                          const CodecParameterMap& params2) {
   // The names might not necessarily match, so check both.
-  auto either_name_matches = [&](const std::string name) {
+  auto either_name_matches = [&](absl::string_view name) {
     return absl::EqualsIgnoreCase(name, name1) ||
            absl::EqualsIgnoreCase(name, name2);
   };

@@ -22,6 +22,7 @@
 #include "api/field_trials_view.h"
 #include "api/frame_transformer_interface.h"
 #include "api/scoped_refptr.h"
+#include "api/sframe/sframe_types.h"
 #include "api/task_queue/task_queue_factory.h"
 #include "api/transport/rtp/dependency_descriptor.h"
 #include "api/units/data_rate.h"
@@ -36,10 +37,12 @@
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/absolute_capture_time_sender.h"
 #include "modules/rtp_rtcp/source/active_decode_targets_helper.h"
+#include "modules/rtp_rtcp/source/rtp_format.h"
 #include "modules/rtp_rtcp/source/rtp_sender.h"
 #include "modules/rtp_rtcp/source/rtp_sender_video_frame_transformer_delegate.h"
 #include "modules/rtp_rtcp/source/rtp_video_header.h"
 #include "modules/rtp_rtcp/source/video_fec_generator.h"
+#include "modules/sframe/sframe_encryption_config.h"
 #include "rtc_base/bitrate_tracker.h"
 #include "rtc_base/frequency_tracker.h"
 #include "rtc_base/one_time_event.h"
@@ -51,7 +54,6 @@
 namespace webrtc {
 
 class FrameEncryptorInterface;
-class RtpPacketizer;
 class RtpPacketToSend;
 
 // kConditionallyRetransmitHigherLayers allows retransmission of video frames
@@ -91,6 +93,9 @@ class RTPSenderVideo : public RTPVideoFrameSenderInterface {
     scoped_refptr<FrameTransformerInterface> frame_transformer;
     TaskQueueFactory* task_queue_factory = nullptr;
     bool raw_packetization = false;
+    // Whether Sframe end-to-end encryption is required on this stream.
+    bool sframe_required_by_negotiation = false;
+    std::optional<SframeEncryptionConfig> sframe_encryption_config;
   };
 
   explicit RTPSenderVideo(const Config& config);
@@ -192,6 +197,15 @@ class RTPSenderVideo : public RTPVideoFrameSenderInterface {
                               RtpPacketToSend* packet) const
       RTC_EXCLUSIVE_LOCKS_REQUIRED(send_checker_);
 
+  // Called when the dependency descriptor isn't attached to `packet`, a packet
+  // of the frame described by `video_header`. Disables the dependency
+  // descriptor if it couldn't be attached to a key frame. Returns false if the
+  // frame should be dropped because the dependency descriptor can't describe
+  // it.
+  bool HandleMissingDependencyDescriptor(const RTPVideoHeader& video_header,
+                                         const RtpPacketToSend& packet)
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(send_checker_);
+
   size_t FecPacketOverhead() const RTC_EXCLUSIVE_LOCKS_REQUIRED(send_checker_);
 
   void LogAndSendToNetwork(
@@ -199,6 +213,15 @@ class RTPSenderVideo : public RTPVideoFrameSenderInterface {
       size_t encoder_output_size);
 
   bool red_enabled() const { return red_payload_type_.has_value(); }
+
+  RtpPacketizer::PacketizationFormat GetPacketizationFormat(
+      VideoCodecType codec_type) const;
+
+  // Returns whether an Sframe encryptor is configured.
+  bool IsSframeEncryptionSupported() const;
+
+  // Returns whether negotiation requires Sframe and `mode` is configured.
+  bool IsSframeModeActive(SframeMode mode) const;
 
   bool UpdateConditionalRetransmit(uint8_t temporal_id,
                                    TimeDelta expected_retransmission_time)
@@ -252,6 +275,10 @@ class RTPSenderVideo : public RTPVideoFrameSenderInterface {
   OneTimeEvent first_frame_sent_;
   Timestamp last_fail_packetize_log_ RTC_GUARDED_BY(send_checker_) =
       Timestamp::MinusInfinity();
+  Timestamp last_undescribable_frame_log_ RTC_GUARDED_BY(send_checker_) =
+      Timestamp::MinusInfinity();
+  Timestamp last_chain_diff_log_ RTC_GUARDED_BY(send_checker_) =
+      Timestamp::MinusInfinity();
 
   // E2EE Custom Video Frame Encryptor (optional)
   FrameEncryptorInterface* const frame_encryptor_ = nullptr;
@@ -259,6 +286,8 @@ class RTPSenderVideo : public RTPVideoFrameSenderInterface {
   // initialized frame_encryptor_ before being sent out of the network.
   // Otherwise these payloads will be dropped.
   const bool require_frame_encryption_;
+  const bool sframe_required_by_negotiation_;
+  const std::optional<SframeEncryptionConfig> sframe_encryption_config_;
   // Set to true if the generic descriptor should be authenticated.
   const bool generic_descriptor_auth_experiment_;
 

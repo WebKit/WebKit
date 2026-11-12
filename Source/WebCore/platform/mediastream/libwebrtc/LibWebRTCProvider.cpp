@@ -351,7 +351,6 @@ Ref<webrtc::PeerConnectionFactoryInterface> LibWebRTCProvider::createPeerConnect
 #endif
     );
     dependencies.network_thread = networkThread;
-    dependencies.worker_thread = networkThread;
     dependencies.signaling_thread = signalingThread;
     dependencies.event_log_factory = std::make_unique<webrtc::RtcEventLogFactory>();
 

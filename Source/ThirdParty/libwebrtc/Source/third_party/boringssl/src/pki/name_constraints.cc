@@ -285,8 +285,6 @@ bool Rfc822NameMatches(std::string_view local_part, std::string_view domain,
 
 }  // namespace
 
-NameConstraints::~NameConstraints() = default;
-
 // static
 std::unique_ptr<NameConstraints> NameConstraints::Create(
     der::Input extension_value, bool is_critical, CertErrors *errors) {

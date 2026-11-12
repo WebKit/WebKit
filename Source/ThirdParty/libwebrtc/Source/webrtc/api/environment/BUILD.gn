@@ -76,8 +76,7 @@ rtc_library("environment_factory") {
 }
 
 if (rtc_include_tests) {
-  rtc_library("environment_unittests") {
-    testonly = true
+  rtc_cc_test("environment_unittest") {
     sources = [ "environment_unittest.cc" ]
     deps = [
       ":environment",

@@ -705,6 +705,11 @@ RTCError BaseChannel::SetLocalContent_w(const MediaContentDescription* content,
       last_send_params_ = std::move(send_params);
     }
   } else {
+    // Set the MID before UpdateLocalStreams_w() adds send streams, so that
+    // they're created with it. The send parameters, which also carry the MID,
+    // are only applied here for answers.
+    voice_media_send_channel()->SetMid(mid());
+
     AudioReceiverParameters recv_params =
         std::get<AudioReceiverParameters>(last_recv_params_);
     MediaChannelParametersFromMediaDescription(

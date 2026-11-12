@@ -544,12 +544,11 @@ typedef struct FIRST_PASS_SPEED_FEATURES {
 /*!\cond */
 typedef struct TPL_SPEED_FEATURES {
   // GOP length adaptive decision.
-  // If set to 0, tpl model decides whether a shorter gf interval is better.
-  // If set to 1, tpl stats of ARFs from base layer, (base+1) layer and
+  // If set to 0, tpl stats of ARFs from base layer, (base+1) layer and
   // (base+2) layer decide whether a shorter gf interval is better.
-  // If set to 2, tpl stats of ARFs from base layer, (base+1) layer and GF boost
+  // If set to 1, tpl stats of ARFs from base layer, (base+1) layer and GF boost
   // decide whether a shorter gf interval is better.
-  // If set to 3, gop length adaptive decision is disabled.
+  // If set to 2, gop length adaptive decision is disabled.
   int gop_length_decision_method;
   // Prune the intra modes search by tpl.
   // If set to 0, we will search all intra modes from DC_PRED to PAETH_PRED.
@@ -1271,6 +1270,11 @@ typedef struct INTER_MODE_SPEED_FEATURES {
 
   // Enable/disable model RD based fast compound wedge mask search.
   int enable_comp_wedge_search_using_model_rd;
+
+  // Avoid further evaluation of interintra modes using top estimate RD Costs of
+  // smooth interintra. Values are 0 (not used),1 - 2 with progressively
+  // increasing aggressiveness, i.e., decreasing number of top candidates.
+  int skip_interintra_using_top_smooth_rd_lvl;
 } INTER_MODE_SPEED_FEATURES;
 
 typedef struct INTERP_FILTER_SPEED_FEATURES {

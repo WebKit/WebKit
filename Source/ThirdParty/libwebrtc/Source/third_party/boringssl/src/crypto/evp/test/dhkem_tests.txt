@@ -1,0 +1,84 @@
+# DHKEM test vectors from RFC 9180. The shared secrets are the RFC's
+# `shared_secret` values, which are not carried in
+# crypto/hpke/hpke_test_vectors.txt.
+
+# RFC 9180, A.1.1.
+Key = DHKEM-X25519-Recipient
+Algorithm = X25519
+RawPrivate = 4612c550263fc8ad58375df3f557aac531d26850903e55a9f23f21d8534e8ac8
+RawPublic = 3948cfe0ad1ddb695d780e59077195da6c56506b027329794ab02bca80815c4d
+PKCS8 = 302e020100300506032b656e042204204612c550263fc8ad58375df3f557aac531d26850903e55a9f23f21d8534e8ac8
+SPKI = 302a300506032b656e0321003948cfe0ad1ddb695d780e59077195da6c56506b027329794ab02bca80815c4d
+
+# The DHKEM(X25519) entropy is skEm, the ephemeral private key.
+EncapsulateDecapsulate = DHKEM-X25519-Recipient/Private
+KEM = DHKEM-X25519-HKDF-SHA256
+Entropy = 52c4a758a802cd8b936eceea314432798d5baf2d7e9235dc084ab1b9cfa2f736
+Ciphertext = 37fda3567bdbd628e88668c3c8d7e97d1d1253b6d4ea6d44c150f741f1bf4431
+Secret = fe0e18c9f024ce43799ae393c7e8fe8fce9d218875e8227b0187c04e7d2ea1fc
+
+Encapsulate = DHKEM-X25519-Recipient
+KEM = DHKEM-X25519-HKDF-SHA256
+Entropy = 52c4a758a802cd8b936eceea314432798d5baf2d7e9235dc084ab1b9cfa2f736
+Ciphertext = 37fda3567bdbd628e88668c3c8d7e97d1d1253b6d4ea6d44c150f741f1bf4431
+Secret = fe0e18c9f024ce43799ae393c7e8fe8fce9d218875e8227b0187c04e7d2ea1fc
+
+Decapsulate = DHKEM-X25519-Recipient/Private
+KEM = DHKEM-X25519-HKDF-SHA256
+Input = 37fda3567bdbd628e88668c3c8d7e97d1d1253b6d4ea6d44c150f741f1bf4431
+Output = fe0e18c9f024ce43799ae393c7e8fe8fce9d218875e8227b0187c04e7d2ea1fc
+
+# A small-order encapsulated key is rejected by the X25519 operation.
+Decapsulate = DHKEM-X25519-Recipient/Private
+KEM = DHKEM-X25519-HKDF-SHA256
+Input = e0eb7a7c3b41b8ae1656e3faf19fc46ada098deb9c32b1fd866205165f49b800
+DecapsulateFail = 1
+
+# An encapsulated key of the wrong length is rejected.
+Decapsulate = DHKEM-X25519-Recipient/Private
+KEM = DHKEM-X25519-HKDF-SHA256
+Input = 37fda3567bdbd628e88668c3c8d7e97d1d1253b6d4ea6d44c150f741f1bf44
+DecapsulateFail = 1
+
+# RFC 9180, A.3.1.
+Key = DHKEM-P256-Recipient
+Algorithm = EC-P-256
+Bits = 256
+ECCurve = prime256v1
+ECUncompressedPoint = 04fe8c19ce0905191ebc298a9245792531f26f0cece2460639e8bc39cb7f706a826a779b4cf969b8a0e539c7f62fb3d30ad6aa8f80e30f1d128aafd68a2ce72ea0
+ECCompressedPoint = 02fe8c19ce0905191ebc298a9245792531f26f0cece2460639e8bc39cb7f706a82
+ECPrivateScalar = f3ce7fdae57e1a310d87f1ebbde6f328be0a99cdbcadf4d6589cf29de4b8ffd2
+PKCS8 = 308187020100301306072a8648ce3d020106082a8648ce3d030107046d306b0201010420f3ce7fdae57e1a310d87f1ebbde6f328be0a99cdbcadf4d6589cf29de4b8ffd2a14403420004fe8c19ce0905191ebc298a9245792531f26f0cece2460639e8bc39cb7f706a826a779b4cf969b8a0e539c7f62fb3d30ad6aa8f80e30f1d128aafd68a2ce72ea0
+SPKI = 3059301306072a8648ce3d020106082a8648ce3d03010703420004fe8c19ce0905191ebc298a9245792531f26f0cece2460639e8bc39cb7f706a826a779b4cf969b8a0e539c7f62fb3d30ad6aa8f80e30f1d128aafd68a2ce72ea0
+
+# The DHKEM(P-256) entropy is ikmE, the input to DeriveKeyPair, rather than the
+# ephemeral private key itself.
+EncapsulateDecapsulate = DHKEM-P256-Recipient/Private
+KEM = DHKEM-P256-HKDF-SHA256
+Entropy = 4270e54ffd08d79d5928020af4686d8f6b7d35dbe470265f1f5aa22816ce860e
+Ciphertext = 04a92719c6195d5085104f469a8b9814d5838ff72b60501e2c4466e5e67b325ac98536d7b61a1af4b78e5b7f951c0900be863c403ce65c9bfcb9382657222d18c4
+Secret = c0d26aeab536609a572b07695d933b589dcf363ff9d93c93adea537aeabb8cb8
+
+Encapsulate = DHKEM-P256-Recipient
+KEM = DHKEM-P256-HKDF-SHA256
+Entropy = 4270e54ffd08d79d5928020af4686d8f6b7d35dbe470265f1f5aa22816ce860e
+Ciphertext = 04a92719c6195d5085104f469a8b9814d5838ff72b60501e2c4466e5e67b325ac98536d7b61a1af4b78e5b7f951c0900be863c403ce65c9bfcb9382657222d18c4
+Secret = c0d26aeab536609a572b07695d933b589dcf363ff9d93c93adea537aeabb8cb8
+
+Decapsulate = DHKEM-P256-Recipient/Private
+KEM = DHKEM-P256-HKDF-SHA256
+Input = 04a92719c6195d5085104f469a8b9814d5838ff72b60501e2c4466e5e67b325ac98536d7b61a1af4b78e5b7f951c0900be863c403ce65c9bfcb9382657222d18c4
+Output = c0d26aeab536609a572b07695d933b589dcf363ff9d93c93adea537aeabb8cb8
+
+# The encapsulated key must be an uncompressed point. This is the compressed
+# form of the point above.
+Decapsulate = DHKEM-P256-Recipient/Private
+KEM = DHKEM-P256-HKDF-SHA256
+Input = 02a92719c6195d5085104f469a8b9814d5838ff72b60501e2c4466e5e67b325ac9
+DecapsulateFail = 1
+
+# A point not on the curve is rejected.
+Decapsulate = DHKEM-P256-Recipient/Private
+KEM = DHKEM-P256-HKDF-SHA256
+Input = 04a92719c6195d5085104f469a8b9814d5838ff72b60501e2c4466e5e67b325ac98536d7b61a1af4b78e5b7f951c0900be863c403ce65c9bfcb9382657222d18c5
+DecapsulateFail = 1

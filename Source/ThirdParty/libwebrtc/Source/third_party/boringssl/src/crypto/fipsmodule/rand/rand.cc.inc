@@ -381,8 +381,8 @@ bcm_infallible bssl::BCM_rand_bytes_with_additional_data(
         !CRYPTO_set_thread_local(OPENSSL_THREAD_LOCAL_RAND, state,
                                  rand_thread_state_free)) {
       // If the system is out of memory, use an ephemeral state on the
-      // stack.
-      Delete(state);
+      // stack. `rand_thread_state_free` has already been called by
+      // `CRYPTO_set_thread_local` on failure.
       state = &stack_state;
     }
 

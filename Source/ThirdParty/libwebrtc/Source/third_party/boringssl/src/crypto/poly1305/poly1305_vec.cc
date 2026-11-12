@@ -36,11 +36,11 @@ namespace {
 
 typedef __m128i xmmi;
 
-alignas(16) const uint32_t poly1305_x64_sse2_message_mask[4] = {
+alignas(16) static const uint32_t poly1305_x64_sse2_message_mask[4] = {
     (1 << 26) - 1, 0, (1 << 26) - 1, 0};
-alignas(16) const uint32_t poly1305_x64_sse2_5[4] = {5, 0, 5, 0};
-alignas(16) const uint32_t poly1305_x64_sse2_1shl128[4] = {(1 << 24), 0,
-                                                           (1 << 24), 0};
+alignas(16) static const uint32_t poly1305_x64_sse2_5[4] = {5, 0, 5, 0};
+alignas(16) static const uint32_t poly1305_x64_sse2_1shl128[4] = {(1 << 24), 0,
+                                                                   (1 << 24), 0};
 
 uint128_t add128(uint128_t a, uint128_t b) { return a + b; }
 

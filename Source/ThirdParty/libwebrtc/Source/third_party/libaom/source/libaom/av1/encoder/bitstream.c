@@ -3102,33 +3102,11 @@ static inline void write_uncompressed_header_obu(
       const int gld_ref = get_ref_frame_map_idx(cm, GOLDEN_FRAME);
       aom_wb_write_literal(wb, gld_ref, REF_FRAMES_LOG2);
     }
-    int first_ref_map_idx = INVALID_IDX;
-    if (cpi->ppi->rtc_ref.set_ref_frame_config) {
-      for (ref_frame = LAST_FRAME; ref_frame <= ALTREF_FRAME; ++ref_frame) {
-        if (cpi->ppi->rtc_ref.reference[ref_frame - 1] == 1) {
-          first_ref_map_idx = cpi->ppi->rtc_ref.ref_idx[ref_frame - 1];
-          break;
-        }
-      }
-    }
     for (ref_frame = LAST_FRAME; ref_frame <= ALTREF_FRAME; ++ref_frame) {
       assert(get_ref_frame_map_idx(cm, ref_frame) != INVALID_IDX);
       if (!current_frame->frame_refs_short_signaling) {
-        if (cpi->ppi->rtc_ref.set_ref_frame_config &&
-            first_ref_map_idx != INVALID_IDX &&
-            cpi->svc.number_spatial_layers == 1 &&
-            !seq_params->order_hint_info.enable_order_hint) {
-          // For the usage of set_ref_frame_config:
-          // for any reference not used set their ref_map_idx
-          // to the first used reference.
-          const int map_idx = cpi->ppi->rtc_ref.reference[ref_frame - 1]
-                                  ? get_ref_frame_map_idx(cm, ref_frame)
-                                  : first_ref_map_idx;
-          aom_wb_write_literal(wb, map_idx, REF_FRAMES_LOG2);
-        } else {
-          aom_wb_write_literal(wb, get_ref_frame_map_idx(cm, ref_frame),
-                               REF_FRAMES_LOG2);
-        }
+        aom_wb_write_literal(wb, get_ref_frame_map_idx(cm, ref_frame),
+                             REF_FRAMES_LOG2);
       }
       if (seq_params->frame_id_numbers_present_flag) {
         int i = get_ref_frame_map_idx(cm, ref_frame);

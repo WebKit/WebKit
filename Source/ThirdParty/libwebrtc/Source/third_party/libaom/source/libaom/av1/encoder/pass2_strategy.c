@@ -1118,52 +1118,26 @@ static int is_shorter_gf_interval_better(
       av1_encode_for_extrc(&cpi->ext_ratectrl)) {
     return 0;
   }
-  const RATE_CONTROL *const rc = &cpi->rc;
   PRIMARY_RATE_CONTROL *const p_rc = &cpi->ppi->p_rc;
   int gop_length_decision_method = cpi->sf.tpl_sf.gop_length_decision_method;
-  int shorten_gf_interval;
+  int shorten_gf_interval = 0;
 
   av1_tpl_preload_rc_estimate(cpi, frame_params);
 
-  if (gop_length_decision_method == 2) {
+  if (gop_length_decision_method == 1) {
     // GF group length is decided based on GF boost and tpl stats of ARFs from
     // base layer, (base+1) layer.
     shorten_gf_interval =
         (p_rc->gfu_boost <
          p_rc->num_stats_used_for_gfu_boost * GF_MIN_BOOST * 1.4) &&
-        !av1_tpl_setup_stats(cpi, 3, frame_params);
-  } else {
-    int do_complete_tpl = 1;
-    GF_GROUP *const gf_group = &cpi->ppi->gf_group;
-    int is_temporal_filter_enabled =
-        (rc->frames_since_key > 0 && gf_group->arf_index > -1);
-
-    if (gop_length_decision_method == 1) {
-      // Check if tpl stats of ARFs from base layer, (base+1) layer,
-      // (base+2) layer can decide the GF group length.
-      int gop_length_eval = av1_tpl_setup_stats(cpi, 2, frame_params);
-
-      if (gop_length_eval != 2) {
-        do_complete_tpl = 0;
-        shorten_gf_interval = !gop_length_eval;
-      }
-    }
-
-    if (do_complete_tpl) {
-      // Decide GF group length based on complete tpl stats.
-      shorten_gf_interval = !av1_tpl_setup_stats(cpi, 1, frame_params);
-      // Tpl stats is reused when the ARF is temporally filtered and GF
-      // interval is not shortened.
-      if (is_temporal_filter_enabled && !shorten_gf_interval) {
-        cpi->skip_tpl_setup_stats = 1;
-#if CONFIG_BITRATE_ACCURACY && !CONFIG_THREE_PASS
-        assert(cpi->gf_frame_index == 0);
-        av1_vbr_rc_update_q_index_list(&cpi->vbr_rc_info, &cpi->ppi->tpl_data,
-                                       gf_group,
-                                       cpi->common.seq_params->bit_depth);
-#endif  // CONFIG_BITRATE_ACCURACY
-      }
-    }
+        !av1_tpl_setup_stats(cpi, /*approx_gop_eval=*/true, frame_params);
+  } else if (gop_length_decision_method == 0) {
+    // Check if tpl stats of ARFs from base layer, (base+1) layer,
+    // (base+2) layer can decide the GF group length.
+    int gop_length_eval =
+        av1_tpl_setup_stats(cpi, /*approx_gop_eval=*/true, frame_params);
+    assert(gop_length_eval != -1);
+    shorten_gf_interval = !gop_length_eval;
   }
   return shorten_gf_interval;
 }
@@ -4239,7 +4213,7 @@ void av1_get_second_pass_params(AV1_COMP *cpi,
       }
       if (max_gop_length > 16 && oxcf->algo_cfg.enable_tpl_model &&
           oxcf->gf_cfg.lag_in_frames >= 32 &&
-          cpi->sf.tpl_sf.gop_length_decision_method != 3) {
+          cpi->sf.tpl_sf.gop_length_decision_method != 2) {
         int this_idx = rc->frames_since_key +
                        p_rc->gf_intervals[p_rc->cur_gf_index] -
                        p_rc->regions_offset - 1;

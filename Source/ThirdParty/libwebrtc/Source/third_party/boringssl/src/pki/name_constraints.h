@@ -33,8 +33,6 @@ class Input;
 // allowed under those constraints as defined by RFC 5280 section 4.2.1.10.
 class OPENSSL_EXPORT NameConstraints {
  public:
-  ~NameConstraints();
-
   // Parses a DER-encoded NameConstraints extension and initializes this object.
   // `extension_value` should be the extnValue from the extension (not including
   // the OCTET STRING tag). `is_critical` should be true if the extension was

@@ -25,6 +25,8 @@ class RtpGenericFrameDescriptor {
   static constexpr int kMaxNumFrameDependencies = 8;
   static constexpr int kMaxTemporalLayers = 8;
   static constexpr int kMaxSpatialLayers = 8;
+  // Largest frame dependency diff that can be represented on the wire.
+  static constexpr int kMaxFrameDependencyDiff = (1 << 14) - 1;
 
   RtpGenericFrameDescriptor();
   RtpGenericFrameDescriptor(const RtpGenericFrameDescriptor&);
@@ -55,8 +57,9 @@ class RtpGenericFrameDescriptor {
 
   std::span<const uint16_t> FrameDependenciesDiffs() const;
   void ClearFrameDependencies() { num_frame_deps_ = 0; }
-  // Returns false on failure, i.e. number of dependencies is too large.
-  bool AddFrameDependencyDiff(uint16_t fdiff);
+  // Returns false on failure, i.e. number of dependencies is too large or
+  // `fdiff` is outside of the range [1, kMaxFrameDependencyDiff].
+  bool AddFrameDependencyDiff(int64_t fdiff);
 
  private:
   bool beginning_of_subframe_ = false;

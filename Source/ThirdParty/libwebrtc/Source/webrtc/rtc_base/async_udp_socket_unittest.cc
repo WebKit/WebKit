@@ -28,6 +28,7 @@
 #include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
+#include "test/near_matcher.h"
 
 namespace webrtc {
 
@@ -100,8 +101,9 @@ TEST(AsyncUDPSocketTest, ArrivalTimeStampCanBeBeforeCurrentTime) {
       });
   EXPECT_CALL(received_packet_callback, Call)
       .WillRepeatedly([&](AsyncPacketSocket*, const ReceivedIpPacket& packet) {
-        EXPECT_EQ(packet.arrival_time(),
-                  webrtc_clock.CurrentTime() - TimeDelta::Millis(5));
+        // Near is needed because of clock drift compensation.
+        EXPECT_THAT(packet.arrival_time(),
+                    Near(webrtc_clock.CurrentTime() - TimeDelta::Millis(5)));
       });
   socket_ptr->NotifyReadEvent(socket_ptr);
 }

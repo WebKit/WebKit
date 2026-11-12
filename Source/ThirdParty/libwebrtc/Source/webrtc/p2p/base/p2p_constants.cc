@@ -11,8 +11,10 @@
 #include "p2p/base/p2p_constants.h"
 
 #include <cstddef>
-#include <cstdint>
 
+#include "absl/strings/match.h"
+#include "absl/strings/string_view.h"
+#include "absl/strings/strip.h"
 #include "api/units/data_rate.h"
 #include "api/units/data_size.h"
 #include "api/units/time_delta.h"
@@ -48,7 +50,19 @@ const char CONNECTIONROLE_PASSIVE_STR[] = "passive";
 const char CONNECTIONROLE_ACTPASS_STR[] = "actpass";
 const char CONNECTIONROLE_HOLDCONN_STR[] = "holdconn";
 
-const char LOCAL_TLD[] = ".local";
+namespace {
+
+// RFC 6762, the .local pseudo-top-level domain used for mDNS names.
+constexpr absl::string_view kLocalTld = ".local";
+
+}  // namespace
+
+bool IsMdnsHostname(absl::string_view hostname) {
+  // Strip the trailing dot of a fully qualified name such as "name.local.".
+  // Only one dot is stripped, since "name.local.." is not a valid name.
+  absl::ConsumeSuffix(&hostname, ".");
+  return absl::EndsWithIgnoreCase(hostname, kLocalTld);
+}
 
 // When the socket is unwritable, we will use 10 Kbps (ignoring IP+UDP headers)
 // for pinging. When the socket is writable, we will use only 1 Kbps because we

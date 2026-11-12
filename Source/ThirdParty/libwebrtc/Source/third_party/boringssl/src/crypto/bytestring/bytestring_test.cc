@@ -2221,7 +2221,7 @@ TEST(CBSTest, GetU64Decimal) {
     EXPECT_EQ(CBS_len(&cbs), 0u);
 
     std::string str(t.text);
-    str += "Z";
+    str += 'Z';
     CBS_init(&cbs, reinterpret_cast<const uint8_t *>(str.data()), str.size());
     ASSERT_TRUE(CBS_get_u64_decimal(&cbs, &v));
     EXPECT_EQ(v, t.val);

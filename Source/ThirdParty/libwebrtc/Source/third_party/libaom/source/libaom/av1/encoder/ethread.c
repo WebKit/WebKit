@@ -912,7 +912,7 @@ void av1_init_mt_sync(AV1_COMP *cpi, int is_first_pass) {
     }
 
 #if !CONFIG_REALTIME_ONLY
-    if (is_restoration_used(cm)) {
+    if (cm->seq_params->enable_restoration) {
       // Initialize loop restoration MT object.
       AV1LrSync *lr_sync = &mt_info->lr_row_sync;
       int rst_unit_size = cpi->sf.lpf_sf.min_lr_unit_size;
@@ -1333,7 +1333,7 @@ static inline void prepare_fpmt_workers(AV1_PRIMARY *ppi,
             mt_info->cdef_worker->colbuf[plane];
     }
 #if !CONFIG_REALTIME_ONLY
-    if (is_restoration_used(cm)) {
+    if (cm->seq_params->enable_restoration) {
       // Back up the original LR buffers before update.
       int idx = i + mt_info->num_workers - 1;
       assert(idx < mt_info->lr_row_sync.num_workers);
@@ -1407,7 +1407,7 @@ static inline void restore_workers_after_fpmt(AV1_PRIMARY *ppi,
             mt_info->restore_state_buf.cdef_colbuf[plane];
     }
 #if !CONFIG_REALTIME_ONLY
-    if (is_restoration_used(cm)) {
+    if (cm->seq_params->enable_restoration) {
       // Restore the original LR buffers.
       int idx = i + mt_info->num_workers - 1;
       assert(idx < mt_info->lr_row_sync.num_workers);

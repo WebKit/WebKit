@@ -34,7 +34,7 @@ import (
 	"boringssl.googlesource.com/boringssl.git/util/fipstools/fipscommon"
 )
 
-func do(outPath, oInput, arInput, hashInput string) error {
+func do(outPath, oInput, arInput, hashInput string, ignoreMissing bool) error {
 	var objectBytes []byte
 	var isStatic bool
 	var perm os.FileMode
@@ -98,6 +98,9 @@ func do(outPath, oInput, arInput, hashInput string) error {
 
 	object, err := elf.NewFile(bytes.NewReader(hashBytes))
 	if err != nil {
+		if ignoreMissing {
+			return os.WriteFile(outPath, objectBytes, perm&0777)
+		}
 		return errors.New("failed to parse object: " + err.Error())
 	}
 
@@ -117,6 +120,9 @@ func do(outPath, oInput, arInput, hashInput string) error {
 	}
 
 	if textSection == nil {
+		if ignoreMissing {
+			return os.WriteFile(outPath, objectBytes, perm&0777)
+		}
 		return errors.New("failed to find .text section in object")
 	}
 
@@ -131,6 +137,9 @@ func do(outPath, oInput, arInput, hashInput string) error {
 		symbols, err = object.DynamicSymbols()
 	}
 	if err != nil {
+		if ignoreMissing {
+			return os.WriteFile(outPath, objectBytes, perm&0777)
+		}
 		return errors.New("failed to parse symbols: " + err.Error())
 	}
 
@@ -184,6 +193,9 @@ func do(outPath, oInput, arInput, hashInput string) error {
 	}
 
 	if textStart == nil || textEnd == nil {
+		if ignoreMissing {
+			return os.WriteFile(outPath, objectBytes, perm&0777)
+		}
 		return errors.New("could not find .text module boundaries in object")
 	}
 
@@ -250,6 +262,9 @@ func do(outPath, oInput, arInput, hashInput string) error {
 
 	offset := bytes.Index(objectBytes, fipscommon.UninitHashValue[:])
 	if offset < 0 {
+		if ignoreMissing {
+			return os.WriteFile(outPath, objectBytes, perm&0777)
+		}
 		return errors.New("did not find uninitialised hash value in object file")
 	}
 
@@ -270,10 +285,12 @@ func main() {
 	oInput := flag.String("in-object", "", "Path to a .o file")
 	hashInput := flag.String("in-hash", "", "Path to an input object file to hash instead")
 	outPath := flag.String("o", "", "Path to output object")
+	var ignoreMissing bool
+	flag.BoolVar(&ignoreMissing, "ignore-missing-symbols", false, "If true, treat non-ELF inputs, missing BCM symbols, or missing uninitialized hash values as a no-op.")
 
 	flag.Parse()
 
-	if err := do(*outPath, *oInput, *arInput, *hashInput); err != nil {
+	if err := do(*outPath, *oInput, *arInput, *hashInput, ignoreMissing); err != nil {
 		fmt.Fprintf(os.Stderr, "%s\n", err)
 		os.Exit(1)
 	}

@@ -410,7 +410,7 @@ if (rtc_enable_protobuf) {
 if (rtc_enable_protobuf) {
   rtc_library("rtc_event_log_impl") {
     visibility = [
-      ":rtc_event_log_tests",
+      ":*",
       "../api/rtc_event_log:rtc_event_log_factory",
     ]
     sources = [
@@ -529,6 +529,7 @@ if (rtc_enable_protobuf) {
       "../rtc_base:protobuf_utils",
       "../rtc_base:rtc_numerics",
       "../rtc_base:safe_conversions",
+      "../rtc_base:sequence_number_util",
       "../rtc_base/system:file_wrapper",
       "//third_party/abseil-cpp/absl/memory",
       "//third_party/abseil-cpp/absl/strings:string_view",
@@ -541,91 +542,226 @@ if (rtc_enable_protobuf) {
   }
 
   if (rtc_include_tests) {
-    rtc_library("rtc_event_log_tests") {
+    rtc_library("rtc_event_log_unittest_helper") {
       testonly = true
       assert(rtc_enable_protobuf)
       sources = [
-        "rtc_event_log/dependency_descriptor_encoder_decoder_unittest.cc",
-        "rtc_event_log/encoder/blob_encoding_unittest.cc",
-        "rtc_event_log/encoder/delta_encoding_unittest.cc",
-        "rtc_event_log/encoder/optional_blob_encoding_unittest.cc",
-        "rtc_event_log/encoder/rtc_event_log_encoder_common_unittest.cc",
-        "rtc_event_log/encoder/rtc_event_log_encoder_unittest.cc",
-        "rtc_event_log/events/rtc_event_field_encoding_unittest.cc",
-        "rtc_event_log/events/rtc_event_field_extraction_unittest.cc",
-        "rtc_event_log/rtc_event_log_impl_unittest.cc",
-        "rtc_event_log/rtc_event_log_unittest.cc",
         "rtc_event_log/rtc_event_log_unittest_helper.cc",
         "rtc_event_log/rtc_event_log_unittest_helper.h",
-        "rtc_event_log/rtc_event_processor_unittest.cc",
       ]
       deps = [
-        ":dependency_descriptor_encoder_decoder",
         ":ice_log",
         ":rtc_event_audio",
         ":rtc_event_begin_end",
         ":rtc_event_bwe",
         ":rtc_event_bwe_update_scream",
-        ":rtc_event_field",
         ":rtc_event_frame_events",
         ":rtc_event_log2_proto",
-        ":rtc_event_log2_proto_include",
-        ":rtc_event_log_api",
-        ":rtc_event_log_blob_encoding",
-        ":rtc_event_log_delta_encoding",
-        ":rtc_event_log_impl",
-        ":rtc_event_log_impl_encoder",
-        ":rtc_event_log_optional_blob_encoding",
         ":rtc_event_log_parser",
         ":rtc_event_log_proto",
-        ":rtc_event_number_encodings",
         ":rtc_event_pacing",
         ":rtc_event_rtp_rtcp",
         ":rtc_event_video",
         ":rtc_stream_config",
         "../api:candidate",
         "../api:dtls_transport_interface",
-        "../api:field_trials",
-        "../api:field_trials_view",
-        "../api:libjingle_logging_api",
-        "../api:rtc_event_log_output_file",
         "../api:rtp_header_extension_id",
         "../api:rtp_headers",
         "../api:rtp_parameters",
-        "../api/environment",
         "../api/rtc_event_log",
-        "../api/rtc_event_log:rtc_event_log_factory",
         "../api/transport:bandwidth_usage",
         "../api/units:data_rate",
         "../api/units:data_size",
         "../api/units:time_delta",
         "../api/units:timestamp",
         "../api/video:video_frame",
-        "../call",
-        "../call:call_interfaces",
         "../modules/audio_coding:audio_network_adaptor",
+        "../modules/audio_coding:audio_network_adaptor_config",
         "../modules/rtp_rtcp:rtp_rtcp_format",
         "../rtc_base:buffer",
         "../rtc_base:checks",
-        "../rtc_base:logging",
         "../rtc_base:random",
-        "../rtc_base:rtc_base_tests_utils",
-        "../rtc_base:safe_conversions",
-        "../rtc_base:timeutils",
         "../system_wrappers",
-        "../test:create_test_environment",
-        "../test:create_test_field_trials",
-        "../test:fileutils",
         "../test:near_matcher",
         "../test:test_support",
-        "../test/logging:log_writer",
-        "../test/time_controller",
-        "//testing/gtest",
         "//third_party/abseil-cpp/absl/algorithm:container",
         "//third_party/abseil-cpp/absl/base:nullability",
-        "//third_party/abseil-cpp/absl/memory",
         "//third_party/abseil-cpp/absl/strings:string_view",
       ]
+    }
+
+    if (!build_with_chromium) {
+      rtc_cc_test("dependency_descriptor_encoder_decoder_unittest") {
+        sources = [
+          "rtc_event_log/dependency_descriptor_encoder_decoder_unittest.cc",
+        ]
+        deps = [
+          ":dependency_descriptor_encoder_decoder",
+          ":rtc_event_log2_proto_include",
+          ":rtc_event_log_delta_encoding",
+          ":rtc_event_log_optional_blob_encoding",
+          "../rtc_base:checks",
+          "../test:test_support",
+        ]
+      }
+
+      rtc_cc_test("blob_encoding_unittest") {
+        sources = [ "rtc_event_log/encoder/blob_encoding_unittest.cc" ]
+        deps = [
+          ":rtc_event_log_blob_encoding",
+          ":rtc_event_number_encodings",
+          "../rtc_base:checks",
+          "../test:test_support",
+          "//third_party/abseil-cpp/absl/strings:string_view",
+        ]
+      }
+
+      rtc_cc_test("delta_encoding_unittest") {
+        sources = [ "rtc_event_log/encoder/delta_encoding_unittest.cc" ]
+        deps = [
+          ":rtc_event_log_delta_encoding",
+          "../rtc_base:checks",
+          "../rtc_base:random",
+          "../test:test_support",
+        ]
+      }
+
+      rtc_cc_test("optional_blob_encoding_unittest") {
+        sources = [ "rtc_event_log/encoder/optional_blob_encoding_unittest.cc" ]
+        deps = [
+          ":rtc_event_log_optional_blob_encoding",
+          "../test:test_support",
+        ]
+      }
+
+      rtc_cc_test("rtc_event_log_encoder_common_unittest") {
+        sources =
+            [ "rtc_event_log/encoder/rtc_event_log_encoder_common_unittest.cc" ]
+        deps = [
+          ":rtc_event_number_encodings",
+          "../test:test_support",
+        ]
+      }
+
+      rtc_cc_test("rtc_event_log_encoder_unittest") {
+        sources = [ "rtc_event_log/encoder/rtc_event_log_encoder_unittest.cc" ]
+        deps = [
+          ":rtc_event_audio",
+          ":rtc_event_bwe",
+          ":rtc_event_bwe_update_scream",
+          ":rtc_event_frame_events",
+          ":rtc_event_log2_proto",
+          ":rtc_event_log_api",
+          ":rtc_event_log_impl_encoder",
+          ":rtc_event_log_parser",
+          ":rtc_event_log_proto",
+          ":rtc_event_log_unittest_helper",
+          ":rtc_event_pacing",
+          ":rtc_event_rtp_rtcp",
+          ":rtc_event_video",
+          "../api:field_trials_view",
+          "../api/rtc_event_log",
+          "../api/units:time_delta",
+          "../api/units:timestamp",
+          "../modules/audio_coding:audio_network_adaptor_config",
+          "../modules/rtp_rtcp:rtp_rtcp_format",
+          "../rtc_base:buffer",
+          "../rtc_base:checks",
+          "../rtc_base:logging",
+          "../rtc_base:random",
+          "../rtc_base:safe_conversions",
+          "../rtc_base:timeutils",
+          "../system_wrappers",
+          "../test:create_test_field_trials",
+          "../test:test_support",
+        ]
+      }
+
+      rtc_cc_test("rtc_event_field_encoding_unittest") {
+        sources =
+            [ "rtc_event_log/events/rtc_event_field_encoding_unittest.cc" ]
+        deps = [
+          ":rtc_event_field",
+          ":rtc_event_number_encodings",
+          "../api/rtc_event_log",
+          "../rtc_base:checks",
+          "../test:test_support",
+          "//third_party/abseil-cpp/absl/strings:string_view",
+        ]
+      }
+
+      rtc_cc_test("rtc_event_field_extraction_unittest") {
+        sources =
+            [ "rtc_event_log/events/rtc_event_field_extraction_unittest.cc" ]
+        deps = [
+          ":rtc_event_field",
+          "../rtc_base:random",
+          "../test:test_support",
+        ]
+      }
+
+      rtc_cc_test("rtc_event_log_impl_unittest") {
+        sources = [ "rtc_event_log/rtc_event_log_impl_unittest.cc" ]
+        deps = [
+          ":rtc_event_log_api",
+          ":rtc_event_log_impl",
+          "../api:libjingle_logging_api",
+          "../api/rtc_event_log",
+          "../api/units:time_delta",
+          "../api/units:timestamp",
+          "../rtc_base:checks",
+          "../test:create_test_environment",
+          "../test:test_support",
+          "../test/time_controller",
+          "//third_party/abseil-cpp/absl/strings:string_view",
+        ]
+      }
+
+      rtc_cc_test("rtc_event_log_unittest") {
+        sources = [ "rtc_event_log/rtc_event_log_unittest.cc" ]
+        deps = [
+          ":ice_log",
+          ":rtc_event_audio",
+          ":rtc_event_bwe",
+          ":rtc_event_bwe_update_scream",
+          ":rtc_event_frame_events",
+          ":rtc_event_log_parser",
+          ":rtc_event_log_unittest_helper",
+          ":rtc_event_pacing",
+          ":rtc_event_rtp_rtcp",
+          ":rtc_event_video",
+          "../api/rtc_event_log",
+          "../api/rtc_event_log:rtc_event_log_factory",
+          "../api/units:time_delta",
+          "../api/units:timestamp",
+          "../modules/rtp_rtcp:rtp_rtcp_format",
+          "../rtc_base:checks",
+          "../rtc_base:random",
+          "../rtc_base:timeutils",
+          "../system_wrappers",
+          "../test:create_test_environment",
+          "../test:fileutils",
+          "../test:near_matcher",
+          "../test:test_support",
+          "../test/logging:log_writer",
+          "../test/time_controller",
+        ]
+      }
+
+      rtc_cc_test("rtc_event_processor_unittest") {
+        sources = [ "rtc_event_log/rtc_event_processor_unittest.cc" ]
+        deps = [
+          ":rtc_event_begin_end",
+          ":rtc_event_bwe",
+          ":rtc_event_log_parser",
+          ":rtc_event_rtp_rtcp",
+          "../api:rtp_headers",
+          "../api/units:timestamp",
+          "../rtc_base:checks",
+          "../rtc_base:random",
+          "../test:test_support",
+        ]
+      }
     }
 
     if (!build_with_chromium) {

@@ -40,17 +40,79 @@ using namespace bssl;
 // X509_NAME_MAX is the length of the maximum encoded `X509_NAME` we accept.
 #define X509_NAME_MAX (1024 * 1024)
 
-static int asn1_marshal_string_canon(CBB *cbb, const ASN1_STRING *in);
+namespace {
 
-bssl::X509NameEntry::X509NameEntry() {
-  object.reset(const_cast<ASN1_OBJECT *>(OBJ_get_undef()));
+int asn1_marshal_string_canon(CBB *cbb, const ASN1_STRING *in) {
+  int (*decode_func)(CBS *, uint32_t *);
+  int error;
+  switch (in->type) {
+    case V_ASN1_UTF8STRING:
+      decode_func = CBS_get_utf8;
+      error = ASN1_R_INVALID_UTF8STRING;
+      break;
+    case V_ASN1_BMPSTRING:
+      decode_func = CBS_get_ucs2_be;
+      error = ASN1_R_INVALID_BMPSTRING;
+      break;
+    case V_ASN1_UNIVERSALSTRING:
+      decode_func = CBS_get_utf32_be;
+      error = ASN1_R_INVALID_UNIVERSALSTRING;
+      break;
+    case V_ASN1_PRINTABLESTRING:
+    case V_ASN1_T61STRING:
+    case V_ASN1_IA5STRING:
+    case V_ASN1_VISIBLESTRING:
+      decode_func = CBS_get_latin1;
+      error = ERR_R_INTERNAL_ERROR;  // Latin-1 inputs are never invalid.
+      break;
+    default:
+      // Other string types are not canonicalized.
+      return asn1_marshal_any_string(cbb, in);
+  }
+
+  CBB child;
+  if (!CBB_add_asn1(cbb, &child, CBS_ASN1_UTF8STRING)) {
+    return 0;
+  }
+
+  bool empty = true;
+  bool in_whitespace = false;
+  CBS cbs;
+  CBS_init(&cbs, in->data, in->length);
+  while (CBS_len(&cbs) != 0) {
+    uint32_t c;
+    if (!decode_func(&cbs, &c)) {
+      OPENSSL_PUT_ERROR(ASN1, error);
+      return 0;
+    }
+    if (OPENSSL_isspace(c)) {
+      if (empty) {
+        continue;  // Trim leading whitespace.
+      }
+      in_whitespace = true;
+    } else {
+      if (in_whitespace) {
+        // Collapse the previous run of whitespace into one space.
+        if (!CBB_add_u8(&child, ' ')) {
+          return 0;
+        }
+      }
+      in_whitespace = false;
+      // Lowecase ASCII codepoints.
+      if (c <= 0x7f) {
+        c = OPENSSL_tolower(c);
+      }
+      if (!CBB_add_utf8(&child, c)) {
+        return 0;
+      }
+      empty = false;
+    }
+  }
+
+  return CBB_flush(cbb);
 }
 
-X509_NAME_ENTRY *X509_NAME_ENTRY_new() { return New<X509NameEntry>(); }
-
-void X509_NAME_ENTRY_free(X509_NAME_ENTRY *entry) { Delete(FromOpaque(entry)); }
-
-static int x509_parse_name_entry(CBS *cbs, X509_NAME_ENTRY *out) {
+int x509_parse_name_entry(CBS *cbs, X509_NAME_ENTRY *out) {
   auto *out_impl = FromOpaque(out);
   CBS seq;
   if (!CBS_get_asn1(cbs, &seq, CBS_ASN1_SEQUENCE)) {
@@ -67,8 +129,8 @@ static int x509_parse_name_entry(CBS *cbs, X509_NAME_ENTRY *out) {
   return 1;
 }
 
-static int x509_marshal_name_entry(CBB *cbb, const X509_NAME_ENTRY *entry,
-                                   int canonicalize) {
+int x509_marshal_name_entry(CBB *cbb, const X509_NAME_ENTRY *entry,
+                            int canonicalize) {
   auto *entry_impl = FromOpaque(entry);
   CBB seq;
   if (!CBB_add_asn1(cbb, &seq, CBS_ASN1_SEQUENCE) ||
@@ -84,10 +146,50 @@ static int x509_marshal_name_entry(CBB *cbb, const X509_NAME_ENTRY *entry,
   return CBB_flush(cbb);
 }
 
-static int x509_marshal_name_entry_no_canon(CBB *cbb,
-                                            const X509_NAME_ENTRY *entry) {
+int x509_marshal_name_entry_no_canon(CBB *cbb, const X509_NAME_ENTRY *entry) {
   return x509_marshal_name_entry(cbb, entry, /*canonicalize=*/0);
 }
+
+int x509_marshal_name_entries(CBB *out, const X509_NAME *name,
+                              int canonicalize) {
+  auto *impl = FromOpaque(name);
+  if (sk_X509_NAME_ENTRY_num(impl->entries.get()) == 0) {
+    return 1;
+  }
+
+  // Bootstrap the first RDN.
+  int set = FromOpaque(sk_X509_NAME_ENTRY_value(impl->entries.get(), 0))->set;
+  CBB rdn;
+  if (!CBB_add_asn1(out, &rdn, CBS_ASN1_SET)) {
+    return 0;
+  }
+
+  for (const X509_NAME_ENTRY *entry : impl->entries.get()) {
+    if (FromOpaque(entry)->set != set) {
+      // Flush the previous RDN and start a new one.
+      if (!CBB_flush_asn1_set_of(&rdn) ||
+          !CBB_add_asn1(out, &rdn, CBS_ASN1_SET)) {
+        return 0;
+      }
+      set = FromOpaque(entry)->set;
+    }
+    if (!x509_marshal_name_entry(&rdn, entry, canonicalize)) {
+      return 0;
+    }
+  }
+
+  return CBB_flush_asn1_set_of(&rdn) && CBB_flush(out);
+}
+
+}  // namespace
+
+bssl::X509NameEntry::X509NameEntry() {
+  object.reset(const_cast<ASN1_OBJECT *>(OBJ_get_undef()));
+}
+
+X509_NAME_ENTRY *X509_NAME_ENTRY_new() { return New<X509NameEntry>(); }
+
+void X509_NAME_ENTRY_free(X509_NAME_ENTRY *entry) { Delete(FromOpaque(entry)); }
 
 BSSL_NAMESPACE_BEGIN
 
@@ -156,37 +258,6 @@ int bssl::x509_parse_name(CBS *cbs, X509_NAME *out) {
 
   // While we are single-threaded, also fill in the cached state.
   return x509_name_get_cache(impl) != nullptr;
-}
-
-static int x509_marshal_name_entries(CBB *out, const X509_NAME *name,
-                                     int canonicalize) {
-  auto *impl = FromOpaque(name);
-  if (sk_X509_NAME_ENTRY_num(impl->entries.get()) == 0) {
-    return 1;
-  }
-
-  // Bootstrap the first RDN.
-  int set = FromOpaque(sk_X509_NAME_ENTRY_value(impl->entries.get(), 0))->set;
-  CBB rdn;
-  if (!CBB_add_asn1(out, &rdn, CBS_ASN1_SET)) {
-    return 0;
-  }
-
-  for (const X509_NAME_ENTRY *entry : impl->entries.get()) {
-    if (FromOpaque(entry)->set != set) {
-      // Flush the previous RDN and start a new one.
-      if (!CBB_flush_asn1_set_of(&rdn) ||
-          !CBB_add_asn1(out, &rdn, CBS_ASN1_SET)) {
-        return 0;
-      }
-      set = FromOpaque(entry)->set;
-    }
-    if (!x509_marshal_name_entry(&rdn, entry, canonicalize)) {
-      return 0;
-    }
-  }
-
-  return CBB_flush_asn1_set_of(&rdn) && CBB_flush(out);
 }
 
 const X509NameCache *bssl::x509_name_get_cache(const X509_NAME *name) {
@@ -306,76 +377,6 @@ int i2d_X509_NAME(const X509_NAME *in, uint8_t **outp) {
 IMPLEMENT_EXTERN_ASN1_PARSE_INTO(X509_NAME, X509_NAME_new, X509_NAME_free,
                                  CBS_ASN1_SEQUENCE, x509_parse_name,
                                  x509_marshal_name)
-
-static int asn1_marshal_string_canon(CBB *cbb, const ASN1_STRING *in) {
-  int (*decode_func)(CBS *, uint32_t *);
-  int error;
-  switch (in->type) {
-    case V_ASN1_UTF8STRING:
-      decode_func = CBS_get_utf8;
-      error = ASN1_R_INVALID_UTF8STRING;
-      break;
-    case V_ASN1_BMPSTRING:
-      decode_func = CBS_get_ucs2_be;
-      error = ASN1_R_INVALID_BMPSTRING;
-      break;
-    case V_ASN1_UNIVERSALSTRING:
-      decode_func = CBS_get_utf32_be;
-      error = ASN1_R_INVALID_UNIVERSALSTRING;
-      break;
-    case V_ASN1_PRINTABLESTRING:
-    case V_ASN1_T61STRING:
-    case V_ASN1_IA5STRING:
-    case V_ASN1_VISIBLESTRING:
-      decode_func = CBS_get_latin1;
-      error = ERR_R_INTERNAL_ERROR;  // Latin-1 inputs are never invalid.
-      break;
-    default:
-      // Other string types are not canonicalized.
-      return asn1_marshal_any_string(cbb, in);
-  }
-
-  CBB child;
-  if (!CBB_add_asn1(cbb, &child, CBS_ASN1_UTF8STRING)) {
-    return 0;
-  }
-
-  bool empty = true;
-  bool in_whitespace = false;
-  CBS cbs;
-  CBS_init(&cbs, in->data, in->length);
-  while (CBS_len(&cbs) != 0) {
-    uint32_t c;
-    if (!decode_func(&cbs, &c)) {
-      OPENSSL_PUT_ERROR(ASN1, error);
-      return 0;
-    }
-    if (OPENSSL_isspace(c)) {
-      if (empty) {
-        continue;  // Trim leading whitespace.
-      }
-      in_whitespace = true;
-    } else {
-      if (in_whitespace) {
-        // Collapse the previous run of whitespace into one space.
-        if (!CBB_add_u8(&child, ' ')) {
-          return 0;
-        }
-      }
-      in_whitespace = false;
-      // Lowecase ASCII codepoints.
-      if (c <= 0x7f) {
-        c = OPENSSL_tolower(c);
-      }
-      if (!CBB_add_utf8(&child, c)) {
-        return 0;
-      }
-      empty = false;
-    }
-  }
-
-  return CBB_flush(cbb);
-}
 
 int X509_NAME_set(X509_NAME **xn, const X509_NAME *name) {
   UniquePtr<X509_NAME> copy(X509_NAME_dup(name));

@@ -22,14 +22,18 @@
 
 using namespace bssl;
 
-static char *i2s_ASN1_INTEGER_cb(const X509V3_EXT_METHOD *method, void *ext) {
+namespace {
+
+char *i2s_ASN1_INTEGER_cb(const X509V3_EXT_METHOD *method, void *ext) {
   return i2s_ASN1_INTEGER(method, reinterpret_cast<ASN1_INTEGER *>(ext));
 }
 
-static void *s2i_asn1_int(const X509V3_EXT_METHOD *meth, const X509V3_CTX *ctx,
-                          const char *value) {
+void *s2i_asn1_int(const X509V3_EXT_METHOD *meth, const X509V3_CTX *ctx,
+                   const char *value) {
   return s2i_ASN1_INTEGER(meth, value);
 }
+
+}  // namespace
 
 const X509V3_EXT_METHOD bssl::v3_crl_num = {
     NID_crl_number,

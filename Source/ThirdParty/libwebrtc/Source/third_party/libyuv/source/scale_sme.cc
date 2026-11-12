@@ -15,6 +15,13 @@ namespace libyuv {
 extern "C" {
 #endif
 
+// Note: every register written by an inline asm block (vector, general
+// purpose, mask/predicate, "cc" for flags and "memory" for stores) must be
+// listed in its clobber list, even when the ABI treats it as caller-saved.
+// With LTO/LTCG the compiler may keep values live in any register across the
+// asm statement, and other OS ABIs (e.g. Windows) differ in which registers
+// are callee-saved. List "memory" first, then "cc", then registers.
+
 #if !defined(LIBYUV_DISABLE_SME) && defined(CLANG_HAS_SME) && \
     defined(__aarch64__)
 
@@ -356,7 +363,7 @@ __arm_locally_streaming void ScaleUVRowDown2Linear_SME(const uint8_t* src_uv,
         [dst_width] "+r"(dst_width),  // %[dst_width]
         [vl] "=r"(vl)                 // %[vl]
       :
-      : "z0", "z1", "p0", "p1");
+      : "memory", "cc", "z0", "z1", "p0", "p1");
 }
 
 #define SCALEUVROWDOWN2BOX_SVE                               \
@@ -408,7 +415,8 @@ __arm_locally_streaming void ScaleUVRowDown2Box_SME(const uint8_t* src_uv,
         [dst_width] "+r"(dst_width),  // %[dst_width]
         [vl] "=r"(vl)                 // %[vl]
       :
-      : "z0", "z1", "z2", "z3", "z4", "z5", "z6", "z7", "p0", "p1");
+      : "memory", "cc", "z0", "z1", "z2", "z3", "z4", "z5", "z6", "z7", "p0",
+        "p1");
 }
 
 #undef SCALEUVROWDOWN2BOX_SVE

@@ -46,9 +46,8 @@ rtc_library("corruption_detection_message") {
   ]
 }
 
-if (rtc_include_tests && !build_with_chromium) {
-  rtc_library("corruption_detection_message_unittest") {
-    testonly = true
+if (rtc_include_tests) {
+  rtc_cc_test("corruption_detection_message_unittest") {
     sources = [ "corruption_detection_message_unittest.cc" ]
     deps = [
       ":corruption_detection_message",

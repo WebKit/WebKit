@@ -15,7 +15,6 @@
 #include <openssl/asn1.h>
 
 #include <assert.h>
-#include <ctype.h>
 #include <inttypes.h>
 #include <limits.h>
 #include <string.h>
@@ -27,7 +26,6 @@
 #include <openssl/span.h>
 
 #include "../bytestring/internal.h"
-#include "../internal.h"
 #include "internal.h"
 
 
@@ -37,15 +35,17 @@ using namespace bssl;
   (ASN1_STRFLGS_ESC_2253 | ASN1_STRFLGS_ESC_QUOTE | ASN1_STRFLGS_ESC_CTRL | \
    ASN1_STRFLGS_ESC_MSB)
 
-static int maybe_write(BIO *out, const void *buf, int len) {
+namespace {
+
+int maybe_write(BIO *out, const void *buf, int len) {
   // If `out` is NULL, ignore the output but report the length.
   return out == nullptr || BIO_write(out, buf, len) == len;
 }
 
-static int is_control_character(unsigned char c) { return c < 32 || c == 127; }
+int is_control_character(unsigned char c) { return c < 32 || c == 127; }
 
-static int do_esc_char(uint32_t c, unsigned long flags, char *do_quotes,
-                       BIO *out, int is_first, int is_last) {
+int do_esc_char(uint32_t c, unsigned long flags, char *do_quotes, BIO *out,
+                int is_first, int is_last) {
   // `c` is a `uint32_t` because, depending on `ASN1_STRFLGS_UTF8_CONVERT`,
   // we may be escaping bytes or Unicode codepoints.
   char buf[16];  // Large enough for "\\W01234567".
@@ -93,8 +93,8 @@ static int do_esc_char(uint32_t c, unsigned long flags, char *do_quotes,
 // interprets the content formats and converts to or from UTF8 as
 // appropriate.
 
-static int do_buf(const unsigned char *buf, int buflen, int encoding,
-                  unsigned long flags, char *quotes, BIO *out) {
+int do_buf(const unsigned char *buf, int buflen, int encoding,
+           unsigned long flags, char *quotes, BIO *out) {
   int (*get_char)(CBS *cbs, uint32_t *out);
   int get_char_error;
   switch (encoding) {
@@ -158,7 +158,7 @@ static int do_buf(const unsigned char *buf, int buflen, int encoding,
   return outlen;
 }
 
-static int do_hex_dump(BIO *out, Span<const uint8_t> in) {
+int do_hex_dump(BIO *out, Span<const uint8_t> in) {
   if (in.size() > INT_MAX / 2) {
     return -1;
   }
@@ -180,7 +180,7 @@ static int do_hex_dump(BIO *out, Span<const uint8_t> in) {
 // request it. We can either dump the content octets or the entire DER
 // encoding. This uses the RFC 2253 #01234 format.
 
-static int do_dump(unsigned long flags, BIO *out, const ASN1_STRING *str) {
+int do_dump(unsigned long flags, BIO *out, const ASN1_STRING *str) {
   if (!maybe_write(out, "#", 1)) {
     return -1;
   }
@@ -211,7 +211,7 @@ static int do_dump(unsigned long flags, BIO *out, const ASN1_STRING *str) {
 // string_type_to_encoding returns the `MBSTRING_*` constant for the encoding
 // used by the `ASN1_STRING` type `type`, or -1 if `tag` is not a string
 // type.
-static int string_type_to_encoding(int type) {
+int string_type_to_encoding(int type) {
   // This function is sometimes passed ASN.1 universal types and sometimes
   // passed `ASN1_STRING` type values
   switch (type) {
@@ -233,6 +233,11 @@ static int string_type_to_encoding(int type) {
   }
   return -1;
 }
+
+const char *const kMon[12] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                              "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+
+}  // namespace
 
 // This is the main function, print out an ASN1_STRING taking note of various
 // escape and display options. Returns number of characters written or -1 if
@@ -379,9 +384,6 @@ int ASN1_TIME_print(BIO *bp, const ASN1_TIME *tm) {
   return 0;
 }
 
-static const char *const mon[12] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                                    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-
 int ASN1_GENERALIZEDTIME_print(BIO *bp, const ASN1_GENERALIZEDTIME *tm) {
   CBS cbs;
   CBS_init(&cbs, tm->data, tm->length);
@@ -391,7 +393,7 @@ int ASN1_GENERALIZEDTIME_print(BIO *bp, const ASN1_GENERALIZEDTIME *tm) {
     return 0;
   }
 
-  return BIO_printf(bp, "%s %2d %02d:%02d:%02d %d GMT", mon[utc.tm_mon],
+  return BIO_printf(bp, "%s %2d %02d:%02d:%02d %d GMT", kMon[utc.tm_mon],
                     utc.tm_mday, utc.tm_hour, utc.tm_min, utc.tm_sec,
                     utc.tm_year + 1900) > 0;
 }
@@ -405,7 +407,7 @@ int ASN1_UTCTIME_print(BIO *bp, const ASN1_UTCTIME *tm) {
     return 0;
   }
 
-  return BIO_printf(bp, "%s %2d %02d:%02d:%02d %d GMT", mon[utc.tm_mon],
+  return BIO_printf(bp, "%s %2d %02d:%02d:%02d %d GMT", kMon[utc.tm_mon],
                     utc.tm_mday, utc.tm_hour, utc.tm_min, utc.tm_sec,
                     utc.tm_year + 1900) > 0;
 }

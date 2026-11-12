@@ -28,12 +28,10 @@ BSSL_NAMESPACE_BEGIN
 // certificates and their trustedness.
 class OPENSSL_EXPORT TrustStoreInMemory : public TrustStore {
  public:
-  TrustStoreInMemory();
+  TrustStoreInMemory() = default;
 
   TrustStoreInMemory(const TrustStoreInMemory &) = delete;
   TrustStoreInMemory &operator=(const TrustStoreInMemory &) = delete;
-
-  ~TrustStoreInMemory() override;
 
   // Returns whether the TrustStore is in the initial empty state.
   bool IsEmpty() const;
@@ -97,10 +95,6 @@ class OPENSSL_EXPORT TrustStoreInMemory : public TrustStore {
 
  private:
   struct Entry {
-    Entry();
-    Entry(const Entry &other);
-    ~Entry();
-
     std::shared_ptr<const ParsedCertificate> cert;
     CertificateTrust trust;
   };

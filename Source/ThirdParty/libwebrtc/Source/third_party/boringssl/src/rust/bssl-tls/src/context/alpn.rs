@@ -51,7 +51,7 @@ impl<M: SupportedMode> TlsContextBuilder<M> {
             bssl_sys::SSL_CTX_set_alpn_protos(self.ptr(), protos, len)
         };
         if rc == 1 {
-            Err(Error::extract_lib_err())
+            Err(Error::extract_lib_err_or_unknown())
         } else {
             Ok(self)
         }

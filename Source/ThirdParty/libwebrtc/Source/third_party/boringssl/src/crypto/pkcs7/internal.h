@@ -59,8 +59,9 @@ int pkcs7_add_signed_data(CBB *out, uint64_t signed_data_version,
 //
 // Note: CMS v1 and PKCS#7 v1.5 are not completely compatible, but they overlap
 // in all cases implemented by this function.
-int pkcs7_add_external_signature(CBB *out, X509 *sign_cert, EVP_PKEY *key,
-                                 const EVP_MD *md, BIO *data, bool use_key_id);
+int pkcs7_add_external_signature(CBB *out, const X509 *sign_cert,
+                                 const EVP_PKEY *key, const EVP_MD *md,
+                                 BIO *data, bool use_key_id);
 
 BSSL_NAMESPACE_END
 

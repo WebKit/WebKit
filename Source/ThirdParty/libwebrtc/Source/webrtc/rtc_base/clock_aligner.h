@@ -42,7 +42,7 @@ class ClockAligner {
   // originate from an uncoordinated clock (such as CLOCK_REALTIME).
   //
   // Handling non-monotonic clocks (such as backward clock steps or clock drift)
-  // requires the field trial "WebRTC-ClockAligner" to be enabled.
+  // is enabled unless the field trial "WebRTC-ClockAligner" is disabled.
   Timestamp Align(Timestamp time);
 
  private:
@@ -52,7 +52,7 @@ class ClockAligner {
       RTC_RUN_ON(&sequence_checker_);
 
   const Environment env_;
-  const bool fix_non_monotonic_clock_;
+  const bool disable_non_monotonic_clock_fix_;
 
   RTC_NO_UNIQUE_ADDRESS SequenceChecker sequence_checker_{
       SequenceChecker::kDetached};

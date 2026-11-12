@@ -522,6 +522,16 @@ static inline void init_comp_avg_est_rd(
   }
 }
 
+// Initialize estimated RD Cost records of smooth interintra.
+static inline void init_smooth_interintra_est_rd(
+    struct macroblock *x, int skip_interintra_using_top_smooth_rd_lvl) {
+  if (!skip_interintra_using_top_smooth_rd_lvl) return;
+
+  for (int j = 0; j < TOP_SMOOTH_INTERINTRA_RD_COUNT; ++j) {
+    x->top_smooth_interintra_rd[j] = INT64_MAX;
+  }
+}
+
 // Similar to get_horver_correlation, but also takes into account first
 // row/column, when computing horizontal/vertical correlation.
 void av1_get_horver_correlation_full_c(const int16_t *diff, int stride,
@@ -676,7 +686,7 @@ int av1_is_skip_txfm_penalized(const AV1_COMP *cpi, const MACROBLOCK *x,
     if (src_var > rec_var) {
       const int num_pixels = block_size_wide[bsize] * block_size_high[bsize];
       const int64_t src_var_per_px = src_var / num_pixels;
-      if (src_var_per_px >= 0) return 1;
+      if (src_var_per_px < 64) return 1;
     }
   }
 #else
@@ -703,7 +713,7 @@ void av1_get_tx_skip_dist(const AV1_COMP *cpi, const MACROBLOCK *x,
       const int num_pixels = block_size_wide[bsize] * block_size_high[bsize];
       const int64_t src_var_per_px = src_var / num_pixels;
       *no_skip_dist += var_offset;
-      *skip_dist += (src_var_per_px >= 0) ? (var_offset * 4) : var_offset;
+      *skip_dist += (src_var_per_px < 64) ? (var_offset * 4) : var_offset;
     }
   }
 #else
@@ -712,6 +722,53 @@ void av1_get_tx_skip_dist(const AV1_COMP *cpi, const MACROBLOCK *x,
   (void)bsize;
 #endif
 }
+
+#if CONFIG_AV1_HIGHBITDEPTH
+static int get_sub_block_energy_diff(const AV1_COMP *cpi, const MACROBLOCK *x,
+                                     BLOCK_SIZE bsize) {
+  if (x->sub_block_energy_bsize == bsize) {
+    return x->sub_block_energy_diff;
+  }
+
+  const MACROBLOCKD *const xd = &x->e_mbd;
+  const struct macroblock_plane *const p = &x->plane[AOM_PLANE_Y];
+  const int bw = block_size_wide[bsize];
+  const int bh = block_size_high[bsize];
+
+  if (bw < 16 || bh < 16) {
+    ((MACROBLOCK *)x)->sub_block_energy_diff = 0;
+    ((MACROBLOCK *)x)->sub_block_energy_bsize = bsize;
+    return 0;
+  }
+
+  DECLARE_ALIGNED(16, static const uint16_t, av1_highbd_all_zeros[64]) = { 0 };
+  DECLARE_ALIGNED(16, static const uint8_t, av1_all_zeros[64]) = { 0 };
+  const uint8_t *all_zeros = is_cur_buf_hbd(xd)
+                                 ? CONVERT_TO_BYTEPTR(av1_highbd_all_zeros)
+                                 : av1_all_zeros;
+  aom_variance_fn_t vf = cpi->ppi->fn_ptr[BLOCK_8X8].vf;
+  unsigned int min_var = UINT_MAX;
+  unsigned int max_var = 0;
+
+  for (int r = 0; r < bh; r += 8) {
+    for (int c = 0; c < bw; c += 8) {
+      unsigned int sse;
+      const uint8_t *src_ptr = p->src.buf + r * p->src.stride + c;
+      unsigned int var = vf(src_ptr, p->src.stride, all_zeros, 0, &sse) / 64;
+      min_var = AOMMIN(min_var, var);
+      max_var = AOMMAX(max_var, var);
+    }
+  }
+
+  int min_energy = (int)round(log((double)min_var + 1.0));
+  int max_energy = (int)round(log((double)max_var + 1.0));
+  int energy_diff = AOMMAX(0, max_energy - min_energy);
+
+  ((MACROBLOCK *)x)->sub_block_energy_diff = energy_diff;
+  ((MACROBLOCK *)x)->sub_block_energy_bsize = bsize;
+  return energy_diff;
+}
+#endif
 
 static void adjust_rdcost(const AV1_COMP *cpi, const MACROBLOCK *x,
                           RD_STATS *rd_cost, bool is_inter_pred) {
@@ -758,7 +815,7 @@ static void adjust_rdcost(const AV1_COMP *cpi, const MACROBLOCK *x,
     const int64_t src_var_per_px = src_var / num_pixels;
 
     if (var_offset > 0 &&
-        ((is_skip_txfm && src_var_per_px >= 0) || is_smooth_intra_mode ||
+        ((is_skip_txfm && src_var_per_px < 64) || is_smooth_intra_mode ||
          is_interintra_mode(mbmi) || has_second_ref(mbmi))) {
       var_offset *= 4;
     }
@@ -771,11 +828,34 @@ static void adjust_rdcost(const AV1_COMP *cpi, const MACROBLOCK *x,
       }
     }
 
-    if (var_offset <= 0) return;
+    if (var_offset > 0) {
+      rd_cost->dist += var_offset;
+      rd_cost->rdcost = RDCOST(x->rdmult, rd_cost->rate, rd_cost->dist);
+    }
 
-    rd_cost->dist += var_offset;
+    // Sub-block local variance energy disparity adjustment
+    if (mbmi->bsize >= BLOCK_16X16) {
+      const int energy_diff = get_sub_block_energy_diff(cpi, x, mbmi->bsize);
+      if (energy_diff > 0) {
+        int64_t extra_rd = 0;
+        if (!is_inter_pred) {
+          if (mbmi->mode == DC_PRED || is_smooth_intra_mode) {
+            extra_rd = rd_cost->rdcost * energy_diff;
+          } else {
+            extra_rd = (rd_cost->rdcost * energy_diff) / 4;
+          }
+        } else if (has_second_ref(mbmi)) {
+          extra_rd = rd_cost->rdcost / 4;
+        }
+        if (extra_rd > 0) {
+          const int64_t extra_dist =
+              (extra_rd + (1 << (RDDIV_BITS - 1))) >> RDDIV_BITS;
+          rd_cost->dist += extra_dist;
+          rd_cost->rdcost = RDCOST(x->rdmult, rd_cost->rate, rd_cost->dist);
+        }
+      }
+    }
 
-    rd_cost->rdcost = RDCOST(x->rdmult, rd_cost->rate, rd_cost->dist);
     return;
   }
 #endif
@@ -827,7 +907,7 @@ static void adjust_cost(const AV1_COMP *cpi, const MACROBLOCK *x,
     const int64_t src_var_per_px = src_var / num_pixels;
 
     if (var_offset > 0 &&
-        ((is_skip_txfm && src_var_per_px >= 0) || is_smooth_intra_mode ||
+        ((is_skip_txfm && src_var_per_px < 64) || is_smooth_intra_mode ||
          is_interintra_mode(mbmi) || has_second_ref(mbmi))) {
       var_offset *= 4;
     }
@@ -840,9 +920,25 @@ static void adjust_cost(const AV1_COMP *cpi, const MACROBLOCK *x,
       }
     }
 
-    if (var_offset <= 0) return;
+    if (var_offset > 0) {
+      *rd_cost += RDCOST(x->rdmult, 0, var_offset);
+    }
 
-    *rd_cost += RDCOST(x->rdmult, 0, var_offset);
+    // Sub-block local variance energy disparity adjustment
+    if (mbmi->bsize >= BLOCK_16X16) {
+      const int energy_diff = get_sub_block_energy_diff(cpi, x, mbmi->bsize);
+      if (energy_diff > 0) {
+        if (!is_inter_pred) {
+          if (mbmi->mode == DC_PRED || is_smooth_intra_mode) {
+            *rd_cost += *rd_cost * energy_diff;
+          } else {
+            *rd_cost += (*rd_cost * energy_diff) / 4;
+          }
+        } else if (has_second_ref(mbmi)) {
+          *rd_cost += *rd_cost / 4;
+        }
+      }
+    }
     return;
   }
 #endif
@@ -1553,6 +1649,7 @@ static int64_t motion_mode_rd(
     int64_t *ref_skip_rd, int *rate_mv, const BUFFER_SET *orig_dst,
     int64_t *best_est_rd, int do_tx_search, InterModesInfo *inter_modes_info,
     int eval_motion_mode, int64_t *yrd) {
+  assert(rd_stats != NULL && rd_stats_y != NULL && rd_stats_uv != NULL);
   const AV1_COMMON *const cm = &cpi->common;
   const FeatureFlags *const features = &cm->features;
   TxfmSearchInfo *txfm_info = &x->txfm_search_info;
@@ -1847,7 +1944,7 @@ static int64_t motion_mode_rd(
       }
       mbmi->skip_txfm = 0;
       rd_stats->skip_txfm = 0;
-      if (rd_stats_y) rd_stats_y->skip_txfm = 0;
+      rd_stats_y->skip_txfm = 0;
       increase_motion_mode_rdstats(cpi, mbmi, rd_stats, NULL, NULL);
 
     } else {
@@ -3084,6 +3181,7 @@ static int64_t handle_inter_mode(
     InterModesInfo *inter_modes_info, motion_mode_candidate *motion_mode_cand,
     int64_t *skip_rd, PruneInfoFromTpl *inter_cost_info_from_tpl,
     int64_t *yrd) {
+  assert(rd_stats != NULL && rd_stats_y != NULL && rd_stats_uv != NULL);
   const AV1_COMMON *cm = &cpi->common;
   const int num_planes = av1_num_planes(cm);
   MACROBLOCKD *xd = &x->e_mbd;
@@ -3513,12 +3611,12 @@ static int64_t rd_pick_intrabc_mode_sb(const AV1_COMP *cpi, MACROBLOCK *x,
   FULLPEL_MOTION_SEARCH_PARAMS fullms_params;
   const SEARCH_METHODS search_method =
       av1_get_default_mv_search_method(x, &cpi->sf.mv_sf, bsize);
-  const search_site_config *lookahead_search_sites =
-      cpi->mv_search_params.search_site_cfg[SS_CFG_LOOKAHEAD];
+  const search_site_config *src_search_sites =
+      av1_get_search_site_config(cpi, x, search_method);
   const FULLPEL_MV start_mv = get_fullmv_from_mv(&dv_ref.as_mv);
   av1_make_default_fullpel_ms_params(&fullms_params, cpi, x, bsize,
-                                     &dv_ref.as_mv, start_mv,
-                                     lookahead_search_sites, search_method,
+                                     &dv_ref.as_mv, start_mv, src_search_sites,
+                                     search_method,
                                      /*fine_search_interval=*/0);
   const IntraBCMVCosts *const dv_costs = x->dv_costs;
   av1_set_ms_to_intra_mode(&fullms_params, dv_costs);
@@ -6364,6 +6462,8 @@ void av1_rd_pick_inter_mode(struct AV1_COMP *cpi, struct TileDataEnc *tile_data,
     mode_end = SINGLE_REF_MODE_END;
   }
   init_comp_avg_est_rd(x, sf->inter_sf.skip_cmp_using_top_cmp_avg_est_rd_lvl);
+  init_smooth_interintra_est_rd(
+      x, sf->inter_sf.skip_interintra_using_top_smooth_rd_lvl);
   for (THR_MODES midx = mode_start; midx < mode_end; ++midx) {
     // Get the actual prediction mode we are trying in this iteration
     const THR_MODES mode_enum = av1_default_mode_order[midx];

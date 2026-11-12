@@ -85,7 +85,8 @@ void ReassemblyQueue::Add(TSN tsn, Data data) {
   // buffer chunks until it's exited.
   if (deferred_reset_streams_.has_value() &&
       unwrapped_tsn > deferred_reset_streams_->sender_last_assigned_tsn &&
-      deferred_reset_streams_->streams.contains(data.stream_id)) {
+      (deferred_reset_streams_->streams.empty() ||
+       deferred_reset_streams_->streams.contains(data.stream_id))) {
     RTC_DLOG(LS_VERBOSE)
         << log_prefix_ << "Deferring chunk with tsn=" << *tsn
         << ", sid=" << *data.stream_id << " until tsn="

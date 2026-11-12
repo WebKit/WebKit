@@ -27,6 +27,21 @@
 namespace webrtc {
 namespace {
 
+// Largest diffs that can be written for a frame. They are limited by the
+// per-frame fields of the dependency descriptor, see frame_fdiffs() and
+// frame_chains() in https://aomediacodec.github.io/av1-rtp-spec/#a82-syntax.
+// Frame dependency templates use narrower 4 bit fields, and frames whose diffs
+// differ from their template are written using the per-frame fields, so these
+// limits apply regardless of which template is used for the frame.
+
+// A frame diff is written as `fdiff_minus_one`, using 4 * `next_fdiff_size`
+// bits where `next_fdiff_size` is 1, 2 or 3. The widest field is 12 bits, so
+// the largest diff is ((1 << 12) - 1) + 1. A diff of 0 can't be represented.
+constexpr int kMaxFrameDiff = 1 << 12;
+// A chain diff is written as-is in the 8 bit `frame_chain_fdiff` field, where
+// 0 means that the chain has no previous frame.
+constexpr int kMaxChainDiff = (1 << 8) - 1;
+
 enum class NextLayerIdc : uint64_t {
   kSameLayer = 0,
   kNextTemporal = 1,
@@ -72,6 +87,10 @@ RtpDependencyDescriptorWriter::RtpDependencyDescriptorWriter(
   }
   if (SafeNe(descriptor.frame_dependencies.decode_target_indications.size(),
              structure_.num_decode_targets)) {
+    build_failed_ = true;
+    return;
+  }
+  if (!HasSerializableDiffs()) {
     build_failed_ = true;
     return;
   }
@@ -173,6 +192,23 @@ RtpDependencyDescriptorWriter::CalculateMatch(
   if (result.need_custom_chains)
     result.extra_size_bits += 8 * structure_.num_chains;
   return result;
+}
+
+bool RtpDependencyDescriptorWriter::HasSerializableDiffs() const {
+  for (int fdiff : descriptor_.frame_dependencies.frame_diffs) {
+    if (fdiff <= 0 || fdiff > kMaxFrameDiff) {
+      return false;
+    }
+  }
+  for (int i = 0; i < structure_.num_chains; ++i) {
+    // Chain diffs of inactive chains are not serialized, see
+    // WriteFrameChains().
+    int chain_diff = descriptor_.frame_dependencies.chain_diffs[i];
+    if (active_chains_[i] && (chain_diff < 0 || chain_diff > kMaxChainDiff)) {
+      return false;
+    }
+  }
+  return true;
 }
 
 void RtpDependencyDescriptorWriter::FindBestTemplate() {
@@ -376,7 +412,7 @@ void RtpDependencyDescriptorWriter::WriteFrameDtis() {
 void RtpDependencyDescriptorWriter::WriteFrameFdiffs() {
   for (int fdiff : descriptor_.frame_dependencies.frame_diffs) {
     RTC_DCHECK_GT(fdiff, 0);
-    RTC_DCHECK_LE(fdiff, 1 << 12);
+    RTC_DCHECK_LE(fdiff, kMaxFrameDiff);
     if (fdiff <= (1 << 4))
       WriteBits((1u << 4) | (fdiff - 1), 2 + 4);
     else if (fdiff <= (1 << 8))
@@ -395,7 +431,7 @@ void RtpDependencyDescriptorWriter::WriteFrameChains() {
     int chain_diff =
         active_chains_[i] ? descriptor_.frame_dependencies.chain_diffs[i] : 0;
     RTC_DCHECK_GE(chain_diff, 0);
-    RTC_DCHECK_LT(chain_diff, 1 << 8);
+    RTC_DCHECK_LE(chain_diff, kMaxChainDiff);
     WriteBits(chain_diff, 8);
   }
 }

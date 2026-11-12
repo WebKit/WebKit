@@ -72,7 +72,7 @@ class RetransmissionQueue {
   bool HandleSack(webrtc::Timestamp now, const SackChunk& sack);
 
   // Handles an expired retransmission timer.
-  void HandleT3RtxTimerExpiry();
+  void HandleT3RtxTimerExpiry(webrtc::Timestamp now);
 
   bool has_data_to_be_fast_retransmitted() const {
     return outstanding_data_.has_data_to_be_fast_retransmitted();
@@ -82,6 +82,7 @@ class RetransmissionQueue {
   // packet with `bytes_in_packet` bytes available. The current value
   // of `cwnd` is ignored.
   std::vector<std::pair<TSN, Data>> GetChunksForFastRetransmit(
+      webrtc::Timestamp now,
       size_t bytes_in_packet);
 
   // Returns a list of chunks to send that would fit in one SCTP packet with

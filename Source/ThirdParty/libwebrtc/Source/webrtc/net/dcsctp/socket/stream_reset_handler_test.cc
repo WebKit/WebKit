@@ -429,6 +429,64 @@ TEST_F(StreamResetHandlerTest, ResetStreamsDeferredOnlySelectedStreams) {
   EXPECT_FALSE(reasm_->HasMessages());
 }
 
+TEST_F(StreamResetHandlerTest, ResetAllStreamsDeferred) {
+  // Per RFC 6525 Section 4.1 / 5.2.2 (E3), an empty list of stream numbers in
+  // an Outgoing SSN Reset Request parameter indicates that all streams shall be
+  // reset.
+
+  // TSN 10 (SSN 0) is received and delivered, advancing Stream 1's expected SSN
+  // to 1.
+  data_tracker_->Observe(TSN(10));
+  reasm_->Add(TSN(10), gen_.Ordered({1, 2, 3, 4}, "BE",
+                                    {.stream_id = StreamID(1),
+                                     .mid = MID(0),
+                                     .ppid = PPID(1001)}));
+  EXPECT_THAT(reasm_->GetNextMessage(),
+              Optional(SctpMessageIs(StreamID(1), PPID(1001), kShortPayload)));
+
+  // Receive a reset request for ALL streams (`stream_ids = {}`) with
+  // `sender_last_assigned_tsn = 11`. Since TSN 11 has not arrived yet, this
+  // enters deferred reset processing.
+  Parameters::Builder builder;
+  builder.Add(OutgoingSSNResetRequestParameter(
+      ReconfigRequestSN(10), ReconfigRequestSN(3), TSN(11), {}));
+  EXPECT_THAT(HandleAndCatchResponse(ReConfigChunk(builder.Build())),
+              ElementsAre(Property(&ReconfigurationResponseParameter::result,
+                                   ResponseResult::kInProgress)));
+
+  // Post-reset message TSN 12 (SSN 0) arrives BEFORE TSN 11. Because it has
+  // TSN > 11, it must be deferred until the stream reset is performed.
+  data_tracker_->Observe(TSN(12));
+  reasm_->Add(TSN(12), gen_.Ordered({1, 2, 3, 4}, "BE",
+                                    {.stream_id = StreamID(1),
+                                     .mid = MID(0),
+                                     .ppid = PPID(1003)}));
+  EXPECT_FALSE(reasm_->HasMessages());
+
+  // Now the delayed pre-reset TSN 11 (SSN 1) arrives and is delivered.
+  data_tracker_->Observe(TSN(11));
+  reasm_->Add(TSN(11), gen_.Ordered({1, 2, 3, 4}, "BE",
+                                    {.stream_id = StreamID(1),
+                                     .mid = MID(1),
+                                     .ppid = PPID(1002)}));
+  EXPECT_THAT(reasm_->GetNextMessage(),
+              Optional(SctpMessageIs(StreamID(1), PPID(1002), kShortPayload)));
+
+  // Peer retransmits the reset request now that TSN 11 has been received.
+  builder.Add(OutgoingSSNResetRequestParameter(
+      ReconfigRequestSN(10), ReconfigRequestSN(3), TSN(11), {}));
+  EXPECT_CALL(callbacks_, OnIncomingStreamsReset(IsEmpty()));
+  EXPECT_THAT(HandleAndCatchResponse(ReConfigChunk(builder.Build())),
+              ElementsAre(Property(&ReconfigurationResponseParameter::result,
+                                   ResponseResult::kSuccessPerformed)));
+
+  // The deferred post-reset message (TSN 12, SSN 0) should now be reassembled
+  // and delivered.
+  EXPECT_THAT(reasm_->GetNextMessage(),
+              Optional(SctpMessageIs(StreamID(1), PPID(1003), kShortPayload)));
+  EXPECT_FALSE(reasm_->HasMessages());
+}
+
 TEST_F(StreamResetHandlerTest, ResetStreamsDefersForwardTsn) {
   // This test verifies that FORWARD-TSNs are deferred if they want to move
   // the cumulative ack TSN point past sender's last assigned TSN.

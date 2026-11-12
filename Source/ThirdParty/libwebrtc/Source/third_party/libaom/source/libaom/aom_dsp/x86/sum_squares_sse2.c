@@ -111,9 +111,8 @@ uint64_t aom_sum_sse_2d_i16_4xn_sse2(const int16_t *src, int stride, int height,
 // maintenance instructions in the common case of 4x4.
 __attribute__((noinline))
 #endif
-uint64_t
-aom_sum_squares_2d_i16_nxn_sse2(const int16_t *src, int stride, int width,
-                                int height) {
+uint64_t aom_sum_squares_2d_i16_nxn_sse2(const int16_t *src, int stride,
+                                         int width, int height) {
   int r = 0;
 
   const __m128i v_zext_mask_q = _mm_set1_epi64x(~0u);
@@ -161,9 +160,8 @@ aom_sum_squares_2d_i16_nxn_sse2(const int16_t *src, int stride, int width,
 // maintenance instructions in the common case of 4x4.
 __attribute__((noinline))
 #endif
-uint64_t
-aom_sum_sse_2d_i16_nxn_sse2(const int16_t *src, int stride, int width,
-                            int height, int *sum) {
+uint64_t aom_sum_sse_2d_i16_nxn_sse2(const int16_t *src, int stride, int width,
+                                     int height, int *sum) {
   int r = 0;
   uint64_t result;
   const __m128i zero_reg = _mm_setzero_si128();

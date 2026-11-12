@@ -157,38 +157,56 @@ def main():
 //    ./make_curve25519_tables.py > curve25519_tables.h
 
 
-static const fe d = """)
+namespace {
+
+const bssl::fe d = """)
     buf.write(to_literal(d))
     buf.write(""";
 
-static const fe sqrtm1 = """)
+const bssl::fe sqrtm1 = """)
     buf.write(to_literal(modp_sqrt_m1))
     buf.write(""";
 
-static const fe d2 = """)
+const bssl::fe d2 = """)
     buf.write(to_literal(d2))
     buf.write(""";
 
+// Bi[i] = (2*i+1)*B
+const bssl::ge_precomp Bi[8] = {
+""")
+    for val in bi_precomp:
+        buf.write("{\n")
+        for term in val:
+                buf.write(to_literal(term) + ",\n")
+        buf.write("},\n")
+    buf.write("""};
+
+}  // namespace
+
 #if defined(OPENSSL_SMALL)
+
+namespace {
 
 // This block of code replaces the standard base-point table with a much smaller
 // one. The standard table is 30,720 bytes while this one is just 960.
 //
 // This table contains 15 pairs of group elements, (x, y), where each field
-// element is serialised with |fe_tobytes|. If |i| is the index of the group
-// element then consider i+1 as a four-bit number: (i₀, i₁, i₂, i₃) (where i₀
-// is the most significant bit). The value of the group element is then:
+// element is serialised with `fe_tobytes`. If `i` is the index of the group
+// element then consider i+1 as a four-bit number: (i₀, i₁, i₂, i₃) where i₀
+// is the most significant bit. The value of the group element is then:
 // (i₀×2^192 + i₁×2^128 + i₂×2^64 + i₃)G, where G is the generator.
-static const uint8_t k25519SmallPrecomp[15 * 2 * 32] = {""")
+const uint8_t k25519SmallPrecomp[15 * 2 * 32] = {""")
     for i, b in enumerate(small_precomp):
         buf.write("0x%02x, " % b)
     buf.write("""
 };
 
-#else
+}  // namespace
+
+#else  // !OPENSSL_SMALL
 
 // k25519Precomp[i][j] = (j+1)*256^i*B
-static const uint8_t k25519Precomp[32][8][3][32] = {
+const uint8_t bssl::k25519Precomp[32][8][3][32] = {
 """)
     for child in large_precomp:
         buf.write("{\n")
@@ -200,17 +218,7 @@ static const uint8_t k25519Precomp[32][8][3][32] = {
         buf.write("},\n")
     buf.write("""};
 
-#endif  // OPENSSL_SMALL
-
-// Bi[i] = (2*i+1)*B
-static const ge_precomp Bi[8] = {
-""")
-    for val in bi_precomp:
-        buf.write("{\n")
-        for term in val:
-                buf.write(to_literal(term) + ",\n")
-        buf.write("},\n")
-    buf.write("""};
+#endif  // !OPENSSL_SMALL
 """)
 
     proc = subprocess.Popen(["clang-format"], stdin=subprocess.PIPE)

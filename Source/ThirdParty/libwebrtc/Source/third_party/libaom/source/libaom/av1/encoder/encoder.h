@@ -2939,6 +2939,11 @@ typedef struct AV1_COMP {
   CB_COEFF_BUFFER *coeff_buffer_base;
 
   /*!
+   * Number of superblock columns per row of coeff_buffer_base, as allocated.
+   */
+  int coeff_buffer_stride;
+
+  /*!
    * Structure holding pointers to frame level memory allocated for transform
    * block related information.
    */

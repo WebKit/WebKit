@@ -21,6 +21,7 @@
 #include <memory>
 #include <optional>
 #include <set>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
@@ -74,6 +75,7 @@
 #include "media/base/rtp_utils.h"
 #include "media/base/stream_params.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
+#include "modules/sframe/sframe_encryption_config.h"
 #include "rtc_base/async_packet_socket.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/containers/flat_set.h"
@@ -89,7 +91,7 @@ class FakeMediaEngine;
 class FakeVideoEngine;
 class FakeVoiceEngine;
 
-// A common helper class that handles sending and receiving RTP/RTCP packets.
+// A common helper class that handles receiving RTP packets.
 template <class Base>
 class RtpReceiveChannelHelper : public Base, public MediaChannelUtil {
  public:
@@ -106,13 +108,6 @@ class RtpReceiveChannelHelper : public Base, public MediaChannelUtil {
   }
   bool playout() const { return playout_; }
   const std::list<std::string>& rtp_packets() const { return rtp_packets_; }
-  const std::list<std::string>& rtcp_packets() const { return rtcp_packets_; }
-
-  bool SendRtcp(const void* data, size_t len) {
-    CopyOnWriteBuffer packet(reinterpret_cast<const uint8_t*>(data), len,
-                             kMaxRtpPacketLen);
-    return Base::SendRtcp(&packet, AsyncSocketPacketOptions());
-  }
 
   bool CheckRtp(const void* data, size_t len) {
     bool success = !rtp_packets_.empty();
@@ -123,17 +118,7 @@ class RtpReceiveChannelHelper : public Base, public MediaChannelUtil {
     }
     return success;
   }
-  bool CheckRtcp(const void* data, size_t len) {
-    bool success = !rtcp_packets_.empty();
-    if (success) {
-      std::string packet = rtcp_packets_.front();
-      rtcp_packets_.pop_front();
-      success = (packet == std::string(static_cast<const char*>(data), len));
-    }
-    return success;
-  }
   bool CheckNoRtp() { return rtp_packets_.empty(); }
-  bool CheckNoRtcp() { return rtcp_packets_.empty(); }
   void set_fail_set_recv_codecs(bool fail) { fail_set_recv_codecs_ = fail; }
   void ResetUnsignaledRecvStream() override {}
   absl::AnyInvocable<void() &&> GetResetUnsignaledRecvStreamTask() override {
@@ -200,10 +185,6 @@ class RtpReceiveChannelHelper : public Base, public MediaChannelUtil {
     return GetStreamBySsrc(receive_streams_, ssrc) != nullptr;
   }
 
-  const MediaChannelParameters::RtcpParameters& recv_rtcp_parameters() {
-    return recv_rtcp_parameters_;
-  }
-
   int transport_overhead_per_packet() const {
     return transport_overhead_per_packet_;
   }
@@ -212,11 +193,6 @@ class RtpReceiveChannelHelper : public Base, public MediaChannelUtil {
   int num_network_route_changes() const { return num_network_route_changes_; }
   void set_num_network_route_changes(int changes) {
     num_network_route_changes_ = changes;
-  }
-
-  void OnRtcpPacketReceived(CopyOnWriteBuffer* packet,
-                            int64_t /* packet_time_us */) {
-    rtcp_packets_.push_back(std::string(packet->cdata<char>(), packet->size()));
   }
 
   void SetFrameDecryptor(uint32_t /* ssrc */,
@@ -239,10 +215,6 @@ class RtpReceiveChannelHelper : public Base, public MediaChannelUtil {
     recv_extensions_ = extensions;
     return true;
   }
-  void set_recv_rtcp_parameters(
-      const MediaChannelParameters::RtcpParameters& params) {
-    recv_rtcp_parameters_ = params;
-  }
   void OnPacketReceived(RtpPacketReceived packet) override {
     rtp_packets_.push_back(
         std::string(packet.Buffer().cdata<char>(), packet.size()));
@@ -257,19 +229,16 @@ class RtpReceiveChannelHelper : public Base, public MediaChannelUtil {
   bool playout_;
   std::vector<RtpExtension> recv_extensions_;
   std::list<std::string> rtp_packets_;
-  std::list<std::string> rtcp_packets_;
   std::vector<StreamParams> receive_streams_;
-  MediaChannelParameters::RtcpParameters recv_rtcp_parameters_;
   std::map<uint32_t, RtpParameters> rtp_receive_parameters_;
   bool fail_set_recv_codecs_;
-  std::string rtcp_cname_;
   int transport_overhead_per_packet_;
   NetworkRoute last_network_route_;
   int num_network_route_changes_;
   MediaChannelNetworkInterface* network_interface_ = nullptr;
 };
 
-// A common helper class that handles sending and receiving RTP/RTCP packets.
+// A common helper class that handles sending RTP packets.
 template <class Base>
 class RtpSendChannelHelper : public Base, public MediaChannelUtil {
  public:
@@ -287,45 +256,16 @@ class RtpSendChannelHelper : public Base, public MediaChannelUtil {
     return send_extensions_;
   }
   bool sending() const { return sending_; }
-  const std::list<std::string>& rtp_packets() const { return rtp_packets_; }
-  const std::list<std::string>& rtcp_packets() const { return rtcp_packets_; }
 
-  bool SendPacket(const void* data,
-                  size_t len,
+  bool SendPacket(std::span<const uint8_t> data,
                   const AsyncSocketPacketOptions& options) {
     if (!sending_) {
       return false;
     }
-    CopyOnWriteBuffer packet(reinterpret_cast<const uint8_t*>(data), len,
-                             kMaxRtpPacketLen);
+    CopyOnWriteBuffer packet(data, kMaxRtpPacketLen);
     return MediaChannelUtil::SendPacket(&packet, options);
   }
-  bool SendRtcp(const void* data, size_t len) {
-    CopyOnWriteBuffer packet(reinterpret_cast<const uint8_t*>(data), len,
-                             kMaxRtpPacketLen);
-    return MediaChannelUtil::SendRtcp(&packet, AsyncSocketPacketOptions());
-  }
 
-  bool CheckRtp(const void* data, size_t len) {
-    bool success = !rtp_packets_.empty();
-    if (success) {
-      std::string packet = rtp_packets_.front();
-      rtp_packets_.pop_front();
-      success = (packet == std::string(static_cast<const char*>(data), len));
-    }
-    return success;
-  }
-  bool CheckRtcp(const void* data, size_t len) {
-    bool success = !rtcp_packets_.empty();
-    if (success) {
-      std::string packet = rtcp_packets_.front();
-      rtcp_packets_.pop_front();
-      success = (packet == std::string(static_cast<const char*>(data), len));
-    }
-    return success;
-  }
-  bool CheckNoRtp() { return rtp_packets_.empty(); }
-  bool CheckNoRtcp() { return rtcp_packets_.empty(); }
   void set_fail_set_send_codecs(bool fail) { fail_set_send_codecs_ = fail; }
   bool AddSendStream(const StreamParams& sp) override {
     if (absl::c_linear_search(send_streams_, sp)) {
@@ -418,10 +358,6 @@ class RtpSendChannelHelper : public Base, public MediaChannelUtil {
     return send_streams_[0].first_ssrc();
   }
 
-  const MediaChannelParameters::RtcpParameters& send_rtcp_parameters() {
-    return send_rtcp_parameters_;
-  }
-
   bool ready_to_send() const { return ready_to_send_; }
 
   int transport_overhead_per_packet() const {
@@ -434,14 +370,11 @@ class RtpSendChannelHelper : public Base, public MediaChannelUtil {
     num_network_route_changes_ = changes;
   }
 
-  void OnRtcpPacketReceived(CopyOnWriteBuffer* packet,
-                            int64_t /* packet_time_us */) {
-    rtcp_packets_.push_back(std::string(packet->cdata<char>(), packet->size()));
-  }
-
   void SetFrameEncryptor(uint32_t /* ssrc */,
                          scoped_refptr<FrameEncryptorInterface>
                          /* frame_encryptor */) override {}
+  void SetSframeEncryptionConfig(
+      SframeEncryptionConfig /* sframe_encryption_config */) override {}
   void SetEncoderToPacketizerFrameTransformer(
       uint32_t /* ssrc */,
       scoped_refptr<FrameTransformerInterface> /* frame_transformer */)
@@ -475,10 +408,6 @@ class RtpSendChannelHelper : public Base, public MediaChannelUtil {
     send_extensions_ = extensions;
     return true;
   }
-  void set_send_rtcp_parameters(
-      const MediaChannelParameters::RtcpParameters& params) {
-    send_rtcp_parameters_ = params;
-  }
   void OnPacketSent(const SentPacketInfo& /* sent_packet */) override {}
   void OnReadyToSend(bool ready) override { ready_to_send_ = ready; }
   void OnNetworkRouteChanged(absl::string_view /* transport_name */,
@@ -495,15 +424,11 @@ class RtpSendChannelHelper : public Base, public MediaChannelUtil {
   // be the appropriate fix.
   std::atomic<bool> sending_;
   std::vector<RtpExtension> send_extensions_;
-  std::list<std::string> rtp_packets_;
-  std::list<std::string> rtcp_packets_;
   std::vector<StreamParams> send_streams_;
-  MediaChannelParameters::RtcpParameters send_rtcp_parameters_;
   std::set<uint32_t> muted_streams_;
   std::map<uint32_t, RtpParameters> rtp_send_parameters_;
   bool fail_set_send_codecs_;
   uint32_t send_ssrc_;
-  std::string rtcp_cname_;
   bool ready_to_send_;
   int transport_overhead_per_packet_;
   NetworkRoute last_network_route_;
@@ -622,6 +547,7 @@ class FakeVoiceMediaSendChannel
   const std::vector<DtmfInfo>& dtmf_info_queue() const;
   const AudioOptions& options() const;
   int max_bps() const;
+  const std::string& mid() const;
   bool HasSource(uint32_t ssrc) const;
   bool GetOutputVolume(uint32_t ssrc, double* volume);
 
@@ -633,6 +559,7 @@ class FakeVoiceMediaSendChannel
   MediaType media_type() const override { return MediaType::AUDIO; }
 
   bool SetSenderParameters(const AudioSenderParameter& params) override;
+  void SetMid(absl::string_view mid) override;
   bool SetSend(bool send) override;
   bool SetAudioSend(uint32_t ssrc,
                     bool enable,
@@ -681,6 +608,7 @@ class FakeVoiceMediaSendChannel
   AudioOptions options_;
   std::map<uint32_t, std::unique_ptr<VoiceChannelAudioSink>> local_sinks_;
   int max_bps_;
+  std::string mid_;
 };
 
 // A helper function to compare the FakeVoiceMediaChannel::DtmfInfo.
@@ -1056,6 +984,10 @@ class FakeVideoEngine : public VideoEngineInterface {
 class FakeMediaEngine : public CompositeMediaEngine {
  public:
   FakeMediaEngine();
+  // Uses the given engines instead of default constructed ones, e.g.
+  // subclasses that create custom media channels.
+  FakeMediaEngine(std::unique_ptr<FakeVoiceEngine> voice_engine,
+                  std::unique_ptr<FakeVideoEngine> video_engine);
 
   ~FakeMediaEngine() override;
 

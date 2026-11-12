@@ -44,7 +44,7 @@ class CertErrorParams2Der : public CertErrorParams {
     std::string result;
     AppendDer(name1_, der1_, &result);
     if (name2_) {
-      result += "\n";
+      result += '\n';
       AppendDer(name2_, der2_, &result);
     }
     return result;
@@ -107,9 +107,6 @@ class CertErrorParams2SizeT : public CertErrorParams {
 };
 
 }  // namespace
-
-CertErrorParams::CertErrorParams() = default;
-CertErrorParams::~CertErrorParams() = default;
 
 std::unique_ptr<CertErrorParams> CreateCertErrorParams1Der(const char *name,
                                                            der::Input der) {

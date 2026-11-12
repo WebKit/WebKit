@@ -22,6 +22,7 @@
 #include "api/task_queue/task_queue_base.h"
 #include "media/base/media_channel.h"
 #include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 
@@ -59,6 +60,8 @@ class RemoteAudioSource : public Notifier<AudioSourceInterface> {
   bool remote() const override;
 
   // AudioSourceInterface implementation.
+  // SetVolume() may be called on any thread. The audio observers are notified
+  // on the main thread.
   void SetVolume(double volume) override;
   void RegisterAudioObserver(AudioObserver* observer) override;
   void UnregisterAudioObserver(AudioObserver* observer) override;
@@ -79,7 +82,7 @@ class RemoteAudioSource : public Notifier<AudioSourceInterface> {
   TaskQueueBase* const main_thread_;
   TaskQueueBase* const worker_thread_;
   const OnAudioChannelGoneAction on_audio_channel_gone_action_;
-  std::list<AudioObserver*> audio_observers_;
+  std::list<AudioObserver*> audio_observers_ RTC_GUARDED_BY(main_thread_);
   Mutex sink_lock_;
   std::list<AudioTrackSinkInterface*> sinks_;
   SourceState state_;

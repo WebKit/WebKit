@@ -27,12 +27,10 @@ BSSL_NAMESPACE_BEGIN
 // Synchronously returns issuers from a pre-supplied set.
 class OPENSSL_EXPORT CertIssuerSourceStatic : public CertIssuerSource {
  public:
-  CertIssuerSourceStatic();
+  CertIssuerSourceStatic() = default;
 
   CertIssuerSourceStatic(const CertIssuerSourceStatic &) = delete;
   CertIssuerSourceStatic &operator=(const CertIssuerSourceStatic &) = delete;
-
-  ~CertIssuerSourceStatic() override;
 
   // Adds `cert` to the set of certificates that this CertIssuerSource will
   // provide.

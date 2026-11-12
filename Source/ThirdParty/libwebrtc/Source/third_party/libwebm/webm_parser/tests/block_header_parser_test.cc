@@ -23,7 +23,8 @@ class BlockHeaderParserTest : public ParserTest<BlockHeaderParser> {};
 TEST_F(BlockHeaderParserTest, ValidBlock) {
   SetReaderData({
       0x81,  // Track number = 1.
-      0x12, 0x34,  // Timecode = 4660.
+      0x12,
+      0x34,  // Timecode = 4660.
       0x00,  // Flags.
   });
 
@@ -38,8 +39,16 @@ TEST_F(BlockHeaderParserTest, ValidBlock) {
 
 TEST_F(BlockHeaderParserTest, IncrementalParse) {
   SetReaderData({
-      0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02,  // Track number = 2.
-      0xFF, 0xFE,  // Timecode = -2.
+      0x01,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      0x02,  // Track number = 2.
+      0xFF,
+      0xFE,  // Timecode = -2.
       0xFF,  // Flags.
   });
 

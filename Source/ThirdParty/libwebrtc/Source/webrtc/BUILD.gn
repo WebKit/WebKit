@@ -53,25 +53,16 @@ if (!build_with_chromium) {
     }
     if (rtc_include_tests) {
       deps += [
-        ":audio_engine_tests",
-        ":rtc_p2p_unittests",
-        ":rtc_unittests",
         ":rust_tests",
         ":test_suites",
-        ":voip_unittests",
-        "common_audio:common_audio_unittests",
-        "common_video:common_video_unittests",
         "examples:examples_unittests",
-        "media:rtc_media_unittests",
         "modules/audio_coding:audio_coding_tests",
         "modules/audio_processing:audio_processing_tests",
         "modules/remote_bitrate_estimator:rtp_to_text",
         "modules/rtp_rtcp:test_packet_masks_metrics",
         "modules/video_capture:video_capture_internal_impl",
         "modules/video_coding:video_codec_perf_tests",
-        "net/dcsctp:dcsctp_unittests",
         "p2p:dtls_ice_integration_bench",
-        "pc:rtc_pc_unittests",
         "pc:slow_peer_connection_unittests",
         "pc:svc_tests",
         "rtc_tools:video_encoder",
@@ -131,16 +122,26 @@ if (rtc_include_tests) {
   group("test_suites") {
     testonly = true
     deps = [
+      ":rtc_unittests",
+      ":voip_unittests",
       ":webrtc_nonparallel_tests",
       ":webrtc_perf_tests",
+      "//audio:audio_engine_tests",
       "//call:call_tests",
       "//call/adaptation:resource_adaptation_tests",
+      "//common_audio:common_audio_unittests",
+      "//common_video:common_video_unittests",
+      "//media:rtc_media_unittests",
       "//modules:modules_unittests",
       "//modules/audio_coding:audio_coding_unittests",
       "//modules/audio_processing:audio_processing_unittests",
       "//modules/rtp_rtcp:rtp_rtcp_unittests",
       "//modules/video_coding:video_coding_unittests",
+      "//net/dcsctp:dcsctp_unittests",
+      "//p2p:rtc_p2p_unittests",
       "//pc:peerconnection_unittests",
+      "//pc:rtc_pc_unittests",
+      "//rtc_tools:tools_unittests",
       "//stats:rtc_stats_unittests",
       "//system_wrappers:system_wrappers_unittests",
       "//test:test_support_unittests",
@@ -643,115 +644,289 @@ if (use_libfuzzer) {
 }
 
 if (rtc_include_tests && !build_with_chromium) {
-  rtc_unittests_resources = [
-    "resources/ConferenceMotion_1280_720_50.yuv",
-    "resources/FourPeople_1280x720_30.yuv",
-    "resources/difficult_photo_1850_1110.yuv",
-    "resources/presentation_1850_1110.yuv",
-    "resources/reference_less_video_test_file.y4m",
-    "resources/reference_video_640x360_30fps.y4m",
-    "resources/web_screenshot_1850_1110.yuv",
-  ]
-
-  if (is_ios) {
-    bundle_data("rtc_unittests_bundle_data") {
-      testonly = true
-      sources = rtc_unittests_resources
-      outputs = [ "{{bundle_resources_dir}}/{{source_file_part}}" ]
-    }
-  }
-
-  rtc_test("rtc_unittests") {
-    testonly = true
-
-    deps = [
-      "api:compile_all_headers",
-      "api:rtc_api_unittests",
-      "api/audio:audio_api_unittests",
-      "api/audio_codecs/test:audio_codecs_api_unittests",
+  rtc_test_suite("rtc_unittests") {
+    tests = [
+      "api:candidate_unittest",
+      "api:field_trials_unittest",
+      "api:frame_transformer_factory_unittest",
+      "api:function_view_unittest",
+      "api:jsep_unittest",
+      "api:peer_connection_interface_api_unittest",
+      "api:peerconnection_quality_test_fixture_unittest",
+      "api:rtc_error_unittest",
+      "api:rtc_event_log_output_file_unittest",
+      "api:rtp_header_extension_id_unittest",
+      "api:rtp_packet_info_unittest",
+      "api:rtp_packet_infos_unittest",
+      "api:rtp_parameters_unittest",
+      "api:scoped_refptr_unittest",
+      "api:sequence_checker_unittest",
+      "api:webrtc_sdp_encoding_options_unittest",
+      "api:webrtc_sdp_unittest",
+      "api/audio:audio_processing_api_unittest",
+      "api/audio:builtin_audio_processing_builder_unittest",
+      "api/audio/test:audio_frame_unittest",
+      "api/audio/test:audio_view_unittest",
+      "api/audio/test:echo_canceller3_config_unittest",
+      "api/audio_codecs/opus:audio_decoder_opus_api_unittest",
+      "api/audio_codecs/test:audio_decoder_factory_template_unittest",
+      "api/audio_codecs/test:audio_encoder_factory_template_unittest",
       "api/crypto:crypto_options_unittest",
-      "api/crypto:options",
-      "api/numerics:numerics_unittests",
-      "api/task_queue:pending_task_safety_flag_unittests",
-      "api/test/metrics:metrics_unittests",
-      "api/test/network_emulation:network_queue_unittests",
+      "api/environment:environment_unittest",
+      "api/numerics:samples_stats_counter_unittest",
+      "api/numerics:sequence_number_unwrapper_unittest",
+      "api/task_queue:default_task_queue_factory_unittest",
+      "api/task_queue:pending_task_safety_flag_unittest",
+      "api/test/metrics:global_metrics_logger_and_exporter_test",
+      "api/test/metrics:metrics_accumulator_test",
+      "api/test/metrics:metrics_logger_test",
+      "api/test/metrics:print_result_proxy_metrics_exporter_test",
+      "api/test/metrics:stdout_metrics_exporter_test",
+      "api/test/network_emulation:dual_pi2_network_queue_unittest",
+      "api/test/network_emulation:leaky_bucket_network_queue_unittest",
       "api/transport:ecn_marking_unittest",
       "api/transport:stun_unittest",
       "api/transport/rtp:corruption_detection_message_unittest",
-      "api/video/test:rtc_api_video_unittests",
+      "api/units:data_rate_unittest",
+      "api/units:data_size_unittest",
+      "api/units:frequency_unittest",
+      "api/units:time_delta_unittest",
+      "api/units:timestamp_unittest",
+      "api/video:encoded_frame_unittest",
+      "api/video:frame_buffer_unittest",
+      "api/video:rtp_video_frame_assembler_unittests",
+      "api/video:video_adapter_unittest",
+      "api/video:video_broadcaster_unittest",
+      "api/video:video_common_unittest",
+      "api/video:video_frame_buffer_unittest",
+      "api/video:video_frame_metadata_unittest",
+      "api/video/corruption_detection:corruption_detection_settings_generator_unittest",
+      "api/video/corruption_detection:frame_instrumentation_data_reader_unittest",
+      "api/video/corruption_detection:frame_instrumentation_data_unittest",
+      "api/video/corruption_detection:frame_instrumentation_evaluation_unittest",
+      "api/video/test:color_space_unittest",
+      "api/video/test:i210_buffer_unittest",
+      "api/video/test:i410_buffer_unittest",
+      "api/video/test:i422_buffer_unittest",
+      "api/video/test:i444_buffer_unittest",
+      "api/video/test:nv12_buffer_unittest",
+      "api/video/test:video_adaptation_counters_unittest",
+      "api/video/test:video_bitrate_allocation_unittest",
       "api/video_codecs:libaom_av1_encoder_factory_test",
       "api/video_codecs:simple_encoder_wrapper_unittests",
-      "api/video_codecs/test:video_codecs_api_unittests",
-      "api/voip:compile_all_headers",
-      "call:fake_network_pipe_unittests",
-      "rtc_base:async_dns_resolver_unittests",
+      "api/video_codecs/test:builtin_video_encoder_factory_unittest",
+      "api/video_codecs/test:h264_profile_level_id_unittest",
+      "api/video_codecs/test:sdp_video_format_unittest",
+      "api/video_codecs/test:temporal_layer_pattern_for_test_unittest",
+      "api/video_codecs/test:video_codec_unittest",
+      "api/video_codecs/test:video_decoder_factory_template_tests",
+      "api/video_codecs/test:video_decoder_software_fallback_wrapper_unittest",
+      "api/video_codecs/test:video_encoder_factory_template_tests",
+      "api/video_codecs/test:video_encoder_factory_unittest",
+      "api/video_codecs/test:video_encoder_functional_unittest",
+      "api/video_codecs/test:video_encoder_rate_control_unittest",
+      "api/video_codecs/test:video_encoder_software_fallback_wrapper_unittest",
+      "call:fake_network_pipe_unittest",
+      "rtc_base:async_dns_resolver_unittest",
       "rtc_base:async_packet_socket_unittest",
       "rtc_base:async_tcp_socket_unittest",
       "rtc_base:async_udp_socket_unittest",
-      "rtc_base:callback_list_unittests",
+      "rtc_base:base64_unittest",
+      "rtc_base:bit_buffer_unittest",
+      "rtc_base:bitrate_tracker_unittest",
+      "rtc_base:bitstream_reader_unittest",
+      "rtc_base:bounded_inline_vector_unittest",
+      "rtc_base:buffer_queue_unittest",
+      "rtc_base:buffer_unittest",
+      "rtc_base:byte_buffer_unittest",
+      "rtc_base:byte_order_unittest",
+      "rtc_base:callback_list_unittest",
+      "rtc_base:checks_unittest",
       "rtc_base:clock_aligner_unittest",
-      "rtc_base:rtc_base_approved_unittests",
-      "rtc_base:rtc_base_unittests",
-      "rtc_base:rtc_json_unittests",
-      "rtc_base:rtc_numerics_unittests",
-      "rtc_base:rtc_operations_chain_unittests",
-      "rtc_base:rtc_task_queue_unittests",
+      "rtc_base:copy_on_write_buffer_unittest",
+      "rtc_base:crc32_unittest",
+      "rtc_base:crypto_random_unittest",
+      "rtc_base:data_rate_limiter_unittest",
+      "rtc_base:denormal_disabler_unittest",
+      "rtc_base:divide_round_unittest",
+      "rtc_base:event_based_exponential_moving_average_unittest",
+      "rtc_base:event_tracer_unittest",
+      "rtc_base:event_unittest",
+      "rtc_base:exp_filter_unittest",
+      "rtc_base:fake_clock_unittest",
+      "rtc_base:frequency_tracker_unittest",
+      "rtc_base:histogram_percentile_counter_unittest",
+      "rtc_base:ip_address_unittest",
+      "rtc_base:json_unittest",
+      "rtc_base:logging_unittest",
+      "rtc_base:memory_usage_unittest",
+      "rtc_base:message_digest_unittest",
+      "rtc_base:mod_ops_unittest",
+      "rtc_base:moving_average_unittest",
+      "rtc_base:moving_max_counter_unittest",
+      "rtc_base:moving_percentile_filter_unittest",
+      "rtc_base:network_route_unittest",
+      "rtc_base:network_unittest",
+      "rtc_base:one_time_event_unittest",
+      "rtc_base:openssl_stream_adapter_unittest",
+      "rtc_base:operations_chain_unittest",
+      "rtc_base:percentile_filter_unittest",
+      "rtc_base:platform_thread_unittest",
+      "rtc_base:random_unittest",
+      "rtc_base:rate_limiter_unittest",
+      "rtc_base:rate_statistics_unittest",
+      "rtc_base:rate_tracker_unittest",
+      "rtc_base:recursive_critical_section_unittest",
+      "rtc_base:ref_counted_object_unittest",
+      "rtc_base:rolling_accumulator_unittest",
+      "rtc_base:rtc_certificate_generator_unittest",
+      "rtc_base:rtc_certificate_unittest",
+      "rtc_base:rtp_to_ntp_estimator_unittest",
+      "rtc_base:running_statistics_unittest",
+      "rtc_base:safe_compare_unittest",
+      "rtc_base:safe_conversions_unittest",
+      "rtc_base:safe_minmax_unittest",
+      "rtc_base:sample_counter_unittest",
+      "rtc_base:sanitizer_unittest",
+      "rtc_base:sequence_number_util_unittest",
+      "rtc_base:str_join_unittest",
+      "rtc_base:string_builder_unittest",
+      "rtc_base:string_encode_unittest",
+      "rtc_base:string_format_unittest",
+      "rtc_base:string_to_number_unittest",
+      "rtc_base:string_utils_unittest",
+      "rtc_base:strong_alias_unittest",
+      "rtc_base:swap_queue_unittest",
       "rtc_base:task_queue_stdlib_unittest",
+      "rtc_base:task_queue_unittest",
+      "rtc_base:test_client_unittest",
+      "rtc_base:thread_annotations_unittest",
+      "rtc_base:thread_unittest",
+      "rtc_base:time_utils_unittest",
+      "rtc_base:timestamp_aligner_unittest",
+      "rtc_base:unique_id_generator_unittest",
       "rtc_base:untyped_function_unittest",
-      "rtc_base:weak_ptr_unittests",
-      "rtc_base/experiments:experiments_unittests",
-      "rtc_base/system:file_wrapper_unittests",
-      "rtc_base/task_utils:repeating_task_unittests",
-      "rtc_base/units:units_unittests",
-      "sdk:sdk_tests",
-      "test:rtp_test_utils",
-      "test/network:network_emulation_unittests",
+      "rtc_base:virtual_socket_unittest",
+      "rtc_base:weak_ptr_unittest",
+      "rtc_base:windowed_min_filter_unittest",
+      "rtc_base:zero_memory_unittest",
+      "rtc_base/containers:flat_map_unittest",
+      "rtc_base/containers:flat_set_unittest",
+      "rtc_base/containers:flat_tree_unittest",
+      "rtc_base/experiments:balanced_degradation_settings_unittest",
+      "rtc_base/experiments:corruption_detection_frame_selector_settings_unittest",
+      "rtc_base/experiments:encoder_info_settings_unittest",
+      "rtc_base/experiments:encoder_speed_experiment_unittest",
+      "rtc_base/experiments:field_trial_list_unittest",
+      "rtc_base/experiments:field_trial_parser_unittest",
+      "rtc_base/experiments:field_trial_units_unittest",
+      "rtc_base/experiments:keyframe_interval_settings_unittest",
+      "rtc_base/experiments:min_video_bitrate_experiment_unittest",
+      "rtc_base/experiments:normalize_simulcast_size_experiment_unittest",
+      "rtc_base/experiments:quality_scaler_settings_unittest",
+      "rtc_base/experiments:quality_scaling_experiment_unittest",
+      "rtc_base/experiments:rate_control_settings_unittest",
+      "rtc_base/experiments:retransmit_flushed_packets_settings_unittest",
+      "rtc_base/experiments:struct_parameters_parser_unittest",
+      "rtc_base/memory:aligned_malloc_unittest",
+      "rtc_base/memory:always_valid_pointer_unittest",
+      "rtc_base/memory:fifo_buffer_unittest",
+      "rtc_base/system:file_wrapper_unittest",
+      "rtc_base/task_utils:repeating_task_unittest",
+      "rtc_base/units:unit_base_unittest",
+      "sdk:media_constraints_unittest",
+      "test/network:cross_traffic_unittest",
+      "test/network:network_emulation_pc_unittest",
+      "test/network:network_emulation_unittest",
+      "test/network:simulated_network_unittest",
+      "test/network:token_bucket_network_behavior_unittest",
     ]
 
-    data = rtc_unittests_resources
-
-    if (rtc_enable_protobuf) {
-      deps += [
-        "api/test/network_emulation:network_config_schedule_proto",
-        "logging:rtc_event_log_tests",
+    if (rtc_use_h265) {
+      tests += [
+        "api/video:rtp_video_frame_h265_assembler_unittests",
+        "api/video_codecs/test:h265_profile_tier_level_unittest",
       ]
     }
 
-    if (is_ios) {
-      deps += [ ":rtc_unittests_bundle_data" ]
+    if (rtc_enable_protobuf) {
+      tests += [
+        "api/test/metrics:chrome_perf_dashboard_metrics_exporter_test",
+        "api/test/metrics:metrics_set_proto_file_exporter_test",
+        "logging:blob_encoding_unittest",
+        "logging:delta_encoding_unittest",
+        "logging:dependency_descriptor_encoder_decoder_unittest",
+        "logging:optional_blob_encoding_unittest",
+        "logging:rtc_event_field_encoding_unittest",
+        "logging:rtc_event_field_extraction_unittest",
+        "logging:rtc_event_log_encoder_common_unittest",
+        "logging:rtc_event_log_encoder_unittest",
+        "logging:rtc_event_log_impl_unittest",
+        "logging:rtc_event_log_unittest",
+        "logging:rtc_event_processor_unittest",
+        "test/network:feedback_generator_unittest",
+        "test/network:schedulable_network_behavior_test",
+      ]
+    }
+
+    if (rtc_rust) {
+      tests += [ "rtc_base:rate_tracker_comparison_unittest" ]
+    }
+
+    if (rtc_enable_google_benchmarks) {
+      tests += [
+        "rtc_base/synchronization:mutex_unittest",
+        "rtc_base/synchronization:yield_policy_unittest",
+      ]
+    }
+
+    if (is_mac || is_ios) {
+      tests += [ "rtc_base:task_queue_gcd_unittest" ]
+    }
+
+    if (is_win) {
+      tests += [
+        "rtc_base:win32_unittest",
+        "rtc_base/win:windows_version_unittest",
+      ]
+    }
+
+    if (is_posix || is_fuchsia || is_win) {
+      tests += [
+        "rtc_base:openssl_adapter_unittest",
+        "rtc_base:openssl_session_cache_unittest",
+        "rtc_base:openssl_utility_unittest",
+        "rtc_base:ssl_adapter_unittest",
+        "rtc_base:ssl_identity_unittest",
+        "rtc_base:ssl_stream_adapter_unittest",
+      ]
     }
 
     if (is_android) {
-      deps += [
-        "sdk/android:native_unittests",
-        "sdk/android:native_unittests_java",
+      tests += [
+        "sdk/android:android_audio_device_unittest",
+        "sdk/android:android_network_monitor_unittest",
+        "sdk/android:android_peer_connection_factory_unittest",
+        "sdk/android:java_types_unittest",
+        "sdk/android:stacktrace_unittest",
+        "sdk/android:video_source_unittest",
+        "sdk/android:wrapper_unittest",
       ]
     }
-  }
-
-  rtc_test("rtc_p2p_unittests") {
-    testonly = true
-
-    deps = [ "p2p:rtc_p2p_unittests" ]
   }
 
   if (rtc_enable_google_benchmarks) {
     rtc_executable("benchmarks") {
       testonly = true
       deps = [
+        "api:webrtc_sdp_benchmark",
         "rtc_base:base64_benchmark",
         "rtc_base/synchronization:mutex_benchmark",
         "test:benchmark_main",
       ]
-    }
-  }
-
-  rtc_test("audio_engine_tests") {
-    testonly = true
-    deps = [ "audio:audio_tests" ]
-
-    if (is_android) {
-      deps += [ "//build/android/gtest_apk:native_test_instrumentation_test_runner_java" ]
+      if (!rtc_disable_logging) {
+        deps += [ "rtc_base:logging_benchmark" ]
+      }
     }
   }
 
@@ -779,15 +954,13 @@ if (rtc_include_tests && !build_with_chromium) {
     ]
   }
 
-  rtc_test("voip_unittests") {
-    testonly = true
-    deps = [
-      "api/voip:compile_all_headers",
-      "api/voip:voip_engine_factory_unittests",
-      "audio/voip/test:audio_channel_unittests",
-      "audio/voip/test:audio_egress_unittests",
-      "audio/voip/test:audio_ingress_unittests",
-      "audio/voip/test:voip_core_unittests",
+  rtc_test_suite("voip_unittests") {
+    tests = [
+      "api/voip:voip_engine_factory_unittest",
+      "audio/voip/test:audio_channel_unittest",
+      "audio/voip/test:audio_egress_unittest",
+      "audio/voip/test:audio_ingress_unittest",
+      "audio/voip/test:voip_core_unittest",
     ]
   }
 

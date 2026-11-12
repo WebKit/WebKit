@@ -19,7 +19,7 @@
 #include <openssl/mem.h>
 #include <openssl/x509.h>
 
-int NETSCAPE_SPKI_set_pubkey(NETSCAPE_SPKI *x, EVP_PKEY *pkey) {
+int NETSCAPE_SPKI_set_pubkey(NETSCAPE_SPKI *x, const EVP_PKEY *pkey) {
   if ((x == nullptr) || (x->spkac == nullptr)) {
     return 0;
   }
@@ -64,7 +64,7 @@ NETSCAPE_SPKI *NETSCAPE_SPKI_b64_decode(const char *str, ossl_ssize_t len) {
 
 // Generate a base64 encoded string from an SPKI
 
-char *NETSCAPE_SPKI_b64_encode(NETSCAPE_SPKI *spki) {
+char *NETSCAPE_SPKI_b64_encode(const NETSCAPE_SPKI *spki) {
   unsigned char *der_spki, *p;
   char *b64_str;
   size_t b64_len;

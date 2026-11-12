@@ -166,7 +166,7 @@ static const char *TrySymbolize(void *pc) {
     defined(ABSL_INTERNAL_HAVE_EMSCRIPTEN_SYMBOLIZE)
 
 // Test with a return address.
-void ABSL_ATTRIBUTE_NOINLINE TestWithReturnAddress() {
+ABSL_ATTRIBUTE_NOINLINE static void TestWithReturnAddress() {
 #if defined(ABSL_HAVE_ATTRIBUTE_NOINLINE)
   void *return_address = __builtin_return_address(0);
   const char *symbol = TrySymbolize(return_address);
@@ -421,10 +421,13 @@ TEST(Symbolize, SetSymbolDecorator) {
 // to optimize away the .data section if no variables live in the
 // section. This variable should get placed in the .data section, and
 // the test below checks for the existence of a .data section.
-static int in_data_section = 1;
+static int in_data_section [[maybe_unused]] = 1;
 
 TEST(Symbolize, ForEachSection) {
-  int fd = TEMP_FAILURE_RETRY(open("/proc/self/exe", O_RDONLY));
+  int fd;
+  do {
+    fd = open("/proc/self/exe", O_RDONLY);
+  } while (fd == -1 && errno == EINTR);
   ASSERT_NE(fd, -1);
 
   std::vector<std::string> sections;
@@ -572,7 +575,7 @@ inline void *ABSL_ATTRIBUTE_ALWAYS_INLINE inline_func() {
   return pc;
 }
 
-void *ABSL_ATTRIBUTE_NOINLINE non_inline_func() {
+ABSL_ATTRIBUTE_NOINLINE void* non_inline_func() {
   void *pc = nullptr;
 #if defined(__i386__)
   __asm__ __volatile__("call 1f;\n 1: pop %[PC]" : [PC] "=r"(pc));
@@ -582,7 +585,7 @@ void *ABSL_ATTRIBUTE_NOINLINE non_inline_func() {
   return pc;
 }
 
-void ABSL_ATTRIBUTE_NOINLINE TestWithPCInsideNonInlineFunction() {
+ABSL_ATTRIBUTE_NOINLINE void TestWithPCInsideNonInlineFunction() {
 #if defined(ABSL_HAVE_ATTRIBUTE_NOINLINE) && \
     (defined(__i386__) || defined(__x86_64__))
   void *pc = non_inline_func();
@@ -593,7 +596,7 @@ void ABSL_ATTRIBUTE_NOINLINE TestWithPCInsideNonInlineFunction() {
 #endif
 }
 
-void ABSL_ATTRIBUTE_NOINLINE TestWithPCInsideInlineFunction() {
+ABSL_ATTRIBUTE_NOINLINE void TestWithPCInsideInlineFunction() {
 #if defined(ABSL_HAVE_ATTRIBUTE_ALWAYS_INLINE) && \
     (defined(__i386__) || defined(__x86_64__))
   void *pc = inline_func();  // Must be inlined.
@@ -637,7 +640,7 @@ __attribute__((target("arm"))) int ArmThumbOverlapArm(int x) {
   return x * x * x;
 }
 
-void ABSL_ATTRIBUTE_NOINLINE TestArmThumbOverlap() {
+ABSL_ATTRIBUTE_NOINLINE void TestArmThumbOverlap() {
 #if defined(ABSL_HAVE_ATTRIBUTE_NOINLINE)
   const char *symbol = TrySymbolize((void *)&ArmThumbOverlapArm);
   ASSERT_NE(symbol, nullptr) << "TestArmThumbOverlap failed";

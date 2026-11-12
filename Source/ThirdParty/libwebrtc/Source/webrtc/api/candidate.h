@@ -269,6 +269,10 @@ class RTC_EXPORT Candidate {
   //   characteristics. Foundations are used in the frozen algorithm.
   // A session wide (peerconnection) tie-breaker is applied to the foundation,
   // adds additional randomness and must be the same for all candidates.
+  // The foundation is computed using a keyed cryptographic hash, with a random
+  // key that is generated once per process and never sent anywhere, so that
+  // the base address can't be derived from the foundation. Consequently,
+  // foundations are only comparable within the same process.
   void ComputeFoundation(const SocketAddress& base_address,
                          uint64_t tie_breaker);
 

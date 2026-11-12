@@ -37,7 +37,10 @@ pub trait DatagramSocket: Send {
     /// the datagram will be truncated while the actual size of the consumed datagram is reported
     /// as [`AbstractSocketResult::Ok`].
     ///
-    /// The datagram will be consumed on successful reception, even with `datagram.is_empty()`.
+    /// Returning [`AbstractSocketResult::Ok(0)`] signals transport end-of-stream.
+    /// Note that empty (zero-length) datagrams make no sense for DTLS, as all valid DTLS records
+    /// require headers. Sockets receiving zero-length datagrams from the network should discard
+    /// them (returning [`AbstractSocketResult::Retry`]) rather than reporting `Ok(0)`.
     fn recv(&mut self, datagram: &mut [u8]) -> AbstractSocketResult;
 }
 

@@ -32,12 +32,16 @@ EncoderSettings::EncoderSettings(const EncoderSettings& other)
       encoder_config_(other.encoder_config_.Copy()),
       video_codec_(other.video_codec_) {}
 
+EncoderSettings::EncoderSettings(EncoderSettings&&) = default;
+
 EncoderSettings& EncoderSettings::operator=(const EncoderSettings& other) {
   encoder_info_ = other.encoder_info_;
   encoder_config_ = other.encoder_config_.Copy();
   video_codec_ = other.video_codec_;
   return *this;
 }
+
+EncoderSettings& EncoderSettings::operator=(EncoderSettings&&) = default;
 
 const VideoEncoder::EncoderInfo& EncoderSettings::encoder_info() const {
   return encoder_info_;

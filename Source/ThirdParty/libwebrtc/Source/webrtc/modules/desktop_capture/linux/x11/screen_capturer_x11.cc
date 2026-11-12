@@ -246,6 +246,14 @@ void ScreenCapturerX11::Start(Callback* callback) {
   callback_ = callback;
 }
 
+void ScreenCapturerX11::SetSharedMemoryFactory(
+    std::unique_ptr<SharedMemoryFactory> shared_memory_factory) {
+  shared_memory_factory_ = std::move(shared_memory_factory);
+  // Drop buffers allocated without the factory so that the next capture
+  // allocates frames with the new factory.
+  queue_.Reset();
+}
+
 void ScreenCapturerX11::CaptureFrame() {
   TRACE_EVENT0("webrtc", "ScreenCapturerX11::CaptureFrame");
   Timestamp capture_start_time = clock_.CurrentTime();
@@ -272,8 +280,20 @@ void ScreenCapturerX11::CaptureFrame() {
   // Note that we can't reallocate other buffers at this point, since the caller
   // may still be reading from them.
   if (!queue_.current_frame()) {
-    std::unique_ptr<DesktopFrame> frame(
-        new BasicDesktopFrame(selected_monitor_rect_.size(), FOURCC_ARGB));
+    std::unique_ptr<DesktopFrame> frame;
+    if (shared_memory_factory_) {
+      frame = SharedMemoryDesktopFrame::Create(selected_monitor_rect_.size(),
+                                               FOURCC_ARGB,
+                                               shared_memory_factory_.get());
+      if (!frame) {
+        RTC_LOG(LS_WARNING) << "Failed to create shared memory frame.";
+        callback_->OnCaptureResult(Result::ERROR_TEMPORARY, nullptr);
+        return;
+      }
+    } else {
+      frame = std::make_unique<BasicDesktopFrame>(selected_monitor_rect_.size(),
+                                                  FOURCC_ARGB);
+    }
 
     // We set the top-left of the frame so the mouse cursor will be composited
     // properly, and our frame buffer will not be overrun while blitting.

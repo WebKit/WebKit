@@ -23,15 +23,16 @@
 
 using namespace bssl;
 
+namespace {
+
 // X509_REQ_INFO is handled in an unusual way to get round invalid encodings.
 // Some broken certificate requests don't encode the attributes field if it
 // is empty. This is in violation of PKCS#10 but we need to tolerate it. We
 // do this by making the attributes field OPTIONAL then using the callback to
 // initialise it to an empty STACK. This means that the field will be
 // correctly encoded unless we NULL out the field.
-
-static int rinf_cb(int operation, ASN1_VALUE **pval, const ASN1_ITEM *it,
-                   void *exarg) {
+int rinf_cb(int operation, ASN1_VALUE **pval, const ASN1_ITEM *it,
+            void *exarg) {
   X509_REQ_INFO *rinf = asn1_load_ptr_as<X509_REQ_INFO>(pval);
 
   if (operation == ASN1_OP_NEW_POST) {
@@ -54,6 +55,8 @@ static int rinf_cb(int operation, ASN1_VALUE **pval, const ASN1_ITEM *it,
 
   return 1;
 }
+
+}  // namespace
 
 BSSL_NAMESPACE_BEGIN
 

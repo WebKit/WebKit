@@ -30,10 +30,6 @@ BSSL_NAMESPACE_BEGIN
 
 class MockSignatureVerifyCache : public SignatureVerifyCache {
  public:
-  MockSignatureVerifyCache();
-
-  ~MockSignatureVerifyCache() override;
-
   void Store(const std::string &key,
              SignatureVerifyCache::Value value) override;
 

@@ -33,9 +33,11 @@
 
 using namespace bssl;
 
-static X509_PKEY *X509_PKEY_new() { return New<X509_PKEY>(); }
+namespace {
 
-static void X509_PKEY_free(X509_PKEY *x) {
+X509_PKEY *X509_PKEY_new() { return New<X509_PKEY>(); }
+
+void X509_PKEY_free(X509_PKEY *x) {
   if (x == nullptr) {
     return;
   }
@@ -44,7 +46,9 @@ static void X509_PKEY_free(X509_PKEY *x) {
   Delete(x);
 }
 
-static X509_INFO *X509_INFO_new() { return New<X509_INFO>(); }
+X509_INFO *X509_INFO_new() { return New<X509_INFO>(); }
+
+}  // namespace
 
 void X509_INFO_free(X509_INFO *x) {
   if (x == nullptr) {
@@ -71,14 +75,16 @@ STACK_OF(X509_INFO) *PEM_X509_INFO_read(FILE *fp, STACK_OF(X509_INFO) *sk,
   return ret;
 }
 
+namespace {
+
 enum parse_result_t {
   parse_ok,
   parse_error,
   parse_new_entry,
 };
 
-static enum parse_result_t parse_x509(X509_INFO *info, const uint8_t *data,
-                                      size_t len, int key_type) {
+enum parse_result_t parse_x509(X509_INFO *info, const uint8_t *data, size_t len,
+                               int key_type) {
   if (info->x509 != nullptr) {
     return parse_new_entry;
   }
@@ -86,8 +92,8 @@ static enum parse_result_t parse_x509(X509_INFO *info, const uint8_t *data,
   return info->x509 != nullptr ? parse_ok : parse_error;
 }
 
-static enum parse_result_t parse_x509_aux(X509_INFO *info, const uint8_t *data,
-                                          size_t len, int key_type) {
+enum parse_result_t parse_x509_aux(X509_INFO *info, const uint8_t *data,
+                                   size_t len, int key_type) {
   if (info->x509 != nullptr) {
     return parse_new_entry;
   }
@@ -95,8 +101,8 @@ static enum parse_result_t parse_x509_aux(X509_INFO *info, const uint8_t *data,
   return info->x509 != nullptr ? parse_ok : parse_error;
 }
 
-static enum parse_result_t parse_crl(X509_INFO *info, const uint8_t *data,
-                                     size_t len, int key_type) {
+enum parse_result_t parse_crl(X509_INFO *info, const uint8_t *data, size_t len,
+                              int key_type) {
   if (info->crl != nullptr) {
     return parse_new_entry;
   }
@@ -104,8 +110,8 @@ static enum parse_result_t parse_crl(X509_INFO *info, const uint8_t *data,
   return info->crl != nullptr ? parse_ok : parse_error;
 }
 
-static enum parse_result_t parse_key(X509_INFO *info, const uint8_t *data,
-                                     size_t len, int key_type) {
+enum parse_result_t parse_key(X509_INFO *info, const uint8_t *data, size_t len,
+                              int key_type) {
   if (info->x_pkey != nullptr) {
     return parse_new_entry;
   }
@@ -116,6 +122,8 @@ static enum parse_result_t parse_key(X509_INFO *info, const uint8_t *data,
   info->x_pkey->dec_pkey = d2i_PrivateKey(key_type, nullptr, &data, len);
   return info->x_pkey->dec_pkey != nullptr ? parse_ok : parse_error;
 }
+
+}  // namespace
 
 STACK_OF(X509_INFO) *PEM_X509_INFO_read_bio(BIO *bp, STACK_OF(X509_INFO) *sk,
                                             pem_password_cb *cb, void *u) {

@@ -11,6 +11,7 @@
 #define API_TEST_NETWORK_EMULATION_DUAL_PI2_NETWORK_QUEUE_H_
 
 #include <cstddef>
+#include <cstdint>
 #include <memory>
 #include <optional>
 #include <queue>
@@ -19,8 +20,6 @@
 #include "api/sequence_checker.h"
 #include "api/test/network_emulation/network_queue.h"
 #include "api/test/simulated_network.h"
-#include "api/units/data_rate.h"
-#include "api/units/data_size.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "rtc_base/random.h"
@@ -31,24 +30,27 @@ namespace webrtc {
 // https://github.com/L4STeam/linux/. Concepts are described in
 // https://datatracker.ietf.org/doc/html/rfc9332.
 // Developed for testing purposes.
-// Note that this implementation does not support the credit-based system
-// (c_protection) from the real implementation and thus a L4S stream can
-// completely starve a classic stream.
-//
-// TODO: bugs.webrtc.org/42225697 - Implement c_protection to better
-// support testing of cross traffic with classic TCP.
 class DualPi2NetworkQueue : public NetworkQueue {
  public:
   struct Config {
-    // Target delay for the queue. The queue will try to keep the delay of the
-    // L4S queue below this value.
-    TimeDelta target_delay = TimeDelta::Micros(500);
-    // Link rate puts a cap on how many bytes in total that can be stored in the
-    // queue and still approximately meet the target delay. The cap is
-    // calculated as: 2*target_delay * link_rate and applies to both queues
-    // combined. If more packets than this are enqueued, they will be CE marked
-    // (L4S) or dropped (classic).
-    DataRate link_rate = DataRate::PlusInfinity();
+    // Target delay for the coupled PI2 controller (RFC 9332 default is 15ms).
+    // Governs the classic queue delay target and L4S overload protection.
+    TimeDelta target_delay = TimeDelta::Millis(15);
+    // Step threshold for the native L4S AQM. If the sojourn time of a packet in
+    // the L4S queue exceeds this value on dequeue (while standing backlog >=
+    // `min_backlog_packets`), it will be CE marked.
+    // RFC 9332 / Linux sch_dualpi2 defaults to 1ms for broadband links (4-200
+    // Mbps), but notes (RFC 9332 Section A.2) that on lower-capacity links the
+    // threshold should be at least 1-2 MTU serialization time so packets are
+    // not prematurely marked while waiting for a single packet in flight on the
+    // wire. A 10ms default corresponds to ~1 MTU (1200B) serialization time at
+    // ~1 Mbps, making these defaults suitable for link capacities >= ~500 kbps
+    // while keeping L4S queuing delay below `target_delay` (15ms) so the slow
+    // PI2 controller stays at zero under normal L4S load.
+    TimeDelta step_threshold = TimeDelta::Millis(10);
+    // Minimum standing queue backlog (in packets) required before taking
+    // marking or dropping actions.
+    size_t min_backlog_packets = 2;
 
     // These constants are used to calculate the proportional and integral
     // factors when updating the marking probability.
@@ -57,6 +59,11 @@ class DualPi2NetworkQueue : public NetworkQueue {
     double beta = 3.2;
     // Coupling factor.
     int k = 2;
+
+    // Classic queue protection weight percentage (0-100) for the WRR credit
+    // scheduler (c_protection in Linux sch_dualpi2). Default is 10%, meaning
+    // 10% weight for the classic queue and 90% weight for the L4S queue.
+    int c_protection = 10;
 
     // How often the base marking probability is updated.
     TimeDelta probability_update_interval = TimeDelta::Millis(16);
@@ -89,13 +96,16 @@ class DualPi2NetworkQueue : public NetworkQueue {
   }
 
  private:
-  void UpdateBaseMarkingProbability(Timestamp time_now, TimeDelta sojourn_time);
-  bool ShouldTakeAction(double marking_probability);
+  void UpdateBaseMarkingProbability(Timestamp time_now);
+  TimeDelta l4s_queue_delay(Timestamp time_now) const;
+  TimeDelta classic_queue_delay(Timestamp time_now) const;
+  bool HasStandingQueueBacklog() const;
+  bool ShouldDequeueFromClassicQueue() const;
+  void ResetCProtectionCredit();
 
   SequenceChecker sequence_checker_;
 
   const Config config_;
-  const DataSize step_threshold_;
 
   std::queue<PacketInFlightInfo> l4s_queue_;
   std::queue<PacketInFlightInfo> classic_queue_;
@@ -103,7 +113,7 @@ class DualPi2NetworkQueue : public NetworkQueue {
   Random random_;
 
   std::optional<size_t> max_packet_capacity_;
-  DataSize total_queued_size_;
+  int64_t c_protection_credit_ = 0;
   double base_marking_probability_ = 0;
   Timestamp last_probability_update_time_ = Timestamp::MinusInfinity();
   // The delay of the queue after the last probability update.
@@ -112,7 +122,8 @@ class DualPi2NetworkQueue : public NetworkQueue {
 
 class DualPi2NetworkQueueFactory : public NetworkQueueFactory {
  public:
-  explicit DualPi2NetworkQueueFactory(const DualPi2NetworkQueue::Config& config)
+  explicit DualPi2NetworkQueueFactory(
+      const DualPi2NetworkQueue::Config& config = DualPi2NetworkQueue::Config())
       : config_(config) {}
 
   std::unique_ptr<NetworkQueue> CreateQueue() override {

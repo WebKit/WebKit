@@ -49,23 +49,29 @@ TEST_F(ChapterAtomParserTest, DefaultParse) {
 
 TEST_F(ChapterAtomParserTest, DefaultValues) {
   SetReaderData({
-      0x73, 0xC4,  // ID = 0x73C4 (ChapterUID).
+      0x73,
+      0xC4,  // ID = 0x73C4 (ChapterUID).
       0x80,  // Size = 0.
 
-      0x56, 0x54,  // ID = 0x73C4 (ChapterStringUID).
+      0x56,
+      0x54,  // ID = 0x73C4 (ChapterStringUID).
       0x80,  // Size = 0.
 
       0x91,  // ID = 0x91 (ChapterTimeStart).
-      0x40, 0x00,  // Size = 0.
+      0x40,
+      0x00,  // Size = 0.
 
       0x92,  // ID = 0x91 (ChapterTimeEnd).
-      0x40, 0x00,  // Size = 0.
+      0x40,
+      0x00,  // Size = 0.
 
       0x80,  // ID = 0x80 (ChapterDisplay).
-      0x40, 0x00,  // Size = 0.
+      0x40,
+      0x00,  // Size = 0.
 
       0xB6,  // ID = 0xB6 (ChapterAtom).
-      0x40, 0x00,  // Size = 0.
+      0x40,
+      0x00,  // Size = 0.
   });
 
   ParseAndVerify();

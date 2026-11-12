@@ -32,8 +32,10 @@
 
 using namespace bssl;
 
-static int rsa_pss_cb(int operation, ASN1_VALUE **pval, const ASN1_ITEM *it,
-                      void *exarg) {
+namespace {
+
+int rsa_pss_cb(int operation, ASN1_VALUE **pval, const ASN1_ITEM *it,
+               void *exarg) {
   if (operation == ASN1_OP_FREE_PRE) {
     RSA_PSS_PARAMS *pss = asn1_load_ptr_as<RSA_PSS_PARAMS>(pval);
     X509_ALGOR_free(pss->maskHash);
@@ -41,17 +43,7 @@ static int rsa_pss_cb(int operation, ASN1_VALUE **pval, const ASN1_ITEM *it,
   return 1;
 }
 
-ASN1_SEQUENCE_cb(RSA_PSS_PARAMS, rsa_pss_cb) = {
-    ASN1_EXP_OPT(RSA_PSS_PARAMS, hashAlgorithm, X509_ALGOR, 0),
-    ASN1_EXP_OPT(RSA_PSS_PARAMS, maskGenAlgorithm, X509_ALGOR, 1),
-    ASN1_EXP_OPT(RSA_PSS_PARAMS, saltLength, ASN1_INTEGER, 2),
-    ASN1_EXP_OPT(RSA_PSS_PARAMS, trailerField, ASN1_INTEGER, 3),
-} ASN1_SEQUENCE_END_cb(RSA_PSS_PARAMS, RSA_PSS_PARAMS)
-
-IMPLEMENT_ASN1_FUNCTIONS_const(RSA_PSS_PARAMS)
-
-
-static int rsa_pss_decode(const X509_ALGOR *alg, rsa_pss_params_t *out) {
+int rsa_pss_decode(const X509_ALGOR *alg, rsa_pss_params_t *out) {
   if (alg->parameter == nullptr || alg->parameter->type != V_ASN1_SEQUENCE) {
     return 0;
   }
@@ -64,6 +56,17 @@ static int rsa_pss_decode(const X509_ALGOR *alg, rsa_pss_params_t *out) {
   return rsa_parse_pss_params(&cbs, out, /*allow_explicit_trailer=*/true) &&
          CBS_len(&cbs) == 0;
 }
+
+}  // namespace
+
+ASN1_SEQUENCE_cb(RSA_PSS_PARAMS, rsa_pss_cb) = {
+    ASN1_EXP_OPT(RSA_PSS_PARAMS, hashAlgorithm, X509_ALGOR, 0),
+    ASN1_EXP_OPT(RSA_PSS_PARAMS, maskGenAlgorithm, X509_ALGOR, 1),
+    ASN1_EXP_OPT(RSA_PSS_PARAMS, saltLength, ASN1_INTEGER, 2),
+    ASN1_EXP_OPT(RSA_PSS_PARAMS, trailerField, ASN1_INTEGER, 3),
+} ASN1_SEQUENCE_END_cb(RSA_PSS_PARAMS, RSA_PSS_PARAMS)
+
+IMPLEMENT_ASN1_FUNCTIONS_const(RSA_PSS_PARAMS)
 
 int bssl::x509_rsa_ctx_to_pss(EVP_MD_CTX *ctx, X509_ALGOR *algor) {
   const EVP_MD *sigmd, *mgf1md;
@@ -122,7 +125,7 @@ int bssl::x509_rsa_ctx_to_pss(EVP_MD_CTX *ctx, X509_ALGOR *algor) {
 }
 
 int bssl::x509_rsa_pss_to_ctx(EVP_MD_CTX *ctx, const X509_ALGOR *sigalg,
-                              EVP_PKEY *pkey) {
+                              const EVP_PKEY *pkey) {
   assert(OBJ_obj2nid(sigalg->algorithm) == NID_rsassaPss);
   rsa_pss_params_t params;
   if (!rsa_pss_decode(sigalg, &params)) {

@@ -71,6 +71,8 @@
 
 #define CONFIG_8BPC 1
 
+#define CONFIG_ASM_DEBUG 0
+
 #define CONFIG_LOG 0
 
 #define ENDIANNESS_BIG 0

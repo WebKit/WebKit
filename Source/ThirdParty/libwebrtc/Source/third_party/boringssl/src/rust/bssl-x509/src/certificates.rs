@@ -74,6 +74,8 @@ use core::{
 
 use bssl_crypto::FromFfiSlice;
 
+#[cfg(feature = "experimental")]
+use crate::check_lib_error;
 use crate::{
     errors::{
         PemReason,
@@ -90,7 +92,7 @@ use crate::{
     },
 };
 
-bssl_macros::bssl_enum! {
+bssl_crypto::bssl_enum! {
     #[derive(Clone, Copy, Debug, PartialEq, Eq)]
     enum GeneralNameKind: u8 {
         /// Other Name
@@ -418,6 +420,136 @@ impl Drop for X509Certificate {
             // live and valid.
             bssl_sys::X509_free(self.0.as_ptr());
         }
+    }
+}
+
+/// An X.509v3 certificate builder.
+#[cfg(feature = "experimental")]
+pub struct X509CertificateBuilder(NonNull<bssl_sys::X509>);
+
+// Safety: `X509` is ref-counted and `X509CertificateBuilder` always requires exclusive access.
+#[cfg(feature = "experimental")]
+unsafe impl Send for X509CertificateBuilder {}
+
+#[cfg(feature = "experimental")]
+impl Drop for X509CertificateBuilder {
+    fn drop(&mut self) {
+        unsafe {
+            // Safety: `self.0` is a valid, uniquely owned `X509` handle.
+            bssl_sys::X509_free(self.0.as_ptr());
+        }
+    }
+}
+
+#[cfg(feature = "experimental")]
+impl X509CertificateBuilder {
+    /// Construct a new X.509v3 certificate builder.
+    pub fn new() -> Self {
+        let x509 = unsafe {
+            // Safety: `X509_new` has no preconditions and returns either null or a newly
+            // allocated `X509`.
+            bssl_sys::X509_new()
+        };
+        let Some(x509) = NonNull::new(x509) else {
+            panic!("allocation error");
+        };
+        let builder = Self(x509);
+        let rc = unsafe {
+            // Safety: `builder.ptr()` is a valid `X509` handle.
+            bssl_sys::X509_set_version(builder.ptr(), bssl_sys::X509_VERSION_3 as _)
+        };
+        debug_assert!(rc == 1, "we must support X509v3");
+        builder
+    }
+
+    pub(crate) fn ptr(&self) -> *mut bssl_sys::X509 {
+        self.0.as_ptr()
+    }
+
+    /// Set the certificate serial number.
+    pub fn with_serial_number(&mut self, serial: u64) -> Result<&mut Self, PkiError> {
+        check_lib_error!(unsafe {
+            // Safety: `self.ptr()` is a valid `X509` handle.
+            bssl_sys::ASN1_INTEGER_set_uint64(bssl_sys::X509_get_serialNumber(self.ptr()), serial)
+        });
+        Ok(self)
+    }
+
+    /// Set the `notBefore` validity time as a POSIX timestamp.
+    pub fn with_not_before(&mut self, posix_time: i64) -> Result<&mut Self, PkiError> {
+        let res = unsafe {
+            // Safety: `self.ptr()` is a valid `X509` handle.
+            bssl_sys::ASN1_TIME_set_posix(bssl_sys::X509_getm_notBefore(self.ptr()), posix_time)
+        };
+        if res.is_null() {
+            return Err(PkiError::extract_lib_err());
+        }
+        Ok(self)
+    }
+
+    /// Set the `notAfter` validity time as a POSIX timestamp.
+    pub fn with_not_after(&mut self, posix_time: i64) -> Result<&mut Self, PkiError> {
+        let res = unsafe {
+            // Safety: `self.ptr()` is a valid `X509` handle.
+            bssl_sys::ASN1_TIME_set_posix(bssl_sys::X509_getm_notAfter(self.ptr()), posix_time)
+        };
+        if res.is_null() {
+            return Err(PkiError::extract_lib_err());
+        }
+        Ok(self)
+    }
+
+    /// Append a Common Name (CN) entry to the certificate subject name.
+    ///
+    /// Note: Since [RFC 6125], subject Common Name is deprecated for domain validation in Web PKI
+    /// in favour of Subject Alternative Name (SAN) extensions; setting only `CN` is insufficient
+    /// for general Web TLS certificates.
+    ///
+    /// [RFC 6125]: <https://datatracker.ietf.org/doc/html/rfc6125>
+    pub fn with_subject_common_name(&mut self, common_name: &str) -> Result<&mut Self, PkiError> {
+        let (cn_ptr, cn_len) = slice_into_ffi_raw_parts(common_name.as_bytes());
+        let Ok(cn_len) = cn_len.try_into() else {
+            return Err(PkiError::X509(X509Error::InvalidParameters));
+        };
+        const LOC_APPEND: i32 = -1; // Append entry to the end of `subject`.
+        const SET_NEW_RDN: i32 = 0; // Create a new singleton RDN for this entry.
+        check_lib_error!(unsafe {
+            // Safety:
+            // - `self.ptr()` is a valid `X509` handle;
+            // - `cn_ptr` is valid for `cn_len` bytes.
+            bssl_sys::X509_NAME_add_entry_by_NID(
+                bssl_sys::X509_get_subject_name(self.ptr()),
+                bssl_sys::NID_commonName,
+                bssl_sys::MBSTRING_UTF8 as _,
+                cn_ptr,
+                cn_len,
+                LOC_APPEND,
+                SET_NEW_RDN,
+            )
+        });
+        Ok(self)
+    }
+
+    /// Finalise and sign a self-signed X.509v3 certificate with SHA-256 using `key`.
+    ///
+    /// This sets the certificate public key from `key`, sets the issuer name equal to the
+    /// subject name, and signs the certificate with `key` and SHA-256.
+    pub fn build_self_signed(self, key: &PrivateKey) -> Result<X509Certificate, PkiError> {
+        let ptr = self.ptr();
+        unsafe {
+            // Safety: `ptr` and `key.ptr()` are valid handles.
+            check_lib_error!(bssl_sys::X509_set_pubkey(ptr, key.ptr()));
+            check_lib_error!(bssl_sys::X509_set_issuer_name(
+                ptr,
+                bssl_sys::X509_get_subject_name(ptr)
+            ));
+            if bssl_sys::X509_sign(ptr, key.ptr(), bssl_sys::EVP_sha256()) <= 0 {
+                return Err(PkiError::extract_lib_err());
+            }
+        }
+        let x509 = self.0;
+        forget(self);
+        Ok(X509Certificate(x509))
     }
 }
 

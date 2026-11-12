@@ -46,19 +46,24 @@ TEST_F(ProjectionParserTest, DefaultParse) {
 
 TEST_F(ProjectionParserTest, DefaultValues) {
   SetReaderData({
-      0x76, 0x71,  // ID = 0x7671 (ProjectionType).
+      0x76,
+      0x71,  // ID = 0x7671 (ProjectionType).
       0x80,  // Size = 0.
 
-      0x76, 0x72,  // ID = 0x7672 (ProjectionPrivate).
+      0x76,
+      0x72,  // ID = 0x7672 (ProjectionPrivate).
       0x80,  // Size = 0.
 
-      0x76, 0x73,  // ID = 0x7673 (ProjectionPoseYaw).
+      0x76,
+      0x73,  // ID = 0x7673 (ProjectionPoseYaw).
       0x80,  // Size = 0.
 
-      0x76, 0x74,  // ID = 0x7674 (ProjectionPosePitch).
+      0x76,
+      0x74,  // ID = 0x7674 (ProjectionPosePitch).
       0x80,  // Size = 0.
 
-      0x76, 0x75,  // ID = 0x7675 (ProjectionPoseRoll).
+      0x76,
+      0x75,  // ID = 0x7675 (ProjectionPoseRoll).
       0x80,  // Size = 0.
   });
 
@@ -128,7 +133,8 @@ TEST_F(ProjectionParserTest, CustomValues) {
 
 TEST_F(ProjectionParserTest, MeshProjection) {
   SetReaderData({
-      0x76, 0x71,  // ID = 0x7671 (ProjectionType).
+      0x76,
+      0x71,  // ID = 0x7671 (ProjectionType).
       0x81,  // Size = 1.
       0x03,  // Body (value = mesh).
   });

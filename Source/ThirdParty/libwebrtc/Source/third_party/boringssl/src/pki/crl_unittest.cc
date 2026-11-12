@@ -20,6 +20,7 @@
 #include <openssl/pool.h>
 #include "cert_errors.h"
 #include "parsed_certificate.h"
+#include "simple_path_builder_delegate.h"
 #include "string_util.h"
 #include "test_helpers.h"
 
@@ -42,6 +43,37 @@ std::shared_ptr<const ParsedCertificate> ParseCertificate(
                             data.size(), nullptr)),
       {}, &errors);
 }
+
+// A delegate that optionally allows SHA-256 based signatures. No other
+// algorithms are allowed.
+//
+// Derived from SimplePathBuilderDelegate just so that the test doesn't need to
+// add no-op implementations of all the other methods on the
+// VerifyCertificateChainDelegate interface. The actual
+// IsSignatureAlgorithmAcceptable method is overridden so the parameters given
+// to SimplePathBuilderDelegate don't actually matter.
+class Sha256CheckerDelegate : public SimplePathBuilderDelegate {
+ public:
+  Sha256CheckerDelegate(bool allow_sha256)
+      : SimplePathBuilderDelegate(
+            1024, SimplePathBuilderDelegate::DigestPolicy::kStrong),
+        allow_sha256_(allow_sha256) {}
+
+  bool IsSignatureAlgorithmAcceptable(SignatureAlgorithm signature_algorithm,
+                                      CertErrors *errors) override {
+    switch (signature_algorithm) {
+      case SignatureAlgorithm::kRsaPkcs1Sha256:
+      case SignatureAlgorithm::kEcdsaSha256:
+      case SignatureAlgorithm::kRsaPssSha256:
+        return allow_sha256_;
+      default:
+        return false;
+    }
+  }
+
+ private:
+  bool allow_sha256_;
+};
 
 class CheckCRLTest : public ::testing::TestWithParam<const char *> {};
 
@@ -211,6 +243,22 @@ TEST_P(CheckCRLTest, FromFile) {
   revocation_status = CheckCRL(crl_data, certs, /*target_cert_index=*/1,
                                *cert_dp, kVerifyTime, kAgeOneWeek);
   EXPECT_EQ(expected_revocation_status, revocation_status);
+
+  // Check that the delegate IsSignatureAlgorithmAcceptable is used. All the
+  // test CRLs use SHA-256, so test with a delegate which either allows or
+  // denies SHA-256. If SHA-256 is allowed, this should have the same result as
+  // the tests that don't pass the delegate.
+  Sha256CheckerDelegate allow_sha256_delegate(true);
+  revocation_status =
+      CheckCRL(crl_data, certs, /*target_cert_index=*/1, *cert_dp, kVerifyTime,
+               kAgeOneWeek, &allow_sha256_delegate);
+  EXPECT_EQ(expected_revocation_status, revocation_status);
+
+  Sha256CheckerDelegate disallow_sha256_delegate(false);
+  revocation_status =
+      CheckCRL(crl_data, certs, /*target_cert_index=*/1, *cert_dp, kVerifyTime,
+               kAgeOneWeek, &disallow_sha256_delegate);
+  EXPECT_EQ(CRLRevocationStatus::UNKNOWN, revocation_status);
 }
 
 }  // namespace

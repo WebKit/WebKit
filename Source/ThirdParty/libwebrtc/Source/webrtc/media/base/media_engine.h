@@ -319,7 +319,7 @@ class CompositeMediaEngine : public MediaEngineInterface {
 };
 
 RtpParameters CreateRtpParametersWithOneEncoding();
-RtpParameters CreateRtpParametersWithEncodings(StreamParams sp);
+RtpParameters CreateRtpParametersWithEncodings(const StreamParams& sp);
 
 // Returns a vector of RTP extensions as visible from RtpSender/Receiver
 // GetCapabilities(). The returned vector only shows what will definitely be

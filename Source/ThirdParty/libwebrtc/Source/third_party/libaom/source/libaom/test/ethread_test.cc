@@ -466,6 +466,72 @@ AV1_INSTANTIATE_TEST_SUITE(AVxEncoderThreadRTTest,
                            ::testing::Values(0, 2), ::testing::Values(0, 2),
                            ::testing::Values(0, 1));
 
+// Codes a key frame with IntraBC and then screen content in motion, with two
+// tile rows so that several threads code the inter frames at once. The output
+// must not depend on the number of threads.
+class AVxEncoderThreadRTIntraBCTest
+    : public ::libaom_test::CodecTestWithParam<int>,
+      public ::libaom_test::EncoderTest {
+ protected:
+  static const int kFrames = 10;
+
+  AVxEncoderThreadRTIntraBCTest()
+      : EncoderTest(GET_PARAM(0)), cpu_used_(GET_PARAM(1)) {}
+  ~AVxEncoderThreadRTIntraBCTest() override = default;
+
+  void SetUp() override {
+    InitializeConfig(::libaom_test::kRealTime);
+    cfg_.g_lag_in_frames = 0;
+    cfg_.rc_end_usage = AOM_CBR;
+    cfg_.rc_target_bitrate = 1000;
+    cfg_.kf_max_dist = 90000;
+  }
+
+  void PreEncodeFrameHook(::libaom_test::VideoSource *video,
+                          ::libaom_test::Encoder *encoder) override {
+    if (video->frame() != 0) return;
+    encoder->Control(AOME_SET_CPUUSED, cpu_used_);
+    encoder->Control(AV1E_SET_TUNE_CONTENT, AOM_CONTENT_SCREEN);
+    encoder->Control(AV1E_SET_ENABLE_INTRABC, 1);
+    encoder->Control(AV1E_SET_AQ_MODE, 0);
+    encoder->Control(AV1E_SET_ROW_MT, 1);
+    encoder->Control(AV1E_SET_TILE_COLUMNS, 1);
+    encoder->Control(AV1E_SET_TILE_ROWS, 1);
+    // Costs updated per superblock differ between one thread and row mt.
+    encoder->Control(AV1E_SET_COEFF_COST_UPD_FREQ, 3);
+    encoder->Control(AV1E_SET_MODE_COST_UPD_FREQ, 3);
+    encoder->Control(AV1E_SET_MV_COST_UPD_FREQ, 3);
+  }
+
+  void FramePktHook(const aom_codec_cx_pkt_t *pkt) override {
+    ::libaom_test::MD5 md5;
+    md5.Add(static_cast<const uint8_t *>(pkt->data.frame.buf),
+            pkt->data.frame.sz);
+    md5_.push_back(md5.Get());
+  }
+
+  std::vector<std::string> Encode(int threads) {
+    cfg_.g_threads = threads;
+    md5_.clear();
+    ::libaom_test::Y4mVideoSource video("screendata.y4m", 0, kFrames);
+    EXPECT_NO_FATAL_FAILURE(RunLoop(&video));
+    return md5_;
+  }
+
+  int cpu_used_;
+  std::vector<std::string> md5_;
+};
+
+TEST_P(AVxEncoderThreadRTIntraBCTest, SameOutput) {
+  const std::vector<std::string> ref = Encode(1);
+  ASSERT_EQ(ref.size(), static_cast<size_t>(kFrames));
+  EXPECT_EQ(ref, Encode(2));
+  EXPECT_EQ(ref, Encode(4));
+}
+
+AV1_INSTANTIATE_TEST_SUITE(AVxEncoderThreadRTIntraBCTest,
+                           ::testing::Range(7, 12));
+
 #if !CONFIG_REALTIME_ONLY
 
 // The AVxEncoderThreadTestLarge takes up ~14% of total run-time of the

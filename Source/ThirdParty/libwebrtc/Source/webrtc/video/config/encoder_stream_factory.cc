@@ -649,7 +649,7 @@ std::vector<Resolution> EncoderStreamFactory::GetStreamResolutions(
       if (encoder_config.simulcast_layers[i]
               .scale_resolution_down_to.has_value()) {
         resolutions[i] = GetLayerResolutionFromScaleResolutionDownTo(
-            norm_resolution.width, norm_resolution.height,
+            width, height,
             *encoder_config.simulcast_layers[i].scale_resolution_down_to);
       } else if (has_scale_resolution_down_by) {
         const double scale_resolution_down_by = std::max(

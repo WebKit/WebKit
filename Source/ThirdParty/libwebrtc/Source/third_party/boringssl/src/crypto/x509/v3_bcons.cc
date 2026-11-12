@@ -27,29 +27,6 @@
 
 using namespace bssl;
 
-static STACK_OF(CONF_VALUE) *i2v_BASIC_CONSTRAINTS(
-    const X509V3_EXT_METHOD *method, void *ext, STACK_OF(CONF_VALUE) *extlist);
-static void *v2i_BASIC_CONSTRAINTS(const X509V3_EXT_METHOD *method,
-                                   const X509V3_CTX *ctx,
-                                   const STACK_OF(CONF_VALUE) *values);
-
-const X509V3_EXT_METHOD bssl::v3_bcons = {
-    NID_basic_constraints,
-    0,
-    ASN1_ITEM_ref(BASIC_CONSTRAINTS),
-    nullptr,
-    nullptr,
-    nullptr,
-    nullptr,
-    nullptr,
-    nullptr,
-    i2v_BASIC_CONSTRAINTS,
-    v2i_BASIC_CONSTRAINTS,
-    nullptr,
-    nullptr,
-    nullptr,
-};
-
 ASN1_SEQUENCE(BASIC_CONSTRAINTS) = {
     ASN1_OPT(BASIC_CONSTRAINTS, ca, ASN1_FBOOLEAN),
     ASN1_OPT(BASIC_CONSTRAINTS, pathlen, ASN1_INTEGER),
@@ -57,8 +34,11 @@ ASN1_SEQUENCE(BASIC_CONSTRAINTS) = {
 
 IMPLEMENT_ASN1_FUNCTIONS_const(BASIC_CONSTRAINTS)
 
-static STACK_OF(CONF_VALUE) *i2v_BASIC_CONSTRAINTS(
-    const X509V3_EXT_METHOD *method, void *ext, STACK_OF(CONF_VALUE) *extlist) {
+namespace {
+
+STACK_OF(CONF_VALUE) *i2v_BASIC_CONSTRAINTS(const X509V3_EXT_METHOD *method,
+                                            void *ext,
+                                            STACK_OF(CONF_VALUE) *extlist) {
   const BASIC_CONSTRAINTS *bcons =
       reinterpret_cast<const BASIC_CONSTRAINTS *>(ext);
   X509V3_add_value_bool("CA", bcons->ca, &extlist);
@@ -66,9 +46,9 @@ static STACK_OF(CONF_VALUE) *i2v_BASIC_CONSTRAINTS(
   return extlist;
 }
 
-static void *v2i_BASIC_CONSTRAINTS(const X509V3_EXT_METHOD *method,
-                                   const X509V3_CTX *ctx,
-                                   const STACK_OF(CONF_VALUE) *values) {
+void *v2i_BASIC_CONSTRAINTS(const X509V3_EXT_METHOD *method,
+                            const X509V3_CTX *ctx,
+                            const STACK_OF(CONF_VALUE) *values) {
   BASIC_CONSTRAINTS *bcons = nullptr;
   if (!(bcons = BASIC_CONSTRAINTS_new())) {
     return nullptr;
@@ -94,3 +74,22 @@ err:
   BASIC_CONSTRAINTS_free(bcons);
   return nullptr;
 }
+
+}  // namespace
+
+const X509V3_EXT_METHOD bssl::v3_bcons = {
+    NID_basic_constraints,
+    0,
+    ASN1_ITEM_ref(BASIC_CONSTRAINTS),
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    i2v_BASIC_CONSTRAINTS,
+    v2i_BASIC_CONSTRAINTS,
+    nullptr,
+    nullptr,
+    nullptr,
+};

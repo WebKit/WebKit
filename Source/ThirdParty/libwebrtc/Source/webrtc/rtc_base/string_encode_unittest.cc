@@ -10,127 +10,121 @@
 
 #include "rtc_base/string_encode.h"
 
+#include <algorithm>
+#include <array>
+#include <cstdint>
 #include <cstring>
 #include <span>
 #include <string>
 #include <vector>
 
 #include "absl/strings/string_view.h"
+#include "test/gmock.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 
+using ::testing::ElementsAreArray;
+using ::testing::IsEmpty;
+using ::testing::SizeIs;
+
 class HexEncodeTest : public ::testing::Test {
  public:
-  HexEncodeTest() : dec_res_(0) {
+  HexEncodeTest() {
     for (size_t i = 0; i < sizeof(data_); ++i) {
       data_[i] = (i + 128) & 0xff;
     }
-    memset(decoded_, 0x7f, sizeof(decoded_));
+    std::ranges::fill(decoded_, 0x7f);
   }
 
-  char data_[10];
-  absl::string_view data_view_{data_, sizeof(data_)};
-  char decoded_[11];
-  size_t dec_res_;
+  std::array<uint8_t, 10> data_;
+  std::array<uint8_t, 11> decoded_;
 };
 
 // Test that we can convert to/from hex with no delimiter.
 TEST_F(HexEncodeTest, TestWithNoDelimiter) {
-  std::string encoded = hex_encode(data_view_);
-  EXPECT_EQ("80818283848586878889", encoded);
-  dec_res_ = hex_decode(std::span<char>(decoded_), encoded);
-  ASSERT_EQ(sizeof(data_), dec_res_);
-  ASSERT_EQ(0, memcmp(data_, decoded_, dec_res_));
+  std::string encoded = HexEncode(data_);
+  EXPECT_EQ(encoded, "80818283848586878889");
+  EXPECT_THAT(HexDecode(decoded_, encoded), ElementsAreArray(data_));
 }
 
 // Test that we can convert to/from hex with a colon delimiter.
 TEST_F(HexEncodeTest, TestWithDelimiter) {
-  std::string encoded = hex_encode_with_delimiter(data_view_, ':');
-  EXPECT_EQ("80:81:82:83:84:85:86:87:88:89", encoded);
-  dec_res_ = hex_decode_with_delimiter(std::span<char>(decoded_), encoded, ':');
-  ASSERT_EQ(sizeof(data_), dec_res_);
-  ASSERT_EQ(0, memcmp(data_, decoded_, dec_res_));
+  std::string encoded = HexEncodeWithDelimiter(data_, ':');
+  EXPECT_EQ(encoded, "80:81:82:83:84:85:86:87:88:89");
+  EXPECT_THAT(HexDecodeWithDelimiter(decoded_, encoded, ':'),
+              ElementsAreArray(data_));
 }
 
 // Test that encoding with one delimiter and decoding with another fails.
 TEST_F(HexEncodeTest, TestWithWrongDelimiter) {
-  std::string encoded = hex_encode_with_delimiter(data_view_, ':');
-  dec_res_ = hex_decode_with_delimiter(std::span<char>(decoded_), encoded, '/');
-  ASSERT_EQ(0U, dec_res_);
+  std::string encoded = HexEncodeWithDelimiter(data_, ':');
+  EXPECT_THAT(HexDecodeWithDelimiter(decoded_, encoded, '/'), IsEmpty());
 }
 
 // Test that encoding without a delimiter and decoding with one fails.
 TEST_F(HexEncodeTest, TestExpectedDelimiter) {
-  std::string encoded = hex_encode(data_view_);
-  EXPECT_EQ(sizeof(data_) * 2, encoded.size());
-  dec_res_ = hex_decode_with_delimiter(std::span<char>(decoded_), encoded, ':');
-  ASSERT_EQ(0U, dec_res_);
+  std::string encoded = HexEncode(data_);
+  EXPECT_THAT(encoded, SizeIs(2 * std::size(data_)));
+  EXPECT_THAT(HexDecodeWithDelimiter(decoded_, encoded, ':'), IsEmpty());
 }
 
 // Test that encoding with a delimiter and decoding without one fails.
 TEST_F(HexEncodeTest, TestExpectedNoDelimiter) {
-  std::string encoded = hex_encode_with_delimiter(data_view_, ':');
-  EXPECT_EQ(sizeof(data_) * 3 - 1, encoded.size());
-  dec_res_ = hex_decode(std::span<char>(decoded_), encoded);
-  ASSERT_EQ(0U, dec_res_);
+  std::string encoded = HexEncodeWithDelimiter(data_, ':');
+  EXPECT_THAT(encoded, SizeIs(3 * std::size(data_) - 1));
+  EXPECT_THAT(HexDecode(decoded_, encoded), IsEmpty());
 }
 
 // Test that we handle a zero-length buffer with no delimiter.
 TEST_F(HexEncodeTest, TestZeroLengthNoDelimiter) {
-  std::string encoded = hex_encode("");
-  EXPECT_TRUE(encoded.empty());
-  dec_res_ = hex_decode(std::span<char>(decoded_), encoded);
-  ASSERT_EQ(0U, dec_res_);
+  std::string encoded = HexEncode({});
+  EXPECT_THAT(encoded, IsEmpty());
+  EXPECT_THAT(HexDecode(decoded_, encoded), IsEmpty());
 }
 
 // Test that we handle a zero-length buffer with a delimiter.
 TEST_F(HexEncodeTest, TestZeroLengthWithDelimiter) {
-  std::string encoded = hex_encode_with_delimiter("", ':');
-  EXPECT_TRUE(encoded.empty());
-  dec_res_ = hex_decode_with_delimiter(std::span<char>(decoded_), encoded, ':');
-  ASSERT_EQ(0U, dec_res_);
+  std::string encoded = HexEncodeWithDelimiter({}, ':');
+  EXPECT_THAT(encoded, IsEmpty());
+  EXPECT_THAT(HexDecodeWithDelimiter(decoded_, encoded, ':'), IsEmpty());
 }
 
 // Test that decoding into a too-small output buffer fails.
 TEST_F(HexEncodeTest, TestDecodeTooShort) {
-  dec_res_ =
-      hex_decode_with_delimiter(std::span<char>(decoded_, 4), "0123456789", 0);
-  ASSERT_EQ(0U, dec_res_);
-  ASSERT_EQ(0x7f, decoded_[4]);
+  EXPECT_THAT(HexDecode(std::span(decoded_).first(4), "0123456789"), IsEmpty());
+  ASSERT_EQ(decoded_[4], 0x7f);
 }
 
 // Test that decoding non-hex data fails.
 TEST_F(HexEncodeTest, TestDecodeBogusData) {
-  dec_res_ = hex_decode_with_delimiter(std::span<char>(decoded_), "axyz", 0);
-  ASSERT_EQ(0U, dec_res_);
+  EXPECT_THAT(HexDecode(decoded_, "axyz"), IsEmpty());
 }
 
 // Test that decoding an odd number of hex characters fails.
 TEST_F(HexEncodeTest, TestDecodeOddHexDigits) {
-  dec_res_ = hex_decode_with_delimiter(std::span<char>(decoded_), "012", 0);
-  ASSERT_EQ(0U, dec_res_);
+  EXPECT_THAT(HexDecode(decoded_, "012"), IsEmpty());
 }
 
 // Test that decoding a string with too many delimiters fails.
 TEST_F(HexEncodeTest, TestDecodeWithDelimiterTooManyDelimiters) {
-  dec_res_ = hex_decode_with_delimiter(std::span<char>(decoded_, 4),
-                                       "01::23::45::67", ':');
-  ASSERT_EQ(0U, dec_res_);
+  EXPECT_THAT(HexDecodeWithDelimiter(std::span(decoded_).first(4),
+                                     "01::23::45::67", ':'),
+              IsEmpty());
 }
 
 // Test that decoding a string with a leading delimiter fails.
 TEST_F(HexEncodeTest, TestDecodeWithDelimiterLeadingDelimiter) {
-  dec_res_ = hex_decode_with_delimiter(std::span<char>(decoded_, 4),
-                                       ":01:23:45:67", ':');
-  ASSERT_EQ(0U, dec_res_);
+  EXPECT_THAT(
+      HexDecodeWithDelimiter(std::span(decoded_).first(4), ":01:23:45:67", ':'),
+      IsEmpty());
 }
 
 // Test that decoding a string with a trailing delimiter fails.
 TEST_F(HexEncodeTest, TestDecodeWithDelimiterTrailingDelimiter) {
-  dec_res_ = hex_decode_with_delimiter(std::span<char>(decoded_, 4),
-                                       "01:23:45:67:", ':');
-  ASSERT_EQ(0U, dec_res_);
+  EXPECT_THAT(
+      HexDecodeWithDelimiter(std::span(decoded_).first(4), "01:23:45:67:", ':'),
+      IsEmpty());
 }
 
 // Tests counting substrings.

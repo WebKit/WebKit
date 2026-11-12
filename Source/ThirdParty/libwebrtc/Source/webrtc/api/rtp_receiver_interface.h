@@ -152,7 +152,8 @@ class RTC_EXPORT RtpReceiverInterface : public RefCountInterface,
   // TODO: issues.webrtc.org/479862368 - make pure virtual when all
   // implementations are updated
   virtual RTCErrorOr<scoped_refptr<SframeDecryptorInterface>>
-  CreateSframeDecryptorOrError(SframeCipherSuite cipher_suite) {
+  CreateSframeDecryptorOrError(SframeCipherSuite cipher_suite,
+                               SframeDecryptErrorCallback error_callback) {
     RTC_DCHECK_NOTREACHED();
     return RTCError();
   }

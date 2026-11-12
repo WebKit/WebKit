@@ -158,6 +158,32 @@ void av1_nonrd_pick_inter_mode_sb(struct AV1_COMP *cpi,
                                   struct RD_STATS *rd_cost, BLOCK_SIZE bsize,
                                   PICK_MODE_CONTEXT *ctx);
 
+/*!\brief Sets the mode of a SEG_LVL_SKIP block for non-RD, without a search.
+ *
+ * \ingroup nonrd_mode_search
+ * Used for blocks in a skip segment, set by the active map or by an ROI map.
+ * The block is coded as inter GLOBALMV from the segment reference, or from
+ * LAST_FRAME if the segment has none, with no residual. The decoder infers
+ * the mode, the reference and skip. The motion mode is still coded, so its
+ * inputs are derived from the neighbors the same way the decoder does it.
+ *
+ * \param[in]    cpi            Top-level encoder structure
+ * \param[in]    x              Pointer to structure holding all the data for
+ *                              the current macroblock
+ * \param[in]    rd_cost        Struct to keep track of the RD information
+ * \param[in]    bsize          Current block size
+ * \param[in]    ctx            Structure to hold snapshot of coding context
+ *                              during the mode picking process
+ *
+ * \remark Nothing is returned. The MB_MODE_INFO struct inside x and ctx are
+ * set to the mode above, and rd_cost is set to zero rate and distortion.
+ */
+void av1_nonrd_pick_inter_mode_sb_seg_skip(const struct AV1_COMP *cpi,
+                                           struct macroblock *x,
+                                           struct RD_STATS *rd_cost,
+                                           BLOCK_SIZE bsize,
+                                           PICK_MODE_CONTEXT *ctx);
+
 void av1_rd_pick_inter_mode_sb_seg_skip(
     const struct AV1_COMP *cpi, struct TileDataEnc *tile_data,
     struct macroblock *x, int mi_row, int mi_col, struct RD_STATS *rd_cost,

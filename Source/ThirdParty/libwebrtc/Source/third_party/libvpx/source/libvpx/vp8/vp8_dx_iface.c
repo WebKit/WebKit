@@ -343,6 +343,10 @@ static vpx_codec_err_t vp8_decode(vpx_codec_alg_priv_t *ctx,
     VP8_COMMON *const pc = &pbi->common;
     if (setjmp(pbi->common.error.jmp)) {
       pbi->common.error.setjmp = 0;
+      /* on failure clear the cached resolution to ensure a full
+       * reallocation is attempted on resync. */
+      ctx->si.w = 0;
+      ctx->si.h = 0;
       vp8_decoder_remove_threads(pbi);
       vpx_clear_system_state();
       ctx->fragments.count = 0;
@@ -607,6 +611,12 @@ static vpx_codec_err_t vp8_set_reference(vpx_codec_alg_priv_t *ctx,
     vpx_ref_frame_t *frame = (vpx_ref_frame_t *)data;
     YV12_BUFFER_CONFIG sd;
 
+    if (frame->img.planes[VPX_PLANE_Y] == NULL ||
+        frame->img.planes[VPX_PLANE_U] == NULL ||
+        frame->img.planes[VPX_PLANE_V] == NULL) {
+      return VPX_CODEC_INVALID_PARAM;
+    }
+
     image2yuvconfig(&frame->img, &sd);
 
     if (ctx->yv12_frame_buffers.pbi[0] == NULL) return VPX_CODEC_CORRUPT_FRAME;
@@ -625,6 +635,12 @@ static vpx_codec_err_t vp8_get_reference(vpx_codec_alg_priv_t *ctx,
   if (data) {
     vpx_ref_frame_t *frame = (vpx_ref_frame_t *)data;
     YV12_BUFFER_CONFIG sd;
+
+    if (frame->img.planes[VPX_PLANE_Y] == NULL ||
+        frame->img.planes[VPX_PLANE_U] == NULL ||
+        frame->img.planes[VPX_PLANE_V] == NULL) {
+      return VPX_CODEC_INVALID_PARAM;
+    }
 
     image2yuvconfig(&frame->img, &sd);
 

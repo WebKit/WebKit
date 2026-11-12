@@ -120,59 +120,190 @@ if (rtc_include_tests && !build_with_chromium) {
     }
   }
 
-  rtc_test("common_video_unittests") {
-    testonly = true
-
-    sources = [
-      "bitrate_adjuster_unittest.cc",
-      "frame_rate_estimator_unittest.cc",
-      "framerate_controller_unittest.cc",
-      "h264/h264_bitstream_parser_unittest.cc",
-      "h264/h264_common_unittest.cc",
-      "h264/pps_parser_unittest.cc",
-      "h264/sps_parser_unittest.cc",
-      "h264/sps_vui_rewriter_unittest.cc",
-      "libyuv/libyuv_unittest.cc",
-      "video_frame_buffer_pool_unittest.cc",
-      "video_frame_unittest.cc",
-    ]
-
-    if (rtc_use_h265) {
-      sources += [
-        "h265/h265_bitstream_parser_unittest.cc",
-        "h265/h265_pps_parser_unittest.cc",
-        "h265/h265_sps_parser_unittest.cc",
-        "h265/h265_vps_parser_unittest.cc",
-      ]
-    }
-
+  rtc_cc_test("bitrate_adjuster_unittest") {
+    sources = [ "bitrate_adjuster_unittest.cc" ]
     deps = [
       ":common_video",
-      "../api:scoped_refptr",
       "../api/units:time_delta",
       "../api/units:timestamp",
-      "../api/video:video_frame",
-      "../api/video:video_frame_i010",
-      "../api/video:video_rtp_headers",
+      "../system_wrappers",
+      "../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("frame_rate_estimator_unittest") {
+    sources = [ "frame_rate_estimator_unittest.cc" ]
+    deps = [
+      ":common_video",
+      "../api/units:time_delta",
+      "../api/units:timestamp",
+      "../system_wrappers",
+      "../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("framerate_controller_unittest") {
+    sources = [ "framerate_controller_unittest.cc" ]
+    deps = [
+      ":common_video",
+      "../rtc_base:timeutils",
+      "../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("h264_bitstream_parser_unittest") {
+    sources = [ "h264/h264_bitstream_parser_unittest.cc" ]
+    deps = [
+      ":common_video",
+      "../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("h264_common_unittest") {
+    sources = [ "h264/h264_common_unittest.cc" ]
+    deps = [
+      ":common_video",
+      "../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("pps_parser_unittest") {
+    sources = [ "h264/pps_parser_unittest.cc" ]
+    deps = [
+      ":common_video",
       "../rtc_base:bit_buffer",
       "../rtc_base:buffer",
       "../rtc_base:checks",
-      "../rtc_base:logging",
-      "../rtc_base:rtc_base_tests_utils",
-      "../rtc_base:timeutils",
-      "../system_wrappers",
+      "../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("sps_parser_unittest") {
+    sources = [ "h264/sps_parser_unittest.cc" ]
+    deps = [
+      ":common_video",
+      "../rtc_base:bit_buffer",
+      "../rtc_base:buffer",
+      "../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("sps_vui_rewriter_unittest") {
+    sources = [ "h264/sps_vui_rewriter_unittest.cc" ]
+    deps = [
+      ":common_video",
+      "../api/video:video_rtp_headers",
+      "../rtc_base:bit_buffer",
+      "../rtc_base:buffer",
+      "../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("webrtc_libyuv_unittest") {
+    sources = [ "libyuv/webrtc_libyuv_unittest.cc" ]
+    deps = [
+      ":common_video",
+      "../api:scoped_refptr",
+      "../api/video:video_frame",
+      "../api/video:video_frame_i010",
+      "../api/video:video_rtp_headers",
       "../test:fileutils",
       "../test:frame_utils",
       "../test:test_support",
-      "../test:video_test_common",
-      "//testing/gtest",
       "//third_party/libyuv",
     ]
-
     data = common_video_resources
-
     if (is_ios) {
       deps += [ ":common_video_unittests_bundle_data" ]
+    }
+  }
+
+  rtc_cc_test("video_frame_buffer_pool_unittest") {
+    sources = [ "video_frame_buffer_pool_unittest.cc" ]
+    deps = [
+      ":common_video",
+      "../api:scoped_refptr",
+      "../api/video:video_frame",
+      "../api/video:video_frame_i010",
+      "../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("video_frame_unittest") {
+    sources = [ "video_frame_unittest.cc" ]
+    deps = [
+      ":common_video",
+      "../api:scoped_refptr",
+      "../api/video:video_frame",
+      "../api/video:video_frame_i010",
+      "../api/video:video_rtp_headers",
+      "../test:frame_utils",
+      "../test:test_support",
+      "../test:video_test_common",
+    ]
+  }
+
+  if (rtc_use_h265) {
+    rtc_cc_test("h265_bitstream_parser_unittest") {
+      sources = [ "h265/h265_bitstream_parser_unittest.cc" ]
+      deps = [
+        ":common_video",
+        "../test:test_support",
+      ]
+    }
+
+    rtc_cc_test("h265_pps_parser_unittest") {
+      sources = [ "h265/h265_pps_parser_unittest.cc" ]
+      deps = [
+        ":common_video",
+        "../rtc_base:bit_buffer",
+        "../rtc_base:buffer",
+        "../test:test_support",
+      ]
+    }
+
+    rtc_cc_test("h265_sps_parser_unittest") {
+      sources = [ "h265/h265_sps_parser_unittest.cc" ]
+      deps = [
+        ":common_video",
+        "../rtc_base:bit_buffer",
+        "../rtc_base:buffer",
+        "../test:test_support",
+      ]
+    }
+
+    rtc_cc_test("h265_vps_parser_unittest") {
+      sources = [ "h265/h265_vps_parser_unittest.cc" ]
+      deps = [
+        ":common_video",
+        "../test:test_support",
+      ]
+    }
+  }
+
+  rtc_test_suite("common_video_unittests") {
+    testonly = true
+    tests = [
+      ":bitrate_adjuster_unittest",
+      ":frame_rate_estimator_unittest",
+      ":framerate_controller_unittest",
+      ":h264_bitstream_parser_unittest",
+      ":h264_common_unittest",
+      ":pps_parser_unittest",
+      ":sps_parser_unittest",
+      ":sps_vui_rewriter_unittest",
+      ":video_frame_buffer_pool_unittest",
+      ":video_frame_unittest",
+      ":webrtc_libyuv_unittest",
+    ]
+
+    if (rtc_use_h265) {
+      tests += [
+        ":h265_bitstream_parser_unittest",
+        ":h265_pps_parser_unittest",
+        ":h265_sps_parser_unittest",
+        ":h265_vps_parser_unittest",
+      ]
     }
   }
 }

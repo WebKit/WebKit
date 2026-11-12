@@ -26,7 +26,8 @@ TEST_F(TagsParserTest, DefaultValues) {
   ParseAndVerify();
 
   SetReaderData({
-      0x73, 0x73,  // ID = 0x7373 (Tag).
+      0x73,
+      0x73,  // ID = 0x7373 (Tag).
       0x80,  // Size = 0.
   });
   ParseAndVerify();

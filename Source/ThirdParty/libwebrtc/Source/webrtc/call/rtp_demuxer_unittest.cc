@@ -1420,6 +1420,23 @@ TEST_F(RtpDemuxerTest, RemoveAllSinksClearsMatchAnySink) {
   EXPECT_FALSE(demuxer_.OnRtpPacket(*packet));
 }
 
+TEST_F(RtpDemuxerTest, RemoveSinkRemovesMatchAnySink) {
+  MockRtpPacketSink match_any_sink;
+  auto match_any_criteria = RtpDemuxerCriteria::MatchAny();
+  ASSERT_TRUE(AddSink(match_any_criteria, &match_any_sink));
+
+  EXPECT_TRUE(RemoveSink(&match_any_sink));
+  EXPECT_TRUE(demuxer_.IsEmpty());
+
+  auto packet = CreatePacketWithSsrc(123);
+  EXPECT_CALL(match_any_sink, OnRtpPacket(_)).Times(0);
+  EXPECT_FALSE(demuxer_.OnRtpPacket(*packet));
+
+  // Another sink can be added once the match-any sink is gone.
+  MockRtpPacketSink specific_sink;
+  EXPECT_TRUE(AddSinkOnlySsrc(123, &specific_sink));
+}
+
 TEST_F(RtpDemuxerTest, RemoveAllSinksClearsLearnedBindings) {
   const std::string mid = "v";
   const std::string rsid = "1";

@@ -15,6 +15,7 @@
 #include <memory>
 #include <optional>
 #include <span>
+#include <string>
 #include <utility>
 #include <variant>
 #include <vector>
@@ -45,6 +46,7 @@
 #include "call/rtp_transport_config.h"
 #include "call/rtp_transport_controller_send.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "test/create_test_environment.h"
 #include "test/create_test_field_trials.h"
@@ -66,6 +68,8 @@ using ::testing::SaveArg;
 
 constexpr int kRtcpIntervalMs = 1000;
 constexpr int kSsrc = 333;
+// Only sent if the MID header extension is registered.
+constexpr char kMid[] = "audio";
 constexpr int kPayloadType = 1;
 constexpr int kSampleRateHz = 48000;
 constexpr int kRtpRateHz = 48000;
@@ -91,7 +95,8 @@ class ChannelSendTest : public ::testing::Test {
                                .worker_thread = TaskQueueBase::Current()}) {
     channel_ = voe::CreateChannelSend(env_, &transport_, nullptr, nullptr,
                                       crypto_options_, false, kRtcpIntervalMs,
-                                      kSsrc, nullptr, &transport_controller_);
+                                      kSsrc, /*rtp_state=*/std::nullopt, kMid,
+                                      nullptr, &transport_controller_);
     encoder_factory_ = CreateBuiltinAudioEncoderFactory();
     SdpAudioFormat opus = SdpAudioFormat("opus", kRtpRateHz, 2);
     std::unique_ptr<AudioEncoder> encoder =
@@ -135,6 +140,20 @@ class ChannelSendTest : public ::testing::Test {
   std::unique_ptr<ChannelSendInterface> channel_;
   scoped_refptr<AudioEncoderFactory> encoder_factory_;
 };
+
+TEST_F(ChannelSendTest, SframeRequirementUpdateDropsAudioFrames) {
+  channel_->SetSframeOptions({.required = false});
+  channel_->StartSend();
+  EXPECT_CALL(transport_, SendRtp).Times(1);
+  ProcessNextFrame();
+  ProcessNextFrame();
+
+  channel_->SetSframeOptions({.required = true});
+  EXPECT_CALL(transport_, SendRtp).Times(0);
+  ProcessNextFrame();
+  ProcessNextFrame();
+  channel_->StopSend();
+}
 
 TEST_F(ChannelSendTest, StopSendShouldResetEncoder) {
   channel_->StartSend();
@@ -435,6 +454,31 @@ TEST_F(ChannelSendTest, ConfiguredCsrcsAreIncludedInRtpPackets) {
   ProcessNextFrame();
 
   EXPECT_EQ(csrcs, expected_csrcs);
+}
+
+// Tests that the MID that the channel was created with is sent once the MID
+// header extension has been registered.
+TEST_F(ChannelSendTest, SendsMidPassedAtCreation) {
+  channel_->GetRtpRtcp()->RegisterRtpHeaderExtension(RtpMid::Uri(),
+                                                     RtpHeaderExtensionId(1));
+  RtpPacketReceived::ExtensionManager extension_manager;
+  extension_manager.RegisterByType(RtpHeaderExtensionId(1), kRtpExtensionMid);
+
+  std::optional<std::string> sent_mid;
+  auto send_rtp = [&](std::span<const uint8_t> data,
+                      const PacketOptions& /* options */) {
+    RtpPacketReceived packet(&extension_manager);
+    packet.Parse(data);
+    sent_mid = packet.GetExtension<RtpMid>();
+    return true;
+  };
+  EXPECT_CALL(transport_, SendRtp).WillRepeatedly(send_rtp);
+
+  channel_->StartSend();
+  ProcessNextFrame();
+  ProcessNextFrame();
+
+  EXPECT_EQ(sent_mid, kMid);
 }
 
 // Creates a frame with the given CSRCs where other values are copied from the

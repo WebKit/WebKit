@@ -31,6 +31,7 @@
 #include "api/scoped_refptr.h"
 #include "api/units/data_rate.h"
 #include "api/units/time_delta.h"
+#include "call/sframe_options.h"
 #include "modules/rtp_rtcp/include/report_block_data.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtp_rtcp_interface.h"
@@ -111,6 +112,10 @@ class ChannelSendInterface {
   virtual void SetFrameEncryptor(
       scoped_refptr<FrameEncryptorInterface> frame_encryptor) = 0;
 
+  // Sets the Sframe end-to-end encryption options. While encryption is
+  // required but no Sframe encryptor is set up, audio frames are dropped.
+  virtual void SetSframeOptions(const SframeSendOptions& options) = 0;
+
   // Sets a frame transformer between encoder and packetizer, to transform
   // encoded frames before sending them out the network.
   virtual void SetEncoderToPacketizerFrameTransformer(
@@ -123,6 +128,9 @@ class ChannelSendInterface {
   virtual void RegisterPacketOverhead(int packet_byte_overhead) = 0;
 };
 
+// `rtp_state` is the initial state of the RTP stream, e.g. when a stream with
+// the same SSRC is recreated. `mid`, if not empty, is sent in the MID RTP
+// header extension once that is registered.
 std::unique_ptr<ChannelSendInterface> CreateChannelSend(
     const Environment& env,
     Transport* rtp_transport,
@@ -132,6 +140,8 @@ std::unique_ptr<ChannelSendInterface> CreateChannelSend(
     bool extmap_allow_mixed,
     int rtcp_report_interval_ms,
     uint32_t ssrc,
+    const std::optional<RtpState>& rtp_state,
+    absl::string_view mid,
     scoped_refptr<FrameTransformerInterface> frame_transformer,
     RtpTransportControllerSendInterface* transport_controller);
 

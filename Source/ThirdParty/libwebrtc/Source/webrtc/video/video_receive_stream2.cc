@@ -574,22 +574,32 @@ VideoReceiveStream2::GetReceiveCodecConfig() const {
   return receive_codecs;
 }
 
-void VideoReceiveStream2::RegisterCodecsOnReceiver(
+bool VideoReceiveStream2::RegisterCodecsOnReceiver(
     const std::vector<Decoder>& old_decoders,
     const std::vector<Decoder>& new_decoders) {
-  // Deregister external decoders from the previous configuration that are
-  // removed or updated in the new configuration.
+  // Deregister decoders from the previous configuration that are removed or
+  // updated in the new configuration. Unchanged decoders are left as is, so
+  // that a decoder that is in use keeps running. Releasing and configuring it
+  // again would require a keyframe and isn't supported by all implementations
+  // (e.g. hardware decoders may fall back to software).
+  bool removed_decoder_instance = false;
   for (const Decoder& old_decoder : old_decoders) {
-    if (!absl::c_linear_search(new_decoders, old_decoder)) {
+    if (absl::c_linear_search(new_decoders, old_decoder)) {
+      continue;
+    }
+    if (video_receiver_.IsExternalDecoderRegistered(old_decoder.payload_type)) {
       video_receiver_.RegisterExternalDecoder(nullptr,
                                               old_decoder.payload_type);
+      removed_decoder_instance = true;
     }
+    video_receiver_.DeregisterReceiveCodec(old_decoder.payload_type);
   }
 
-  video_receiver_.DeregisterReceiveCodecs();
-
-  // Register settings for the new decoder configuration.
+  // Register settings for added or updated decoders.
   for (const Decoder& decoder : new_decoders) {
+    if (absl::c_linear_search(old_decoders, decoder)) {
+      continue;
+    }
     VideoDecoder::Settings settings;
     settings.set_codec_type(
         PayloadStringToCodecType(decoder.video_format.name));
@@ -599,6 +609,8 @@ void VideoReceiveStream2::RegisterCodecsOnReceiver(
 
     video_receiver_.RegisterReceiveCodec(decoder.payload_type, settings);
   }
+
+  return removed_decoder_instance;
 }
 
 void VideoReceiveStream2::ConfigureCodecs() {
@@ -628,19 +640,26 @@ void VideoReceiveStream2::SetDecoders(std::vector<Decoder> decoders) {
   // if Stop() is called, it synchronously flushes decode_queue_ before setting
   // decoder_running_ to false, avoiding a clash with ConfigureCodecs().
   decode_queue_->PostTask([this, old_decoders = std::move(old_decoders),
-                           new_decoders = config_.decoders]() mutable {
+                           new_decoders = config_.decoders,
+                           task_safety_flag = task_safety_.flag()]() mutable {
     RTC_DCHECK_RUN_ON(&decode_sequence_checker_);
-    RegisterCodecsOnReceiver(old_decoders, new_decoders);
+    const bool removed_decoder_instance =
+        RegisterCodecsOnReceiver(old_decoders, new_decoders);
     active_decoders_ = std::move(new_decoders);
+    if (!removed_decoder_instance) {
+      return;
+    }
+    // The decoder that was in use has been removed or replaced. Request a
+    // keyframe right away since delta frames currently in the jitter buffer or
+    // arriving before the keyframe will fail to decode due to missing state.
+    call_->worker_thread()->PostTask(
+        SafeTask(std::move(task_safety_flag), [this] {
+          RTC_DCHECK_RUN_ON(&worker_sequence_checker_);
+          RequestKeyFrame(env_.clock().CurrentTime());
+        }));
   });
 
   rtp_video_stream_receiver_.SetReceiveCodecs(GetReceiveCodecConfig());
-
-  // Request a keyframe immediately because changing the decoder configuration
-  // resets the decoder database and underlying decoders. Delta frames currently
-  // in the jitter buffer or arriving before the keyframe will fail to decode
-  // due to missing state.
-  RequestKeyFrame(env_.clock().CurrentTime());
 }
 
 void VideoReceiveStream2::SetRawPayloadTypes(std::set<int> raw_payload_types) {
@@ -895,8 +914,10 @@ void VideoReceiveStream2::RequestKeyFrame(Timestamp now) {
 void VideoReceiveStream2::OnCompleteFrame(std::unique_ptr<EncodedFrame> frame) {
   RTC_DCHECK_RUN_ON(&worker_sequence_checker_);
 
-  if (std::optional<VideoPlayoutDelay> playout_delay =
-          frame->EncodedImage().PlayoutDelay()) {
+  std::optional<VideoPlayoutDelay> playout_delay =
+      frame->EncodedImage().PlayoutDelay();
+  stats_proxy_.OnPlayoutDelay(playout_delay);
+  if (playout_delay) {
     frame_minimum_playout_delay_ = playout_delay->min();
     frame_maximum_playout_delay_ = playout_delay->max();
     UpdatePlayoutDelays();

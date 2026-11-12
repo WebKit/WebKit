@@ -482,13 +482,14 @@ static inline bool tpl_alloc_temp_buffers(TplBuffers *tpl_tmp_buffers,
  *
  *\ingroup tpl_modelling
  *
- * \param[in]    cpi           Top - level encoder instance structure
- * \param[in]    gop_eval      Flag if it is in the GOP length decision stage
- * \param[in]    frame_params  Per frame encoding parameters
+ * \param[in]    cpi             Top - level encoder instance structure
+ * \param[in]    approx_gop_eval Flag to indicate TPL is invoked for approximate
+ *                               GOP size evaluation
+ * \param[in]    frame_params    Per frame encoding parameters
  *
  * \return Indicates whether or not we should use a longer GOP length.
  */
-int av1_tpl_setup_stats(struct AV1_COMP *cpi, int gop_eval,
+int av1_tpl_setup_stats(struct AV1_COMP *cpi, int approx_gop_eval,
                         const struct EncodeFrameParams *const frame_params);
 
 /*!\cond */

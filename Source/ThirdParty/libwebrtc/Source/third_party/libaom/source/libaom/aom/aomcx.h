@@ -1037,6 +1037,10 @@ enum aome_enc_control_id {
    * - 0 = disable
    * - 1 = enable (default)
    *
+   * \note Global motion can only be enabled before the first frame is passed
+   * to aom_codec_encode(). After that, it can still be disabled, but a request
+   * to enable it is ignored.
+   *
    * \note Excluded from CONFIG_REALTIME_ONLY build.
    */
   AV1E_SET_ENABLE_GLOBAL_MOTION = 95,
@@ -1887,21 +1891,28 @@ typedef struct aom_svc_params {
 
 /*!\brief Parameters for setting ref frame config */
 typedef struct aom_svc_ref_frame_config {
-  // Three arrays need to be set: reference[], ref_id[], refresh[].
+  // Three arrays need to be set: reference[], ref_idx[], refresh[].
   // reference[i]: is a boolean flag to indicate which of the 7 possible
   // references are used for prediction. Values are 0 (not used as reference)
   // or 1 (use as reference). The index 0 - 6 refers to the references:
   // last(0), last2(1), last3(2), golden(3), bwdref(4), altref2(5), altref(6).
-  // ref_idx[i]: maps a reference to one of the 8 buffers slots, values are
-  // 0 - 7. The ref_idx for a unused reference (reference[i] = 1, and not used
-  // for refresh, see below) can be set to the ref_idx of the first reference
-  // used (usually LAST).
-  // refresh[i] is a boolean flag to indicate if a buffer is updated/refreshed
-  // with the current encoded frame. Values are 0 (no refresh) or 1 (refresh).
-  // The refresh is done internally by looking at the ref_idx[j], for j = 0 - 6,
-  // so to refresh a buffer slot (i) a reference must be mapped to that slot
-  // (i = ref_idx[j]).
-  // Examples for usage (for RTC encoding) are in: examples/svc_encoder_rtc.c.
+  // ref_idx[i]: maps a reference to one of the 8 buffer slots, values are
+  // 0 - 7. Inter frames signal all seven references in the bitstream,
+  // including the unused ones (reference[i] = 0):
+  // - With order hints disabled (see AV1E_SET_ENABLE_ORDER_HINT), the encoder
+  //   points each unused reference to the slot of the first used reference
+  //   instead, so their ref_idx[i] may point to any slot, even one holding a
+  //   frame that the current frame cannot reference, e.g. due to its size.
+  // - With order hints enabled, unused references also affect the decoding
+  //   process (e.g. temporal motion vector projection) and are signaled as
+  //   configured, so their ref_idx[i] must point to slots holding valid
+  //   references for the current frame, e.g. the slot of the first used
+  //   reference (usually LAST).
+  // refresh[i]: is a boolean flag to indicate if buffer slot i (0 - 7) is
+  // updated/refreshed with the current encoded frame. Values are 0 (no refresh)
+  // or 1 (refresh). A slot can be refreshed whether or not any ref_idx[] entry
+  // points to it. Key frames refresh all slots.
+  // Examples for usage (for RTC encoding) are in: examples/svc_encoder_rtc.cc.
   int reference[7]; /**< Reference flag for each of the 7 references. */
   /*! Buffer slot index (0..7) for each of 7 references indexed above. */
   int ref_idx[7];

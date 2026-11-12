@@ -16,6 +16,13 @@ namespace libyuv {
 extern "C" {
 #endif
 
+// Note: every register written by an inline asm block (vector, general
+// purpose, mask/predicate, "cc" for flags and "memory" for stores) must be
+// listed in its clobber list, even when the ABI treats it as caller-saved.
+// With LTO/LTCG the compiler may keep values live in any register across the
+// asm statement, and other OS ABIs (e.g. Windows) differ in which registers
+// are callee-saved. List "memory" first, then "cc", then registers.
+
 // This module is for GCC x86 and x64.
 #if !defined(LIBYUV_DISABLE_X86) &&               \
     (defined(__x86_64__) || defined(__i386__)) && \
@@ -290,6 +297,158 @@ void ScaleRowDown2Box_AVX2(const uint8_t* src_ptr,
       : "memory", "cc", "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5");
 }
 #endif  // HAS_SCALEROWDOWN2_AVX2
+
+#ifdef HAS_SCALEROWDOWN2_AVX512BW
+void ScaleRowDown2_AVX512BW(const uint8_t* src_ptr,
+                            ptrdiff_t src_stride,
+                            uint8_t* dst_ptr,
+                            int dst_width) {
+  (void)src_stride;
+  uintptr_t temp;
+  asm volatile(
+      "sub         $0x20,%2                      \n"
+      "jl          2f                            \n"
+
+      LABELALIGN
+      "1:          \n"
+      "vmovdqu8    (%0),%%zmm0                   \n"
+      "lea         0x40(%0),%0                   \n"
+      "vpsrlw      $0x8,%%zmm0,%%zmm0            \n"
+      "vpmovwb     %%zmm0,(%1)                   \n"
+      "lea         0x20(%1),%1                   \n"
+      "sub         $0x20,%2                      \n"
+      "jge         1b                            \n"
+
+      "2:          \n"
+      "add         $0x20,%2                      \n"
+      "jle         99f                           \n"
+      "mov         $-1,%k3                       \n"
+      "bzhi        %k2,%k3,%k3                   \n"
+      "kmovd       %k3,%%k1                      \n"
+      "vmovdqu16   (%0),%%zmm0%{%%k1%}%{z%}      \n"
+      "vpsrlw      $0x8,%%zmm0,%%zmm0            \n"
+      "vpmovwb     %%zmm0,(%1)%{%%k1%}           \n"
+
+      "99:         \n"
+      "vzeroupper  \n"
+      : "+r"(src_ptr),    // %0
+        "+r"(dst_ptr),    // %1
+        "+r"(dst_width),  // %2
+        "=&r"(temp)       // %3
+      :
+      : "memory", "cc", "xmm0", "k1");
+}
+
+void ScaleRowDown2Linear_AVX512BW(const uint8_t* src_ptr,
+                                  ptrdiff_t src_stride,
+                                  uint8_t* dst_ptr,
+                                  int dst_width) {
+  (void)src_stride;
+  uintptr_t temp;
+  asm volatile(
+      "vpternlogd  $0xff,%%zmm4,%%zmm4,%%zmm4    \n"
+      "vpabsb      %%zmm4,%%zmm4                 \n"
+      "vpxord      %%zmm5,%%zmm5,%%zmm5          \n"
+      "sub         $0x20,%2                      \n"
+      "jl          2f                            \n"
+
+      LABELALIGN
+      "1:          \n"
+      "vmovdqu8    (%0),%%zmm0                   \n"
+      "lea         0x40(%0),%0                   \n"
+      "vpmaddubsw  %%zmm4,%%zmm0,%%zmm0          \n"
+      "vpavgw      %%zmm5,%%zmm0,%%zmm0          \n"
+      "vpmovwb     %%zmm0,(%1)                   \n"
+      "lea         0x20(%1),%1                   \n"
+      "sub         $0x20,%2                      \n"
+      "jge         1b                            \n"
+
+      "2:          \n"
+      "add         $0x20,%2                      \n"
+      "jle         99f                           \n"
+      "mov         $-1,%k3                       \n"
+      "bzhi        %k2,%k3,%k3                   \n"
+      "kmovd       %k3,%%k1                      \n"
+      "vmovdqu16   (%0),%%zmm0%{%%k1%}%{z%}      \n"
+      "vpmaddubsw  %%zmm4,%%zmm0,%%zmm0          \n"
+      "vpavgw      %%zmm5,%%zmm0,%%zmm0          \n"
+      "vpmovwb     %%zmm0,(%1)%{%%k1%}           \n"
+
+      "99:         \n"
+      "vzeroupper  \n"
+      : "+r"(src_ptr),    // %0
+        "+r"(dst_ptr),    // %1
+        "+r"(dst_width),  // %2
+        "=&r"(temp)       // %3
+      :
+      : "memory", "cc", "xmm0", "xmm4", "xmm5", "k1");
+}
+
+void ScaleRowDown2Box_AVX512BW(const uint8_t* src_ptr,
+                               ptrdiff_t src_stride,
+                               uint8_t* dst_ptr,
+                               int dst_width) {
+  uintptr_t temp;
+  asm volatile(
+      "vpternlogd  $0xff,%%zmm4,%%zmm4,%%zmm4    \n"
+      "vpabsb      %%zmm4,%%zmm4                 \n"
+      "vpxord      %%zmm5,%%zmm5,%%zmm5          \n"
+      "sub         $0x20,%2                      \n"
+      "jl          2f                            \n"
+
+      LABELALIGN
+      "1:          \n"
+      "vmovdqu8    (%0),%%zmm0                   \n"
+      "vmovdqu8    0x00(%0,%4,1),%%zmm2          \n"
+      "lea         0x40(%0),%0                   \n"
+      "vpmaddubsw  %%zmm4,%%zmm0,%%zmm0          \n"
+      "vpmaddubsw  %%zmm4,%%zmm2,%%zmm2          \n"
+      "vpaddw      %%zmm2,%%zmm0,%%zmm0          \n"
+      "vpsrlw      $0x1,%%zmm0,%%zmm0            \n"
+      "vpavgw      %%zmm5,%%zmm0,%%zmm0          \n"
+      "vpmovwb     %%zmm0,(%1)                   \n"
+      "lea         0x20(%1),%1                   \n"
+      "sub         $0x20,%2                      \n"
+      "jge         1b                            \n"
+
+      "2:          \n"
+      "add         $0x20,%2                      \n"
+      "jle         99f                           \n"
+      "mov         $-1,%k3                       \n"
+      "bzhi        %k2,%k3,%k3                   \n"
+      "kmovd       %k3,%%k1                      \n"
+      "vmovdqu16   (%0),%%zmm0%{%%k1%}%{z%}      \n"
+      "vmovdqu16   0x00(%0,%4,1),%%zmm2%{%%k1%}%{z%}\n"
+      "vpmaddubsw  %%zmm4,%%zmm0,%%zmm0          \n"
+      "vpmaddubsw  %%zmm4,%%zmm2,%%zmm2          \n"
+      "vpaddw      %%zmm2,%%zmm0,%%zmm0          \n"
+      "vpsrlw      $0x1,%%zmm0,%%zmm0            \n"
+      "vpavgw      %%zmm5,%%zmm0,%%zmm0          \n"
+      "vpmovwb     %%zmm0,(%1)%{%%k1%}           \n"
+
+      "99:         \n"
+      "vzeroupper  \n"
+      : "+r"(src_ptr),    // %0
+        "+r"(dst_ptr),    // %1
+        "+r"(dst_width),  // %2
+        "=&r"(temp)       // %3
+      : "r"(src_stride)   // %4
+      : "memory", "cc", "xmm0", "xmm2", "xmm4", "xmm5", "k1");
+}
+
+void ScaleRowDown2Box_Odd_AVX512BW(const uint8_t* src_ptr,
+                                   ptrdiff_t src_stride,
+                                   uint8_t* dst_ptr,
+                                   int dst_width) {
+  dst_width -= 1;
+  if (dst_width > 0) {
+    ScaleRowDown2Box_AVX512BW(src_ptr, src_stride, dst_ptr, dst_width);
+    src_ptr += dst_width * 2;
+    dst_ptr += dst_width;
+  }
+  dst_ptr[0] = (src_ptr[0] + src_ptr[src_stride] + 1) >> 1;
+}
+#endif  // HAS_SCALEROWDOWN2_AVX512BW
 
 void ScaleRowDown4_SSSE3(const uint8_t* src_ptr,
                          ptrdiff_t src_stride,
@@ -2611,7 +2770,7 @@ void ScaleARGBRowDown2Linear_SSE2(const uint8_t* src_argb,
         "+r"(dst_argb),  // %1
         "+r"(dst_width)  // %2
       :
-      : "memory", "cc", "xmm0", "xmm1");
+      : "memory", "cc", "xmm0", "xmm1", "xmm2");
 }
 
 void ScaleARGBRowDown2Box_SSE2(const uint8_t* src_argb,

@@ -22,6 +22,8 @@
 
 using namespace bssl;
 
+namespace {
+
 // https://tools.ietf.org/html/rfc7693#section-2.6
 static const uint64_t kIV[8] = {
     UINT64_C(0x6a09e667f3bcc908), UINT64_C(0xbb67ae8584caa73b),
@@ -47,8 +49,8 @@ static const uint8_t kSigma[10 * 16] = {
 };
 
 // https://tools.ietf.org/html/rfc7693#section-3.1
-static void blake2b_mix(uint64_t v[16], int a, int b, int c, int d, uint64_t x,
-                        uint64_t y) {
+void blake2b_mix(uint64_t v[16], int a, int b, int c, int d, uint64_t x,
+                 uint64_t y) {
   v[a] = v[a] + v[b] + x;
   v[d] = CRYPTO_rotr_u64(v[d] ^ v[a], 32);
   v[c] = v[c] + v[d];
@@ -59,13 +61,12 @@ static void blake2b_mix(uint64_t v[16], int a, int b, int c, int d, uint64_t x,
   v[b] = CRYPTO_rotr_u64(v[b] ^ v[c], 63);
 }
 
-static uint64_t blake2b_load(const uint8_t block[BLAKE2B_CBLOCK], size_t i) {
+uint64_t blake2b_load(const uint8_t block[BLAKE2B_CBLOCK], size_t i) {
   return CRYPTO_load_u64_le(block + 8 * i);
 }
 
-static void blake2b_transform(BLAKE2B_CTX *b2b,
-                              const uint8_t block[BLAKE2B_CBLOCK],
-                              size_t num_bytes, int is_final_block) {
+void blake2b_transform(BLAKE2B_CTX *b2b, const uint8_t block[BLAKE2B_CBLOCK],
+                       size_t num_bytes, int is_final_block) {
   // https://tools.ietf.org/html/rfc7693#section-3.2
   uint64_t v[16];
   static_assert(sizeof(v) == sizeof(b2b->h) + sizeof(kIV));
@@ -108,6 +109,8 @@ static void blake2b_transform(BLAKE2B_CTX *b2b,
     b2b->h[i] ^= v[i + 8];
   }
 }
+
+}  // namespace
 
 void BLAKE2B256_Init(BLAKE2B_CTX *b2b) {
   OPENSSL_memset(b2b, 0, sizeof(BLAKE2B_CTX));

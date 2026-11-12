@@ -72,6 +72,13 @@ int DSA_up_ref(DSA *dsa) {
   return 1;
 }
 
+DSA *DSA_dup_ref(const DSA *dsa) {
+  if (dsa == nullptr) {
+    return nullptr;
+  }
+  return FromOpaque(dsa)->DupRefInternal();
+}
+
 unsigned DSA_bits(const DSA *dsa) {
   return BN_num_bits(FromOpaque(dsa)->p.get());
 }
@@ -845,7 +852,8 @@ static int dsa_sign_setup(const DSAImpl *dsa, BN_CTX *ctx, BIGNUM **out_kinv,
   if (!BN_mod(r, r, dsa->q.get(), ctx) ||
       // Compute part of 's = inv(k) (m + xr) mod q' using Fermat's Little
       // Theorem.
-      !bn_mod_inverse_prime(kinv, &k, dsa->q.get(), ctx, dsa->method_mont_q.get())) {
+      !bn_mod_inverse_prime(kinv, &k, dsa->q.get(), ctx,
+                            dsa->method_mont_q.get())) {
     OPENSSL_PUT_ERROR(DSA, ERR_R_BN_LIB);
     goto err;
   }

@@ -167,7 +167,7 @@ class ResourceVideoSendStreamForwarder {
  public:
   explicit ResourceVideoSendStreamForwarder(
       scoped_refptr<webrtc::Resource> resource)
-      : broadcast_resource_listener_(resource) {
+      : broadcast_resource_listener_(std::move(resource)) {
     broadcast_resource_listener_.StartListening();
   }
   ~ResourceVideoSendStreamForwarder() {

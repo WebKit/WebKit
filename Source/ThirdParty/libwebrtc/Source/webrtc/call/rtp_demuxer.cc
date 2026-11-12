@@ -313,6 +313,10 @@ bool RtpDemuxer::RemoveSink(const RtpPacketSinkInterface* absl_nonnull sink) {
                        RemoveFromMultimapByValue(&sinks_by_pt_, sink) +
                        RemoveFromMapByValue(&sink_by_mid_and_rsid_, sink) +
                        RemoveFromMapByValue(&sink_by_rsid_, sink);
+  if (match_any_sink_ == sink) {
+    match_any_sink_ = nullptr;
+    ++num_removed;
+  }
   RefreshKnownMids();
   return num_removed > 0;
 }

@@ -82,6 +82,7 @@ class FirewallSocketServer : public SocketServer {
   void SetMessageQueue(Thread* queue) override;
   bool Wait(TimeDelta max_wait_duration, bool process_io) override;
   void WakeUp() override;
+  bool CanCreateSockets() const override { return server_->CanCreateSockets(); }
 
   Socket* WrapSocket(Socket* sock, int type);
 

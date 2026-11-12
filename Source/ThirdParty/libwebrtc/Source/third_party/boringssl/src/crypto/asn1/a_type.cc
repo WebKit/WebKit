@@ -292,6 +292,12 @@ int bssl::asn1_parse_any_as_string(CBS *cbs, ASN1_STRING *out) {
         return 0;
       }
       break;
+    case CBS_ASN1_RELATIVE_OID:
+      if (!CBS_is_valid_asn1_relative_oid(&body)) {
+        OPENSSL_PUT_ERROR(ASN1, ASN1_R_INVALID_OBJECT_ENCODING);
+        return 0;
+      }
+      break;
     case CBS_ASN1_NULL:
       if (CBS_len(&body) != 0) {
         OPENSSL_PUT_ERROR(ASN1, ASN1_R_NULL_IS_WRONG_LENGTH);

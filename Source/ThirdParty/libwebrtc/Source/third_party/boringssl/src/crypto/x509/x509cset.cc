@@ -103,6 +103,15 @@ int X509_CRL_up_ref(X509_CRL *crl) {
   return 1;
 }
 
+X509_CRL *X509_CRL_dup_ref(const X509_CRL *crl) {
+  if (crl == nullptr) {
+    return nullptr;
+  }
+  auto *ptr = const_cast<X509_CRL *>(crl);
+  CRYPTO_refcount_inc(&ptr->references);
+  return ptr;
+}
+
 long X509_CRL_get_version(const X509_CRL *crl) {
   return ASN1_INTEGER_get(crl->crl->version);
 }

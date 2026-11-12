@@ -28,7 +28,6 @@
 #include "absl/algorithm/container.h"
 #include "absl/functional/any_invocable.h"
 #include "absl/memory/memory.h"
-#include "absl/strings/match.h"
 #include "absl/strings/string_view.h"
 #include "api/async_dns_resolver.h"
 #include "api/candidate.h"
@@ -322,7 +321,7 @@ void P2PTransportChannel::AddConnection(Connection* connection) {
           return dtls_stun_piggyback_callbacks_.send_data(request);
         },
         [&](auto data, auto ack) {
-          dtls_stun_piggyback_callbacks_.recv_data(data, ack);
+          dtls_stun_piggyback_callbacks_.recv_data(data, std::move(ack));
         }));
   }
 
@@ -2337,7 +2336,7 @@ Candidate P2PTransportChannel::SanitizeRemoteCandidate(
   RTC_DCHECK_RUN_ON(&network_thread_);
   // If the remote endpoint signaled us an mDNS candidate, we assume it
   // is supposed to be sanitized.
-  bool use_hostname_address = absl::EndsWith(c.address().hostname(), LOCAL_TLD);
+  bool use_hostname_address = IsMdnsHostname(c.address().hostname());
   // Remove the address for prflx remote candidates. See
   // https://w3c.github.io/webrtc-stats/#dom-rtcicecandidatestats.
   use_hostname_address |= c.is_prflx();

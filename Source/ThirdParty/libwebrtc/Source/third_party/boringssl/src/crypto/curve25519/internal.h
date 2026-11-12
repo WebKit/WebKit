@@ -15,9 +15,11 @@
 #ifndef OPENSSL_HEADER_CRYPTO_CURVE25519_INTERNAL_H
 #define OPENSSL_HEADER_CRYPTO_CURVE25519_INTERNAL_H
 
+#include <openssl/base.h>
 #include <openssl/curve25519.h>
 
-#include "../internal.h"
+#include "../mem_internal.h"
+
 
 BSSL_NAMESPACE_BEGIN
 
@@ -165,7 +167,33 @@ struct spake2_ctx_st {
   char disable_password_scalar_hack;
 };
 
+DECLARE_OPAQUE_STRUCT(cpace_ctx_st, CpaceCtx)
+
 BSSL_NAMESPACE_BEGIN
+
+class CpaceCtx : public cpace_ctx_st {
+ public:
+  enum cpace_role_t our_role;
+  enum cpace_state_t {
+    cpace_state_init = 0,
+    cpace_state_msg_generated,
+    cpace_state_key_generated,
+  } state = cpace_state_init;
+  Array<uint8_t> our_aad;
+  Array<uint8_t> our_password;
+  Array<uint8_t> channel_id;
+  Array<uint8_t> session_id;
+  uint8_t our_public_key[32];
+  uint8_t our_private_key[32];
+
+  static constexpr bool kAllowUniquePtr = true;
+
+  void ComputeGeneratorStrHash(uint8_t out_gen_str_hash[32]) const;
+  bool ComputeMessage(uint8_t msg[32]);
+  bool ComputeISK(const uint8_t msg[32], Span<const uint8_t> peer_assoc_data,
+                  uint8_t shared_secret[64],
+                  uint8_t out_sid[SHA512_DIGEST_LENGTH]);
+};
 
 extern const uint8_t k25519Precomp[32][8][3][32];
 

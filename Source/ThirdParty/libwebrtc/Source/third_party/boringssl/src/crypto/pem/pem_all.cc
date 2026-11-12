@@ -26,21 +26,19 @@
 #include "internal.h"
 
 
-static RSA *pkey_get_rsa(EVP_PKEY *key, RSA **rsa);
-static DSA *pkey_get_dsa(EVP_PKEY *key, DSA **dsa);
-static EC_KEY *pkey_get_eckey(EVP_PKEY *key, EC_KEY **eckey);
-
 IMPLEMENT_PEM_rw(X509_REQ, X509_REQ, PEM_STRING_X509_REQ, X509_REQ)
 
 IMPLEMENT_PEM_write(X509_REQ_NEW, X509_REQ, PEM_STRING_X509_REQ_OLD, X509_REQ)
 IMPLEMENT_PEM_rw(X509_CRL, X509_CRL, PEM_STRING_X509_CRL, X509_CRL)
 IMPLEMENT_PEM_rw(PKCS7, PKCS7, PEM_STRING_PKCS7, PKCS7)
 
+namespace {
+
 // We treat RSA or DSA private keys as a special case. For private keys we
 // read in an EVP_PKEY structure with PEM_read_bio_PrivateKey() and extract
 // the relevant private key: this means can handle "traditional" and PKCS#8
 // formats transparently.
-static RSA *pkey_get_rsa(EVP_PKEY *key, RSA **rsa) {
+RSA *pkey_get_rsa(EVP_PKEY *key, RSA **rsa) {
   if (!key) {
     return nullptr;
   }
@@ -60,6 +58,8 @@ static RSA *pkey_get_rsa(EVP_PKEY *key, RSA **rsa) {
   return rtmp;
 }
 
+}  // namespace
+
 RSA *PEM_read_bio_RSAPrivateKey(BIO *bp, RSA **rsa, pem_password_cb *cb,
                                 void *u) {
   bssl::UniquePtr<EVP_PKEY> pkey(PEM_read_bio_PrivateKey(bp, nullptr, cb, u));
@@ -76,8 +76,11 @@ IMPLEMENT_PEM_write_cb(RSAPrivateKey, RSA, PEM_STRING_RSA, RSAPrivateKey)
 
 IMPLEMENT_PEM_rw(RSAPublicKey, RSA, PEM_STRING_RSA_PUBLIC, RSAPublicKey)
 IMPLEMENT_PEM_rw(RSA_PUBKEY, RSA, PEM_STRING_PUBLIC, RSA_PUBKEY)
+
 #ifndef OPENSSL_NO_DSA
-static DSA *pkey_get_dsa(EVP_PKEY *key, DSA **dsa) {
+namespace {
+
+DSA *pkey_get_dsa(EVP_PKEY *key, DSA **dsa) {
   DSA *dtmp;
   if (!key) {
     return nullptr;
@@ -93,6 +96,8 @@ static DSA *pkey_get_dsa(EVP_PKEY *key, DSA **dsa) {
   }
   return dtmp;
 }
+
+}  // namespace
 
 DSA *PEM_read_bio_DSAPrivateKey(BIO *bp, DSA **dsa, pem_password_cb *cb,
                                 void *u) {
@@ -112,7 +117,10 @@ DSA *PEM_read_DSAPrivateKey(FILE *fp, DSA **dsa, pem_password_cb *cb, void *u) {
 
 IMPLEMENT_PEM_rw(DSAparams, DSA, PEM_STRING_DSAPARAMS, DSAparams)
 #endif
-static EC_KEY *pkey_get_eckey(EVP_PKEY *key, EC_KEY **eckey) {
+
+namespace {
+
+EC_KEY *pkey_get_eckey(EVP_PKEY *key, EC_KEY **eckey) {
   EC_KEY *dtmp;
   if (!key) {
     return nullptr;
@@ -128,6 +136,8 @@ static EC_KEY *pkey_get_eckey(EVP_PKEY *key, EC_KEY **eckey) {
   }
   return dtmp;
 }
+
+}  // namespace
 
 EC_KEY *PEM_read_bio_ECPrivateKey(BIO *bp, EC_KEY **key, pem_password_cb *cb,
                                   void *u) {

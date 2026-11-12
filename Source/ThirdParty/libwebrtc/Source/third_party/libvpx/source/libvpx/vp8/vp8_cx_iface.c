@@ -222,29 +222,7 @@ static vpx_codec_err_t validate_config(vpx_codec_alg_priv_t *ctx,
     RANGE_CHECK(vp8_cfg, cq_level, cfg->rc_min_quantizer,
                 cfg->rc_max_quantizer);
 
-#if !(CONFIG_REALTIME_ONLY)
-  if (cfg->g_pass == VPX_RC_LAST_PASS) {
-    size_t packet_sz = sizeof(FIRSTPASS_STATS);
-    int n_packets = (int)(cfg->rc_twopass_stats_in.sz / packet_sz);
-    FIRSTPASS_STATS *stats;
-
-    if (!cfg->rc_twopass_stats_in.buf)
-      ERROR("rc_twopass_stats_in.buf not set.");
-
-    if (cfg->rc_twopass_stats_in.sz % packet_sz)
-      ERROR("rc_twopass_stats_in.sz indicates truncated packet.");
-
-    if (cfg->rc_twopass_stats_in.sz < 2 * packet_sz)
-      ERROR("rc_twopass_stats_in requires at least two packets.");
-
-    stats = (void *)((char *)cfg->rc_twopass_stats_in.buf +
-                     (n_packets - 1) * packet_sz);
-
-    if ((int)(stats->count + 0.5) != n_packets - 1)
-      ERROR("rc_twopass_stats_in missing EOS stats packet");
-  }
-#endif
-
+  RANGE_CHECK(cfg, ss_number_layers, 1, VPX_SS_MAX_LAYERS);
   RANGE_CHECK(cfg, ts_number_layers, 1, 5);
 
   if (cfg->ts_number_layers > 1) {
@@ -281,6 +259,7 @@ static vpx_codec_err_t validate_config(vpx_codec_alg_priv_t *ctx,
   RANGE_CHECK(cfg, sr_diff_factor.den, 1, 1000);
   RANGE_CHECK(cfg, kf_err_per_mb_factor.den, 1, 1000);
   RANGE_CHECK(cfg, kf_frame_min_boost_factor.den, 1, 1000);
+  RANGE_CHECK(cfg, kf_frame_max_boost_first_factor.den, 1, 1000);
   RANGE_CHECK(cfg, kf_frame_max_boost_subs_factor.den, 1, 1000);
   RANGE_CHECK(cfg, kf_max_total_boost_factor.den, 1, 1000);
   RANGE_CHECK(cfg, gf_max_total_boost_factor.den, 1, 1000);
@@ -289,6 +268,33 @@ static vpx_codec_err_t validate_config(vpx_codec_alg_priv_t *ctx,
   RANGE_CHECK(cfg, rd_mult_inter_qp_fac.den, 1, 1000);
   RANGE_CHECK(cfg, rd_mult_arf_qp_fac.den, 1, 1000);
   RANGE_CHECK(cfg, rd_mult_key_qp_fac.den, 1, 1000);
+
+#if !(CONFIG_REALTIME_ONLY)
+  if (cfg->g_pass == VPX_RC_LAST_PASS) {
+    const size_t packet_sz = sizeof(FIRSTPASS_STATS);
+    const int n_packets = (int)(cfg->rc_twopass_stats_in.sz / packet_sz);
+    const FIRSTPASS_STATS *stats;
+
+    if (!cfg->rc_twopass_stats_in.buf) {
+      ERROR("rc_twopass_stats_in.buf not set.");
+    }
+
+    if (cfg->rc_twopass_stats_in.sz % packet_sz) {
+      ERROR("rc_twopass_stats_in.sz indicates truncated packet.");
+    }
+
+    if (cfg->rc_twopass_stats_in.sz < 2 * packet_sz) {
+      ERROR("rc_twopass_stats_in requires at least two packets.");
+    }
+
+    stats =
+        (const FIRSTPASS_STATS *)cfg->rc_twopass_stats_in.buf + n_packets - 1;
+
+    if ((int)(stats->count + 0.5) != n_packets - 1) {
+      ERROR("rc_twopass_stats_in missing EOS stats packet");
+    }
+  }
+#endif
 
   return VPX_CODEC_OK;
 }
@@ -1178,6 +1184,11 @@ static vpx_codec_err_t vp8e_set_reference(vpx_codec_alg_priv_t *ctx,
   if (data) {
     vpx_ref_frame_t *frame = (vpx_ref_frame_t *)data;
     YV12_BUFFER_CONFIG sd;
+    if (frame->img.planes[VPX_PLANE_Y] == NULL ||
+        frame->img.planes[VPX_PLANE_U] == NULL ||
+        frame->img.planes[VPX_PLANE_V] == NULL) {
+      return VPX_CODEC_INVALID_PARAM;
+    }
 
     image2yuvconfig(&frame->img, &sd);
     if (vp8_set_reference(ctx->cpi, frame->frame_type, &sd)) {
@@ -1196,6 +1207,11 @@ static vpx_codec_err_t vp8e_get_reference(vpx_codec_alg_priv_t *ctx,
   if (data) {
     vpx_ref_frame_t *frame = (vpx_ref_frame_t *)data;
     YV12_BUFFER_CONFIG sd;
+    if (frame->img.planes[VPX_PLANE_Y] == NULL ||
+        frame->img.planes[VPX_PLANE_U] == NULL ||
+        frame->img.planes[VPX_PLANE_V] == NULL) {
+      return VPX_CODEC_INVALID_PARAM;
+    }
 
     image2yuvconfig(&frame->img, &sd);
     if (vp8_get_reference(ctx->cpi, frame->frame_type, &sd)) {

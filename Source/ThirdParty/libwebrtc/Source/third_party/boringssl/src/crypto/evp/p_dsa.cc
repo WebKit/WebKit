@@ -31,9 +31,9 @@ namespace {
 
 extern const EVP_PKEY_ASN1_METHOD dsa_asn1_meth;
 
-static bssl::evp_decode_result_t dsa_pub_decode(const EVP_PKEY_ALG *alg,
-                                                EvpPkey *out, CBS *params,
-                                                CBS *key) {
+bssl::evp_decode_result_t dsa_pub_decode(const EVP_PKEY_ALG *alg,
+                                         EvpPkey *out, CBS *params,
+                                         CBS *key) {
   // See RFC 3279, section 2.3.2.
 
   // Decode parameters. RFC 3279 permits DSA parameters to be omitted, in which
@@ -59,7 +59,7 @@ static bssl::evp_decode_result_t dsa_pub_decode(const EVP_PKEY_ALG *alg,
   return evp_decode_ok;
 }
 
-static int dsa_pub_encode(CBB *out, const EvpPkey *key) {
+int dsa_pub_encode(CBB *out, const EvpPkey *key) {
   const DSAImpl *dsa = reinterpret_cast<const DSAImpl *>(key->pkey);
   const int has_params =
       dsa->p != nullptr && dsa->q != nullptr && dsa->g != nullptr;
@@ -81,9 +81,9 @@ static int dsa_pub_encode(CBB *out, const EvpPkey *key) {
   return 1;
 }
 
-static bssl::evp_decode_result_t dsa_priv_decode(const EVP_PKEY_ALG *alg,
-                                                 EvpPkey *out, CBS *params,
-                                                 CBS *key) {
+bssl::evp_decode_result_t dsa_priv_decode(const EVP_PKEY_ALG *alg,
+                                          EvpPkey *out, CBS *params,
+                                          CBS *key) {
   // See PKCS#11, v2.40, section 2.5.
 
   // Decode parameters.
@@ -124,7 +124,7 @@ static bssl::evp_decode_result_t dsa_priv_decode(const EVP_PKEY_ALG *alg,
   return evp_decode_ok;
 }
 
-static int dsa_priv_encode(CBB *out, const EvpPkey *key) {
+int dsa_priv_encode(CBB *out, const EvpPkey *key) {
   const DSAImpl *dsa = reinterpret_cast<const DSAImpl *>(key->pkey);
   if (dsa == nullptr || dsa->priv_key == nullptr) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_MISSING_PARAMETERS);
@@ -148,17 +148,17 @@ static int dsa_priv_encode(CBB *out, const EvpPkey *key) {
   return 1;
 }
 
-static int int_dsa_size(const EvpPkey *pkey) {
+int int_dsa_size(const EvpPkey *pkey) {
   const DSAImpl *dsa = reinterpret_cast<const DSAImpl *>(pkey->pkey);
   return DSA_size(dsa);
 }
 
-static int dsa_bits(const EvpPkey *pkey) {
+int dsa_bits(const EvpPkey *pkey) {
   const DSAImpl *dsa = reinterpret_cast<const DSAImpl *>(pkey->pkey);
   return BN_num_bits(DSA_get0_p(dsa));
 }
 
-static int dsa_missing_parameters(const EvpPkey *pkey) {
+int dsa_missing_parameters(const EvpPkey *pkey) {
   const DSAImpl *dsa = reinterpret_cast<const DSAImpl *>(pkey->pkey);
   if (DSA_get0_p(dsa) == nullptr || DSA_get0_q(dsa) == nullptr ||
       DSA_get0_g(dsa) == nullptr) {
@@ -167,7 +167,7 @@ static int dsa_missing_parameters(const EvpPkey *pkey) {
   return 0;
 }
 
-static int dup_bn_into(UniquePtr<BIGNUM> *out, const BIGNUM *src) {
+int dup_bn_into(UniquePtr<BIGNUM> *out, const BIGNUM *src) {
   UniquePtr<BIGNUM> copy(BN_dup(src));
   if (copy == nullptr) {
     return 0;
@@ -176,7 +176,7 @@ static int dup_bn_into(UniquePtr<BIGNUM> *out, const BIGNUM *src) {
   return 1;
 }
 
-static int dsa_copy_parameters(EvpPkey *to, const EvpPkey *from) {
+int dsa_copy_parameters(EvpPkey *to, const EvpPkey *from) {
   if (to->pkey == nullptr) {
     to->pkey = DSA_new();
     if (to->pkey == nullptr) {
@@ -194,7 +194,7 @@ static int dsa_copy_parameters(EvpPkey *to, const EvpPkey *from) {
   return 1;
 }
 
-static bool dsa_equal_parameters(const EvpPkey *a, const EvpPkey *b) {
+bool dsa_equal_parameters(const EvpPkey *a, const EvpPkey *b) {
   const DSAImpl *a_dsa = reinterpret_cast<const DSAImpl *>(a->pkey);
   const DSAImpl *b_dsa = reinterpret_cast<const DSAImpl *>(b->pkey);
   return BN_cmp(DSA_get0_p(a_dsa), DSA_get0_p(b_dsa)) == 0 &&
@@ -202,18 +202,18 @@ static bool dsa_equal_parameters(const EvpPkey *a, const EvpPkey *b) {
          BN_cmp(DSA_get0_g(a_dsa), DSA_get0_g(b_dsa)) == 0;
 }
 
-static bool dsa_pub_equal(const EvpPkey *a, const EvpPkey *b) {
+bool dsa_pub_equal(const EvpPkey *a, const EvpPkey *b) {
   const DSAImpl *a_dsa = reinterpret_cast<const DSAImpl *>(a->pkey);
   const DSAImpl *b_dsa = reinterpret_cast<const DSAImpl *>(b->pkey);
   return BN_cmp(DSA_get0_pub_key(b_dsa), DSA_get0_pub_key(a_dsa)) == 0;
 }
 
-static bool dsa_pub_present(const EvpPkey *pk) {
+bool dsa_pub_present(const EvpPkey *pk) {
   const DSA *pk_dsa = reinterpret_cast<const DSA *>(pk->pkey);
   return DSA_get0_pub_key(pk_dsa) != nullptr;
 }
 
-static bool dsa_pub_copy(EvpPkey *out, const EvpPkey *pk) {
+bool dsa_pub_copy(EvpPkey *out, const EvpPkey *pk) {
   const DSA *pk_dsa = reinterpret_cast<const DSA *>(pk->pkey);
   const BIGNUM *public_key = DSA_get0_pub_key(pk_dsa);
   if (public_key == nullptr) {
@@ -232,12 +232,12 @@ static bool dsa_pub_copy(EvpPkey *out, const EvpPkey *pk) {
   return true;
 }
 
-static bool dsa_priv_present(const EvpPkey *pk) {
+bool dsa_priv_present(const EvpPkey *pk) {
   const DSA *pk_dsa = reinterpret_cast<const DSA *>(pk->pkey);
   return DSA_get0_priv_key(pk_dsa) != nullptr;
 }
 
-static void int_dsa_free(EvpPkey *pkey) {
+void int_dsa_free(EvpPkey *pkey) {
   DSA_free(reinterpret_cast<DSAImpl *>(pkey->pkey));
   pkey->pkey = nullptr;
 }
@@ -300,12 +300,8 @@ int EVP_PKEY_CTX_set_dsa_paramgen_q_bits(EVP_PKEY_CTX *ctx, int qbits) {
   return 0;
 }
 
-int EVP_PKEY_set1_DSA(EVP_PKEY *pkey, DSA *key) {
-  if (EVP_PKEY_assign_DSA(pkey, key)) {
-    DSA_up_ref(key);
-    return 1;
-  }
-  return 0;
+int EVP_PKEY_set1_DSA(EVP_PKEY *pkey, const DSA *key) {
+  return EVP_PKEY_assign_DSA(pkey, DSA_dup_ref(key));
 }
 
 int EVP_PKEY_assign_DSA(EVP_PKEY *pkey, DSA *key) {

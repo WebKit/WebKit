@@ -19,6 +19,7 @@
 #include "absl/flags/flag.h"
 #include "absl/strings/str_cat.h"
 #include "api/test/metrics/metric.h"
+#include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/strings/string_builder.h"
 #include "test/test_flags.h"
 
@@ -34,6 +35,10 @@ int64_t IntegralPart(double value) {
 void AppendWithPrecision(double value,
                          int digits_after_comma,
                          StringBuilder& out) {
+  if (!IsValueInRangeForNumericType<int64_t>(value)) {
+    out << value;
+    return;
+  }
   int64_t multiplier = std::lround(std::pow(10, digits_after_comma));
   int64_t integral_part = IntegralPart(value);
   double decimal_part = std::abs(value) - integral_part;
@@ -87,7 +92,7 @@ std::string TestCaseAndMetadata(const Metric& metric) {
 
 }  // namespace
 
-StdoutMetricsExporter::StdoutMetricsExporter() : output_(stdout) {}
+StdoutMetricsExporter::StdoutMetricsExporter(FILE* output) : output_(output) {}
 
 bool StdoutMetricsExporter::Export(std::span<const Metric> metrics) {
   for (const Metric& metric : metrics) {

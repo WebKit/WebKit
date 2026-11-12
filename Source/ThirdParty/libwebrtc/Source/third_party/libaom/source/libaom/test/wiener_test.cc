@@ -1885,6 +1885,267 @@ TEST(SearchWienerTest, 8bitSignedIntegerOverflowInLinsolveWiener) {
   EXPECT_EQ(AOM_CODEC_OK, aom_codec_destroy(&enc));
 }
 
+// A test that reproduces issues.oss-fuzz.com/issues/566951534: signed integer
+// overflow in linsolve_wiener().
+TEST(SearchWienerTest, 8bitSignedIntegerOverflowInLinsolveWiener2) {
+  // clang-format off
+  // YUV 4:2:2
+  // Layer 0: 6x5
+  constexpr unsigned char kBuffer0[6 * 5 + 3 * 5 + 3 * 5] = {
+    // Y plane
+    100, 50, 54, 227, 58, 74,
+    164, 56, 25, 135, 7, 189,
+    108, 194, 17, 206, 26, 111,
+    187, 44, 66, 131, 123, 208,
+    164, 131, 197, 113, 87, 194,
+    // U plane
+    95, 225, 123,
+    11, 253, 28,
+    109, 180, 57,
+    185, 249, 33,
+    111, 156, 13,
+    // V plane
+    31, 214, 26,
+    230, 192, 153,
+    245, 91, 43,
+    2, 220, 211,
+    163, 53, 65,
+  };
+  // Layer 1: 5x14
+  // Y stride is padded to the even number 6. There is an unused byte after each
+  // row, set to 0.
+  constexpr unsigned char kBuffer1[6 * 14 + 3 * 14 + 3 * 14] = {
+    // Y plane
+    120, 13, 67, 132, 85, 0,
+    153, 71, 123, 169, 44, 0,
+    177, 148, 163, 58, 172, 0,
+    106, 172, 243, 152, 239, 0,
+    203, 238, 106, 240, 226, 0,
+    11, 179, 122, 7, 167, 0,
+    153, 194, 55, 147, 18, 0,
+    139, 173, 110, 17, 80, 0,
+    29, 84, 49, 156, 249, 0,
+    187, 183, 177, 38, 25, 0,
+    71, 69, 230, 208, 1, 0,
+    145, 145, 141, 229, 145, 0,
+    25, 37, 207, 97, 42, 0,
+    84, 124, 196, 115, 127, 0,
+    // U plane
+    84, 7, 54,
+    16, 76, 135,
+    178, 32, 74,
+    29, 247, 180,
+    183, 149, 81,
+    46, 111, 115,
+    207, 244, 222,
+    2, 142, 46,
+    55, 1, 250,
+    90, 219, 147,
+    163, 242, 45,
+    114, 40, 42,
+    90, 198, 173,
+    222, 200, 196,
+    // V plane
+    60, 48, 74,
+    108, 130, 108,
+    150, 202, 23,
+    206, 218, 134,
+    218, 141, 221,
+    186, 24, 116,
+    117, 149, 187,
+    75, 96, 183,
+    157, 123, 153,
+    41, 225, 67,
+    20, 171, 227,
+    158, 139, 174,
+    33, 253, 84,
+    199, 159, 39,
+  };
+  // Layer 2: 6x3
+  constexpr unsigned char kBuffer2[6 * 3 + 3 * 3 + 3 * 3] = {
+    // Y plane
+    54, 250, 157, 213, 111, 96,
+    67, 84, 142, 2, 194, 77,
+    63, 70, 235, 113, 44, 16,
+    // U plane
+    113, 249, 204,
+    211, 32, 140,
+    54, 64, 142,
+    // V plane
+    171, 218, 22,
+    69, 59, 124,
+    224, 186, 47,
+  };
+  // Layer 3: 12x17
+  constexpr unsigned char kBuffer3[12 * 17 + 6 * 17 + 6 * 17] = {
+    // Y plane
+    156, 96, 33, 110, 77, 181, 146, 16, 149, 152, 211, 141,
+    215, 48, 48, 252, 251, 203, 4, 173, 250, 193, 60, 96,
+    55, 219, 138, 89, 218, 190, 187, 67, 145, 5, 194, 240,
+    26, 150, 59, 83, 65, 222, 67, 245, 169, 26, 111, 218,
+    158, 29, 125, 164, 212, 86, 105, 70, 193, 111, 251, 191,
+    238, 48, 116, 43, 11, 209, 60, 85, 216, 73, 24, 129,
+    245, 130, 229, 147, 173, 39, 76, 239, 86, 11, 143, 42,
+    55, 152, 114, 214, 146, 63, 68, 252, 134, 68, 88, 8,
+    8, 11, 53, 178, 180, 203, 78, 253, 130, 230, 58, 113,
+    110, 137, 22, 255, 207, 8, 74, 242, 233, 76, 227, 57,
+    71, 54, 227, 200, 118, 16, 186, 166, 127, 39, 39, 131,
+    22, 192, 88, 166, 224, 103, 125, 118, 213, 228, 238, 73,
+    184, 99, 135, 248, 159, 211, 5, 16, 239, 121, 187, 229,
+    162, 189, 33, 248, 231, 178, 233, 167, 231, 57, 188, 167,
+    187, 223, 95, 31, 101, 1, 192, 126, 5, 135, 236, 137,
+    82, 8, 251, 61, 81, 164, 160, 64, 153, 19, 50, 208,
+    62, 197, 32, 81, 56, 233, 244, 112, 25, 136, 142, 154,
+    // U plane
+    17, 219, 140, 117, 187, 44,
+    99, 14, 252, 32, 58, 242,
+    196, 196, 226, 11, 227, 175,
+    195, 77, 70, 254, 157, 113,
+    53, 34, 21, 17, 145, 220,
+    108, 136, 142, 74, 54, 91,
+    130, 58, 36, 42, 116, 223,
+    219, 114, 25, 201, 97, 73,
+    158, 87, 64, 11, 210, 61,
+    46, 110, 204, 108, 185, 103,
+    237, 211, 229, 154, 59, 27,
+    134, 62, 226, 233, 164, 132,
+    91, 121, 70, 164, 144, 138,
+    53, 242, 40, 49, 199, 74,
+    25, 42, 2, 120, 43, 219,
+    151, 246, 183, 120, 63, 209,
+    64, 170, 112, 66, 176, 165,
+    // V plane
+    113, 242, 231, 9, 100, 102,
+    116, 69, 10, 35, 139, 236,
+    51, 60, 38, 85, 174, 192,
+    36, 119, 73, 50, 236, 113,
+    169, 153, 79, 168, 83, 127,
+    223, 106, 204, 81, 236, 54,
+    79, 114, 83, 58, 158, 29,
+    62, 213, 242, 29, 234, 30,
+    113, 214, 21, 226, 136, 220,
+    137, 151, 27, 182, 94, 171,
+    45, 101, 167, 164, 183, 77,
+    41, 129, 120, 199, 139, 231,
+    95, 101, 83, 65, 34, 154,
+    143, 169, 220, 115, 165, 96,
+    56, 115, 49, 191, 177, 186,
+    245, 221, 173, 83, 23, 22,
+    195, 134, 202, 221, 121, 88,
+  };
+  // clang-format on
+
+  aom_image_t img;
+  EXPECT_EQ(&img, aom_img_wrap(&img, AOM_IMG_FMT_I422, 6, 5, 1,
+                               const_cast<unsigned char *>(kBuffer0)));
+
+  aom_codec_iface_t *iface = aom_codec_av1_cx();
+  aom_codec_enc_cfg_t cfg;
+  EXPECT_EQ(AOM_CODEC_OK,
+            aom_codec_enc_config_default(iface, &cfg, AOM_USAGE_GOOD_QUALITY));
+  cfg.rc_end_usage = AOM_Q;
+  cfg.g_profile = 2;
+  cfg.g_bit_depth = AOM_BITS_8;
+  cfg.g_input_bit_depth = 8;
+  cfg.g_w = 6;
+  cfg.g_h = 5;
+  cfg.g_forced_max_frame_width = 12;
+  cfg.g_forced_max_frame_height = 17;
+  cfg.g_limit = 4;
+  cfg.g_lag_in_frames = 0;
+  cfg.use_fixed_qp_offsets = 2;
+  cfg.g_threads = 1;
+  cfg.rc_min_quantizer = 0;
+  cfg.rc_max_quantizer = 63;
+  aom_codec_ctx_t enc;
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_enc_init(&enc, iface, &cfg, 0));
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_control(&enc, AOME_SET_CQ_LEVEL, 62));
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_control(&enc, AV1E_SET_TILE_ROWS, 6));
+  EXPECT_EQ(AOM_CODEC_OK,
+            aom_codec_control(&enc, AOME_SET_NUMBER_SPATIAL_LAYERS, 4));
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_control(&enc, AOME_SET_CPUUSED, 6));
+  EXPECT_EQ(AOM_CODEC_OK,
+            aom_codec_control(&enc, AV1E_SET_COLOR_RANGE, AOM_CR_FULL_RANGE));
+  EXPECT_EQ(AOM_CODEC_OK,
+            aom_codec_control(&enc, AOME_SET_TUNING, AOM_TUNE_IQ));
+
+  // Encode frame
+  EXPECT_EQ(AOM_CODEC_OK,
+            aom_codec_control(&enc, AOME_SET_SPATIAL_LAYER_ID, 0));
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_encode(&enc, &img, 0, 1, 0));
+  aom_codec_iter_t iter = nullptr;
+  const aom_codec_cx_pkt_t *pkt = aom_codec_get_cx_data(&enc, &iter);
+  ASSERT_NE(pkt, nullptr);
+  EXPECT_EQ(pkt->kind, AOM_CODEC_CX_FRAME_PKT);
+  pkt = aom_codec_get_cx_data(&enc, &iter);
+  ASSERT_EQ(pkt, nullptr);
+
+  // Encode frame
+  EXPECT_EQ(&img, aom_img_wrap(&img, AOM_IMG_FMT_I422, 5, 14, 1,
+                               const_cast<unsigned char *>(kBuffer1)));
+  cfg.g_w = 5;
+  cfg.g_h = 14;
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_enc_config_set(&enc, &cfg));
+  EXPECT_EQ(AOM_CODEC_OK,
+            aom_codec_control(&enc, AOME_SET_SPATIAL_LAYER_ID, 1));
+  aom_enc_frame_flags_t encode_flags =
+      AOM_EFLAG_NO_REF_GF | AOM_EFLAG_NO_REF_ARF | AOM_EFLAG_NO_REF_BWD |
+      AOM_EFLAG_NO_REF_ARF2 | AOM_EFLAG_NO_UPD_GF | AOM_EFLAG_NO_UPD_ARF;
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_encode(&enc, &img, 0, 1, encode_flags));
+  iter = nullptr;
+  pkt = aom_codec_get_cx_data(&enc, &iter);
+  ASSERT_NE(pkt, nullptr);
+  EXPECT_EQ(pkt->kind, AOM_CODEC_CX_FRAME_PKT);
+  pkt = aom_codec_get_cx_data(&enc, &iter);
+  EXPECT_EQ(pkt, nullptr);
+
+  // Encode frame
+  EXPECT_EQ(&img, aom_img_wrap(&img, AOM_IMG_FMT_I422, 6, 3, 1,
+                               const_cast<unsigned char *>(kBuffer2)));
+  cfg.g_w = 6;
+  cfg.g_h = 3;
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_enc_config_set(&enc, &cfg));
+  EXPECT_EQ(AOM_CODEC_OK,
+            aom_codec_control(&enc, AOME_SET_SPATIAL_LAYER_ID, 2));
+  encode_flags = AOM_EFLAG_NO_REF_GF | AOM_EFLAG_NO_REF_ARF |
+                 AOM_EFLAG_NO_REF_BWD | AOM_EFLAG_NO_REF_ARF2 |
+                 AOM_EFLAG_NO_UPD_GF | AOM_EFLAG_NO_UPD_ARF;
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_encode(&enc, &img, 0, 1, encode_flags));
+  iter = nullptr;
+  pkt = aom_codec_get_cx_data(&enc, &iter);
+  ASSERT_NE(pkt, nullptr);
+  EXPECT_EQ(pkt->kind, AOM_CODEC_CX_FRAME_PKT);
+  pkt = aom_codec_get_cx_data(&enc, &iter);
+  EXPECT_EQ(pkt, nullptr);
+
+  // Encode frame
+  EXPECT_EQ(&img, aom_img_wrap(&img, AOM_IMG_FMT_I422, 12, 17, 1,
+                               const_cast<unsigned char *>(kBuffer3)));
+  cfg.g_w = 12;
+  cfg.g_h = 17;
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_enc_config_set(&enc, &cfg));
+  EXPECT_EQ(AOM_CODEC_OK,
+            aom_codec_control(&enc, AOME_SET_SPATIAL_LAYER_ID, 3));
+  encode_flags = AOM_EFLAG_NO_REF_GF | AOM_EFLAG_NO_REF_ARF |
+                 AOM_EFLAG_NO_REF_BWD | AOM_EFLAG_NO_REF_ARF2 |
+                 AOM_EFLAG_NO_UPD_GF | AOM_EFLAG_NO_UPD_ARF;
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_encode(&enc, &img, 0, 1, encode_flags));
+  iter = nullptr;
+  pkt = aom_codec_get_cx_data(&enc, &iter);
+  ASSERT_NE(pkt, nullptr);
+  EXPECT_EQ(pkt->kind, AOM_CODEC_CX_FRAME_PKT);
+  pkt = aom_codec_get_cx_data(&enc, &iter);
+  EXPECT_EQ(pkt, nullptr);
+
+  // Flush encoder
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_encode(&enc, nullptr, 0, 1, 0));
+  iter = nullptr;
+  pkt = aom_codec_get_cx_data(&enc, &iter);
+  EXPECT_EQ(pkt, nullptr);
+
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_destroy(&enc));
+}
+
 // A test that reproduces b/259173819: signed integer overflow in
 // linsolve_wiener().
 TEST(SearchWienerTest, 10bitSignedIntegerOverflowInLinsolveWiener) {

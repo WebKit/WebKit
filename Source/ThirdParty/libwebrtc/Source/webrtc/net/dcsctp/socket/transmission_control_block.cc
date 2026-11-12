@@ -25,7 +25,9 @@
 #include "api/units/timestamp.h"
 #include "net/dcsctp/common/internal_types.h"
 #include "net/dcsctp/packet/chunk/data_chunk.h"
+#include "net/dcsctp/packet/chunk/forward_tsn_chunk.h"
 #include "net/dcsctp/packet/chunk/idata_chunk.h"
+#include "net/dcsctp/packet/chunk/iforward_tsn_chunk.h"
 #include "net/dcsctp/packet/chunk/reconfig_chunk.h"
 #include "net/dcsctp/packet/sctp_packet.h"
 #include "net/dcsctp/public/dcsctp_handover_state.h"
@@ -146,7 +148,7 @@ TimeDelta TransmissionControlBlock::OnRtxTimerExpiry() {
     RTC_DLOG(LS_VERBOSE) << "Not retransmitting as T1-cookie is active.";
   } else {
     if (IncrementTxErrorCounter("t3-rtx expired")) {
-      retransmission_queue_.HandleT3RtxTimerExpiry();
+      retransmission_queue_.HandleT3RtxTimerExpiry(now);
       SendBufferedPackets(now);
     }
   }
@@ -170,25 +172,50 @@ void TransmissionControlBlock::MaybeSendSack() {
 
 void TransmissionControlBlock::MaybeSendForwardTsn(SctpPacket::Builder& builder,
                                                    Timestamp now) {
-  if (now >= limit_forward_tsn_until_ &&
-      retransmission_queue_.ShouldSendForwardTsn(now)) {
-    if (capabilities_.message_interleaving) {
-      builder.Add(retransmission_queue_.CreateIForwardTsn());
-    } else {
-      builder.Add(retransmission_queue_.CreateForwardTsn());
+  if (!retransmission_queue_.ShouldSendForwardTsn(now)) {
+    return;
+  }
+  if (capabilities_.message_interleaving) {
+    IForwardTsnChunk chunk = retransmission_queue_.CreateIForwardTsn();
+    if (ShouldSendForwardTsnChunk(chunk.new_cumulative_tsn(), now)) {
+      builder.Add(chunk);
     }
-    // https://datatracker.ietf.org/doc/html/rfc3758
-    // "IMPLEMENTATION NOTE: An implementation may wish to limit the number of
-    // duplicate FORWARD TSN chunks it sends by ... waiting a full RTT before
-    // sending a duplicate FORWARD TSN."
-    // "Any delay applied to the sending of FORWARD TSN chunk SHOULD NOT exceed
-    // 200ms and MUST NOT exceed 500ms".
-    limit_forward_tsn_until_ =
-        now + std::min(TimeDelta::Millis(200), rto_.srtt());
+  } else {
+    ForwardTsnChunk chunk = retransmission_queue_.CreateForwardTsn();
+    if (ShouldSendForwardTsnChunk(chunk.new_cumulative_tsn(), now)) {
+      builder.Add(chunk);
+    }
   }
 }
 
-void TransmissionControlBlock::MaybeSendFastRetransmit() {
+bool TransmissionControlBlock::ShouldSendForwardTsnChunk(TSN new_cumulative_tsn,
+                                                         Timestamp now) {
+  // https://datatracker.ietf.org/doc/html/rfc3758#section-3.5
+  // "C3) If, after step C1 and C2, the "Advanced.Peer.Ack.Point" is greater
+  // than the Cumulative TSN Ack Point, the data sender MUST send the data
+  // receiver a FORWARD TSN chunk containing the latest value of the
+  // "Advanced.Peer.Ack.Point"."
+  //
+  // "IMPLEMENTATION NOTE: An implementation may wish to limit the number of
+  // duplicate FORWARD TSN chunks it sends by ... waiting a full RTT before
+  // sending a duplicate FORWARD TSN."
+  // "Any delay applied to the sending of FORWARD TSN chunk SHOULD NOT exceed
+  // 200ms and MUST NOT exceed 500ms".
+  //
+  // Only duplicates are rate limited. A FORWARD-TSN that advances the
+  // cumulative TSN is sent immediately, as delaying it would block the
+  // receiver from delivering messages on ordered streams.
+  if (new_cumulative_tsn == last_sent_forward_tsn_ &&
+      now < limit_forward_tsn_until_) {
+    return false;
+  }
+  last_sent_forward_tsn_ = new_cumulative_tsn;
+  limit_forward_tsn_until_ =
+      now + std::min(TimeDelta::Millis(200), rto_.srtt());
+  return true;
+}
+
+void TransmissionControlBlock::MaybeSendFastRetransmit(Timestamp now) {
   if (!retransmission_queue_.has_data_to_be_fast_retransmitted()) {
     return;
   }
@@ -204,7 +231,7 @@ void TransmissionControlBlock::MaybeSendFastRetransmit() {
 
   SctpPacket::Builder builder(peer_verification_tag_, options_);
   auto chunks = retransmission_queue_.GetChunksForFastRetransmit(
-      builder.bytes_remaining());
+      now, builder.bytes_remaining());
   for (auto& [tsn, data] : chunks) {
     if (capabilities_.message_interleaving) {
       builder.Add(IDataChunk(tsn, std::move(data), false));

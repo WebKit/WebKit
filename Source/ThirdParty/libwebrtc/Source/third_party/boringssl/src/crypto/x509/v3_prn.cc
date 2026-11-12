@@ -23,12 +23,11 @@
 
 // Extension printing routines
 
-static int unknown_ext_print(BIO *out, const X509_EXTENSION *ext,
-                             unsigned long flag, int indent, int supported);
+namespace {
 
 // Print out a name+value stack
-static void X509V3_EXT_val_prn(BIO *out, const STACK_OF(CONF_VALUE) *val,
-                               int indent, int ml) {
+void X509V3_EXT_val_prn(BIO *out, const STACK_OF(CONF_VALUE) *val, int indent,
+                        int ml) {
   if (!val) {
     return;
   }
@@ -57,6 +56,34 @@ static void X509V3_EXT_val_prn(BIO *out, const STACK_OF(CONF_VALUE) *val,
     }
   }
 }
+
+int unknown_ext_print(BIO *out, const X509_EXTENSION *ext, unsigned long flag,
+                      int indent, int supported) {
+  switch (flag & X509V3_EXT_UNKNOWN_MASK) {
+    case X509V3_EXT_DEFAULT:
+      return 0;
+
+    case X509V3_EXT_ERROR_UNKNOWN:
+      if (supported) {
+        BIO_printf(out, "%*s<Parse Error>", indent, "");
+      } else {
+        BIO_printf(out, "%*s<Not Supported>", indent, "");
+      }
+      return 1;
+
+    case X509V3_EXT_PARSE_UNKNOWN:
+    case X509V3_EXT_DUMP_UNKNOWN: {
+      const ASN1_STRING *data = X509_EXTENSION_get_data(ext);
+      return BIO_hexdump(out, ASN1_STRING_get0_data(data),
+                         ASN1_STRING_length(data), indent);
+    }
+
+    default:
+      return 1;
+  }
+}
+
+}  // namespace
 
 // Main routine: print out a general extension
 
@@ -142,32 +169,6 @@ int X509V3_extensions_print(BIO *bp, const char *title,
     }
   }
   return 1;
-}
-
-static int unknown_ext_print(BIO *out, const X509_EXTENSION *ext,
-                             unsigned long flag, int indent, int supported) {
-  switch (flag & X509V3_EXT_UNKNOWN_MASK) {
-    case X509V3_EXT_DEFAULT:
-      return 0;
-
-    case X509V3_EXT_ERROR_UNKNOWN:
-      if (supported) {
-        BIO_printf(out, "%*s<Parse Error>", indent, "");
-      } else {
-        BIO_printf(out, "%*s<Not Supported>", indent, "");
-      }
-      return 1;
-
-    case X509V3_EXT_PARSE_UNKNOWN:
-    case X509V3_EXT_DUMP_UNKNOWN: {
-      const ASN1_STRING *data = X509_EXTENSION_get_data(ext);
-      return BIO_hexdump(out, ASN1_STRING_get0_data(data),
-                         ASN1_STRING_length(data), indent);
-    }
-
-    default:
-      return 1;
-  }
 }
 
 int X509V3_EXT_print_fp(FILE *fp, const X509_EXTENSION *ext, int flag,

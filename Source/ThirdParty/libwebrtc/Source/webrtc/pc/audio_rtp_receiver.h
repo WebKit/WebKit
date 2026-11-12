@@ -136,8 +136,10 @@ class AudioRtpReceiver : public ObserverInterface,
   void GetRestartFunctionForMediaChannel_w(
       std::optional<uint32_t> ssrc,
       bool track_enabled,
-      MediaSourceInterface::SourceState state) RTC_RUN_ON(worker_thread_);
-  void Reconfigure(bool track_enabled) RTC_RUN_ON(worker_thread_);
+      MediaSourceInterface::SourceState state,
+      double volume) RTC_RUN_ON(worker_thread_);
+  void Reconfigure(bool track_enabled, double volume)
+      RTC_RUN_ON(worker_thread_);
   void SetOutputVolume_w(double volume) RTC_RUN_ON(worker_thread_);
 
   const std::string id_;
@@ -148,7 +150,7 @@ class AudioRtpReceiver : public ObserverInterface,
   std::vector<scoped_refptr<MediaStreamInterface>> streams_
       RTC_GUARDED_BY(&signaling_thread_checker_);
   bool cached_track_enabled_ RTC_GUARDED_BY(&signaling_thread_checker_);
-  double cached_volume_ RTC_GUARDED_BY(worker_thread_) = 1.0;
+  double cached_volume_ RTC_GUARDED_BY(&signaling_thread_checker_) = 1.0;
   const int attachment_id_;
   scoped_refptr<DtlsTransportInterface> dtls_transport_
       RTC_GUARDED_BY(&signaling_thread_checker_);

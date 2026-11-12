@@ -69,6 +69,10 @@ static const int kCpuHasLOONGARCH = 0x20;
 static const int kCpuHasLSX = 0x100;
 static const int kCpuHasLASX = 0x200;
 
+// These flags are only valid on WASM processors.
+static const int kCpuHasWASM = 0x40;
+static const int kCpuHasWASMSIMD = 0x100;
+
 // Optional init function. TestCpuFlag does an auto-init.
 // Returns cpu_info flags.
 LIBYUV_API

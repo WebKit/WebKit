@@ -2776,6 +2776,22 @@ func parseCAs(reader *cryptobyte.String, out *[][]byte) bool {
 	return true
 }
 
+func isValidTrustAnchorID(id []byte) bool {
+	if len(id) == 0 || len(id) > 32 {
+		return false
+	}
+	// Check OID components are minimally-encoded. That is, no OID component can
+	// begin with 0x80.
+	for i, b := range id {
+		startOfComponent := i == 0 || id[i-1]&0x80 == 0
+		if b == 0x80 && startOfComponent {
+			return false
+		}
+	}
+	// The final OID component cannot be truncated.
+	return id[len(id)-1]&0x80 == 0
+}
+
 func parseTrustAnchors(reader *cryptobyte.String, out *[][]byte) bool {
 	var ids cryptobyte.String
 	if !reader.ReadUint16LengthPrefixed(&ids) {
@@ -2785,7 +2801,8 @@ func parseTrustAnchors(reader *cryptobyte.String, out *[][]byte) bool {
 	*out = [][]byte{}
 	for len(ids) > 0 {
 		var id []byte
-		if !readUint8LengthPrefixedBytes(&ids, &id) {
+		if !readUint8LengthPrefixedBytes(&ids, &id) ||
+			!isValidTrustAnchorID(id) {
 			return false
 		}
 		*out = append(*out, id)
@@ -3156,3 +3173,55 @@ func (m *importedPSKIdentity) marshal() []byte {
 	b.AddUint16(m.targetKDF)
 	return b.BytesOrPanic()
 }
+
+func appendBase128(in []byte, v uint64) []byte {
+	// Count how many bytes are needed.
+	l := 1
+	for n := v >> 7; n != 0; n >>= 7 {
+		l++
+	}
+	// Append big-endian, base 128
+	for ; l > 0; l-- {
+		b := byte(v>>uint(7*(l-1))) & 0x7f
+		if l > 1 {
+			b |= 0x80
+		}
+		in = append(in, b)
+	}
+	return in
+}
+
+func MakeTrustAnchorID(in ...uint64) []byte {
+	var ret []byte
+	for _, v := range in {
+		ret = appendBase128(ret, v)
+	}
+	return ret
+}
+
+type TrustAnchorIDPattern []byte
+
+func MakeTrustAnchorIDPattern(in ...uint64) TrustAnchorIDPattern {
+	return TrustAnchorIDPattern{}.Exact(in...)
+}
+
+func (p TrustAnchorIDPattern) Exact(in ...uint64) TrustAnchorIDPattern {
+	for _, v := range in {
+		p = p.Range(v, v)
+	}
+	return p
+}
+
+func (p TrustAnchorIDPattern) Range(min, max uint64) TrustAnchorIDPattern {
+	p = appendBase128(p, min)
+	p = appendBase128(p, max)
+	return p
+}
+
+func (p TrustAnchorIDPattern) AtLeast(min uint64) TrustAnchorIDPattern {
+	p = appendBase128(p, min)
+	p = append(p, 0x80) // Infinity
+	return p
+}
+
+func (p TrustAnchorIDPattern) Bytes() []byte { return []byte(p) }

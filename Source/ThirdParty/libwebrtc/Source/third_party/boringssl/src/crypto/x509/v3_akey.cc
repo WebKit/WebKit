@@ -28,31 +28,11 @@
 
 using namespace bssl;
 
-static STACK_OF(CONF_VALUE) *i2v_AUTHORITY_KEYID(
-    const X509V3_EXT_METHOD *method, void *ext, STACK_OF(CONF_VALUE) *extlist);
-static void *v2i_AUTHORITY_KEYID(const X509V3_EXT_METHOD *method,
-                                 const X509V3_CTX *ctx,
-                                 const STACK_OF(CONF_VALUE) *values);
+namespace {
 
-const X509V3_EXT_METHOD bssl::v3_akey_id = {
-    NID_authority_key_identifier,
-    X509V3_EXT_MULTILINE,
-    ASN1_ITEM_ref(AUTHORITY_KEYID),
-    nullptr,
-    nullptr,
-    nullptr,
-    nullptr,
-    nullptr,
-    nullptr,
-    i2v_AUTHORITY_KEYID,
-    v2i_AUTHORITY_KEYID,
-    nullptr,
-    nullptr,
-    nullptr,
-};
-
-static STACK_OF(CONF_VALUE) *i2v_AUTHORITY_KEYID(
-    const X509V3_EXT_METHOD *method, void *ext, STACK_OF(CONF_VALUE) *extlist) {
+STACK_OF(CONF_VALUE) *i2v_AUTHORITY_KEYID(const X509V3_EXT_METHOD *method,
+                                          void *ext,
+                                          STACK_OF(CONF_VALUE) *extlist) {
   const AUTHORITY_KEYID *akeyid =
       reinterpret_cast<const AUTHORITY_KEYID *>(ext);
   int extlist_was_null = extlist == nullptr;
@@ -94,9 +74,9 @@ err:
 // - issuer: Use the issuer's issuer and serial number. The default is to only
 //   use this if the key ID is not present. The value 'always' means it's always
 //   included.
-static void *v2i_AUTHORITY_KEYID(const X509V3_EXT_METHOD *method,
-                                 const X509V3_CTX *ctx,
-                                 const STACK_OF(CONF_VALUE) *values) {
+void *v2i_AUTHORITY_KEYID(const X509V3_EXT_METHOD *method,
+                          const X509V3_CTX *ctx,
+                          const STACK_OF(CONF_VALUE) *values) {
   enum Option { kOff = 0, kOn = 1, kAlways = 2 };
   Option use_key_id = kOff, use_issuer = kOff;
   for (const CONF_VALUE *cnf : values) {
@@ -172,3 +152,22 @@ static void *v2i_AUTHORITY_KEYID(const X509V3_EXT_METHOD *method,
   akid->keyid = key_id.release();
   return akid.release();
 }
+
+}  // namespace
+
+const X509V3_EXT_METHOD bssl::v3_akey_id = {
+    NID_authority_key_identifier,
+    X509V3_EXT_MULTILINE,
+    ASN1_ITEM_ref(AUTHORITY_KEYID),
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    i2v_AUTHORITY_KEYID,
+    v2i_AUTHORITY_KEYID,
+    nullptr,
+    nullptr,
+    nullptr,
+};

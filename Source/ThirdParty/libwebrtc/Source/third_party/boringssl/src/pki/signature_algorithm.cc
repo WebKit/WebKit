@@ -157,6 +157,14 @@ const uint8_t kOidAlgMldsa65[] = {OBJ_ENC_ML_DSA_65};
 // In dotted notation: 2.16.840.1.101.3.4.3.19
 const uint8_t kOidAlgMldsa87[] = {OBJ_ENC_ML_DSA_87};
 
+// From draft-ietf-plants-merkle-tree-certs-07:
+//
+//   id-alg-mtcProof OBJECT IDENTIFIER ::= {
+//       iso(1) identified-organization(3) dod(6) internet(1) security(5)
+//       mechanisms(5) pkix(7) algorithms(6) 67 }
+const uint8_t kOidAlgMtcProof[] = {0x2b, 0x06, 0x01, 0x05, 0x05, 0x07, 0x06,
+                                   0x43};
+
 // From draft-ietf-plants-merkle-tree-certs-04:
 //
 //   id-alg-mtcProof OBJECT IDENTIFIER ::= {
@@ -439,6 +447,9 @@ std::optional<SignatureAlgorithm> ParseSignatureAlgorithm(
     return ParseRsaPss(params);
   }
 
+  if (oid == der::Input(kOidAlgMtcProof) && params.empty()) {
+    return SignatureAlgorithm::kMtcProof;
+  }
   if (oid == der::Input(kOidAlgMtcProofDraftPlants04) && params.empty()) {
     return SignatureAlgorithm::kMtcProofDraftPlants04;
   }
@@ -485,6 +496,7 @@ std::optional<DigestAlgorithm> GetTlsServerEndpointDigestAlgorithm(
     // RFC 5929 (nor other references) does not define digests to use for these
     // signature algorithms:
     case SignatureAlgorithm::kMtcProofDraftPlants04:
+    case SignatureAlgorithm::kMtcProof:
     case SignatureAlgorithm::kMldsa44:
     case SignatureAlgorithm::kMldsa65:
     case SignatureAlgorithm::kMldsa87:

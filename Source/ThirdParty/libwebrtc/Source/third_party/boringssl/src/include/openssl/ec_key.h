@@ -60,6 +60,11 @@ OPENSSL_EXPORT EC_KEY *EC_KEY_dup(const EC_KEY *src);
 // not mutate `key` for thread-safety purposes and may be used concurrently.
 OPENSSL_EXPORT int EC_KEY_up_ref(EC_KEY *key);
 
+// EC_KEY_dup_ref increases the reference count of `key` and returns the same
+// handle. It does not mutate `key` for thread-safety purposes and may be used
+// concurrently.
+OPENSSL_EXPORT EC_KEY *EC_KEY_dup_ref(const EC_KEY *key);
+
 // EC_KEY_is_opaque returns one if `key` is opaque and doesn't expose its key
 // material. Otherwise it return zero.
 OPENSSL_EXPORT int EC_KEY_is_opaque(const EC_KEY *key);
@@ -347,7 +352,7 @@ extern "C++" {
 BSSL_NAMESPACE_BEGIN
 
 BORINGSSL_MAKE_DELETER(EC_KEY, EC_KEY_free)
-BORINGSSL_MAKE_UP_REF(EC_KEY, EC_KEY_up_ref)
+BORINGSSL_MAKE_UP_REF(EC_KEY, EC_KEY_dup_ref)
 
 BSSL_NAMESPACE_END
 

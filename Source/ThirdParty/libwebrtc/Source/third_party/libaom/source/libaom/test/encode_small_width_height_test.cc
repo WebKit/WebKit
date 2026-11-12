@@ -15,6 +15,7 @@
 // (<= one AV1 superblock) with multiple threads. aom_codec_encode() should
 // not crash.
 
+#include <cstring>
 #include <memory>
 
 #include "aom/aomcx.h"

@@ -189,24 +189,6 @@ group("video_engine_tests_data") {
   data = video_engine_tests_resources
 }
 
-scenario_config_resources = [
-  "difficult_photo_1850_1110.yuv",
-  "photo_1850_1110.yuv",
-  "presentation_1850_1110.yuv",
-  "web_screenshot_1850_1110.yuv",
-]
-
-group("scenario_config_resources") {
-  data = scenario_config_resources
-}
-if (is_ios) {
-  bundle_data("scenario_config_resources_bundle_data") {
-    testonly = true
-    sources = scenario_config_resources
-    outputs = [ "{{bundle_resources_dir}}/{{source_file_part}}" ]
-  }
-}
-
 video_coding_tests_resources = [
   "foreman_128x96.yuv",
   "foreman_160x120.yuv",
@@ -231,6 +213,27 @@ if (is_ios) {
   bundle_data("video_coding_tests_bundle_data") {
     testonly = true
     sources = video_coding_tests_resources
+    outputs = [ "{{bundle_resources_dir}}/{{source_file_part}}" ]
+  }
+}
+
+rtc_unittests_resources = [
+  "ConferenceMotion_1280_720_50.yuv",
+  "FourPeople_1280x720_30.yuv",
+  "difficult_photo_1850_1110.yuv",
+  "presentation_1850_1110.yuv",
+  "reference_less_video_test_file.y4m",
+  "reference_video_640x360_30fps.y4m",
+  "web_screenshot_1850_1110.yuv",
+]
+
+group("rtc_unittests_data") {
+  data = rtc_unittests_resources
+}
+if (is_ios) {
+  bundle_data("rtc_unittests_bundle_data") {
+    testonly = true
+    sources = rtc_unittests_resources
     outputs = [ "{{bundle_resources_dir}}/{{source_file_part}}" ]
   }
 }

@@ -44,7 +44,9 @@ IMPLEMENT_ASN1_FUNCTIONS_const(X509_CERT_AUX)
 
 BSSL_NAMESPACE_END
 
-static X509_CERT_AUX *aux_get(X509Impl *x) {
+namespace {
+
+X509_CERT_AUX *aux_get(X509Impl *x) {
   if (!x) {
     return nullptr;
   }
@@ -53,6 +55,8 @@ static X509_CERT_AUX *aux_get(X509Impl *x) {
   }
   return x->aux;
 }
+
+}  // namespace
 
 int X509_alias_set1(X509 *x, const uint8_t *name, ossl_ssize_t len) {
   auto *impl = FromOpaque(x);

@@ -14,7 +14,12 @@
 
 package runner
 
-import "golang.org/x/crypto/cryptobyte"
+import (
+	"bytes"
+	"fmt"
+
+	"golang.org/x/crypto/cryptobyte"
+)
 
 func trustAnchorListFlagValue(ids ...[]byte) string {
 	b := cryptobyte.NewBuilder(nil)
@@ -131,28 +136,52 @@ func addTrustAnchorTests() {
 		},
 	})
 
-	// An empty trust anchor ID is a syntax error, so most be rejected in both
-	// ClientHello and EncryptedExtensions.
-	testCases = append(testCases, testCase{
-		testType: serverTest,
-		name:     "TrustAnchors-EmptyID-ClientHello",
-		config: Config{
-			MinVersion:          VersionTLS13,
-			RequestTrustAnchors: [][]byte{{}},
-		},
-		shouldFail:    true,
-		expectedError: ":DECODE_ERROR:",
-	})
-	testCases = append(testCases, testCase{
-		name: "TrustAnchors-EmptyID-EncryptedExtensions",
-		config: Config{
-			MinVersion:            VersionTLS13,
-			AvailableTrustAnchors: [][]byte{{}},
-		},
-		flags:         []string{"-requested-trust-anchors", trustAnchorListFlagValue(id1)},
-		shouldFail:    true,
-		expectedError: ":DECODE_ERROR:",
-	})
+	// Invalid trust anchor IDs are rejected in ClientHello, EncryptedExtensions,
+	// and configuration.
+	invalidIDs := []struct {
+		name string
+		id   []byte
+	}{
+		{"Empty", []byte{}},
+		{"TooLong", bytes.Repeat([]byte{5}, 33)},
+		{"NonMinimalComponent", []byte{0x80, 0x01}},
+		{"TruncatedComponent", []byte{0xff}},
+	}
+	for _, id := range invalidIDs {
+		testCases = append(testCases, testCase{
+			testType: serverTest,
+			name:     fmt.Sprintf("TrustAnchors-%s-ClientHello", id.name),
+			config: Config{
+				MinVersion:          VersionTLS13,
+				RequestTrustAnchors: [][]byte{id.id},
+			},
+			shouldFail:    true,
+			expectedError: ":DECODE_ERROR:",
+		})
+		testCases = append(testCases, testCase{
+			name: fmt.Sprintf("TrustAnchors-%s-EncryptedExtensions", id.name),
+			config: Config{
+				MinVersion:            VersionTLS13,
+				AvailableTrustAnchors: [][]byte{id.id},
+			},
+			flags:         []string{"-requested-trust-anchors", trustAnchorListFlagValue(id1)},
+			shouldFail:    true,
+			expectedError: ":DECODE_ERROR:",
+		})
+		testCases = append(testCases, testCase{
+			testType:        serverTest,
+			name:            fmt.Sprintf("TrustAnchors-%s-ConfigCredential", id.name),
+			shimCredentials: []*Credential{rsaCertificate.WithTrustAnchorID(id.id)},
+			shouldFail:      true,
+			expectedError:   ":INVALID_TRUST_ANCHOR_ID:",
+		})
+		testCases = append(testCases, testCase{
+			name:          fmt.Sprintf("TrustAnchors-%s-ConfigRequest", id.name),
+			flags:         []string{"-requested-trust-anchors", trustAnchorListFlagValue(id.id)},
+			shouldFail:    true,
+			expectedError: ":INVALID_TRUST_ANCHOR_LIST:",
+		})
+	}
 
 	// Test the server selection logic, as well as whether it correctly reports
 	// available trust anchors and the match status. (The general selection flow
@@ -353,18 +382,60 @@ func addTrustAnchorTests() {
 		expectedLocalError: "remote error: unsupported extension",
 	})
 
-	group := []byte{1, 2, 3, 4, 5}
+	// Having a trust_anchor_id property does not, on its own, gate the credential
+	// on an issuer match.
+	testCases = append(testCases, testCase{
+		testType: serverTest,
+		name:     "TrustAnchors-NoTrustAnchorNegotiationProperty",
+		config: Config{
+			MinVersion:          VersionTLS13,
+			RequestTrustAnchors: [][]byte{id2},
+		},
+		shimCredentials: []*Credential{
+			rsaCertificate.WithProperties(CertificatePropertyList{
+				TrustAnchorID: id1,
+			}),
+			ecdsaP256Certificate.WithTrustAnchorID(id2),
+		},
+		// The first credential is chosen because it is not gated on a trust anchors.
+		flags: []string{"-expect-selected-credential", "0"},
+		expectations: connectionExpectations{
+			peerCertificate: &rsaCertificate,
+		},
+	})
+
+	// The trust_anchor_negotiation property, however, does gate it.
+	testCases = append(testCases, testCase{
+		testType: serverTest,
+		name:     "TrustAnchors-TrustAnchorNegotiationProperty",
+		config: Config{
+			MinVersion:          VersionTLS13,
+			RequestTrustAnchors: [][]byte{id2},
+		},
+		shimCredentials: []*Credential{
+			rsaCertificate.WithProperties(CertificatePropertyList{
+				TrustAnchorID:          id1,
+				TrustAnchorNegotiation: true,
+			}),
+			ecdsaP256Certificate.WithTrustAnchorID(id2),
+		},
+		// The second credential is chosen because the first is gated on trust
+		// anchors and does not match.
+		flags: []string{"-expect-selected-credential", "1"},
+		expectations: connectionExpectations{
+			peerCertificate: &ecdsaP256Certificate,
+		},
+	})
+
+	group := MakeTrustAnchorID(32473, 100, 200, 300, 400)
 	// These ranges match the test group.
-	match := TrustAnchorRange{Base: []byte{1, 2, 3, 4}, Min: 1, Max: 10}
-	matchExact := TrustAnchorRange{Base: []byte{1, 2, 3, 4}, Min: 5, Max: 5}
+	match := MakeTrustAnchorIDPattern(32473).Range(50, 100).Exact(200).Range(300, 350).AtLeast(350).Bytes()
+	matchExact := MakeTrustAnchorIDPattern(32473, 100, 200, 300, 400).Bytes()
 	// These ranges do not.
-	wrongBase := TrustAnchorRange{Base: []byte{1, 2, 3, 5}, Min: 5, Max: 10}
-	componentTooLow := TrustAnchorRange{Base: []byte{1, 2, 3, 4}, Min: 1, Max: 4}
-	componentTooHigh := TrustAnchorRange{Base: []byte{1, 2, 3, 4}, Min: 6, Max: 10}
-	matchParent := TrustAnchorRange{Base: []byte{1, 2, 3}, Min: 1, Max: 10}
-	matchChild := TrustAnchorRange{Base: []byte{1, 2, 3, 4, 5}, Min: 1, Max: 10}
-	matchChild2 := TrustAnchorRange{Base: []byte{1, 2, 3, 4, 5}, Min: 0, Max: 0}
-	matchGrandChild := TrustAnchorRange{Base: []byte{1, 2, 3, 4, 5, 6}, Min: 1, Max: 10}
+	tooShort := MakeTrustAnchorIDPattern(32473, 100, 200, 300).Bytes()
+	tooLong := MakeTrustAnchorIDPattern(32473, 100, 200, 300, 400, 0).Bytes()
+	componentTooLow := MakeTrustAnchorIDPattern(32473, 100, 200).Range(301, 350).Exact(400).Bytes()
+	componentTooHigh := MakeTrustAnchorIDPattern(32473, 100, 200).Range(250, 299).Exact(400).Bytes()
 
 	testCases = append(testCases, testCase{
 		testType: serverTest,
@@ -380,17 +451,13 @@ func addTrustAnchorTests() {
 		shimCredentials: []*Credential{
 			// Neither the ID nor the group inclusions match.
 			rsaCertificate.WithMustMatchIssuer(true).WithProperties(CertificatePropertyList{
-				TrustAnchorID: id1,
-				TrustAnchorGroupInclusions: []TrustAnchorRange{
-					wrongBase, componentTooLow, componentTooHigh, matchParent, matchChild, matchChild2, matchGrandChild,
-				},
+				TrustAnchorID:     id1,
+				TrustAnchorGroups: [][]byte{tooShort, tooLong, componentTooLow, componentTooHigh},
 			}),
 			// The group inclusions match, after skipping some irrelevant inclusions.
 			ecdsaP256Certificate.WithMustMatchIssuer(true).WithProperties(CertificatePropertyList{
-				TrustAnchorID: id2,
-				TrustAnchorGroupInclusions: []TrustAnchorRange{
-					wrongBase, match,
-				},
+				TrustAnchorID:     id2,
+				TrustAnchorGroups: [][]byte{tooShort, match},
 			}),
 		},
 		expectations: connectionExpectations{
@@ -413,17 +480,13 @@ func addTrustAnchorTests() {
 		shimCredentials: []*Credential{
 			// Neither the ID nor the group inclusions match.
 			rsaCertificate.WithMustMatchIssuer(true).WithProperties(CertificatePropertyList{
-				TrustAnchorID: id1,
-				TrustAnchorGroupInclusions: []TrustAnchorRange{
-					wrongBase, componentTooLow, componentTooHigh, matchParent, matchChild, matchGrandChild,
-				},
+				TrustAnchorID:     id1,
+				TrustAnchorGroups: [][]byte{tooShort, tooLong, componentTooLow, componentTooHigh},
 			}),
 			// The group inclusions match, after skipping some irrelevant inclusions.
 			ecdsaP256Certificate.WithMustMatchIssuer(true).WithProperties(CertificatePropertyList{
-				TrustAnchorID: id2,
-				TrustAnchorGroupInclusions: []TrustAnchorRange{
-					wrongBase, matchExact,
-				},
+				TrustAnchorID:     id2,
+				TrustAnchorGroups: [][]byte{tooShort, matchExact},
 			}),
 		},
 		expectations: connectionExpectations{

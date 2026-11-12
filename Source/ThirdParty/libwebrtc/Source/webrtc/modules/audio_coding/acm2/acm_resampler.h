@@ -30,11 +30,18 @@ class ResamplerHelper {
   ResamplerHelper();
 
   // Resamples audio_frame if it is not already in desired_sample_rate_hz.
+  // A muted frame that follows a muted frame stays muted: its resampled
+  // output would be silent. A muted frame that follows audio is resampled
+  // and comes out unmuted, since the output still holds the tail of that
+  // audio.
   bool MaybeResample(int desired_sample_rate_hz, AudioFrame* audio_frame);
 
  private:
   PushResampler<int16_t> resampler_;
   bool resampled_last_output_frame_ = true;
+  // Whether the last frame that MaybeResample() accepted was muted. The
+  // resampler starts out silent.
+  bool last_frame_muted_ = true;
   std::array<int16_t, AudioFrame::kMaxDataSizeSamples> last_audio_buffer_;
 };
 

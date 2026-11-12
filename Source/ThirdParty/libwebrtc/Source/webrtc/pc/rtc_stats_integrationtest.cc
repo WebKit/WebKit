@@ -836,8 +836,6 @@ class RTCStatsReportVerifier {
       verifier.TestAttributeIsDefined(outbound_stream.key_frames_encoded);
       verifier.TestAttributeIsNonNegative<double>(
           outbound_stream.total_encode_time);
-      verifier.TestAttributeIsNonNegative<uint64_t>(
-          outbound_stream.total_encoded_bytes_target);
       verifier.TestAttributeIsDefined(
           outbound_stream.quality_limitation_reason);
       verifier.TestAttributeIsDefined(
@@ -881,8 +879,6 @@ class RTCStatsReportVerifier {
       verifier.TestAttributeIsUndefined(outbound_stream.key_frames_encoded);
       verifier.TestAttributeIsUndefined(outbound_stream.total_encode_time);
       verifier.TestAttributeIsUndefined(
-          outbound_stream.total_encoded_bytes_target);
-      verifier.TestAttributeIsUndefined(
           outbound_stream.quality_limitation_reason);
       verifier.TestAttributeIsUndefined(
           outbound_stream.quality_limitation_durations);
@@ -921,11 +917,21 @@ class RTCStatsReportVerifier {
     verifier.TestAttributeIsIDReference(remote_inbound_stream.local_id,
                                         RTCOutboundRtpStreamStats::kType);
     verifier.TestAttributeIsNonNegative<double>(
-        remote_inbound_stream.round_trip_time);
-    verifier.TestAttributeIsNonNegative<double>(
         remote_inbound_stream.total_round_trip_time);
     verifier.TestAttributeIsNonNegative<int32_t>(
         remote_inbound_stream.round_trip_time_measurements);
+    // `round_trip_time_measurements` should always be defined since it's a
+    // counter and it is implemented, but if it isn't the only sensible
+    // interpretation for missing value is "no measurements", i.e. 0. If missing
+    // the `verifier` will mark the attribute as such above and fail the test.
+    if (remote_inbound_stream.round_trip_time_measurements.value_or(0) > 0) {
+      verifier.TestAttributeIsNonNegative<double>(
+          remote_inbound_stream.round_trip_time);
+    } else {
+      // It's possible to have an RTCP report without any round trip time
+      // measurements yet, in which case this value is undefined.
+      verifier.TestAttributeIsUndefined(remote_inbound_stream.round_trip_time);
+    }
     // TODO: bugs.webrtc.org/42225697 - move to RTCReceivedRtpStreamStats
     // when wiring the RFC 8888 feedback to stats.
     verifier.TestAttributeIsUndefined<int64_t>(

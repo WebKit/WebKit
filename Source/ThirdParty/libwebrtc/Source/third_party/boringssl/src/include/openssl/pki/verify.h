@@ -77,7 +77,7 @@ class OPENSSL_EXPORT CertificateVerifyOptions {
     C2PA_MANIFEST
   };
 
-  CertificateVerifyOptions();
+  CertificateVerifyOptions() = default;
   CertificateVerifyOptions(const CertificateVerifyOptions &) = delete;
   CertificateVerifyOptions &operator=(const CertificateVerifyOptions &) =
       delete;
@@ -130,8 +130,6 @@ class OPENSSL_EXPORT CertificateVerifyOptions {
 // attempt.
 class OPENSSL_EXPORT CertificateVerifyStatus {
  public:
-  CertificateVerifyStatus();
-
   // IterationCount returns the total number of attempted certificate additions
   // to any potential path while performing path building for verification. It
   // is the same value which may be bound by max_iteration_count in

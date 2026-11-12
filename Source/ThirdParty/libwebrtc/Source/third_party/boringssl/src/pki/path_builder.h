@@ -52,9 +52,6 @@ class OPENSSL_EXPORT CertPathBuilderDelegateData {
 // CertPathBuilderResultPath is the result of a successful certificate
 // verification.
 struct OPENSSL_EXPORT CertPathBuilderResultPath {
-  CertPathBuilderResultPath();
-  ~CertPathBuilderResultPath();
-
   // Returns true if the candidate path is valid. A "valid" path is one which
   // chains to a trusted root, and did not have any high severity errors added
   // to it during certificate verification.
@@ -140,14 +137,12 @@ class OPENSSL_EXPORT CertPathBuilder {
   // Provides the overall result of path building. This includes the paths that
   // were attempted.
   struct OPENSSL_EXPORT Result {
-    Result();
-    Result(Result &&);
-
-    Result(const Result &) = delete;
-    Result &operator=(const Result &) = delete;
-
-    ~Result();
-    Result &operator=(Result &&);
+    // This type is not copyable due to `paths`, but we must define it
+    // explicitly as move-only type because `std::vector<T>` does not delete its
+    // copy constructor based on `T`.
+    Result() = default;
+    Result(Result &&) = default;
+    Result &operator=(Result &&) = default;
 
     // Returns true if there was a valid path.
     bool HasValidPath() const;

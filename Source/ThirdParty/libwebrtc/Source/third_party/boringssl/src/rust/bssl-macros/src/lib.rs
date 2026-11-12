@@ -41,10 +41,14 @@ macro_rules! bssl_enum {
             fn try_from(value: $repr) -> Result<Self, Self::Error> {
                 $(
                     #[allow(non_upper_case_globals)]
+                    #[allow(clippy::unnecessary_cast)]
+                    #[allow(deprecated)]
                     const $item: $repr = $e;
                 )*
 
                 #[allow(non_upper_case_globals)]
+                #[allow(clippy::unnecessary_cast)]
+                #[allow(deprecated)]
                 match value {
                     $(
                         $item => ::core::result::Result::Ok(Self::$item),
