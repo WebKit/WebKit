@@ -202,13 +202,13 @@ public:
         : m_previousState(JSExecState::currentState())
         , m_customElementReactionStack(m_previousState)
     {
-        ASSERT(isMainThread());
+        ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
         JSExecState::setCurrentState(nullptr);
     }
 
     ~JSMainThreadNullState()
     {
-        ASSERT(isMainThread());
+        ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
         JSExecState::setCurrentState(m_previousState);
     }
 

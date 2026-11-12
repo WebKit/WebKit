@@ -133,7 +133,7 @@ private:
     void evict(Entry& entry)
     {
         auto it = m_entries.find(entry.size());
-        ASSERT(it != m_entries.end());
+        ASSERT_WITH_SECURITY_IMPLICATION(it != m_entries.end());
 
         bool removed = it->value.removeFirstMatching([&](auto& candidate) {
             return candidate.get() == &entry;

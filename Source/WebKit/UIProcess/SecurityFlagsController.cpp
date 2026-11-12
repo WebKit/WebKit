@@ -152,7 +152,7 @@ void SecurityFlagsController::remoteListRequestTimedOut(uint64_t generation)
 
 void SecurityFlagsController::didReceiveRemoteList(uint64_t generation, std::optional<Vector<String>>&& names)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     // A reply the watchdog already gave up on, or one belonging to a request that a later one replaced.
     if (m_remoteListState == RemoteListState::Idle || generation != m_remoteListRequestGeneration)
@@ -214,7 +214,7 @@ void SecurityFlagsController::platformObserveRemoteListChanges()
 
 void SecurityFlagsController::propagateToChildProcesses()
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     // Processes launched after this point pick the new value up through their creation parameters instead.
     for (Ref networkProcess : NetworkProcessProxy::allNetworkProcesses())

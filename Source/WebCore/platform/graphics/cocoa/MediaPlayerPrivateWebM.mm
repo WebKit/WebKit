@@ -1952,7 +1952,7 @@ AudioVideoRenderer::TrackIdentifier MediaPlayerPrivateWebM::trackIdentifierFor(T
 {
     assertIsCurrent(runningQueue());
     auto it = m_trackIdentifiers.find(trackID);
-    ASSERT(it != m_trackIdentifiers.end());
+    ASSERT_WITH_SECURITY_IMPLICATION(it != m_trackIdentifiers.end());
     return it->second;
 }
 

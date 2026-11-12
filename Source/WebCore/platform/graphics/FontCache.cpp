@@ -220,7 +220,7 @@ FontPlatformData* FontCache::cachedFontPlatformData(const FontDescription& fontD
                 // Look up the key in the hash table again as the previous iterator may have
                 // been invalidated by the recursive call to cachedFontPlatformData().
                 it = m_fontDataCaches->platformData.find(key);
-                ASSERT(it != m_fontDataCaches->platformData.end());
+                ASSERT_WITH_SECURITY_IMPLICATION(it != m_fontDataCaches->platformData.end());
                 if (alternateData)
                     it->value = makeUnique<FontPlatformData>(*alternateData);
             }

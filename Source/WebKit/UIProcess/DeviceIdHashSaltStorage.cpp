@@ -53,7 +53,7 @@ Ref<DeviceIdHashSaltStorage> DeviceIdHashSaltStorage::create(const String& devic
 
 void DeviceIdHashSaltStorage::completePendingHandler(CompletionHandler<void(HashSet<SecurityOriginData>&&)>&& completionHandler)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     HashSet<SecurityOriginData> origins;
 
@@ -77,7 +77,7 @@ DeviceIdHashSaltStorage::DeviceIdHashSaltStorage(const String& deviceIdHashSaltS
     }
 
     loadStorageFromDisk([this, protectedThis = Ref { *this }] (auto&& deviceIdHashSaltForOrigins) {
-        ASSERT(RunLoop::isMain());
+        ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
         m_deviceIdHashSaltForOrigins = WTF::move(deviceIdHashSaltForOrigins);
         m_isLoaded = true;
 
@@ -226,7 +226,7 @@ void DeviceIdHashSaltStorage::completeDeviceIdHashSaltForOriginCall(SecurityOrig
 
 void DeviceIdHashSaltStorage::deviceIdHashSaltForOrigin(const SecurityOrigin& documentOrigin, const SecurityOrigin& parentOrigin, CompletionHandler<void(String&&)>&& completionHandler)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     if (!m_isLoaded) {
         m_pendingCompletionHandlers.append([weakThis = ThreadSafeWeakPtr { *this }, documentOrigin = documentOrigin.data().isolatedCopy(), parentOrigin = parentOrigin.data().isolatedCopy(), completionHandler = WTF::move(completionHandler)]() mutable {
@@ -241,7 +241,7 @@ void DeviceIdHashSaltStorage::deviceIdHashSaltForOrigin(const SecurityOrigin& do
 
 void DeviceIdHashSaltStorage::getDeviceIdHashSaltOrigins(CompletionHandler<void(HashSet<SecurityOriginData>&&)>&& completionHandler)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     if (!m_isLoaded) {
         m_pendingCompletionHandlers.append([weakThis = ThreadSafeWeakPtr { *this }, completionHandler = WTF::move(completionHandler)]() mutable {
@@ -266,7 +266,7 @@ void DeviceIdHashSaltStorage::deleteHashSaltFromDisk(const HashSaltForOrigin& ha
 
 void DeviceIdHashSaltStorage::deleteDeviceIdHashSaltForOrigins(const Vector<SecurityOriginData>& origins, CompletionHandler<void()>&& completionHandler)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     if (!m_isLoaded) {
         m_pendingCompletionHandlers.append([weakThis = ThreadSafeWeakPtr { *this }, origins, completionHandler = WTF::move(completionHandler)]() mutable {
@@ -296,7 +296,7 @@ void DeviceIdHashSaltStorage::deleteDeviceIdHashSaltForOrigins(const Vector<Secu
 
 void DeviceIdHashSaltStorage::deleteDeviceIdHashSaltOriginsModifiedSince(WallTime time, CompletionHandler<void()>&& completionHandler)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     if (!m_isLoaded) {
         m_pendingCompletionHandlers.append([weakThis = ThreadSafeWeakPtr { *this }, time, completionHandler = WTF::move(completionHandler)]() mutable {

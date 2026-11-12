@@ -143,7 +143,7 @@ CDMSessionAVContentKeySession::CDMSessionAVContentKeySession(Vector<int>&& proto
 
 CDMSessionAVContentKeySession::~CDMSessionAVContentKeySession()
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     ALWAYS_LOG(LOGIDENTIFIER);
     [m_contentKeySessionDelegate invalidate];
 

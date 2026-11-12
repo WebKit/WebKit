@@ -180,7 +180,7 @@ WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClien
 
     // Can we benefit from request being an r-value to create more efficiently its isolated copy?
     protect(m_loaderProxy)->postTaskToLoader([this, protectedThis = Ref { *this }, request = WTF::move(request).isolatedCopy(), options = WTF::move(optionsCopy), contentSecurityPolicyIsolatedCopy = WTF::move(contentSecurityPolicyIsolatedCopy), crossOriginEmbedderPolicyCopy = WTF::move(crossOriginEmbedderPolicyCopy)](ScriptExecutionContext& context) mutable {
-        ASSERT(isMainThread());
+        ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
         Ref document = downcast<Document>(context);
 
         // FIXME: If the site requests a local resource, then this will return a non-zero value but the sync path will return a 0 value.
@@ -200,7 +200,7 @@ void WorkerThreadableLoader::MainThreadBridge::cancel()
 {
     if (m_loaderProxy) {
         protect(m_loaderProxy)->postTaskToLoader([this, protectedThis = Ref { *this }] (ScriptExecutionContext& context) {
-            ASSERT(isMainThread());
+            ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
             ASSERT_UNUSED(context, context.isDocument());
 
             if (RefPtr mainThreadLoader = std::exchange(m_mainThreadLoader, nullptr))

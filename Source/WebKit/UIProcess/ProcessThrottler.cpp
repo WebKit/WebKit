@@ -653,7 +653,7 @@ ProcessThrottlerActivity::ProcessThrottlerActivity(ProcessThrottler& throttler, 
     , m_type(type)
     , m_isQuietActivity(isQuiet)
 {
-    ASSERT(isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
     if (!throttler.addActivity(*this)) {
         m_throttler = nullptr;
         return;

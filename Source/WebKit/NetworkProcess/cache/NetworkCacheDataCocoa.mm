@@ -112,7 +112,7 @@ Data Data::adoptMap(FileSystem::MappedFileData&& mappedFile, FileSystem::FileHan
 {
     auto span = mappedFile.leakHandle();
     ASSERT(span.data());
-    ASSERT(span.data() != MAP_FAILED);
+    ASSERT_WITH_SECURITY_IMPLICATION(span.data() != MAP_FAILED);
     outputHandle = { };
     auto bodyMap = adoptOSObject(dispatch_data_create(span.data(), span.size(), globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [span] {
         munmap(span.data(), span.size());

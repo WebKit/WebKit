@@ -693,7 +693,7 @@ void ScrollingTree::applyLayerPositions()
 
 void ScrollingTree::applyLayerPositionsInternal()
 {
-    ASSERT(m_treeLock.isLocked());
+    ASSERT_WITH_SECURITY_IMPLICATION(m_treeLock.isLocked());
     if (RefPtr rootNode = m_rootNode)
         applyLayerPositionsRecursive(*rootNode);
 }

@@ -63,7 +63,7 @@ void BaseAudioCaptureUnit::setEnableEchoCancellation(bool enableEchoCancellation
 
 void BaseAudioCaptureUnit::addClient(CoreAudioCaptureSource& client)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     m_clients.add(client);
     Locker locker { m_audioThreadClientsLock };
     m_audioThreadClients = m_clients.weakValues();
@@ -71,7 +71,7 @@ void BaseAudioCaptureUnit::addClient(CoreAudioCaptureSource& client)
 
 void BaseAudioCaptureUnit::removeClient(CoreAudioCaptureSource& client)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     m_clients.remove(client);
     {
         Locker locker { m_audioThreadClientsLock };
@@ -84,7 +84,7 @@ void BaseAudioCaptureUnit::removeClient(CoreAudioCaptureSource& client)
 
 void BaseAudioCaptureUnit::clearClients()
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     m_clients.clear();
     Locker locker { m_audioThreadClientsLock };
     m_audioThreadClients.clear();
@@ -92,7 +92,7 @@ void BaseAudioCaptureUnit::clearClients()
 
 void BaseAudioCaptureUnit::forEachClient(NOESCAPE const Function<void(CoreAudioCaptureSource&)>& apply) const
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     m_clients.forEach(apply);
 }
 

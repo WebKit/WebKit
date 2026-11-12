@@ -87,14 +87,14 @@ template<typename ValueType> NODELETE SUPPRESS_NODELETE ValueType& ValueHandleMa
 {
     Locker locker { m_lock };
     auto entry = m_map.find(handle);
-    ASSERT(entry != m_map.end());
+    ASSERT_WITH_SECURITY_IMPLICATION(entry != m_map.end());
     return *entry->value.value;
 }
 
 template<typename ValueType> void ValueHandleMap<ValueType>::ref(unsigned handle)
 {
     Locker locker { m_lock };
-    ASSERT(m_map.contains(handle));
+    ASSERT_WITH_SECURITY_IMPLICATION(m_map.contains(handle));
 
     ++m_map.find(handle)->value.referenceCountMinusOne;
 }
@@ -102,7 +102,7 @@ template<typename ValueType> void ValueHandleMap<ValueType>::ref(unsigned handle
 template<typename ValueType> void ValueHandleMap<ValueType>::deref(unsigned handle)
 {
     Locker locker { m_lock };
-    ASSERT(m_map.contains(handle));
+    ASSERT_WITH_SECURITY_IMPLICATION(m_map.contains(handle));
 
     auto it = m_map.find(handle);
     if (it->value.referenceCountMinusOne) {

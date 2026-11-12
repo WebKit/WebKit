@@ -51,7 +51,7 @@ void WheelEventTestMonitor::clearAllTestDeferrals()
 {
     Locker locker { m_lock };
 
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     m_deferCompletionReasons.clear();
     m_completionCallback = nullptr;
     m_everHadDeferral = false;
@@ -64,7 +64,7 @@ void WheelEventTestMonitor::setTestCallbackAndStartMonitoring(bool expectWheelEn
 {
     Locker locker { m_lock };
 
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     m_completionCallback = WTF::move(functionCallback);
 #if ENABLE(KINETIC_SCROLLING)
     m_expectWheelEndOrCancel = expectWheelEndOrCancel;
@@ -141,7 +141,7 @@ void WheelEventTestMonitor::scheduleCallbackCheck()
 
 void WheelEventTestMonitor::checkShouldFireCallbacks()
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     {
         Locker locker { m_lock };
 

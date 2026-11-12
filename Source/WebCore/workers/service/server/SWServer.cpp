@@ -276,7 +276,7 @@ void SWServer::importRegistrationsForOrigin(const SecurityOriginData& topOrigin,
 
 void SWServer::addRegistrationFromStore(ServiceWorkerContextData&& data, CompletionHandler<void()>&& completionHandler)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
     ASSERT(!m_scopeToRegistrationMap.contains(data.registration.key));
 
@@ -285,7 +285,7 @@ void SWServer::addRegistrationFromStore(ServiceWorkerContextData&& data, Complet
     auto registrationKey = data.registration.key;
     auto registrableDomain = WebCore::RegistrableDomain(registrationKey.topOrigin());
     validateRegistrationDomain(registrableDomain, ServiceWorkerJobType::Register, m_scopeToRegistrationMap.contains(registrationKey), [weakThis = WeakPtr { *this }, data = WTF::move(data), completionHandler = WTF::move(completionHandler)] (bool isValid) mutable {
-        ASSERT(isMainThread());
+        ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return completionHandler();
@@ -1789,7 +1789,7 @@ void SWServer::getOriginsWithRegistrations(CompletionHandler<void(const HashSet<
 
 void SWServer::performGetOriginsWithRegistrationsCallbacks()
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     ASSERT(m_originListImportComplete);
 
     if (m_getOriginsWithRegistrationsCallbacks.isEmpty() && m_getAllOriginsCallbacks.isEmpty())

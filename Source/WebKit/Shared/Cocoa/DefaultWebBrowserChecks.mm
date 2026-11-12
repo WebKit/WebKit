@@ -142,7 +142,7 @@ NODELETE static RefPtr<WorkQueue>& itpQueue()
 
 void determineTrackingPreventionState()
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
     if (currentTrackingPreventionState != TrackingPreventionState::Uninitialized)
         return;
 
@@ -161,7 +161,7 @@ void determineTrackingPreventionState()
 bool doesAppHaveTrackingPreventionEnabled()
 {
     ASSERT(!isInWebKitChildProcess());
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
     // If we're still computing the ITP state on the background thread, then synchronize with it.
     if (RefPtr queue = itpQueue())
         queue->dispatchSync([] { });

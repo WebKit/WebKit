@@ -41,7 +41,7 @@
 
 - (void)authorization:(SOAuthorization *)authorization presentViewController:(SOAuthorizationViewController)viewController withCompletion:(void (^)(BOOL success, NSError *error))completion
 {
-    ASSERT(RunLoop::isMain() && completion);
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain() && completion);
     WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorization (authorization = %p, _session = %p)", authorization, _session.get());
     RefPtr session = _session;
     if (!session) {
@@ -69,7 +69,7 @@
 
 - (void)authorizationDidNotHandle:(SOAuthorization *)authorization
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
     WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorizationDidNotHandle: (authorization = %p, _session = %p)", authorization, _session.get());
     LOG_ERROR("Could not handle AppSSO.");
     RefPtr session = _session;
@@ -89,7 +89,7 @@
 
 - (void)authorizationDidCancel:(SOAuthorization *)authorization
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
     WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorizationDidCancel: (authorization = %p, _session = %p)", authorization, _session.get());
     RefPtr session = _session;
     if (!session) {
@@ -108,7 +108,7 @@
 
 - (void)authorizationDidComplete:(SOAuthorization *)authorization
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
     WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorizationDidComplete: (authorization = %p, _session = %p)", authorization, _session.get());
     LOG_ERROR("Complete AppSSO without any data.");
     RefPtr session = _session;
@@ -128,7 +128,7 @@
 
 - (void)authorization:(SOAuthorization *)authorization didCompleteWithHTTPAuthorizationHeaders:(NSDictionary *)httpAuthorizationHeaders
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
     WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorization:didCompleteWithHTTPAuthorizationHeaders: (authorization = %p, _session = %p)", authorization, _session.get());
     LOG_ERROR("Complete AppSSO with unexpected callback.");
     RefPtr session = _session;
@@ -148,7 +148,7 @@
 
 - (void)authorization:(SOAuthorization *)authorization didCompleteWithHTTPResponse:(NSHTTPURLResponse *)httpResponse httpBody:(NSData *)httpBody
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
     WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorization:didCompleteWithHTTPResponse: (authorization = %p, _session = %p)", authorization, _session.get());
     RefPtr session = _session;
     if (!session) {
@@ -167,7 +167,7 @@
 
 - (void)authorization:(SOAuthorization *)authorization didCompleteWithError:(NSError *)error
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
     WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorization:didCompleteWithError: (authorization = %p, _session = %p)", authorization, _session.get());
     if (error.code)
         LOG_ERROR("Could not complete AppSSO operation. Error: %zd", error.code);

@@ -52,7 +52,7 @@ void Authenticator::handleRequest(const WebAuthenticationRequestData& data)
 
 void Authenticator::receiveRespond(AuthenticatorObserverRespond&& respond) const
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
     if (RefPtr observer = m_observer.get())
         observer->respondReceived(WTF::move(respond));
 }

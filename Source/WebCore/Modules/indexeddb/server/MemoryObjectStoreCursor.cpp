@@ -96,7 +96,7 @@ void MemoryObjectStoreCursor::setFirstInRemainingRange(IDBKeyDataSet& set)
         }
     }
 
-    ASSERT(!m_iterator || *m_iterator != set.end());
+    ASSERT_WITH_SECURITY_IMPLICATION(!m_iterator || *m_iterator != set.end());
 }
 
 void MemoryObjectStoreCursor::setForwardIteratorFromRemainingRange(IDBKeyDataSet& set)
@@ -225,7 +225,7 @@ void MemoryObjectStoreCursor::incrementForwardIterator(IDBKeyDataSet& set, const
     if (!m_iterator)
         return;
 
-    ASSERT(*m_iterator != set.end());
+    ASSERT_WITH_SECURITY_IMPLICATION(*m_iterator != set.end());
 
     if (key.isValid()) {
         // If iterating to a key, the count passed in must be zero, as there is no way to iterate by both a count and to a key.

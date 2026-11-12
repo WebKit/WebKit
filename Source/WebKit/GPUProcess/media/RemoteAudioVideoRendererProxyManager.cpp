@@ -244,7 +244,7 @@ RefPtr<WebCore::AudioVideoRenderer> RemoteAudioVideoRendererProxyManager::render
 RemoteAudioVideoRendererProxyManager::RendererContext& RemoteAudioVideoRendererProxyManager::contextFor(RemoteAudioVideoRendererIdentifier identifier)
 {
     auto iterator = m_renderers.find(identifier);
-    ASSERT(iterator != m_renderers.end());
+    ASSERT_WITH_SECURITY_IMPLICATION(iterator != m_renderers.end());
     return iterator->value;
 }
 

@@ -192,7 +192,7 @@ private:
 
 std::unique_ptr<SerializedImageBuffer> ImageBuffer::sinkIntoSerializedImageBuffer()
 {
-    ASSERT(hasOneRef());
+    ASSERT_WITH_SECURITY_IMPLICATION(hasOneRef());
     ASSERT(!controlBlock().weakRefCount());
 #if USE(SKIA)
     return makeUnique<SkiaSerializedImageBuffer>(*this);
@@ -203,7 +203,7 @@ std::unique_ptr<SerializedImageBuffer> ImageBuffer::sinkIntoSerializedImageBuffe
 
 std::unique_ptr<SerializedImageBuffer> ImageBuffer::sinkIntoSerializedImageBuffer(RefPtr<ImageBuffer>&& image)
 {
-    ASSERT(image->hasOneRef());
+    ASSERT_WITH_SECURITY_IMPLICATION(image->hasOneRef());
     RefPtr<ImageBuffer> move = WTF::move(image);
     return move->sinkIntoSerializedImageBuffer();
 }
@@ -361,13 +361,13 @@ RefPtr<ImageBuffer> ImageBuffer::sinkIntoBufferForDifferentThread(RefPtr<ImageBu
 {
     if (!buffer)
         return nullptr;
-    ASSERT(buffer->hasOneRef());
+    ASSERT_WITH_SECURITY_IMPLICATION(buffer->hasOneRef());
     return buffer->sinkIntoBufferForDifferentThread();
 }
 
 RefPtr<ImageBuffer> ImageBuffer::sinkIntoBufferForDifferentThread()
 {
-    ASSERT(hasOneRef());
+    ASSERT_WITH_SECURITY_IMPLICATION(hasOneRef());
     return this;
 }
 

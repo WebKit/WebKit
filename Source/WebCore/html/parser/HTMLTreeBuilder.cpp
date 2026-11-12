@@ -258,7 +258,7 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser& parser, HTMLDocument& docum
     , m_tree(document, parserContentPolicy, options.maximumDOMTreeDepth)
     , m_scriptToProcessStartPosition(uninitializedPositionValue1())
 {
-#if ASSERT_ENABLED
+#if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
     m_destructionProhibited = false;
 #endif
 }
@@ -270,7 +270,7 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser& parser, DocumentFragment& f
     , m_tree(fragment, parserContentPolicy, options.maximumDOMTreeDepth, registry)
     , m_scriptToProcessStartPosition(uninitializedPositionValue1())
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
     // https://html.spec.whatwg.org/multipage/syntax.html#parsing-html-fragments
     // For efficiency, we skip step 5 ("Let root be a new html element with no attributes") and instead use the DocumentFragment as a root node.
@@ -288,7 +288,7 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser& parser, DocumentFragment& f
     // implied by the context element have to be set up front rather than after the first token.
     updateTokenizerForAdjustedCurrentNode();
 
-#if ASSERT_ENABLED
+#if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
     m_destructionProhibited = false;
 #endif
 }
@@ -320,7 +320,7 @@ inline bool HTMLTreeBuilder::FragmentParsingContext::contextElementIsTemplate() 
 
 RefPtr<ScriptElement> HTMLTreeBuilder::takeScriptToProcess(TextPosition& scriptStartPosition)
 {
-    ASSERT(!m_destroyed);
+    ASSERT_WITH_SECURITY_IMPLICATION(!m_destroyed);
 
     if (!m_scriptToProcess)
         return nullptr;
@@ -335,9 +335,9 @@ RefPtr<ScriptElement> HTMLTreeBuilder::takeScriptToProcess(TextPosition& scriptS
 
 void HTMLTreeBuilder::constructTree(AtomHTMLToken&& token)
 {
-#if ASSERT_ENABLED
-    ASSERT(!m_destroyed);
-    ASSERT(!m_destructionProhibited);
+#if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
+    ASSERT_WITH_SECURITY_IMPLICATION(!m_destroyed);
+    ASSERT_WITH_SECURITY_IMPLICATION(!m_destructionProhibited);
     m_destructionProhibited = true;
 #endif
 
@@ -348,7 +348,7 @@ void HTMLTreeBuilder::constructTree(AtomHTMLToken&& token)
 
     updateTokenizerForAdjustedCurrentNode();
 
-#if ASSERT_ENABLED
+#if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
     m_destructionProhibited = false;
 #endif
 
@@ -3078,7 +3078,7 @@ void HTMLTreeBuilder::processTokenInForeignContent(AtomHTMLToken&& token)
 
 void HTMLTreeBuilder::finished()
 {
-    ASSERT(!m_destroyed);
+    ASSERT_WITH_SECURITY_IMPLICATION(!m_destroyed);
 
     if (isParsingFragment())
         return;

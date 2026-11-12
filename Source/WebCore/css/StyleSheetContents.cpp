@@ -715,7 +715,7 @@ StyleSheetContents* StyleSheetContents::parentStyleSheet() const
 
 void StyleSheetContents::registerClient(CSSStyleSheet* sheet)
 {
-    ASSERT(!m_clients.contains(sheet));
+    ASSERT_WITH_SECURITY_IMPLICATION(!m_clients.contains(sheet));
     m_clients.append(sheet);
 }
 

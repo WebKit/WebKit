@@ -112,7 +112,7 @@ NODELETE static inline simdutf::base64_options toSIMDUTFEncodeOptions(OptionSet<
 template<typename CharacterType> static void base64EncodeInternal(std::span<const uint8_t> inputDataBuffer, std::span<CharacterType> destinationDataBuffer, OptionSet<Base64EncodeOption> options)
 {
     ASSERT(destinationDataBuffer.size() > 0);
-    ASSERT(calculateBase64EncodedSize(inputDataBuffer.size(), options) == destinationDataBuffer.size());
+    ASSERT_WITH_SECURITY_IMPLICATION(calculateBase64EncodedSize(inputDataBuffer.size(), options) == destinationDataBuffer.size());
 
     if constexpr (sizeof(CharacterType) == 1) {
         size_t bytesWritten = simdutf::binary_to_base64(inputDataBuffer, byteCast<char>(destinationDataBuffer), toSIMDUTFEncodeOptions(options));

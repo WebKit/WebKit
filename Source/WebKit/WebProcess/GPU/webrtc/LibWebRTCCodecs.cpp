@@ -254,7 +254,7 @@ void LibWebRTCCodecs::initializeIfNeeded()
 
 void LibWebRTCCodecs::ensureGPUProcessConnectionOnMainThreadWithLock()
 {
-    ASSERT(isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
     if (m_connection)
         return;
 

@@ -59,13 +59,13 @@ void StorageMap::setIteratorToIndex(unsigned index)
     if (index < m_impl->iteratorIndex) {
         m_impl->iteratorIndex = 0;
         m_impl->iterator = m_impl->map.begin();
-        ASSERT(m_impl->iterator != m_impl->map.end());
+        ASSERT_WITH_SECURITY_IMPLICATION(m_impl->iterator != m_impl->map.end());
     }
 
     while (m_impl->iteratorIndex < index) {
         ++m_impl->iteratorIndex;
         ++m_impl->iterator;
-        ASSERT(m_impl->iterator != m_impl->map.end());
+        ASSERT_WITH_SECURITY_IMPLICATION(m_impl->iterator != m_impl->map.end());
     }
 }
 

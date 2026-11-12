@@ -313,7 +313,7 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
     ASSERT(!isScheduledForResume());
 
     // This is an attempt to check that this object is both attached to the Document and protected by something.
-    ASSERT(refCount() >= 2);
+    ASSERT_WITH_SECURITY_IMPLICATION(refCount() >= 2);
 
     PumpSession session(m_pumpSessionNestingLevel, protect(contextForParsingSession()));
 
@@ -331,7 +331,7 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
 
     // Ensure we haven't been totally deref'ed after pumping. Any caller of this
     // function should be holding a RefPtr to this to ensure we weren't deleted.
-    ASSERT(refCount() >= 1);
+    ASSERT_WITH_SECURITY_IMPLICATION(refCount() >= 1);
 
     if (isStopped() || isParsingFragment())
         return;

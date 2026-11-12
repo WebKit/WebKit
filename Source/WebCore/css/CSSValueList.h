@@ -148,7 +148,7 @@ inline const CSSValue& CSSValueContainingVector::operator[](unsigned index) cons
 {
     unsigned maxInlineSize = m_inlineStorage.size();
     if (index < maxInlineSize) {
-        ASSERT(index < m_size);
+        ASSERT_WITH_SECURITY_IMPLICATION(index < m_size);
         return *m_inlineStorage[index];
     }
     ASSERT(index < m_size);

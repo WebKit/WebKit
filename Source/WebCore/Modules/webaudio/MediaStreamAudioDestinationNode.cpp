@@ -75,7 +75,7 @@ void MediaStreamAudioDestinationNode::process(size_t numberOfFrames)
 
 void MediaStreamAudioDestinationNode::checkNumberOfChannelsForInput(AudioNodeInput* input)
 {
-    ASSERT(context().isAudioThread() && context().isGraphOwner());
+    ASSERT_WITH_SECURITY_IMPLICATION(context().isAudioThread() && context().isGraphOwner());
     m_source->setNumberOfChannels(input->numberOfChannels());
     AudioBasicInspectorNode::checkNumberOfChannelsForInput(input);
 }

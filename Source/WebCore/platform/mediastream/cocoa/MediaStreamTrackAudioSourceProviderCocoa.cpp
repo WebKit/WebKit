@@ -149,7 +149,7 @@ void MediaStreamTrackAudioSourceProviderCocoa::provideInput(AudioBus& bus, size_
         buffer->mDataByteSize = channel.length() * sizeof(float);
     }
 
-    ASSERT(framesToProcess <= bus.length());
+    ASSERT_WITH_SECURITY_IMPLICATION(framesToProcess <= bus.length());
     m_dataSource->pullSamples(*m_audioBufferList->list(), framesToProcess, m_readCount, 0, AudioSampleDataSource::Copy);
     m_readCount += framesToProcess;
 }

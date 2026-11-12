@@ -327,7 +327,7 @@ static_assert(std::is_trivial_v<StatusBytes>);
         const_iterator& operator++()
         {
             checkValidity();
-            ASSERT(m_position != m_endPosition);
+            ASSERT_WITH_SECURITY_IMPLICATION(m_position != m_endPosition);
             advance();
             skipWeakNullBuckets();
             return *this;
@@ -1106,7 +1106,7 @@ static_assert(std::is_trivial_v<StatusBytes>);
         ValueType* table = m_table;
         unsigned index = pos - table;
         StatusBytes statusBytes = statusBytesForTable(table, tableSizeForTable(table));
-        ASSERT(statusBytes[index].isFull());
+        ASSERT_WITH_SECURITY_IMPLICATION(statusBytes[index].isFull());
 
         keyCountForTable(table)--;
         statusBytes[index] = StatusByte { StatusByte::deleted };

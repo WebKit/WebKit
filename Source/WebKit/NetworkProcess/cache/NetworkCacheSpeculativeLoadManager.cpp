@@ -81,7 +81,7 @@ static void logSpeculativeLoadingDiagnosticMessage(const GlobalFrameID& frameID,
 
 static const AtomString& subresourcesType()
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
     static NeverDestroyed<const AtomString> resource("SubResources"_s);
     return resource;
 }
@@ -183,14 +183,14 @@ public:
 
     void registerSubresourceLoad(const ResourceRequest& request, const Key& subresourceKey)
     {
-        ASSERT(RunLoop::isMain());
+        ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
         m_subresourceLoads.append(makeUnique<SubresourceLoad>(request, subresourceKey));
         m_loadHysteresisActivity.impulse();
     }
 
     void markLoadAsCompleted()
     {
-        ASSERT(RunLoop::isMain());
+        ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
         if (m_didFinishLoad)
             return;
 
@@ -360,7 +360,7 @@ bool SpeculativeLoadManager::shouldRegisterLoad(const WebCore::ResourceRequest& 
 
 void SpeculativeLoadManager::registerLoad(GlobalFrameID frameID, const ResourceRequest& request, const Key& resourceKey, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, bool allowPrivacyProxy, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
     ASSERT(request.url().protocolIsInHTTPFamily());
 
     if (!shouldRegisterLoad(request))

@@ -147,7 +147,7 @@ static bool processHasActiveRunTimeLimitation()
 
 - (void)_notifyAssertionsOfImminentSuspension
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     // Note that we don't expect clients to register new assertions when getting notified that the UI assertion will expire imminently.
     // If clients were to do so, then those new assertions would not get notified of the imminent suspension.
@@ -238,7 +238,7 @@ static bool processHasActiveRunTimeLimitation()
 
 - (void)_handleBackgroundTaskExpirationOnMainThread
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     auto remainingTime = [RBSProcessHandle currentProcess].activeLimitations.runTime;
     RELEASE_LOG(ProcessSuspension, "WKProcessAssertionBackgroundTaskManager: _handleBackgroundTaskExpirationOnMainThread (remainingTime=%g).", remainingTime);
@@ -548,7 +548,7 @@ void ProcessAssertion::processAssertionWillBeInvalidated()
 
 void ProcessAssertion::processAssertionWasInvalidated()
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
     RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion::processAssertionWasInvalidated() PID=%d", this, m_pid);
 
     m_wasInvalidated = true;
@@ -616,7 +616,7 @@ void ProcessAndUIAssertion::uiAssertionWillExpireImminently()
 
 void ProcessAndUIAssertion::processAssertionWasInvalidated()
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     ThreadSafeWeakPtr weakThis { *this };
     ProcessAssertion::processAssertionWasInvalidated();

@@ -131,7 +131,7 @@ const uint8_t kGetUidCommand[] = {
 void CcidConnection::detectContactless()
 {
     transact(Vector(std::span { kGetUidCommand }), [weakThis = ThreadSafeWeakPtr { *this }] (Vector<uint8_t>&& response) mutable {
-        ASSERT(RunLoop::isMain());
+        ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -145,7 +145,7 @@ void CcidConnection::detectContactless()
 void CcidConnection::trySelectFidoApplet()
 {
     transact(Vector(std::span { kCtapNfcAppletSelectionCommand }), [weakThis = ThreadSafeWeakPtr { *this }] (Vector<uint8_t>&& response) mutable {
-        ASSERT(RunLoop::isMain());
+        ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -160,7 +160,7 @@ void CcidConnection::trySelectFidoApplet()
         // only have the FIDO applet. When applet selection fails, use the U2F_VERSION command to check
         // whether the connected tag can speak U2F, indicating one of these legacy keys.
         protectedThis->transact(Vector(std::span { kCtapNfcU2fVersionCommand }), [weakThis = WTF::move(weakThis)] (Vector<uint8_t>&& response) mutable {
-            ASSERT(RunLoop::isMain());
+            ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;

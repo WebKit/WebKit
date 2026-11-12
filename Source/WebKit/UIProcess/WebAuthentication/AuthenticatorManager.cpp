@@ -274,7 +274,7 @@ void AuthenticatorManager::clearState()
 
 void AuthenticatorManager::authenticatorAdded(Ref<Authenticator>&& authenticator)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
     if (!m_pendingRequest || !m_pendingRequest->completionHandler)
         return;
 
@@ -299,7 +299,7 @@ void AuthenticatorManager::serviceStatusUpdated(WebAuthenticationStatus status)
 
 void AuthenticatorManager::respondReceived(Respond&& respond)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
     if (!m_requestTimeOutTimer.isActive() && (!m_pendingRequest || !m_pendingRequest->completionHandler || m_pendingRequest->data.mediation != WebCore::MediationRequirement::Conditional))
         return;
     ASSERT(m_pendingRequest);
@@ -480,7 +480,7 @@ void AuthenticatorManager::filterTransports(TransportSet& transports) const
 
 void AuthenticatorManager::startDiscovery(const TransportSet& transports)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
     ASSERT(m_services.isEmpty());
     ASSERT(transports.size() <= maxTransportNumber);
     m_services = WTF::map(transports, [this](auto& transport) {

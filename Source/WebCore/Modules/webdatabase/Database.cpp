@@ -273,7 +273,7 @@ void Database::close()
 
 void Database::performClose()
 {
-    ASSERT(databaseThread().getThread() == &Thread::currentSingleton());
+    ASSERT_WITH_SECURITY_IMPLICATION(databaseThread().getThread() == &Thread::currentSingleton());
 
     {
         Locker locker { m_transactionInProgressLock };
@@ -508,7 +508,7 @@ bool Database::getActualVersionForTransaction(String &actualVersion)
 
 void Database::scheduleTransaction()
 {
-    ASSERT(m_transactionInProgressLock.isHeld());
+    ASSERT_WITH_SECURITY_IMPLICATION(m_transactionInProgressLock.isHeld());
 
     if (!m_isTransactionQueueEnabled || m_transactionQueue.isEmpty()) {
         m_transactionInProgress = false;
@@ -672,7 +672,7 @@ void Database::resetAuthorizer()
 
 void Database::runTransaction(RefPtr<SQLTransactionCallback>&& callback, RefPtr<SQLTransactionErrorCallback>&& errorCallback, RefPtr<VoidCallback>&& successCallback, RefPtr<SQLTransactionWrapper>&& wrapper, bool readOnly)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     Locker locker { m_transactionInProgressLock };
     if (!m_isTransactionQueueEnabled) {
         if (errorCallback) {
@@ -782,7 +782,7 @@ void Database::didCommitWriteTransaction()
 
 bool Database::didExceedQuota()
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     auto& tracker = DatabaseTracker::singleton();
     auto oldQuota = tracker.quota(securityOrigin());
     if (estimatedSize() <= oldQuota) {

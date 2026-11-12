@@ -37,13 +37,13 @@ namespace WebCore {
 
 ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAESCTR::platformEncrypt(const CryptoAlgorithmAesCtrParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& plainText)
 {
-    ASSERT(parameters.counterVector().size() == kCCBlockSizeAES128);
+    ASSERT_WITH_SECURITY_IMPLICATION(parameters.counterVector().size() == kCCBlockSizeAES128);
     return transformAESCTR(kCCEncrypt, parameters.counterVector(), parameters.length, key.key(), plainText.span());
 }
 
 ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAESCTR::platformDecrypt(const CryptoAlgorithmAesCtrParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& cipherText)
 {
-    ASSERT(parameters.counterVector().size() == kCCBlockSizeAES128);
+    ASSERT_WITH_SECURITY_IMPLICATION(parameters.counterVector().size() == kCCBlockSizeAES128);
     return transformAESCTR(kCCDecrypt, parameters.counterVector(), parameters.length, key.key(), cipherText.span());
 }
 

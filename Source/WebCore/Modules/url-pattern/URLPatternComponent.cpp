@@ -100,7 +100,7 @@ ExceptionOr<URLPatternComponent> URLPatternComponent::compile(StringView input, 
         return Exception { ExceptionCode::TypeError, "Unable to compile RegExp bytecode from provided URLPattern string."_s };
 
     // The output offset vector must hold at least (numSubpatterns + 1) * 2 capture offsets.
-    ASSERT(bytecode->m_offsetsSize >= (yarrPattern.m_numSubpatterns + 1) * 2);
+    ASSERT_WITH_SECURITY_IMPLICATION(bytecode->m_offsetsSize >= (yarrPattern.m_numSubpatterns + 1) * 2);
 
     String patternString = generatePatternString(partList, options);
     bool hasRegexGroups = partList.containsIf([](auto& part) {

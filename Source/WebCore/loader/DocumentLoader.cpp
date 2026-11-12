@@ -440,7 +440,7 @@ static void hideRedirectTimingForNoReferrerNavigation(const DocumentLoader& load
 
 void DocumentLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics& fetchMetrics, LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 #if ENABLE(CONTENT_FILTERING)
     if (RefPtr contentFilter = m_contentFilter; contentFilter && !contentFilter->continueAfterNotifyFinished(resource))
         return;
@@ -2486,7 +2486,7 @@ void DocumentLoader::willContinueMainResourceLoadAfterRedirect(const ResourceReq
 
 void DocumentLoader::clearMainResource()
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     if (m_mainResource && m_mainResource->hasClient(*this))
         protect(*m_mainResource)->removeClient(*this);
 #if ENABLE(CONTENT_FILTERING)

@@ -182,7 +182,7 @@ void WorkerInspectorController::updateServiceWorkerPageFrontendCount()
     if (!serviceWorkerPage)
         return;
 
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
     // When a service worker is loaded in a Page, we need to report its inspector frontend count
     // up to the page's inspectorController so the client knows about it.

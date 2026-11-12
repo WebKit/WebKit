@@ -1409,7 +1409,7 @@ bool PDFPluginBase::performImmediateActionHitTestAtLocation(const WebCore::Float
 
 WebCore::AXObjectCache* PDFPluginBase::axObjectCache() const
 {
-    ASSERT(isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
     RefPtr frame = m_frame.get();
     if (!frame)
         return nullptr;

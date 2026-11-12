@@ -108,7 +108,7 @@ void ImageFrameWorkQueuePool::removeSourceWorkQueueIfNeeded(const BitmapImageSou
     m_mapper.remove(&source);
 
     auto iterator = m_reverseMapper.find(sourceWorkQueue);
-    ASSERT(iterator != m_reverseMapper.end());
+    ASSERT_WITH_SECURITY_IMPLICATION(iterator != m_reverseMapper.end());
     auto& sources = iterator->value;
 
     sources.removeFirst(&source);

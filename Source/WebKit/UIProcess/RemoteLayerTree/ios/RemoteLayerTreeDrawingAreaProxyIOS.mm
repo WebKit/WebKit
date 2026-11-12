@@ -154,7 +154,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)displayLinkFired:(CADisplayLink *)sender
 {
-    ASSERT(isUIThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isUIThread());
 
     _lastDisplayLinkFireTime = MonotonicTime::now();
 
@@ -184,7 +184,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)_forcedRefreshTimerFired
 {
-    ASSERT(isUIThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isUIThread());
 
     if (MonotonicTime::now() >= _forcedRefreshStateWhileDisplayIsNotUpdating.deadline) {
         [self _stopForcedDisplayRefresh];
@@ -214,7 +214,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if ENABLE(TIMER_DRIVEN_DISPLAY_REFRESH_FOR_TESTING)
 - (void)timerFired
 {
-    ASSERT(isUIThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isUIThread());
     _lastDisplayLinkFireTime = MonotonicTime::now();
     if (RefPtr drawingArea = _drawingAreaProxy)
         drawingArea->didRefreshDisplay();

@@ -78,7 +78,7 @@ constexpr auto clearAllPrivateClickMeasurementQuery = "DELETE FROM PCMObservedDo
 
 NODELETE static WeakHashSet<Database>& allDatabases()
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(!RunLoop::isMain());
     static NeverDestroyed<WeakHashSet<Database>> set;
     return set;
 }

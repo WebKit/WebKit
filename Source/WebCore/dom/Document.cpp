@@ -936,7 +936,7 @@ void Document::removedLastRef()
     RELEASE_ASSERT(m_refCountAndParentBit == s_refCountIncrement);
 
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
-    ASSERT(!deletionHasBegun());
+    ASSERT_WITH_SECURITY_IMPLICATION(!deletionHasBegun());
     m_wasRemovedLastRefCalled = true;
 
     // FIXME: This condition is usually true, and can probably be unconditional.
@@ -998,7 +998,7 @@ void Document::removedLastRef()
         return;
     }
 
-#if ASSERT_ENABLED
+#if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
     m_deletionHasBegun = true;
 #endif
     delete this;
@@ -2882,7 +2882,7 @@ bool Document::hasPendingFullStyleRebuild() const
 
 void Document::updateRenderTree(std::unique_ptr<Style::Update> styleUpdate)
 {
-    ASSERT(!inRenderTreeUpdate());
+    ASSERT_WITH_SECURITY_IMPLICATION(!inRenderTreeUpdate());
 
     Style::PostResolutionCallbackDisabler callbackDisabler(*this);
     {
@@ -2898,7 +2898,7 @@ void Document::resolveStyle(ResolveStyleType type)
 {
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
-    ASSERT(!view() || !view()->isPainting());
+    ASSERT_WITH_SECURITY_IMPLICATION(!view() || !view()->isPainting());
 
     // NOTE: XSL code seems to be the only client stumbling in here without a RenderView.
     if (!m_renderView)
@@ -3108,8 +3108,8 @@ bool Document::updateStyleIfNeeded()
 
     RefPtr frameView = view();
     {
-        ASSERT(isMainThread());
-        ASSERT(!frameView || !frameView->isPainting());
+        ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+        ASSERT_WITH_SECURITY_IMPLICATION(!frameView || !frameView->isPainting());
 
         if (!frameView || frameView->layoutContext().isInRenderTreeLayout())
             return false;
@@ -3189,7 +3189,7 @@ auto Document::updateLayout(OptionSet<LayoutOptions> layoutOptions, const Elemen
         }
     }
 
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
     RefPtr frameView = view();
     if (frameView && frameView->layoutContext().isInRenderTreeLayout()) {
@@ -3333,7 +3333,7 @@ std::unique_ptr<Style::ComputedStyle> Document::styleForElementIgnoringPendingSt
 
 bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, OptionSet<DimensionsCheck> dimensionsCheck, OptionSet<LayoutOptions> layoutOptions)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
     // If the stylesheets haven't loaded, just give up and do a full layout ignoring pending stylesheets.
     if (!haveStylesheetsLoaded()) {
@@ -3539,7 +3539,7 @@ void Document::pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int&
 
 void Document::fontsNeedUpdate(FontSelector&)
 {
-    ASSERT(!deletionHasBegun());
+    ASSERT_WITH_SECURITY_IMPLICATION(!deletionHasBegun());
     invalidateMatchedPropertiesCacheAndForceStyleRecalc();
     InspectorInstrumentation::fontDataChanged(*this);
 }
@@ -5236,7 +5236,7 @@ SocketProvider* Document::socketProvider()
 
 RefPtr<RTCDataChannelRemoteHandlerConnection> Document::createRTCDataChannelRemoteHandlerConnection()
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     RefPtr page = this->page();
     if (!page)
         return nullptr;
@@ -5452,8 +5452,8 @@ bool Document::usesStyleBasedEditability() const
     if (m_hasElementUsingStyleBasedEditability)
         return true;
 
-    ASSERT(!m_renderView || !m_renderView->frameView().isPainting());
-    ASSERT(!m_inStyleRecalc);
+    ASSERT_WITH_SECURITY_IMPLICATION(!m_renderView || !m_renderView->frameView().isPainting());
+    ASSERT_WITH_SECURITY_IMPLICATION(!m_inStyleRecalc);
 
     auto& styleScope = const_cast<Style::DocumentScope&>(this->styleScope());
     styleScope.flushPendingUpdate();
@@ -7203,7 +7203,7 @@ void Document::updateRangesAfterChildrenChanged(ContainerNode& container)
 
 void Document::nodeChildrenWillBeRemoved(ContainerNode& container)
 {
-    ASSERT(ScriptDisallowedScope::InMainThread::hasDisallowedScope());
+    ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::hasDisallowedScope());
 
     adjustFocusedNodeOnNodeRemoval(container, NodeRemoval::ChildrenOfNode);
     adjustFocusNavigationNodeOnNodeRemoval(container, NodeRemoval::ChildrenOfNode);
@@ -7233,7 +7233,7 @@ void Document::nodeChildrenWillBeRemoved(ContainerNode& container)
 
 void Document::nodeWillBeRemoved(Node& node)
 {
-    ASSERT(ScriptDisallowedScope::InMainThread::hasDisallowedScope());
+    ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::hasDisallowedScope());
 
     adjustFocusedNodeOnNodeRemoval(node);
     adjustFocusNavigationNodeOnNodeRemoval(node);
@@ -7257,7 +7257,7 @@ void Document::nodeWillBeRemoved(Node& node)
 
 void Document::nodeWillBeMoved(Node& node)
 {
-    ASSERT(ScriptDisallowedScope::InMainThread::hasDisallowedScope());
+    ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::hasDisallowedScope());
 
     for (Ref nodeIterator : m_nodeIterators)
         nodeIterator->nodeWillBeRemoved(node);
@@ -9178,7 +9178,7 @@ void Document::addMessage(MessageSource source, MessageLevel level, const String
 void Document::postTask(Task&& task)
 {
     callOnMainThread([documentID = identifier(), task = WTF::move(task)]() mutable {
-        ASSERT(isMainThread());
+        ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
         RefPtr document = allDocumentsMap().get(documentID);
         if (!document)
@@ -9201,7 +9201,7 @@ void Document::pendingTasksTimerFired()
 
 EventLoopTaskGroup& Document::eventLoop()
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     if (!m_documentTaskGroup) [[unlikely]] {
         lazyInitialize(m_documentTaskGroup, makeUnique<EventLoopTaskGroup>(protect(windowEventLoop())));
         m_documentTaskGroup->setScriptExecutionContext(*this);
@@ -9215,7 +9215,7 @@ EventLoopTaskGroup& Document::eventLoop()
 
 WindowEventLoop& Document::windowEventLoop()
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     if (!m_eventLoop) [[unlikely]] {
         m_eventLoop = WindowEventLoop::eventLoopForSecurityOrigin(protect(securityOrigin()));
         protect(m_eventLoop)->addAssociatedContext(*this);

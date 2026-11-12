@@ -380,7 +380,7 @@ void MessagePort::dispatchMessages()
         if (!context || !context->globalObject())
             return;
 
-        ASSERT(context->isContextThread());
+        ASSERT_WITH_SECURITY_IMPLICATION(context->isContextThread());
         auto* globalObject = context->globalObject();
         Ref vm = globalObject->vm();
         auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
@@ -421,7 +421,7 @@ void MessagePort::drainOneLocalMessage()
     if (!context || !context->globalObject() || context->activeDOMObjectsAreSuspended() || isDetached())
         return;
 
-    ASSERT(context->isContextThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(context->isContextThread());
     if (auto* workerGlobalScope = dynamicDowncast<WorkerGlobalScope>(*context)) {
         if (workerGlobalScope->isClosing())
             return;

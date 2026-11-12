@@ -300,7 +300,7 @@ void LibWebRTCMediaEndpoint::doCreateAnswer()
 webrtc::scoped_refptr<LibWebRTCStatsCollector> LibWebRTCMediaEndpoint::createStatsCollector(Ref<DeferredPromise>&& promise)
 {
     return LibWebRTCStatsCollector::create([promise = WTF::move(promise), protectedThis = Ref { *this }](auto&& rtcReport) mutable {
-        ASSERT(isMainThread());
+        ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
         if (protectedThis->isStopped())
             return;
 

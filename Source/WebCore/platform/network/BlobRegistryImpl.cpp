@@ -126,7 +126,7 @@ void BlobRegistryImpl::appendStorageItems(BlobData* blobData, const BlobDataItem
 
 void BlobRegistryImpl::registerInternalFileBlobURL(const URL& url, Ref<BlobDataFileReference>&& file, const String& contentType)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     registerBlobResourceHandleConstructor();
 
     auto blobData = BlobData::create(contentType);
@@ -178,7 +178,7 @@ Ref<DataSegment> BlobRegistryImpl::createDataSegment(Vector<uint8_t>&& movedData
 
 void BlobRegistryImpl::registerInternalBlobURL(const URL& url, Vector<BlobPart>&& blobParts, const String& contentType)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     registerBlobResourceHandleConstructor();
 
     auto blobData = BlobData::create(contentType);
@@ -221,7 +221,7 @@ void BlobRegistryImpl::registerInternalBlobURLOptionallyFileBacked(const URL& ur
 
 void BlobRegistryImpl::registerBlobURLOptionallyFileBacked(const URL& url, const URL& srcURL, RefPtr<BlobDataFileReference>&& file, const String& contentType, const PolicyContainer& policyContainer, const std::optional<SecurityOriginData>& topOrigin)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     ASSERT(BlobURL::isInternalURL(url) || topOrigin);
     registerBlobResourceHandleConstructor();
 
@@ -248,7 +248,7 @@ void BlobRegistryImpl::registerBlobURLOptionallyFileBacked(const URL& url, const
 
 void BlobRegistryImpl::registerInternalBlobURLForSlice(const URL& url, const URL& srcURL, long long start, long long end, const String& contentType)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     RefPtr originalData = blobDataFromURL(srcURL);
     if (!originalData)
         return;
@@ -286,7 +286,7 @@ void BlobRegistryImpl::registerInternalBlobURLForSlice(const URL& url, const URL
 
 void BlobRegistryImpl::unregisterBlobURL(const URL& url, const std::optional<WebCore::SecurityOriginData>& topOrigin)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     auto& urlKey = url.string();
     if (!m_blobs.isValidKey(urlKey))
         return;
@@ -303,7 +303,7 @@ void BlobRegistryImpl::unregisterBlobURL(const URL& url, const std::optional<Web
 
 BlobData* BlobRegistryImpl::blobDataFromURL(const URL& url, const std::optional<SecurityOriginData>& topOrigin) const
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     auto urlKey = url.stringWithoutFragmentIdentifier();
     if (!m_blobs.isValidKey(urlKey))
         return nullptr;
@@ -316,7 +316,7 @@ BlobData* BlobRegistryImpl::blobDataFromURL(const URL& url, const std::optional<
 
 String BlobRegistryImpl::blobType(const URL& url)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     if (RefPtr data = blobDataFromURL(url))
         return data->contentType();
     return emptyString();
@@ -324,7 +324,7 @@ String BlobRegistryImpl::blobType(const URL& url)
 
 unsigned long long BlobRegistryImpl::blobSize(const URL& url)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     RefPtr data = blobDataFromURL(url);
     if (!data)
         return 0;

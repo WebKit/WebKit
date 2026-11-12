@@ -222,7 +222,7 @@ private:
 
         uintptr_t allocation = m_allocHead;
         m_allocHead = headIncrementedBy(bytes);
-        ASSERT(m_allocHead <= m_allocBound);
+        ASSERT_WITH_SECURITY_IMPLICATION(m_allocHead <= m_allocBound);
         return reinterpret_cast<void*>(allocation);
     }
 
@@ -236,7 +236,7 @@ private:
         alignment = std::max(alignment, minHeadAlignment);
         uintptr_t allocation = WTF::roundUpToMultipleOf(alignment, m_allocHead);
         m_allocHead = headIncrementedBy((allocation - m_allocHead) + bytes);
-        ASSERT(m_allocHead <= m_allocBound);
+        ASSERT_WITH_SECURITY_IMPLICATION(m_allocHead <= m_allocBound);
         return reinterpret_cast<void*>(allocation);
     }
 

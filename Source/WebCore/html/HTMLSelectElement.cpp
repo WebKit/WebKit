@@ -2759,7 +2759,7 @@ ExceptionOr<void> HTMLSelectElement::showPicker()
 
 void HTMLSelectElement::updateSelectedContentIfEnabled(HTMLOptionElement* selectedOption)
 {
-    ASSERT(ScriptDisallowedScope::InMainThread::isScriptAllowed());
+    ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isScriptAllowed());
 
     auto& settings = document().settings();
     if (settings.htmlEnhancedSelectEnabled() && !settings.mutationEventsEnabled())
@@ -2768,7 +2768,7 @@ void HTMLSelectElement::updateSelectedContentIfEnabled(HTMLOptionElement* select
 
 void HTMLSelectElement::updateSelectedContent(HTMLOptionElement* selectedOption)
 {
-    ASSERT(ScriptDisallowedScope::InMainThread::isScriptAllowed());
+    ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isScriptAllowed());
     ASSERT(document().settings().htmlEnhancedSelectEnabled());
     ASSERT(!document().settings().mutationEventsEnabled());
 
@@ -2810,7 +2810,7 @@ Vector<Ref<HTMLSelectedContentElement>> HTMLSelectElement::selectedContentElemen
 
 void HTMLSelectElement::cloneOptionsIntoSelectedContent()
 {
-    ASSERT(ScriptDisallowedScope::InMainThread::isScriptAllowed());
+    ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isScriptAllowed());
 
     if (!m_multiple || !m_selectedContentDescendantCount || !updatesSelectedContent())
         return;

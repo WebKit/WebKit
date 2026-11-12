@@ -436,7 +436,7 @@ void IDBConnectionProxy::didAbortTransaction(const IDBResourceIdentifier& transa
 
 bool IDBConnectionProxy::hasRecordOfTransaction(const IDBTransaction& transaction) const
 {
-    ASSERT(m_transactionMapLock.isLocked());
+    ASSERT_WITH_SECURITY_IMPLICATION(m_transactionMapLock.isLocked());
 
     auto identifier = transaction.info().identifier();
     return m_pendingTransactions.contains(identifier) || m_committingTransactions.contains(identifier) || m_abortingTransactions.contains(identifier);

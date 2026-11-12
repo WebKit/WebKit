@@ -36,13 +36,13 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkOriginAccessPatterns);
 
 void NetworkOriginAccessPatterns::allowAccessTo(const WebCore::UserContentURLPattern& pattern)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
     m_patterns.append(pattern);
 }
 
 bool NetworkOriginAccessPatterns::anyPatternMatches(const URL& url) const
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
     return std::ranges::any_of(m_patterns, [&](auto& pattern) {
         return pattern.matches(url);
     });

@@ -116,7 +116,7 @@ static Lock allScriptExecutionContextsMapLock;
 NODELETE static HashMap<ScriptExecutionContextIdentifier, WeakRef<ScriptExecutionContext>>& allScriptExecutionContextsMap() WTF_REQUIRES_LOCK(allScriptExecutionContextsMapLock)
 {
     static NeverDestroyed<HashMap<ScriptExecutionContextIdentifier, WeakRef<ScriptExecutionContext>>> contexts;
-    ASSERT(allScriptExecutionContextsMapLock.isLocked());
+    ASSERT_WITH_SECURITY_IMPLICATION(allScriptExecutionContextsMapLock.isLocked());
     return contexts;
 }
 
@@ -243,7 +243,7 @@ ScriptExecutionContext::~ScriptExecutionContext()
 
 void ScriptExecutionContext::resumeAllMessagePortsSoon()
 {
-    ASSERT(isContextThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isContextThread());
     m_dispatchAllPorts = true;
 
     if (m_willprocessMessageWithMessagePortsSoon)
@@ -257,7 +257,7 @@ void ScriptExecutionContext::resumeAllMessagePortsSoon()
 
 void ScriptExecutionContext::processMessageForPortSoon(const MessagePortIdentifier& portIdentifier, CompletionHandler<void()>&& completionHandler)
 {
-    ASSERT(isContextThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isContextThread());
     m_processMessageWithMessagePortsSoonHandlers.append(WTF::move(completionHandler));
     m_portsWithAvailableMessages.add(portIdentifier);
 
@@ -272,7 +272,7 @@ void ScriptExecutionContext::processMessageForPortSoon(const MessagePortIdentifi
 
 void ScriptExecutionContext::dispatchMessagePortEvents()
 {
-    ASSERT(isContextThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isContextThread());
     checkConsistency();
 
     Ref<ScriptExecutionContext> protectedThis(*this);
@@ -303,14 +303,14 @@ void ScriptExecutionContext::dispatchMessagePortEvents()
 
 void ScriptExecutionContext::createdMessagePort(MessagePort& messagePort)
 {
-    ASSERT(isContextThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isContextThread());
 
     m_messagePorts.add(messagePort);
 }
 
 void ScriptExecutionContext::destroyedMessagePort(MessagePort& messagePort)
 {
-    ASSERT(isContextThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isContextThread());
 
     m_messagePorts.remove(messagePort);
 }

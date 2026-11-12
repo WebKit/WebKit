@@ -102,7 +102,7 @@ public:
     {
         initializeIfNeeded(object);
 
-        ASSERT(&object == m_impl->template get<T>());
+        ASSERT_WITH_SECURITY_IMPLICATION(&object == m_impl->template get<T>());
         return WeakPtr<U, WeakPtrImpl>(*m_impl, enableWeakPtrThreadingAssertions);
     }
 
@@ -178,7 +178,7 @@ public:
     {
         initializeIfNeeded(object);
 
-        ASSERT(&object == m_impl.pointer()->template get<T>());
+        ASSERT_WITH_SECURITY_IMPLICATION(&object == m_impl.pointer()->template get<T>());
         return WeakPtr<U, WeakPtrImpl>(*m_impl.pointer(), enableWeakPtrThreadingAssertions);
     }
 

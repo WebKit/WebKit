@@ -51,7 +51,7 @@
 - (void)connection:(APSConnection *)connection didReceivePublicToken:(NSData *)publicToken
 {
     UNUSED_PARAM(connection);
-    ASSERT(isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
 
     if (RefPtr connection = _connection.get(); connection && publicToken.length)
         connection->didReceivePublicToken(makeVector(publicToken));
@@ -60,7 +60,7 @@
 - (void)connection:(APSConnection *)connection didReceiveIncomingMessage:(APSIncomingMessage *)message
 {
     UNUSED_PARAM(connection);
-    ASSERT(isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
 
     if (RefPtr connection = _connection.get())
         connection->didReceivePushMessage(retainPtr(message.topic).get(), retainPtr(message.userInfo).get());
@@ -90,7 +90,7 @@ static RetainPtr<APSURLTokenInfo> makeTokenInfo(const String& topic, const Vecto
 
 void ApplePushServiceConnection::subscribe(const String& topic, const Vector<uint8_t>& vapidPublicKey, SubscribeHandler&& subscribeHandler)
 {
-    ASSERT(isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
 
     // Stash the completion handler away and look it up by id so that we can ensure it gets destructed on the main thread. If we move the handler and capture it in the Obj-C block, it might get destructed on a secondary thread since this completion block moves between different dispatch queues in the APS implementation.
     auto identifier = ++m_handlerIdentifier;
@@ -108,7 +108,7 @@ void ApplePushServiceConnection::subscribe(const String& topic, const Vector<uin
 
 void ApplePushServiceConnection::unsubscribe(const String& topic, const Vector<uint8_t>& vapidPublicKey, UnsubscribeHandler&& unsubscribeHandler)
 {
-    ASSERT(isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
 
     // See subscribe for why we stash the handler into a map.
     auto identifier = ++m_handlerIdentifier;

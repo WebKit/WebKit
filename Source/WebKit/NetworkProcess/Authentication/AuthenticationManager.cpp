@@ -90,7 +90,7 @@ void AuthenticationManager::deref() const
 
 AuthenticationChallengeIdentifier AuthenticationManager::addChallengeToChallengeMap(UniqueRef<Challenge>&& challenge)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     auto challengeID = AuthenticationChallengeIdentifier::generate();
     m_challenges.set(challengeID, WTF::move(challenge));
@@ -162,7 +162,7 @@ void AuthenticationManager::didReceiveAuthenticationChallenge(IPC::MessageSender
 
 void AuthenticationManager::completeAuthenticationChallenge(AuthenticationChallengeIdentifier challengeID, AuthenticationChallengeDisposition disposition, WebCore::Credential&& credential)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     for (auto& coalescedChallengeID : coalesceChallengesMatching(challengeID)) {
         auto challenge = m_challenges.take(coalescedChallengeID);

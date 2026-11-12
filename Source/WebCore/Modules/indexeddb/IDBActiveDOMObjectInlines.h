@@ -34,7 +34,7 @@ namespace WebCore {
 template<typename T, typename... Parameters, typename... Arguments>
 void IDBActiveDOMObject::performCallbackOnOriginThread(Ref<T>&& object, void (T::*method)(Parameters...), Arguments&&... arguments)
 {
-    ASSERT(&originThread() == &object->originThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(&originThread() == &object->originThread());
 
     if (canCurrentThreadAccessThreadLocalData(object->originThread())) {
         (object.get().*method)(std::forward<Arguments>(arguments)...);

@@ -229,7 +229,7 @@ private:
 
     void processVideoFrame(VideoFrame& frame)
     {
-        ASSERT(isMainThread());
+        ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
         if (m_callbacks.isEmpty())
             return;
 

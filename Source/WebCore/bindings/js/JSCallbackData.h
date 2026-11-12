@@ -79,7 +79,7 @@ private:
     WeakOwner m_weakOwner;
     JSC::Weak<JSC::JSObject> m_callback;
 
-#if ASSERT_ENABLED
+#if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
     const uint32_t m_threadID { currentThreadID() };
 #endif
 };

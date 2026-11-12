@@ -175,13 +175,13 @@ void RealtimeMediaSource::removeVideoFrameObserver(VideoFrameObserver& observer)
 
 void RealtimeMediaSource::addObserver(RealtimeMediaSourceObserver& observer)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     m_observers.add(observer);
 }
 
 void RealtimeMediaSource::removeObserver(RealtimeMediaSourceObserver& observer)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     m_observers.remove(observer);
     if (m_observers.isEmptyIgnoringNullReferences())
         stopBeingObserved();
@@ -226,7 +226,7 @@ void RealtimeMediaSource::setInterruptedForTesting(bool interrupted)
 
 void RealtimeMediaSource::forEachObserver(NOESCAPE const Function<void(RealtimeMediaSourceObserver&)>& apply)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     Ref protectedThis { *this };
     m_observers.forEach(apply);
 }
@@ -247,7 +247,7 @@ void RealtimeMediaSource::notifyMutedObservers()
 
 void RealtimeMediaSource::notifySettingsDidChangeObservers(OptionSet<RealtimeMediaSourceSettings::Flag> flags)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
     ++m_settingsCapabilitiesUpdateCount;
     settingsDidChange(flags);
@@ -481,7 +481,7 @@ void RealtimeMediaSource::requestToEnd(RealtimeMediaSourceObserver& callingObser
 
 void RealtimeMediaSource::end(RealtimeMediaSourceObserver* callingObserver)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
     if (m_isEnded)
         return;

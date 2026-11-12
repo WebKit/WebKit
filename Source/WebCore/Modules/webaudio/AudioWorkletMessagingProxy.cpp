@@ -126,7 +126,7 @@ RefPtr<IDBClient::IDBConnectionProxy> AudioWorkletMessagingProxy::createIDBConne
 
 RefPtr<RTCDataChannelRemoteHandlerConnection> AudioWorkletMessagingProxy::createRTCDataChannelRemoteHandlerConnection()
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     RefPtr worklet = m_worklet.get();
     if (!worklet)
         return nullptr;

@@ -492,7 +492,7 @@ public:
     // pointer without introducing reference cycles.
     ALWAYS_INLINE void incrementReferencingNodeCount(unsigned count = 1)
     {
-        ASSERT(!deletionHasBegun());
+        ASSERT_WITH_SECURITY_IMPLICATION(!deletionHasBegun());
         m_referencingNodeCount += count;
     }
 
@@ -505,7 +505,7 @@ public:
             // Restore the the final overlooking ref that deref() maintains.
             m_refCountAndParentBit = s_refCountIncrement;
 
-#if ASSERT_ENABLED
+#if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
             m_deletionHasBegun = true;
 #endif
             delete this;

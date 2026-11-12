@@ -309,7 +309,7 @@ void RTCDataChannel::scheduleDispatchEvent(Ref<Event>&& event)
 static Lock s_rtcDataChannelLocalMapLock;
 NODELETE static HashMap<RTCDataChannelLocalIdentifier, std::unique_ptr<RTCDataChannelHandler>>& rtcDataChannelLocalMap() WTF_REQUIRES_LOCK(s_rtcDataChannelLocalMapLock)
 {
-    ASSERT(s_rtcDataChannelLocalMapLock.isHeld());
+    ASSERT_WITH_SECURITY_IMPLICATION(s_rtcDataChannelLocalMapLock.isHeld());
     static NeverDestroyed<HashMap<RTCDataChannelLocalIdentifier, std::unique_ptr<RTCDataChannelHandler>>> map;
     return map;
 }

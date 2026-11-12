@@ -61,7 +61,7 @@
 
 - (void)detach
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSProcessInfoPowerStateDidChangeNotification object:nil];
     _notifier = nullptr;
 }
@@ -90,7 +90,7 @@ LowPowerModeNotifier::LowPowerModeNotifier(LowPowerModeChangeCallback&& callback
 
 LowPowerModeNotifier::~LowPowerModeNotifier()
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     [m_observer detach];
 }
 

@@ -133,7 +133,7 @@ NotificationClient::Permission WebNotificationClient::checkPermission(ScriptExec
 
     NotificationClient::Permission resultPermission;
     if (RefPtr document = dynamicDowncast<Document>(*context)) {
-        ASSERT(isMainRunLoop());
+        ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
         RefPtr documentPage = document->page();
         RefPtr page = documentPage ? WebPage::fromCorePage(*documentPage) : nullptr;
         resultPermission = protect(WebProcess::singleton().notificationManager())->policyForOrigin(origin->data().toString(), page.get());

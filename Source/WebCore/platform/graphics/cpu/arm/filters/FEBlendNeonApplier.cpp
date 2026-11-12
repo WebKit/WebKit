@@ -191,7 +191,7 @@ bool FEBlendNeonApplier::apply(const Filter&, std::span<const Ref<FilterImage>> 
         return false;
 
     unsigned sourcePixelArrayLength = sourcePixelArrayA->bytes().size();
-    ASSERT(sourcePixelArrayLength == sourcePixelArrayB->bytes().size());
+    ASSERT_WITH_SECURITY_IMPLICATION(sourcePixelArrayLength == sourcePixelArrayB->bytes().size());
 
     if (sourcePixelArrayLength >= 8) {
         applyPlatform(sourcePixelArrayA->bytes().data(), sourcePixelArrayB->bytes().data(), destinationPixelArray, sourcePixelArrayLength);

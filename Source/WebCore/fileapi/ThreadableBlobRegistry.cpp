@@ -118,7 +118,7 @@ void ThreadableBlobRegistry::registerInternalBlobURL(const URL& url, Vector<Blob
 
 static void unregisterBlobURLOriginIfNecessaryOnMainThread(const URL& url)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     if (!isBlobURLContainingNullOrigin(url))
         return;
 

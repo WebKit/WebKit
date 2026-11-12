@@ -92,7 +92,7 @@ void GameControllerHapticEngines::playEffect(GamepadHapticEffectType type, const
 
     currentEffect = WTF::move(newEffect);
     currentEffect->start([weakThis = WeakPtr { *this }, effect = WeakPtr { *currentEffect }, type, completionHandler = WTF::move(completionHandler)](bool success) mutable {
-        ASSERT(isMainThread());
+        ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
         completionHandler(success);
 

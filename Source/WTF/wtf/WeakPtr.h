@@ -85,7 +85,7 @@ public:
 #endif
     {
         UNUSED_PARAM(shouldEnableAssertions);
-        ASSERT(!object || object == m_impl->template get<T>());
+        ASSERT_WITH_SECURITY_IMPLICATION(!object || object == m_impl->template get<T>());
     }
 
     template<typename U = T> requires (!IsSmartPtr<U>::value && !std::is_pointer_v<U>)
@@ -96,7 +96,7 @@ public:
 #endif
     {
         UNUSED_PARAM(shouldEnableAssertions);
-        ASSERT(&object == m_impl->template get<T>());
+        ASSERT_WITH_SECURITY_IMPLICATION(&object == m_impl->template get<T>());
     }
 
     WeakPtr(const Ref<T>& object, EnableWeakPtrThreadingAssertions shouldEnableAssertions = EnableWeakPtrThreadingAssertions::Yes) requires (!IsSmartPtr<T>::value)

@@ -67,7 +67,7 @@ ALWAYS_INLINE Event::Event(MonotonicTime createTime, enum EventInterfaceType eve
     , m_type { type }
     , m_createTime { createTime }
 {
-    ASSERT(m_eventInterface == std::to_underlying(eventInterface));
+    ASSERT_WITH_SECURITY_IMPLICATION(m_eventInterface == std::to_underlying(eventInterface));
 }
 
 Event::Event(enum EventInterfaceType eventInterface, IsTrusted isTrusted)

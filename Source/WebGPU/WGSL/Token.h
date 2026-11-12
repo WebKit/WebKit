@@ -151,7 +151,7 @@ struct Token {
         : type(type)
         , span(position.line, position.lineOffset, position.offset, length)
     {
-        ASSERT(type != TokenType::AbstractFloatLiteral
+        ASSERT_WITH_SECURITY_IMPLICATION(type != TokenType::AbstractFloatLiteral
             && type != TokenType::Identifier
             && type != TokenType::IntegerLiteral
             && type != TokenType::IntegerLiteralSigned
@@ -165,7 +165,7 @@ struct Token {
         , span(position.line, position.lineOffset, position.offset, length)
         , integerValue(integerValue)
     {
-        ASSERT(type == TokenType::IntegerLiteral
+        ASSERT_WITH_SECURITY_IMPLICATION(type == TokenType::IntegerLiteral
             || type == TokenType::IntegerLiteralSigned
             || type == TokenType::IntegerLiteralUnsigned);
     }
@@ -175,7 +175,7 @@ struct Token {
         , span(position.line, position.lineOffset, position.offset, length)
         , floatValue(floatValue)
     {
-        ASSERT(type == TokenType::AbstractFloatLiteral
+        ASSERT_WITH_SECURITY_IMPLICATION(type == TokenType::AbstractFloatLiteral
             || type == TokenType::FloatLiteral
             || type == TokenType::HalfLiteral);
     }
@@ -186,7 +186,7 @@ struct Token {
         , ident(WTF::move(ident))
     {
         ASSERT(this->ident.impl() && this->ident.impl()->bufferOwnership() == StringImpl::BufferInternal);
-        ASSERT(type == TokenType::Identifier);
+        ASSERT_WITH_SECURITY_IMPLICATION(type == TokenType::Identifier);
     }
 
     Token& operator=(Token&& other)

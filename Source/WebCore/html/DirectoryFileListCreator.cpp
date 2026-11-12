@@ -80,7 +80,7 @@ static Vector<FileInformation> gatherFileInformation(const Vector<FileChooserFil
 
 static Ref<FileList> toFileList(Document* document, const Vector<FileInformation>& files)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     auto fileObjects = files.map([document](auto& file) {
         if (file.relativePath.isNull())
             return File::create(document, file.path, { }, file.displayName);

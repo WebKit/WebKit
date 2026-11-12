@@ -126,42 +126,42 @@ NODELETE static webrtc::EcnMarking convertToWebRTCEcnMarking(WebRTCNetwork::EcnM
 
 void LibWebRTCNetwork::signalAddressReady(WebCore::LibWebRTCSocketIdentifier identifier, const RTCNetwork::SocketAddress& address)
 {
-    ASSERT(!WTF::isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(!WTF::isMainRunLoop());
     if (CheckedPtr socket = m_socketFactory.socket(identifier))
         socket->signalAddressReady(address.rtcAddress());
 }
 
 void LibWebRTCNetwork::signalReadPacket(WebCore::LibWebRTCSocketIdentifier identifier, std::span<const uint8_t> data, const RTCNetwork::SocketAddress& address, int64_t timestamp, WebRTCNetwork::EcnMarking ecn)
 {
-    ASSERT(!WTF::isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(!WTF::isMainRunLoop());
     if (CheckedPtr socket = m_socketFactory.socket(identifier))
         socket->signalReadPacket(data, address.rtcAddress(), timestamp, convertToWebRTCEcnMarking(ecn));
 }
 
 void LibWebRTCNetwork::signalSentPacket(WebCore::LibWebRTCSocketIdentifier identifier, int64_t rtcPacketID, int64_t sendTimeMs)
 {
-    ASSERT(!WTF::isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(!WTF::isMainRunLoop());
     if (CheckedPtr socket = m_socketFactory.socket(identifier))
         socket->signalSentPacket(rtcPacketID, sendTimeMs);
 }
 
 void LibWebRTCNetwork::signalConnect(WebCore::LibWebRTCSocketIdentifier identifier)
 {
-    ASSERT(!WTF::isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(!WTF::isMainRunLoop());
     if (CheckedPtr socket = m_socketFactory.socket(identifier))
         socket->signalConnect();
 }
 
 void LibWebRTCNetwork::signalClose(WebCore::LibWebRTCSocketIdentifier identifier, int error)
 {
-    ASSERT(!WTF::isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(!WTF::isMainRunLoop());
     if (CheckedPtr socket = m_socketFactory.socket(identifier))
         socket->signalClose(error);
 }
 
 void LibWebRTCNetwork::signalUsedInterface(WebCore::LibWebRTCSocketIdentifier identifier, String&& interfaceName)
 {
-    ASSERT(!WTF::isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(!WTF::isMainRunLoop());
     if (CheckedPtr socket = m_socketFactory.socket(identifier))
         socket->signalUsedInterface(WTF::move(interfaceName));
 }

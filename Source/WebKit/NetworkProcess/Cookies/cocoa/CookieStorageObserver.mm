@@ -91,7 +91,7 @@ CookieStorageObserver::CookieStorageObserver(NSHTTPCookieStorage *cookieStorage)
 
 CookieStorageObserver::~CookieStorageObserver()
 {
-    ASSERT(isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
 
     if (m_cookieChangeCallback) {
         ASSERT(m_observerAdapter);
@@ -101,7 +101,7 @@ CookieStorageObserver::~CookieStorageObserver()
 
 void CookieStorageObserver::startObserving(WTF::Function<void()>&& callback)
 {
-    ASSERT(isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
     ASSERT(!m_cookieChangeCallback);
     ASSERT(!m_observerAdapter);
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
@@ -134,7 +134,7 @@ void CookieStorageObserver::registerInternalsForNotifications(bool isReregisteri
 
 void CookieStorageObserver::stopObserving()
 {
-    ASSERT(isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
     ASSERT(m_cookieChangeCallback);
     ASSERT(m_observerAdapter);
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
@@ -147,7 +147,7 @@ void CookieStorageObserver::stopObserving()
 
 void CookieStorageObserver::cookiesDidChange()
 {
-    ASSERT(isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
     if (m_cookieChangeCallback)
         m_cookieChangeCallback();
 }

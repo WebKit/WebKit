@@ -158,7 +158,7 @@ LayoutUnit GridBaselineAlignment::baselineOffsetForGridItem(ItemPosition prefere
     ASSERT(isBaselinePosition(preference));
     auto& contextMap = alignmentContextType == Style::GridTrackSizingDirection::Rows ? m_rowAlignmentContextStates : m_columnAlignmentContextStates;
     auto it = contextMap.find(sharedContext);
-    ASSERT(it != contextMap.end());
+    ASSERT_WITH_SECURITY_IMPLICATION(it != contextMap.end());
     auto& context = it->value;
     auto groupIndex = context.sharedGroups->sharedGroupIndex(gridItem.writingMode(), preference);
     if (groupIndex >= context.alignments.size())

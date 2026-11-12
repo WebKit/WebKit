@@ -514,7 +514,7 @@ CSSValueID CSSParserToken::functionId() const
 
 CSSValueID CSSParserToken::identOrFunctionId() const
 {
-    ASSERT(m_type == IdentToken || m_type == FunctionToken);
+    ASSERT_WITH_SECURITY_IMPLICATION(m_type == IdentToken || m_type == FunctionToken);
     if (m_id < 0)
         m_id = std::to_underlying(cssValueKeywordID(value()));
     return static_cast<CSSValueID>(m_id);

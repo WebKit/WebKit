@@ -150,7 +150,7 @@ WorkerThreadableWebSocketChannel::Peer::Peer(Ref<ThreadableWebSocketChannelClien
     , m_taskMode(taskMode)
     , m_workerContextIdentifier(workerContextIdentifier)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 }
 
 Ref<WorkerThreadableWebSocketChannel::Peer> WorkerThreadableWebSocketChannel::Peer::create(Ref<ThreadableWebSocketChannelClientWrapper>&& clientWrapper, ScriptExecutionContext& context, ScriptExecutionContextIdentifier workerContextIdentifier, const String& taskMode, SocketProvider& provider, IsInitiatedByWorker isInitiatedByWorker)
@@ -160,14 +160,14 @@ Ref<WorkerThreadableWebSocketChannel::Peer> WorkerThreadableWebSocketChannel::Pe
 
 WorkerThreadableWebSocketChannel::Peer::~Peer()
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     if (RefPtr channel = m_mainWebSocketChannel)
         channel->disconnect();
 }
 
 WorkerThreadableWebSocketChannel::ConnectStatus WorkerThreadableWebSocketChannel::Peer::connect(const URL& url, const String& protocol)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     RefPtr channel = m_mainWebSocketChannel;
     if (!channel)
         return WorkerThreadableWebSocketChannel::ConnectStatus::KO;
@@ -177,42 +177,42 @@ WorkerThreadableWebSocketChannel::ConnectStatus WorkerThreadableWebSocketChannel
 
 void WorkerThreadableWebSocketChannel::Peer::send(UTF8CString&& message)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     if (RefPtr channel = m_mainWebSocketChannel)
         channel->send(WTF::move(message));
 }
 
 void WorkerThreadableWebSocketChannel::Peer::send(const ArrayBuffer& binaryData)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     if (RefPtr channel = m_mainWebSocketChannel)
         channel->send(binaryData, 0, binaryData.byteLength());
 }
 
 void WorkerThreadableWebSocketChannel::Peer::send(Blob& binaryData)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     if (RefPtr channel = m_mainWebSocketChannel)
         channel->send(binaryData);
 }
 
 void WorkerThreadableWebSocketChannel::Peer::close(int code, const String& reason)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     if (RefPtr channel = m_mainWebSocketChannel)
         channel->close(code, reason);
 }
 
 void WorkerThreadableWebSocketChannel::Peer::fail(String&& reason)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     if (RefPtr channel = m_mainWebSocketChannel)
         channel->fail(WTF::move(reason));
 }
 
 void WorkerThreadableWebSocketChannel::Peer::disconnect()
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     if (!m_mainWebSocketChannel)
         return;
     std::exchange(m_mainWebSocketChannel, nullptr)->disconnect();
@@ -220,21 +220,21 @@ void WorkerThreadableWebSocketChannel::Peer::disconnect()
 
 void WorkerThreadableWebSocketChannel::Peer::suspend()
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     if (RefPtr channel = m_mainWebSocketChannel)
         channel->suspend();
 }
 
 void WorkerThreadableWebSocketChannel::Peer::resume()
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     if (RefPtr channel = m_mainWebSocketChannel)
         channel->resume();
 }
 
 void WorkerThreadableWebSocketChannel::Peer::didConnect()
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
     RefPtr workerClientWrapper = m_workerClientWrapper.get();
     if (!workerClientWrapper)
@@ -309,7 +309,7 @@ void WorkerThreadableWebSocketChannel::Peer::didStartClosingHandshake()
 
 void WorkerThreadableWebSocketChannel::Peer::didClose(uint64_t unhandledBufferedAmount, ClosingHandshakeCompletionStatus closingHandshakeCompletion, unsigned short code, const String& reason)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     m_mainWebSocketChannel = nullptr;
 
     RefPtr workerClientWrapper = m_workerClientWrapper.get();
@@ -406,7 +406,7 @@ void WorkerThreadableWebSocketChannel::Bridge::connect(const URL& url, const Str
         return;
 
     m_loaderProxy->postTaskToLoader([peer = peer.releaseNonNull(), url = url.isolatedCopy(), protocol = protocol.isolatedCopy()](ScriptExecutionContext& context) {
-        ASSERT(isMainThread());
+        ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
         auto& document = downcast<Document>(context);
         
@@ -465,7 +465,7 @@ void WorkerThreadableWebSocketChannel::Bridge::send(Blob& binaryData)
         return;
 
     m_loaderProxy->postTaskToLoader([peer = peer.releaseNonNull(), url = binaryData.url().isolatedCopy(), type = binaryData.type().isolatedCopy(), size = binaryData.size(), memoryCost = binaryData.memoryCost()](ScriptExecutionContext& context) {
-        ASSERT(isMainThread());
+        ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
         ASSERT_UNUSED(context, context.isDocument());
 
         peer->send(Blob::deserialize(&context, url, type, size, memoryCost, { }));

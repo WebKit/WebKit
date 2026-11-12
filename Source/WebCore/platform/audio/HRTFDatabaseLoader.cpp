@@ -49,7 +49,7 @@ NODELETE static HashMap<double, ThreadSafeWeakPtr<HRTFDatabaseLoader>>& loaderMa
 
 Ref<HRTFDatabaseLoader> HRTFDatabaseLoader::createAndLoadAsynchronouslyIfNecessary(float sampleRate)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
     if (RefPtr<HRTFDatabaseLoader> loader = loaderMap().get(sampleRate).get()) {
         ASSERT(sampleRate == loader->databaseSampleRate());
@@ -72,7 +72,7 @@ HRTFDatabaseLoader::HRTFDatabaseLoader(float sampleRate)
 
 HRTFDatabaseLoader::~HRTFDatabaseLoader()
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
     waitForLoaderThreadCompletion();
     m_hrtfDatabase = nullptr;

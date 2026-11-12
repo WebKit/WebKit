@@ -216,7 +216,7 @@ public:
 
     void queueAndProcessSerialAction(Function<Ref<GenericPromise>()>&& action)
     {
-        ASSERT(isMainRunLoop());
+        ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
 
         Ref pendingAction = WTF::move(m_pendingAction);
         m_pendingAction = pendingAction->isResolved() ? action() : pendingAction->whenSettled(RunLoop::mainSingleton(), WTF::move(action));

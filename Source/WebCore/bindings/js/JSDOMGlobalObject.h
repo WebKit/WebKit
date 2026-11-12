@@ -79,8 +79,8 @@ public:
     DOMConstructors& constructors() LIFETIME_BOUND { return m_constructors; }
 
     // No locking is necessary for call sites that do not mutate the containers and are not on a GC thread.
-    const JSDOMStructureMap& structures() const LIFETIME_BOUND WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(!Thread::mayBeGCThread()); return m_structures; }
-    const DOMGuardedObjectSet& guardedObjects() const LIFETIME_BOUND WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(!Thread::mayBeGCThread()); return m_guardedObjects; }
+    const JSDOMStructureMap& structures() const LIFETIME_BOUND WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT_WITH_SECURITY_IMPLICATION(!Thread::mayBeGCThread()); return m_structures; }
+    const DOMGuardedObjectSet& guardedObjects() const LIFETIME_BOUND WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT_WITH_SECURITY_IMPLICATION(!Thread::mayBeGCThread()); return m_guardedObjects; }
     const DOMConstructors& constructors() const LIFETIME_BOUND { ASSERT(!Thread::mayBeGCThread()); return m_constructors; }
 
     // The following don't require grabbing the gcLock first and should only be called when the Heap says that mutators don't have to be fenced.

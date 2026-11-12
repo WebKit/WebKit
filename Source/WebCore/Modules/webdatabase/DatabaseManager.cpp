@@ -200,7 +200,7 @@ void DatabaseManager::removeProposedDatabase(ProposedDatabase& database)
 
 ExceptionOr<Ref<Database>> DatabaseManager::openDatabase(Document& document, const String& name, const String& expectedVersion, const String& displayName, unsigned estimatedSize, RefPtr<DatabaseCallback>&& creationCallback)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
     // FIXME: Remove this call to ScriptController::initializeMainThread(). The
     // main thread should have been initialized by a WebKit entrypoint already.
@@ -262,7 +262,7 @@ DatabaseDetails DatabaseManager::detailsForNameAndOrigin(const String& name, Sec
         Locker locker { m_proposedDatabasesLock };
         for (auto* proposedDatabase : m_proposedDatabases) {
             if (proposedDatabase->details().name() == name && proposedDatabase->origin().equal(origin)) {
-                ASSERT(proposedDatabase->details().threadID() == currentThreadID() || isMainThread());
+                ASSERT_WITH_SECURITY_IMPLICATION(proposedDatabase->details().threadID() == currentThreadID() || isMainThread());
                 return proposedDatabase->details();
             }
         }

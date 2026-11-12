@@ -122,7 +122,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(GPUProcessProxy);
 
 void GPUProcessProxy::keepProcessAliveTemporarily()
 {
-    ASSERT(isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
     static constexpr auto durationToKeepGPUProcessAliveAfterDestruction = 1_min;
 
     if (!singleton())
@@ -137,7 +137,7 @@ void GPUProcessProxy::keepProcessAliveTemporarily()
 
 Ref<GPUProcessProxy> GPUProcessProxy::getOrCreate()
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
     if (auto& existingGPUProcess = singleton()) {
         ASSERT(existingGPUProcess->state() != State::Terminated);
         return *existingGPUProcess;

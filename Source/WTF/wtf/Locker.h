@@ -114,8 +114,8 @@ public:
 
     void assertIsHolding(T& lock) WTF_ASSERTS_ACQUIRED_LOCK(lock)
     {
-        ASSERT(m_isLocked);
-        ASSERT(&lock == &m_lock);
+        ASSERT_WITH_SECURITY_IMPLICATION(m_isLocked);
+        ASSERT_WITH_SECURITY_IMPLICATION(&lock == &m_lock);
         lock.assertIsOwner();
     }
 

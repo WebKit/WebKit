@@ -55,7 +55,7 @@ public:
     void process(const AudioBus& source, AudioBus& destination, size_t framesToProcess) final;
 
     void setCurveForBindings(Vector<float>&&);
-    const Vector<float>& curveForBindings() const LIFETIME_BOUND WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(isMainThread()); return m_curve; } // Doesn't grab the lock, only safe to call on the main thread.
+    const Vector<float>& curveForBindings() const LIFETIME_BOUND WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT_WITH_SECURITY_IMPLICATION(isMainThread()); return m_curve; } // Doesn't grab the lock, only safe to call on the main thread.
     const Vector<float>& curve() const LIFETIME_BOUND WTF_REQUIRES_LOCK(m_processLock) { return m_curve; }
 
     void setOversampleForBindings(OverSampleType);

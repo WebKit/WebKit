@@ -216,7 +216,7 @@ private:
     PitchType m_pitch { PitchType::Unknown };
     bool m_isForPlatformFont { false };
     TriState m_canTakeFixedPitchFastContentMeasuring : 2 { TriState::Indeterminate };
-#if ASSERT_ENABLED
+#if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
     std::optional<uint32_t> m_creationThreadID;
 #endif
 };
@@ -237,7 +237,7 @@ inline bool FontCascadeFonts::canTakeFixedPitchFastContentMeasuring(const FontCa
 
 inline const Font& FontCascadeFonts::primaryFont(const FontCascadeDescription& description, FontSelector* fontSelector)
 {
-    ASSERT(m_creationThreadID ? *m_creationThreadID == currentThreadID() : isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(m_creationThreadID ? *m_creationThreadID == currentThreadID() : isMainThread());
     if (!m_cachedPrimaryFont) {
         // CSS Fonts 4 §5.2: "The first available font [...] is defined to be the first font for which
         // the character U+0020 (space) is not excluded by a unicode-range [...]. Note: it does not

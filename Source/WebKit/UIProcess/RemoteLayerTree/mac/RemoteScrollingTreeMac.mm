@@ -166,7 +166,7 @@ void RemoteScrollingTreeMac::didCommitTree()
 void RemoteScrollingTreeMac::startPendingScrollAnimations()
 {
     ASSERT(ScrollingThread::isCurrentThread());
-    ASSERT(m_treeLock.isLocked());
+    ASSERT_WITH_SECURITY_IMPLICATION(m_treeLock.isLocked());
 
     auto nodesWithPendingScrollAnimations = std::exchange(m_nodesWithPendingScrollAnimations, { });
     for (auto& [nodeID, data] : nodesWithPendingScrollAnimations) {
@@ -278,7 +278,7 @@ void RemoteScrollingTreeMac::didAddPendingScrollUpdate()
 RequestsScrollHandling RemoteScrollingTreeMac::scrollingTreeNodeRequestsScroll(ScrollingNodeID nodeID, const RequestedScrollData& request)
 {
     if (isAnimatedUpdate(request.requestType)) {
-        ASSERT(m_treeLock.isLocked());
+        ASSERT_WITH_SECURITY_IMPLICATION(m_treeLock.isLocked());
         m_nodesWithPendingScrollAnimations.set(nodeID, request);
         return RequestsScrollHandling::Handled;
     }
@@ -287,7 +287,7 @@ RequestsScrollHandling RemoteScrollingTreeMac::scrollingTreeNodeRequestsScroll(S
 
 bool RemoteScrollingTreeMac::scrollingTreeNodeRequestsKeyboardScroll(ScrollingNodeID nodeID, const RequestedKeyboardScrollData& request)
 {
-    ASSERT(m_treeLock.isLocked());
+    ASSERT_WITH_SECURITY_IMPLICATION(m_treeLock.isLocked());
     m_nodesWithPendingKeyboardScrollAnimations.set(nodeID, request);
     return true;
 }
@@ -483,7 +483,7 @@ RefPtr<ScrollingTreeNode> RemoteScrollingTreeMac::scrollingNodeForPoint(FloatPoi
     if (!rootScrollingNode)
         return nullptr;
 
-    ASSERT(m_layerHitTestMutex.isLocked());
+    ASSERT_WITH_SECURITY_IMPLICATION(m_layerHitTestMutex.isLocked());
 
     RetainPtr scrolledContentsLayer { static_cast<CALayer*>(rootScrollingNode->scrolledContentsLayer()) };
 
@@ -598,7 +598,7 @@ OptionSet<EventListenerRegionType> RemoteScrollingTreeMac::eventListenerRegionTy
     if (!rootScrollingNode)
         return { };
 
-    ASSERT(m_layerHitTestMutex.isLocked());
+    ASSERT_WITH_SECURITY_IMPLICATION(m_layerHitTestMutex.isLocked());
 
     auto rootContentsLayer = rootScrollingNode->rootContentsLayer();
 

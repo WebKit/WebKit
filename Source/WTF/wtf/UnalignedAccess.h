@@ -68,7 +68,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 template<typename Type>
 ALWAYS_INLINE void copyOverlappingEnds(uint8_t* destination, const uint8_t* source, size_t count)
 {
-    ASSERT(count >= sizeof(Type) && count <= 2 * sizeof(Type));
+    ASSERT_WITH_SECURITY_IMPLICATION(count >= sizeof(Type) && count <= 2 * sizeof(Type));
     Type low = unalignedLoad<Type>(source);
     Type high = unalignedLoad<Type>(source + count - sizeof(Type));
     unalignedStore<Type>(destination, low);
@@ -78,7 +78,7 @@ ALWAYS_INLINE void copyOverlappingEnds(uint8_t* destination, const uint8_t* sour
 template<typename Type>
 ALWAYS_INLINE void copyOverlappingEndPairs(uint8_t* destination, const uint8_t* source, size_t count)
 {
-    ASSERT(count >= 2 * sizeof(Type) && count <= 4 * sizeof(Type));
+    ASSERT_WITH_SECURITY_IMPLICATION(count >= 2 * sizeof(Type) && count <= 4 * sizeof(Type));
     Type low0 = unalignedLoad<Type>(source);
     Type low1 = unalignedLoad<Type>(source + sizeof(Type));
     Type high0 = unalignedLoad<Type>(source + count - 2 * sizeof(Type));
@@ -97,8 +97,8 @@ ALWAYS_INLINE void copySmallMemory(uint8_t* destination, const uint8_t* source, 
 {
     static_assert(minimumCount >= sizeof(uint16_t));
     static_assert(maximumCount <= maxSmallCopySize);
-    ASSERT(count >= minimumCount);
-    ASSERT(count <= maximumCount);
+    ASSERT_WITH_SECURITY_IMPLICATION(count >= minimumCount);
+    ASSERT_WITH_SECURITY_IMPLICATION(count <= maximumCount);
 
     if constexpr (minimumCount < 2 * sizeof(uint16_t)) {
         if (maximumCount <= 2 * sizeof(uint16_t) || count < 2 * sizeof(uint16_t)) {

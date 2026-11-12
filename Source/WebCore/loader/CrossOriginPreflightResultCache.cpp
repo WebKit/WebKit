@@ -122,13 +122,13 @@ CrossOriginPreflightResultCache& CrossOriginPreflightResultCache::singleton()
 
 void CrossOriginPreflightResultCache::appendEntry(PAL::SessionID sessionID, const ClientOrigin& origin, const URL& url, std::unique_ptr<CrossOriginPreflightResultCacheItem> preflightResult)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     m_preflightHashMap.set(std::make_tuple(sessionID, origin, url), WTF::move(preflightResult));
 }
 
 bool CrossOriginPreflightResultCache::canSkipPreflight(PAL::SessionID sessionID, const ClientOrigin& origin, const URL& url, StoredCredentialsPolicy storedCredentialsPolicy, const String& method, const HTTPHeaderMap& requestHeaders)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     auto it = m_preflightHashMap.find(std::make_tuple(sessionID, origin, url));
     if (it == m_preflightHashMap.end())
         return false;
@@ -142,7 +142,7 @@ bool CrossOriginPreflightResultCache::canSkipPreflight(PAL::SessionID sessionID,
 
 void CrossOriginPreflightResultCache::clear()
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     m_preflightHashMap.clear();
 }
 

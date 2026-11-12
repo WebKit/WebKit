@@ -84,7 +84,7 @@ void IncomingAudioMediaStreamTrackRendererUnit::addSource(const String& identifi
 #if !RELEASE_LOG_DISABLED
     protect(source->logger())->logAlways(LogWebRTC, "IncomingAudioMediaStreamTrackRendererUnit::addSource ", source->logIdentifier());
 #endif
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 #if !RELEASE_LOG_DISABLED
         if (!m_logger)
             lazyInitialize(m_logger, Ref { source->logger() });
@@ -151,7 +151,7 @@ void IncomingAudioMediaStreamTrackRendererUnit::removeSource(const String& ident
 #if !RELEASE_LOG_DISABLED
     protect(source.logger())->logAlways(LogWebRTC, "IncomingAudioMediaStreamTrackRendererUnit::removeSource ", source.logIdentifier());
 #endif
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
     auto result = removeSourceFromMixer(deviceID, source);
     bool shouldStop = result.first;
@@ -186,7 +186,7 @@ void IncomingAudioMediaStreamTrackRendererUnit::start(Mixer& mixer)
 void IncomingAudioMediaStreamTrackRendererUnit::stop(Mixer& mixer)
 {
     RELEASE_LOG(WebRTC, "IncomingAudioMediaStreamTrackRendererUnit::stop");
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
     AudioMediaStreamTrackRendererUnit::singleton().removeSource(mixer.deviceID, protect(*mixer.registeredMixedSource));
     mixer.registeredMixedSource = nullptr;

@@ -106,7 +106,7 @@ auto SharedWorkerContextManager::connection() const -> Connection*
 
 void SharedWorkerContextManager::registerSharedWorkerThread(Ref<SharedWorkerThreadProxy>&& proxy)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     RELEASE_LOG(SharedWorker, "SharedWorkerContextManager::registerSharedWorkerThread: sharedWorkerIdentifier=%" PRIu64, proxy->identifier().toUInt64());
 
     auto result = m_workerMap.add(proxy->identifier(), proxy.copyRef());
@@ -121,7 +121,7 @@ void SharedWorkerContextManager::registerSharedWorkerThread(Ref<SharedWorkerThre
 
 void SharedWorkerContextManager::Connection::postConnectEvent(SharedWorkerIdentifier sharedWorkerIdentifier, TransferredMessagePort&& transferredPort, const SecurityOriginData& sourceOrigin, CompletionHandler<void(bool)>&& completionHandler)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     RefPtr proxy = SharedWorkerContextManager::singleton().sharedWorker(sharedWorkerIdentifier);
     RELEASE_LOG(SharedWorker, "SharedWorkerContextManager::Connection::postConnectEvent: sharedWorkerIdentifier=%" PRIu64 ", proxy=%p", sharedWorkerIdentifier.toUInt64(), proxy.get());
     if (!proxy)
@@ -136,7 +136,7 @@ void SharedWorkerContextManager::Connection::postConnectEvent(SharedWorkerIdenti
 
 void SharedWorkerContextManager::Connection::terminateSharedWorker(SharedWorkerIdentifier sharedWorkerIdentifier)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     RELEASE_LOG(SharedWorker, "SharedWorkerContextManager::Connection::terminateSharedWorker: sharedWorkerIdentifier=%" PRIu64, sharedWorkerIdentifier.toUInt64());
     SharedWorkerContextManager::singleton().stopSharedWorker(sharedWorkerIdentifier);
 }

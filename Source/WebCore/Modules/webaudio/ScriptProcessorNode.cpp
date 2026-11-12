@@ -232,7 +232,7 @@ void ScriptProcessorNode::process(size_t framesToProcess)
 
 void ScriptProcessorNode::fireProcessEvent(unsigned bufferIndex)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
     RefPtr inputBuffer = m_inputBuffers[bufferIndex];
     RefPtr outputBuffer = m_outputBuffers[bufferIndex];

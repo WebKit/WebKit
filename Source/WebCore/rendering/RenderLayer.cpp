@@ -368,7 +368,7 @@ RenderLayer::RenderLayer(RenderLayerModelObject& renderer)
     , m_insideSVGForeignObject(false)
     , m_indirectCompositingReason(static_cast<unsigned>(IndirectCompositingReason::None))
     , m_viewportConstrainedNotCompositedReason(NoNotCompositedReason)
-#if ASSERT_ENABLED
+#if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
     , m_layerListMutationAllowed(true)
 #endif
     , m_blendMode(static_cast<unsigned>(BlendMode::Normal))
@@ -759,7 +759,7 @@ RenderLayer* RenderLayer::stackingContext() const
 
 void RenderLayer::dirtyZOrderLists()
 {
-    ASSERT(layerListMutationAllowed());
+    ASSERT_WITH_SECURITY_IMPLICATION(layerListMutationAllowed());
     ASSERT(isStackingContext());
 
     if (m_posZOrderList)
@@ -807,7 +807,7 @@ bool RenderLayer::willCompositeClipPath() const
 
 void RenderLayer::dirtyNormalFlowList()
 {
-    ASSERT(layerListMutationAllowed());
+    ASSERT_WITH_SECURITY_IMPLICATION(layerListMutationAllowed());
 
     if (m_normalFlowList)
         m_normalFlowList->clear();
@@ -825,7 +825,7 @@ void RenderLayer::updateNormalFlowList()
     if (!m_normalFlowListDirty)
         return;
 
-    ASSERT(layerListMutationAllowed());
+    ASSERT_WITH_SECURITY_IMPLICATION(layerListMutationAllowed());
 
     for (RenderLayer* child = firstChild(); child; child = child->nextSibling()) {
         // Ignore non-overflow layers and reflections.
@@ -845,7 +845,7 @@ void RenderLayer::updateNormalFlowList()
 
 void RenderLayer::rebuildZOrderLists()
 {
-    ASSERT(layerListMutationAllowed());
+    ASSERT_WITH_SECURITY_IMPLICATION(layerListMutationAllowed());
     ASSERT(isDirtyStackingContext());
 
     OptionSet<Compositing> childDirtyFlags;
@@ -4235,7 +4235,7 @@ void RenderLayer::paintList(LayerList layerIterator, GraphicsContext& context, c
     if (!hasSelfPaintingLayerDescendant())
         return;
 
-#if ASSERT_ENABLED
+#if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
     LayerListMutationDetector mutationChecker(*this);
 #endif
 
@@ -5018,7 +5018,7 @@ RenderLayer::HitLayer RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLa
 
     // This variable tracks which layer the mouse ends up being inside.
     auto candidateLayer = HitLayer { nullptr, -std::numeric_limits<double>::infinity() };
-#if ASSERT_ENABLED
+#if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
     LayerListMutationDetector mutationChecker(*this);
 #endif
 
@@ -6012,7 +6012,7 @@ LayoutRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, c
     
     ASSERT(isStackingContext() || !positiveZOrderLayers().size());
 
-#if ASSERT_ENABLED
+#if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
     LayerListMutationDetector mutationChecker(const_cast<RenderLayer&>(*this));
 #endif
 

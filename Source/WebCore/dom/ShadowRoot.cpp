@@ -120,7 +120,7 @@ ShadowRoot::~ShadowRoot()
     // We can't ref document() here since it may have started destruction.
     willBeDeletedFrom(document());
 
-    ASSERT(!m_hasBegunDeletingDetachedChildren);
+    ASSERT_WITH_SECURITY_IMPLICATION(!m_hasBegunDeletingDetachedChildren);
     m_hasBegunDeletingDetachedChildren = true;
 
     // We must remove all of our children first before the TreeScope destructor

@@ -49,7 +49,7 @@ WebGestureEvent::WebGestureEvent(WebEventData&& eventData, WebGestureEventData&&
     : WebEvent(WTF::move(eventData))
     , m_data(WTF::move(gestureData))
 {
-    ASSERT(isGestureEventType(type()));
+    ASSERT_WITH_SECURITY_IMPLICATION(isGestureEventType(type()));
 }
 
 bool WebGestureEvent::isGestureEventType(WebEventType type)

@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-#if ASSERT_ENABLED
+#if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
 
 LayoutDisallowedScope* LayoutDisallowedScope::s_currentAssertion = nullptr;
 

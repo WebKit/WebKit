@@ -75,7 +75,7 @@ public:
 
     RefPtr<ImageBuffer> getScratchBuffer(const IntSize& size) WTF_REQUIRES_LOCK(lock())
     {
-        ASSERT(lock().isHeld());
+        ASSERT_WITH_SECURITY_IMPLICATION(lock().isHeld());
         auto releaseLayerImage = makeScopeExit([this] {
             if (m_imageBuffer)
                 scheduleScratchBufferPurge();
@@ -97,7 +97,7 @@ public:
 
     bool setCachedShadowValues(const FloatSize& radius, const Color& color, const FloatRect& shadowRect, const CornerRadii& radii, const FloatSize& layerSize) WTF_REQUIRES_LOCK(lock())
     {
-        ASSERT(lock().isHeld());
+        ASSERT_WITH_SECURITY_IMPLICATION(lock().isHeld());
         if (!m_lastWasInset && m_lastRadius == radius && m_lastColor == color && m_lastShadowRect == shadowRect &&  m_lastRadii == radii && m_lastLayerSize == layerSize)
             return false;
 
@@ -113,7 +113,7 @@ public:
 
     bool setCachedInsetShadowValues(const FloatSize& radius, const Color& color, const FloatRect& bounds, const FloatRect& shadowRect, const CornerRadii& radii) WTF_REQUIRES_LOCK(lock())
     {
-        ASSERT(lock().isHeld());
+        ASSERT_WITH_SECURITY_IMPLICATION(lock().isHeld());
         if (m_lastWasInset && m_lastRadius == radius && m_lastColor == color && m_lastInsetBounds == bounds && shadowRect == m_lastShadowRect && radii == m_lastRadii)
             return false;
 
@@ -157,7 +157,7 @@ private:
 
     void clearScratchBuffer() WTF_REQUIRES_LOCK(lock())
     {
-        ASSERT(lock().isHeld());
+        ASSERT_WITH_SECURITY_IMPLICATION(lock().isHeld());
         m_imageBuffer = nullptr;
         m_lastRadius = FloatSize();
         m_lastLayerSize = FloatSize();

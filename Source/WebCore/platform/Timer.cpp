@@ -265,7 +265,7 @@ struct SameSizeAsTimer {
 #if CPU(ADDRESS32)
     uint8_t bitfields;
 #endif
-#if ASSERT_ENABLED
+#if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
     uint32_t threadID;
 #endif
 };
@@ -287,7 +287,7 @@ TimerBase::TimerBase()
 
 TimerBase::~TimerBase()
 {
-    ASSERT(canCurrentThreadIDAccessThreadLocalData(m_creationThreadID));
+    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadIDAccessThreadLocalData(m_creationThreadID));
     stop();
     ASSERT(!inHeap());
     if (auto* item = m_heapItemWithBitfields.pointer())
@@ -297,7 +297,7 @@ TimerBase::~TimerBase()
 
 void TimerBase::start(Seconds nextFireInterval, Seconds repeatInterval)
 {
-    ASSERT(canCurrentThreadIDAccessThreadLocalData(m_creationThreadID));
+    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadIDAccessThreadLocalData(m_creationThreadID));
 
     m_repeatInterval = repeatInterval;
     setNextFireTime(MonotonicTime::now() + nextFireInterval);
@@ -305,7 +305,7 @@ void TimerBase::start(Seconds nextFireInterval, Seconds repeatInterval)
 
 void TimerBase::stopSlowCase()
 {
-    ASSERT(canCurrentThreadIDAccessThreadLocalData(m_creationThreadID));
+    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadIDAccessThreadLocalData(m_creationThreadID));
 
     m_repeatInterval = 0_s;
     setNextFireTime(MonotonicTime { });
@@ -504,7 +504,7 @@ void TimerBase::setNextFireTime(MonotonicTime newTime)
 #if USE(WEB_THREAD)
     RELEASE_ASSERT(WebThreadIsLockedOrDisabledInMainOrWebThread());
 #endif
-    ASSERT(canCurrentThreadIDAccessThreadLocalData(m_creationThreadID));
+    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadIDAccessThreadLocalData(m_creationThreadID));
     bool timerHasBeenDeleted = m_unalignedNextFireTime.isNaN();
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!timerHasBeenDeleted);
 

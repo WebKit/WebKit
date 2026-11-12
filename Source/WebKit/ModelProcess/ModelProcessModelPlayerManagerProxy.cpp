@@ -67,7 +67,7 @@ void ModelProcessModelPlayerManagerProxy::clear()
 
 void ModelProcessModelPlayerManagerProxy::createModelPlayer(WebCore::ModelPlayerIdentifier identifier)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
     ASSERT(m_modelConnectionToWebProcess);
     MESSAGE_CHECK(!m_proxies.contains(identifier));
 
@@ -77,7 +77,7 @@ void ModelProcessModelPlayerManagerProxy::createModelPlayer(WebCore::ModelPlayer
 
 void ModelProcessModelPlayerManagerProxy::deleteModelPlayer(WebCore::ModelPlayerIdentifier identifier)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     // The unload model timer (ModelProcess) can race the model element suspension (WebProcess).
     // So the model player might already be gone.
@@ -93,7 +93,7 @@ void ModelProcessModelPlayerManagerProxy::deleteModelPlayer(WebCore::ModelPlayer
 
 void ModelProcessModelPlayerManagerProxy::unloadModelPlayer(WebCore::ModelPlayerIdentifier identifier)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
     MESSAGE_CHECK(m_proxies.contains(identifier));
 
     deleteModelPlayer(identifier);
@@ -107,7 +107,7 @@ bool ModelProcessModelPlayerManagerProxy::hasModelPlayers() const
 
 void ModelProcessModelPlayerManagerProxy::didReceivePlayerMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
     if (auto* player = m_proxies.get(WebCore::ModelPlayerIdentifier(decoder.destinationID())))
         player->didReceiveMessage(connection, decoder);
 }

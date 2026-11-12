@@ -90,7 +90,7 @@ DOMWrapperWorld& normalWorld(JSC::VM& vm)
 
 DOMWrapperWorld& mainThreadNormalWorldSingleton()
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     static NeverDestroyed<Ref<DOMWrapperWorld>> cachedNormalWorld = normalWorld(commonVM());
     return cachedNormalWorld->get();
 }

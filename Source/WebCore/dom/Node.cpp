@@ -121,7 +121,7 @@ struct SameSizeAsNode : EventTarget, CanMakeCheckedPtr<SameSizeAsNode> {
     WTF_MAKE_TZONE_ALLOCATED(SameSizeAsNode);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SameSizeAsNode);
 public:
-#if ASSERT_ENABLED
+#if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
     bool inRemovedLastRefFunction;
     bool deletionHasBegun;
 #endif
@@ -382,7 +382,7 @@ Node::Node(Document& document, NodeType type, OptionSet<TypeFlag> flags)
     , m_shadowIncludingRoot(this)
 {
     ASSERT(nodeType() == type);
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
     if (!isDocumentNode())
         document.incrementReferencingNodeCount();
@@ -405,7 +405,7 @@ NODELETE static HashMap<WeakPtr<Node, WeakPtrImplWithEventTargetData>, NodeIdent
 
 Node::~Node()
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     ASSERT(deletionHasBegun());
 
     InspectorInstrumentation::willDestroyDOMNode(*this);
@@ -445,7 +445,7 @@ Node::~Node()
     }
 #endif
 
-#if ASSERT_ENABLED
+#if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
     if (m_refCountAndParentBit != s_refCountIncrement)
         WTF::RefCountDebuggerBase::printRefDuringDestructionLogAndCrash(this);
 #endif
@@ -1379,7 +1379,7 @@ void Node::setHasEverPaintedImages(bool hasEverPaintedImages)
 
 ContainerNode* Node::parentInComposedTree() const
 {
-    ASSERT(isMainThreadOrGCThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThreadOrGCThread());
     if (auto* slot = assignedSlot())
         return slot;
     if (auto* shadowRoot = dynamicDowncast<ShadowRoot>(*this))
@@ -2206,7 +2206,7 @@ static ALWAYS_INLINE void adoptCustomElementRegistryIfNotKeptNull(ShadowRoot& sh
 
 inline unsigned Node::moveShadowTreeToNewDocumentFastCase(ShadowRoot& shadowRoot, Document& oldDocument, Document& newDocument)
 {
-    ASSERT(isDocumentEligibleForFastAdoption(oldDocument, newDocument));
+    ASSERT_WITH_SECURITY_IMPLICATION(isDocumentEligibleForFastAdoption(oldDocument, newDocument));
     adoptCustomElementRegistryIfNotKeptNull(shadowRoot, newDocument);
     return traverseSubtreeToUpdateTreeScope(shadowRoot, [&](Node& node) -> unsigned {
         if (&node.treeScope() != static_cast<TreeScope*>(&shadowRoot)) {
@@ -2313,7 +2313,7 @@ inline void Node::adoptCustomElementRegistryIntoScopedRegistryDocument()
 
 void Node::moveNodeToNewDocumentFastCase(Document& oldDocument, Document& newDocument)
 {
-    ASSERT(!oldDocument.shouldInvalidateNodeListAndCollectionCaches());
+    ASSERT_WITH_SECURITY_IMPLICATION(!oldDocument.shouldInvalidateNodeListAndCollectionCaches());
     ASSERT(!oldDocument.hasNodeIterators());
     ASSERT(!oldDocument.hasRanges());
     ASSERT(!AXObjectCache::accessibilityEnabled() || !oldDocument.existingAXObjectCache());
@@ -2970,7 +2970,7 @@ void Node::removedLastRef()
     if (auto* svgElement = dynamicDowncast<SVGElement>(*this))
         svgElement->detachAllProperties();
 
-#if ASSERT_ENABLED
+#if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
     m_deletionHasBegun = true;
 #endif
     delete this;

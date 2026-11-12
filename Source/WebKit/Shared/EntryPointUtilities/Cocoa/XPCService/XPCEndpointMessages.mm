@@ -53,7 +53,7 @@ static void handleLaunchServiceDatabaseMessage(xpc_object_t message)
 #if ENABLE(LINEAR_MEDIA_PLAYER)
 static void handleVideoReceiverEndpointMessage(xpc_object_t message)
 {
-    ASSERT(isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
     RELEASE_ASSERT(isInGPUProcess());
 
     auto endpointMessage = VideoReceiverEndpointMessage::decode(message);
@@ -66,7 +66,7 @@ static void handleVideoReceiverEndpointMessage(xpc_object_t message)
 
 static void handleVideoReceiverSwapEndpointsMessage(xpc_object_t message)
 {
-    ASSERT(isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
     RELEASE_ASSERT(isInGPUProcess());
 
     auto endpointMessage = VideoReceiverSwapEndpointsMessage::decode(message);

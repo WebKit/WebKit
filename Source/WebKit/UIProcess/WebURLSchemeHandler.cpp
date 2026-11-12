@@ -101,7 +101,7 @@ void WebURLSchemeHandler::taskCompleted(WebPageProxyIdentifier pageID, WebURLSch
 void WebURLSchemeHandler::removeTaskFromPageMap(WebPageProxyIdentifier pageID, WebCore::ScopedResourceLoaderIdentifier taskID)
 {
     auto iterator = m_tasksByPageIdentifier.find(pageID);
-    ASSERT(iterator != m_tasksByPageIdentifier.end());
+    ASSERT_WITH_SECURITY_IMPLICATION(iterator != m_tasksByPageIdentifier.end());
     ASSERT(iterator->value.contains(taskID));
     if (!decltype(iterator->value)::isValidValue(taskID))
         return;

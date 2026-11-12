@@ -50,7 +50,7 @@ WebTouchEvent::WebTouchEvent(WebEventData&& eventData, WebTouchEventData&& touch
     : WebEvent(WTF::move(eventData))
     , m_data(WTF::move(touchData))
 {
-    ASSERT(isTouchEventType(type()));
+    ASSERT_WITH_SECURITY_IMPLICATION(isTouchEventType(type()));
 }
 
 Ref<WebTouchEvent> WebTouchEvent::copy() const

@@ -101,7 +101,7 @@ void SWContextManager::startedServiceWorker(std::optional<ServiceWorkerJobDataId
 
 ServiceWorkerThreadProxy* SWContextManager::serviceWorkerThreadProxy(ServiceWorkerIdentifier identifier) const
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     Locker locker { m_workerMapLock };
     return m_workerMap.get(identifier);
 }

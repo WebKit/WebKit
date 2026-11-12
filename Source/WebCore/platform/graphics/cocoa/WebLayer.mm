@@ -118,7 +118,7 @@
     if (pthread_main_np())
         WebThreadLock();
 #endif
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     auto layer = WebCore::PlatformCALayer::platformCALayerForLayer((__bridge void*)self);
     WebCore::PlatformCALayerClient* owner = layer ? layer->owner() : nullptr;
     if (owner && owner->platformCALayerDelegatesDisplay(layer.get()))
@@ -135,7 +135,7 @@
     if (pthread_main_np())
         WebThreadLock();
 #endif
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     auto layer = WebCore::PlatformCALayer::platformCALayerForLayer((__bridge void*)self);
     if (layer && layer->owner()) {
         WebCore::GraphicsContextCG graphicsContext(context, WebCore::GraphicsContextCG::CGContextFromCALayer);

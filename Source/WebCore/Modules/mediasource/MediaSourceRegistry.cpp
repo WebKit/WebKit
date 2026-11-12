@@ -52,7 +52,7 @@ MediaSourceRegistry& MediaSourceRegistry::registry()
 void MediaSourceRegistry::registerURL(const ScriptExecutionContext& context, const URL& url, URLRegistrable& registrable)
 {
     ASSERT(&registrable.registry() == this);
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
     auto& urlString = url.string();
     m_urlsPerContext.add(context.identifier(), HashSet<String>()).iterator->value.add(urlString);
@@ -99,7 +99,7 @@ void MediaSourceRegistry::unregisterURLsForContext(const ScriptExecutionContext&
 
 URLRegistrable* MediaSourceRegistry::lookup(const String& url) const
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     if (auto it = m_mediaSources.find(url); it != m_mediaSources.end())
         return it->value.first.ptr();
     return nullptr;

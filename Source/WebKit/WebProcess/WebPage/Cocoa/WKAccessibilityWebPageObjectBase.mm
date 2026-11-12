@@ -54,7 +54,7 @@ namespace ax = WebCore::Accessibility;
 
 - (NakedPtr<WebCore::AXObjectCache>)axObjectCache
 {
-    ASSERT(isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
 
     if (!m_page)
         return nullptr;
@@ -144,7 +144,7 @@ namespace ax = WebCore::Accessibility;
 
 - (void)setWebPage:(NakedPtr<WebKit::WebPage>)nakedPage
 {
-    ASSERT(isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
 
     m_page = nakedPage.get();
 
@@ -179,7 +179,7 @@ namespace ax = WebCore::Accessibility;
 
 - (void)setIsolatedTree:(Ref<WebCore::AXIsolatedTree>&&)tree
 {
-    ASSERT(isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
 
     if (m_hasMainFramePlugin) {
         // Do not set the isolated tree root for main-frame plugins, as that would prevent serving the root

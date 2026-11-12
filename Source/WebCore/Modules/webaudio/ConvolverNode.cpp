@@ -218,7 +218,7 @@ ExceptionOr<void> ConvolverNode::setChannelCountMode(ChannelCountMode mode)
 
 void ConvolverNode::checkNumberOfChannelsForInput(AudioNodeInput* input)
 {
-    ASSERT(context().isAudioThread() && context().isGraphOwner());
+    ASSERT_WITH_SECURITY_IMPLICATION(context().isAudioThread() && context().isGraphOwner());
     std::optional<unsigned> numberOfBufferChannels;
     if (m_processLock.tryLock()) {
         Locker locker { AdoptLock, m_processLock };

@@ -48,7 +48,7 @@ void initializeObjectIdentifierDomain(ObjectIdentifierDomain domain)
 
 uint64_t ObjectIdentifierMainThreadAccessTraits::generateIdentifierInternal()
 {
-    ASSERT(isMainThread()); // You should use AtomicObjectIdentifier if you're hitting this assertion.
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread()); // You should use AtomicObjectIdentifier if you're hitting this assertion.
     return ++currentMainThreadIdentifier;
 }
 

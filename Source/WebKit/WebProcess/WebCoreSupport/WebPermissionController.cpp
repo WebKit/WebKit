@@ -126,7 +126,7 @@ void WebPermissionController::removeObserver(WebCore::PermissionObserver& observ
 template<typename ObserverFilter>
 void WebPermissionController::notifyObserversIfNeeded(WebCore::PermissionName permissionName, NOESCAPE const ObserverFilter& filter)
 {
-    ASSERT(isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
 
     for (CheckedRef observer : m_observers) {
         if (!filter(observer))

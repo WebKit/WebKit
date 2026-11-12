@@ -66,7 +66,7 @@ IDBIndex::IDBIndex(ScriptExecutionContext& context, const IDBIndexInfo& info, ID
 
 IDBIndex::~IDBIndex()
 {
-    ASSERT(canCurrentThreadAccessThreadLocalData(m_objectStore->transaction().database().originThread()));
+    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_objectStore->transaction().database().originThread()));
 }
 
 bool IDBIndex::virtualHasPendingActivity() const
@@ -83,7 +83,7 @@ const String& IDBIndex::name() const
 ExceptionOr<void> IDBIndex::setName(const String& name)
 {
     Ref transaction = m_objectStore->transaction();
-    ASSERT(canCurrentThreadAccessThreadLocalData(transaction->database().originThread()));
+    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(transaction->database().originThread()));
 
     if (m_deleted)
         return Exception { ExceptionCode::InvalidStateError, "Failed set property 'name' on 'IDBIndex': The index has been deleted."_s };
@@ -135,7 +135,7 @@ bool IDBIndex::multiEntry() const
 
 void IDBIndex::rollbackInfoForVersionChangeAbort()
 {
-    ASSERT(canCurrentThreadAccessThreadLocalData(m_objectStore->transaction().database().originThread()));
+    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_objectStore->transaction().database().originThread()));
 
     // Only rollback to the original info if this index still exists in the rolled-back database info.
     auto* objectStoreInfo = m_objectStore->transaction().database().info().infoForExistingObjectStore(m_objectStore->info().identifier());
@@ -155,7 +155,7 @@ ExceptionOr<Ref<IDBRequest>> IDBIndex::doOpenCursor(IDBCursorDirection direction
 {
     LOG(IndexedDB, "IDBIndex::openCursor");
     Ref transaction = m_objectStore->transaction();
-    ASSERT(canCurrentThreadAccessThreadLocalData(transaction->database().originThread()));
+    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(transaction->database().originThread()));
 
     if (m_deleted || m_objectStore->isDeleted())
         return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'openCursor' on 'IDBIndex': The index or its object store has been deleted."_s };
@@ -199,7 +199,7 @@ ExceptionOr<Ref<IDBRequest>> IDBIndex::doOpenKeyCursor(IDBCursorDirection direct
 {
     LOG(IndexedDB, "IDBIndex::openKeyCursor");
     Ref transaction = m_objectStore->transaction();
-    ASSERT(canCurrentThreadAccessThreadLocalData(transaction->database().originThread()));
+    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(transaction->database().originThread()));
 
     if (m_deleted || m_objectStore->isDeleted())
         return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'openKeyCursor' on 'IDBIndex': The index or its object store has been deleted."_s };
@@ -253,7 +253,7 @@ ExceptionOr<Ref<IDBRequest>> IDBIndex::count(JSGlobalObject& execState, JSValue 
 
 ExceptionOr<Ref<IDBRequest>> IDBIndex::doCount(const IDBKeyRangeData& range)
 {
-    ASSERT(canCurrentThreadAccessThreadLocalData(m_objectStore->transaction().database().originThread()));
+    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_objectStore->transaction().database().originThread()));
 
     if (m_deleted || m_objectStore->isDeleted())
         return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'count' on 'IDBIndex': The index or its object store has been deleted."_s };
@@ -288,7 +288,7 @@ ExceptionOr<Ref<IDBRequest>> IDBIndex::get(JSGlobalObject& execState, JSValue ke
 
 ExceptionOr<Ref<IDBRequest>> IDBIndex::doGet(ExceptionOr<IDBKeyRangeData> range)
 {
-    ASSERT(canCurrentThreadAccessThreadLocalData(m_objectStore->transaction().database().originThread()));
+    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_objectStore->transaction().database().originThread()));
 
     if (m_deleted || m_objectStore->isDeleted())
         return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'get' on 'IDBIndex': The index or its object store has been deleted."_s };
@@ -327,7 +327,7 @@ ExceptionOr<Ref<IDBRequest>> IDBIndex::getKey(JSGlobalObject& execState, JSValue
 
 ExceptionOr<Ref<IDBRequest>> IDBIndex::doGetKey(ExceptionOr<IDBKeyRangeData> range)
 {
-    ASSERT(canCurrentThreadAccessThreadLocalData(m_objectStore->transaction().database().originThread()));
+    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(m_objectStore->transaction().database().originThread()));
 
     if (m_deleted || m_objectStore->isDeleted())
         return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'getKey' on 'IDBIndex': The index or its object store has been deleted."_s };
@@ -363,7 +363,7 @@ ExceptionOr<Ref<IDBRequest>> IDBIndex::doGetAllShared(IndexedDB::GetAllType getA
     }
 
     Ref transaction = m_objectStore->transaction();
-    ASSERT(canCurrentThreadAccessThreadLocalData(transaction->database().originThread()));
+    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(transaction->database().originThread()));
 
     if (m_deleted || m_objectStore->isDeleted())
         return Exception { ExceptionCode::InvalidStateError, makeString(callingFunctionExceptionMessagePrefix, "The index or its object store has been deleted."_s) };

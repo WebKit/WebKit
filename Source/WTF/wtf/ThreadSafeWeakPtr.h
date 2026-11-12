@@ -422,7 +422,7 @@ protected:
             // It doesn't really make sense to create a ThreadSafeWeakPtr during destruction since the controlBlock has to
             // view the object as dead. Otherwise a ThreadSafeWeakPtrFactory on an unrelated thread could vend out a partially
             // destroyed object.
-            ASSERT(!(bits & destructionStartedFlag));
+            ASSERT_WITH_SECURITY_IMPLICATION(!(bits & destructionStartedFlag));
             controlBlock->setStrongReferenceCountDuringInitialization(refCountFromStrongOnlyBits(bits));
             bits = std::bit_cast<uintptr_t>(controlBlock);
             ASSERT(!isStrongOnly(bits));

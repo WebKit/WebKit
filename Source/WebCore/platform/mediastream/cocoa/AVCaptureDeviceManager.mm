@@ -116,7 +116,7 @@ RetainPtr<NSArray> AVCaptureDeviceManager::currentCameras()
 void AVCaptureDeviceManager::updateCachedAVCaptureDevices()
 {
 #if HAVE(AVCAPTUREDEVICE)
-    ASSERT(!isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(!isMainThread());
     auto currentDevices = currentCameras();
     auto removedDevices = adoptNS([[NSMutableArray alloc] init]);
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
@@ -173,7 +173,7 @@ static inline bool isVideoDevice(AVCaptureDevice *device)
 
 Vector<CaptureDevice> AVCaptureDeviceManager::retrieveCaptureDevices()
 {
-    ASSERT(!isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(!isMainThread());
     if (!isAvailable())
         return { };
 
@@ -232,7 +232,7 @@ Vector<CaptureDevice> AVCaptureDeviceManager::retrieveCaptureDevices()
 
 void AVCaptureDeviceManager::processRefreshedCaptureDevices(CompletionHandler<void()>&& callback, Vector<CaptureDevice>&& deviceList)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
     bool deviceHasChanged = m_devices.size() != deviceList.size();
     if (!deviceHasChanged) {

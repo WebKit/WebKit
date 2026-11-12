@@ -101,7 +101,7 @@ private:
 
 inline auto PaintWorkletGlobalScope::paintDefinitionMap() -> HashMap<String, std::unique_ptr<PaintDefinition>>&
 {
-    ASSERT(m_paintDefinitionLock.isLocked());
+    ASSERT_WITH_SECURITY_IMPLICATION(m_paintDefinitionLock.isLocked());
     return m_paintDefinitionMap;
 }
 

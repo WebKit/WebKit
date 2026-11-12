@@ -95,19 +95,19 @@ MediaStreamPrivate::~MediaStreamPrivate()
 
 void MediaStreamPrivate::addObserver(MediaStreamPrivateObserver& observer)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     m_observers.add(observer);
 }
 
 void MediaStreamPrivate::removeObserver(MediaStreamPrivateObserver& observer)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     m_observers.remove(observer);
 }
 
 void MediaStreamPrivate::forEachObserver(NOESCAPE const Function<void(MediaStreamPrivateObserver&)>& apply)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     Ref protectedThis { *this };
     m_observers.forEach(apply);
 }

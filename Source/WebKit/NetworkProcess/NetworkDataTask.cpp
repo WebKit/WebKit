@@ -85,7 +85,7 @@ NetworkDataTask::NetworkDataTask(NetworkSession& session, NetworkDataTaskClient&
     , m_dataTaskIsForMainFrameNavigation(dataTaskIsForMainFrameNavigation)
     , m_isInitiatedByWorker(isInitiatedByWorker)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     if (!requestWithCredentials.url().isValid()) {
         scheduleFailure(FailureType::InvalidURL);
@@ -108,7 +108,7 @@ NetworkDataTask::NetworkDataTask(NetworkSession& session, NetworkDataTaskClient&
 
 NetworkDataTask::~NetworkDataTask()
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
     ASSERT(!m_client);
 
     if (CheckedPtr session = m_session.get())

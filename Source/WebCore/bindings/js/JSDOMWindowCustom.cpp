@@ -201,7 +201,7 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, JSGlobalObject* lexicalGl
 
     auto* thisObject = downcast<JSDOMWindow>(object);
 
-    ASSERT(lexicalGlobalObject->vm().currentThreadIsHoldingAPILock());
+    ASSERT_WITH_SECURITY_IMPLICATION(lexicalGlobalObject->vm().currentThreadIsHoldingAPILock());
 
     // Hand off all cross-domain access to jsDOMWindowGetOwnPropertySlotRestrictedAccess.
     Ref window = thisObject->wrapped();
@@ -241,7 +241,7 @@ bool JSDOMWindow::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObject* le
     // Indexed getters take precendence over regular properties, so caching would be invalid.
     slot.disableCaching();
 
-    ASSERT(lexicalGlobalObject->vm().currentThreadIsHoldingAPILock());
+    ASSERT_WITH_SECURITY_IMPLICATION(lexicalGlobalObject->vm().currentThreadIsHoldingAPILock());
     // These are also allowed cross-origin, so come before the access check.
     if (RefPtr frame = window->frame()) {
         // FIXME: scopedChild/scopedChildCount and RemoteFrame need to work together well. We're using using child/childCount until then.

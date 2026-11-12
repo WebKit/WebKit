@@ -79,7 +79,7 @@ namespace ax = WebCore::Accessibility;
 
 - (void)setWebPage:(NakedPtr<WebKit::WebPage>)page
 {
-    ASSERT(isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
     [super setWebPage:page];
 
     if (!page) {

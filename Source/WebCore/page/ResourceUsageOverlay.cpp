@@ -60,7 +60,7 @@ ResourceUsageOverlay::ResourceUsageOverlay(Page& page)
 
 ResourceUsageOverlay::~ResourceUsageOverlay()
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     platformDestroy();
     if (RefPtr page = m_page.get())
         page->pageOverlayController().uninstallPageOverlay(m_overlay.get(), PageOverlay::FadeMode::DoNotFade);

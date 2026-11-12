@@ -82,7 +82,7 @@ EventTargetInterfaceType IDBOpenDBRequest::eventTargetInterface() const
 
 void IDBOpenDBRequest::onError(const IDBResultData& data)
 {
-    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
+    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(originThread()));
 
     m_domError = data.error().toDOMException();
     enqueueEvent(IDBRequestCompletionEvent::create(eventNames().errorEvent, Event::CanBubble::Yes, Event::IsCancelable::Yes, *this));
@@ -101,7 +101,7 @@ void IDBOpenDBRequest::fireSuccessAfterVersionChangeCommit()
 {
     LOG_WITH_STREAM(IndexedDB, stream << "IDBOpenDBRequest::fireSuccessAfterVersionChangeCommit() - "_s << resourceIdentifier().loggingString());
 
-    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
+    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(originThread()));
     ASSERT(hasPendingActivity());
     protect(transaction())->addRequest(*this);
 
@@ -115,7 +115,7 @@ void IDBOpenDBRequest::fireErrorAfterVersionChangeCompletion()
 {
     LOG_WITH_STREAM(IndexedDB, stream << "IDBOpenDBRequest::fireErrorAfterVersionChangeCompletion() - "_s << resourceIdentifier().loggingString());
 
-    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
+    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(originThread()));
     ASSERT(hasPendingActivity());
 
     IDBError idbError(ExceptionCode::AbortError);
@@ -133,7 +133,7 @@ void IDBOpenDBRequest::cancelForStop()
 
 void IDBOpenDBRequest::dispatchEvent(Event& event)
 {
-    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
+    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(originThread()));
 
     Ref protectedThis { *this };
 
@@ -152,7 +152,7 @@ void IDBOpenDBRequest::onSuccess(const IDBResultData& resultData)
 {
     LOG(IndexedDB, "IDBOpenDBRequest::onSuccess()");
 
-    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
+    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(originThread()));
 
     setResult(IDBDatabase::create(*protect(scriptExecutionContext()), connectionProxy(), resultData));
     setReadyState(ReadyState::Done);
@@ -162,7 +162,7 @@ void IDBOpenDBRequest::onSuccess(const IDBResultData& resultData)
 
 void IDBOpenDBRequest::onUpgradeNeeded(const IDBResultData& resultData)
 {
-    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
+    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(originThread()));
 
     Ref database = IDBDatabase::create(*protect(scriptExecutionContext()), connectionProxy(), resultData);
     Ref transaction = database->startVersionChangeTransaction(resultData.transactionInfo(), *this);
@@ -185,7 +185,7 @@ void IDBOpenDBRequest::onUpgradeNeeded(const IDBResultData& resultData)
 
 void IDBOpenDBRequest::onDeleteDatabaseSuccess(const IDBResultData& resultData)
 {
-    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
+    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(originThread()));
 
     uint64_t oldVersion = resultData.databaseInfo().version();
 
@@ -201,7 +201,7 @@ void IDBOpenDBRequest::requestCompleted(const IDBResultData& data)
 {
     LOG(IndexedDB, "IDBOpenDBRequest::requestCompleted");
 
-    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
+    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(originThread()));
 
     m_isBlocked = false;
 
@@ -243,7 +243,7 @@ void IDBOpenDBRequest::requestCompleted(const IDBResultData& data)
 
 void IDBOpenDBRequest::requestBlocked(uint64_t oldVersion, uint64_t newVersion)
 {
-    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
+    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(originThread()));
     ASSERT(!m_isBlocked);
 
     m_isBlocked = true;

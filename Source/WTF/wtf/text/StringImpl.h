@@ -316,8 +316,8 @@ public:
     bool isEmpty() const { return !m_length; }
 
     bool is8Bit() const { return m_hashAndFlags & s_hashFlag8BitBuffer; }
-    ALWAYS_INLINE std::span<const Latin1Character> span8() const LIFETIME_BOUND { ASSERT(is8Bit()); return unsafeMakeSpan(m_data8, length()); }
-    ALWAYS_INLINE std::span<const char16_t> span16() const LIFETIME_BOUND { ASSERT(!is8Bit() || isEmpty()); return unsafeMakeSpan(m_data16, length()); }
+    ALWAYS_INLINE std::span<const Latin1Character> span8() const LIFETIME_BOUND { ASSERT_WITH_SECURITY_IMPLICATION(is8Bit()); return unsafeMakeSpan(m_data8, length()); }
+    ALWAYS_INLINE std::span<const char16_t> span16() const LIFETIME_BOUND { ASSERT_WITH_SECURITY_IMPLICATION(!is8Bit() || isEmpty()); return unsafeMakeSpan(m_data16, length()); }
 
     template<IsStringStorageCharacter CharacterType> std::span<const CharacterType> span() const LIFETIME_BOUND;
 
@@ -1288,14 +1288,14 @@ template<typename CharacterType> inline Ref<StringImpl> StringImpl::createUninit
 
 inline StringImpl* const& StringImpl::substringBuffer() const
 {
-    ASSERT(bufferOwnership() == BufferSubstring);
+    ASSERT_WITH_SECURITY_IMPLICATION(bufferOwnership() == BufferSubstring);
 
     return *tailPointer<StringImpl*>();
 }
 
 inline StringImpl*& StringImpl::substringBuffer()
 {
-    ASSERT(bufferOwnership() == BufferSubstring);
+    ASSERT_WITH_SECURITY_IMPLICATION(bufferOwnership() == BufferSubstring);
 
     return *tailPointer<StringImpl*>();
 }

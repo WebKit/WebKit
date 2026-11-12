@@ -332,7 +332,7 @@ JSC::JSValue ObjcInstance::invokeObjcMethod(JSGlobalObject* lexicalGlobalObject,
     // of return value will never exceed the size of largest scalar
     // or a pointer.
     char buffer[1024];
-    ASSERT([signature methodReturnLength] < 1024);
+    ASSERT_WITH_SECURITY_IMPLICATION([signature methodReturnLength] < 1024);
 
     if (*type != 'v') {
         [invocation getReturnValue:buffer];

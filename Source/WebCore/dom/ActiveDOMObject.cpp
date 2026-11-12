@@ -52,7 +52,7 @@ inline ActiveDOMObject::ActiveDOMObject(ScriptExecutionContext* context, Checked
     if (!context)
         return;
 
-    ASSERT(context->isContextThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(context->isContextThread());
     context->didCreateActiveDOMObject(*this);
 }
 
@@ -87,7 +87,7 @@ ActiveDOMObject::~ActiveDOMObject()
         return;
 
     ASSERT(m_suspendIfNeededWasCalled);
-    ASSERT(context->isContextThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(context->isContextThread());
     context->willDestroyActiveDOMObject(*this);
 }
 

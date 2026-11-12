@@ -170,7 +170,7 @@ private:
     bool m_isStopped { false };
     HashMap<ServiceWorkerRegistrationIdentifier, WeakRef<ServiceWorkerRegistration, WeakPtrImplWithEventTargetData>> m_registrations;
 
-#if ASSERT_ENABLED
+#if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
     const uint32_t m_creationThreadID { currentThreadID() };
 #endif
 

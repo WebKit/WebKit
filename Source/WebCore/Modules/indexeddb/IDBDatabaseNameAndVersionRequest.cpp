@@ -52,7 +52,7 @@ IDBDatabaseNameAndVersionRequest::IDBDatabaseNameAndVersionRequest(ScriptExecuti
 
 void IDBDatabaseNameAndVersionRequest::complete(std::optional<Vector<IDBDatabaseNameAndVersion>>&& databases)
 {
-    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
+    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(originThread()));
 
     if (auto callback = WTF::move(m_callback))
         callback(WTF::move(databases));

@@ -54,14 +54,14 @@ struct AnyThreadsAccessTraits {
 struct MainThreadAccessTraits {
     static void assertAccess()
     {
-        ASSERT(isMainThread());
+        ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     }
 };
 
 struct MainRunLoopAccessTraits {
     static void assertAccess()
     {
-        ASSERT(isMainRunLoop());
+        ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
     }
 };
 

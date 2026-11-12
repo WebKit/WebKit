@@ -52,7 +52,7 @@ using OriginAccessMap = HashMap<SecurityOriginData, std::unique_ptr<OriginAccess
 static Lock originAccessMapLock;
 NODELETE static OriginAccessMap& originAccessMap() WTF_REQUIRES_LOCK(originAccessMapLock)
 {
-    ASSERT(originAccessMapLock.isHeld());
+    ASSERT_WITH_SECURITY_IMPLICATION(originAccessMapLock.isHeld());
     static NeverDestroyed<OriginAccessMap> originAccessMap;
     return originAccessMap;
 }

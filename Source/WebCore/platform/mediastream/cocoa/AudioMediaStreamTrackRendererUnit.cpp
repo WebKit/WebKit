@@ -284,7 +284,7 @@ OSStatus AudioMediaStreamTrackRendererUnit::Unit::render(size_t sampleCount, Aud
     // For performance reasons, we forbid heap allocations while doing rendering on the audio thread.
     ForbidMallocUseForCurrentThreadScope forbidMallocUse;
 
-    ASSERT(!isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(!isMainThread());
 
     updateRenderSourcesIfNecessary();
 

@@ -219,8 +219,8 @@ void LocalFrameViewLayoutContext::performLayout(bool canDeferUpdateLayerPosition
 {
     Ref frame = this->frame();
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!document()->inRenderTreeUpdate());
-    ASSERT(LayoutDisallowedScope::isLayoutAllowed());
-    ASSERT(!view().isPainting());
+    ASSERT_WITH_SECURITY_IMPLICATION(LayoutDisallowedScope::isLayoutAllowed());
+    ASSERT_WITH_SECURITY_IMPLICATION(!view().isPainting());
     ASSERT(frame->view() == &view());
     ASSERT(document());
     ASSERT(document()->backForwardCacheState() == Document::NotInBackForwardCache
@@ -1023,7 +1023,7 @@ void LocalFrameViewLayoutContext::popLayoutState()
 bool LocalFrameViewLayoutContext::DetachedRendererList::append(RenderPtr<RenderObject>&& detachedRenderer)
 {
     ASSERT(!detachedRenderer->parent());
-    ASSERT(!detachedRenderer->beingDestroyed());
+    ASSERT_WITH_SECURITY_IMPLICATION(!detachedRenderer->beingDestroyed());
 
     if (detachedRenderer->renderTreeBeingDestroyed())
         return false;

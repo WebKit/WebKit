@@ -111,7 +111,7 @@ void AudioBasicProcessorNode::pullInputs(size_t framesToProcess)
 // uninitialize and then re-initialize with the new channel count.
 void AudioBasicProcessorNode::checkNumberOfChannelsForInput(AudioNodeInput* input)
 {
-    ASSERT(context().isAudioThread() && context().isGraphOwner());
+    ASSERT_WITH_SECURITY_IMPLICATION(context().isAudioThread() && context().isGraphOwner());
     
     ASSERT(input == this->input(0));
     if (input != this->input(0))

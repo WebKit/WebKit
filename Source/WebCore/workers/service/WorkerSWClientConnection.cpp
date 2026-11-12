@@ -558,7 +558,7 @@ void WorkerSWClientConnection::retrieveRecordResponseBody(BackgroundFetchRecordI
             thread->runLoop().postTaskForMode([requestIdentifier, buffer = WTF::move(buffer), error = WTF::move(error).isolatedCopy()](auto& scope) mutable {
                 auto& callbacks = downcast<WorkerGlobalScope>(scope).swClientConnection().m_retrieveRecordResponseBodyCallbacks;
                 auto iterator = callbacks.find(requestIdentifier);
-                ASSERT(iterator != callbacks.end());
+                ASSERT_WITH_SECURITY_IMPLICATION(iterator != callbacks.end());
                 if (!error.isNull()) {
                     iterator->value(makeUnexpected(WTF::move(error)));
                     callbacks.remove(iterator);

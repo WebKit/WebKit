@@ -149,7 +149,7 @@ public:
     const_iterator& operator++()
     {
         checkValidity();
-        ASSERT(m_position != m_endPosition);
+        ASSERT_WITH_SECURITY_IMPLICATION(m_position != m_endPosition);
         ++m_position;
         skipEmptyBuckets();
         return *this;

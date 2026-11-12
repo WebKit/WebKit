@@ -86,7 +86,7 @@ DiskCacheMonitor::DiskCacheMonitor(const ResourceRequest& request, PAL::SessionI
 
     // Set up the disk caching callback to create the ShareableResource and send it to the WebProcess.
     auto block = ^(CFCachedURLResponseRef cachedResponse) {
-        ASSERT(isMainThread());
+        ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
         // If the monitor isn't there then it timed out before this resource was cached to disk.
         if (!rawMonitor)
             return;

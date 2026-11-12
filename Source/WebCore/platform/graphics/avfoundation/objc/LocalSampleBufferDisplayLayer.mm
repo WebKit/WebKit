@@ -243,7 +243,7 @@ void LocalSampleBufferDisplayLayer::setShouldMaintainAspectRatio(bool shouldMain
 
 void LocalSampleBufferDisplayLayer::layerStatusDidChange()
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     RefPtr client = m_client.get();
     if (client && m_sampleBufferDisplayLayer.get().status == AVQueuedSampleBufferRenderingStatusFailed) {
@@ -258,7 +258,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 void LocalSampleBufferDisplayLayer::layerErrorDidChange()
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     RELEASE_LOG_ERROR(WebRTC, "LocalSampleBufferDisplayLayer::layerErrorDidChange (%llu) ", m_logIdentifier);
     RefPtr client = m_client.get();
     if (!client || m_didFail)

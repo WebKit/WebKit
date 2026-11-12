@@ -54,7 +54,7 @@ void AudioBasicInspectorNode::pullInputs(size_t framesToProcess)
 
 void AudioBasicInspectorNode::checkNumberOfChannelsForInput(AudioNodeInput* input)
 {
-    ASSERT(context().isAudioThread() && context().isGraphOwner());
+    ASSERT_WITH_SECURITY_IMPLICATION(context().isAudioThread() && context().isGraphOwner());
 
     ASSERT(input == this->input(0));
     if (input != this->input(0))
@@ -76,7 +76,7 @@ void AudioBasicInspectorNode::checkNumberOfChannelsForInput(AudioNodeInput* inpu
 
 void AudioBasicInspectorNode::updatePullStatus()
 {
-    ASSERT(context().isGraphOwner());
+    ASSERT_WITH_SECURITY_IMPLICATION(context().isGraphOwner());
 
     CheckedPtr output = this->output(0);
     Ref context = this->context();

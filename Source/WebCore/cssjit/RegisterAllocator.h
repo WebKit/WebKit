@@ -93,7 +93,7 @@ public:
         RELEASE_ASSERT(m_registers.size());
         JSC::MacroAssembler::RegisterID registerID = m_registers.first();
         m_registers.removeFirst();
-        ASSERT(!m_allocatedRegisters.contains(registerID));
+        ASSERT_WITH_SECURITY_IMPLICATION(!m_allocatedRegisters.contains(registerID));
         m_allocatedRegisters.append(registerID);
         return registerID;
     }
@@ -103,7 +103,7 @@ public:
         for (auto it = m_registers.begin(); it != m_registers.end(); ++it) {
             if (*it == registerID) {
                 m_registers.remove(it);
-                ASSERT(!m_allocatedRegisters.contains(registerID));
+                ASSERT_WITH_SECURITY_IMPLICATION(!m_allocatedRegisters.contains(registerID));
                 m_allocatedRegisters.append(registerID);
                 return;
             }
@@ -116,7 +116,7 @@ public:
         for (auto it = m_registers.begin(); it != m_registers.end(); ++it) {
             if (*it == preferredRegister) {
                 m_registers.remove(it);
-                ASSERT(!m_allocatedRegisters.contains(preferredRegister));
+                ASSERT_WITH_SECURITY_IMPLICATION(!m_allocatedRegisters.contains(preferredRegister));
                 m_allocatedRegisters.append(preferredRegister);
                 return preferredRegister;
             }
@@ -126,7 +126,7 @@ public:
 
     void deallocateRegister(JSC::MacroAssembler::RegisterID registerID)
     {
-        ASSERT(m_allocatedRegisters.contains(registerID));
+        ASSERT_WITH_SECURITY_IMPLICATION(m_allocatedRegisters.contains(registerID));
         // Most allocation/deallocation happen in stack-like order. In the common case, this
         // just removes the last item.
         m_allocatedRegisters.removeLast(registerID);

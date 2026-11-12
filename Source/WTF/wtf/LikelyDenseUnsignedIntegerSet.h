@@ -112,7 +112,7 @@ public:
         ASSERT(isValidValue(value));
 
         if (!m_size) {
-            ASSERT(isBitVector());
+            ASSERT_WITH_SECURITY_IMPLICATION(isBitVector());
             m_min = value & ~63;
             m_max = value;
             m_size = 1;
@@ -284,7 +284,7 @@ private:
 
     void transitionToHashSet()
     {
-        ASSERT(isBitVector());
+        ASSERT_WITH_SECURITY_IMPLICATION(isBitVector());
 
         Set newSet;
         newSet.reserveInitialCapacity(m_size + 1);
@@ -299,7 +299,7 @@ private:
 
     void transitionToBitVector()
     {
-        ASSERT(!isBitVector());
+        ASSERT_WITH_SECURITY_IMPLICATION(!isBitVector());
 
         BitVector newBitVector;
         newBitVector.ensureSize(m_max - m_min + 1);

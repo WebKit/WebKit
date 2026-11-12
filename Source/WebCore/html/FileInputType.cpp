@@ -414,7 +414,7 @@ void FileInputType::filesChosen(const Vector<FileChooserFileInfo>& paths, const 
     }
 
     Ref creator = DirectoryFileListCreator::create([weakThis = WeakPtr { *this }, icon = RefPtr { icon }](Ref<FileList>&& fileList) mutable {
-        ASSERT(isMainThread());
+        ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;

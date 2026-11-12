@@ -372,7 +372,7 @@ void AudioParam::calculateTimelineValues(std::span<float> values)
 void AudioParam::connect(AudioNodeOutput* output)
 {
     ASSERT(context());
-    ASSERT(context()->isGraphOwner());
+    ASSERT_WITH_SECURITY_IMPLICATION(context()->isGraphOwner());
 
     ASSERT(output);
     if (!output)
@@ -388,7 +388,7 @@ void AudioParam::connect(AudioNodeOutput* output)
 void AudioParam::disconnect(AudioNodeOutput* output)
 {
     ASSERT(context());
-    ASSERT(context()->isGraphOwner());
+    ASSERT_WITH_SECURITY_IMPLICATION(context()->isGraphOwner());
 
     ASSERT(output);
     if (!output)

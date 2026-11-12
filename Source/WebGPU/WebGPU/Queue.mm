@@ -1406,7 +1406,7 @@ void Queue::writeTexture(const WebGPU::TexelCopyTextureInfo& destination, std::s
     }
     if (!temporaryBuffer)
         return;
-    ASSERT(temporaryBuffer.length >= newBufferSize);
+    ASSERT_WITH_SECURITY_IMPLICATION(temporaryBuffer.length >= newBufferSize);
 
     switch (texture->dimension()) {
     case WebGPU::TextureDimension::_1d: {

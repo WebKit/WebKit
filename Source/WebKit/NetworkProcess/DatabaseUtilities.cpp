@@ -124,7 +124,7 @@ void DatabaseUtilities::enableForeignKeys()
 
 void DatabaseUtilities::close()
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(!RunLoop::isMain());
     destroyStatements();
     if (m_database->isOpen())
         m_database->close();

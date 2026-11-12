@@ -359,14 +359,14 @@ public:
     void remove(iterator it)
     {
         ASSERT(it.m_table == this);
-        ASSERT(it.m_index < m_entriesLength);
+        ASSERT_WITH_SECURITY_IMPLICATION(it.m_index < m_entriesLength);
         removeEntryAtIndex(it.m_index);
     }
 
     void remove(const_iterator it)
     {
         ASSERT(it.m_table == this);
-        ASSERT(it.m_index < m_entriesLength);
+        ASSERT_WITH_SECURITY_IMPLICATION(it.m_index < m_entriesLength);
         removeEntryAtIndex(it.m_index);
     }
 
@@ -548,8 +548,8 @@ private:
 
     void removeEntryAtIndex(uint32_t index)
     {
-        ASSERT(index < m_entriesLength);
-        ASSERT(!isDeletedEntry(m_entries[index]));
+        ASSERT_WITH_SECURITY_IMPLICATION(index < m_entriesLength);
+        ASSERT_WITH_SECURITY_IMPLICATION(!isDeletedEntry(m_entries[index]));
 
         // The bucket slot keeps pointing at this entry; probes skip it via
         // isDeletedEntry, so no second probe is needed here.
@@ -648,7 +648,7 @@ public:
     ValueType* get() const
     {
         ASSERT(m_table);
-        ASSERT(m_index < m_table->entriesLength());
+        ASSERT_WITH_SECURITY_IMPLICATION(m_index < m_table->entriesLength());
         return &m_table->entries()[m_index];
     }
 
@@ -674,7 +674,7 @@ public:
     OrderedHashTableIterator& operator--()
     {
         ASSERT(m_table);
-        ASSERT(m_index > 0);
+        ASSERT_WITH_SECURITY_IMPLICATION(m_index > 0);
         --m_index;
         while (m_index > 0 && m_table->isDeletedEntry(m_table->entries()[m_index]))
             --m_index;
@@ -737,7 +737,7 @@ public:
     const ValueType* get() const
     {
         ASSERT(m_table);
-        ASSERT(m_index < m_table->entriesLength());
+        ASSERT_WITH_SECURITY_IMPLICATION(m_index < m_table->entriesLength());
         return &m_table->entries()[m_index];
     }
 
@@ -763,7 +763,7 @@ public:
     OrderedHashTableConstIterator& operator--()
     {
         ASSERT(m_table);
-        ASSERT(m_index > 0);
+        ASSERT_WITH_SECURITY_IMPLICATION(m_index > 0);
         --m_index;
         while (m_index > 0 && m_table->isDeletedEntry(m_table->entries()[m_index]))
             --m_index;
@@ -818,8 +818,8 @@ public:
     ValueType* get() const
     {
         ASSERT(m_table);
-        ASSERT(m_index > 0);
-        ASSERT(m_index <= m_table->entriesLength());
+        ASSERT_WITH_SECURITY_IMPLICATION(m_index > 0);
+        ASSERT_WITH_SECURITY_IMPLICATION(m_index <= m_table->entriesLength());
         return &m_table->entries()[m_index - 1];
     }
 
@@ -829,7 +829,7 @@ public:
     OrderedHashTableReverseIterator& operator++()
     {
         ASSERT(m_table);
-        ASSERT(m_index > 0);
+        ASSERT_WITH_SECURITY_IMPLICATION(m_index > 0);
         --m_index;
         skipDeleted();
         return *this;
@@ -888,8 +888,8 @@ public:
     const ValueType* get() const
     {
         ASSERT(m_table);
-        ASSERT(m_index > 0);
-        ASSERT(m_index <= m_table->entriesLength());
+        ASSERT_WITH_SECURITY_IMPLICATION(m_index > 0);
+        ASSERT_WITH_SECURITY_IMPLICATION(m_index <= m_table->entriesLength());
         return &m_table->entries()[m_index - 1];
     }
 
@@ -899,7 +899,7 @@ public:
     OrderedHashTableConstReverseIterator& operator++()
     {
         ASSERT(m_table);
-        ASSERT(m_index > 0);
+        ASSERT_WITH_SECURITY_IMPLICATION(m_index > 0);
         --m_index;
         skipDeleted();
         return *this;

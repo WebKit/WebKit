@@ -925,7 +925,7 @@ auto AVVideoCaptureSource::getPhotoSettings() -> Ref<PhotoSettingsNativePromise>
 
 RetainPtr<NSArray> AVVideoCaptureSource::cameraCaptureDeviceTypes()
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     static NeverDestroyed<RetainPtr<NSMutableArray>> devicePriorities;
     if (!devicePriorities.get()) {
         devicePriorities.get() = adoptNS([[NSMutableArray alloc] initWithCapacity:8]);

@@ -133,7 +133,7 @@ public:
 
     void assertIsOwner() const
     {
-        ASSERT(isHeld());
+        ASSERT_WITH_SECURITY_IMPLICATION(isHeld());
     }
 
 private:

@@ -41,7 +41,7 @@ inline JSC::Structure* JSDOMGlobalObject::createStructure(JSC::VM& vm, JSC::JSVa
 
 inline JSDOMStructureMap& JSDOMGlobalObject::structures(NoLockingNecessaryTag) LIFETIME_BOUND
 {
-    ASSERT(!vm().heap.mutatorShouldBeFenced());
+    ASSERT_WITH_SECURITY_IMPLICATION(!vm().heap.mutatorShouldBeFenced());
     IGNORE_CLANG_WARNINGS_BEGIN("thread-safety-reference-return")
     return m_structures;
     IGNORE_CLANG_WARNINGS_END
@@ -49,7 +49,7 @@ inline JSDOMStructureMap& JSDOMGlobalObject::structures(NoLockingNecessaryTag) L
 
 inline DOMGuardedObjectSet& JSDOMGlobalObject::guardedObjects(NoLockingNecessaryTag) LIFETIME_BOUND
 {
-    ASSERT(!vm().heap.mutatorShouldBeFenced());
+    ASSERT_WITH_SECURITY_IMPLICATION(!vm().heap.mutatorShouldBeFenced());
     IGNORE_CLANG_WARNINGS_BEGIN("thread-safety-reference-return")
     return m_guardedObjects;
     IGNORE_CLANG_WARNINGS_END

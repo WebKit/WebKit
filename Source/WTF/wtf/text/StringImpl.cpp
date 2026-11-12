@@ -117,7 +117,7 @@ StringImpl::StaticStringImpl StringImpl::s_emptyAtomString("", StringImpl::Strin
 
 StringImpl::~StringImpl()
 {
-    ASSERT(!isStatic());
+    ASSERT_WITH_SECURITY_IMPLICATION(!isStatic());
 
     StringView::invalidate(*this);
 
@@ -194,8 +194,8 @@ Ref<StringImpl> StringImpl::createUninitialized(size_t length, std::span<char16_
 
 template<typename CharacterType> inline std::expected<Ref<StringImpl>, UTF8ConversionError> StringImpl::reallocateInternal(Ref<StringImpl>&& originalString, unsigned length, CharacterType*& data)
 {
-    ASSERT(originalString->hasOneRef());
-    ASSERT(originalString->bufferOwnership() == BufferInternal);
+    ASSERT_WITH_SECURITY_IMPLICATION(originalString->hasOneRef());
+    ASSERT_WITH_SECURITY_IMPLICATION(originalString->bufferOwnership() == BufferInternal);
 
     if (!length) {
         data = nullptr;
@@ -234,13 +234,13 @@ Ref<StringImpl> StringImpl::reallocate(Ref<StringImpl>&& originalString, unsigne
 
 std::expected<Ref<StringImpl>, UTF8ConversionError> StringImpl::tryReallocate(Ref<StringImpl>&& originalString, unsigned length, Latin1Character*& data)
 {
-    ASSERT(originalString->is8Bit());
+    ASSERT_WITH_SECURITY_IMPLICATION(originalString->is8Bit());
     return reallocateInternal(WTF::move(originalString), length, data);
 }
 
 std::expected<Ref<StringImpl>, UTF8ConversionError> StringImpl::tryReallocate(Ref<StringImpl>&& originalString, unsigned length, char16_t*& data)
 {
-    ASSERT(!originalString->is8Bit());
+    ASSERT_WITH_SECURITY_IMPLICATION(!originalString->is8Bit());
     return reallocateInternal(WTF::move(originalString), length, data);
 }
 
@@ -1100,7 +1100,7 @@ SUPPRESS_NODELETE size_t StringImpl::reverseFind(StringView matchString, size_t 
 ALWAYS_INLINE static bool equalInner(const StringImpl& string, unsigned start, std::span<const char> matchString)
 {
     ASSERT(matchString.size() <= string.length());
-    ASSERT(start + matchString.size() <= string.length());
+    ASSERT_WITH_SECURITY_IMPLICATION(start + matchString.size() <= string.length());
 
     if (string.is8Bit())
         return equal(string.span8().subspan(start).data(), byteCast<Latin1Character>(matchString));
@@ -1639,7 +1639,7 @@ std::expected<UTF8CString, UTF8ConversionError> StringImpl::utf8ForCharacters(st
 
 std::expected<size_t, UTF8ConversionError> StringImpl::utf8ForCharactersIntoBuffer(std::span<const char16_t> span, ConversionMode mode, Vector<char8_t, 1024>& bufferVector)
 {
-    ASSERT(bufferVector.size() == span.size() * 3);
+    ASSERT_WITH_SECURITY_IMPLICATION(bufferVector.size() == span.size() * 3);
 
     auto conversionResult = simdutf::convert_utf16le_to_utf8_with_errors(span, bufferVector.mutableSpan());
 

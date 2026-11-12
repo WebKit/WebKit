@@ -262,7 +262,7 @@ void PeerConnectionBackend::createOffer(RTCOfferOptions&& options, CreateCallbac
 
 void PeerConnectionBackend::createOfferSucceeded(String&& sdp)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
 #if !RELEASE_LOG_DISABLED
     logger().toObservers(LogWebRTC, WTFLogLevel::Always, { }, LOGIDENTIFIER, "SDP offer created:\n", sdp);
@@ -278,7 +278,7 @@ void PeerConnectionBackend::createOfferSucceeded(String&& sdp)
 
 void PeerConnectionBackend::createOfferFailed(Exception&& exception)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     ALWAYS_LOG(LOGIDENTIFIER, exception.message());
 
     ASSERT(m_offerAnswerCallback);
@@ -298,7 +298,7 @@ void PeerConnectionBackend::createAnswer(RTCAnswerOptions&& options, CreateCallb
 
 void PeerConnectionBackend::createAnswerSucceeded(String&& sdp)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
 #if !RELEASE_LOG_DISABLED
     logger().toObservers(LogWebRTC, WTFLogLevel::Always, { }, LOGIDENTIFIER, "SDP answer created:\n", sdp);
@@ -313,7 +313,7 @@ void PeerConnectionBackend::createAnswerSucceeded(String&& sdp)
 
 void PeerConnectionBackend::createAnswerFailed(Exception&& exception)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     ALWAYS_LOG(LOGIDENTIFIER, exception.message());
 
     ASSERT(m_offerAnswerCallback);
@@ -378,7 +378,7 @@ static void processRemoteTracks(RTCRtpTransceiver& transceiver, PeerConnectionBa
 
 void PeerConnectionBackend::setLocalDescriptionSucceeded(std::optional<DescriptionStates>&& descriptionStates, std::optional<TransceiverStates>&& transceiverStates, std::unique_ptr<RTCSctpTransportBackend>&& sctpBackend, std::optional<double> maxMessageSize)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     ALWAYS_LOG(LOGIDENTIFIER, "Set local description succeeded");
     if (transceiverStates)
         DEBUG_LOG(LOGIDENTIFIER, "Transceiver states: ", *transceiverStates);
@@ -443,7 +443,7 @@ void PeerConnectionBackend::setLocalDescriptionSucceeded(std::optional<Descripti
 
 void PeerConnectionBackend::setLocalDescriptionFailed(Exception&& exception)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     ALWAYS_LOG(LOGIDENTIFIER, "Set local description failed:", exception.message());
 
     ASSERT(m_setDescriptionCallback);
@@ -465,7 +465,7 @@ void PeerConnectionBackend::setRemoteDescription(const RTCSessionDescription& se
 
 void PeerConnectionBackend::setRemoteDescriptionSucceeded(std::optional<DescriptionStates>&& descriptionStates, std::optional<TransceiverStates>&& transceiverStates, std::unique_ptr<RTCSctpTransportBackend>&& sctpBackend, std::optional<double> maxMessageSize)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     ALWAYS_LOG(LOGIDENTIFIER, "Set remote description succeeded");
     if (transceiverStates)
         DEBUG_LOG(LOGIDENTIFIER, "Transceiver states: ", *transceiverStates);
@@ -568,7 +568,7 @@ void PeerConnectionBackend::setRemoteDescriptionSucceeded(std::optional<Descript
 
 void PeerConnectionBackend::setRemoteDescriptionFailed(Exception&& exception)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     ALWAYS_LOG(LOGIDENTIFIER, "Set remote description failed:", exception.message());
 
     ASSERT(m_setDescriptionCallback);
@@ -706,7 +706,7 @@ void PeerConnectionBackend::newDataChannel(UniqueRef<RTCDataChannelHandler>&& ch
 
 void PeerConnectionBackend::doneGatheringCandidates()
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     ALWAYS_LOG(LOGIDENTIFIER, "Finished ice candidate gathering");
     m_finishedGatheringCandidates = true;
 

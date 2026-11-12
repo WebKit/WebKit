@@ -111,7 +111,7 @@ void SQLTransaction::performNextStep()
 
 void SQLTransaction::performPendingCallback()
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     LOG(StorageAPI, "Callback %s\n", debugStepName(m_nextStep).characters());
 
     ASSERT(m_nextStep == &SQLTransaction::deliverTransactionCallback
@@ -133,7 +133,7 @@ void SQLTransaction::notifyDatabaseThreadIsShuttingDown()
 
 void SQLTransaction::callErrorCallbackDueToInterruption()
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     auto errorCallback = m_errorCallbackWrapper.unwrap();
     if (!errorCallback)
         return;

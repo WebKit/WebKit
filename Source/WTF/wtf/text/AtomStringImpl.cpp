@@ -327,7 +327,7 @@ static inline Ref<AtomStringImpl> addSymbol(StringImpl& base)
 static Ref<AtomStringImpl> addStatic(AtomStringTableLocker& locker, StringTableImpl& atomStringTable, const StringImpl& base)
 {
     ASSERT(base.length());
-    ASSERT(base.isStatic());
+    ASSERT_WITH_SECURITY_IMPLICATION(base.isStatic());
 
     // StaticStringImpl with StringAtom: store the static pointer directly in the
     // atom table with no heap allocation. The isAtom() flag is already set at

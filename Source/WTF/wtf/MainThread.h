@@ -79,11 +79,11 @@ void initializeMainThreadPlatform();
 
 // To be used with WTF_REQUIRES_CAPABILITY(mainThread). Symbol is undefined.
 extern NamedAssertion& mainThread;
-inline void assertIsMainThread() WTF_ASSERTS_ACQUIRED_CAPABILITY(mainThread) { ASSERT(isMainThread()); }
+inline void assertIsMainThread() WTF_ASSERTS_ACQUIRED_CAPABILITY(mainThread) { ASSERT_WITH_SECURITY_IMPLICATION(isMainThread()); }
 
 // To be used with WTF_REQUIRES_CAPABILITY(mainRunLoop). Symbol is undefined.
 extern NamedAssertion& mainRunLoop;
-inline void assertIsMainRunLoop() WTF_ASSERTS_ACQUIRED_CAPABILITY(mainRunLoop) { ASSERT(isMainRunLoop()); }
+inline void assertIsMainRunLoop() WTF_ASSERTS_ACQUIRED_CAPABILITY(mainRunLoop) { ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop()); }
 
 enum class DestructionThread : uint8_t { Any, Main, MainRunLoop };
 

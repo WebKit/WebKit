@@ -35,7 +35,7 @@
 #import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/Threading.h>
 
-#if ASSERT_ENABLED
+#if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
 
 // This is like the isKindOfClass: method, bypassing it to get the correct answer for our purposes even for classes that override it.
 // At the time of this writing, that included WebKit's WKObject class.
@@ -54,7 +54,7 @@ static bool safeIsKindOfClass(id object, Class testClass)
 
 bool WebCoreObjCScheduleDeallocateOnMainThread(Class deallocMethodClass, id object)
 {
-    ASSERT(safeIsKindOfClass(object, deallocMethodClass));
+    ASSERT_WITH_SECURITY_IMPLICATION(safeIsKindOfClass(object, deallocMethodClass));
 
     if (isMainThread())
         return false;
@@ -70,7 +70,7 @@ bool WebCoreObjCScheduleDeallocateOnMainThread(Class deallocMethodClass, id obje
 
 bool WebCoreObjCScheduleDeallocateOnMainRunLoop(Class deallocMethodClass, id object)
 {
-    ASSERT(safeIsKindOfClass(object, deallocMethodClass));
+    ASSERT_WITH_SECURITY_IMPLICATION(safeIsKindOfClass(object, deallocMethodClass));
 
     if (isMainRunLoop())
         return false;

@@ -48,7 +48,7 @@ WorkletPendingTasks::~WorkletPendingTasks() = default;
 
 void WorkletPendingTasks::abort(Exception&& exception)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
     if (m_counter == -1)
         return;
@@ -61,7 +61,7 @@ void WorkletPendingTasks::abort(Exception&& exception)
 
 void WorkletPendingTasks::decrementCounter()
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
     if (m_counter == -1)
         return;

@@ -60,7 +60,7 @@ Ref<BitmapImage> BitmapImage::createFromPlatformResource(StringView name)
 
 BitmapImage& BitmapImage::nullImage()
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     static NeverDestroyed<Ref<BitmapImage>> nullImage = BitmapImage::create();
     return nullImage->get();
 }

@@ -229,7 +229,7 @@ private:
 
     bool m_framesetOk { true };
 
-#if ASSERT_ENABLED
+#if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
     bool m_destroyed { false };
     bool m_destructionProhibited { true };
 #endif
@@ -237,28 +237,28 @@ private:
 
 inline HTMLTreeBuilder::~HTMLTreeBuilder()
 {
-#if ASSERT_ENABLED
-    ASSERT(!m_destroyed);
-    ASSERT(!m_destructionProhibited);
+#if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
+    ASSERT_WITH_SECURITY_IMPLICATION(!m_destroyed);
+    ASSERT_WITH_SECURITY_IMPLICATION(!m_destructionProhibited);
     m_destroyed = true;
 #endif
 }
 
 inline void HTMLTreeBuilder::setShouldSkipLeadingNewline(bool shouldSkip)
 {
-    ASSERT(!m_destroyed);
+    ASSERT_WITH_SECURITY_IMPLICATION(!m_destroyed);
     m_shouldSkipLeadingNewline = shouldSkip;
 }
 
 inline bool HTMLTreeBuilder::isParsingFragment() const
 {
-    ASSERT(!m_destroyed);
+    ASSERT_WITH_SECURITY_IMPLICATION(!m_destroyed);
     return !!m_fragmentContext.fragment();
 }
 
 inline bool HTMLTreeBuilder::hasParserBlockingScriptWork() const
 {
-    ASSERT(!m_destroyed);
+    ASSERT_WITH_SECURITY_IMPLICATION(!m_destroyed);
     ASSERT(!(m_scriptToProcess && m_customElementToConstruct));
     return m_scriptToProcess || m_customElementToConstruct;
 }

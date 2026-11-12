@@ -56,7 +56,7 @@ AudioNodeInput::AudioNodeInput(AudioNode* node)
 void AudioNodeInput::connect(AudioNodeOutput* output)
 {
     ASSERT(context());
-    ASSERT(context()->isGraphOwner());
+    ASSERT_WITH_SECURITY_IMPLICATION(context()->isGraphOwner());
     
     ASSERT(output && node());
     if (!output || !node())
@@ -75,7 +75,7 @@ void AudioNodeInput::connect(AudioNodeOutput* output)
 void AudioNodeInput::disconnect(AudioNodeOutput* output)
 {
     ASSERT(context());
-    ASSERT(context()->isGraphOwner());
+    ASSERT_WITH_SECURITY_IMPLICATION(context()->isGraphOwner());
 
     ASSERT(output && node());
     if (!output || !node())
@@ -102,7 +102,7 @@ void AudioNodeInput::disconnect(AudioNodeOutput* output)
 void AudioNodeInput::disable(AudioNodeOutput* output)
 {
     ASSERT(context());
-    ASSERT(context()->isGraphOwner());
+    ASSERT_WITH_SECURITY_IMPLICATION(context()->isGraphOwner());
 
     ASSERT(output && node());
     if (!output || !node())
@@ -124,7 +124,7 @@ void AudioNodeInput::disable(AudioNodeOutput* output)
 void AudioNodeInput::enable(AudioNodeOutput* output)
 {
     ASSERT(context());
-    ASSERT(context()->isGraphOwner());
+    ASSERT_WITH_SECURITY_IMPLICATION(context()->isGraphOwner());
 
     ASSERT(output && node());
     if (!output || !node())
@@ -153,7 +153,7 @@ void AudioNodeInput::didUpdate()
 void AudioNodeInput::updateInternalBus()
 {
     ASSERT(context());
-    ASSERT(context()->isAudioThread() && context()->isGraphOwner());
+    ASSERT_WITH_SECURITY_IMPLICATION(context()->isAudioThread() && context()->isGraphOwner());
 
     unsigned numberOfInputChannels = numberOfChannels();
 
@@ -184,7 +184,7 @@ unsigned AudioNodeInput::numberOfChannels() const
 AudioBus& AudioNodeInput::bus() LIFETIME_BOUND
 {
     ASSERT(context());
-    ASSERT(context()->isAudioThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(context()->isAudioThread());
 
     // Handle single connection specially to allow for in-place processing.
     if (numberOfRenderingConnections() == 1 && node()->channelCountMode() == ChannelCountMode::Max)
@@ -197,7 +197,7 @@ AudioBus& AudioNodeInput::bus() LIFETIME_BOUND
 AudioBus& AudioNodeInput::internalSummingBus()
 {
     ASSERT(context());
-    ASSERT(context()->isAudioThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(context()->isAudioThread());
 
     return m_internalSummingBus;
 }
@@ -205,7 +205,7 @@ AudioBus& AudioNodeInput::internalSummingBus()
 void AudioNodeInput::sumAllConnections(AudioBus& summingBus, size_t framesToProcess)
 {
     ASSERT(context());
-    ASSERT(context()->isAudioThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(context()->isAudioThread());
 
     // We shouldn't be calling this method if there's only one connection, since it's less efficient.
     ASSERT(numberOfRenderingConnections() > 1 || node()->channelCountMode() != ChannelCountMode::Max);
@@ -228,7 +228,7 @@ void AudioNodeInput::sumAllConnections(AudioBus& summingBus, size_t framesToProc
 AudioBus& AudioNodeInput::pull(AudioBus* inPlaceBus, size_t framesToProcess)
 {
     ASSERT(context());
-    ASSERT(context()->isAudioThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(context()->isAudioThread());
 
     // Handle single connection case.
     if (numberOfRenderingConnections() == 1 && node()->channelCountMode() == ChannelCountMode::Max) {

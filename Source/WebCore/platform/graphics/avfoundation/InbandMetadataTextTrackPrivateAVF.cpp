@@ -59,7 +59,7 @@ InbandMetadataTextTrackPrivateAVF::~InbandMetadataTextTrackPrivateAVF() = defaul
 
 void InbandMetadataTextTrackPrivateAVF::addDataCue(const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformDataCue>&& cueData, const String& type)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     ASSERT(cueFormat() == CueFormat::Data);
     ASSERT(start >= MediaTime::zeroTime());
 
@@ -77,7 +77,7 @@ void InbandMetadataTextTrackPrivateAVF::addDataCue(const MediaTime& start, const
 
 void InbandMetadataTextTrackPrivateAVF::updatePendingCueEndTimes(const MediaTime& time)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     ASSERT(time >= MediaTime::zeroTime());
 
     if (time >= m_currentCueStartTime) {
@@ -101,7 +101,7 @@ void InbandMetadataTextTrackPrivateAVF::updatePendingCueEndTimes(const MediaTime
 
 void InbandMetadataTextTrackPrivateAVF::flushPartialCues()
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     if (m_currentCueStartTime && m_incompleteCues.size())
         INFO_LOG(LOGIDENTIFIER, "flushing incomplete data for cues: start = ", m_currentCueStartTime);
 

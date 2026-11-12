@@ -547,7 +547,7 @@ inline bool Color::isHashTableEmptyValue() const
 
 inline Color::OutOfLineComponents& Color::asOutOfLine() const
 {
-    ASSERT(isOutOfLine());
+    ASSERT_WITH_SECURITY_IMPLICATION(isOutOfLine());
     return decodedOutOfLineComponents(m_colorAndFlags);
 }
 

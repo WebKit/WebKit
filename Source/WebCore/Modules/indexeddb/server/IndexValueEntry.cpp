@@ -164,7 +164,7 @@ IndexValueEntry::Iterator IndexValueEntry::begin() LIFETIME_BOUND
         ASSERT_UNUSED(singleKey, singleKey);
         return { *this };
     }, [this](IDBKeyDataSet& orderedKeys) -> Iterator {
-        ASSERT(!orderedKeys.empty());
+        ASSERT_WITH_SECURITY_IMPLICATION(!orderedKeys.empty());
         return { *this, orderedKeys.begin() };
     });
 }
@@ -175,7 +175,7 @@ IndexValueEntry::Iterator IndexValueEntry::reverseBegin(CursorDuplicity duplicit
         ASSERT_UNUSED(singleKey, singleKey);
         return { *this };
     }, [this, duplicity](IDBKeyDataSet& orderedKeys) -> Iterator {
-        ASSERT(!orderedKeys.empty());
+        ASSERT_WITH_SECURITY_IMPLICATION(!orderedKeys.empty());
         if (duplicity == CursorDuplicity::Duplicates)
             return { *this, orderedKeys.rbegin() };
         auto iterator = orderedKeys.rend();

@@ -46,14 +46,14 @@ MessagePortChannelRegistry::~MessagePortChannelRegistry()
 void MessagePortChannelRegistry::didCreateMessagePortChannel(const MessagePortIdentifier& port1, const MessagePortIdentifier& port2)
 {
     LOG_WITH_STREAM(MessagePorts, stream << "Registry: Creating MessagePortChannel "_s << this << " linking "_s << port1.logString() << " and "_s << port2.logString());
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
     MessagePortChannel::create(*this, port1, port2);
 }
 
 void MessagePortChannelRegistry::messagePortChannelCreated(MessagePortChannel& channel)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
     auto result = m_openChannels.add(channel.port1(), channel);
     ASSERT_UNUSED(result, result.isNewEntry);
@@ -64,7 +64,7 @@ void MessagePortChannelRegistry::messagePortChannelCreated(MessagePortChannel& c
 
 void MessagePortChannelRegistry::messagePortChannelDestroyed(MessagePortChannel& channel)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
     ASSERT(m_openChannels.get(channel.port1()) == &channel);
     ASSERT(m_openChannels.get(channel.port2()) == &channel);
@@ -82,7 +82,7 @@ void MessagePortChannelRegistry::messagePortChannelDestroyed(MessagePortChannel&
 
 void MessagePortChannelRegistry::didEntangleLocalToRemote(const MessagePortIdentifier& local, const MessagePortIdentifier& remote, ProcessIdentifier process)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
     // The channel might be gone if the remote side was closed.
     RefPtr channel = m_openChannels.get(local);
@@ -96,7 +96,7 @@ void MessagePortChannelRegistry::didEntangleLocalToRemote(const MessagePortIdent
 
 void MessagePortChannelRegistry::didDisentangleMessagePort(const MessagePortIdentifier& port)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
     // The channel might be gone if the remote side was closed.
     if (RefPtr channel = m_openChannels.get(port))
@@ -105,7 +105,7 @@ void MessagePortChannelRegistry::didDisentangleMessagePort(const MessagePortIden
 
 void MessagePortChannelRegistry::didCloseMessagePort(const MessagePortIdentifier& port, MessagePortStatus status)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
     LOG_WITH_STREAM(MessagePorts, stream << "Registry: MessagePort "_s << port.logString() << " closed in registry"_s);
 
@@ -126,7 +126,7 @@ void MessagePortChannelRegistry::didCloseMessagePort(const MessagePortIdentifier
 
 bool MessagePortChannelRegistry::didPostMessageToRemote(MessageWithMessagePorts&& message, const MessagePortIdentifier& remoteTarget, CompletionHandlerCallingScope&& blobURLsInFlight)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
     LOG_WITH_STREAM(MessagePorts, stream << "Registry: Posting message to MessagePort "_s << remoteTarget.logString() << " in registry"_s);
 
@@ -142,7 +142,7 @@ bool MessagePortChannelRegistry::didPostMessageToRemote(MessageWithMessagePorts&
 
 void MessagePortChannelRegistry::takeAllMessagesForPort(const MessagePortIdentifier& port, CompletionHandler<void(Vector<MessageWithMessagePorts>&&, CompletionHandler<void()>&&)>&& callback)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
     LOG_WITH_STREAM(MessagePorts, stream << "Registry: Taking all messages for MessagePort "_s << port.logString());
 
@@ -158,20 +158,20 @@ void MessagePortChannelRegistry::takeAllMessagesForPort(const MessagePortIdentif
 
 MessagePortChannel* MessagePortChannelRegistry::existingChannelContainingPort(const MessagePortIdentifier& port)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
     return m_openChannels.get(port);
 }
 
 void MessagePortChannelRegistry::recordPendingTransferOrigin(const MessagePortIdentifier& port, ProcessIdentifier origin)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     m_pendingTransferOrigins.set(port, origin);
 }
 
 bool MessagePortChannelRegistry::claimPendingTransferOrigin(const MessagePortIdentifier& port, ProcessIdentifier expected)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     auto it = m_pendingTransferOrigins.find(port);
     if (it == m_pendingTransferOrigins.end() || it->value != expected)
         return false;
@@ -181,13 +181,13 @@ bool MessagePortChannelRegistry::claimPendingTransferOrigin(const MessagePortIde
 
 void MessagePortChannelRegistry::recordPendingTransferDestination(const MessagePortIdentifier& port, ProcessIdentifier destination)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     m_pendingTransferDestinations.set(port, destination);
 }
 
 bool MessagePortChannelRegistry::claimPendingTransferDestination(const MessagePortIdentifier& port, ProcessIdentifier expected)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     auto it = m_pendingTransferDestinations.find(port);
     if (it == m_pendingTransferDestinations.end() || it->value != expected)
         return false;

@@ -93,7 +93,7 @@ PlaybackSessionModel* PlaybackSessionInterfaceCocoa::playbackSessionModel() cons
 
 void PlaybackSessionInterfaceCocoa::modelDestroyed()
 {
-    ASSERT(isUIThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isUIThread());
     invalidate();
     ASSERT(!m_playbackSessionModel);
 }

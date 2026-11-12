@@ -640,7 +640,7 @@ static ExceptionOr<void> forEachRendererInPaintOrder(NOESCAPE const std::functio
 
     layer.updateLayerListsIfNeeded();
 
-#if ASSERT_ENABLED
+#if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
     LayerListMutationDetector mutationChecker(layer);
 #endif
 

@@ -57,7 +57,7 @@ bool MockParentalControlsURLFilter::isEnabledImpl() const
 
 void MockParentalControlsURLFilter::isURLAllowedImpl(IsMainFrameLoad, const URL& mainDocumentURL, const URL& url, CompletionHandler<void(bool, NSData *)>&& completionHandler)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
     bool isBlocked = m_blockedURLs.contains(url) || (!mainDocumentURL.isEmpty() && m_blockedURLs.contains(mainDocumentURL));
 

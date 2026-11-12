@@ -155,7 +155,7 @@ void ScheduledAction::execute(Document& document)
 void ScheduledAction::execute(WorkerGlobalScope& workerGlobalScope)
 {
     // In a Worker, the execution should always happen on a worker thread.
-    ASSERT(workerGlobalScope.thread()->thread() == &Thread::currentSingleton());
+    ASSERT_WITH_SECURITY_IMPLICATION(workerGlobalScope.thread()->thread() == &Thread::currentSingleton());
 
     CheckedPtr scriptController = workerGlobalScope.script();
 

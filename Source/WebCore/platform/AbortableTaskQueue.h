@@ -73,7 +73,7 @@ public:
     ~AbortableTaskQueue()
     {
         ASSERT(isMainThread());
-        ASSERT(!m_lock.isHeld());
+        ASSERT_WITH_SECURITY_IMPLICATION(!m_lock.isHeld());
         ASSERT(m_channel.isEmpty());
         startAborting();
     }
@@ -195,7 +195,7 @@ private:
 
         void dispatch()
         {
-            ASSERT(isMainThread());
+            ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
             if (isCancelled())
                 return;
 
@@ -218,7 +218,7 @@ private:
 
     void postTask(Function<void()>&& callback) WTF_REQUIRES_LOCK(m_lock)
     {
-        ASSERT(m_lock.isHeld());
+        ASSERT_WITH_SECURITY_IMPLICATION(m_lock.isHeld());
         Ref<Task> task = Task::create(this, WTF::move(callback));
         m_channel.append(task.copyRef());
         RunLoop::mainSingleton().dispatch([task = WTF::move(task)]() { task->dispatch(); });
@@ -226,8 +226,8 @@ private:
 
     void cancelAllTasks() WTF_REQUIRES_LOCK(m_lock)
     {
-        ASSERT(isMainThread());
-        ASSERT(m_lock.isHeld());
+        ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+        ASSERT_WITH_SECURITY_IMPLICATION(m_lock.isHeld());
         for (Ref<Task>& task : m_channel)
             task->cancel();
         m_channel.clear();

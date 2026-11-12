@@ -181,13 +181,13 @@ void DisplayRefreshMonitor::displayLinkFired(const DisplayUpdate& displayUpdate)
 
 void DisplayRefreshMonitor::dispatchDisplayDidRefresh(const DisplayUpdate& displayUpdate)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     displayDidRefresh(displayUpdate);
 }
 
 void DisplayRefreshMonitor::displayDidRefresh(const DisplayUpdate& displayUpdate)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
     UNUSED_PARAM(displayUpdate);
     LOG_WITH_STREAM(DisplayLink, stream << "DisplayRefreshMonitor::displayDidRefresh for display " << displayID() << " update " << displayUpdate);

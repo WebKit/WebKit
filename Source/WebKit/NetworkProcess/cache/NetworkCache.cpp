@@ -77,7 +77,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(Cache::RetrieveInfo);
 
 const AtomString& recordTypeName(RecordType recordType)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
     static NeverDestroyed<const AtomString> resource("Resource"_s);
     static NeverDestroyed<const AtomString> compressionDictionary("CompressionDictionary"_s);
     return recordType == RecordType::CompressionDictionary ? compressionDictionary : resource;
@@ -370,7 +370,7 @@ bool Cache::shouldUseSpeculativeLoadManager() const
 
 void Cache::updateSpeculativeLoadManagerEnabledState()
 {
-    ASSERT(WTF::RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(WTF::RunLoop::isMain());
 
     bool shouldEnable = shouldUseSpeculativeLoadManager();
     if (!shouldEnable && m_speculativeLoadManager) {

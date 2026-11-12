@@ -172,7 +172,7 @@ void NameManglerVisitor::visit(AST::FieldAccessExpression& access)
     RELEASE_ASSERT(structMapIt != m_structFieldMapping.end());
 
     auto fieldIt = structMapIt->value.find(access.fieldName());
-    ASSERT(fieldIt != structMapIt->value.end());
+    ASSERT_WITH_SECURITY_IMPLICATION(fieldIt != structMapIt->value.end());
     m_shaderModule.replace(&access.fieldName(), AST::Identifier::makeWithSpan(access.fieldName().span(), fieldIt->value.toString()));
 }
 

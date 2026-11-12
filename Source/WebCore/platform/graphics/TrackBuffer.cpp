@@ -303,7 +303,7 @@ bool TrackBuffer::reenqueueMediaForTime(const MediaTime& time, bool isEnded)
     Ref sample = currentSamplePTSIterator->second;
     DecodeOrderSampleMap::KeyType decodeKey(sample->decodeTime(), sample->presentationTime());
     auto currentSampleDTSIterator = m_samples.decodeOrder().findSampleWithDecodeKey(decodeKey);
-    ASSERT(currentSampleDTSIterator != m_samples.decodeOrder().end());
+    ASSERT_WITH_SECURITY_IMPLICATION(currentSampleDTSIterator != m_samples.decodeOrder().end());
 
     auto reverseCurrentSampleIter = --DecodeOrderSampleMap::reverse_iterator(currentSampleDTSIterator);
     auto reverseLastSyncSampleIter = m_samples.decodeOrder().findSyncSamplePriorToDecodeIterator(reverseCurrentSampleIter);

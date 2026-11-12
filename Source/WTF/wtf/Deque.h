@@ -787,7 +787,7 @@ template<typename T, size_t inlineCapacity>
 inline T* DequeIteratorBase<T, inlineCapacity>::after() const
 {
     checkValidity();
-    ASSERT(m_index != m_deque->m_end);
+    ASSERT_WITH_SECURITY_IMPLICATION(m_index != m_deque->m_end);
     return std::addressof(m_deque->m_buffer.capacitySpan()[m_index]);
 }
 
@@ -795,7 +795,7 @@ template<typename T, size_t inlineCapacity>
 inline T* DequeIteratorBase<T, inlineCapacity>::before() const
 {
     checkValidity();
-    ASSERT(m_index != m_deque->m_start);
+    ASSERT_WITH_SECURITY_IMPLICATION(m_index != m_deque->m_start);
     return std::addressof(m_deque->m_buffer.capacitySpan()[(m_index - 1) & m_deque->m_capacityMask]);
 }
 

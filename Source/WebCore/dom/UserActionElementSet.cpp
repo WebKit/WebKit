@@ -55,7 +55,7 @@ void UserActionElementSet::clearFlags(Element& element, OptionSet<Flag> flags)
         return;
 
     auto iterator = m_elements.find(element);
-    ASSERT(iterator != m_elements.end());
+    ASSERT_WITH_SECURITY_IMPLICATION(iterator != m_elements.end());
     auto updatedFlags = iterator->value - flags;
     if (updatedFlags.isEmpty()) {
         element.setUserActionElement(false);

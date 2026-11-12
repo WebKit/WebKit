@@ -44,7 +44,7 @@ public:
 private:
     WebCore::StorageConnection& storageConnection() final
     {
-        ASSERT(WTF::isMainRunLoop());
+        ASSERT_WITH_SECURITY_IMPLICATION(WTF::isMainRunLoop());
 
         if (!m_connection)
             lazyInitialize(m_connection, WebStorageConnection::create());

@@ -237,7 +237,7 @@ void ScreenCaptureKitCaptureSource::end()
 
 void ScreenCaptureKitCaptureSource::sessionFailedWithError(RetainPtr<NSError>&& error, const String& message)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
     if (!m_isRunning)
         return;
@@ -523,7 +523,7 @@ void ScreenCaptureKitCaptureSource::commitConfiguration(const RealtimeMediaSourc
 
 void ScreenCaptureKitCaptureSource::streamDidOutputVideoSampleBuffer(RetainPtr<CMSampleBufferRef> sampleBuffer)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     ASSERT(sampleBuffer);
 
     if (m_didReceiveVideoFrame && m_isPrewarming) {

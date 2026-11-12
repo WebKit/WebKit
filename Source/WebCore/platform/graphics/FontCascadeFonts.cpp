@@ -111,7 +111,7 @@ FontCascadeFonts::FontCascadeFonts()
     : m_cachedPrimaryFont(nullptr)
     , m_generation(FontCache::forCurrentThread().generation())
 {
-#if ASSERT_ENABLED
+#if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
     if (!isMainThread())
         m_creationThreadID = currentThreadID();
 #endif
@@ -548,7 +548,7 @@ static RefPtr<GlyphPage> glyphPageFromFontRanges(unsigned pageNumber, const Font
 
 GlyphData FontCascadeFonts::glyphDataForCharacter(char32_t c, const FontCascadeDescription& description, FontSelector* fontSelector, FontVariant variant, ResolvedEmojiPolicy resolvedEmojiPolicy)
 {
-    ASSERT(m_creationThreadID ? *m_creationThreadID == currentThreadID() : isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(m_creationThreadID ? *m_creationThreadID == currentThreadID() : isMainThread());
     ASSERT(variant != FontVariant::Auto);
 
     if (variant != FontVariant::Normal)

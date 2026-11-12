@@ -49,7 +49,7 @@ OriginAccessPatternsForWebProcess& OriginAccessPatternsForWebProcess::singleton(
 static Lock originAccessPatternLock;
 NODELETE static Vector<UserContentURLPattern>& originAccessPatterns() WTF_REQUIRES_LOCK(originAccessPatternLock)
 {
-    ASSERT(originAccessPatternLock.isHeld());
+    ASSERT_WITH_SECURITY_IMPLICATION(originAccessPatternLock.isHeld());
     static NeverDestroyed<Vector<UserContentURLPattern>> originAccessPatterns;
     return originAccessPatterns;
 }

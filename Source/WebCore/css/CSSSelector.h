@@ -306,7 +306,7 @@ inline bool operator==(const PossiblyQuotedIdentifier& a, const AtomString& b) {
 inline const QualifiedName& CSSSelector::attribute() const
 {
     ASSERT(isAttributeSelector());
-    ASSERT(m_hasRareData);
+    ASSERT_WITH_SECURITY_IMPLICATION(m_hasRareData);
     return m_data.rareData->attribute;
 }
 
@@ -371,7 +371,7 @@ inline bool CSSSelector::isAttributeSelector() const
 
 inline void CSSSelector::setValue(const AtomString& value, bool matchLowerCase)
 {
-    ASSERT(match() != Match::Tag);
+    ASSERT_WITH_SECURITY_IMPLICATION(match() != Match::Tag);
     auto matchingValue = matchLowerCase ? value.convertToASCIILowercase() : value;
     if (!m_hasRareData && matchingValue != value)
         createRareData();
@@ -443,7 +443,7 @@ inline const AtomString& CSSSelector::tagLowercaseLocalName() const
 
 inline const AtomString& CSSSelector::value() const
 {
-    ASSERT(match() != Match::Tag);
+    ASSERT_WITH_SECURITY_IMPLICATION(match() != Match::Tag);
     if (m_hasRareData)
         return m_data.rareData->matchingValue;
 
@@ -453,7 +453,7 @@ inline const AtomString& CSSSelector::value() const
 
 inline const AtomString& CSSSelector::serializingValue() const
 {
-    ASSERT(match() != Match::Tag);
+    ASSERT_WITH_SECURITY_IMPLICATION(match() != Match::Tag);
     if (m_hasRareData)
         return m_data.rareData->serializingValue;
 

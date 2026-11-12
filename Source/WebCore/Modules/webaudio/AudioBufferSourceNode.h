@@ -56,7 +56,7 @@ public:
     Lock& processLock() LIFETIME_BOUND WTF_RETURNS_LOCK(m_processLock) { return m_processLock; }
 
     // This function does not lock before accessing the buffer and should therefore only be called on the main thread.
-    AudioBuffer* bufferForBindings() WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(isMainThread()); return m_buffer.get(); }
+    AudioBuffer* bufferForBindings() WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT_WITH_SECURITY_IMPLICATION(isMainThread()); return m_buffer.get(); }
 
     // numberOfChannels() returns the number of output channels.  This value equals the number of channels from the buffer.
     // If a new buffer is set with a different number of channels, then this value will dynamically change.

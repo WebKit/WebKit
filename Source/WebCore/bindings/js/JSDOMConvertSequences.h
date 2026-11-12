@@ -144,7 +144,7 @@ struct NumericSequenceConverterImpl {
             return Result { WTF::move(sequence) };
         }
 
-        ASSERT(indexingType == JSC::DoubleShape);
+        ASSERT_WITH_SECURITY_IMPLICATION(indexingType == JSC::DoubleShape);
         ASSERT(JSC::Options::allowDoubleShape());
         for (unsigned i = 0; i < length; i++) {
             double doubleValue = array->butterfly()->contiguousDouble().at(array, i);

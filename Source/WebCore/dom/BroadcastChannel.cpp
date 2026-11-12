@@ -59,7 +59,7 @@ NODELETE static HashMap<BroadcastChannelIdentifier, ThreadSafeWeakPtr<BroadcastC
 
 NODELETE static HashMap<BroadcastChannelIdentifier, ScriptExecutionContextIdentifier>& channelToContextIdentifier()
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     static NeverDestroyed<HashMap<BroadcastChannelIdentifier, ScriptExecutionContextIdentifier>> map;
     return map;
 }
@@ -109,7 +109,7 @@ void BroadcastChannel::MainThreadBridge::ensureOnMainThread(Function<void(Page*)
     RefPtr context = m_broadcastChannel->scriptExecutionContext();
     if (!context)
         return;
-    ASSERT(context->isContextThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(context->isContextThread());
 
     if (RefPtr document = dynamicDowncast<Document>(*context)) {
         task(protect(document->page()).get());
@@ -217,7 +217,7 @@ void BroadcastChannel::close()
 
 void BroadcastChannel::dispatchMessageTo(BroadcastChannelIdentifier channelIdentifier, Ref<SerializedScriptValue>&& message, CompletionHandler<void()>&& completionHandler)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     CompletionHandlerCallingScope completionHandlerCallingScope { CompletionHandler<void()> { [completionHandler = WTF::move(completionHandler)]() mutable {
         callOnMainThread(WTF::move(completionHandler));
     }, CompletionHandlerCallThread::AnyThread } };

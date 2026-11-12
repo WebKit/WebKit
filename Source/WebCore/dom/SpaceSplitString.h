@@ -54,15 +54,15 @@ public:
 
     void ref()
     {
-        ASSERT(isMainThread());
-        ASSERT(m_refCount);
+        ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+        ASSERT_WITH_SECURITY_IMPLICATION(m_refCount);
         ++m_refCount;
     }
 
     void deref()
     {
-        ASSERT(isMainThread());
-        ASSERT(m_refCount);
+        ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+        ASSERT_WITH_SECURITY_IMPLICATION(m_refCount);
         unsigned tempRefCount = m_refCount - 1;
         if (!tempRefCount) {
             destroy(this);

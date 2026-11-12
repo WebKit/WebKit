@@ -465,8 +465,8 @@ NODELETE bool equal(const StringClass& string, std::span<const char8_t> span)
 
 template<typename CharacterTypeA, typename CharacterTypeB> NODELETE SUPPRESS_NODELETE inline bool equalIgnoringASCIICaseWithLength(std::span<const CharacterTypeA> a, std::span<const CharacterTypeB> b, size_t lengthToCheck)
 {
-    ASSERT(a.size() >= lengthToCheck);
-    ASSERT(b.size() >= lengthToCheck);
+    ASSERT_WITH_SECURITY_IMPLICATION(a.size() >= lengthToCheck);
+    ASSERT_WITH_SECURITY_IMPLICATION(b.size() >= lengthToCheck);
 
 #if CPU(ARM64) || CPU(X86_64)
     if constexpr (sizeof(CharacterTypeA) == sizeof(CharacterTypeB)) {
@@ -1245,8 +1245,8 @@ template<typename CharacterType, typename OneByteCharacterType>
     requires SearchableStringByOneByteCharacter<CharacterType, OneByteCharacterType>
 NODELETE SUPPRESS_NODELETE inline bool equalLettersIgnoringASCIICaseWithLength(std::span<const CharacterType> characters, std::span<const OneByteCharacterType> lowercaseLetters, size_t length)
 {
-    ASSERT(characters.size() >= length);
-    ASSERT(lowercaseLetters.size() >= length);
+    ASSERT_WITH_SECURITY_IMPLICATION(characters.size() >= length);
+    ASSERT_WITH_SECURITY_IMPLICATION(lowercaseLetters.size() >= length);
 
 #if CPU(ARM64) || CPU(X86_64)
     if constexpr (sizeof(CharacterType) == sizeof(OneByteCharacterType)) {
@@ -1307,7 +1307,7 @@ template<typename StringClass> NODELETE bool inline hasPrefixWithLettersIgnoring
     for (auto lowercaseLetter : lowercaseLetters)
         ASSERT(!lowercaseLetter || toASCIILowerUnchecked(lowercaseLetter) == lowercaseLetter);
 #endif
-    ASSERT(string.length() >= lowercaseLetters.size());
+    ASSERT_WITH_SECURITY_IMPLICATION(string.length() >= lowercaseLetters.size());
 
     if (string.is8Bit())
         return equalLettersIgnoringASCIICaseWithLength(string.span8(), lowercaseLetters, lowercaseLetters.size());

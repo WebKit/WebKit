@@ -134,7 +134,7 @@ void U2fAuthenticator::issueCommand(const Vector<uint8_t>& command, CommandType 
 {
     U2F_RELEASE_LOG("issueCommand: Sending %s", base64EncodeToString(command).utf8());
     protect(driver())->transact(Vector<uint8_t>(command), [weakThis = WeakPtr { *this }, type](Vector<uint8_t>&& data) {
-        ASSERT(RunLoop::isMain());
+        ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
         if (RefPtr protectedThis = weakThis)
             protectedThis->responseReceived(WTF::move(data), type);
     });

@@ -241,7 +241,7 @@ inline bool PropertyCascade::hasCustomProperty(const AtomString& name) const
 
 inline const PropertyCascade::Property& PropertyCascade::customProperty(const AtomString& name) const
 {
-    ASSERT(hasCustomProperty(name));
+    ASSERT_WITH_SECURITY_IMPLICATION(hasCustomProperty(name));
     return m_customProperties.find(name)->value;
 }
 

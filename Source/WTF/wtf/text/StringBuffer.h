@@ -58,7 +58,7 @@ public:
 
     void shrink(unsigned newLength)
     {
-        ASSERT(newLength <= m_length);
+        ASSERT_WITH_SECURITY_IMPLICATION(newLength <= m_length);
         m_length = newLength;
     }
 

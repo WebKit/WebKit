@@ -505,25 +505,25 @@ void MediaSession::metadataUpdated(const MediaMetadata& metadata)
 
 bool MediaSession::hasObserver(MediaSessionObserver& observer) const
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     return m_observers.contains(observer);
 }
 
 void MediaSession::addObserver(MediaSessionObserver& observer)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     m_observers.add(observer);
 }
 
 void MediaSession::removeObserver(MediaSessionObserver& observer)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     m_observers.remove(observer);
 }
 
 void MediaSession::forEachObserver(NOESCAPE const Function<void(MediaSessionObserver&)>& apply)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     Ref protectedThis { *this };
     m_observers.forEach(apply);
 }

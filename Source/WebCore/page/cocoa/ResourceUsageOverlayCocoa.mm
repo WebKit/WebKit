@@ -195,7 +195,7 @@ static HistoricResourceUsageData& historicUsageData()
 
 static void appendDataToHistory(const ResourceUsageData& data)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
     auto& historicData = historicUsageData();
     historicData.cpu.append(data.cpu);

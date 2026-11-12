@@ -67,7 +67,7 @@ void CtapHidDriverWorker::transact(fido::FidoHidMessage&& requestMessage, Messag
     // HidConnection could hold data from other applications, and thereofore invalidate it before each transaction.
     m_connection->invalidateCache();
     m_connection->send(m_requestMessage->popNextPacket(), [weakThis = WeakPtr { *this }](HidConnection::DataSent sent) mutable {
-        ASSERT(RunLoop::isMain());
+        ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
         if (RefPtr protectedThis = weakThis)
             protectedThis->write(sent);
     });
@@ -86,7 +86,7 @@ void CtapHidDriverWorker::write(HidConnection::DataSent sent)
     if (!m_requestMessage->numPackets()) {
         m_state = State::Read;
         m_connection->registerDataReceivedCallback([weakThis = WeakPtr { *this }](Vector<uint8_t>&& data) mutable {
-            ASSERT(RunLoop::isMain());
+            ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
             if (RefPtr protectedThis = weakThis)
                 protectedThis->read(data);
         });
@@ -94,7 +94,7 @@ void CtapHidDriverWorker::write(HidConnection::DataSent sent)
     }
 
     m_connection->send(m_requestMessage->popNextPacket(), [weakThis = WeakPtr { *this }](HidConnection::DataSent sent) mutable {
-        ASSERT(RunLoop::isMain());
+        ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
         if (RefPtr protectedThis = weakThis)
             protectedThis->write(sent);
     });
@@ -196,7 +196,7 @@ void CtapHidDriver::transact(Vector<uint8_t>&& data, ResponseCallback&& callback
     auto initCommand = FidoHidMessage::create(m_channelId, FidoHidDeviceCommand::kInit, m_nonce);
     ASSERT(initCommand);
     m_worker->transact(WTF::move(*initCommand), [weakThis = WeakPtr { *this }](std::optional<FidoHidMessage>&& response) mutable {
-        ASSERT(RunLoop::isMain());
+        ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
         if (RefPtr protectedThis = weakThis)
             protectedThis->continueAfterChannelAllocated(WTF::move(response));
     });
@@ -232,7 +232,7 @@ void CtapHidDriver::continueAfterChannelAllocated(std::optional<FidoHidMessage>&
     auto cmd = FidoHidMessage::create(m_channelId, isCtap2Protocol() ?  FidoHidDeviceCommand::kCbor : FidoHidDeviceCommand::kMsg, m_requestData);
     ASSERT(cmd);
     m_worker->transact(WTF::move(*cmd), [weakThis = WeakPtr { *this }](std::optional<FidoHidMessage>&& response) mutable {
-        ASSERT(RunLoop::isMain());
+        ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
         if (RefPtr protectedThis = weakThis)
             protectedThis->continueAfterResponseReceived(WTF::move(response));
     });

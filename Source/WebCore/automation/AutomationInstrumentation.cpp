@@ -66,7 +66,7 @@ void AutomationInstrumentation::clearClient()
 
 void AutomationInstrumentation::addMessageToConsole(FrameIdentifier frameID, const std::unique_ptr<ConsoleMessage>& message)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     if (RefPtr client = automationClient()) [[unlikely]]
         client->addMessageToConsole(frameID, message->source(), message->level(), message->message(), message->type(), message->timestamp());
 }

@@ -246,7 +246,7 @@ auto SharedMemory::createHandle(Protection protection) -> std::optional<Handle>
 
 WTF::MachSendRight SharedMemory::createSendRight(Protection protection) const
 {
-    ASSERT(m_protection == protection || m_protection == Protection::ReadWrite && protection == Protection::ReadOnly);
+    ASSERT_WITH_SECURITY_IMPLICATION(m_protection == protection || m_protection == Protection::ReadWrite && protection == Protection::ReadOnly);
     ASSERT(!!m_data ^ !!m_sendRight);
 
     if (m_sendRight && m_protection == protection)

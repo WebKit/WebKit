@@ -354,7 +354,7 @@ static String buildIntegerList(const Vector<ValueType>& values)
 
 NODELETE static WeakHashSet<ResourceLoadStatisticsStore>& allStores()
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(!RunLoop::isMain());
 
     static NeverDestroyed<WeakHashSet<ResourceLoadStatisticsStore>> map;
     return map;
@@ -369,7 +369,7 @@ ResourceLoadStatisticsStore::ResourceLoadStatisticsStore(WebResourceLoadStatisti
     , m_sessionID(sessionID)
     , m_shouldIncludeLocalhost(shouldIncludeLocalhost)
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(!RunLoop::isMain());
 
     openAndUpdateSchemaIfNecessary();
     enableForeignKeys();
@@ -383,7 +383,7 @@ ResourceLoadStatisticsStore::ResourceLoadStatisticsStore(WebResourceLoadStatisti
 
 ResourceLoadStatisticsStore::~ResourceLoadStatisticsStore()
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(!RunLoop::isMain());
     close();
     allStores().remove(*this);
 }
@@ -706,7 +706,7 @@ void ResourceLoadStatisticsStore::setPruneEntriesDownTo(size_t pruneTargetCount)
 
 void ResourceLoadStatisticsStore::resetParametersToDefaultValues()
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(!RunLoop::isMain());
 
     m_parameters = { };
     m_appBoundDomains.clear();
@@ -1070,7 +1070,7 @@ void ResourceLoadStatisticsStore::openAndUpdateSchemaIfNecessary()
 
 void ResourceLoadStatisticsStore::interruptAllDatabases()
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(!RunLoop::isMain());
     for (Ref store : allStores())
         store->interrupt();
 }
@@ -1186,7 +1186,7 @@ bool ResourceLoadStatisticsStore::createSchema()
 
 void ResourceLoadStatisticsStore::destroyStatements()
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(!RunLoop::isMain());
 
     m_observedDomainCountStatement = nullptr;
     m_insertObservedDomainStatement = nullptr;
@@ -2277,7 +2277,7 @@ void ResourceLoadStatisticsStore::setDomainsAsPrevalent(StdSet<unsigned>&& domai
 
 void ResourceLoadStatisticsStore::dumpResourceLoadStatistics(CompletionHandler<void(const String&)>&& completionHandler)
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(!RunLoop::isMain());
     if (m_dataRecordsBeingRemoved) {
         m_dataRecordRemovalCompletionHandlers.append([weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)]() mutable {
             RefPtr protectedThis = weakThis;

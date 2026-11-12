@@ -524,7 +524,7 @@ void DrawGlyphsRecorder::drawBySplittingIntoOTSVGAndNonOTSVGRuns(const Font& fon
         return;
     }
 
-    ASSERT(otsvgGlyphs->size() >= glyphs.size());
+    ASSERT_WITH_SECURITY_IMPLICATION(otsvgGlyphs->size() >= glyphs.size());
 
     // We can't just partition the glyphs into OT-SVG glyphs and non-OT-SVG glyphs because glyphs are allowed to draw outside of their layout boxes.
     // This means that glyphs can overlap, which means we have to get the z-order correct. We can't have an earlier run be drawn on top of a later run.

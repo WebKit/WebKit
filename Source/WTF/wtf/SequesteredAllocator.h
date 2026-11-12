@@ -221,7 +221,7 @@ private:
                 return granule->payload();
             uintptr_t allocation = m_allocHead;
             m_allocHead = headIncrementedBy(bytes);
-            ASSERT(m_allocHead <= m_allocBound);
+            ASSERT_WITH_SECURITY_IMPLICATION(m_allocHead <= m_allocBound);
             return reinterpret_cast<void*>(allocation);
         }
 
@@ -237,7 +237,7 @@ private:
                 return granule->payload();
             uintptr_t allocation = headAlignedUpTo(alignment);
             m_allocHead = headIncrementedBy((allocation - m_allocHead) + bytes);
-            ASSERT(m_allocHead <= m_allocBound);
+            ASSERT_WITH_SECURITY_IMPLICATION(m_allocHead <= m_allocBound);
             return reinterpret_cast<void*>(allocation);
         }
 
@@ -303,7 +303,7 @@ public:
 
     void* malloc(size_t bytes)
     {
-        ASSERT(isAliveOnOwningThread());
+        ASSERT_WITH_SECURITY_IMPLICATION(isAliveOnOwningThread());
         auto retval = m_genericSmallArena.allocate(bytes);
         registerSuccessfulAllocation(retval, bytes);
         return retval;
@@ -311,7 +311,7 @@ public:
 
     void* alignedMalloc(size_t alignment, size_t bytes)
     {
-        ASSERT(isAliveOnOwningThread());
+        ASSERT_WITH_SECURITY_IMPLICATION(isAliveOnOwningThread());
         auto retval = m_genericSmallArena.alignedAllocate(alignment, bytes);
         registerSuccessfulAllocation(retval, bytes);
         return retval;
@@ -320,7 +320,7 @@ public:
     void* zeroedMalloc(size_t bytes)
     {
         WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-        ASSERT(isAliveOnOwningThread());
+        ASSERT_WITH_SECURITY_IMPLICATION(isAliveOnOwningThread());
         auto retval = m_genericSmallArena.allocate(bytes);
         std::memset(retval, 0, bytes);
         registerSuccessfulAllocation(retval, bytes);
@@ -330,7 +330,7 @@ public:
 
     void* tryMalloc(size_t bytes)
     {
-        ASSERT(isAliveOnOwningThread());
+        ASSERT_WITH_SECURITY_IMPLICATION(isAliveOnOwningThread());
         auto retval = m_genericSmallArena.tryAllocate(bytes);
         if (retval) [[likely]]
             registerSuccessfulAllocation(retval, bytes);
@@ -339,7 +339,7 @@ public:
 
     void* tryAlignedMalloc(size_t alignment, size_t bytes)
     {
-        ASSERT(isAliveOnOwningThread());
+        ASSERT_WITH_SECURITY_IMPLICATION(isAliveOnOwningThread());
         auto retval = m_genericSmallArena.tryAlignedAllocate(alignment, bytes);
         if (retval) [[likely]]
             registerSuccessfulAllocation(retval, bytes);
@@ -349,7 +349,7 @@ public:
     void* tryZeroedMalloc(size_t bytes)
     {
         WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-        ASSERT(isAliveOnOwningThread());
+        ASSERT_WITH_SECURITY_IMPLICATION(isAliveOnOwningThread());
         auto retval = m_genericSmallArena.tryAllocate(bytes);
         if (retval) [[likely]] {
             std::memset(retval, 0, bytes);
@@ -361,7 +361,7 @@ public:
 
     void free(void* p)
     {
-        ASSERT(isAliveOnOwningThread());
+        ASSERT_WITH_SECURITY_IMPLICATION(isAliveOnOwningThread());
         ASSERT(m_liveAllocations > 0);
 
         registerSuccessfulFree(p);
@@ -371,7 +371,7 @@ public:
 
     void* realloc(void* p, size_t newSize)
     {
-        ASSERT(isAliveOnOwningThread());
+        ASSERT_WITH_SECURITY_IMPLICATION(isAliveOnOwningThread());
         ASSERT(m_liveAllocations > 0);
 
         void* newP = m_genericSmallArena.allocate(newSize);
@@ -382,7 +382,7 @@ public:
 
     void* tryRealloc(void* p, size_t newSize)
     {
-        ASSERT(isAliveOnOwningThread());
+        ASSERT_WITH_SECURITY_IMPLICATION(isAliveOnOwningThread());
 
         void* newP = m_genericSmallArena.tryAllocate(newSize);
         if (!newP)
@@ -414,7 +414,7 @@ public:
 
     void endArenaLifetime() WTF_EXCLUDES_LOCK(m_arenaLock)
     {
-        ASSERT(isAliveOnOwningThread());
+        ASSERT_WITH_SECURITY_IMPLICATION(isAliveOnOwningThread());
         if constexpr (trackAllocationDebugInfo) {
             if (m_liveAllocations > 0) {
                 logLiveAllocationDebugInfos();

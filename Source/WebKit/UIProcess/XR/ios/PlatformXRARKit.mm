@@ -111,7 +111,7 @@ void ARKitCoordinator::requestPermissionOnSessionFeatures(WebPageProxy& page, co
 void ARKitCoordinator::startSession(WebPageProxy& page, WeakPtr<SessionEventClient>&& sessionEventClient, const WebCore::SecurityOriginData&, PlatformXR::SessionMode mode, const PlatformXR::Device::FeatureList&, std::optional<WebCore::XRCanvasConfiguration>&&)
 {
     RELEASE_LOG(XR, "ARKitCoordinator::startSession");
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
     ASSERT(mode == PlatformXR::SessionMode::ImmersiveAr);
 
     WTF::switchOn(m_state,
@@ -153,7 +153,7 @@ void ARKitCoordinator::startSession(WebPageProxy& page, WeakPtr<SessionEventClie
 void ARKitCoordinator::endSessionIfExists(std::optional<WebCore::PageIdentifier> pageIdentifier)
 {
     RELEASE_LOG(XR, "ARKitCoordinator::endSessionIfExists");
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     WTF::switchOn(m_state,
         [&](Idle&) { },

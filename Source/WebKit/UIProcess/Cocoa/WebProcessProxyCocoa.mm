@@ -118,7 +118,7 @@ const MemoryCompactLookupOnlyRobinHoodHashSet<String>& WebProcessProxy::platform
 
 NODELETE static Vector<String>& mediaTypeCache()
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
     static NeverDestroyed<Vector<String>> typeCache;
     return typeCache;
 }

@@ -93,7 +93,7 @@ private:
     ServiceWorkerOrClientIdentifier m_contextIdentifier;
     RefPtr<WorkerScriptLoader> m_scriptLoader;
 
-#if ASSERT_ENABLED
+#if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
     const uint32_t m_creationThreadID { currentThreadID() };
 #endif
 };

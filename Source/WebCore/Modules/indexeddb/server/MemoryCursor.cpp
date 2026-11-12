@@ -38,7 +38,7 @@ MemoryCursor::MemoryCursor(const IDBCursorInfo& info, MemoryBackingStoreTransact
     : m_info(info)
     , m_transaction(transaction)
 {
-    ASSERT(!isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(!isMainThread());
 
     transaction.addCursor(*this);
 }

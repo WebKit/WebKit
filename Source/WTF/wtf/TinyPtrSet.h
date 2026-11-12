@@ -423,7 +423,7 @@ private:
     
     NEVER_INLINE void copyFromOutOfLine(const TinyPtrSet& other)
     {
-        ASSERT(!other.isThin() && other.m_pointer != reservedValue);
+        ASSERT_WITH_SECURITY_IMPLICATION(!other.isThin() && other.m_pointer != reservedValue);
         OutOfLineList* otherList = other.list();
         OutOfLineList* myList = OutOfLineList::create(otherList->m_length);
         myList->m_length = otherList->m_length;
@@ -461,7 +461,7 @@ private:
     ALWAYS_INLINE void deleteListIfNecessary()
     {
         if (!isThin()) {
-            ASSERT(m_pointer != reservedValue);
+            ASSERT_WITH_SECURITY_IMPLICATION(m_pointer != reservedValue);
             OutOfLineList::destroy(list());
         }
     }
@@ -475,13 +475,13 @@ private:
     
     T singleEntry() const
     {
-        ASSERT(isThin());
+        ASSERT_WITH_SECURITY_IMPLICATION(isThin());
         return std::bit_cast<T>(pointer());
     }
     
     OutOfLineList* list() const
     {
-        ASSERT(!isThin());
+        ASSERT_WITH_SECURITY_IMPLICATION(!isThin());
         return static_cast<OutOfLineList*>(pointer());
     }
     

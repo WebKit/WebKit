@@ -138,7 +138,7 @@ void WebParentalControlsURLFilter::allowURL(const URL& url, CompletionHandler<vo
 void WebParentalControlsURLFilter::setSharedParentalControlsURLFilterIfNecessary()
 {
 #if !HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
-    ASSERT(isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
     if (!WebCore::ParentalControlsURLFilter::hasGlobalFilter()) {
         WebCore::ParentalControlsURLFilter::setGlobalFilter(WebParentalControlsURLFilter::create());
     }

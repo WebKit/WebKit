@@ -47,7 +47,7 @@ WebKeyboardEvent::WebKeyboardEvent(WebEventData&& eventData, WebKeyboardEventDat
     : WebEvent(WTF::move(eventData))
     , m_data(WTF::move(keyboardData))
 {
-    ASSERT(isKeyboardEventType(type()));
+    ASSERT_WITH_SECURITY_IMPLICATION(isKeyboardEventType(type()));
 }
 
 WebKeyboardEvent::~WebKeyboardEvent() = default;

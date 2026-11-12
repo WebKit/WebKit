@@ -48,7 +48,7 @@ PlatformCALayerContentsDelayedReleaser::PlatformCALayerContentsDelayedReleaser()
 
 void PlatformCALayerContentsDelayedReleaser::takeLayerContents(PlatformCALayer& layer)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
     auto retainedContents = RetainPtr { layer.contents() };
     if (retainedContents)
@@ -120,7 +120,7 @@ void PlatformCALayerContentsDelayedReleaser::updateSawOverlappingCommit()
 
 void PlatformCALayerContentsDelayedReleaser::clearRetainedContents()
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     m_retainedContents.clear();
 }
 

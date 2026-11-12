@@ -311,7 +311,7 @@ bool AudioWorkletProcessor::process(const Vector<RefPtr<AudioBus>>& inputs, Vect
         return false;
 
     ASSERT(globalObject->scriptExecutionContext());
-    ASSERT(globalObject->scriptExecutionContext()->isContextThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(globalObject->scriptExecutionContext()->isContextThread());
 
     auto& vm = globalObject->vm();
     JSLockHolder lock(vm);

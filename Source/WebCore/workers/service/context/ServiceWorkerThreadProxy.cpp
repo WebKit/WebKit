@@ -148,7 +148,7 @@ void ServiceWorkerThreadProxy::postMessageToDebugger(const String& message)
 void ServiceWorkerThreadProxy::setResourceCachingDisabledByWebInspector(bool disabled)
 {
     postTaskToLoader([this, protectedThis = Ref { *this }, disabled] (ScriptExecutionContext&) {
-        ASSERT(isMainThread());
+        ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
         m_page->setResourceCachingDisabledByWebInspector(disabled);
     });   
 }
@@ -354,7 +354,7 @@ void ServiceWorkerThreadProxy::didSaveScriptsToDisk(ScriptBuffer&& script, HashM
 
 void ServiceWorkerThreadProxy::firePushEvent(std::optional<Vector<uint8_t>>&& data, std::optional<NotificationPayload>&& proposedPayload, CompletionHandler<void(bool, std::optional<NotificationPayload>&&)>&& callback)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
     if (m_ongoingNotificationPayloadFunctionalEventTasks.isEmpty())
         thread().startNotificationPayloadFunctionalEventMonitoring();
@@ -393,7 +393,7 @@ void ServiceWorkerThreadProxy::firePushSubscriptionChangeEvent(std::optional<Pus
 
 void ServiceWorkerThreadProxy::fireNotificationEvent(NotificationData&& data, NotificationEventType eventType, CompletionHandler<void(bool)>&& callback)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
 #if ENABLE(NOTIFICATION_EVENT)
     if (m_ongoingFunctionalEventTasks.isEmpty())

@@ -286,8 +286,8 @@ NODELETE static inline UTextProviderContext textLatin1ContextAwareGetCurrentCont
 static void textLatin1ContextAwareMoveInPrimaryContext(UText* text, int64_t nativeIndex, int64_t nativeLength, UBool forward)
 {
     ASSERT(text->chunkContents == text->pExtra);
-    ASSERT(forward ? nativeIndex >= text->b : nativeIndex > text->b);
-    ASSERT(nativeIndex <= nativeLength);
+    ASSERT_WITH_SECURITY_IMPLICATION(forward ? nativeIndex >= text->b : nativeIndex > text->b);
+    ASSERT_WITH_SECURITY_IMPLICATION(nativeIndex <= nativeLength);
     if (forward) {
         text->chunkNativeStart = nativeIndex;
         text->chunkNativeLimit = nativeIndex + text->extraSize / sizeof(char16_t);

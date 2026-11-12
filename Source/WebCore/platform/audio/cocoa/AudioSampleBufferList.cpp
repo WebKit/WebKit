@@ -308,7 +308,7 @@ OSStatus AudioSampleBufferList::copyFrom(const AudioBufferList& source, size_t f
     AudioStreamBasicDescription inputFormat;
     UInt32 propertyDataSize = sizeof(inputFormat);
     PAL::AudioConverterGetProperty(converter, kAudioConverterCurrentInputStreamDescription, &propertyDataSize, &inputFormat);
-    ASSERT(frameCount <= span(source)[0].mDataByteSize / inputFormat.mBytesPerPacket);
+    ASSERT_WITH_SECURITY_IMPLICATION(frameCount <= span(source)[0].mDataByteSize / inputFormat.mBytesPerPacket);
 
     AudioConverterFromABLContext context { source, frameCount, inputFormat.mBytesPerPacket };
 

@@ -62,7 +62,7 @@ public:
 #if CHECK_REF_COUNTED_LIFECYCLE
     ~RefCountDebuggerImpl()
     {
-        ASSERT(m_deletionHasBegun);
+        ASSERT_WITH_SECURITY_IMPLICATION(m_deletionHasBegun);
     }
 #else
     ~RefCountDebuggerImpl() = default;
@@ -135,7 +135,7 @@ public:
     {
         applyRefDerefThreadingCheck(refCount);
 
-        ASSERT(refCount);
+        ASSERT_WITH_SECURITY_IMPLICATION(refCount);
     }
 
 #if CHECK_REF_COUNTED_LIFECYCLE

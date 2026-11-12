@@ -906,7 +906,7 @@ std::optional<Error> RewriteGlobalVariables::collectGlobals()
             lengthVariable.m_referenceType = &bufferLengthReferenceType();
 
             auto it = m_groupBindingMap.find(group);
-            ASSERT(it != m_groupBindingMap.end());
+            ASSERT_WITH_SECURITY_IMPLICATION(it != m_groupBindingMap.end());
 
             auto binding = it->value.last().first + 1;
             it->value.append({ binding, name });

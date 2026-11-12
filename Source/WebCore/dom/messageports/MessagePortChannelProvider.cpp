@@ -43,7 +43,7 @@ NODELETE static RefPtr<MessagePortChannelProvider>& globalProvider()
 
 MessagePortChannelProvider& MessagePortChannelProvider::singleton()
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     auto& globalProvider = WebCore::globalProvider();
     if (!globalProvider)
         globalProvider = MessagePortChannelProviderImpl::create();

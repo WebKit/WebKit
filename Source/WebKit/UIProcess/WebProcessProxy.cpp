@@ -270,7 +270,7 @@ static bool isMainThreadOrCheckDisabled()
 
 WebProcessProxy::WebProcessProxyMap& WebProcessProxy::allProcessMap()
 {
-    ASSERT(isMainThreadOrCheckDisabled());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThreadOrCheckDisabled());
     static NeverDestroyed<WebProcessProxy::WebProcessProxyMap> map;
     return map;
 }
@@ -305,7 +305,7 @@ Ref<WebProcessProxy> WebProcessProxy::fromConnection(const IPC::Connection& conn
 
 auto WebProcessProxy::globalPageMap() -> WebPageProxyMap&
 {
-    ASSERT(isMainThreadOrCheckDisabled());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThreadOrCheckDisabled());
     static NeverDestroyed<WebPageProxyMap> pageMap;
     return pageMap;
 }
@@ -4062,7 +4062,7 @@ static void releasePendingFrames(const Vector<UniqueRef<OffscreenCanvasPlacehold
 // any process the canvas was transferred to.
 static HashMap<WebCore::PlaceholderRenderingContextIdentifier, UniqueRef<OffscreenCanvasPlaceholder>>& offscreenCanvasPlaceholders()
 {
-    ASSERT(isMainThreadOrCheckDisabled());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThreadOrCheckDisabled());
     static NeverDestroyed<HashMap<WebCore::PlaceholderRenderingContextIdentifier, UniqueRef<OffscreenCanvasPlaceholder>>> placeholders;
     return placeholders;
 }
@@ -4180,7 +4180,7 @@ WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(CommittedOffscreenCanvasPlaceholderFrame);
 
 static HashMap<WebCore::PlaceholderRenderingContextIdentifier, UniqueRef<CommittedOffscreenCanvasPlaceholderFrame>>& offscreenCanvasPlaceholderFramesAwaitingOwner()
 {
-    ASSERT(isMainThreadOrCheckDisabled());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThreadOrCheckDisabled());
     static NeverDestroyed<HashMap<WebCore::PlaceholderRenderingContextIdentifier, UniqueRef<CommittedOffscreenCanvasPlaceholderFrame>>> frames;
     return frames;
 }

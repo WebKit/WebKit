@@ -53,8 +53,8 @@ public:
 
     constexpr void setPosition(std::span<const CharacterType> position)
     {
-        ASSERT(position.data() <= std::to_address(m_data.end()));
-        ASSERT(std::to_address(position.end()) <= std::to_address(m_data.end()));
+        ASSERT_WITH_SECURITY_IMPLICATION(position.data() <= std::to_address(m_data.end()));
+        ASSERT_WITH_SECURITY_IMPLICATION(std::to_address(position.end()) <= std::to_address(m_data.end()));
         m_data = position;
     }
 

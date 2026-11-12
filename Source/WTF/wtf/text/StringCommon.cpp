@@ -148,7 +148,7 @@ bool isWellFormedUTF16(std::span<const char16_t> data)
 SUPPRESS_NODELETE
 void toWellFormedUTF16(std::span<const char16_t> input, std::span<char16_t> output)
 {
-    ASSERT(input.size() == output.size());
+    ASSERT_WITH_SECURITY_IMPLICATION(input.size() == output.size());
     simdutf::to_well_formed_utf16(input, output);
 }
 

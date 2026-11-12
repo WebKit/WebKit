@@ -188,7 +188,7 @@ bool GPUProcess::shouldTerminate()
 
 bool GPUProcess::canExitUnderMemoryPressure() const
 {
-    ASSERT(isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
     if (m_capturePreviewManager)
         return false;
@@ -211,7 +211,7 @@ void GPUProcess::tryExitIfUnusedAndUnderMemoryPressure()
 
 void GPUProcess::tryExitIfUnused()
 {
-    ASSERT(isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
     if (!canExitUnderMemoryPressure()) {
         m_idleExitTimer.stop();
         return;

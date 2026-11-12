@@ -168,7 +168,7 @@ CSSPrimitiveValue::~CSSPrimitiveValue()
         break;
     }
     if (m_hasCachedCSSText) {
-        ASSERT(isMainThread());
+        ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
         ASSERT(serializedPrimitiveValues().contains(this));
         serializedPrimitiveValues().remove(this);
     }

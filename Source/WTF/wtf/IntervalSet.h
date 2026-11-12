@@ -469,8 +469,8 @@ private:
         NodeRef(Node* ptr, size_t size)
             : m_bits(reinterpret_cast<uintptr_t>(ptr) | size)
         {
-            ASSERT(!(reinterpret_cast<uintptr_t>(ptr) & sizeMask));
-            ASSERT(size <= sizeMask);
+            ASSERT_WITH_SECURITY_IMPLICATION(!(reinterpret_cast<uintptr_t>(ptr) & sizeMask));
+            ASSERT_WITH_SECURITY_IMPLICATION(size <= sizeMask);
         }
 
         Node* node() const
@@ -485,7 +485,7 @@ private:
 
         void setSize(size_t newSize)
         {
-            ASSERT(newSize <= sizeMask);
+            ASSERT_WITH_SECURITY_IMPLICATION(newSize <= sizeMask);
             m_bits = (m_bits & ~sizeMask) | newSize;
         }
 

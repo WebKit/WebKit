@@ -74,7 +74,7 @@ TileGrid::TileGrid(TileController& controller)
 
 TileGrid::~TileGrid()
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
     for (auto& tile : m_tiles.values())
         protect(tile.layer)->setOwner(nullptr);

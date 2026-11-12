@@ -303,7 +303,7 @@ void NetworkLoad::startWithScheduling()
 
 NetworkLoad::~NetworkLoad()
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     if (RefPtr scheduler = m_scheduler.get())
         scheduler->unschedule(*this);

@@ -58,14 +58,14 @@ PlaybackSessionInterfaceAVKitLegacy::PlaybackSessionInterfaceAVKitLegacy(Playbac
     : PlaybackSessionInterfaceCocoa(model)
     , m_playerController(createWebAVPlayerController())
 {
-    ASSERT(isUIThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isUIThread());
     [m_playerController setPlaybackSessionInterface:this];
     [m_playerController setDelegate:&model];
 }
 
 PlaybackSessionInterfaceAVKitLegacy::~PlaybackSessionInterfaceAVKitLegacy()
 {
-    ASSERT(isUIThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isUIThread());
     invalidate();
 }
 

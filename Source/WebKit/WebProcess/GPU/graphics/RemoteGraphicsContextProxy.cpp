@@ -328,7 +328,7 @@ void RemoteGraphicsContextProxy::drawGlyphs(const Font& font, std::span<const Gl
 
 void RemoteGraphicsContextProxy::drawGlyphsImmediate(const FontBase& font, std::span<const GlyphBufferGlyph> glyphs, std::span<const GlyphBufferAdvance> advances, const FloatPoint& localAnchor, FontSmoothingMode smoothingMode)
 {
-    ASSERT(glyphs.size() == advances.size());
+    ASSERT_WITH_SECURITY_IMPLICATION(glyphs.size() == advances.size());
     sendPendingDrawsIfNecessary();
     appendStateChangeItemIfNecessary();
     recordResourceUse(const_cast<FontBase&>(font));

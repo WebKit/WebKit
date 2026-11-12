@@ -118,7 +118,7 @@ struct FormStreamFields {
 
 static void closeCurrentStream(FormStreamFields* form)
 {
-    ASSERT(form->streamIsBeingOpenedOrClosedLock.isHeld());
+    ASSERT_WITH_SECURITY_IMPLICATION(form->streamIsBeingOpenedOrClosedLock.isHeld());
 
     if (form->currentStream) {
         CFReadStreamClose(form->currentStream.get());
@@ -132,7 +132,7 @@ static void closeCurrentStream(FormStreamFields* form)
 // Return false if we cannot advance the stream. Currently the only possible failure is that the underlying file has been removed or changed since File.slice.
 static bool advanceCurrentStream(FormStreamFields* form)
 {
-    ASSERT(form->streamIsBeingOpenedOrClosedLock.isHeld());
+    ASSERT_WITH_SECURITY_IMPLICATION(form->streamIsBeingOpenedOrClosedLock.isHeld());
 
     closeCurrentStream(form);
 

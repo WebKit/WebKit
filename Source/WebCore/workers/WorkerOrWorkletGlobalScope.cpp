@@ -124,7 +124,7 @@ bool WorkerOrWorkletGlobalScope::isJSExecutionForbidden() const
 
 EventLoopTaskGroup& WorkerOrWorkletGlobalScope::eventLoop()
 {
-    ASSERT(isContextThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isContextThread());
     if (!m_defaultTaskGroup) [[unlikely]] {
         lazyInitialize(m_eventLoop, WorkerEventLoop::create(*this));
         lazyInitialize(m_defaultTaskGroup, makeUnique<EventLoopTaskGroup>(*m_eventLoop));

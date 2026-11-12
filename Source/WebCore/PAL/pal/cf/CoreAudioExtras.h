@@ -81,7 +81,7 @@ inline std::unique_ptr<AudioBufferList, WTF::SystemFree<AudioBufferList>> create
         ? SystemMallocBase<AudioBufferList>::zeroedMalloc(bufferListSize.value())
         : SystemMallocBase<AudioBufferList>::malloc(bufferListSize.value()));
     bufferList->mNumberBuffers = bufferCount;
-    ASSERT(allocationSize(*bufferList) == bufferListSize.value());
+    ASSERT_WITH_SECURITY_IMPLICATION(allocationSize(*bufferList) == bufferListSize.value());
     return bufferList;
 }
 
@@ -95,7 +95,7 @@ inline std::unique_ptr<AudioChannelLayout, WTF::SystemFree<AudioChannelLayout>> 
         ? SystemMallocBase<AudioChannelLayout>::zeroedMalloc(channelLayoutSize.value())
         : SystemMallocBase<AudioChannelLayout>::malloc(channelLayoutSize.value()));
     channelLayout->mNumberChannelDescriptions = channelCount;
-    ASSERT(allocationSize(*channelLayout) == channelLayoutSize.value());
+    ASSERT_WITH_SECURITY_IMPLICATION(allocationSize(*channelLayout) == channelLayoutSize.value());
     return channelLayout;
 }
 

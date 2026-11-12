@@ -67,7 +67,7 @@ public:
         ASSERT(*this);
         ASSERT(isPageAligned(start));
         ASSERT(isPageAligned(size));
-        ASSERT(contains(start, size));
+        ASSERT_WITH_SECURITY_IMPLICATION(contains(start, size));
 
         m_committed += size;
         OSAllocator::commit(start, size, m_writable, m_executable);
@@ -78,7 +78,7 @@ public:
         ASSERT(*this);
         ASSERT(isPageAligned(start));
         ASSERT(isPageAligned(size));
-        ASSERT(contains(start, size));
+        ASSERT_WITH_SECURITY_IMPLICATION(contains(start, size));
 
         m_committed -= size;
         OSAllocator::decommit(start, size);

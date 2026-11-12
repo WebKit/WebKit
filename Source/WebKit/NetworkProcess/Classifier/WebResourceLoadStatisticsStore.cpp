@@ -163,7 +163,7 @@ Ref<WebResourceLoadStatisticsStore> WebResourceLoadStatisticsStore::create(Netwo
 
 void WebResourceLoadStatisticsStore::didDestroyNetworkSession(CompletionHandler<void()>&& completionHandler)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     auto callbackAggregator = CallbackAggregator::create([completionHandler = WTF::move(completionHandler)] () mutable {
         completionHandler();
@@ -254,7 +254,7 @@ void WebResourceLoadStatisticsStore::loadWebsitesWithUserInteraction(CompletionH
 
 void WebResourceLoadStatisticsStore::setResourceLoadStatisticsDebugMode(bool value, CompletionHandler<void()>&& completionHandler)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     if (isEphemeral()) {
         completionHandler();
@@ -360,7 +360,7 @@ void WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated(Vector<Resour
 
 void WebResourceLoadStatisticsStore::hasStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, std::optional<FrameIdentifier> frameID, WebPageProxyIdentifier webPageProxyID, CompletionHandler<void(bool)>&& completionHandler)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     if (isEphemeral())
         return hasStorageAccessEphemeral(WTF::move(subFrameDomain), WTF::move(topFrameDomain), frameID, webPageProxyID, WTF::move(completionHandler));
@@ -403,7 +403,7 @@ void WebResourceLoadStatisticsStore::hasStorageAccessEphemeral(const Registrable
 
 bool WebResourceLoadStatisticsStore::hasStorageAccessForFrame(const RegistrableDomain& resourceDomain, const RegistrableDomain& firstPartyDomain, FrameIdentifier frameID, WebPageProxyIdentifier webPageProxyID)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     if (CheckedPtr networkSession = m_networkSession.get()) {
         if (CheckedPtr storageSession = networkSession->networkStorageSession())
@@ -415,7 +415,7 @@ bool WebResourceLoadStatisticsStore::hasStorageAccessForFrame(const RegistrableD
 
 void WebResourceLoadStatisticsStore::callHasStorageAccessForFrameHandler(const RegistrableDomain& resourceDomain, const RegistrableDomain& firstPartyDomain, FrameIdentifier frameID, WebPageProxyIdentifier webPageProxyID, CompletionHandler<void(bool hasAccess)>&& callback)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     if (CheckedPtr networkSession = m_networkSession.get()) {
         if (CheckedPtr storageSession = networkSession->networkStorageSession()) {
@@ -429,7 +429,7 @@ void WebResourceLoadStatisticsStore::callHasStorageAccessForFrameHandler(const R
 
 void WebResourceLoadStatisticsStore::requestStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, FrameIdentifier frameID, WebPageProxyIdentifier webPageProxyID, StorageAccessScope scope, HasUserGestureOrNoUserGestureRequired hasUserGestureOrNoUserGestureRequired, CompletionHandler<void(RequestStorageAccessResult)>&& completionHandler)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     if (subFrameDomain == topFrameDomain) {
         completionHandler({ StorageAccessWasGranted::Yes, StorageAccessPromptWasShown::No, scope, WTF::move(topFrameDomain), WTF::move(subFrameDomain) });
@@ -499,7 +499,7 @@ void WebResourceLoadStatisticsStore::requestStorageAccess(RegistrableDomain&& su
 
 void WebResourceLoadStatisticsStore::queryStorageAccessPermission(SubFrameDomain&& subFrameDomain, TopFrameDomain&& topFrameDomain, std::optional<WebPageProxyIdentifier> webPageProxyID, CompletionHandler<void(PermissionState)>&& completionHandler)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     if (isEphemeral()) {
         if (webPageProxyID) {
@@ -548,7 +548,7 @@ void WebResourceLoadStatisticsStore::stopListeningForStorageAccessPermissionChan
 
 void WebResourceLoadStatisticsStore::setLoginStatus(RegistrableDomain&& domain, IsLoggedIn loggedInStatus, std::optional<LoginStatus>&& lastAuthentication, CompletionHandler<void()>&& completionHandler)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     if (loggedInStatus == IsLoggedIn::LoggedIn) {
         auto loginStatusToSet = lastAuthentication && lastAuthentication->hasExpired() ? std::nullopt : std::optional(WTF::move(lastAuthentication));
@@ -563,7 +563,7 @@ void WebResourceLoadStatisticsStore::setLoginStatus(RegistrableDomain&& domain, 
 
 void WebResourceLoadStatisticsStore::isLoggedIn(RegistrableDomain&& domain, CompletionHandler<void(bool)>&& completionHandler)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     auto it = m_loginStatus.find(domain);
     completionHandler(it != m_loginStatus.end() && it->value.first == IsLoggedIn::LoggedIn);
@@ -589,7 +589,7 @@ void WebResourceLoadStatisticsStore::requestStorageAccessEphemeral(const Registr
 
 void WebResourceLoadStatisticsStore::requestStorageAccessUnderOpener(RegistrableDomain&& domainInNeedOfStorageAccess, WebPageProxyIdentifier openerWebPageProxyID, RegistrableDomain&& openerDomain)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     if (isEphemeral())
         return requestStorageAccessUnderOpenerEphemeral(WTF::move(domainInNeedOfStorageAccess), openerWebPageProxyID, WTF::move(openerDomain));
@@ -623,7 +623,7 @@ void WebResourceLoadStatisticsStore::requestStorageAccessUnderOpenerEphemeral(Re
 
 void WebResourceLoadStatisticsStore::grantStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, FrameIdentifier frameID, WebPageProxyIdentifier webPageProxyID, StorageAccessPromptWasShown promptWasShown, StorageAccessScope scope, CompletionHandler<void(RequestStorageAccessResult)>&& completionHandler)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     if (promptWasShown == StorageAccessPromptWasShown::Yes)
         wasGrantedStorageAccessPermissionInPage(webPageProxyID, topFrameDomain, subFrameDomain);
@@ -652,7 +652,7 @@ void WebResourceLoadStatisticsStore::grantStorageAccess(RegistrableDomain&& subF
 
 void WebResourceLoadStatisticsStore::didGrantPageLevelStorageAccess(WebPageProxyIdentifier webPageProxyID, const RegistrableDomain& topFrameDomain, const RegistrableDomain& subFrameDomain)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     if (CheckedPtr networkSession = m_networkSession)
         protect(networkSession->networkProcess().parentProcessConnection())->send(Messages::NetworkProcessProxy::DidGrantPageLevelStorageAccess(webPageProxyID, topFrameDomain, subFrameDomain), 0);
@@ -674,7 +674,7 @@ void WebResourceLoadStatisticsStore::grantStorageAccessEphemeral(const Registrab
 
 StorageAccessWasGranted WebResourceLoadStatisticsStore::grantStorageAccessInStorageSession(const RegistrableDomain& resourceDomain, const RegistrableDomain& firstPartyDomain, std::optional<FrameIdentifier> frameID, WebPageProxyIdentifier webPageProxyID, StorageAccessScope scope)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     bool isStorageGranted = false;
 
@@ -699,14 +699,14 @@ StorageAccessWasGranted WebResourceLoadStatisticsStore::grantStorageAccessInStor
 
 void WebResourceLoadStatisticsStore::callGrantStorageAccessHandler(const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, std::optional<FrameIdentifier> frameID, WebPageProxyIdentifier webPageProxyID, StorageAccessScope scope, CompletionHandler<void(StorageAccessWasGranted)>&& completionHandler)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     completionHandler(grantStorageAccessInStorageSession(subFrameDomain, topFrameDomain, frameID, webPageProxyID, scope));
 }
 
 void WebResourceLoadStatisticsStore::hasCookies(const RegistrableDomain& domain, CompletionHandler<void(bool)>&& completionHandler)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     if (CheckedPtr networkSession = m_networkSession.get()) {
         if (CheckedPtr storageSession = networkSession->networkStorageSession()) {
@@ -720,7 +720,7 @@ void WebResourceLoadStatisticsStore::hasCookies(const RegistrableDomain& domain,
 
 void WebResourceLoadStatisticsStore::setThirdPartyCookieBlockingMode(ThirdPartyCookieBlockingMode blockingMode)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     if (CheckedPtr networkSession = m_networkSession.get()) {
         if (CheckedPtr storageSession = networkSession->networkStorageSession())
@@ -808,7 +808,7 @@ void WebResourceLoadStatisticsStore::setStandaloneApplicationDomain(const Regist
 #if ENABLE(APP_BOUND_DOMAINS)
 void WebResourceLoadStatisticsStore::setAppBoundDomains(HashSet<RegistrableDomain>&& domains, CompletionHandler<void()>&& completionHandler)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     if (isEphemeral() || domains.isEmpty()) {
         completionHandler();
@@ -837,7 +837,7 @@ void WebResourceLoadStatisticsStore::setAppBoundDomains(HashSet<RegistrableDomai
 #if ENABLE(MANAGED_DOMAINS)
 void WebResourceLoadStatisticsStore::setManagedDomains(HashSet<RegistrableDomain>&& domains, CompletionHandler<void()>&& completionHandler)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     if (isEphemeral() || domains.isEmpty()) {
         completionHandler();
@@ -875,7 +875,7 @@ void WebResourceLoadStatisticsStore::didCreateNetworkProcess()
 
 void WebResourceLoadStatisticsStore::removeAllStorageAccess(CompletionHandler<void()>&& completionHandler)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     if (CheckedPtr networkSession = m_networkSession.get()) {
         if (CheckedPtr storageSession = networkSession->networkStorageSession())
@@ -910,7 +910,7 @@ void WebResourceLoadStatisticsStore::logFrameNavigation(RegistrableDomain&& targ
 
 void WebResourceLoadStatisticsStore::logUserInteraction(RegistrableDomain&& domain, CompletionHandler<void()>&& completionHandler)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     // User interactions need to be logged for ephemeral sessions to support the Storage Access API.
     if (isEphemeral())
@@ -950,7 +950,7 @@ void WebResourceLoadStatisticsStore::logCrossSiteLoadWithLinkDecoration(Registra
 
 void WebResourceLoadStatisticsStore::clearUserInteraction(RegistrableDomain&& domain, CompletionHandler<void()>&& completionHandler)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     if (isEphemeral())
         return clearUserInteractionEphemeral(domain, WTF::move(completionHandler));
@@ -987,7 +987,7 @@ void WebResourceLoadStatisticsStore::clearUserInteractionEphemeral(const Registr
 
 void WebResourceLoadStatisticsStore::hasHadUserInteraction(RegistrableDomain&& domain, CompletionHandler<void(bool)>&& completionHandler)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     if (isEphemeral())
         return hasHadUserInteractionEphemeral(domain, WTF::move(completionHandler));
@@ -1337,7 +1337,7 @@ void WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent(ShouldGr
 
 void WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent(WallTime modifiedSince, ShouldGrandfatherStatistics shouldGrandfather, CompletionHandler<void()>&& callback)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     // For now, be conservative and clear everything regardless of modifiedSince.
     UNUSED_PARAM(modifiedSince);
@@ -1407,7 +1407,7 @@ void WebResourceLoadStatisticsStore::setGrandfatheringTime(Seconds seconds, Comp
 
 void WebResourceLoadStatisticsStore::setCacheMaxAgeCap(Seconds seconds, CompletionHandler<void()>&& completionHandler)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
     ASSERT(seconds >= 0_s);
     
     if (CheckedPtr networkSession = m_networkSession.get()) {
@@ -1432,7 +1432,7 @@ bool WebResourceLoadStatisticsStore::needsUserInteractionQuirk(const Registrable
 
 void WebResourceLoadStatisticsStore::callUpdatePrevalentDomainsToBlockCookiesForHandler(const RegistrableDomainsToBlockCookiesFor& domainsToBlock, CompletionHandler<void()>&& completionHandler)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     if (CheckedPtr networkSession = m_networkSession.get()) {
         if (CheckedPtr storageSession = networkSession->networkStorageSession()) {
@@ -1497,7 +1497,7 @@ void WebResourceLoadStatisticsStore::setPruneEntriesDownTo(size_t pruneTargetCou
 
 void WebResourceLoadStatisticsStore::resetParametersToDefaultValues(CompletionHandler<void()>&& completionHandler)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     if (isEphemeral()) {
         completionHandler();
@@ -1528,7 +1528,7 @@ void WebResourceLoadStatisticsStore::resetParametersToDefaultValues(CompletionHa
 
 void WebResourceLoadStatisticsStore::logTestingEvent(const String& event)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     CheckedPtr networkSession = m_networkSession.get();
     if (networkSession && networkSession->enableResourceLoadStatisticsLogTestingEvent())
@@ -1537,13 +1537,13 @@ void WebResourceLoadStatisticsStore::logTestingEvent(const String& event)
 
 NetworkSession* WebResourceLoadStatisticsStore::networkSession()
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
     return m_networkSession.get();
 }
 
 void WebResourceLoadStatisticsStore::invalidateAndCancel()
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
     m_networkSession = nullptr;
 }
 
@@ -1555,7 +1555,7 @@ void WebResourceLoadStatisticsStore::removeDataForDomain(RegistrableDomain domai
         });
     }
 
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
     postTask([domain = WTF::move(domain), completionHandler = WTF::move(completionHandler)](auto& store) mutable {
         if (RefPtr statisticsStore = store.m_statisticsStore)
             statisticsStore->removeDataForDomain(domain);
@@ -1621,7 +1621,7 @@ void WebResourceLoadStatisticsStore::registrableDomainsExemptFromWebsiteDataDele
 
 void WebResourceLoadStatisticsStore::deleteAndRestrictWebsiteDataForRegistrableDomains(OptionSet<WebsiteDataType> dataTypes, RegistrableDomainsToDeleteOrRestrictWebsiteDataFor&& domainsToDeleteAndRestrictWebsiteDataFor, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&& completionHandler)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
     
     if (CheckedPtr networkSession = m_networkSession.get()) {
         networkSession->deleteAndRestrictWebsiteDataForRegistrableDomains(dataTypes, WTF::move(domainsToDeleteAndRestrictWebsiteDataFor), WTF::move(completionHandler));
@@ -1633,7 +1633,7 @@ void WebResourceLoadStatisticsStore::deleteAndRestrictWebsiteDataForRegistrableD
 
 void WebResourceLoadStatisticsStore::registrableDomainsWithWebsiteData(OptionSet<WebsiteDataType> dataTypes, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&& completionHandler)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
     
     if (CheckedPtr networkSession = m_networkSession.get()) {
         networkSession->registrableDomainsWithWebsiteData(dataTypes, WTF::move(completionHandler));
@@ -1727,7 +1727,7 @@ StorageAccessWasGranted WebResourceLoadStatisticsStore::storageAccessWasGrantedV
 
 void WebResourceLoadStatisticsStore::setStorageAccessPermissionForTesting(bool granted, WebPageProxyIdentifier webPageProxyID, RegistrableDomain&& topFrameDomain, RegistrableDomain&& subFrameDomain, CompletionHandler<void()>&& completionHandler)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     if (granted)
         wasGrantedStorageAccessPermissionInPage(webPageProxyID, topFrameDomain, subFrameDomain);

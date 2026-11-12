@@ -107,7 +107,7 @@ ServiceWorkerContainer::ServiceWorkerContainer(ScriptExecutionContext* context, 
 
 ServiceWorkerContainer::~ServiceWorkerContainer()
 {
-    ASSERT(m_creationThreadID == currentThreadID());
+    ASSERT_WITH_SECURITY_IMPLICATION(m_creationThreadID == currentThreadID());
 }
 
 ScriptExecutionContext* ServiceWorkerContainer::scriptExecutionContext() const
@@ -312,7 +312,7 @@ void ServiceWorkerContainer::updateRegistration(const URL& scopeURL, const URL& 
 
 void ServiceWorkerContainer::scheduleJob(Ref<ServiceWorkerJob>&& job)
 {
-    ASSERT(m_creationThreadID == currentThreadID());
+    ASSERT_WITH_SECURITY_IMPLICATION(m_creationThreadID == currentThreadID());
     RefPtr swConnection = m_swConnection;
     ASSERT(swConnection);
     ASSERT(!isStopped());
@@ -412,7 +412,7 @@ void ServiceWorkerContainer::startMessages()
 
 void ServiceWorkerContainer::jobFailedWithException(ServiceWorkerJob& job, const Exception& exception)
 {
-    ASSERT(m_creationThreadID == currentThreadID());
+    ASSERT_WITH_SECURITY_IMPLICATION(m_creationThreadID == currentThreadID());
 
     auto guard = makeScopeExit([this, protectedThis = Ref { *this }, job = Ref { job }] {
         destroyJob(job);
@@ -430,7 +430,7 @@ void ServiceWorkerContainer::jobFailedWithException(ServiceWorkerJob& job, const
 
 void ServiceWorkerContainer::queueTaskToFireUpdateFoundEvent(ServiceWorkerRegistrationIdentifier identifier)
 {
-    ASSERT(m_creationThreadID == currentThreadID());
+    ASSERT_WITH_SECURITY_IMPLICATION(m_creationThreadID == currentThreadID());
 
     if (RefPtr registration = m_registrations.get(identifier))
         registration->queueTaskToFireUpdateFoundEvent();
@@ -438,7 +438,7 @@ void ServiceWorkerContainer::queueTaskToFireUpdateFoundEvent(ServiceWorkerRegist
 
 void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, ServiceWorkerRegistrationData&& data, ShouldNotifyWhenResolved shouldNotifyWhenResolved)
 {
-    ASSERT(m_creationThreadID == currentThreadID());
+    ASSERT_WITH_SECURITY_IMPLICATION(m_creationThreadID == currentThreadID());
 
     if (job.data().type == ServiceWorkerJobType::Register) {
         CONTAINER_RELEASE_LOG("jobResolvedWithRegistration: Registration job %" PRIu64 " succeeded", job.identifier().toUInt64());
@@ -523,7 +523,7 @@ void ServiceWorkerContainer::notifyRegistrationIsSettled(const ServiceWorkerRegi
 
 void ServiceWorkerContainer::jobResolvedWithUnregistrationResult(ServiceWorkerJob& job, bool unregistrationResult)
 {
-    ASSERT(m_creationThreadID == currentThreadID());
+    ASSERT_WITH_SECURITY_IMPLICATION(m_creationThreadID == currentThreadID());
 
     auto guard = makeScopeExit([this, protectedThis = Ref { *this }, job = Ref { job }] {
         destroyJob(job);
@@ -543,7 +543,7 @@ void ServiceWorkerContainer::jobResolvedWithUnregistrationResult(ServiceWorkerJo
 
 void ServiceWorkerContainer::startScriptFetchForJob(ServiceWorkerJob& job, FetchOptions::Cache cachePolicy)
 {
-    ASSERT(m_creationThreadID == currentThreadID());
+    ASSERT_WITH_SECURITY_IMPLICATION(m_creationThreadID == currentThreadID());
 
     CONTAINER_RELEASE_LOG("startScriptFetchForJob: Starting script fetch for job %" PRIu64, job.identifier().toUInt64());
 
@@ -560,7 +560,7 @@ void ServiceWorkerContainer::startScriptFetchForJob(ServiceWorkerJob& job, Fetch
 
 void ServiceWorkerContainer::jobFinishedLoadingScript(ServiceWorkerJob& job, WorkerFetchResult&& fetchResult)
 {
-    ASSERT(m_creationThreadID == currentThreadID());
+    ASSERT_WITH_SECURITY_IMPLICATION(m_creationThreadID == currentThreadID());
 
     CONTAINER_RELEASE_LOG("jobFinishedLoadingScript: Successfuly finished fetching script for job %" PRIu64, job.identifier().toUInt64());
 
@@ -569,7 +569,7 @@ void ServiceWorkerContainer::jobFinishedLoadingScript(ServiceWorkerJob& job, Wor
 
 void ServiceWorkerContainer::jobFailedLoadingScript(ServiceWorkerJob& job, const ResourceError& error, Exception&& exception)
 {
-    ASSERT(m_creationThreadID == currentThreadID());
+    ASSERT_WITH_SECURITY_IMPLICATION(m_creationThreadID == currentThreadID());
 
     CONTAINER_RELEASE_LOG_ERROR("jobFinishedLoadingScript: Failed to fetch script for job %" PRIu64 ", error: %s", job.identifier().toUInt64(), error.localizedDescription().utf8());
 
@@ -591,7 +591,7 @@ void ServiceWorkerContainer::notifyFailedFetchingScript(ServiceWorkerJob& job, c
 
 void ServiceWorkerContainer::destroyJob(ServiceWorkerJob& job)
 {
-    ASSERT(m_creationThreadID == currentThreadID());
+    ASSERT_WITH_SECURITY_IMPLICATION(m_creationThreadID == currentThreadID());
     ASSERT(m_jobMap.contains(job.identifier()));
 
     bool isRegisterJob = job.data().type == ServiceWorkerJobType::Register;
@@ -619,7 +619,7 @@ SWClientConnection& ServiceWorkerContainer::ensureSWClientConnection()
 
 void ServiceWorkerContainer::addRegistration(ServiceWorkerRegistration& registration)
 {
-    ASSERT(m_creationThreadID == currentThreadID());
+    ASSERT_WITH_SECURITY_IMPLICATION(m_creationThreadID == currentThreadID());
 
     protect(ensureSWClientConnection())->addServiceWorkerRegistrationInServer(registration.identifier());
     m_registrations.add(registration.identifier(), registration);
@@ -627,7 +627,7 @@ void ServiceWorkerContainer::addRegistration(ServiceWorkerRegistration& registra
 
 void ServiceWorkerContainer::removeRegistration(ServiceWorkerRegistration& registration)
 {
-    ASSERT(m_creationThreadID == currentThreadID());
+    ASSERT_WITH_SECURITY_IMPLICATION(m_creationThreadID == currentThreadID());
 
     Ref { *m_swConnection }->removeServiceWorkerRegistrationInServer(registration.identifier());
     m_registrations.remove(registration.identifier());
@@ -702,7 +702,7 @@ void ServiceWorkerContainer::getNotifications(const URL& serviceWorkerRegistrati
 
 void ServiceWorkerContainer::queueTaskToDispatchControllerChangeEvent()
 {
-    ASSERT(m_creationThreadID == currentThreadID());
+    ASSERT_WITH_SECURITY_IMPLICATION(m_creationThreadID == currentThreadID());
 
     queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().controllerchangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
@@ -725,7 +725,7 @@ void ServiceWorkerContainer::stop()
 
 ServiceWorkerOrClientIdentifier ServiceWorkerContainer::contextIdentifier()
 {
-    ASSERT(m_creationThreadID == currentThreadID());
+    ASSERT_WITH_SECURITY_IMPLICATION(m_creationThreadID == currentThreadID());
     ASSERT(scriptExecutionContext());
     if (RefPtr serviceWorkerGlobal = dynamicDowncast<ServiceWorkerGlobalScope>(*scriptExecutionContext()))
         return serviceWorkerGlobal->thread()->identifier();

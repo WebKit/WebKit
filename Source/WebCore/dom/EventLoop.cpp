@@ -201,7 +201,7 @@ void EventLoop::queueTask(std::unique_ptr<EventLoopTask>&& task)
 {
     ASSERT(task->taskSource() != TaskSource::Microtask);
     ASSERT(task->group());
-    ASSERT(isContextThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isContextThread());
     scheduleToRunIfNeeded();
     m_tasks.append(WTF::move(task));
 }
@@ -273,7 +273,7 @@ void EventLoop::performMicrotaskCheckpoint(JSC::VM& vm)
 
 void EventLoop::resumeGroup(EventLoopTaskGroup& group)
 {
-    ASSERT(isContextThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isContextThread());
     if (!m_groupsWithSuspendedTasks.contains(group))
         return;
     scheduleToRunIfNeeded();
@@ -281,20 +281,20 @@ void EventLoop::resumeGroup(EventLoopTaskGroup& group)
 
 void EventLoop::registerGroup(EventLoopTaskGroup& group)
 {
-    ASSERT(isContextThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isContextThread());
     m_associatedGroups.add(group);
 }
 
 void EventLoop::unregisterGroup(EventLoopTaskGroup& group)
 {
-    ASSERT(isContextThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isContextThread());
     if (m_associatedGroups.remove(group))
         stopAssociatedGroupsIfNecessary();
 }
 
 void EventLoop::stopAssociatedGroupsIfNecessary()
 {
-    ASSERT(isContextThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isContextThread());
     for (auto& group : m_associatedGroups) {
         if (!group.isReadyToStop())
             return;
@@ -306,7 +306,7 @@ void EventLoop::stopAssociatedGroupsIfNecessary()
 
 void EventLoop::stopGroup(EventLoopTaskGroup& group)
 {
-    ASSERT(isContextThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isContextThread());
     m_tasks.removeAllMatching([&group] (auto& task) {
         return group.matchesTask(*task);
     });

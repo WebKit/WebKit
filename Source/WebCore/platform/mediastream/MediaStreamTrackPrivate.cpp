@@ -227,7 +227,7 @@ MediaStreamTrackPrivateSourceObserver::MediaStreamTrackPrivateSourceObserver(Ref
     : m_source(WTF::move(source))
     , m_postTask(WTF::move(postTask))
 {
-    ASSERT(m_postTask || isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(m_postTask || isMainThread());
     if (!m_postTask)
         m_postTask = [](Function<void()>&& function) { function(); };
 }
@@ -321,7 +321,7 @@ MediaStreamTrackPrivate::MediaStreamTrackPrivate(Ref<const Logger>&& trackLogger
 #if !RELEASE_LOG_DISABLED
     , m_logIdentifier(uniqueLogIdentifier())
 #endif
-#if ASSERT_ENABLED
+#if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
     , m_creationThreadId(isMainThread() ? 0 : Thread::currentSingleton().uid())
 #endif
 {
@@ -344,7 +344,7 @@ MediaStreamTrackPrivate::MediaStreamTrackPrivate(Ref<const Logger>&& logger, Uni
 #if !RELEASE_LOG_DISABLED
     , m_logIdentifier(uniqueLogIdentifier())
 #endif
-#if ASSERT_ENABLED
+#if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
     , m_creationThreadId(isMainThread() ? 0 : Thread::currentSingleton().uid())
 #endif
 {
@@ -364,7 +364,7 @@ MediaStreamTrackPrivate::~MediaStreamTrackPrivate()
     m_sourceObserver->close();
 }
 
-#if ASSERT_ENABLED
+#if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
 bool MediaStreamTrackPrivate::isOnCreationThread()
 {
     return m_creationThreadId ? m_creationThreadId == Thread::currentSingleton().uid() : isMainThread();
@@ -382,7 +382,7 @@ void MediaStreamTrackPrivate::updateLabelIfRemoteTrack()
 
 void MediaStreamTrackPrivate::forEachObserver(NOESCAPE const Function<void(MediaStreamTrackPrivateObserver&)>& apply)
 {
-    ASSERT(isOnCreationThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isOnCreationThread());
     ASSERT(!m_observers.hasNullReferences());
     Ref protectedThis { *this };
     m_observers.forEach(apply);
@@ -390,13 +390,13 @@ void MediaStreamTrackPrivate::forEachObserver(NOESCAPE const Function<void(Media
 
 void MediaStreamTrackPrivate::addObserver(MediaStreamTrackPrivateObserver& observer)
 {
-    ASSERT(isOnCreationThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isOnCreationThread());
     m_observers.add(observer);
 }
 
 void MediaStreamTrackPrivate::removeObserver(MediaStreamTrackPrivateObserver& observer)
 {
-    ASSERT(isOnCreationThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isOnCreationThread());
     m_observers.remove(observer);
 }
 
@@ -599,7 +599,7 @@ void MediaStreamTrackPrivate::sourceMutedChanged(bool interrupted, bool muted)
 
 void MediaStreamTrackPrivate::sourceSettingsChanged(RealtimeMediaSourceSettings&& settings, RealtimeMediaSourceCapabilities&& capabilities, size_t settingsCapabilitiesUpdateCount)
 {
-    ASSERT(isOnCreationThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isOnCreationThread());
     ALWAYS_LOG(LOGIDENTIFIER);
 
     m_data.settings = WTF::move(settings);
@@ -612,7 +612,7 @@ void MediaStreamTrackPrivate::sourceSettingsChanged(RealtimeMediaSourceSettings&
 
 void MediaStreamTrackPrivate::sourceConfigurationChanged(String&& label, RealtimeMediaSourceSettings&& settings, RealtimeMediaSourceCapabilities&& capabilities, size_t settingsCapabilitiesUpdateCount)
 {
-    ASSERT(isOnCreationThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isOnCreationThread());
     ALWAYS_LOG(LOGIDENTIFIER);
 
     m_data.label = WTF::move(label);

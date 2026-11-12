@@ -82,7 +82,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         const auto* start = subjectPtr + index;
         const auto searchLength = maxN - index;
         const SubjectChar* charPos = nullptr;
-        ASSERT(maxN - index >= 0);
+        ASSERT_WITH_SECURITY_IMPLICATION(maxN - index >= 0);
         if constexpr (sizeof(SubjectChar) == 2)
             charPos = std::bit_cast<const SubjectChar*>(find16(std::bit_cast<const uint16_t*>(start), searchCharacter, searchLength));
         else
@@ -258,7 +258,7 @@ template <typename PatternChar, typename SubjectChar>
 int AdaptiveStringSearcher<PatternChar, SubjectChar>::linearSearch(AdaptiveStringSearcher<PatternChar, SubjectChar>& search, std::span<const SubjectChar> subject, int index)
 {
     auto charCompare = [](const PatternChar* pattern, const SubjectChar* subject, int length) ALWAYS_INLINE_LAMBDA {
-        ASSERT(length > 0);
+        ASSERT_WITH_SECURITY_IMPLICATION(length > 0);
         int pos = 0;
         do {
             if (pattern[pos] != subject[pos])
@@ -269,7 +269,7 @@ int AdaptiveStringSearcher<PatternChar, SubjectChar>::linearSearch(AdaptiveStrin
     };
 
     std::span<const PatternChar> pattern = search.m_pattern;
-    ASSERT(pattern.size() > 1);
+    ASSERT_WITH_SECURITY_IMPLICATION(pattern.size() > 1);
     int patternLength = pattern.size();
     int i = index;
     int n = subject.size() - patternLength;
@@ -277,7 +277,7 @@ int AdaptiveStringSearcher<PatternChar, SubjectChar>::linearSearch(AdaptiveStrin
         i = findFirstCharacter(pattern, subject, i);
         if (i == -1)
             return -1;
-        ASSERT(i <= n);
+        ASSERT_WITH_SECURITY_IMPLICATION(i <= n);
         i++;
         // Loop extracted to separate function to allow using return to do
         // a deeper break.
@@ -301,7 +301,7 @@ int AdaptiveStringSearcher<PatternChar, SubjectChar>::initialSearch(AdaptiveStri
     const auto* subjectPtr = subject.data();
     int patternLength = pattern.size();
     int subjectLength = subject.size();
-    ASSERT(patternLength >= 2);
+    ASSERT_WITH_SECURITY_IMPLICATION(patternLength >= 2);
     int maxIndex = subjectLength - patternLength;
     if (startIndex > maxIndex)
         return -1;

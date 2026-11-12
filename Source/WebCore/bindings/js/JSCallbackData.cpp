@@ -53,7 +53,7 @@ JSCallbackData::JSCallbackData(JSC::JSObject* callback, JSDOMGlobalObject* globa
 JSCallbackData::~JSCallbackData()
 {
 #if !PLATFORM(IOS_FAMILY)
-    ASSERT(m_threadID == currentThreadID());
+    ASSERT_WITH_SECURITY_IMPLICATION(m_threadID == currentThreadID());
 #endif
 }
 

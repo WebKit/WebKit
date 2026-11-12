@@ -124,7 +124,7 @@ bool MemoryCache::add(CachedResource& resource)
     if (resource.resourceRequest().httpMethod() != "GET"_s)
         return false;
 
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
     auto key = std::make_pair(resource.url(), resource.cachePartition());
 
@@ -199,7 +199,7 @@ CachedResource* MemoryCache::resourceForRequest(const ResourceRequest& request, 
 
 CachedResource* MemoryCache::resourceForRequestImpl(const ResourceRequest& request, CachedResourceMap& resources)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     URL url = removeFragmentIdentifierIfNeeded(request.url());
 
     auto key = std::make_pair(WTF::move(url), request.cachePartition());

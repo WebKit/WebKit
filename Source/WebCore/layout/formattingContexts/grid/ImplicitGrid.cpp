@@ -252,7 +252,7 @@ bool ImplicitGrid::isCellRangeEmpty(WTF::Range<size_t> columnRange, WTF::Range<s
 GridAreaLines ImplicitGrid::markAreaAsOccupied(WTF::Range<size_t> columnRange, WTF::Range<size_t> rowRange)
 {
     // Every caller is responsible for growing the implicit grid to cover the area first.
-    ASSERT(columnRange.end() <= columnsCount() && rowRange.end() <= rowsCount());
+    ASSERT_WITH_SECURITY_IMPLICATION(columnRange.end() <= columnsCount() && rowRange.end() <= rowsCount());
 
     for (auto row : std::views::iota(rowRange.begin(), rowRange.end())) {
         for (auto column : std::views::iota(columnRange.begin(), columnRange.end()))
@@ -292,7 +292,7 @@ GridAreaLines ImplicitGrid::placeAutoPositionedItemWithDefiniteColumn(const Unpl
 
     // Step 3 grew the implicit grid to cover the column-end line of every item in this step that
     // has a definite column position, so the cells this searches are always in bounds.
-    ASSERT(columnRange.end() <= columnsCount());
+    ASSERT_WITH_SECURITY_IMPLICATION(columnRange.end() <= columnsCount());
 
     if (autoFlowOptions.strategy == PackingStrategy::Dense) {
         // Set the row position of the cursor to the start-most row line in the implicit grid.

@@ -598,7 +598,7 @@ static void restoreFromSessionState(WKPageRef pageRef, WKTypeRef sessionStateRef
         if (!decodeLegacySessionState(toImpl(static_cast<WKDataRef>(sessionStateRef))->span(), sessionState))
             return;
     } else {
-        ASSERT(toImpl(sessionStateRef)->type() == API::Object::Type::SessionState);
+        ASSERT_WITH_SECURITY_IMPLICATION(toImpl(sessionStateRef)->type() == API::Object::Type::SessionState);
 
         sessionState = toImpl(static_cast<WKSessionStateRef>(sessionStateRef))->sessionState();
     }

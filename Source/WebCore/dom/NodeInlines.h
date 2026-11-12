@@ -46,7 +46,7 @@ inline bool Node::isUserAgentShadowRoot() const
 
 inline ContainerNode* Node::parentOrShadowHostNode() const
 {
-    ASSERT(isMainThreadOrGCThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThreadOrGCThread());
     if (auto* shadowRoot = dynamicDowncast<ShadowRoot>(*this))
         return shadowRoot->host();
     return parentNode();
@@ -172,7 +172,7 @@ inline Node& Node::rootNode() const
 
 inline void Node::setParentNode(ContainerNode* parent)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     m_parentNode = parent;
     m_refCountAndParentBit = (m_refCountAndParentBit & s_refCountMask) | !!parent;
 }
@@ -210,7 +210,7 @@ inline void Node::setHasValidStyle()
 inline void Node::setTreeScopeRecursively(TreeScope& newTreeScope)
 {
     ASSERT(!isDocumentNode());
-    ASSERT(!deletionHasBegun());
+    ASSERT_WITH_SECURITY_IMPLICATION(!deletionHasBegun());
     if (m_treeScope != &newTreeScope) {
         Ref oldTreeScope = *m_treeScope;
         moveTreeToNewScope(*this, oldTreeScope, newTreeScope);

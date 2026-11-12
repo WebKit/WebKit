@@ -66,14 +66,14 @@ static ExceptionOr<Vector<uint8_t>> transformAESCBC(CCOperation operation, const
 
 ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAESCBC::platformEncrypt(const CryptoAlgorithmAesCbcCfbParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& plainText, Padding padding)
 {
-    ASSERT(parameters.ivVector().size() == kCCBlockSizeAES128 || parameters.ivVector().isEmpty());
+    ASSERT_WITH_SECURITY_IMPLICATION(parameters.ivVector().size() == kCCBlockSizeAES128 || parameters.ivVector().isEmpty());
     ASSERT(padding == Padding::Yes || !(plainText.size() % kCCBlockSizeAES128));
     return transformAESCBC(kCCEncrypt, parameters.ivVector(), key.key(), plainText, padding);
 }
 
 ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAESCBC::platformDecrypt(const CryptoAlgorithmAesCbcCfbParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& cipherText, Padding padding)
 {
-    ASSERT(parameters.ivVector().size() == kCCBlockSizeAES128 || parameters.ivVector().isEmpty());
+    ASSERT_WITH_SECURITY_IMPLICATION(parameters.ivVector().size() == kCCBlockSizeAES128 || parameters.ivVector().isEmpty());
     ASSERT(padding == Padding::Yes || !(cipherText.size() % kCCBlockSizeAES128));
     auto result = transformAESCBC(kCCDecrypt, parameters.ivVector(), key.key(), cipherText, Padding::No);
     if (result.hasException())

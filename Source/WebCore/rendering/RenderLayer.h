@@ -257,7 +257,7 @@ public:
     bool normalFlowListDirty() const { return m_normalFlowListDirty; }
     bool zOrderListsDirty() const { return m_zOrderListsDirty; }
 
-#if ASSERT_ENABLED
+#if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
     bool layerListMutationAllowed() const { return m_layerListMutationAllowed; }
     void setLayerListMutationAllowed(bool flag) { m_layerListMutationAllowed = flag; }
 #endif
@@ -1505,7 +1505,7 @@ private:
     unsigned m_indirectCompositingReason : 4; // IndirectCompositingReason
     unsigned m_viewportConstrainedNotCompositedReason : 2; // ViewportConstrainedNotCompositedReason
 
-#if ASSERT_ENABLED
+#if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
     bool m_layerListMutationAllowed : 1;
 #endif
 
@@ -1598,7 +1598,7 @@ private:
 inline void RenderLayer::clearZOrderLists()
 {
     ASSERT(!isStackingContext());
-    ASSERT(layerListMutationAllowed());
+    ASSERT_WITH_SECURITY_IMPLICATION(layerListMutationAllowed());
 
     m_posZOrderList = nullptr;
     m_negZOrderList = nullptr;
@@ -1631,7 +1631,7 @@ inline void RenderLayer::setIsHiddenByOverflowTruncation(bool isHidden)
     dirtyVisibleContentStatus();
 }
 
-#if ASSERT_ENABLED
+#if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
 class LayerListMutationDetector {
 public:
     LayerListMutationDetector(RenderLayer& layer)
@@ -1650,7 +1650,7 @@ private:
     RenderLayer& m_layer;
     bool m_previousMutationAllowedState;
 };
-#endif // ASSERT_ENABLED
+#endif // ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
 
 NODELETE void makeMatrixRenderable(TransformationMatrix&, bool has3DRendering);
 

@@ -128,7 +128,7 @@ IsolatedSiteStore::~IsolatedSiteStore()
 
 void IsolatedSiteStore::didLoadSites(HashMap<WebCore::RegistrableDomain, Entry>&& sites, bool didImportUserInteractions)
 {
-    ASSERT(isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
     ASSERT(!m_isReady);
 
     for (auto& [domain, loadedEntry] : sites) {
@@ -159,7 +159,7 @@ void IsolatedSiteStore::didLoadSites(HashMap<WebCore::RegistrableDomain, Entry>&
 
 void IsolatedSiteStore::whenLoaded(CompletionHandler<void()>&& completionHandler)
 {
-    ASSERT(isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
 
     if (m_isLoaded)
         return completionHandler();
@@ -233,7 +233,7 @@ void IsolatedSiteStore::importUserInteractions()
 
 void IsolatedSiteStore::becomeReady()
 {
-    ASSERT(isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
     ASSERT(!m_isReady);
 
     // Injected after the load and any import so that nothing written here reaches the database. Only
@@ -250,7 +250,7 @@ void IsolatedSiteStore::becomeReady()
 
 void IsolatedSiteStore::whenReady(CompletionHandler<void()>&& completionHandler)
 {
-    ASSERT(isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
 
     if (m_isReady)
         return completionHandler();
@@ -278,7 +278,7 @@ void IsolatedSiteStore::saveSite(const WebCore::RegistrableDomain& domain, const
 
 void IsolatedSiteStore::recordSignals(const WebCore::RegistrableDomain& domain, OptionSet<Signal> signals, WallTime lastUpdated)
 {
-    ASSERT(isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
 
     auto& entry = m_sites.add(domain, Entry { }).iterator->value;
     if (entry.signals.containsAll(signals) && entry.lastUpdated >= lastUpdated)
@@ -304,7 +304,7 @@ auto IsolatedSiteStore::evictionTier(OptionSet<Signal> signals) -> EvictionTier
 
 void IsolatedSiteStore::evictSitesIfNeeded()
 {
-    ASSERT(isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
 
     if (!m_isLoaded || m_isImportingUserInteractions)
         return;
@@ -455,7 +455,7 @@ void IsolatedSiteStore::removeSites(Vector<WebCore::RegistrableDomain>&& domains
 
 OptionSet<IsolatedSiteStore::Signal> IsolatedSiteStore::reasonsFor(const WebCore::Site& site) const
 {
-    ASSERT(isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
 
     OptionSet<Signal> signals;
     if (auto it = m_sites.find(site.domain()); it != m_sites.end())
@@ -474,7 +474,7 @@ bool IsolatedSiteStore::contains(const WebCore::Site& site) const
 
 bool IsolatedSiteStore::containsDomain(const WebCore::RegistrableDomain& domain) const
 {
-    ASSERT(isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
 
     return m_sites.contains(domain) || isHighValueFraudTargetDomain(domain);
 }

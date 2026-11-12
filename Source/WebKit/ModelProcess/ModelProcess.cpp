@@ -153,7 +153,7 @@ bool ModelProcess::shouldTerminate()
 
 bool ModelProcess::canExitUnderMemoryPressure() const
 {
-    ASSERT(isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
     for (auto& webProcessConnection : m_webProcessConnections.values()) {
         if (!webProcessConnection->allowsExitUnderMemoryPressure())
             return false;
@@ -172,7 +172,7 @@ void ModelProcess::tryExitIfUnusedAndUnderMemoryPressure()
 
 void ModelProcess::tryExitIfUnused()
 {
-    ASSERT(isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
     if (!canExitUnderMemoryPressure()) {
         m_idleExitTimer.stop();
         return;

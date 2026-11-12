@@ -454,7 +454,7 @@ template<Numeric N, SpecificKeyword... Ks> struct PrimitiveData {
 
     Calc asCalc() const
     {
-        ASSERT(isCalc());
+        ASSERT_WITH_SECURITY_IMPLICATION(isCalc());
         return Calc { payload.unevaluatedCalc() };
     }
 

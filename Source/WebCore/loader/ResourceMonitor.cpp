@@ -101,7 +101,7 @@ void ResourceMonitor::setDocumentURL(URL&& url)
 
 void ResourceMonitor::didReceiveResponse(const URL& url, OptionSet<ContentExtensions::ResourceType> resourceType)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
     if (m_eligibility == Eligibility::Eligible)
         return;

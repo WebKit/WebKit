@@ -50,7 +50,7 @@ static inline webrtc::SocketAddress prepareSocketAddress(const webrtc::SocketAdd
 
 void LibWebRTCSocketFactory::setConnection(RefPtr<IPC::Connection>&& connection)
 {
-    ASSERT(!WTF::isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(!WTF::isMainRunLoop());
     m_connection = connection.copyRef();
     if (!m_connection)
         return;
@@ -61,13 +61,13 @@ void LibWebRTCSocketFactory::setConnection(RefPtr<IPC::Connection>&& connection)
 
 IPC::Connection* LibWebRTCSocketFactory::connection()
 {
-    ASSERT(!WTF::isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(!WTF::isMainRunLoop());
     return m_connection.get();
 }
 
 std::unique_ptr<webrtc::AsyncPacketSocket> LibWebRTCSocketFactory::createUdpSocket(WebCore::ScriptExecutionContextIdentifier contextIdentifier, const webrtc::SocketAddress& address, uint16_t minPort, uint16_t maxPort, WebPageProxyIdentifier pageIdentifier, RTCSocketCreationFlags flags, const WebCore::RegistrableDomain& domain)
 {
-    ASSERT(!WTF::isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(!WTF::isMainRunLoop());
     auto socket = makeUnique<LibWebRTCSocket>(*this, contextIdentifier, LibWebRTCSocket::Type::UDP, address, webrtc::SocketAddress());
 
     if (RefPtr connection = m_connection)
@@ -86,7 +86,7 @@ std::unique_ptr<webrtc::AsyncPacketSocket> LibWebRTCSocketFactory::createUdpSock
 
 std::unique_ptr<webrtc::AsyncPacketSocket> LibWebRTCSocketFactory::createClientTcpSocket(WebCore::ScriptExecutionContextIdentifier contextIdentifier, const webrtc::SocketAddress& localAddress, const webrtc::SocketAddress& remoteAddress, String&& userAgent, const webrtc::PacketSocketTcpOptions& options, WebPageProxyIdentifier pageIdentifier, RTCSocketCreationFlags flags, const WebCore::RegistrableDomain& domain)
 {
-    ASSERT(!WTF::isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(!WTF::isMainRunLoop());
 
     auto socket = makeUnique<LibWebRTCSocket>(*this, contextIdentifier, LibWebRTCSocket::Type::ClientTCP, localAddress, remoteAddress);
     socket->setState(LibWebRTCSocket::STATE_CONNECTING);
@@ -108,21 +108,21 @@ std::unique_ptr<webrtc::AsyncPacketSocket> LibWebRTCSocketFactory::createClientT
 
 void LibWebRTCSocketFactory::addSocket(LibWebRTCSocket& socket)
 {
-    ASSERT(!WTF::isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(!WTF::isMainRunLoop());
     ASSERT(!m_sockets.contains(socket.identifier()));
     m_sockets.add(socket.identifier(), socket);
 }
 
 void LibWebRTCSocketFactory::removeSocket(LibWebRTCSocket& socket)
 {
-    ASSERT(!WTF::isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(!WTF::isMainRunLoop());
     ASSERT(m_sockets.contains(socket.identifier()));
     m_sockets.remove(socket.identifier());
 }
 
 void LibWebRTCSocketFactory::forSocketInGroup(ScriptExecutionContextIdentifier contextIdentifier, NOESCAPE const Function<void(LibWebRTCSocket&)>& callback)
 {
-    ASSERT(!WTF::isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(!WTF::isMainRunLoop());
     for (CheckedRef socket : m_sockets.values()) {
         if (socket->contextIdentifier() == contextIdentifier)
             callback(socket);

@@ -575,8 +575,8 @@ ExceptionOr<void> AudioBufferSourceNode::setBufferForBindings(RefPtr<AudioBuffer
 void AudioBufferSourceNode::updateOutputChannelCount()
 {
     ASSERT(isMainThread());
-    ASSERT(m_processLock.isHeld());
-    ASSERT(context().isGraphOwner());
+    ASSERT_WITH_SECURITY_IMPLICATION(m_processLock.isHeld());
+    ASSERT_WITH_SECURITY_IMPLICATION(context().isGraphOwner());
 
     unsigned numberOfChannels = 1;
     if (m_buffer && isPlayingOrScheduled())

@@ -200,7 +200,7 @@ NetworkStorageManager::NetworkStorageManager(NetworkProcess& process, PAL::Sessi
     , m_queue(SuspendableWorkQueue::create(queueName(sessionID), SuspendableWorkQueue::QOS::Default, SuspendableWorkQueue::ShouldLog::Yes))
     , m_parentConnection(connection)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     if (!path.isEmpty()) {
         auto addResult = activePaths().add(path, *this);
@@ -287,7 +287,7 @@ OptionSet<WebsiteDataType> NetworkStorageManager::allManagedTypes()
 
 void NetworkStorageManager::close(CompletionHandler<void()>&& completionHandler)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
     ASSERT(!m_closed);
 
     m_closed = true;
@@ -312,7 +312,7 @@ void NetworkStorageManager::close(CompletionHandler<void()>&& completionHandler)
 
 void NetworkStorageManager::startReceivingMessageFromConnection(IPC::Connection& connection, std::optional<HashSet<WebCore::RegistrableDomain>>&& allowedSites, const SharedPreferencesForWebProcess& preferences)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     workQueue().dispatch([this, protectedThis = Ref { *this }, connection = connection.uniqueID(), allowedSites = crossThreadCopy(WTF::move(allowedSites)), preferences]() mutable {
         assertIsCurrent(workQueue());
@@ -334,7 +334,7 @@ void NetworkStorageManager::startReceivingMessageFromConnection(IPC::Connection&
 
 void NetworkStorageManager::stopReceivingMessageFromConnection(IPC::Connection& connection)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
     
     if (!m_connections.remove(connection))
         return;
@@ -1078,7 +1078,7 @@ void NetworkStorageManager::didIncreaseQuota(WebCore::ClientOrigin&& origin, Quo
 
 void NetworkStorageManager::fileSystemGetDirectory(IPC::Connection& connection, WebCore::ClientOrigin&& origin, CompletionHandler<void(std::expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError>)>&& completionHandler)
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(!RunLoop::isMain());
     STORAGE_MESSAGE_CHECK_COMPLETION(isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { origin.topOrigin }), connection, completionHandler(makeUnexpected(FileSystemStorageError::Unknown)));
 
     Ref fileSystemStorageManager = originStorageManager(origin, ShouldWriteOriginFile::Yes, ShouldUpdateOriginAccessTime::Yes)->fileSystemStorageManager(*protect(m_fileSystemStorageHandleRegistry), origin);
@@ -1091,7 +1091,7 @@ void NetworkStorageManager::fileSystemGetDirectory(IPC::Connection& connection, 
 
 void NetworkStorageManager::closeHandle(IPC::Connection& connection, WebCore::FileSystemHandleIdentifier identifier)
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(!RunLoop::isMain());
 
     RefPtr handle = m_fileSystemStorageHandleRegistry->getHandle(identifier);
     if (!handle)
@@ -1104,7 +1104,7 @@ void NetworkStorageManager::closeHandle(IPC::Connection& connection, WebCore::Fi
 
 void NetworkStorageManager::isSameEntry(IPC::Connection& connection, WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemHandleIdentifier targetIdentifier, CompletionHandler<void(bool)>&& completionHandler)
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(!RunLoop::isMain());
 
     RefPtr handle = m_fileSystemStorageHandleRegistry->getHandle(identifier);
     if (!handle)
@@ -1117,7 +1117,7 @@ void NetworkStorageManager::isSameEntry(IPC::Connection& connection, WebCore::Fi
 
 void NetworkStorageManager::move(IPC::Connection& connection, WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemHandleIdentifier destinationIdentifier, const String& newName, CompletionHandler<void(std::optional<FileSystemStorageError>)>&& completionHandler)
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(!RunLoop::isMain());
 
     RefPtr handle = m_fileSystemStorageHandleRegistry->getHandle(identifier);
     if (!handle)
@@ -1130,7 +1130,7 @@ void NetworkStorageManager::move(IPC::Connection& connection, WebCore::FileSyste
 
 void NetworkStorageManager::getFileHandle(IPC::Connection& connection, WebCore::FileSystemHandleIdentifier identifier, String&& name, bool createIfNecessary, CompletionHandler<void(std::expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError>)>&& completionHandler)
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(!RunLoop::isMain());
 
     RefPtr handle = m_fileSystemStorageHandleRegistry->getHandle(identifier);
     if (!handle)
@@ -1147,7 +1147,7 @@ void NetworkStorageManager::getFileHandle(IPC::Connection& connection, WebCore::
 
 void NetworkStorageManager::getDirectoryHandle(IPC::Connection& connection, WebCore::FileSystemHandleIdentifier identifier, String&& name, bool createIfNecessary, CompletionHandler<void(std::expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError>)>&& completionHandler)
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(!RunLoop::isMain());
 
     RefPtr handle = m_fileSystemStorageHandleRegistry->getHandle(identifier);
     if (!handle)
@@ -1164,7 +1164,7 @@ void NetworkStorageManager::getDirectoryHandle(IPC::Connection& connection, WebC
 
 void NetworkStorageManager::removeEntry(IPC::Connection& connection, WebCore::FileSystemHandleIdentifier identifier, const String& name, bool deleteRecursively, CompletionHandler<void(std::optional<FileSystemStorageError>)>&& completionHandler)
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(!RunLoop::isMain());
 
     RefPtr handle = m_fileSystemStorageHandleRegistry->getHandle(identifier);
     if (!handle)
@@ -1177,7 +1177,7 @@ void NetworkStorageManager::removeEntry(IPC::Connection& connection, WebCore::Fi
 
 void NetworkStorageManager::resolve(IPC::Connection& connection, WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemHandleIdentifier targetIdentifier, CompletionHandler<void(std::expected<std::optional<Vector<String>>, FileSystemStorageError>)>&& completionHandler)
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(!RunLoop::isMain());
 
     RefPtr handle = m_fileSystemStorageHandleRegistry->getHandle(identifier);
     if (!handle)
@@ -1190,7 +1190,7 @@ void NetworkStorageManager::resolve(IPC::Connection& connection, WebCore::FileSy
 
 void NetworkStorageManager::getFile(IPC::Connection& connection, WebCore::FileSystemHandleIdentifier identifier, CompletionHandler<void(std::expected<String, FileSystemStorageError>)>&& completionHandler)
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(!RunLoop::isMain());
 
     RefPtr handle = m_fileSystemStorageHandleRegistry->getHandle(identifier);
     if (!handle)
@@ -1214,7 +1214,7 @@ void NetworkStorageManager::getFile(IPC::Connection& connection, WebCore::FileSy
 
 void NetworkStorageManager::createSyncAccessHandle(IPC::Connection& connection, WebCore::FileSystemHandleIdentifier identifier, CompletionHandler<void(std::expected<FileSystemSyncAccessHandleInfo, FileSystemStorageError>)>&& completionHandler)
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(!RunLoop::isMain());
 
     RefPtr handle = m_fileSystemStorageHandleRegistry->getHandle(identifier);
     if (!handle)
@@ -1227,7 +1227,7 @@ void NetworkStorageManager::createSyncAccessHandle(IPC::Connection& connection, 
 
 void NetworkStorageManager::closeSyncAccessHandle(IPC::Connection& connection, WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, CompletionHandler<void()>&& completionHandler)
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(!RunLoop::isMain());
 
     RefPtr handle = m_fileSystemStorageHandleRegistry->getHandle(identifier);
     if (!handle)
@@ -1242,7 +1242,7 @@ void NetworkStorageManager::closeSyncAccessHandle(IPC::Connection& connection, W
 
 void NetworkStorageManager::requestNewCapacityForSyncAccessHandle(IPC::Connection& connection, WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, uint64_t newCapacity, CompletionHandler<void(std::optional<uint64_t>)>&& completionHandler)
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(!RunLoop::isMain());
 
     RefPtr handle = m_fileSystemStorageHandleRegistry->getHandle(identifier);
     if (!handle)
@@ -1255,7 +1255,7 @@ void NetworkStorageManager::requestNewCapacityForSyncAccessHandle(IPC::Connectio
 
 void NetworkStorageManager::createWritable(IPC::Connection& connection, WebCore::FileSystemHandleIdentifier identifier, bool keepExistingData, CompletionHandler<void(std::expected<WebCore::FileSystemWritableFileStreamIdentifier, FileSystemStorageError>)>&& completionHandler)
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(!RunLoop::isMain());
 
     RefPtr handle = m_fileSystemStorageHandleRegistry->getHandle(identifier);
     if (!handle)
@@ -1268,7 +1268,7 @@ void NetworkStorageManager::createWritable(IPC::Connection& connection, WebCore:
 
 void NetworkStorageManager::closeWritable(IPC::Connection& connection, WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemWritableFileStreamIdentifier streamIdentifier, WebCore::FileSystemWriteCloseReason reason, CompletionHandler<void(std::optional<FileSystemStorageError>)>&& completionHandler)
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(!RunLoop::isMain());
 
     RefPtr handle = m_fileSystemStorageHandleRegistry->getHandle(identifier);
     if (!handle)
@@ -1281,7 +1281,7 @@ void NetworkStorageManager::closeWritable(IPC::Connection& connection, WebCore::
 
 void NetworkStorageManager::executeCommandForWritable(IPC::Connection& connection, WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemWritableFileStreamIdentifier streamIdentifier, WebCore::FileSystemWriteCommandType type, std::optional<uint64_t> position, std::optional<uint64_t> size, std::span<const uint8_t> dataBytes, bool hasDataError, CompletionHandler<void(std::optional<FileSystemStorageError>)>&& completionHandler)
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(!RunLoop::isMain());
 
     RefPtr handle = m_fileSystemStorageHandleRegistry->getHandle(identifier);
     if (!handle)
@@ -1294,7 +1294,7 @@ void NetworkStorageManager::executeCommandForWritable(IPC::Connection& connectio
 
 void NetworkStorageManager::getHandleNames(IPC::Connection& connection, WebCore::FileSystemHandleIdentifier identifier, CompletionHandler<void(std::expected<Vector<String>, FileSystemStorageError>)>&& completionHandler)
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(!RunLoop::isMain());
 
     RefPtr handle = m_fileSystemStorageHandleRegistry->getHandle(identifier);
     if (!handle)
@@ -1307,7 +1307,7 @@ void NetworkStorageManager::getHandleNames(IPC::Connection& connection, WebCore:
 
 void NetworkStorageManager::getHandle(IPC::Connection& connection, WebCore::FileSystemHandleIdentifier identifier, String&& name, CompletionHandler<void(std::expected<std::optional<WebCore::FileSystemHandleInfo>, FileSystemStorageError>)>&& completionHandler)
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(!RunLoop::isMain());
 
     RefPtr handle = m_fileSystemStorageHandleRegistry->getHandle(identifier);
     if (!handle)
@@ -1415,7 +1415,7 @@ static void updateOriginData(HashMap<WebCore::SecurityOriginData, OriginStorageM
 
 Vector<WebsiteData::Entry> NetworkStorageManager::fetchDataFromDisk(OptionSet<WebsiteDataType> targetTypes, ShouldComputeSize shouldComputeSize)
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(!RunLoop::isMain());
 
     HashMap<WebCore::SecurityOriginData, OriginStorageManager::DataTypeSizeMap> originTypes;
     for (auto& origin : getAllOrigins()) {
@@ -1451,7 +1451,7 @@ void NetworkStorageManager::fetchData(OptionSet<WebsiteDataType> types, ShouldCo
 
 HashSet<WebCore::ClientOrigin> NetworkStorageManager::deleteDataOnDisk(OptionSet<WebsiteDataType> types, WallTime modifiedSinceTime, NOESCAPE const Function<bool(const WebCore::ClientOrigin&)>& filter)
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(!RunLoop::isMain());
 
     // ServiceWorkerRegistrations are deleted through SWServer when origins may be active.
     auto typesExcludingServiceWorkerRegistrations = types;
@@ -1937,7 +1937,7 @@ bool NetworkStorageManager::canConnectionAccessSiteForWebStorage(IPC::Connection
 
 void NetworkStorageManager::connectToStorageArea(IPC::Connection& connection, WebCore::StorageType type, StorageAreaMapIdentifier sourceIdentifier, std::optional<StorageNamespaceIdentifier> namespaceIdentifier, const WebCore::ClientOrigin& origin, CompletionHandler<void(std::optional<StorageAreaIdentifier>, HashMap<String, String>, uint64_t)>&& completionHandler)
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(!RunLoop::isMain());
     STORAGE_MESSAGE_CHECK_COMPLETION(canConnectionAccessSiteForWebStorage(connection, WebCore::RegistrableDomain { origin.topOrigin }), connection, completionHandler(std::nullopt, { }, StorageAreaBase::nextMessageIdentifier()));
 
     MESSAGE_CHECK_COMPLETION(isStorageTypeEnabled(connection, type), connection, completionHandler(std::nullopt, { }, StorageAreaBase::nextMessageIdentifier()));
@@ -2008,7 +2008,7 @@ void NetworkStorageManager::cancelConnectToStorageArea(IPC::Connection& connecti
 
 void NetworkStorageManager::disconnectFromStorageArea(IPC::Connection& connection, StorageAreaIdentifier identifier)
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(!RunLoop::isMain());
 
     RefPtr storageArea = m_storageAreaRegistry->getStorageArea(identifier);
     if (!storageArea)
@@ -2025,7 +2025,7 @@ void NetworkStorageManager::disconnectFromStorageArea(IPC::Connection& connectio
 
 void NetworkStorageManager::setItem(IPC::Connection& connection, StorageAreaIdentifier identifier, StorageAreaImplIdentifier implIdentifier, String&& key, String&& value, String&& urlString, CompletionHandler<void(bool, HashMap<String, String>&&)>&& completionHandler)
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(!RunLoop::isMain());
 
     bool hasError = false;
     HashMap<String, String> allItems;
@@ -2048,7 +2048,7 @@ void NetworkStorageManager::setItem(IPC::Connection& connection, StorageAreaIden
 
 void NetworkStorageManager::removeItem(IPC::Connection& connection, StorageAreaIdentifier identifier, StorageAreaImplIdentifier implIdentifier, String&& key, String&& urlString, CompletionHandler<void(bool, HashMap<String, String>&&)>&& completionHandler)
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(!RunLoop::isMain());
 
     bool hasError = false;
     HashMap<String, String> allItems;
@@ -2071,7 +2071,7 @@ void NetworkStorageManager::removeItem(IPC::Connection& connection, StorageAreaI
 
 void NetworkStorageManager::clear(IPC::Connection& connection, StorageAreaIdentifier identifier, StorageAreaImplIdentifier implIdentifier, String&& urlString, CompletionHandler<void()>&& completionHandler)
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(!RunLoop::isMain());
 
     RefPtr storageArea = m_storageAreaRegistry->getStorageArea(identifier);
     if (!storageArea)
@@ -2777,7 +2777,7 @@ void NetworkStorageManager::migrateServiceWorkerRegistrationsToOrigins()
 
 Vector<WebCore::ServiceWorkerScripts> NetworkStorageManager::updateServiceWorkerRegistrationsByOrigin(Vector<WebCore::ServiceWorkerContextData>&& registrationsToUpdate, Vector<WebCore::ServiceWorkerRegistrationKey>&& registrationsToDelete)
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(!RunLoop::isMain());
 
     HashMap<WebCore::ClientOrigin, std::pair<Vector<WebCore::ServiceWorkerContextData>, Vector<WebCore::ServiceWorkerRegistrationKey>>> originRegistrations;
     for (auto& registration : borrow(registrationsToUpdate)) {

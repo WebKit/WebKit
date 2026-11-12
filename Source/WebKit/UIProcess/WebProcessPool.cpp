@@ -342,7 +342,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     UIProcess::initializeLoggingIfNecessary();
 #endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     updateBackForwardCacheCapacity();
 

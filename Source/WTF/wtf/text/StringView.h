@@ -508,14 +508,14 @@ inline void StringView::clear()
 
 inline std::span<const Latin1Character> StringView::span8() const LIFETIME_BOUND
 {
-    ASSERT(is8Bit());
+    ASSERT_WITH_SECURITY_IMPLICATION(is8Bit());
     ASSERT(underlyingStringIsValid());
     return unsafeMakeSpan(static_cast<const Latin1Character*>(m_characters), m_length);
 }
 
 inline std::span<const char16_t> StringView::span16() const LIFETIME_BOUND
 {
-    ASSERT(!is8Bit() || isEmpty());
+    ASSERT_WITH_SECURITY_IMPLICATION(!is8Bit() || isEmpty());
     ASSERT(underlyingStringIsValid());
     return unsafeMakeSpan(static_cast<const char16_t*>(m_characters), m_length);
 }
@@ -1073,7 +1073,7 @@ inline auto StringView::CodePoints::Iterator::operator++() -> Iterator&
 #if CHECK_STRINGVIEW_LIFETIME
     ASSERT(m_stringView.underlyingStringIsValid());
 #endif
-    ASSERT(m_current < m_end);
+    ASSERT_WITH_SECURITY_IMPLICATION(m_current < m_end);
     if (m_is8Bit)
         m_current = static_cast<const Latin1Character*>(m_current) + 1;
     else {
@@ -1097,7 +1097,7 @@ inline auto StringView::CodePoints::Iterator::operator--() -> Iterator&
 #if CHECK_STRINGVIEW_LIFETIME
     ASSERT(m_stringView.underlyingStringIsValid());
 #endif
-    ASSERT(m_current > m_begin);
+    ASSERT_WITH_SECURITY_IMPLICATION(m_current > m_begin);
     if (m_is8Bit)
         m_current = static_cast<const Latin1Character*>(m_current) - 1;
     else {
@@ -1122,7 +1122,7 @@ inline char32_t StringView::CodePoints::Iterator::operator*() const
 #if CHECK_STRINGVIEW_LIFETIME
     ASSERT(m_stringView.underlyingStringIsValid());
 #endif
-    ASSERT(m_current < m_end);
+    ASSERT_WITH_SECURITY_IMPLICATION(m_current < m_end);
     if (m_is8Bit)
         return *static_cast<const Latin1Character*>(m_current);
     char32_t codePoint;

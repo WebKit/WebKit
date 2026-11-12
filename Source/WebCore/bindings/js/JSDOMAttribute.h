@@ -84,7 +84,7 @@ public:
         auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(&lexicalGlobalObject));
 
         if constexpr (shouldThrow == CastedThisErrorBehavior::Assert) {
-            ASSERT(castThisValue<JSClass>(lexicalGlobalObject, JSC::JSValue::decode(thisValue)));
+            ASSERT_WITH_SECURITY_IMPLICATION(castThisValue<JSClass>(lexicalGlobalObject, JSC::JSValue::decode(thisValue)));
             auto* thisObject = uncheckedDowncast<JSClass>(JSC::JSValue::decode(thisValue));
             RELEASE_AND_RETURN(throwScope, (JSC::JSValue::encode(getter(lexicalGlobalObject, *thisObject))));
         } else {
@@ -109,7 +109,7 @@ public:
         auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(&lexicalGlobalObject));
 
         if constexpr (shouldThrow == CastedThisErrorBehavior::Assert) {
-            ASSERT(castThisValue<JSClass>(lexicalGlobalObject, JSC::JSValue::decode(thisValue)));
+            ASSERT_WITH_SECURITY_IMPLICATION(castThisValue<JSClass>(lexicalGlobalObject, JSC::JSValue::decode(thisValue)));
             auto* thisObject = uncheckedDowncast<JSClass>(JSC::JSValue::decode(thisValue));
             RELEASE_AND_RETURN(throwScope, (JSC::JSValue::encode(getter(lexicalGlobalObject, *thisObject, attributeName))));
         } else {

@@ -139,7 +139,7 @@ WK_OBJECT_DEALLOC_ON_MAIN_THREAD(objcClass); \
 \
 - (void)dealloc \
 { \
-    ASSERT(isMainRunLoop()); \
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop()); \
     SUPPRESS_UNCOUNTED_ARG storageVar->~implClass(); \
 } \
 \
@@ -153,7 +153,7 @@ using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
 #define WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(objcClass, implClass, storageVar) \
 - (void)dealloc \
 { \
-    ASSERT(isMainRunLoop()); \
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop()); \
     storageVar->~implClass(); \
 } \
 \

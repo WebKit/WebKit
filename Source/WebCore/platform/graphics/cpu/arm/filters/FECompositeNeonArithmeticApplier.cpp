@@ -117,7 +117,7 @@ bool FECompositeNeonArithmeticApplier::apply(const Filter&, std::span<const Ref<
     auto* destinationPixelBytes = destinationPixelBuffer->bytes().data();
 
     auto length = sourcePixelBuffer->bytes().size();
-    ASSERT(length == destinationPixelBuffer->bytes().size());
+    ASSERT_WITH_SECURITY_IMPLICATION(length == destinationPixelBuffer->bytes().size());
 
     applyPlatform(sourcePixelBytes, destinationPixelBytes, length, m_effect->k1(), m_effect->k2(), m_effect->k3(), m_effect->k4());
     return true;

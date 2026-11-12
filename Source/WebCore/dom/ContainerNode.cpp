@@ -701,7 +701,7 @@ ExceptionOr<void> ContainerNode::insertBefore(Node& newChild, RefPtr<Node>&& ref
 {
     // Check that this node is not "floating".
     // If it is, it can be deleted as a side effect of sending mutation events.
-    ASSERT(refCount() || parentOrShadowHostNode());
+    ASSERT_WITH_SECURITY_IMPLICATION(refCount() || parentOrShadowHostNode());
 
     // Make sure adding the new child is OK.
     auto validityCheckResult = ensurePreInsertionValidity(newChild, refChild.get());
@@ -757,9 +757,9 @@ void ContainerNode::insertBeforeCommon(Node& nextChild, Node& newChild)
 {
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
-    ASSERT(nextChild.parentNode() == this);
+    ASSERT_WITH_SECURITY_IMPLICATION(nextChild.parentNode() == this);
     ASSERT(&nextChild != &newChild);
-    ASSERT(!newChild.parentNode()); // Use insertBefore if you need to handle reparenting (and want DOM mutation events).
+    ASSERT_WITH_SECURITY_IMPLICATION(!newChild.parentNode()); // Use insertBefore if you need to handle reparenting (and want DOM mutation events).
     ASSERT(!newChild.nextSibling());
     ASSERT(!newChild.previousSibling());
     ASSERT(!newChild.isShadowRoot());
@@ -784,7 +784,7 @@ void ContainerNode::appendChildCommon(Node& child)
 {
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
-    ASSERT(!child.parentNode());
+    ASSERT_WITH_SECURITY_IMPLICATION(!child.parentNode());
     child.setParentNode(this);
 
     if (auto* lastChild = this->lastChild()) {
@@ -819,7 +819,7 @@ ExceptionOr<void> ContainerNode::replaceChild(Node& newChild, Node& oldChild)
 {
     // Check that this node is not "floating".
     // If it is, it can be deleted as a side effect of sending mutation events.
-    ASSERT(refCount() || parentOrShadowHostNode());
+    ASSERT_WITH_SECURITY_IMPLICATION(refCount() || parentOrShadowHostNode());
 
     Ref protectedThis { *this };
 
@@ -913,7 +913,7 @@ ExceptionOr<void> ContainerNode::removeChild(Node& oldChild)
 {
     // Check that this node is not "floating".
     // If it is, it can be deleted as a side effect of sending mutation events.
-    ASSERT(refCount() || parentOrShadowHostNode());
+    ASSERT_WITH_SECURITY_IMPLICATION(refCount() || parentOrShadowHostNode());
 
     Ref protectedThis { *this };
     Ref protectedOldChild { oldChild };
@@ -937,7 +937,7 @@ void ContainerNode::removeBetween(Node* previousChild, Node* nextChild, Node& ol
 
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
-    ASSERT(oldChild.parentNode() == this);
+    ASSERT_WITH_SECURITY_IMPLICATION(oldChild.parentNode() == this);
 
     destroyRenderTreeIfNeeded(oldChild);
 
@@ -1039,7 +1039,7 @@ ExceptionOr<void> ContainerNode::appendChild(Node& newChild)
 {
     // Check that this node is not "floating".
     // If it is, it can be deleted as a side effect of sending mutation events.
-    ASSERT(refCount() || parentOrShadowHostNode());
+    ASSERT_WITH_SECURITY_IMPLICATION(refCount() || parentOrShadowHostNode());
 
     // Make sure adding the new child is ok
     auto validityCheckResult = ensurePreInsertionValidity(newChild, nullptr);
@@ -1132,7 +1132,7 @@ ExceptionOr<void> ContainerNode::insertChildrenBeforeWithoutPreInsertionValidity
 
 void ContainerNode::parserAppendChild(Node& newChild)
 {
-    ASSERT(!newChild.parentNode()); // Use appendChild if you need to handle reparenting (and want DOM mutation events).
+    ASSERT_WITH_SECURITY_IMPLICATION(!newChild.parentNode()); // Use appendChild if you need to handle reparenting (and want DOM mutation events).
     ASSERT(!newChild.isDocumentFragment());
     ASSERT(!hasTagName(HTMLNames::templateTag));
 
@@ -1150,7 +1150,7 @@ void ContainerNode::parserAppendChildIntoIsolatedTree(Node& newChild)
 {
     ASSERT(!inRenderedDocument());
     ASSERT(!newChild.traverseToRootNode().wrapper());
-    ASSERT(!newChild.parentNode()); // Use appendChild if you need to handle reparenting (and want DOM mutation events).
+    ASSERT_WITH_SECURITY_IMPLICATION(!newChild.parentNode()); // Use appendChild if you need to handle reparenting (and want DOM mutation events).
     ASSERT(is<Element>(*this) || is<DocumentFragment>(*this)); // Only Element calls parserNotifyChildrenChanged
     ASSERT(is<DocumentFragment>(*this) || !isParsingChildrenFinished());
     ASSERT(!newChild.isDocumentFragment());

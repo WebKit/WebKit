@@ -201,7 +201,7 @@ static ProcessThrottleState processThrottleState(const WebProcessProxy& process)
 
 void MemoryFootprintMonitor::measurementTimerFired()
 {
-    ASSERT(isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
     ASSERT(m_state == State::WaitingToMeasure);
 
     Vector<std::pair<ProcessID, MachSendRight>> processesToMeasure;
@@ -237,7 +237,7 @@ void MemoryFootprintMonitor::measurementTimerFired()
 
 void MemoryFootprintMonitor::didCompleteMeasurement(HashMap<ProcessID, size_t>&& footprints)
 {
-    ASSERT(isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
 
     ASSERT(m_state == State::Measuring);
     m_state = State::WaitingToMeasure;

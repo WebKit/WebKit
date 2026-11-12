@@ -139,7 +139,7 @@ static constexpr Seconds networkProcessResponsivenessTimeout = 6_s;
 
 NODELETE static WeakHashSet<NetworkProcessProxy>& networkProcessesSet()
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
     static NeverDestroyed<WeakHashSet<NetworkProcessProxy>> set;
     return set;
 }

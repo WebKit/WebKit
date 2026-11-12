@@ -356,7 +356,7 @@ SQLTransactionBackend::~SQLTransactionBackend()
 
 void SQLTransactionBackend::doCleanup()
 {
-    ASSERT(frontend()->database().databaseThread().getThread() == &Thread::currentSingleton());
+    ASSERT_WITH_SECURITY_IMPLICATION(frontend()->database().databaseThread().getThread() == &Thread::currentSingleton());
 
     Ref frontend = this->frontend();
     frontend->releaseOriginLockIfNeeded();
@@ -470,7 +470,7 @@ void SQLTransactionBackend::computeNextStateAndCleanupIfNeeded()
 
 void SQLTransactionBackend::notifyDatabaseThreadIsShuttingDown()
 {
-    ASSERT(frontend()->database().databaseThread().getThread() == &Thread::currentSingleton());
+    ASSERT_WITH_SECURITY_IMPLICATION(frontend()->database().databaseThread().getThread() == &Thread::currentSingleton());
 
     // If the transaction is in progress, we should roll it back here, since this
     // is our last opportunity to do something related to this transaction on the

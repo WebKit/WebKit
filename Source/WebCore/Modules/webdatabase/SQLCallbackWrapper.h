@@ -83,7 +83,7 @@ public:
     RefPtr<T> unwrap()
     {
         Locker locker { m_lock };
-        ASSERT(!m_callback || m_scriptExecutionContext->isContextThread());
+        ASSERT_WITH_SECURITY_IMPLICATION(!m_callback || m_scriptExecutionContext->isContextThread());
         m_scriptExecutionContext = nullptr;
         return WTF::move(m_callback);
     }

@@ -62,13 +62,13 @@ static ExceptionOr<Vector<uint8_t>> transformAESCFB(CCOperation operation, const
 
 ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAESCFB::platformEncrypt(const CryptoAlgorithmAesCbcCfbParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& plainText)
 {
-    ASSERT(parameters.ivVector().size() == kCCBlockSizeAES128);
+    ASSERT_WITH_SECURITY_IMPLICATION(parameters.ivVector().size() == kCCBlockSizeAES128);
     return transformAESCFB(kCCEncrypt, parameters.ivVector(), key.key(), plainText);
 }
 
 ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAESCFB::platformDecrypt(const CryptoAlgorithmAesCbcCfbParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& cipherText)
 {
-    ASSERT(parameters.ivVector().size() == kCCBlockSizeAES128);
+    ASSERT_WITH_SECURITY_IMPLICATION(parameters.ivVector().size() == kCCBlockSizeAES128);
     return transformAESCFB(kCCDecrypt, parameters.ivVector(), key.key(), cipherText);
 }
 

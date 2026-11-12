@@ -323,7 +323,7 @@ public:
 
         ~MessageDispatchScope()
         {
-            ASSERT(s_current == this);
+            ASSERT_WITH_SECURITY_IMPLICATION(s_current == this);
             s_current = m_previous;
         }
 

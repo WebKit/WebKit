@@ -1902,7 +1902,7 @@ InstrumentingAgents* InspectorInstrumentation::instrumentingAgents(Document& doc
 
 InstrumentingAgents& InspectorInstrumentation::instrumentingAgents(Page& page)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     return page.inspectorController().m_instrumentingAgents.get();
 }
 

@@ -109,7 +109,7 @@ private:
 
     static HashMap<IPC::AsyncReplyID, Ref<PendingSnapshotDrawing>>& drawings()
     {
-        ASSERT(RunLoop::isMain());
+        ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
         static NeverDestroyed<HashMap<IPC::AsyncReplyID, Ref<PendingSnapshotDrawing>>> drawings;
         return drawings;
     }

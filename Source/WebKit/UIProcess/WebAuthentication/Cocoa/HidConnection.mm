@@ -42,7 +42,7 @@ using namespace fido;
 // FIXME(191518)
 static void reportReceived(void* context, IOReturn status, void*, IOHIDReportType type, uint32_t reportID, uint8_t* report, CFIndex reportLength)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
     auto* connection = static_cast<HidConnection*>(context);
 
     if (status) {

@@ -347,7 +347,7 @@ void Notification::dispatchShowEvent()
     if (!context)
         return;
 
-    ASSERT(context->isContextThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(context->isContextThread());
     ASSERT(!isPersistent());
 
     if (m_notificationSource == NotificationSource::ServiceWorker)
@@ -362,7 +362,7 @@ void Notification::dispatchClickEvent()
     if (!context)
         return;
 
-    ASSERT(context->isContextThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(context->isContextThread());
     ASSERT(m_notificationSource != NotificationSource::ServiceWorker);
     ASSERT(!isPersistent());
 
@@ -378,7 +378,7 @@ void Notification::dispatchCloseEvent()
     if (!context)
         return;
 
-    ASSERT(context->isContextThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(context->isContextThread());
     ASSERT(m_notificationSource != NotificationSource::ServiceWorker);
     ASSERT(!isPersistent());
 
@@ -392,7 +392,7 @@ void Notification::dispatchErrorEvent()
     if (!context)
         return;
 
-    ASSERT(context->isContextThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(context->isContextThread());
     ASSERT(m_notificationSource != NotificationSource::ServiceWorker);
     ASSERT(!isPersistent());
 

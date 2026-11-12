@@ -152,7 +152,7 @@ bool AnalyserNode::requiresTailProcessing() const
 
 void AnalyserNode::updatePullStatus()
 {
-    ASSERT(context().isGraphOwner());
+    ASSERT_WITH_SECURITY_IMPLICATION(context().isGraphOwner());
 
     Ref context = this->context();
     if (output(0)->isConnected()) {

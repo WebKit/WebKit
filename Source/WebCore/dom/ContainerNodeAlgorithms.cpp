@@ -75,7 +75,7 @@ static void notifyNodeInsertedIntoTree(ContainerNode& parentOfInsertedTree, Node
 // NodeVector has a large inline buffer and is thus not cheap to move.
 void notifyChildNodeInserted(ContainerNode& parentOfInsertedTree, Node& node, NodeVector& postInsertionNotificationTargets)
 {
-    ASSERT(ScriptDisallowedScope::InMainThread::hasDisallowedScope());
+    ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::hasDisallowedScope());
 
     Ref document { node.document() };
     Ref protectNode { node };
@@ -161,7 +161,7 @@ static RemovedSubtreeResult notifyNodeRemovedFromTree(ContainerNode& oldParentOf
 RemovedSubtreeResult notifyChildNodeRemoved(ContainerNode& oldParentOfRemovedTree, Node& child)
 {
     // Assert that the caller of this function has an instance of ScriptDisallowedScope.
-    ASSERT(!isMainThread() || ScriptDisallowedScope::InMainThread::hasDisallowedScope());
+    ASSERT_WITH_SECURITY_IMPLICATION(!isMainThread() || ScriptDisallowedScope::InMainThread::hasDisallowedScope());
     ContainerChildRemovalScope removalScope(oldParentOfRemovedTree, child);
 
     // Tree scope has changed if the container node from which "node" is removed is in a document or a shadow root.
@@ -177,7 +177,7 @@ void removeDetachedChildrenInContainer(ContainerNode& container)
 
     RefPtr<Node> next;
     for (RefPtr node = container.firstChild(); node; node = WTF::move(next)) {
-        ASSERT(!node->deletionHasBegun());
+        ASSERT_WITH_SECURITY_IMPLICATION(!node->deletionHasBegun());
 
         next = node->nextSibling();
         node->setNextSibling(nullptr);

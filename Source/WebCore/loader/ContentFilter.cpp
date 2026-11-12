@@ -132,7 +132,7 @@ bool ContentFilter::continueAfterWillSendRequest(ResourceRequest& request, const
 
 ContentFilter::ContentFilterCallbackAggregator::~ContentFilterCallbackAggregator()
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
     ASSERT(m_callback);
 
     if (m_isBlocked) {
@@ -152,7 +152,7 @@ ContentFilter::ContentFilterCallbackAggregator::~ContentFilterCallbackAggregator
 
 void ContentFilter::ContentFilterCallbackAggregator::didReceivePlatformContentFilterDecision(PlatformContentFilter& platformContentFilter, String&& urlString)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     if (platformContentFilter.isAllowed())
         ++m_numberOfFiltersAllowed;
@@ -174,12 +174,12 @@ ContentFilter::ContentFilterCallbackAggregator::ContentFilterCallbackAggregator(
     , m_request(request)
     , m_callback(WTF::move(callback))
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 }
 
 void ContentFilter::continueAfterWillSendRequest(ResourceRequest&& request, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
     LOG(ContentFiltering, "ContentFilter received request for <%{sensitive}s> with redirect response from %s" SENSITIVE_LOG_STRING, request.url().string().utf8(), redirectResponse.url().string().utf8());
     ASSERT(m_state == State::Stopped || m_state == State::Filtering);
@@ -188,7 +188,7 @@ void ContentFilter::continueAfterWillSendRequest(ResourceRequest&& request, cons
 
     for (Ref platformContentFilter : m_contentFilters) {
         CompletionHandler<void(String&&)> completion = [contentFilterCallbackAggregator, platformContentFilter] (String&& urlString) mutable {
-            ASSERT(RunLoop::isMain());
+            ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
             contentFilterCallbackAggregator->didReceivePlatformContentFilterDecision(platformContentFilter, WTF::move(urlString));
         };
 

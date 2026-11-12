@@ -424,7 +424,7 @@ void RemoteLayerTreeNode::removeFromHostingNode()
 #if ENABLE(THREADED_ANIMATIONS)
 void RemoteLayerTreeNode::setAcceleratedEffectsAndBaseValues(const WebCore::AcceleratedEffects& effects, const WebCore::AcceleratedEffectValues& baseValues, RemoteLayerTreeHost& host)
 {
-    ASSERT(isUIThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isUIThread());
 
     RetainPtr layer = this->layer();
     if (RefPtr animationStack = m_animationStack)

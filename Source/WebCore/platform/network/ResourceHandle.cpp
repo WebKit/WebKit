@@ -57,7 +57,7 @@ NODELETE static BuiltinResourceHandleConstructorMap& builtinResourceHandleConstr
 #if PLATFORM(IOS_FAMILY)
     ASSERT(WebThreadIsLockedOrDisabled());
 #else
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 #endif
     static NeverDestroyed<BuiltinResourceHandleConstructorMap> map;
     return map;
@@ -71,7 +71,7 @@ void ResourceHandle::registerBuiltinConstructor(const AtomString& protocol, Reso
 typedef HashMap<AtomString, ResourceHandle::BuiltinSynchronousLoader> BuiltinResourceHandleSynchronousLoaderMap;
 NODELETE static BuiltinResourceHandleSynchronousLoaderMap& builtinResourceHandleSynchronousLoaderMap()
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     static NeverDestroyed<BuiltinResourceHandleSynchronousLoaderMap> map;
     return map;
 }

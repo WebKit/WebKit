@@ -153,7 +153,7 @@ private:
 
     TextBreakIterator take(StringView string, std::span<const char16_t> priorContext, TextBreakIterator::Mode mode, TextBreakIterator::ContentAnalysis contentAnalysis, const AtomString& locale)
     {
-        ASSERT(isMainThread());
+        ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
         auto iter = std::ranges::find_if(m_unused, [&](TextBreakIterator& candidate) {
             return candidate.mode() == mode && candidate.contentAnalysis() == contentAnalysis && candidate.locale() == locale;
         });
@@ -167,7 +167,7 @@ private:
 
     void put(TextBreakIterator&& iterator)
     {
-        ASSERT(isMainThread());
+        ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
         m_unused.append(WTF::move(iterator));
         if (m_unused.size() > capacity)
             m_unused.removeAt(0);

@@ -162,7 +162,7 @@ void CtapAuthenticator::makeCredential()
             pinParameters = PinParameters { static_cast<uint8_t>(selectPinProtocol()), m_pinAuth };
         Vector<uint8_t> cborCmd = encodeSilentGetAssertion(options.rp.id, requestData().hash, borrow(m_batches)[m_currentBatch], pinParameters);
         protect(driver())->transact(WTF::move(cborCmd), [weakThis = WeakPtr { *this }](Vector<uint8_t>&& data) mutable {
-            ASSERT(RunLoop::isMain());
+            ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
             RefPtr protectedThis = weakThis;
             if (!protectedThis)
                 return;
@@ -217,7 +217,7 @@ void CtapAuthenticator::continueSilentlyCheckCredentials(Vector<uint8_t>&& data,
     });
 
     protect(driver())->transact(WTF::move(cborCmd), [weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)](Vector<uint8_t>&& data) mutable {
-        ASSERT(RunLoop::isMain());
+        ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
         RefPtr protectedThis = weakThis;
         if (!protectedThis)
             return completionHandler(false);
@@ -286,7 +286,7 @@ void CtapAuthenticator::continueMakeCredentialAfterCheckExcludedCredentials(bool
     if (m_info.maxMsgSize() && cborCmd.size() >= *m_info.maxMsgSize())
         CTAP_RELEASE_LOG("CtapAuthenticator::makeCredential cmdSize = %lu maxMsgSize = %u", cborCmd.size(), *m_info.maxMsgSize());
     protect(driver())->transact(WTF::move(cborCmd), [weakThis = WeakPtr { *this }](Vector<uint8_t>&& data) {
-        ASSERT(RunLoop::isMain());
+        ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
         if (RefPtr protectedThis = weakThis)
             protectedThis->continueMakeCredentialAfterResponseReceived(WTF::move(data));
     });
@@ -374,7 +374,7 @@ void CtapAuthenticator::getAssertion()
             pinParameters = PinParameters { static_cast<uint8_t>(selectPinProtocol()), m_pinAuth };
         Vector<uint8_t> cborCmd = encodeSilentGetAssertion(options.rpId, requestData().hash, borrow(m_batches)[m_currentBatch], pinParameters);
         protect(driver())->transact(WTF::move(cborCmd), [weakThis = WeakPtr { *this }](Vector<uint8_t>&& data) mutable {
-            ASSERT(RunLoop::isMain());
+            ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
             RefPtr protectedThis = weakThis;
             if (!protectedThis)
                 return;
@@ -393,7 +393,7 @@ void CtapAuthenticator::getAssertion()
             pinParameters = PinParameters { static_cast<uint8_t>(selectPinProtocol()), m_pinAuth };
         Vector<uint8_t> cborCmd = encodeSilentGetAssertion(options.rpId, requestData().hash, options.allowCredentials, pinParameters);
         protect(driver())->transact(WTF::move(cborCmd), [weakThis = WeakPtr { *this }](Vector<uint8_t>&& data) {
-            ASSERT(RunLoop::isMain());
+            ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
             RefPtr protectedThis = weakThis;
             if (!protectedThis)
                 return;
@@ -457,7 +457,7 @@ void CtapAuthenticator::continueGetAssertionAfterCheckAllowCredentials()
         CTAP_RELEASE_LOG("getAssertion cmdSize = %lu maxMsgSize = %u", cborCmd.size(), *m_info.maxMsgSize());
     CTAP_RELEASE_LOG("getAssertion: Sending %s", base64EncodeToString(cborCmd).utf8());
     protect(driver())->transact(WTF::move(cborCmd), [weakThis = WeakPtr { *this }](Vector<uint8_t>&& data) {
-        ASSERT(RunLoop::isMain());
+        ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
         if (RefPtr protectedThis = weakThis)
             protectedThis->continueGetAssertionAfterResponseReceived(WTF::move(data));
     });
@@ -519,7 +519,7 @@ void CtapAuthenticator::continueGetAssertionAfterResponseReceived(Vector<uint8_t
     auto cborCmd = encodeEmptyAuthenticatorRequest(CtapRequestCommand::kAuthenticatorGetNextAssertion);
     CTAP_RELEASE_LOG("continueGetAssertionAfterResponseReceived: Sending %s", base64EncodeToString(cborCmd).utf8());
     protect(driver())->transact(WTF::move(cborCmd), [weakThis = WeakPtr { *this }](Vector<uint8_t>&& data) {
-        ASSERT(RunLoop::isMain());
+        ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
         if (RefPtr protectedThis = weakThis)
             protectedThis->continueGetNextAssertionAfterResponseReceived(WTF::move(data));
     });
@@ -560,7 +560,7 @@ void CtapAuthenticator::continueGetNextAssertionAfterResponseReceived(Vector<uin
     auto cborCmd = encodeEmptyAuthenticatorRequest(CtapRequestCommand::kAuthenticatorGetNextAssertion);
     CTAP_RELEASE_LOG("continueGetNextAssertionAfterResponseReceived: Sending %s", base64EncodeToString(cborCmd).utf8());
     protect(driver())->transact(WTF::move(cborCmd), [weakThis = WeakPtr { *this }](Vector<uint8_t>&& data) {
-        ASSERT(RunLoop::isMain());
+        ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
         if (RefPtr protectedThis = weakThis)
             protectedThis->continueGetNextAssertionAfterResponseReceived(WTF::move(data));
     });
@@ -571,7 +571,7 @@ void CtapAuthenticator::getRetries()
     auto cborCmd = encodeAsCBOR(pin::RetriesRequest { selectPinProtocol() });
     CTAP_RELEASE_LOG("getRetries: Sending %s", base64EncodeToString(cborCmd).utf8());
     protect(driver())->transact(WTF::move(cborCmd), [weakThis = WeakPtr { *this }](Vector<uint8_t>&& data) {
-        ASSERT(RunLoop::isMain());
+        ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -594,7 +594,7 @@ void CtapAuthenticator::continueGetKeyAgreementAfterGetRetries(Vector<uint8_t>&&
     auto cborCmd = encodeAsCBOR(pin::KeyAgreementRequest { selectPinProtocol() });
     CTAP_RELEASE_LOG("continueGetKeyAgreementAfterGetRetries: Sending %s", base64EncodeToString(cborCmd).utf8());
     protect(driver())->transact(WTF::move(cborCmd), [weakThis = WeakPtr { *this }, retries = retries->retries] (Vector<uint8_t>&& data) {
-        ASSERT(RunLoop::isMain());
+        ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -652,7 +652,7 @@ void CtapAuthenticator::continueGetPinTokenAfterRequestPin(const String& pin, co
     auto cborCmd = encodeAsCBOR(*tokenRequest);
     CTAP_RELEASE_LOG("continueGetPinTokenAfterRequestPin: Sending %s", base64EncodeToString(cborCmd).utf8());
     protect(driver())->transact(WTF::move(cborCmd), [weakThis = WeakPtr { *this }, tokenRequest = WTF::move(*tokenRequest)] (Vector<uint8_t>&& data) {
-        ASSERT(RunLoop::isMain());
+        ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -817,7 +817,7 @@ void CtapAuthenticator::continueSetupPinAfterCommand(Vector<uint8_t>&& data, con
     auto cborCmd = encodeAsCBOR(*tokenRequest);
     CTAP_RELEASE_LOG("continueSetupPinAfterCommand: Sending %s", base64EncodeToString(cborCmd).utf8());
     protect(driver())->transact(WTF::move(cborCmd), [weakThis = WeakPtr { *this }, tokenRequest = WTF::move(*tokenRequest)] (Vector<uint8_t>&& data) {
-        ASSERT(RunLoop::isMain());
+        ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -858,7 +858,7 @@ void CtapAuthenticator::setupPin()
     CTAP_RELEASE_LOG("setupPin: Requesting new pin from delegate");
     uint64_t minLength = m_info.minPINLength().value_or(4);
     observer->requestNewPin(minLength, [weakThis = WeakPtr { *this }] (const String& pin) mutable {
-        ASSERT(RunLoop::isMain());
+        ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -875,7 +875,7 @@ void CtapAuthenticator::setupPin()
         auto cborCmd = encodeAsCBOR(pin::KeyAgreementRequest { protectedThis->selectPinProtocol() });
         CTAP_RELEASE_LOG_WITH_THIS(protectedThis, "setupPin: Sending %s", base64EncodeToString(cborCmd).utf8());
         protect(protectedThis->driver())->transact(WTF::move(cborCmd), [weakThis = WTF::move(weakThis), pin] (Vector<uint8_t>&& data) {
-            ASSERT(RunLoop::isMain());
+            ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;
@@ -891,7 +891,7 @@ void CtapAuthenticator::performAuthenticatorSelectionForSetupPin()
     if (m_info.versions().contains(ProtocolVersion::kCtap21) || m_info.versions().contains(ProtocolVersion::kCtap21Pre)) {
         // We should perform the authenticatorSelector command
         protect(driver())->transact(encodeEmptyAuthenticatorRequest(CtapRequestCommand::kAuthenticatorAuthenticatorSelection), [weakThis = WeakPtr { *this }, weakDriver = WeakPtr { driver() }] (Vector<uint8_t>&& response) mutable {
-            ASSERT(RunLoop::isMain());
+            ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
             if (RefPtr protectedThis = weakThis.get())
                 protectedThis->setupPin();
         });
@@ -899,7 +899,7 @@ void CtapAuthenticator::performAuthenticatorSelectionForSetupPin()
         auto zeroLengthPinAuth = encodeBogusRequestForAuthenticatorSelection();
         // We should send a zeroLength pinAuth
         protect(driver())->transact(WTF::move(zeroLengthPinAuth), [weakThis = WeakPtr { *this }, weakDriver = WeakPtr { driver() }] (Vector<uint8_t>&& response) mutable {
-            ASSERT(RunLoop::isMain());
+            ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
             if (RefPtr protectedThis = weakThis.get())
                 protectedThis->setupPin();
         });

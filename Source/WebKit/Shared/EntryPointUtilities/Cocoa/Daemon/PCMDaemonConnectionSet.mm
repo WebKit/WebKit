@@ -36,7 +36,7 @@ namespace WebKit::PCM {
 
 DaemonConnectionSet& DaemonConnectionSet::singleton()
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
     static NeverDestroyed<DaemonConnectionSet> set;
     return set.get();
 }

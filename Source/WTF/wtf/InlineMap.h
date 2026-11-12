@@ -584,19 +584,19 @@ private:
 
     ALWAYS_INLINE unsigned deletedCount() const
     {
-        ASSERT(!isInline());
+        ASSERT_WITH_SECURITY_IMPLICATION(!isInline());
         return m_storage.hashedData.deletedCount;
     }
 
     ALWAYS_INLINE void incrementDeletedCount()
     {
-        ASSERT(!isInline());
+        ASSERT_WITH_SECURITY_IMPLICATION(!isInline());
         ++m_storage.hashedData.deletedCount;
     }
 
     ALWAYS_INLINE void decrementDeletedCount()
     {
-        ASSERT(!isInline());
+        ASSERT_WITH_SECURITY_IMPLICATION(!isInline());
         ASSERT(m_storage.hashedData.deletedCount);
         --m_storage.hashedData.deletedCount;
     }
@@ -675,8 +675,8 @@ private:
 
     void transitionToInline()
     {
-        ASSERT(!isInline());
-        ASSERT(m_size <= InlineCapacity);
+        ASSERT_WITH_SECURITY_IMPLICATION(!isInline());
+        ASSERT_WITH_SECURITY_IMPLICATION(m_size <= InlineCapacity);
 
         Entry* oldEntries = m_storage.hashedData.entries;
         unsigned oldCapacity = m_capacity;
@@ -721,13 +721,13 @@ private:
     template<typename K>
     Entry* findKeyOrEmpty(const K& key) const
     {
-        ASSERT(!isInline());
+        ASSERT_WITH_SECURITY_IMPLICATION(!isInline());
         return findKeyOrEmptyInStorage(key, m_storage.hashedData.entries, m_capacity);
     }
 
     Entry* findKeyOrEmptyOrDeleted(const KeyType& key) const
     {
-        ASSERT(!isInline());
+        ASSERT_WITH_SECURITY_IMPLICATION(!isInline());
         ASSERT(isPowerOfTwo(m_capacity));
 
         Entry* data = m_storage.hashedData.entries;

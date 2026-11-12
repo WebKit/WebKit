@@ -419,7 +419,7 @@ bool AuxiliaryProcessProxy::dispatchSyncMessage(IPC::Connection& connection, IPC
 void AuxiliaryProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connection::Identifier&& connectionIdentifier)
 {
     ASSERT(!m_connection);
-    ASSERT(isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
 
     auto launchTime = MonotonicTime::now() - m_processStart;
     if (launchTime > 1_s)
@@ -499,7 +499,7 @@ void AuxiliaryProcessProxy::wakeUpTemporarilyForIPC()
 
 void AuxiliaryProcessProxy::replyToPendingMessages()
 {
-    ASSERT(isMainRunLoop());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainRunLoop());
     for (auto&& message : std::exchange(m_pendingMessages, { })) {
         WTF::switchOn(message.asyncReplyHandler,
             [](std::monostate&) { },

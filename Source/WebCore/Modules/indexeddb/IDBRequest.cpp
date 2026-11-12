@@ -156,7 +156,7 @@ IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBIndex& index, Indexed
 
 IDBRequest::~IDBRequest()
 {
-    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
+    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(originThread()));
 
     WTF::switchOn(m_result,
         [](Ref<IDBCursor>& cursor) { cursor->clearRequest(); },
@@ -184,14 +184,14 @@ ExceptionOr<DOMException*> IDBRequest::error() const
 
 void IDBRequest::setSource(IDBCursor& cursor)
 {
-    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
+    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(originThread()));
 
     m_source = Source { cursor };
 }
 
 void IDBRequest::setVersionChangeTransaction(IDBTransaction& transaction)
 {
-    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
+    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(originThread()));
     ASSERT(!m_transaction);
     ASSERT(transaction.isVersionChange());
     ASSERT(!transaction.isFinishedOrFinishing());
@@ -273,7 +273,7 @@ bool IDBRequest::virtualHasPendingActivity() const
 
 void IDBRequest::stop()
 {
-    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
+    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(originThread()));
 
     cancelForStop();
 
@@ -290,7 +290,7 @@ void IDBRequest::cancelForStop()
 
 void IDBRequest::enqueueEvent(Ref<Event>&& event)
 {
-    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
+    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(originThread()));
     if (isContextStopped())
         return;
 
@@ -301,7 +301,7 @@ void IDBRequest::dispatchEvent(Event& event)
 {
     LOG_WITH_STREAM(IndexedDB, stream << "IDBRequest::dispatchEvent - "_s << event.type().string() << " ("_s << this << ")"_s);
 
-    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
+    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(originThread()));
     ASSERT(!isContextStopped());
 
     Ref protectedThis { *this };
@@ -365,7 +365,7 @@ void IDBRequest::uncaughtExceptionInEventHandler()
 {
     LOG(IndexedDB, "IDBRequest::uncaughtExceptionInEventHandler");
 
-    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
+    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(originThread()));
 
     if (m_eventBeingDispatched) {
         m_hasUncaughtException = true;
@@ -377,7 +377,7 @@ void IDBRequest::uncaughtExceptionInEventHandler()
 
 void IDBRequest::setResult(const IDBKeyData& keyData)
 {
-    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
+    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(originThread()));
 
     RefPtr context = scriptExecutionContext();
     if (!context)
@@ -391,7 +391,7 @@ void IDBRequest::setResult(const IDBKeyData& keyData)
 
 void IDBRequest::setResult(const Vector<IDBKeyData>& keyDatas)
 {
-    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
+    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(originThread()));
 
     RefPtr context = scriptExecutionContext();
     if (!context)
@@ -405,7 +405,7 @@ void IDBRequest::setResult(const Vector<IDBKeyData>& keyDatas)
 
 void IDBRequest::setResult(const IDBGetAllResult& result)
 {
-    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
+    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(originThread()));
 
     RefPtr context = scriptExecutionContext();
     if (!context)
@@ -419,7 +419,7 @@ void IDBRequest::setResult(const IDBGetAllResult& result)
 
 void IDBRequest::setResult(uint64_t number)
 {
-    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
+    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(originThread()));
 
     RefPtr context = scriptExecutionContext();
     if (!context)
@@ -433,7 +433,7 @@ void IDBRequest::setResult(uint64_t number)
 
 void IDBRequest::setResultToStructuredClone(const IDBGetResult& result)
 {
-    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
+    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(originThread()));
 
     LOG(IndexedDB, "IDBRequest::setResultToStructuredClone");
 
@@ -449,7 +449,7 @@ void IDBRequest::setResultToStructuredClone(const IDBGetResult& result)
 
 void IDBRequest::setResultToUndefined()
 {
-    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
+    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(originThread()));
 
     RefPtr context = scriptExecutionContext();
     if (!context)
@@ -473,7 +473,7 @@ IDBCursor* IDBRequest::resultCursor()
 
 void IDBRequest::willIterateCursor(IDBCursor& cursor)
 {
-    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
+    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(originThread()));
     ASSERT(isDone());
     ASSERT(scriptExecutionContext());
     ASSERT(m_transaction);
@@ -494,7 +494,7 @@ void IDBRequest::willIterateCursor(IDBCursor& cursor)
 
 void IDBRequest::didOpenOrIterateCursor(const IDBResultData& resultData)
 {
-    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
+    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(originThread()));
     ASSERT(m_pendingCursor);
 
     RefPtr context = scriptExecutionContext();
@@ -522,7 +522,7 @@ void IDBRequest::didOpenOrIterateCursor(const IDBResultData& resultData)
 
 void IDBRequest::completeRequestAndDispatchEvent(const IDBResultData& resultData)
 {
-    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
+    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(originThread()));
 
     m_readyState = ReadyState::Done;
 
@@ -537,7 +537,7 @@ void IDBRequest::onError()
 {
     LOG(IndexedDB, "IDBRequest::onError");
 
-    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
+    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(originThread()));
     ASSERT(!m_idbError.isNull());
 
     m_domError = m_idbError.toDOMException();
@@ -547,13 +547,13 @@ void IDBRequest::onError()
 void IDBRequest::onSuccess()
 {
     LOG(IndexedDB, "IDBRequest::onSuccess");
-    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
+    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(originThread()));
     enqueueEvent(Event::create(eventNames().successEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
 void IDBRequest::setResult(Ref<IDBDatabase>&& database)
 {
-    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
+    ASSERT_WITH_SECURITY_IMPLICATION(canCurrentThreadAccessThreadLocalData(originThread()));
 
     RefPtr context = scriptExecutionContext();
     if (!context)

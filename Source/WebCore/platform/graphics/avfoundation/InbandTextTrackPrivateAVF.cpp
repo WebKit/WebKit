@@ -341,7 +341,7 @@ void InbandTextTrackPrivateAVF::processCue(CFArrayRef attributedStrings, CFArray
 
 void InbandTextTrackPrivateAVF::processAttributedStrings(CFArrayRef attributedStrings, const MediaTime& time)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     CFIndex count = attributedStrings ? CFArrayGetCount(attributedStrings) : 0;
 
     if (count)

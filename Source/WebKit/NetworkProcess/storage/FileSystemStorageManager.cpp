@@ -77,7 +77,7 @@ uint64_t FileSystemStorageManager::allocatedUnusedCapacity() const
 
 std::expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError> FileSystemStorageManager::createHandle(IPC::Connection::UniqueID connection, FileSystemStorageHandle::Type type, String&& path, String&& name, bool createIfNecessary)
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(!RunLoop::isMain());
 
     if (path.isEmpty())
         return makeUnexpected(FileSystemStorageError::Unknown);
@@ -151,7 +151,7 @@ void FileSystemStorageManager::closeHandle(FileSystemStorageHandle& handle)
 
 void FileSystemStorageManager::connectionClosed(IPC::Connection::UniqueID connection)
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(!RunLoop::isMain());
 
     auto connectionHandles = m_handlesByConnection.find(connection);
     if (connectionHandles == m_handlesByConnection.end())
@@ -231,7 +231,7 @@ bool FileSystemStorageManager::hasActiveLock(const String& path) const
 
 void FileSystemStorageManager::close()
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(!RunLoop::isMain());
 
     for (auto& [connectionID, identifiers] : m_handlesByConnection) {
         for (auto identifier : identifiers) {
@@ -260,7 +260,7 @@ void FileSystemStorageManager::requestSpace(uint64_t size, CompletionHandler<voi
 
 void FileSystemStorageManager::addGlobalIdentifierReference(WebCore::FileSystemHandleGlobalIdentifier globalIdentifier)
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(!RunLoop::isMain());
 
     auto it = m_globalIdentifierRegistry.find(globalIdentifier);
     if (it != m_globalIdentifierRegistry.end() && !it->value.refcount.hasOverflowed())
@@ -269,7 +269,7 @@ void FileSystemStorageManager::addGlobalIdentifierReference(WebCore::FileSystemH
 
 void FileSystemStorageManager::removeGlobalIdentifierReference(WebCore::FileSystemHandleGlobalIdentifier globalIdentifier)
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(!RunLoop::isMain());
 
     auto it = m_globalIdentifierRegistry.find(globalIdentifier);
     if (it == m_globalIdentifierRegistry.end())
@@ -292,7 +292,7 @@ void FileSystemStorageManager::removeGlobalIdentifierReferences(std::span<const 
 
 std::expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> FileSystemStorageManager::resolveGlobalIdentifier(IPC::Connection::UniqueID connection, WebCore::FileSystemHandleGlobalIdentifier globalIdentifier)
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(!RunLoop::isMain());
 
     auto it = m_globalIdentifierRegistry.find(globalIdentifier);
     if (it == m_globalIdentifierRegistry.end())
@@ -315,7 +315,7 @@ std::expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> FileS
 
 std::optional<WebCore::FileSystemHandleRecord> FileSystemStorageManager::lookupHandle(WebCore::FileSystemHandleGlobalIdentifier globalIdentifier)
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(!RunLoop::isMain());
 
     auto it = m_globalIdentifierRegistry.find(globalIdentifier);
     if (it == m_globalIdentifierRegistry.end())
@@ -341,7 +341,7 @@ std::optional<Vector<WebCore::FileSystemHandleRecord>> FileSystemStorageManager:
 
 void FileSystemStorageManager::registerPersistedHandle(WebCore::FileSystemHandleGlobalIdentifier globalIdentifier, WebCore::FileSystemHandleKind kind, String&& path, String&& name)
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT_WITH_SECURITY_IMPLICATION(!RunLoop::isMain());
 
     m_globalIdentifierRegistry.ensure(globalIdentifier, [&] {
         return GlobalIdentifierEntry { kind, WTF::move(path), WTF::move(name), CheckedUint32 { 0 } };

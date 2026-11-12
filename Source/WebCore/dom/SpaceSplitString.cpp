@@ -200,7 +200,7 @@ inline Ref<SpaceSplitStringData> SpaceSplitStringData::create(const AtomString& 
     auto tokenArray = spaceSplitStringData->tokenArray();
     TokenAtomStringInitializer tokenInitializer(keyString, tokenArray);
     tokenizeSpaceSplitString(tokenInitializer, keyString);
-    ASSERT(static_cast<unsigned>(tokenInitializer.nextMemoryBucket() - tokenArray.data()) == tokenCount);
+    ASSERT_WITH_SECURITY_IMPLICATION(static_cast<unsigned>(tokenInitializer.nextMemoryBucket() - tokenArray.data()) == tokenCount);
     ASSERT(reinterpret_cast<const char*>(tokenInitializer.nextMemoryBucket()) - reinterpret_cast<const char*>(spaceSplitStringData.ptr()) == static_cast<ptrdiff_t>(sizeToAllocate));
 
     return spaceSplitStringData;
@@ -208,7 +208,7 @@ inline Ref<SpaceSplitStringData> SpaceSplitStringData::create(const AtomString& 
 
 RefPtr<SpaceSplitStringData> SpaceSplitStringData::create(const AtomString& keyString)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     ASSERT(!keyString.isNull());
 
     auto addResult = spaceSplitStringTable().add(keyString, nullptr);
@@ -236,7 +236,7 @@ RefPtr<SpaceSplitStringData> SpaceSplitStringData::create(const AtomString& keyS
 
 void SpaceSplitStringData::destroy(SpaceSplitStringData* spaceSplitString)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
     spaceSplitStringTable().remove(spaceSplitString->m_keyString);
 

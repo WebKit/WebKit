@@ -460,7 +460,7 @@ auto RealtimeVideoCaptureSource::takePhotoInternal(PhotoSettings&&) -> Ref<TakeP
 
 auto RealtimeVideoCaptureSource::takePhoto(PhotoSettings&& photoSettings) -> Ref<TakePhotoNativePromise>
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
     if (isEnded())
         return TakePhotoNativePromise::createAndResolve();
@@ -494,7 +494,7 @@ auto RealtimeVideoCaptureSource::takePhoto(PhotoSettings&& photoSettings) -> Ref
 
 void RealtimeVideoCaptureSource::applyConstraints(const MediaConstraints& constraints, ApplyConstraintsHandler&& handler)
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     if (!m_captureInFlight && m_pendingOperations.isEmpty()) {
         RealtimeMediaSource::applyConstraints(constraints, WTF::move(handler));
         return;
@@ -504,7 +504,7 @@ void RealtimeVideoCaptureSource::applyConstraints(const MediaConstraints& constr
 
 void RealtimeVideoCaptureSource::dispatchNextOperation()
 {
-    ASSERT(isMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     ASSERT(!m_captureInFlight);
 
     // Drain synchronous constraint applications at the front of the queue.
@@ -556,7 +556,7 @@ void RealtimeVideoCaptureSource::dispatchNextOperation()
     takePhotoInternal(WTF::move(photoSettings))->whenSettled(RunLoop::mainSingleton(),
         [this, protectedThis = Ref { *this }, producer = WTF::move(producer), configurationToRestore = WTF::move(configurationToRestore)] (auto&& result) mutable {
 
-            ASSERT(isMainThread());
+            ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
             m_captureInFlight = false;
 
