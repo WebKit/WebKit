@@ -6072,6 +6072,16 @@ SiteIsolationSharedProcessEnabled:
   defaultValue: true
   sharedPreferenceForWebProcess: true
 
+SiteIsolationSharedProcessEnhancedSecurityEnabled:
+  type: bool
+  status: internal
+  defaultsOverridable: true
+  category: security
+  humanReadableName: "Site Isolation: Enhanced Security for shared process"
+  humanReadableDescription: "Use Enhanced Security for the Site Isolation shared Web process"
+  excludeFrom: [ WebKitLegacy, WebCore ]
+  defaultValue: false
+
 SlowFrameIndicatorVisible:
   type: bool
   status: internal

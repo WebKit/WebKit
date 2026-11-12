@@ -955,7 +955,7 @@ WebPageProxy* WebPageProxy::fromIdentifier(std::optional<WebPageProxyIdentifier>
 static Ref<BrowsingContextGroup> getOrCreateBrowsingContextGroup(const API::PageConfiguration& configuration, const WebProcessProxy& process)
 {
     Ref websiteDataStore = configuration.websiteDataStore();
-    if (RefPtr preferredBrowsingContextGroup = configuration.preferredBrowsingContextGroup(); preferredBrowsingContextGroup && preferredBrowsingContextGroup->websiteDataStore() == websiteDataStore.ptr() && enhancedSecurityStatesAreConsistent(preferredBrowsingContextGroup->enhancedSecurity(), process.enhancedSecurity()))
+    if (RefPtr preferredBrowsingContextGroup = configuration.preferredBrowsingContextGroup(); preferredBrowsingContextGroup && preferredBrowsingContextGroup->websiteDataStore() == websiteDataStore.ptr() && preferredBrowsingContextGroup->canUseProcessForEnhancedSecurity(process, protect(configuration.preferences())))
         return *preferredBrowsingContextGroup;
 
     return BrowsingContextGroup::create(CrossOriginMode::Shared, websiteDataStore, process.enhancedSecurity());
@@ -6767,8 +6767,17 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
 
     Ref browsingContextGroup = browsingContextGroupForNavigation(frame, navigation, websiteDataStore, enhancedSecurity, enhancedSecurityExplicitlySet ? IsEnhancedSecurityExplicitlySet::Yes : IsEnhancedSecurityExplicitlySet::No, processSwapRequestedByClient);
 
-    if (!enhancedSecurityExplicitlySet) {
-        if (RefPtr process = browsingContextGroup->processForSite(Site { navigation.currentRequest().url() }))
+    Site site { navigation.currentRequest().url() };
+    if (!frame.isMainFrame() && site.isEmpty() && preferences->siteIsolationSharedProcessEnhancedSecurityEnabled() && !preferences->enhancedSecurityForceDisabled()) {
+        // Empty sites share a process map key, so that entry can belong to an unrelated frame.
+        if (!isEnhancedSecurityEnabledForState(enhancedSecurity)) {
+            enhancedSecurity = frame.process().enhancedSecurity();
+            auto& url = navigation.currentRequest().url();
+            if (!isEnhancedSecurityEnabledForState(enhancedSecurity) && !url.isAboutBlank() && !url.isAboutSrcDoc())
+                enhancedSecurity = processInitiatingNavigation.enhancedSecurity();
+        }
+    } else if (!enhancedSecurityExplicitlySet) {
+        if (RefPtr process = site.isEmpty() && preferences->siteIsolationSharedProcessEnhancedSecurityEnabled() ? nullptr : browsingContextGroup->processForSite(site))
             enhancedSecurity = process->process().enhancedSecurity();
         else if (frame.isMainFrame() && !enhancedSecurityStatesAreConsistent(enhancedSecurity, browsingContextGroup->enhancedSecurity()))
             enhancedSecurity = browsingContextGroup->enhancedSecurity();
@@ -6777,7 +6786,6 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
     if (shouldUseEnhancedSecurityHeuristics(preferences) && enhancedSecurity != EnhancedSecurity::EnabledPolicy)
         protect(this->websiteDataStore())->trackEnhancedSecurityForDomain(RegistrableDomain { navigation.currentRequest().url() }, enhancedSecurity);
 
-    Site site { navigation.currentRequest().url() };
     // A subframe belongs to the committed main frame document, not to a pending main frame load. The decision for a
     // removed subframe can arrive after the web process exited, when there is no main frame.
     Site mainFrameSite = frame.isMainFrame() ? site : Site { m_mainFrame ? m_mainFrame->url() : pageLoadState().url() };
