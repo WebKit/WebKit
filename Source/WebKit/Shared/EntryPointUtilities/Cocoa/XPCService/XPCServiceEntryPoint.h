@@ -90,8 +90,9 @@ void setOSTransaction(OSObjectPtr<os_transaction_t>&&);
 
 enum class EnableLockdownMode: bool { No, Yes };
 enum class EnableEnhancedSecurity: bool { No, Yes };
+enum class EnableRegExpInterpreterBodyRestart : bool { No, Yes };
 
-void setJSCOptions(xpc_object_t initializerMessage, EnableLockdownMode, EnableEnhancedSecurity, bool isWebContentProcess);
+void setJSCOptions(xpc_object_t initializerMessage, EnableLockdownMode, EnableEnhancedSecurity, EnableRegExpInterpreterBodyRestart, bool isWebContentProcess);
 void disableJSC(NOESCAPE WTF::CompletionHandler<void(void)>&& beforeFinalizeHandler);
 
 template<typename XPCServiceType, typename XPCServiceInitializerDelegateType, bool isWebContentProcess = false>
@@ -118,7 +119,8 @@ void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_
     if (initializerMessage) {
         bool enableLockdownMode = parameters.extraInitializationData.get<HashTranslatorASCIILiteral>("enable-lockdown-mode"_s) == "1"_s;
         bool enableEnhancedSecurity = parameters.extraInitializationData.get<HashTranslatorASCIILiteral>("enable-enhanced-security"_s) == "1"_s;
-        setJSCOptions(initializerMessage, enableLockdownMode ? EnableLockdownMode::Yes : EnableLockdownMode::No, enableEnhancedSecurity ? EnableEnhancedSecurity::Yes : EnableEnhancedSecurity::No, isWebContentProcess);
+        bool enableRegExpInterpreterBodyRestart = parameters.extraInitializationData.get<HashTranslatorASCIILiteral>("enable-regexp-interpreter-body-restart"_s) == "1"_s;
+        setJSCOptions(initializerMessage, enableLockdownMode ? EnableLockdownMode::Yes : EnableLockdownMode::No, enableEnhancedSecurity ? EnableEnhancedSecurity::Yes : EnableEnhancedSecurity::No, enableRegExpInterpreterBodyRestart ? EnableRegExpInterpreterBodyRestart::Yes : EnableRegExpInterpreterBodyRestart::No, isWebContentProcess);
     }
 
     // InitializeWebKit2() calls linkedOnOrAfterSDKWithBehavior(), so SDK-aligned behaviors must be
