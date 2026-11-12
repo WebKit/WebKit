@@ -206,14 +206,14 @@ void AudioDestinationGStreamer::initializePipeline()
     }
 
     if (GST_IS_AUDIO_BASE_SINK(m_audioSink.get()))
-        g_object_set(m_audioSink.get(), "buffer-time", audioSinkBufferTime, nullptr);
+        g_object_set(m_audioSink.get(), "buffer-time", audioSinkBufferTime, "slave-method", GST_AUDIO_BASE_SINK_SLAVE_NONE, nullptr);
     else {
         // Probe platform early on for a working audio output device in autoaudiosink.
         auto nameView = StringView::fromLatin1(GST_OBJECT_NAME(m_audioSink.get()));
         if (nameView.startsWith("autoaudiosink"_s)) {
             g_signal_connect(m_audioSink.get(), "child-added", G_CALLBACK(+[](GstChildProxy*, GObject* object, gchar*, gpointer) {
                 if (GST_IS_AUDIO_BASE_SINK(object))
-                    g_object_set(object, "buffer-time", audioSinkBufferTime, nullptr);
+                    g_object_set(object, "buffer-time", audioSinkBufferTime, "slave-method", GST_AUDIO_BASE_SINK_SLAVE_NONE, nullptr);
             }), nullptr);
 
             // Autoaudiosink does the real sink detection in the GST_STATE_NULL->READY transition
