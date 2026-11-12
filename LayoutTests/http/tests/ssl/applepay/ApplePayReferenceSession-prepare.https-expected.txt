@@ -1,0 +1,25 @@
+Test ApplePayReferenceSession.prepare(), which needs no user gesture, against the mock payment coordinator.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+With a token:
+PASS token is "mock-token"
+PASS internals.mockPaymentCoordinator.referenceSessionRequest.clientIdentifier is "com.example.client"
+PASS internals.mockPaymentCoordinator.referenceSessionShouldDiscloseCapability is true
+PASS session.prepare() rejected with InvalidStateError.
+
+When Apple Pay capability disclosure is not allowed:
+PASS token is "mock-token"
+PASS internals.mockPaymentCoordinator.referenceSessionShouldDiscloseCapability is false
+
+Without a token:
+PASS session.prepare() rejected with NotSupportedError.
+
+When the frame is removed while prepare() is in flight:
+PASS Removing the frame did not crash.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
