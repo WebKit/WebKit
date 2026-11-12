@@ -1057,6 +1057,8 @@ def decode_type(type, serialized_types):
         result.append('')
 
     if type.has_optional_tuple_bits() and type.populate_from_empty_constructor:
+        if type.return_unique_ref:
+            raise Exception(f'UniqueRef is not supported together with OptionalTupleBits and LegacyPopulateFromEmptyConstructor: {type.namespace_and_name()}')
         result.append(f'    {type.namespace_and_name()} result;')
 
     if type.debug_decoding_failure:
@@ -1282,11 +1284,14 @@ def generate_one_impl(type, template_argument, serialized_types):
             result.append('    if (!decoder.isValid()) [[unlikely]]')
             result.append('        return std::nullopt;')
             if type.populate_from_empty_constructor and not type.has_optional_tuple_bits():
-                result.append(f'    {name_with_template} result;')
+                if type.return_unique_ref:
+                    result.append(f'    auto result = makeUniqueRef<{name_with_template}>();')
+                else:
+                    result.append(f'    {name_with_template} result;')
                 for member in type.serialized_members():
                     if member.condition is not None:
                         result.append(f'#if {member.condition}')
-                    result.append(f'    result.{member.name} = WTF::move(*{member.name});')
+                    result.append(f'    result{"->" if type.return_unique_ref else "."}{member.name} = WTF::move(*{member.name});')
                     if member.condition is not None:
                         result.append('#endif')
                 result.append('    return { WTF::move(result) };')

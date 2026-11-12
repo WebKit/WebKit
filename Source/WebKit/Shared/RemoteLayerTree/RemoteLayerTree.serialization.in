@@ -105,7 +105,7 @@ header: "RemoteLayerBackingStore.h"
 #endif
 };
 
-[LegacyPopulateFromEmptyConstructor, DisableMissingMemberCheck] class WebKit::RemoteLayerTreeTransaction {
+[LegacyPopulateFromEmptyConstructor, DisableMissingMemberCheck, UniqueRef] class WebKit::RemoteLayerTreeTransaction {
 {
     Markable<WebCore::PlatformLayerIdentifier> m_rootLayerID;
     WebKit::ChangedLayers m_changedLayers;
@@ -298,7 +298,7 @@ using WebKit::PageData::TransactionCallbackID = IPC::AsyncReplyID;
 #endif
 };
 
-using WebKit::RemoteLayerTreeCommitBundle::RootFrameData = std::pair<WebKit::RemoteLayerTreeTransaction, WebKit::RemoteScrollingCoordinatorTransaction>;
+using WebKit::RemoteLayerTreeCommitBundle::RootFrameData = std::pair<UniqueRef<WebKit::RemoteLayerTreeTransaction>, WebKit::RemoteScrollingCoordinatorTransaction>;
 
 struct WebKit::RemoteLayerTreeCommitBundle {
     Vector<WebKit::RemoteLayerTreeCommitBundle::RootFrameData> transactions;

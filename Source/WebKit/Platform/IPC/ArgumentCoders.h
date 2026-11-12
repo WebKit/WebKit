@@ -342,7 +342,8 @@ template<typename T> struct ArgumentCoder<UniqueRef<T>> {
     static void encode(Encoder& encoder, U&& object)
     {
         static_assert(std::is_same_v<std::remove_cvref_t<U>, UniqueRef<T>>);
-        encoder << WTF::forward_like<U>(object.get());
+        // The caller's UniqueRef owns the object for the duration of the call.
+        SUPPRESS_UNCHECKED_ARG encoder << WTF::forward_like<U>(object.get());
     }
 
     template<typename Decoder>

@@ -74,7 +74,7 @@ struct ChangedLayers {
     ~ChangedLayers();
 };
 
-class RemoteLayerTreeTransaction final : public CanMakeCheckedPtr<RemoteLayerTreeTransaction, WTF::DefaultedOperatorEqual::No, WTF::CheckedPtrDeleteCheckException::Yes> {
+class RemoteLayerTreeTransaction final : public CanMakeCheckedPtr<RemoteLayerTreeTransaction> {
     WTF_MAKE_TZONE_ALLOCATED(RemoteLayerTreeTransaction);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteLayerTreeTransaction);
 public:
@@ -130,8 +130,6 @@ public:
 
     RemoteLayerTreeTransaction();
     ~RemoteLayerTreeTransaction();
-    RemoteLayerTreeTransaction(RemoteLayerTreeTransaction&&);
-    RemoteLayerTreeTransaction& operator=(RemoteLayerTreeTransaction&&);
 
     std::optional<WebCore::PlatformLayerIdentifier> rootLayerID() const { return m_rootLayerID.asOptional(); }
     NODELETE void setRootLayerID(WebCore::PlatformLayerIdentifier);

@@ -38,6 +38,7 @@
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ViewportArguments.h>
 #include <optional>
+#include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
 
 #if !defined(NDEBUG) || !LOG_DISABLED
@@ -103,7 +104,7 @@ struct MainFrameData {
 };
 
 struct RemoteLayerTreeCommitBundle {
-    using RootFrameData = std::pair<RemoteLayerTreeTransaction, RemoteScrollingCoordinatorTransaction>;
+    using RootFrameData = std::pair<UniqueRef<RemoteLayerTreeTransaction>, RemoteScrollingCoordinatorTransaction>;
 
     Vector<RootFrameData> transactions;
     PageData pageData;

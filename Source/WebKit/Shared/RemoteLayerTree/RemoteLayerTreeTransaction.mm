@@ -49,10 +49,6 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteLayerTreeTransaction);
 
-RemoteLayerTreeTransaction::RemoteLayerTreeTransaction(RemoteLayerTreeTransaction&&) = default;
-
-RemoteLayerTreeTransaction& RemoteLayerTreeTransaction::operator=(RemoteLayerTreeTransaction&&) = default;
-
 RemoteLayerTreeTransaction::RemoteLayerTreeTransaction() = default;
 
 RemoteLayerTreeTransaction::~RemoteLayerTreeTransaction() = default;
