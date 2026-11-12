@@ -1,0 +1,3 @@
+
+FAIL Test that TaskSignal.onprioritychange listens for prioritychange events Can't find variable: TaskController
+

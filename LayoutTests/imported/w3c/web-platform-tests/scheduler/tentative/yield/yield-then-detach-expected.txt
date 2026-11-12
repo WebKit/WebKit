@@ -1,0 +1,4 @@
+
+
+FAIL Test scheduler.yield() from an iframe that is removed promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'iframeScheduler.yield')"
+

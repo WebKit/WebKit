@@ -1,0 +1,3 @@
+
+FAIL Tests replacing window.scheduler with a different object Can't find variable: scheduler
+

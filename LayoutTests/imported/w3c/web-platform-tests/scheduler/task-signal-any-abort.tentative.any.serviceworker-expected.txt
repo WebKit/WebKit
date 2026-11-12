@@ -1,0 +1,4 @@
+
+Harness Error (FAIL), message = Unhandled rejection: ReferenceError: Can't find variable: TaskSignal
+
+
