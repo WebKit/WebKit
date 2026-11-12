@@ -70,7 +70,12 @@ bool AccessibilityController::addNotificationListener(JSContextRef context, JSVa
 
 bool AccessibilityController::removeNotificationListener()
 {
-    return false;
+    ASSERT(m_globalNotificationHandler);
+
+    [m_globalNotificationHandler stopObserving];
+    m_globalNotificationHandler.clear();
+
+    return true;
 }
 
 RefPtr<OpaqueJSString> AccessibilityController::platformName()
