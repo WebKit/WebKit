@@ -792,6 +792,11 @@ void Internals::resetToConsistentState(Page& page)
     page.setFullscreenAutoHideDuration(0_s);
     page.setFullscreenInsets({ });
 
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    if (PlatformScreen::singleton()->screenContentsFormatsForTesting())
+        PlatformScreen::updateSingletonContentsFormatsForTesting({ });
+#endif
+
     PlatformMediaEngineConfigurationFactory::disableMock();
 
 #if ENABLE(ENCRYPTED_MEDIA)
