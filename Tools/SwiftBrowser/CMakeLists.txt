@@ -109,6 +109,9 @@ webkit_target_add_swift_options(SwiftBrowser
     "-I${WEBKIT_DIR}/Platform/spi/Cocoa"
     "-I${WEBKIT_DIR}/Platform/spi/Cocoa/Modules"
 )
+get_target_property(_webkit_binary_dir WebKit BINARY_DIR)
+webkit_target_add_swift_objc_importer_options(SwiftBrowser "${_webkit_binary_dir}/WebKit.platform-swift-args.resp")
+unset(_webkit_binary_dir)
 
 WEBKIT_EXECUTABLE(SwiftBrowser)
 WEBKIT_RAISE_SWIFT_NINJA_PRIORITY(SwiftBrowser 6)

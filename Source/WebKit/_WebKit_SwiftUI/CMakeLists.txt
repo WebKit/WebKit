@@ -21,25 +21,10 @@ set(WebKit_SWIFTUI_SOURCES
     ${WEBKIT_DIR}/_WebKit_SwiftUI/Implementation/WebViewRepresentable.swift
 )
 
-# Swift flags shared by every platform. The -Xcc -D/-f flags come
-# from _WEBKIT_COMPUTE_SWIFT_SHARED_CLANG_FLAGS so the overlay lands in the same
-# SwiftModuleCache hash dir as WebKit, PAL and WebGPU; only -I and -F, which are
-# not hashed, are listed here. Flags Xcode sets for every Swift target
+# Swift flags shared by every platform. Flags Xcode sets for every Swift target
 # (-swift-version, InternalImportsByDefault, -disable-sandbox) come from
 # WebKitSwiftFlags.cmake.
-# FIXME: _WebKit_SwiftUI shouldn't use this function, as it doesn't build with
-# c++ interop.
-_WEBKIT_COMPUTE_SWIFT_SHARED_CLANG_FLAGS(_swiftui_shared_cc_flags)
-# Strip the UCHAR_TYPE define, which is only relevant for C++ and otherwise
-# breaks icu's module.
-list(FILTER _swiftui_shared_cc_flags EXCLUDE REGEX "^-DUCHAR_TYPE=")
-
-set(WebKit_SWIFTUI_SWIFT_FLAGS "")
-foreach (_flag IN LISTS _swiftui_shared_cc_flags)
-    list(APPEND WebKit_SWIFTUI_SWIFT_FLAGS "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc ${_flag}>")
-endforeach ()
-unset(_swiftui_shared_cc_flags)
-list(APPEND WebKit_SWIFTUI_SWIFT_FLAGS
+set(WebKit_SWIFTUI_SWIFT_FLAGS
     "$<$<COMPILE_LANGUAGE:Swift>:-F${CMAKE_LIBRARY_OUTPUT_DIRECTORY}>"
     "$<$<COMPILE_LANGUAGE:Swift>:-I${WEBKIT_DIR}/Platform/spi/Cocoa>"
     "$<$<COMPILE_LANGUAGE:Swift>:-I${WEBKIT_DIR}/Platform/spi/Cocoa/Modules>"
@@ -52,13 +37,8 @@ list(APPEND WebKit_SWIFTUI_SWIFT_FLAGS
     "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -iquote${CMAKE_BINARY_DIR}>"
     "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xfrontend -experimental-spi-only-imports>"
     "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-library-level api>"
-    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:@${_webkit_binary_dir}/WebKit.platform-swift-args.resp>"
     ${WEBKIT_PRIVATE_FRAMEWORKS_COMPILE_FLAG}
 )
-if (CMAKE_Swift_COMPILER_TARGET)
-    list(APPEND WebKit_SWIFTUI_SWIFT_FLAGS
-        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-clang-target ${CMAKE_Swift_COMPILER_TARGET}>")
-endif ()
 
 set(_WebKit_SwiftUI_LIBRARY_TYPE SHARED)
 set(_WebKit_SwiftUI_SOURCES ${WebKit_SWIFTUI_SOURCES})
@@ -77,6 +57,7 @@ if (_WebKit_SwiftUI_INSTALL_NAME_DIR)
     )
 endif ()
 target_compile_options(_WebKit_SwiftUI PRIVATE ${WebKit_SWIFTUI_SWIFT_FLAGS})
+webkit_target_add_swift_objc_importer_options(_WebKit_SwiftUI "${_webkit_binary_dir}/WebKit.platform-swift-args.resp")
 target_link_libraries(_WebKit_SwiftUI PRIVATE
     "-framework SwiftUI"
     "-framework Foundation"
@@ -107,6 +88,10 @@ if (WebKit_SwiftUI_ADDITIONS_SOURCES)
 endif ()
 
 add_dependencies(_WebKit_SwiftUI WebKit WebKit_StageSwiftModule WebKit_CopyModules)
+
+# WebKitSwift's Swift compile builds every SDK module this needs so do not build twice.
+add_custom_target(_WebKit_SwiftUI_AfterWebKitSwift DEPENDS "$<FILTER:$<TARGET_OBJECTS:WebKitSwift>,INCLUDE,[.]swift[.]o>")
+add_dependencies(_WebKit_SwiftUI _WebKit_SwiftUI_AfterWebKitSwift)
 
 # Stage the swiftmodule inside the framework under the target triple, the layout
 # the Swift importer expects when it resolves the overlay.
