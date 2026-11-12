@@ -6494,6 +6494,11 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
         policyAction = PolicyAction::Ignore;
     }
 
+    if (processSwapRequestedByClient == ProcessSwapRequestedByClient::Yes && navigation.targetItem()) {
+        WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "receivedNavigationActionPolicyDecision: ignoring the client's request for a new process because this is a back/forward navigation");
+        processSwapRequestedByClient = ProcessSwapRequestedByClient::No;
+    }
+
     // A subframe navigation stays in its group, so it uses the group's data store.
     Ref websiteDataStore = frame.isMainFrame() ? m_websiteDataStore.get() : *protect(m_browsingContextGroup)->websiteDataStore();
     RefPtr policies = navigation.websitePolicies();

@@ -34,10 +34,12 @@ extern "C" {
 WK_EXPORT WKTypeID WKFramePolicyListenerGetTypeID(void);
 
 WK_EXPORT void WKFramePolicyListenerUse(WKFramePolicyListenerRef);
+// Like WKFramePolicyListenerUse, but asks for another web content process, except for a back/forward navigation.
 WK_EXPORT void WKFramePolicyListenerUseInNewProcess(WKFramePolicyListenerRef);
 WK_EXPORT void WKFramePolicyListenerDownload(WKFramePolicyListenerRef);
 WK_EXPORT void WKFramePolicyListenerIgnore(WKFramePolicyListenerRef);
 WK_EXPORT void WKFramePolicyListenerUseWithPolicies(WKFramePolicyListenerRef, WKWebsitePoliciesRef);
+// Like WKFramePolicyListenerUseWithPolicies, but asks for another web content process, except for a back/forward navigation.
 WK_EXPORT void WKFramePolicyListenerUseInNewProcessWithPolicies(WKFramePolicyListenerRef, WKWebsitePoliciesRef);
 
 #ifdef __cplusplus

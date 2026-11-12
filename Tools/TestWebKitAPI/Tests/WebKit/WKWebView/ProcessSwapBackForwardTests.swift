@@ -25,8 +25,10 @@ import Foundation
 private import TestWebKitAPILibrary
 import Testing
 import WebKit
+private import WebKit_Private.WKNavigationDelegatePrivate
 private import WebKit_Private.WKProcessPoolPrivate
 private import WebKit_Private.WKWebViewPrivate
+private import WebKit_Private.WKWebpagePreferencesPrivate
 
 import struct Foundation.URL
 import struct Swift.String
@@ -40,14 +42,13 @@ import struct Swift.String
 struct ProcessSwapBackForwardTests {
     @Test
     func navigateBackAndForwardAcrossCrossOriginIsolationUsesBackForwardCache() async throws {
-        let pageshowScript = "<script>addEventListener('pageshow', event => { window.persisted = event.persisted })</script>"
         var server = try HTTPServer(protocol: .httpsProxy) {
             Route("/shared") {
-                pageshowScript + "shared"
+                Self.pageshowScript + "shared"
             }
 
             Route("/isolated", headerFields: Self.crossOriginIsolation) {
-                pageshowScript + "isolated"
+                Self.pageshowScript + "isolated"
             }
         }
 
@@ -237,6 +238,211 @@ struct ProcessSwapBackForwardTests {
             try await navigationDelegate.waitForDidFinishNavigation()
             #expect(webView._committedURL?.absoluteString == firstURL.absoluteString)
         }
+    }
+
+    @Test(arguments: [false, true], [false, true])
+    func navigateBackAndForwardAskingForNewProcessUsesBackForwardCache(siteIsolationEnabled: Bool, crossSite: Bool) async throws {
+        var server = try Self.serverWithPagesAAndB()
+
+        try await server.run { serverConfiguration in
+            let (webView, navigationDelegate) = Self.processSwappingWebViewAndDelegate(
+                server: serverConfiguration,
+                processPool: .processSwapping(),
+                siteIsolationEnabled: siteIsolationEnabled
+            )
+
+            webView.load(URLRequest(url: try #require(URL(string: "https://example.com/a"))))
+            try await navigationDelegate.waitForDidFinishNavigation()
+            let firstProcessIdentifier = webView._webProcessIdentifier
+            try await webView.callJavaScript { "window.marker = 'a'" }
+
+            let secondHost = crossSite ? "apple.com" : "example.com"
+            webView.load(URLRequest(url: try #require(URL(string: "https://\(secondHost)/b"))))
+            try await navigationDelegate.waitForDidFinishNavigation()
+            let secondProcessIdentifier = webView._webProcessIdentifier
+            #expect((secondProcessIdentifier != firstProcessIdentifier) == crossSite)
+            try await webView.callJavaScript { "window.marker = 'b'" }
+
+            let backForwardNavigationCount = Self.askForNewProcess(for: navigationDelegate)
+            webView.goBack()
+            try await navigationDelegate.waitForDidFinishNavigation()
+            #expect(backForwardNavigationCount() == 1)
+            #expect(webView._webProcessIdentifier == firstProcessIdentifier)
+            let documentAfterGoingBack = try await Self.markerAndPersisted(in: webView)
+            #expect(documentAfterGoingBack == "a true")
+
+            webView.goForward()
+            try await navigationDelegate.waitForDidFinishNavigation()
+            #expect(backForwardNavigationCount() == 2)
+            #expect(webView._webProcessIdentifier == secondProcessIdentifier)
+            let documentAfterGoingForward = try await Self.markerAndPersisted(in: webView)
+            #expect(documentAfterGoingForward == "b true")
+        }
+    }
+
+    @Test(arguments: [false, true])
+    func navigateBackAskingForNewProcessWithoutBackForwardCacheStaysInProcess(siteIsolationEnabled: Bool) async throws {
+        var server = try Self.serverWithPagesAAndB()
+
+        try await server.run { serverConfiguration in
+            let (webView, navigationDelegate) = Self.processSwappingWebViewAndDelegate(
+                server: serverConfiguration,
+                processPool: .processSwapping(backForwardCacheEnabled: false),
+                siteIsolationEnabled: siteIsolationEnabled
+            )
+
+            webView.load(URLRequest(url: try #require(URL(string: "https://example.com/a"))))
+            try await navigationDelegate.waitForDidFinishNavigation()
+            let processIdentifier = webView._webProcessIdentifier
+            try await webView.callJavaScript { "window.marker = 'a'" }
+
+            webView.load(URLRequest(url: try #require(URL(string: "https://example.com/b"))))
+            try await navigationDelegate.waitForDidFinishNavigation()
+            #expect(webView._webProcessIdentifier == processIdentifier)
+
+            let backForwardNavigationCount = Self.askForNewProcess(for: navigationDelegate)
+            webView.goBack()
+            try await navigationDelegate.waitForDidFinishNavigation()
+            #expect(backForwardNavigationCount() == 1)
+            #expect(webView._committedURL?.absoluteString == "https://example.com/a")
+            #expect(webView._webProcessIdentifier == processIdentifier)
+            #expect(try await webView.callJavaScript(returning: String.self) { "return typeof window.marker" } == "undefined")
+        }
+    }
+
+    @Test(arguments: [false, true])
+    func navigateBackAcrossSitesAskingForNewProcessWithoutBackForwardCacheReturnsToItsProcess(siteIsolationEnabled: Bool) async throws {
+        var server = try Self.serverWithPagesAAndB()
+
+        try await server.run { serverConfiguration in
+            let (webView, navigationDelegate) = Self.processSwappingWebViewAndDelegate(
+                server: serverConfiguration,
+                processPool: .processSwapping(backForwardCacheEnabled: false),
+                siteIsolationEnabled: siteIsolationEnabled
+            )
+            let openedWebViews = OpenedWebViewRecorder(siteIsolationEnabled: siteIsolationEnabled)
+            webView.uiDelegate = openedWebViews
+
+            webView.load(URLRequest(url: try #require(URL(string: "https://example.com/a"))))
+            try await navigationDelegate.waitForDidFinishNavigation()
+            let processIdentifier = webView._webProcessIdentifier
+            try await webView.callJavaScript { "window.open('https://example.com/b'); return undefined" }
+            let popup = try await openedWebViews.nextOpenedWebView()
+            #expect(popup.webView._webProcessIdentifier == processIdentifier)
+
+            webView.load(URLRequest(url: try #require(URL(string: "https://apple.com/b"))))
+            try await navigationDelegate.waitForDidFinishNavigation()
+            #expect(webView._webProcessIdentifier != processIdentifier)
+
+            let backForwardNavigationCount = Self.askForNewProcess(for: navigationDelegate)
+            webView.goBack()
+            try await navigationDelegate.waitForDidFinishNavigation()
+            #expect(backForwardNavigationCount() == 1)
+            #expect(webView._committedURL?.absoluteString == "https://example.com/a")
+            #expect(webView._webProcessIdentifier == processIdentifier)
+            withExtendedLifetime(popup) {}
+        }
+    }
+
+    @Test(arguments: [false, true])
+    func navigateBackToOtherWebsiteDataStoreAskingForNewProcessUsesNewProcess(siteIsolationEnabled: Bool) async throws {
+        var server = try Self.serverWithPagesAAndB()
+
+        try await server.run { serverConfiguration in
+            let (webView, navigationDelegate) = Self.processSwappingWebViewAndDelegate(
+                server: serverConfiguration,
+                processPool: .processSwapping(backForwardCacheEnabled: false),
+                siteIsolationEnabled: siteIsolationEnabled
+            )
+
+            webView.load(URLRequest(url: try #require(URL(string: "https://example.com/a"))))
+            try await navigationDelegate.waitForDidFinishNavigation()
+            let processIdentifier = webView._webProcessIdentifier
+
+            webView.load(URLRequest(url: try #require(URL(string: "https://example.com/b"))))
+            try await navigationDelegate.waitForDidFinishNavigation()
+            #expect(webView._webProcessIdentifier == processIdentifier)
+
+            let otherWebsiteDataStore = WKWebsiteDataStore.nonPersistent()
+            navigationDelegate.decidePolicyForNavigationActionWithPreferences = { navigationAction, preferences, decisionHandler in
+                if navigationAction.navigationType == .backForward {
+                    preferences._websiteDataStore = otherWebsiteDataStore
+                }
+                decisionHandler(_WKNavigationActionPolicyAllowInNewProcess, preferences)
+            }
+            webView.goBack()
+            try await navigationDelegate.waitForDidFinishNavigation()
+            #expect(webView._committedURL?.absoluteString == "https://example.com/a")
+            #expect(webView._webProcessIdentifier != processIdentifier)
+            #expect(webView._webProcessIdentifier != 0)
+        }
+    }
+
+    @Test(arguments: [false, true])
+    func sameSiteNavigationAskingForNewProcessUsesNewProcess(siteIsolationEnabled: Bool) async throws {
+        var server = try Self.serverWithPagesAAndB()
+
+        try await server.run { serverConfiguration in
+            let (webView, navigationDelegate) = Self.processSwappingWebViewAndDelegate(
+                server: serverConfiguration,
+                processPool: .processSwapping(),
+                siteIsolationEnabled: siteIsolationEnabled
+            )
+
+            webView.load(URLRequest(url: try #require(URL(string: "https://example.com/a"))))
+            try await navigationDelegate.waitForDidFinishNavigation()
+            let firstProcessIdentifier = webView._webProcessIdentifier
+
+            let backForwardNavigationCount = Self.askForNewProcess(for: navigationDelegate)
+            webView.load(URLRequest(url: try #require(URL(string: "https://example.com/b"))))
+            try await navigationDelegate.waitForDidFinishNavigation()
+            #expect(backForwardNavigationCount() == 0)
+            #expect(webView._webProcessIdentifier != firstProcessIdentifier)
+            #expect(webView._webProcessIdentifier != 0)
+        }
+    }
+
+    private static let pageshowScript = "<script>addEventListener('pageshow', event => { window.persisted = event.persisted })</script>"
+
+    private static func serverWithPagesAAndB() throws -> HTTPServer {
+        try HTTPServer(protocol: .httpsProxy) {
+            Route("/a") {
+                Self.pageshowScript + "a"
+            }
+
+            Route("/b") {
+                Self.pageshowScript + "b"
+            }
+        }
+    }
+
+    private static func processSwappingWebViewAndDelegate(
+        server: HTTPServer.Configuration,
+        processPool: WKProcessPool,
+        siteIsolationEnabled: Bool
+    ) -> (webView: TestWKWebView, navigationDelegate: TestNavigationDelegate) {
+        let configuration = WKWebViewConfiguration(httpsProxyFor: server)
+        configuration.processPool = processPool
+        return webViewAndDelegate(
+            configuration: configuration,
+            frame: CGRect(x: 0, y: 0, width: 800, height: 600),
+            siteIsolationEnabled: siteIsolationEnabled
+        )
+    }
+
+    private static func askForNewProcess(for navigationDelegate: TestNavigationDelegate) -> () -> Int {
+        var backForwardNavigationCount = 0
+        navigationDelegate.decidePolicyForNavigationAction = { navigationAction, decisionHandler in
+            if navigationAction.navigationType == .backForward {
+                backForwardNavigationCount += 1
+            }
+            decisionHandler(_WKNavigationActionPolicyAllowInNewProcess)
+        }
+        return { backForwardNavigationCount }
+    }
+
+    private static func markerAndPersisted(in webView: WKWebView) async throws -> String {
+        try await webView.callJavaScript(returning: String.self) { "return `${window.marker} ${window.persisted}`" }
     }
 
     private static let crossOriginIsolation = [
