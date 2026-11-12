@@ -204,4 +204,172 @@ struct SiteIsolationBrowsingContextGroupTests {
             #expect(await webView.frameTreesInProcesses() == expectedFrameTrees)
         }
     }
+
+    @Test(arguments: [true, false])
+    func cancelledCoopNavigationKeepsOpener(siteIsolationEnabled: Bool) async throws {
+        try await assertCoopNavigationThatDoesNotCommitKeepsOpener(
+            siteIsolationEnabled: siteIsolationEnabled,
+            coopPath: "/coop",
+            coopResponsePolicy: .cancel
+        )
+    }
+
+    @Test(arguments: [true, false])
+    func coopNavigationTurnedIntoDownloadKeepsOpener(siteIsolationEnabled: Bool) async throws {
+        try await assertCoopNavigationThatDoesNotCommitKeepsOpener(
+            siteIsolationEnabled: siteIsolationEnabled,
+            coopPath: "/coop",
+            coopResponsePolicy: .download
+        )
+    }
+
+    @Test(arguments: [true, false])
+    func coopNavigationReceivingNoContentResponseKeepsOpener(siteIsolationEnabled: Bool) async throws {
+        try await assertCoopNavigationThatDoesNotCommitKeepsOpener(
+            siteIsolationEnabled: siteIsolationEnabled,
+            coopPath: "/coop-204"
+        )
+    }
+
+    @Test(arguments: [true, false])
+    func committedCoopNavigationSeversOpener(siteIsolationEnabled: Bool) async throws {
+        var server = try HTTPServer(protocol: .httpsProxy) {
+            Self.openerRoutes
+
+            Route("/coop", headerFields: ["Cross-Origin-Opener-Policy": "same-origin"]) {
+                "coop"
+            }
+        }
+
+        try await server.run { serverConfiguration in
+            let (opener, opened) = try await Self.openerAndOpenedWebViews(
+                siteIsolationEnabled: siteIsolationEnabled,
+                server: serverConfiguration
+            )
+            defer { withExtendedLifetime(opener) {} }
+            #expect(try await Self.hasOpener(opened.webView))
+
+            try await Self.navigate(opened.webView, to: "https://example.com/coop", andWaitWith: opened.navigationDelegate)
+            #expect(try await !Self.hasOpener(opened.webView))
+            #expect(try await Self.windowName(opened.webView) == "")
+        }
+    }
+
+    @Test(arguments: [true, false])
+    func clientStartedCrossSiteNavigationSeversOpener(siteIsolationEnabled: Bool) async throws {
+        var server = try HTTPServer(protocol: .httpsProxy) {
+            Self.openerRoutes
+
+            Route("/target") {
+                "target"
+            }
+        }
+
+        try await server.run { serverConfiguration in
+            let (opener, opened) = try await Self.openerAndOpenedWebViews(
+                siteIsolationEnabled: siteIsolationEnabled,
+                server: serverConfiguration
+            )
+            defer { withExtendedLifetime(opener) {} }
+            #expect(try await Self.hasOpener(opened.webView))
+
+            opened.webView.load(URLRequest(url: try #require(URL(string: "https://apple.com/target"))))
+            try await opened.navigationDelegate.waitForDidFinishNavigation()
+            #expect(try await !Self.hasOpener(opened.webView))
+            #expect(try await Self.windowName(opened.webView) == "")
+        }
+    }
+
+    private func assertCoopNavigationThatDoesNotCommitKeepsOpener(
+        siteIsolationEnabled: Bool,
+        coopPath: String,
+        coopResponsePolicy: WKNavigationResponsePolicy? = nil
+    ) async throws {
+        var server = try HTTPServer(protocol: .httpsProxy) {
+            Self.openerRoutes
+
+            Route("/target") {
+                "target"
+            }
+
+            Route("/coop", headerFields: ["Cross-Origin-Opener-Policy": "same-origin"]) {
+                "coop"
+            }
+
+            Route("/coop-204", statusCode: 204, headerFields: ["Cross-Origin-Opener-Policy": "same-origin"]) {
+                ""
+            }
+        }
+
+        try await server.run { serverConfiguration in
+            let (opener, opened) = try await Self.openerAndOpenedWebViews(
+                siteIsolationEnabled: siteIsolationEnabled,
+                server: serverConfiguration
+            )
+            defer { withExtendedLifetime(opener) {} }
+            #expect(try await Self.hasOpener(opened.webView))
+
+            if let coopResponsePolicy {
+                opened.navigationDelegate.decidePolicyForNavigationResponse = { _, decisionHandler in
+                    decisionHandler(coopResponsePolicy)
+                }
+            }
+            opened.webView.startEvaluatingJavaScript("location.href = 'https://example.com\(coopPath)'")
+            _ = await opened.navigationDelegate.waitForDidFailProvisionalNavigation()
+            opened.navigationDelegate.decidePolicyForNavigationResponse = nil
+
+            try await Self.navigate(opened.webView, to: "https://apple.com/target", andWaitWith: opened.navigationDelegate)
+            #expect(try await Self.hasOpener(opened.webView))
+            #expect(try await Self.windowName(opened.webView) == "popup")
+        }
+    }
+
+    private typealias WebViewAndDelegate = (webView: TestWKWebView, navigationDelegate: TestNavigationDelegate)
+
+    @RouteBuilder
+    private static var openerRoutes: Route {
+        Route("/shared-opener") {
+            "<script>onload = () => { w = window.open('https://example.com/shared-plain', 'popup'); }</script>"
+        }
+
+        Route("/shared-plain") {
+            "shared"
+        }
+    }
+
+    private static func openerAndOpenedWebViews(
+        siteIsolationEnabled: Bool,
+        server: HTTPServer.Configuration
+    ) async throws -> (opener: WebViewAndDelegate, opened: WebViewAndDelegate) {
+        let configuration = WKWebViewConfiguration(httpsProxyFor: server)
+        configuration.preferences.javaScriptCanOpenWindowsAutomatically = true
+        let opener = webViewAndDelegate(
+            configuration: configuration,
+            frame: CGRect(x: 0, y: 0, width: 800, height: 600),
+            siteIsolationEnabled: siteIsolationEnabled
+        )
+        let openedWebViews = OpenedWebViewRecorder(siteIsolationEnabled: siteIsolationEnabled)
+        opener.webView.uiDelegate = openedWebViews
+
+        opener.webView.load(URLRequest(url: try #require(URL(string: "https://webkit.org/shared-opener"))))
+        let opened = try await openedWebViews.nextOpenedWebView()
+        return (opener, opened)
+    }
+
+    private static func hasOpener(_ webView: WKWebView) async throws -> Bool {
+        try await webView.callJavaScript(returning: Bool.self) { "return !!opener" }
+    }
+
+    private static func windowName(_ webView: WKWebView) async throws -> String {
+        try await webView.callJavaScript(returning: String.self) { "return name" }
+    }
+
+    private static func navigate(
+        _ webView: TestWKWebView,
+        to urlString: String,
+        andWaitWith navigationDelegate: TestNavigationDelegate
+    ) async throws {
+        webView.startEvaluatingJavaScript("location.href = '\(urlString)'")
+        try await navigationDelegate.waitForDidFinishNavigation()
+    }
 }
