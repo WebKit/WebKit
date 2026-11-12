@@ -97,6 +97,7 @@ list(APPEND PAL_PUBLIC_HEADERS
     spi/cocoa/ContactsSPI.h
     spi/cocoa/CoreCryptoSPI.h
     spi/cocoa/CoreMaterialSPI.h
+    spi/cocoa/CoreMotionSPI.h
     spi/cocoa/CoreServicesSPI.h
     spi/cocoa/CoreTelephonySPI.h
     spi/cocoa/CryptoKitPrivateSPI.h
@@ -161,44 +162,11 @@ list(APPEND PAL_PUBLIC_HEADERS
 
     spi/mac/CoreUISPI.h
     spi/mac/DataDetectorsSPI.h
-    spi/mac/IOKitSPIMac.h
-    spi/mac/MediaRemoteSPI.h
-    spi/mac/PowerLogSPI.h
-    spi/mac/QuickLookMacSPI.h
-
-    system/cocoa/RegexHelper.h
-    system/cocoa/SleepDisablerCocoa.h
-
-    system/ios/UserInterfaceIdiom.h
-
-    system/mac/DefaultSearchProvider.h
-    system/mac/PopupMenu.h
-    system/mac/SystemSleepListenerMac.h
-    system/mac/WebPanel.h
-)
-
-list(APPEND PAL_UNIFIED_SOURCE_LIST_FILES
-    "SourcesCocoa.txt"
-)
-
-list(APPEND PAL_PRIVATE_INCLUDE_DIRECTORIES
-    "${CMAKE_SOURCE_DIR}/Source/ThirdParty/libwebrtc/Source"
-    "${PAL_DIR}/pal/avfoundation"
-    "${PAL_DIR}/pal/cf"
-    "${PAL_DIR}/pal/cocoa"
-    "${PAL_DIR}/pal/spi/cf"
-    "${PAL_DIR}/pal/spi/cg"
-    "${PAL_DIR}/pal/spi/cocoa"
-    "${PAL_DIR}/pal/spi/mac"
-)
-
-
-if (WEBKIT_SDK_IS_MACOS)
-
-list(APPEND PAL_PUBLIC_HEADERS
     spi/mac/HIServicesSPI.h
     spi/mac/HIToolboxSPI.h
+    spi/mac/IOKitSPIMac.h
     spi/mac/LookupSPI.h
+    spi/mac/MediaRemoteSPI.h
     spi/mac/NSAppearanceSPI.h
     spi/mac/NSApplicationSPI.h
     spi/mac/NSCellSPI.h
@@ -230,10 +198,39 @@ list(APPEND PAL_PUBLIC_HEADERS
     spi/mac/NSViewSPI.h
     spi/mac/NSWindowSPI.h
     spi/mac/PIPSPI.h
+    spi/mac/PowerLogSPI.h
     spi/mac/QuarantineSPI.h
+    spi/mac/QuickLookMacSPI.h
     spi/mac/TelephonyUtilitiesSPI.h
 
+    system/cocoa/RegexHelper.h
+    system/cocoa/SleepDisablerCocoa.h
+
+    system/ios/UserInterfaceIdiom.h
+
+    system/mac/DefaultSearchProvider.h
+    system/mac/PopupMenu.h
+    system/mac/SystemSleepListenerMac.h
+    system/mac/WebPanel.h
 )
+
+list(APPEND PAL_UNIFIED_SOURCE_LIST_FILES
+    "SourcesCocoa.txt"
+)
+
+list(APPEND PAL_PRIVATE_INCLUDE_DIRECTORIES
+    "${CMAKE_SOURCE_DIR}/Source/ThirdParty/libwebrtc/Source"
+    "${PAL_DIR}/pal/avfoundation"
+    "${PAL_DIR}/pal/cf"
+    "${PAL_DIR}/pal/cocoa"
+    "${PAL_DIR}/pal/spi/cf"
+    "${PAL_DIR}/pal/spi/cg"
+    "${PAL_DIR}/pal/spi/cocoa"
+    "${PAL_DIR}/pal/spi/mac"
+)
+
+
+if (WEBKIT_SDK_IS_MACOS)
 
 list(APPEND PAL_UNIFIED_SOURCE_LIST_FILES
     "SourcesMac.txt"

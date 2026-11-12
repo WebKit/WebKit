@@ -1676,10 +1676,19 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
                 "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -F${CMAKE_LIBRARY_OUTPUT_DIRECTORY}>"
                 "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-F ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}>"
                 "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -iframework${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks>")
+            # Load the ICU module map in every Clang context of the Swift
+            # dependency scan. Otherwise some contexts never discover it,
+            # textually include ICU into wtf, and produce a wtf variant that
+            # conflicts with modules importing `unicode`.
             if (EXISTS "${CMAKE_OSX_SYSROOT}/usr/local/include/unicode_private.modulemap")
                 target_compile_options(${_target} PRIVATE
                     "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -isystem${CMAKE_OSX_SYSROOT}/usr/local/include>"
                     "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -fmodule-map-file=${CMAKE_OSX_SYSROOT}/usr/local/include/unicode_private.modulemap>")
+            elseif (NOT USE_APPLE_INTERNAL_SDK)
+                # Vendored ICU headers and module map (Source/WTF/CMakeLists.txt).
+                target_compile_options(${_target} PRIVATE
+                    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -isystem${ICU_INCLUDE_DIRS}>"
+                    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -fmodule-map-file=${ICU_INCLUDE_DIRS}/unicode/module.modulemap>")
             endif ()
         endif ()
         if (WEBKIT_ADDITIONS_COMPILE_PATH)

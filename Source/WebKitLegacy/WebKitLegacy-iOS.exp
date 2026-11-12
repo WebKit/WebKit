@@ -138,7 +138,6 @@ _OBJC_CLASS_$_WebDeviceOrientation
 _OBJC_CLASS_$_WebDeviceOrientationProviderMock
 _OBJC_CLASS_$_WebDownload
 _OBJC_CLASS_$_WebEvent
-_OBJC_CLASS_$_WebEventRegion
 _OBJC_CLASS_$_WebFeature
 _OBJC_CLASS_$_WebFixedPositionContent
 _OBJC_CLASS_$_WebFormDelegate
@@ -187,10 +186,6 @@ _OBJC_IVAR_$_WAKWindow._screenScale
 _OBJC_IVAR_$_WAKWindow._screenSize
 _OBJC_IVAR_$_WAKWindow._useOrientationDependentFontAntialiasing
 _OBJC_IVAR_$_WAKWindow._visible
-_OBJC_IVAR_$_WebEventRegion.p1
-_OBJC_IVAR_$_WebEventRegion.p2
-_OBJC_IVAR_$_WebEventRegion.p3
-_OBJC_IVAR_$_WebEventRegion.p4
 _OBJC_METACLASS_$_DOMAbstractView
 _OBJC_METACLASS_$_DOMAttr
 _OBJC_METACLASS_$_DOMBlob
@@ -323,7 +318,6 @@ _OBJC_METACLASS_$_WebDeviceOrientation
 _OBJC_METACLASS_$_WebDeviceOrientationProviderMock
 _OBJC_METACLASS_$_WebDownload
 _OBJC_METACLASS_$_WebEvent
-_OBJC_METACLASS_$_WebEventRegion
 _OBJC_METACLASS_$_WebFeature
 _OBJC_METACLASS_$_WebFixedPositionContent
 _OBJC_METACLASS_$_WebFormDelegate

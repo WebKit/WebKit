@@ -1482,7 +1482,6 @@ webkit_target_add_swift_options(WebKit
     "-Xcc -I${bmalloc_FRAMEWORK_HEADERS_DIR}"
     "-Xcc -I${PAL_FRAMEWORK_HEADERS_DIR}"
     "-Xcc -isystem${CMAKE_OSX_SYSROOT}/usr/local/include"
-    "-Xcc -fmodule-map-file=${CMAKE_OSX_SYSROOT}/usr/local/include/unicode_private.modulemap"
     # -Xcc paths precede WebKit's header maps. Clang does not map a header found
     # through a header map to its module, so a WebKit_Internal #import of
     # "_WKFormInputSession.h" or "_WKTapHandlingResult.h" is skipped once
@@ -2032,6 +2031,9 @@ target_link_options(WebKit PRIVATE
     "LINKER:-weak_framework,CoreML"
     "LINKER:-weak_framework,CorePrediction"
     "LINKER:-weak_framework,NaturalLanguage"
+    # WK_RUNNINGBOARD_SERVICES_LDFLAGS. The internal SDK auto-links it through
+    # the framework's module; the public SDK's SPI declarations do not.
+    "LINKER:-framework,RunningBoardServices"
 )
 
 if (WEBKIT_SDK_IS_XROS)
@@ -2039,7 +2041,10 @@ if (WEBKIT_SDK_IS_XROS)
 endif ()
 
 if (CMAKE_OSX_SYSROOT MATCHES "[Ss]imulator")
-    target_link_options(WebKit PRIVATE "SHELL:-L${CMAKE_OSX_SYSROOT}/usr/local/lib/dyld" "LINKER:-hidden-lsandbox-static")
+    # libsandbox-static ships only in the internal simulator SDK.
+    if (USE_APPLE_INTERNAL_SDK)
+        target_link_options(WebKit PRIVATE "SHELL:-L${CMAKE_OSX_SYSROOT}/usr/local/lib/dyld" "LINKER:-hidden-lsandbox-static")
+    endif ()
 else ()
     target_link_options(WebKit PRIVATE -lsandbox)
 endif ()

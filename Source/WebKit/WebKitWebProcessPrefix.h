@@ -55,7 +55,9 @@
 
 #if PLATFORM(COCOA)
 #include <AudioToolbox/AudioToolbox.h>
+#if PLATFORM(MAC)
 #include <CoreAudio/CoreAudio.h>
+#endif
 #include <simd/simd.h>
 #endif
 
