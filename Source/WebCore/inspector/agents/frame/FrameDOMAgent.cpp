@@ -178,7 +178,7 @@ FrameDOMAgent::FrameDOMAgent(FrameAgentContext& context, InspectorOverlay& overl
     , m_destroyedNodesTimer(*this, &FrameDOMAgent::destroyedNodesTimerFired)
     , m_focusNodeTimer(*this, &FrameDOMAgent::focusNode)
 #if ENABLE(VIDEO)
-    , m_mediaEventTracker(*this)
+    , m_mediaEventTracker(makeUniqueRef<InspectorMediaEventTracker>(*this))
 #endif
 {
 }
@@ -229,7 +229,7 @@ void FrameDOMAgent::relayoutDocument()
 void FrameDOMAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason reason)
 {
 #if ENABLE(VIDEO)
-    m_mediaEventTracker.reset(reason == Inspector::DisconnectReason::InspectedTargetDestroyed ? InspectorMediaEventTracker::RemoveEventListeners::No : InspectorMediaEventTracker::RemoveEventListeners::Yes);
+    m_mediaEventTracker->reset(reason == Inspector::DisconnectReason::InspectedTargetDestroyed ? InspectorMediaEventTracker::RemoveEventListeners::No : InspectorMediaEventTracker::RemoveEventListeners::Yes);
 #else
     UNUSED_PARAM(reason);
 #endif
@@ -751,7 +751,7 @@ void FrameDOMAgent::addEventListenersToNode(Node& node)
 #if ENABLE(VIDEO)
     if (pageDOMAgentReportsMediaEvents(node))
         return;
-    m_mediaEventTracker.addEventListenersToNode(node);
+    m_mediaEventTracker->addEventListenersToNode(node);
 #else
     UNUSED_PARAM(node);
 #endif
@@ -760,7 +760,7 @@ void FrameDOMAgent::addEventListenersToNode(Node& node)
 void FrameDOMAgent::eventDidResetAfterDispatch(const Event& event)
 {
 #if ENABLE(VIDEO)
-    m_mediaEventTracker.eventDidResetAfterDispatch(event);
+    m_mediaEventTracker->eventDidResetAfterDispatch(event);
 #else
     UNUSED_PARAM(event);
 #endif

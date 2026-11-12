@@ -235,7 +235,7 @@ InspectorDOMAgent::InspectorDOMAgent(PageAgentContext& context, InspectorOverlay
     , m_overlay(overlay)
     , m_destroyedNodesTimer(*this, &InspectorDOMAgent::destroyedNodesTimerFired)
 #if ENABLE(VIDEO)
-    , m_mediaEventTracker(*this)
+    , m_mediaEventTracker(makeUniqueRef<InspectorMediaEventTracker>(*this))
 #endif
 {
 }
@@ -279,7 +279,7 @@ void InspectorDOMAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReaso
     overlay->clearAllFlexOverlays();
 
 #if ENABLE(VIDEO)
-    m_mediaEventTracker.reset(InspectorMediaEventTracker::RemoveEventListeners::Yes);
+    m_mediaEventTracker->reset(InspectorMediaEventTracker::RemoveEventListeners::Yes);
 #endif // ENABLE(VIDEO)
 
     Ref { m_instrumentingAgents.get() }->setPersistentDOMAgent(nullptr);
@@ -2603,7 +2603,7 @@ void InspectorDOMAgent::addEventListenersToNode(Node& node)
     // FrameDOMAgent reports media events for nodes outside the local frame tree.
     if (!InspectorMediaEventTracker::isInLocalFrameTree(node))
         return;
-    m_mediaEventTracker.addEventListenersToNode(node);
+    m_mediaEventTracker->addEventListenersToNode(node);
 #else
     UNUSED_PARAM(node);
 #endif // ENABLE(VIDEO)
@@ -2928,7 +2928,7 @@ bool InspectorDOMAgent::isEventListenerDisabled(EventTarget& target, const AtomS
 void InspectorDOMAgent::eventDidResetAfterDispatch(const Event& event)
 {
 #if ENABLE(VIDEO)
-    m_mediaEventTracker.eventDidResetAfterDispatch(event);
+    m_mediaEventTracker->eventDidResetAfterDispatch(event);
 #else
     UNUSED_PARAM(event);
 #endif

@@ -36,6 +36,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/WeakHashMap.h>
 #include <wtf/WeakPtr.h>
 
@@ -303,7 +304,7 @@ private:
     std::unique_ptr<DOMEditor> m_domEditor;
 
 #if ENABLE(VIDEO)
-    InspectorMediaEventTracker m_mediaEventTracker;
+    const UniqueRef<InspectorMediaEventTracker> m_mediaEventTracker;
 #endif
 
     bool m_suppressAttributeModifiedEvent { false };

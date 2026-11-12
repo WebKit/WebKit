@@ -46,6 +46,7 @@
 #include <wtf/JSONValues.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakHashMap.h>
 #include <wtf/text/AtomString.h>
@@ -325,7 +326,7 @@ private:
     Timer m_destroyedNodesTimer;
 
 #if ENABLE(VIDEO)
-    InspectorMediaEventTracker m_mediaEventTracker;
+    const UniqueRef<InspectorMediaEventTracker> m_mediaEventTracker;
 #endif
 
     struct InspectorEventListener {
