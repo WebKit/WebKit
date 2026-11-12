@@ -136,7 +136,7 @@ auto ContentChangeObserver::viewportVisibilityForElement(const Element& element)
         ? ViewportVisibility::Onscreen : ViewportVisibility::Offscreen;
 }
 
-bool ContentChangeObserver::isVisuallyHidden(const Node& node)
+bool ContentChangeObserver::isVisuallyHidden(const Node& node, IgnoreVisibilityProperty ignoreVisibilityProperty)
 {
     CheckedPtr style = node.renderStyle();
     if (!style)
@@ -146,9 +146,9 @@ bool ContentChangeObserver::isVisuallyHidden(const Node& node)
         return true;
 
     if (CheckedPtr renderer = node.renderer()) {
-        if (renderer->usedStyle().visibility() == UsedVisibility::Hidden)
+        if (ignoreVisibilityProperty == IgnoreVisibilityProperty::No && renderer->usedStyle().visibility() == UsedVisibility::Hidden)
             return true;
-    } else if (style->visibility() == Visibility::Hidden || style->isForceHidden())
+    } else if (ignoreVisibilityProperty == IgnoreVisibilityProperty::No && (style->visibility() == Visibility::Hidden || style->isForceHidden()))
         return true;
 
     if (style->opacity().isTransparent())
@@ -895,8 +895,29 @@ ContentChangeObserver::StyleChangeScope::StyleChangeScope(Document& document, co
     , m_hadRenderer(element.renderer())
 {
     // FIXME: Should this use `isConsideredVisible` like the destructor instead of `isVisuallyHidden`?
-    if (m_contentChangeObserver->shouldObserveVisibilityChangeForElement(element))
-        m_wasHidden = isVisuallyHidden(m_element);
+    if (!m_contentChangeObserver->shouldObserveVisibilityChangeForElement(element))
+        return;
+
+    m_wasHidden = isVisuallyHidden(m_element);
+    if (!*m_wasHidden)
+        return;
+
+    m_wasHiddenOnlyByVisibility = !isVisuallyHidden(m_element, IgnoreVisibilityProperty::Yes);
+    if (!m_wasHiddenOnlyByVisibility)
+        return;
+
+    CheckedPtr renderer = element.renderer();
+    CheckedPtr firstChild = renderer ? renderer->firstChild() : nullptr;
+    if (!firstChild)
+        return;
+
+    m_everyChildWasVisible = true;
+    for (CheckedPtr child = firstChild; child; child = child->nextSibling()) {
+        if (child->usedStyle().visibility() != UsedVisibility::Visible) {
+            m_everyChildWasVisible = false;
+            return;
+        }
+    }
 }
 
 ContentChangeObserver::StyleChangeScope::~StyleChangeScope()
@@ -910,8 +931,11 @@ ContentChangeObserver::StyleChangeScope::~StyleChangeScope()
 
     auto wasVisible = !m_wasHidden.value();
     auto isVisible = isConsideredVisible(m_element);
-    if (!wasVisible && isVisible)
+    if (!wasVisible && isVisible) {
+        if (m_wasHiddenOnlyByVisibility && m_everyChildWasVisible)
+            return;
         m_contentChangeObserver->elementDidBecomeVisible(m_element);
+    }
     else if (wasVisible && !isVisible)
         m_contentChangeObserver->elementDidBecomeHidden(m_element);
 }

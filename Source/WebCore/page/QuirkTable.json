@@ -572,6 +572,11 @@
                     "bugs": ["https://webkit.org/b/161984"]
                 },
                 {
+                    "id": "MayNeedToIgnoreContentObservation",
+                    "elementSelector": ".navigation-item-list, .navigation-item-list *",
+                    "bugs": ["rdar://54102411"]
+                },
+                {
                     "id": "NeedsGoogleDocsNavigationWidgetScrollQuirk",
                     "bugs": ["rdar://189433637"]
                 },

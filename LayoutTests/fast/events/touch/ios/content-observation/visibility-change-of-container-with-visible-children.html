@@ -1,0 +1,47 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<script src="../../../../../resources/js-test.js"></script>
+<script src="../../../../../resources/ui-helper.js"></script>
+<script>
+jsTestIsAsync = true;
+targetClicked = false;
+window.internals?.settings.setContentChangeObserverEnabled(true);
+
+addEventListener("load", async () => {
+    description("To run this test manually, tap \"Target\". It should respond to the first tap.");
+
+    panel.addEventListener("mousedown", () => { });
+    target.addEventListener("click", () => targetClicked = true);
+
+    await UIHelper.activateElement(target);
+    await shouldBecomeEqual("targetClicked", "true");
+    finishJSTest();
+});
+</script>
+<style>
+#panel {
+    visibility: hidden;
+    width: 300px;
+}
+
+#panel > *, #panel:hover {
+    visibility: visible;
+}
+
+#target {
+    height: 40px;
+    line-height: 40px;
+    font-size: 18px;
+}
+</style>
+</head>
+<body>
+    <div id="panel">
+        <div id="target">Target</div>
+    </div>
+    <p id="console"></p>
+    <p id="description"></p>
+</body>
+</html>

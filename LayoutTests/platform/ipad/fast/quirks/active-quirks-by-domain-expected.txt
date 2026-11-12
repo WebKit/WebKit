@@ -232,6 +232,8 @@ https://maps.google.com/maps/
     ShouldDispatchSimulatedMouseEventsQuirk
 https://docs.google.com/
     InputMethodUsesCorrectKeyEventOrder
+    MayNeedToIgnoreContentObservation
+        elementSelector: .navigation-item-list, .navigation-item-list *
     NeedsSingleOwnerMainFrameCNAMECloakingCookieCapQuirk
         secondaryURL: [*://*.youtube.com/*, *://*.google.com/*]
     ShouldBypassBackForwardCacheWhenElementMatchesQuirk

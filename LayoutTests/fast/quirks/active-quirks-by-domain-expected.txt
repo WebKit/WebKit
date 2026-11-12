@@ -211,6 +211,8 @@ https://docs.google.com/
     InputMethodMustUseCompositionEvents
     InputMethodUsesCorrectKeyEventOrder
     IsTouchBarUpdateSuppressedForHiddenContentEditableQuirk
+    MayNeedToIgnoreContentObservation
+        elementSelector: .navigation-item-list, .navigation-item-list *
     NeedsGoogleDocsNavigationWidgetScrollQuirk
     NeedsSingleOwnerMainFrameCNAMECloakingCookieCapQuirk
         secondaryURL: [*://*.youtube.com/*, *://*.google.com/*]

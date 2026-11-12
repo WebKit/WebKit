@@ -70,7 +70,8 @@ public:
     WEBCORE_EXPORT void stopContentObservation();
     ContentChange observedContentChange() const { return m_observedAddedMouseoutListenerAboveClickTarget ? ContentChange::Visibility : m_observedContentState; }
     WEBCORE_EXPORT static bool isConsideredVisible(const Node&);
-    static bool isVisuallyHidden(const Node&);
+    enum class IgnoreVisibilityProperty : bool { No, Yes };
+    static bool isVisuallyHidden(const Node&, IgnoreVisibilityProperty = IgnoreVisibilityProperty::No);
 
     void didInstallDOMTimer(const DOMTimer&, Seconds timeout, bool singleShot);
     void didRemoveDOMTimer(const DOMTimer&);
@@ -111,6 +112,8 @@ public:
         const Ref<const Element> m_element;
         std::optional<bool> m_wasHidden;
         bool m_hadRenderer { false };
+        bool m_wasHiddenOnlyByVisibility { false };
+        bool m_everyChildWasVisible { false };
     };
 
 #if ENABLE(TOUCH_EVENTS)

@@ -1,0 +1,109 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<script src="../../../../../resources/js-test.js"></script>
+<script src="../../../../../resources/ui-helper.js"></script>
+<script>
+jsTestIsAsync = true;
+tabRowClicked = false;
+outlineItemClicked = false;
+window.internals?.settings.setContentChangeObserverEnabled(true);
+window.internals?.setTopDocumentURLForQuirks("https://docs.google.com/document/d/test/edit");
+
+addEventListener("load", async () => {
+    description("To run this test manually, tap \"Tab 1\", then \"Elsewhere\", then \"Second heading\". \"Tab 1\" and \"Second heading\" should each respond to the first tap.");
+
+    const content = document.querySelector(".navigation-widget-content");
+    const chapter = document.querySelector(".chapter-item");
+    const list = document.querySelector(".navigation-item-list");
+    const controls = document.querySelector(".navigation-widget-row-controls");
+    const control = document.querySelector(".navigation-widget-row-controls-control");
+
+    content.addEventListener("mousedown", () => { });
+    chapter.addEventListener("mousedown", () => { });
+    chapter.addEventListener("click", () => tabRowClicked = true);
+    control.addEventListener("mousedown", () => { });
+    control.addEventListener("mouseup", () => { });
+    list.addEventListener("mousedown", () => { });
+    list.addEventListener("mouseup", () => { });
+    list.addEventListener("mouseover", event => {
+        const item = event.target.closest(".navigation-item");
+        if (!item)
+            return;
+        controls.style.top = `${item.offsetTop}px`;
+        controls.style.display = "block";
+    });
+    list.addEventListener("mouseleave", () => controls.style.display = "none");
+    list.addEventListener("click", () => outlineItemClicked = true);
+
+    await UIHelper.activateElement(document.getElementById("tab"));
+    await shouldBecomeEqual("tabRowClicked", "true");
+
+    await UIHelper.activateElement(document.getElementById("elsewhere"));
+    await shouldBecomeEqual("getComputedStyle(document.querySelector('.navigation-widget-content')).visibility", "'hidden'");
+
+    await UIHelper.activateElement(document.getElementById("heading"));
+    await shouldBecomeEqual("outlineItemClicked", "true");
+    finishJSTest();
+});
+</script>
+<style>
+.navigation-widget-content {
+    visibility: hidden;
+    width: 300px;
+}
+
+.navigation-widget-content > *, .navigation-widget-content:hover {
+    visibility: visible;
+}
+
+.chapter-item-label-and-buttons-container, .navigation-item {
+    height: 40px;
+    line-height: 40px;
+    padding-right: 40px;
+    font-size: 18px;
+}
+
+.navigation-item-list {
+    position: relative;
+}
+
+.navigation-widget-row-controls {
+    display: none;
+    position: absolute;
+    right: 8px;
+}
+
+.navigation-widget-row-controls-control {
+    width: 24px;
+    height: 24px;
+    margin-top: 8px;
+    background: gray;
+}
+
+#elsewhere {
+    margin-top: 40px;
+    font-size: 18px;
+}
+</style>
+</head>
+<body>
+    <div class="navigation-widget-content">
+        <div class="chapter-item">
+            <div class="chapter-item-label-and-buttons-container" role="treeitem" tabindex="0" id="tab">Tab 1</div>
+        </div>
+        <div class="navigation-item-list" role="menu" tabindex="0">
+            <div class="navigation-item" role="menuitem">First heading</div>
+            <div class="navigation-item" role="menuitem" id="heading">Second heading</div>
+            <div class="navigation-item" role="menuitem">Third heading</div>
+            <div class="navigation-widget-row-controls">
+                <div class="navigation-widget-row-controls-control" role="button" aria-label="Remove from outline"></div>
+            </div>
+        </div>
+    </div>
+    <button id="elsewhere">Elsewhere</button>
+    <p id="console"></p>
+    <p id="description"></p>
+</body>
+</html>
