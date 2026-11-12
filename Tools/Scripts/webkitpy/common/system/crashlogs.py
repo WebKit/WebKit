@@ -71,23 +71,61 @@ class CrashLogs(object):
             return self._find_all_logs_darwin(include_errors, newer_than)
         return None
 
+    @staticmethod
+    def _decode_json_report(contents):
+        lines = contents.splitlines()
+        if len(lines) < 2 or not lines[0].startswith('{') or not lines[1].startswith('{'):
+            return None
+        try:
+            json.loads(lines[0])
+            return json.loads('\n'.join(lines[1:]))
+        except ValueError:
+            return None
+
+    @classmethod
+    def crashed_thread(cls, contents):
+        """Returns the exception and the crashed thread's frames of a JSON crash report, or None for any other crash log."""
+        report = cls._decode_json_report(contents)
+        try:
+            index = report['faultingThread']
+            thread = report['threads'][index]
+            images = report.get('usedImages', [])
+            exception = report.get('exception', {})
+            summary = '{}: {} ({})'.format(report.get('procName'), exception.get('type'), exception.get('signal'))
+            if exception.get('subtype'):
+                summary += ', ' + exception['subtype']
+            lines = [summary]
+            for messages in report.get('asi', {}).values():
+                lines.extend(messages)
+            queue = thread.get('queue') or thread.get('name')
+            lines.append('Thread {} crashed{}'.format(index, ': ' + queue if queue else ''))
+            frames = [(images[frame['imageIndex']].get('name', '???'), cls._frame_symbol(frame)) for frame in thread['frames']]
+        except (AttributeError, IndexError, KeyError, TypeError):
+            return None
+        width = max((len(image) for image, _ in frames), default=0)
+        lines.extend('{:<4}{:<{}}  {}'.format(number, image, width, symbol) for number, (image, symbol) in enumerate(frames))
+        return '\n'.join(lines)
+
+    @staticmethod
+    def _frame_symbol(frame):
+        symbol = frame.get('symbol') or '0x{:x}'.format(frame['imageOffset'])
+        if 'sourceFile' in frame:
+            return '{} ({}:{})'.format(symbol, frame['sourceFile'], frame.get('sourceLine'))
+        return symbol
+
     def _parse_darwin_crash_log(self, path):
         contents = self._host.symbolicate_crash_log_if_needed(path)
         if not contents:
             return (None, None, None)
 
-        lines = contents.splitlines()
-        if len(lines) >= 2 and lines[0].startswith('{') and lines[1].startswith('{'):
-            try:
-                json.loads(lines[0])
-                decoded = json.loads('\n'.join(lines[1:]))
-                name = decoded.get('procName')
-                pid = decoded.get('pid')
-                if name and pid:
-                    return (name, pid, contents)
-            except ValueError:
-                pass
+        decoded = self._decode_json_report(contents)
+        if decoded:
+            name = decoded.get('procName')
+            pid = decoded.get('pid')
+            if name and pid:
+                return (name, pid, contents)
 
+        lines = contents.splitlines()
         is_sandbox_violation = False
         for line in lines:
             if line.startswith('Sandbox Violation:'):
