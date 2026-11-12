@@ -215,7 +215,7 @@ static CACornerMask convertToCACornerMask(OptionSet<InteractionRegion::CornerMas
     return cornerMask;
 }
 
-void updateLayersForInteractionRegions(RemoteLayerTreeNode& node)
+void updateLayersForInteractionRegions(RemoteLayerTreeNode& node, RemoteLayerTreeHost* host)
 {
     ASSERT(node.uiView());
 
@@ -244,7 +244,14 @@ void updateLayersForInteractionRegions(RemoteLayerTreeNode& node)
 
     bool applyBackground = applyBackgroundColorForDebugging();
 
-    NSUInteger insertionPoint = 0;
+    struct RegionLayer {
+        const WebCore::InteractionRegion& region;
+        RetainPtr<CALayer> layer;
+        bool didReuseLayerBasedOnRect { false };
+    };
+    Vector<RegionLayer> regionLayers;
+    regionLayers.reserveInitialCapacity(node.eventRegion().interactionRegions().size());
+
     HashSet<std::pair<IntRect, InteractionRegion::Type>>dedupeSet;
     for (const WebCore::InteractionRegion& region : node.eventRegion().interactionRegions()) {
         auto rect = region.rectInLayerCoordinates;
@@ -256,32 +263,16 @@ void updateLayersForInteractionRegions(RemoteLayerTreeNode& node)
             continue;
 
         auto reuseKey = std::make_pair(region.nodeIdentifier.toUInt64(), region.type);
-        RetainPtr interactionRegionGroupName = interactionRegionGroupNameForRegion(node.layerID(), region);
 
         RetainPtr<CALayer> regionLayer;
-        bool didReuseLayer = true;
         bool didReuseLayerBasedOnRect = false;
+        if (auto layerIterator = existingLayers.find(key); layerIterator != existingLayers.end()) {
+            didReuseLayerBasedOnRect = true;
+            regionLayer = layerIterator->value;
+        } else if (auto layerReuseIterator = reusableLayers.find(reuseKey); layerReuseIterator != reusableLayers.end())
+            regionLayer = layerReuseIterator->value;
 
-        auto findOrCreateLayer = [&]() {
-            auto layerIterator = existingLayers.find(key);
-            if (layerIterator != existingLayers.end()) {
-                didReuseLayerBasedOnRect = true;
-                regionLayer = layerIterator->value;
-                return;
-            }
-
-            auto layerReuseIterator = reusableLayers.find(reuseKey);
-            if (layerReuseIterator != reusableLayers.end()) {
-                regionLayer = layerReuseIterator->value;
-                return;
-            }
-
-            didReuseLayer = false;
-            regionLayer = adoptNS(createInteractionRegionLayer(region.type, region.nodeIdentifier, interactionRegionGroupName.get()));
-        };
-        findOrCreateLayer();
-
-        if (didReuseLayer) {
+        if (regionLayer) {
             auto layerIdentifier = interactionRegionElementIdentifierForLayer(regionLayer.get());
             auto layerKey = std::make_pair(enclosingIntRect([regionLayer frame]), region.type);
             auto layerReuseKey = std::make_pair(*layerIdentifier, region.type);
@@ -290,11 +281,35 @@ void updateLayersForInteractionRegions(RemoteLayerTreeNode& node)
 
             bool shouldReconfigureRemoteEffect = didReuseLayerBasedOnRect && layerIdentifier != region.nodeIdentifier.toUInt64();
             if (shouldReconfigureRemoteEffect)
+                configureRemoteEffect(regionLayer.get(), region.type, interactionRegionGroupNameForRegion(node.layerID(), region).get());
+        }
+
+        regionLayers.append({ region, WTF::move(regionLayer), didReuseLayerBasedOnRect });
+    }
+
+    // Return the unneeded glow layers to the pool first for the regions below to reuse.
+    for (auto& sublayer : existingLayers.values()) {
+        [sublayer removeFromSuperlayer];
+        if (host && [sublayer isKindOfClass:getRCPGlowEffectLayerClassSingleton()])
+            host->reclaimInteractionRegionGlowLayer(WTF::move(sublayer));
+    }
+
+    NSUInteger insertionPoint = 0;
+    for (auto& [region, regionLayer, didReuseLayerBasedOnRect] : regionLayers) {
+        if (!regionLayer) {
+            RetainPtr interactionRegionGroupName = interactionRegionGroupNameForRegion(node.layerID(), region);
+            if (host && region.type == InteractionRegion::Type::Interaction)
+                regionLayer = host->takeInteractionRegionGlowLayer();
+
+            if (regionLayer) {
+                [regionLayer setValue:@(region.nodeIdentifier.toUInt64()) forKey:interactionRegionElementIdentifierKey];
                 configureRemoteEffect(regionLayer.get(), region.type, interactionRegionGroupName.get());
+            } else
+                regionLayer = adoptNS(createInteractionRegionLayer(region.type, region.nodeIdentifier, interactionRegionGroupName.get()));
         }
 
         if (!didReuseLayerBasedOnRect)
-            [regionLayer setFrame:rect];
+            [regionLayer setFrame:region.rectInLayerCoordinates];
 
         if (region.type == InteractionRegion::Type::Interaction) {
             [regionLayer setCornerRadius:region.cornerRadius];
@@ -337,9 +352,6 @@ void updateLayersForInteractionRegions(RemoteLayerTreeNode& node)
 
         insertionPoint++;
     }
-
-    for (auto& sublayer : existingLayers.values())
-        [sublayer removeFromSuperlayer];
 }
 
 } // namespace WebKit

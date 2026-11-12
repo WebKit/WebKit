@@ -122,6 +122,9 @@ public:
 #if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
     void updateOrDeferInteractionRegions(RemoteLayerTreeNode&);
     void updateDeferredInteractionRegions();
+
+    RetainPtr<CALayer> takeInteractionRegionGlowLayer();
+    void reclaimInteractionRegionGlowLayer(RetainPtr<CALayer>&&);
 #endif
 
 private:
@@ -156,6 +159,7 @@ private:
 #if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
     HashSet<WebCore::PlatformLayerIdentifier> m_layersWithDeferredInteractionRegionUpdates;
     Vector<RetainPtr<UIScrollView>> m_scrollViewsHidingInteractionRegions;
+    Vector<RetainPtr<CALayer>> m_interactionRegionGlowLayerPool;
     bool m_mainScrollViewHidesInteractionRegions { false };
 #endif
     bool m_isDebugLayerTreeHost { false };
