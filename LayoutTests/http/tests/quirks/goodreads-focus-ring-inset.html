@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+</head>
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+if (!window.internals)
+    document.body.textContent = "FAIL: this test requires window.internals.";
+else {
+    // Resolve the real quirk table as if the page were on goodreads.com, then navigate so the
+    // injected sheet is applied when the target becomes the current document.
+    internals.setTopDocumentHostForQuirks("www.goodreads.com");
+    location.href = "resources/goodreads-focus-ring-inset-target.html";
+}
+</script>
+</body>
+</html>

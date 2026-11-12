@@ -143,6 +143,9 @@ https://gizmodo.com/
     (none)
 https://play.geforcenow.com/
     (none)
+https://www.goodreads.com/
+    NeedsStyleSheetInjectedQuirk
+        styleSheet: .TruncatedContent:focus-visible, .TruncatedContent__text:focus-visible { outline-offset: inset; }
 https://www.google.com/
     NeedsSingleOwnerMainFrameCNAMECloakingCookieCapQuirk
         secondaryURL: [*://*.youtube.com/*, *://*.google.com/*]

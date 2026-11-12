@@ -517,6 +517,12 @@
             "behaviors": [{ "id": "NeedsFullscreenDisplayNoneQuirk" }]
         },
         {
+            "bugs": ["rdar://162717044"],
+            "comment": "The author bio sits flush against an overflow:hidden column, which clips the auto focus ring drawn outside the border box.",
+            "matches": ["*://*.goodreads.com/*"],
+            "behaviors": [{ "id": "NeedsStyleSheetInjectedQuirk", "styleSheet": ".TruncatedContent:focus-visible, .TruncatedContent__text:focus-visible { outline-offset: inset; }" }]
+        },
+        {
             "bugs": ["rdar://57670064", "rdar://59893415"],
             "comment": "Deliberately not limited to docs.google.com, because of hosted G Suite apps.",
             "matches": ["*://*.google.*/*"],
