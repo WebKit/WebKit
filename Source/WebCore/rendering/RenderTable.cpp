@@ -347,6 +347,10 @@ template<typename SizeType> LayoutUnit RenderTable::convertStyleLogicalWidthToCo
     if (styleLogicalWidth.isIntrinsicOrStretch())
         return computeSizingKeywordLogicalWidthUsing(styleLogicalWidth, availableWidth, bordersPaddingAndSpacingInRowDirection());
 
+    // A stretch() argument is the size of the margin box, whatever kind of table this is.
+    if (styleLogicalWidth.isStretchFunction())
+        return adjustBorderBoxLogicalWidthForBoxSizing(styleLogicalWidth, Style::evaluateMinimum<LayoutUnit>(styleLogicalWidth, availableWidth, style().usedZoomForLength()), containingBlockLogicalWidthForBoxSizing(styleLogicalWidth));
+
     // HTML tables' width styles already include borders and padding, but CSS tables' width styles do not.
     LayoutUnit borders;
     bool isCSSTable = !is<HTMLTableElement>(element());
@@ -362,6 +366,16 @@ template<typename SizeType> LayoutUnit RenderTable::convertStyleLogicalHeightToC
     LayoutUnit borderAndPaddingBefore = borderBefore() + (collapseBorders() ? 0_lu : paddingBefore());
     LayoutUnit borderAndPaddingAfter = borderAfter() + (collapseBorders() ? 0_lu : paddingAfter());
     LayoutUnit borderAndPadding = borderAndPaddingBefore + borderAndPaddingAfter;
+
+    if (styleLogicalHeight.isStretchFunction()) {
+        auto marginBoxLogicalHeight = [&] {
+            if (auto fixedStyleLogicalHeight = styleLogicalHeight.tryFixed())
+                return Style::evaluate<LayoutUnit>(*fixedStyleLogicalHeight, style().usedZoomForLength());
+            return computePercentageLogicalHeight(styleLogicalHeight).value_or(0_lu);
+        }();
+        return std::max(0_lu, adjustBorderBoxLogicalHeightForBoxSizing(styleLogicalHeight, marginBoxLogicalHeight, containingBlockLogicalWidthForBoxSizing(styleLogicalHeight)) - borderAndPadding);
+    }
+
     return WTF::switchOn(styleLogicalHeight,
         [&](const typename SizeType::Fixed& fixedStyleLogicalHeight) {
             // HTML tables size as though CSS height includes border/padding, CSS tables do not.

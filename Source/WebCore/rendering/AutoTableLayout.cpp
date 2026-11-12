@@ -118,10 +118,10 @@ void AutoTableLayout::recalcColumn(unsigned effCol)
                     WTF::switchOn(cellLogicalWidth,
                         [&](const Style::PreferredSize::Fixed& fixedCellLogicalWidth) {
                             if (fixedCellLogicalWidth.isPositiveOrZero() && !columnLayout.logicalWidth.isPercentOrCalculated()) {
-                                float logicalWidth = cell->adjustBorderBoxLogicalWidthForBoxSizing(fixedCellLogicalWidth);
+                                float logicalWidth = cell->adjustBorderBoxLogicalWidthForBoxSizing(cellLogicalWidth, LayoutUnit { fixedCellLogicalWidth.resolveZoom(cell->style().usedZoomForLength()) }, 0_lu);
                                 // Honor the cell's CSS max-width constraint.
                                 if (auto fixedMaxWidth = cell->style().logicalMaxWidth().tryFixed())
-                                    logicalWidth = std::min(logicalWidth, cell->adjustBorderBoxLogicalWidthForBoxSizing(*fixedMaxWidth).toFloat());
+                                    logicalWidth = std::min(logicalWidth, cell->adjustBorderBoxLogicalWidthForBoxSizing(cell->style().logicalMaxWidth(), LayoutUnit { fixedMaxWidth->resolveZoom(cell->style().usedZoomForLength()) }, 0_lu).toFloat());
                                 if (auto fixedColumnLayoutLogicalWidth = columnLayout.logicalWidth.tryFixed()) {
                                     // Nav/IE weirdness
                                     if ((logicalWidth > fixedColumnLayoutLogicalWidth->resolveZoom(cellUsedZoom))
@@ -299,6 +299,9 @@ void AutoTableLayout::applyContentLogicalWidthQuirks(LayoutUnit& minWidth, Layou
     if (auto fixedTableLogicalWidth = m_table->style().logicalWidth().tryFixed(); fixedTableLogicalWidth && fixedTableLogicalWidth->isPositive()) {
         LayoutUnit minContentWidth = minWidth;
         LayoutUnit tableFixedWidth = m_table->overridingBorderBoxLogicalWidth().value_or(LayoutUnit { fixedTableLogicalWidth->resolveZoom(m_table->style().usedZoomForLength()) });
+        // A stretch() takes its margins off, resolved against zero as the contributions resolve them.
+        if (m_table->style().logicalWidth().isStretchFunction() && !m_table->overridingBorderBoxLogicalWidth())
+            tableFixedWidth = m_table->adjustBorderBoxLogicalWidthForBoxSizing(m_table->style().logicalWidth(), tableFixedWidth, 0_lu);
         LayoutUnit clampedWidth = std::max(minContentWidth, std::max(minWidth, tableFixedWidth));
         minWidth = clampedWidth;
         maxWidth = clampedWidth;

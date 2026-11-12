@@ -387,7 +387,7 @@ std::pair<LayoutUnit, LayoutUnit> RenderBlockFlow::computeIntrinsicLogicalWidths
     if (auto* cell = dynamicDowncast<RenderTableCell>(*this)) {
         auto [tableCellWidth, usedZoom] = cell->styleOrColLogicalWidth();
         if (auto fixedTableCellWidth = tableCellWidth.tryFixed(); fixedTableCellWidth && fixedTableCellWidth->isPositive())
-            maxLogicalWidth = std::max(minLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(*fixedTableCellWidth));
+            maxLogicalWidth = std::max(minLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(tableCellWidth, LayoutUnit { fixedTableCellWidth->resolveZoom(style().usedZoomForLength()) }, 0_lu));
     }
 
     auto scrollbarWidth = intrinsicScrollbarLogicalWidthIncludingGutter();
