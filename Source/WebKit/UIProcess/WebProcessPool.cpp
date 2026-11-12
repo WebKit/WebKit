@@ -2496,10 +2496,16 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
     Ref sourceProcess = frame.process();
 
     if (siteIsolationEnabled) {
+        auto canRestoreTargetItemInProcess = [&](WebProcessProxy& process) {
+            return process.state() != AuxiliaryProcessProxy::State::Terminated
+                && process.websiteDataStore() == dataStore.ptr()
+                && process.matchesLockdownModeAndEnhancedSecurity(lockdownMode, enhancedSecurity)
+                && browsingContextGroup.canUseProcessForCrossOriginIsolation(process);
+        };
         if (RefPtr targetItem = navigation.targetItem(); targetItem && frame.isMainFrame()) {
             if (RefPtr suspendedPage = targetItem->suspendedPage()) {
                 Ref process = suspendedPage->process();
-                if (process->state() != AuxiliaryProcessProxy::State::Terminated && browsingContextGroup.canUseProcessForCrossOriginIsolation(process)) {
+                if (canRestoreTargetItemInProcess(process)) {
                     ASSERT(isolatedProcessType != WebProcessProxy::IsolatedProcessType::Shared);
                     prepareProcessForNavigation(WTF::move(process), page, suspendedPage.get(),
                         "Using target back/forward item's process and suspended page"_s, isolatedProcessType,
@@ -2513,7 +2519,7 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
                 backForwardCacheProcess = entry->process();
             else if (auto processIdentifier = navigation.backForwardCacheMainFrameProcessIdentifier())
                 backForwardCacheProcess = WebProcessProxy::processForIdentifier(*processIdentifier);
-            if (backForwardCacheProcess && backForwardCacheProcess->state() != AuxiliaryProcessProxy::State::Terminated && browsingContextGroup.canUseProcessForCrossOriginIsolation(*backForwardCacheProcess)) {
+            if (backForwardCacheProcess && canRestoreTargetItemInProcess(*backForwardCacheProcess)) {
                 ASSERT(isolatedProcessType != WebProcessProxy::IsolatedProcessType::Shared);
                 // The cached page may since have been evicted without the entry being dropped (e.g. its WebPage
                 // closed after a client redirect), letting the process enter the WebProcessCache. Take it out
