@@ -458,6 +458,12 @@ unsigned Options::computeNumberOfGCMarkers(unsigned maxNumberOfGCMarkers)
     return computeNumberOfWorkerThreads(maxNumberOfGCMarkers);
 }
 
+unsigned Options::defaultThreadPoolCapacity()
+{
+    // Leave a core for the thread running JavaScript.
+    return std::max(kernTCSMAwareNumberOfProcessorCores(), 2) - 1;
+}
+
 bool Options::defaultTCSMValue()
 {
     return true;

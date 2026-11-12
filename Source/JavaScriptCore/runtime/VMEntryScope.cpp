@@ -26,6 +26,7 @@
 #include "config.h"
 #include "VMEntryScope.h"
 
+#include "HelperThreadPool.h"
 #include "Options.h"
 #include "SamplingProfiler.h"
 #include "VM.h"
@@ -39,6 +40,8 @@ namespace JSC {
 void VMEntryScope::setUpSlow()
 {
     m_vm.entryScope = this;
+    if (Options::useSharedHelperThreadPool())
+        HelperThreadPool::didEnterVM();
 
     auto& thread = Thread::currentSingleton();
     if (!thread.isJSThread()) [[unlikely]] {
@@ -60,6 +63,8 @@ void VMEntryScope::tearDownSlow()
     ASSERT_WITH_MESSAGE(!m_vm.hasCheckpointOSRSideState(), "Exitting the VM but pending checkpoint side state still available");
 
     m_vm.entryScope = nullptr;
+    if (Options::useSharedHelperThreadPool())
+        HelperThreadPool::didExitVM();
 
     if (m_vm.hasAnyEntryScopeServiceRequest()) [[unlikely]]
         m_vm.executeEntryScopeServicesOnExit();

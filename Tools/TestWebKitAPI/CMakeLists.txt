@@ -48,6 +48,7 @@ set(TestWTF_SOURCES
 
     Tests/WTF/ASCIILiteral.cpp
     Tests/WTF/AtomString.cpp
+    Tests/WTF/AutomaticThread.cpp
     Tests/WTF/Base64.cpp
     Tests/WTF/BitSet.cpp
     Tests/WTF/BitVector.cpp

@@ -30,7 +30,7 @@
 
 #include "JITPlan.h"
 #include "JITScannable.h"
-#include "JITWorklistThread.h"
+#include "JITWorklist.h"
 #include "SlotVisitor.h"
 
 namespace JSC {
@@ -57,13 +57,13 @@ Safepoint::Safepoint(JITPlan& plan, Result& result)
     result.m_didGetCancelled = false;
 }
 
-Safepoint::~Safepoint()
+Safepoint::~Safepoint() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     RELEASE_ASSERT(m_didCallBegin);
-    if (RefPtr thread = m_plan.thread()) {
-        RELEASE_ASSERT(thread->m_safepoint == this);
-        thread->m_rightToRun.lock();
-        thread->m_safepoint = nullptr;
+    if (CheckedPtr slot = m_plan.workerSlot()) {
+        RELEASE_ASSERT(slot->m_safepoint == this);
+        JITWorklist::ensureGlobalWorklist().lockRightToRun(*slot);
+        slot->m_safepoint = nullptr;
     }
 }
 
@@ -78,10 +78,10 @@ void Safepoint::begin(bool keepDependenciesLive) WTF_IGNORES_THREAD_SAFETY_ANALY
     RELEASE_ASSERT(!m_didCallBegin);
     m_didCallBegin = true;
     m_keepDependenciesLive = keepDependenciesLive;
-    if (RefPtr data = m_plan.thread()) {
-        RELEASE_ASSERT(!data->m_safepoint);
-        data->m_safepoint = this;
-        data->m_rightToRun.unlockFairly();
+    if (CheckedPtr slot = m_plan.workerSlot()) {
+        RELEASE_ASSERT(!slot->m_safepoint);
+        slot->m_safepoint = this;
+        slot->m_rightToRun.unlockFairly();
     }
 }
 

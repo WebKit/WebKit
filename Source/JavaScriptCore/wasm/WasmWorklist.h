@@ -29,7 +29,9 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "HelperThreadPool.h"
 #include <wtf/AutomaticThread.h>
+#include <wtf/FixedVector.h>
 #include <wtf/PrintStream.h>
 #include <wtf/PriorityQueue.h>
 #include <wtf/TZoneMalloc.h>
@@ -43,7 +45,7 @@ namespace Wasm {
 
 class Plan;
 
-class Worklist {
+class Worklist final : public HelperThreadClient {
     WTF_MAKE_TZONE_ALLOCATED(Worklist);
 public:
     Worklist();
@@ -79,6 +81,19 @@ private:
         NODELETE void setToNextPriority();
     };
 
+    struct WorkerSlot {
+        // Only modified while holding m_lock.
+        QueueElement element;
+        Condition synchronize;
+    };
+
+    AutomaticThread::PollResult poll(const AbstractLocker&, WorkerSlot&);
+    void runOnSlot(WorkerSlot&);
+    void notifyPlanEnqueued(const AbstractLocker&, bool multiThreaded);
+
+    TaskResult runOneTask() final;
+    void publishDemand(const AbstractLocker&);
+
     struct QueueElementIsLowerPriority {
         NODELETE bool operator()(const QueueElement& left, const QueueElement& right) const
         {
@@ -90,6 +105,8 @@ private:
         }
     };
 
+    const bool m_usesSharedHelperThreadPool;
+    FixedVector<WorkerSlot> m_slots;
     Box<Lock> m_lock;
     const Ref<AutomaticThreadCondition> m_planEnqueued;
     // Technically, this could overflow but that's unlikely. Even if it did, we will just compile things of the same

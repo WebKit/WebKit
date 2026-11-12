@@ -1409,6 +1409,7 @@
 		79DAE27A1E03C82200B526AA /* WasmExceptionType.h in Headers */ = {isa = PBXBuildFile; fileRef = 79DAE2791E03C82200B526AA /* WasmExceptionType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		79DFCBDB1D88C59600527D03 /* HasOwnPropertyCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 79DFCBDA1D88C59600527D03 /* HasOwnPropertyCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E843EDF4DD134DE686F2F670 /* HasOwnPropertyCacheInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E05F9756C1DF4EE9859CBB3A /* HasOwnPropertyCacheInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A7DB32394C3E1CC8AD3614B1 /* HelperThreadPool.h in Headers */ = {isa = PBXBuildFile; fileRef = BDBB396248DD5FB527B266C1 /* HelperThreadPool.h */; };
 		79EE0C001B4AFB85000385C9 /* VariableEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = 79EE0BFE1B4AFB85000385C9 /* VariableEnvironment.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		529A28C6401D36A330D2F209 /* VariableEnvironmentInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 06BA6208BFD351FE575209D7 /* VariableEnvironmentInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		79FC8A081E32E9F000D88F0E /* DFGRegisteredStructure.h in Headers */ = {isa = PBXBuildFile; fileRef = 79FC8A071E32E9F000D88F0E /* DFGRegisteredStructure.h */; };
@@ -5126,6 +5127,8 @@
 		79DAE2791E03C82200B526AA /* WasmExceptionType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmExceptionType.h; sourceTree = "<group>"; };
 		79DFCBDA1D88C59600527D03 /* HasOwnPropertyCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HasOwnPropertyCache.h; sourceTree = "<group>"; };
 		E05F9756C1DF4EE9859CBB3A /* HasOwnPropertyCacheInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HasOwnPropertyCacheInlines.h; sourceTree = "<group>"; };
+		EAE8E40DC320397624D8543F /* HelperThreadPool.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = HelperThreadPool.cpp; sourceTree = "<group>"; };
+		BDBB396248DD5FB527B266C1 /* HelperThreadPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HelperThreadPool.h; sourceTree = "<group>"; };
 		79EE0BFD1B4AFB85000385C9 /* VariableEnvironment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VariableEnvironment.cpp; sourceTree = "<group>"; };
 		79EE0BFE1B4AFB85000385C9 /* VariableEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VariableEnvironment.h; sourceTree = "<group>"; };
 		06BA6208BFD351FE575209D7 /* VariableEnvironmentInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VariableEnvironmentInlines.h; sourceTree = "<group>"; };
@@ -9126,6 +9129,8 @@
 				0F0C03A92995FB710064230A /* HasOwnPropertyCache.cpp */,
 				79DFCBDA1D88C59600527D03 /* HasOwnPropertyCache.h */,
 				E05F9756C1DF4EE9859CBB3A /* HasOwnPropertyCacheInlines.h */,
+				EAE8E40DC320397624D8543F /* HelperThreadPool.cpp */,
+				BDBB396248DD5FB527B266C1 /* HelperThreadPool.h */,
 				933A349D038AE80F008635CE /* Identifier.cpp */,
 				933A349A038AE7C6008635CE /* Identifier.h */,
 				8606DDE918DA44AB00A383D0 /* IdentifierInlines.h */,
@@ -12143,6 +12148,7 @@
 				FE2CC9302756B2B9003F5AB8 /* HeapSubspaceTypes.h in Headers */,
 				0FADE6731D4D23BE00768457 /* HeapUtil.h in Headers */,
 				FE1BD0251E72053800134BC9 /* HeapVerifier.h in Headers */,
+				A7DB32394C3E1CC8AD3614B1 /* HelperThreadPool.h in Headers */,
 				DC2143071CA32E55000A8869 /* ICStats.h in Headers */,
 				0F44A7B220BF68CE0022B171 /* ICStatusMap.h in Headers */,
 				0FB399BE20AF6B3D0017E213 /* ICStatusUtils.h in Headers */,

@@ -85,7 +85,6 @@ jit/JIT.cpp
 jit/JITSafepoint.cpp
 jit/JITWorklist.cpp
 jit/JITWorklistInlines.h
-jit/JITWorklistThread.cpp
 jit/PolymorphicCallStubRoutine.cpp
 parser/Lexer.cpp
 parser/Parser.cpp

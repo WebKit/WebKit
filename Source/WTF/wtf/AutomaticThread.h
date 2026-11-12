@@ -116,6 +116,8 @@ public:
     // strong ref to AutomaticThreadCondition and the underlying thread holds a strong ref to
     // AutomaticThread).
     virtual ~AutomaticThread();
+
+    enum class PollResult { Work, Stop, Wait };
     
     // Sometimes it's possible to optimize for the case that there is no underlying thread.
     bool hasUnderlyingThread(const AbstractLocker&) const { return m_hasUnderlyingThread; }
@@ -169,7 +171,6 @@ protected:
     //     }
     // }
     
-    enum class PollResult { Work, Stop, Wait };
     virtual PollResult poll(const AbstractLocker&) = 0;
     
     enum class WorkResult { Continue, Stop };

@@ -303,6 +303,10 @@ bool hasCapacityToUseLargeGigacage();
     v(Int32, priorityDeltaOfFTLCompilerThreads, computePriorityDeltaOfWorkerThreads(-2, 0), Normal, nullptr) \
     v(Int32, priorityDeltaOfWasmCompilerThreads, computePriorityDeltaOfWorkerThreads(-1, 0), Normal, nullptr) \
     \
+    /* FIXME: https://bugs.webkit.org/show_bug.cgi?id=331018 remove all the unused options once the pool is on by default */ \
+    v(Bool, useSharedHelperThreadPool, false, Normal, "runs GC marking helpers, JIT compiles and Wasm compiles on one shared pool of threads"_s) \
+    v(Unsigned, helperThreadPoolTargetCapacity, defaultThreadPoolCapacity(), Normal, "target number of shared pool threads that can run at once (excluding minimums)"_s) \
+    \
     v(Bool, useProfiler, false, Normal, nullptr) \
     v(Bool, dumpProfilerDataAtExit, false, Normal, nullptr) \
     v(Bool, disassembleBaselineForProfiler, true, Normal, nullptr) \

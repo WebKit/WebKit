@@ -40,7 +40,7 @@ namespace JSC {
 
 class AbstractSlotVisitor;
 class CodeBlock;
-class JITWorklistThread;
+class JITWorkerSlot;
 class VM;
 
 class JITPlan : public ThreadSafeRefCounted<JITPlan> {
@@ -52,7 +52,7 @@ public:
 
     VM* vm() const { return m_vm; }
     CodeBlock* codeBlock() const { return m_codeBlock; }
-    JITWorklistThread* thread() const { return m_thread.get(); }
+    JITWorkerSlot* workerSlot() const { return m_workerSlot.get(); }
 
     JITCompilationMode mode() const { return m_mode; }
 
@@ -79,7 +79,7 @@ public:
 
     JITCompilationKey key();
 
-    void compileInThread(JITWorklistThread*);
+    void compileInThread(JITWorkerSlot*);
 
     virtual size_t codeSize() const = 0;
 
@@ -138,7 +138,7 @@ protected:
     MonotonicTime m_timeBeforeFTL;
     VM* m_vm;
     CodeBlock* m_codeBlock;
-    CheckedPtr<JITWorklistThread> m_thread;
+    CheckedPtr<JITWorkerSlot> m_workerSlot;
     Vector<Ref<SharedTask<void()>>> m_mainThreadFinalizationTasks;
     UTF8CString m_signpostMessage; // Non-null iff Options::useCompilerSignpost()
 };

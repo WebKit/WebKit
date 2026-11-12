@@ -210,6 +210,9 @@ public:
     // relativePriority is a value in the range [-15, 0] where a lower value indicates a lower priority.
     WTF_EXPORT_PRIVATE static void setCurrentThreadIsUserInteractive(int relativePriority = 0);
     WTF_EXPORT_PRIVATE static void setCurrentThreadIsUserInitiated(int relativePriority = 0);
+    // For a helper thread WTF created that runs different kinds of work. Unlike the functions above, this also
+    // changes the thread's priority on Linux.
+    WTF_EXPORT_PRIVATE static void setCurrentHelperThreadQOS(QOS);
     // Returns std::nullopt if the current thread has QOS_CLASS_UNSPECIFIED.
     WTF_EXPORT_PRIVATE static std::optional<QOS> currentThreadQOS();
     WTF_EXPORT_PRIVATE static bool currentThreadIsRealtime();

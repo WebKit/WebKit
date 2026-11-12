@@ -232,14 +232,18 @@ void AutomaticThread::start(const AbstractLocker&)
                             m_waitCondition.waitFor(*m_lock, m_timeout);
                         if (verbose && !awokenByNotify && !m_isWaiting)
                             dataLog(RawPointer(this), ": waitFor timed out, but notified via m_isWaiting flag!\n");
-                        if (m_isWaiting && shouldSleep(locker)) {
+                        if (m_isWaiting) {
+                            // Clear this even if we keep running, or notifyOne() could pick this thread
+                            // while it works and the notification would be lost.
                             m_isWaiting = false;
-                            if (verbose)
-                                dataLog(RawPointer(this), ": Going to sleep!\n");
-                            // It's important that we don't release the lock until we have completely
-                            // indicated that the thread is kaput. Otherwise we'll have a a notify
-                            // race that manifests as a deadlock on VM shutdown.
-                            return stopForTimeout(locker);
+                            if (shouldSleep(locker)) {
+                                if (verbose)
+                                    dataLog(RawPointer(this), ": Going to sleep!\n");
+                                // It's important that we don't release the lock until we have completely
+                                // indicated that the thread is kaput. Otherwise we'll have a notify
+                                // race that manifests as a deadlock on VM shutdown.
+                                return stopForTimeout(locker);
+                            }
                         }
                     }
                 }

@@ -46,6 +46,7 @@
 #include "GetterSetter.h"
 #include "HeapProfiler.h"
 #include "HeapSnapshotBuilder.h"
+#include "HelperThreadPool.h"
 #include "InitializeThreading.h"
 #include "InterpreterInlines.h"
 #include "JITSizeStatistics.h"
@@ -2234,6 +2235,7 @@ static JSC_DECLARE_HOST_FUNCTION(functionInstallPropertyInlineCacheClearingWatch
 static JSC_DECLARE_HOST_FUNCTION(functionDeltaBetweenButterflies);
 static JSC_DECLARE_HOST_FUNCTION(functionCurrentCPUTime);
 static JSC_DECLARE_HOST_FUNCTION(functionTotalGCTime);
+static JSC_DECLARE_HOST_FUNCTION(functionHelperThreadPoolStatistics);
 static JSC_DECLARE_HOST_FUNCTION(functionWarmUpMarkedBlocksAreEnabled);
 static JSC_DECLARE_HOST_FUNCTION(functionWarmUpMarkedBlockCount);
 static JSC_DECLARE_HOST_FUNCTION(functionSetWarmUpMarkedBlockAllocationShouldFail);
@@ -4148,6 +4150,39 @@ JSC_DEFINE_HOST_FUNCTION(functionTotalGCTime, (JSGlobalObject* globalObject, Cal
     return JSValue::encode(jsNumber(vm.heap.totalGCTime().seconds()));
 }
 
+JSC_DEFINE_HOST_FUNCTION(functionHelperThreadPoolStatistics, (JSGlobalObject* globalObject, CallFrame*))
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
+    if (!Options::useSharedHelperThreadPool())
+        return JSValue::encode(jsUndefined());
+
+    auto statistics = HelperThreadPool::singleton().statistics();
+    auto put = [&](JSObject* object, ASCIILiteral name, double value) {
+        object->putDirect(vm, Identifier::fromString(vm, name), jsNumber(value));
+    };
+    JSObject* result = constructEmptyObject(globalObject);
+    put(result, "capacity"_s, statistics.capacity);
+    put(result, "maxThreads"_s, statistics.maxThreads);
+    put(result, "liveThreads"_s, statistics.liveThreads);
+    put(result, "peakLiveThreads"_s, statistics.peakLiveThreads);
+    put(result, "running"_s, statistics.running);
+    put(result, "blocked"_s, statistics.blocked);
+    put(result, "blockingEvents"_s, statistics.blockingEvents);
+    for (unsigned i = 0; i < numberOfHelperThreadClasses; ++i) {
+        auto& classStatistics = statistics.classes[i];
+        JSObject* classResult = constructEmptyObject(globalObject);
+        put(classResult, "running"_s, classStatistics.running);
+        put(classResult, "demand"_s, classStatistics.demand);
+        put(classResult, "peakRunning"_s, classStatistics.peakRunning);
+        put(classResult, "tasks"_s, classStatistics.tasks);
+        put(classResult, "tasksWithNoWork"_s, classStatistics.tasksWithNoWork);
+        put(classResult, "migrations"_s, classStatistics.migrations);
+        result->putDirect(vm, Identifier::fromString(vm, helperThreadClassName(static_cast<HelperThreadClass>(i))), classResult);
+    }
+    return JSValue::encode(result);
+}
+
 JSC_DEFINE_HOST_FUNCTION(functionWarmUpMarkedBlocksAreEnabled, (JSGlobalObject*, CallFrame*))
 {
     DollarVMAssertScope assertScope;
@@ -4936,6 +4971,7 @@ void JSDollarVM::finishCreation(VM& vm)
     
     addFunction(vm, alwaysAllow, "currentCPUTime"_s, functionCurrentCPUTime, 0);
     addFunction(vm, alwaysAllow, "totalGCTime"_s, functionTotalGCTime, 0);
+    addFunction(vm, alwaysAllow, "helperThreadPoolStatistics"_s, functionHelperThreadPoolStatistics, 0);
     addFunction(vm, alwaysAllow, "warmUpMarkedBlocksAreEnabled"_s, functionWarmUpMarkedBlocksAreEnabled, 0);
     addFunction(vm, alwaysAllow, "warmUpMarkedBlockCount"_s, functionWarmUpMarkedBlockCount, 0);
     addFunction(vm, alwaysAllow, "setWarmUpMarkedBlockAllocationShouldFail"_s, functionSetWarmUpMarkedBlockAllocationShouldFail, 1);

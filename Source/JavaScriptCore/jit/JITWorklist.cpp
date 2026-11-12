@@ -41,8 +41,56 @@ namespace JSC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(JITWorklist);
 
+class JITWorklist::WorkScope final {
+public:
+    WorkScope(JITWorklist& worklist, JITWorkerSlot& slot)
+        : m_worklist(worklist)
+        , m_slot(slot)
+        , m_tier(slot.m_plan->tier())
+    {
+        RELEASE_ASSERT(m_slot->m_plan);
+    }
+
+    ~WorkScope()
+    {
+        Locker locker { *m_worklist.m_lock };
+        m_slot->m_plan = nullptr;
+        m_slot->m_isInUse = false;
+        m_worklist.m_ongoingCompilationsPerTier[static_cast<unsigned>(m_tier)]--;
+
+        ASSERT(m_slot->m_planLoad);
+        ASSERT(m_worklist.m_totalLoad >= m_slot->m_planLoad);
+        m_worklist.m_totalLoad -= m_slot->m_planLoad;
+        m_slot->m_planLoad = 0;
+
+        ASSERT(!m_worklist.m_totalLoad ==
+            (!m_worklist.queueLength(locker) && !m_worklist.totalOngoingCompilations(locker)));
+
+        if (m_worklist.m_usesSharedHelperThreadPool)
+            m_worklist.publishDemand(locker);
+    }
+
+private:
+#if USE(PROTECTED_JIT)
+    // Must be constructed before we allocate anything using SequesteredArenaMalloc
+    ArenaLifetime m_saLifetime { };
+#endif
+    JITWorklist& m_worklist;
+    CheckedRef<JITWorkerSlot> m_slot;
+    JITPlan::Tier m_tier;
+};
+
+static unsigned numberOfWorkerSlots()
+{
+    if (Options::useSharedHelperThreadPool())
+        return HelperThreadPool::singleton().maxConcurrency(HelperThreadClass::JIT);
+    return Options::maxNumberOfWorklistThreads();
+}
+
 JITWorklist::JITWorklist()
-    : m_lock(Box<Lock>::create())
+    : m_usesSharedHelperThreadPool(Options::useSharedHelperThreadPool())
+    , m_slots(numberOfWorkerSlots())
+    , m_lock(Box<Lock>::create())
     , m_planEnqueued(AutomaticThreadCondition::create())
 {
     m_maximumNumberOfConcurrentCompilationsPerTier = {
@@ -56,9 +104,14 @@ JITWorklist::JITWorklist()
         Options::worklistFTLLoadWeight(),
     };
 
+    if (m_usesSharedHelperThreadPool) {
+        HelperThreadPool::singleton().registerClient(*this, HelperThreadClass::JIT, m_slots.size());
+        return;
+    }
+
     Locker locker { *m_lock };
-    for (unsigned i = 0; i < Options::maxNumberOfWorklistThreads(); ++i)
-        m_threads.append(adoptRef(*new JITWorklistThread(locker, *this)));
+    for (CheckedRef slot : m_slots)
+        m_threads.append(adoptRef(*new JITWorklistThread(locker, *this, slot.get())));
 }
 
 JITWorklist::~JITWorklist()
@@ -103,6 +156,28 @@ unsigned JITWorklist::planLoad(JITPlan& plan)
     return m_loadWeightsPerTier[tier];
 }
 
+unsigned JITWorklist::maximumNumberOfConcurrentCompilations(unsigned tier) const
+{
+    unsigned maximum = m_maximumNumberOfConcurrentCompilationsPerTier[tier];
+    // A tier that may use every dedicated thread may also use the shared pool's extra compile slots.
+    if (maximum >= Options::maxNumberOfWorklistThreads())
+        return std::max<unsigned>(maximum, m_slots.size());
+    return maximum;
+}
+
+unsigned JITWorklist::numberOfRunnablePlans(const AbstractLocker&) const
+{
+    unsigned plans = 0;
+    for (unsigned tier = 0; tier < static_cast<unsigned>(JITPlan::Tier::Count); tier++)
+        plans += std::min<unsigned>(m_ongoingCompilationsPerTier[tier] + m_queues[tier].size(), maximumNumberOfConcurrentCompilations(tier));
+    return plans;
+}
+
+unsigned JITWorklist::threadsForCurrentLoad() const
+{
+    return (m_totalLoad + Options::worklistLoadFactor() - 1) / Options::worklistLoadFactor();
+}
+
 // wakeThreads wakes up compiler worker threads, if appropriate.
 //
 // There is a cost to running more worker threads. For example, there is a direct cost
@@ -125,27 +200,21 @@ void JITWorklist::wakeThreads(const AbstractLocker& locker, unsigned enqueuedTie
     unsigned targetNumThreads;
 
     if (m_numberOfActiveThreads < Options::minNumberOfWorklistThreads()
-        && m_ongoingCompilationsPerTier[enqueuedTier] < m_maximumNumberOfConcurrentCompilationsPerTier[enqueuedTier]) {
+        && m_ongoingCompilationsPerTier[enqueuedTier] < maximumNumberOfConcurrentCompilations(enqueuedTier)) {
         targetNumThreads = m_numberOfActiveThreads + 1;
     } else {
-        unsigned maxThreads = 0;
-        for (unsigned tier = 0; tier < static_cast<unsigned>(JITPlan::Tier::Count); tier++) {
-            unsigned plansForTier = m_ongoingCompilationsPerTier[tier] + m_queues[tier].size();
-
-            unsigned maxThreadsUsedForTier = std::min(plansForTier, m_maximumNumberOfConcurrentCompilationsPerTier[tier]);
-            maxThreads += maxThreadsUsedForTier;
-        }
-        maxThreads = std::min(maxThreads, Options::maxNumberOfWorklistThreads());
-
+        unsigned maxThreads = std::min<unsigned>(numberOfRunnablePlans(locker), m_slots.size());
         ASSERT(m_totalLoad);
-        targetNumThreads = (m_totalLoad + Options::worklistLoadFactor() - 1) / Options::worklistLoadFactor();
-        targetNumThreads = std::min(targetNumThreads, maxThreads);
+        targetNumThreads = std::min(threadsForCurrentLoad(), maxThreads);
     }
     while (m_numberOfActiveThreads < targetNumThreads) {
-        m_planEnqueued->notifyOne(locker);
+        if (!m_usesSharedHelperThreadPool)
+            m_planEnqueued->notifyOne(locker);
         m_numberOfActiveThreads++;
     }
     ASSERT(m_numberOfActiveThreads >= 1);
+    if (m_usesSharedHelperThreadPool)
+        publishDemand(locker);
 }
 
 CompilationResult JITWorklist::enqueue(Ref<JITPlan> plan)
@@ -180,6 +249,120 @@ CompilationResult JITWorklist::enqueue(Ref<JITPlan> plan)
     return CompilationResult::CompilationDeferred;
 }
 
+void JITWorklist::publishDemand(const AbstractLocker& locker)
+{
+    // m_numberOfActiveThreads is raised by wakeThreads() and drops to the number
+    // of ongoing compiles whenever nothing is left to dequeue.
+    if (!hasDequeueablePlan())
+        m_numberOfActiveThreads = std::min<unsigned>(m_numberOfActiveThreads, totalOngoingCompilations(locker));
+    unsigned runnablePlans = numberOfRunnablePlans(locker);
+    unsigned demand = m_isSuspended ? 0 : std::min(runnablePlans, std::max(m_numberOfActiveThreads, Options::minNumberOfWorklistThreads()));
+    HelperThreadPool::singleton().setDemand(*this, demand);
+}
+
+bool JITWorklist::canDequeueFromTier(unsigned tier) const
+{
+    return !m_queues[tier].isEmpty() && m_ongoingCompilationsPerTier[tier] < maximumNumberOfConcurrentCompilations(tier);
+}
+
+bool JITWorklist::hasDequeueablePlan() const
+{
+    for (unsigned i = 0; i < static_cast<unsigned>(JITPlan::Tier::Count); ++i) {
+        if (canDequeueFromTier(i))
+            return true;
+    }
+    return false;
+}
+
+bool JITWorklist::dequeuePlan(const AbstractLocker&, JITWorkerSlot& slot)
+{
+    for (unsigned i = 0; i < static_cast<unsigned>(JITPlan::Tier::Count); ++i) {
+        if (!canDequeueFromTier(i))
+            continue;
+
+        slot.m_plan = m_queues[i].takeFirst();
+        RELEASE_ASSERT(slot.m_plan);
+        RELEASE_ASSERT(slot.m_plan->stage() == JITPlanStage::Preparing);
+        // Dequeuing this plan doesn't change the total load yet, but it will once the compilation finishes.
+        // If the plan is canceled during compilation, the codeBlock may no longer be alive, so remember the plan's load now.
+        slot.m_planLoad = planLoad(*slot.m_plan);
+        m_ongoingCompilationsPerTier[i]++;
+        return true;
+    }
+    return false;
+}
+
+void JITWorklist::compileOnSlot(JITWorkerSlot& slot)
+{
+    WorkScope workScope(*this, slot);
+
+    lockRightToRun(slot);
+    Locker locker { AdoptLock, slot.m_rightToRun };
+    {
+        Locker locker { *m_lock };
+        if (slot.m_plan->stage() == JITPlanStage::Canceled)
+            return;
+        slot.m_plan->notifyCompiling();
+    }
+    dataLogLnIf(Options::verboseCompilationQueue(), *this, ": Compiling ", slot.m_plan->key(), " asynchronously");
+
+    // There's no way for the GC to be safepointing since we own rightToRun.
+    if (slot.m_plan->vm()->heap.worldIsStopped()) {
+        dataLog("Heap is stopped but here we are! (1)\n");
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+    slot.m_plan->compileInThread(&slot);
+    if (slot.m_plan->stage() != JITPlanStage::Canceled) {
+        if (slot.m_plan->vm()->heap.worldIsStopped()) {
+            dataLog("Heap is stopped but here we are! (2)\n");
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    {
+        Locker locker { *m_lock };
+        if (slot.m_plan->stage() == JITPlanStage::Canceled)
+            return;
+
+        slot.m_plan->notifyReady();
+
+        if (Options::verboseCompilationQueue()) {
+            dump(locker, WTF::dataFile());
+            dataLog(": Compiled ", slot.m_plan->key(), " asynchronously\n");
+        }
+
+        RELEASE_ASSERT(!slot.m_plan->vm()->heap.worldIsStopped());
+        m_readyPlans.append(slot.m_plan.releaseNonNull());
+        m_planCompiledOrCancelled.notifyAll();
+    }
+}
+
+auto JITWorklist::runOneTask() -> TaskResult
+{
+    JITWorkerSlot* slot = nullptr;
+    {
+        Locker locker { *m_lock };
+        if (!m_isSuspended) {
+            for (auto& candidate : m_slots) {
+                if (!candidate.m_isInUse) {
+                    slot = &candidate;
+                    break;
+                }
+            }
+            if (slot && dequeuePlan(locker, *slot))
+                slot->m_isInUse = true;
+            else
+                slot = nullptr;
+        }
+        if (!slot) {
+            publishDemand(locker);
+            return TaskResult::NoWork;
+        }
+    }
+    compileOnSlot(*slot);
+    return TaskResult::Ran;
+}
+
 size_t JITWorklist::queueLength() const
 {
     Locker locker { *m_lock };
@@ -211,19 +394,37 @@ size_t JITWorklist::totalOngoingCompilations(const AbstractLocker&) const
 void JITWorklist::suspendAllThreads() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     m_suspensionLock.lock();
-    Vector<Ref<JITWorklistThread>, 8> busyThreads;
-    for (auto& thread : m_threads) {
-        if (!thread->m_rightToRun.tryLock())
-            busyThreads.append(thread.copyRef());
+    if (m_usesSharedHelperThreadPool) {
+        Locker locker { *m_lock };
+        m_isSuspended = true;
+        publishDemand(locker);
     }
-    for (auto& thread : busyThreads)
-        thread->m_rightToRun.lock();
+    Vector<CheckedRef<JITWorkerSlot>, 8> busySlots;
+    for (CheckedRef slot : m_slots) {
+        if (!slot->m_rightToRun.tryLock())
+            busySlots.append(WTF::move(slot));
+    }
+    for (auto& slot : busySlots)
+        slot->m_rightToRun.lock();
+}
+
+void JITWorklist::lockRightToRun(JITWorkerSlot& slot) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
+{
+    if (slot.m_rightToRun.tryLock())
+        return;
+    HelperThreadPool::BlockingScope blockingScope(*this);
+    slot.m_rightToRun.lock();
 }
 
 void JITWorklist::resumeAllThreads() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
-    for (auto& thread : m_threads)
-        thread->m_rightToRun.unlock();
+    for (CheckedRef slot : m_slots)
+        slot->m_rightToRun.unlock();
+    if (m_usesSharedHelperThreadPool) {
+        Locker locker { *m_lock };
+        m_isSuspended = false;
+        publishDemand(locker);
+    }
     m_suspensionLock.unlock();
 }
 
@@ -343,9 +544,9 @@ void JITWorklist::removeDeadPlans(VM& vm)
     });
 
     // No locking needed for this part, see comment in visitWeakReferences().
-    for (auto& thread : m_threads) {
-        thread->m_rightToRun.assertIsOwner();
-        Safepoint* safepoint = thread->m_safepoint;
+    for (CheckedRef slot : m_slots) {
+        slot->m_rightToRun.assertIsOwner();
+        Safepoint* safepoint = slot->m_safepoint;
         if (!safepoint)
             continue;
         if (safepoint->vm() != &vm)
@@ -358,15 +559,21 @@ void JITWorklist::removeDeadPlans(VM& vm)
 
 unsigned JITWorklist::setMaximumNumberOfConcurrentDFGCompilations(unsigned n)
 {
+    Locker locker { *m_lock };
     unsigned oldValue = m_maximumNumberOfConcurrentCompilationsPerTier[static_cast<unsigned>(JITPlan::Tier::DFG)];
     m_maximumNumberOfConcurrentCompilationsPerTier[static_cast<unsigned>(JITPlan::Tier::DFG)] = n;
+    if (m_usesSharedHelperThreadPool)
+        publishDemand(locker);
     return oldValue;
 }
 
 unsigned JITWorklist::setMaximumNumberOfConcurrentFTLCompilations(unsigned n)
 {
+    Locker locker { *m_lock };
     unsigned oldValue = m_maximumNumberOfConcurrentCompilationsPerTier[static_cast<unsigned>(JITPlan::Tier::FTL)];
     m_maximumNumberOfConcurrentCompilationsPerTier[static_cast<unsigned>(JITPlan::Tier::FTL)] = n;
+    if (m_usesSharedHelperThreadPool)
+        publishDemand(locker);
     return oldValue;
 }
 
@@ -384,12 +591,12 @@ void JITWorklist::visitWeakReferences(VM& vm, Visitor& visitor)
         }
     }
     // This loop doesn't need locking because:
-    // (1) no new threads can be added to m_threads. Hence, it is immutable and needs no locks.
-    // (2) JITWorklistThread::m_safepoint is protected by that thread's m_rightToRun which we must be
+    // (1) m_slots has a fixed size, so it is immutable and needs no locks.
+    // (2) JITWorkerSlot::m_safepoint is protected by that slot's m_rightToRun which we must be
     //     holding here because of a prior call to suspendAllThreads().
-    for (auto& thread : m_threads) {
-        thread->m_rightToRun.assertIsOwner();
-        Safepoint* safepoint = thread->m_safepoint;
+    for (CheckedRef slot : m_slots) {
+        slot->m_rightToRun.assertIsOwner();
+        Safepoint* safepoint = slot->m_safepoint;
         if (safepoint && safepoint->vm() == &vm)
             safepoint->checkLivenessAndVisitChildren(visitor);
     }
@@ -408,7 +615,7 @@ void JITWorklist::dump(const AbstractLocker& locker, PrintStream& out) const
     out.print(
         "JITWorklist(", RawPointer(this), ")[Queue Length = ", queueLength(locker),
         ", Map Size = ", m_plans.size(), ", Num Ready = ", m_readyPlans.size(),
-        ", Num Active Threads = ", m_numberOfActiveThreads, "/", m_threads.size(), "]");
+        ", Num Active Threads = ", m_numberOfActiveThreads, "/", m_slots.size(), "]");
 }
 
 JITWorklist::State JITWorklist::removeAllReadyPlansForVM(VM& vm, Vector<Ref<JITPlan>, 8>& myReadyPlans, JITCompilationKey requestedKey)
@@ -466,6 +673,9 @@ void JITWorklist::removeMatchingPlansForVM(VM& vm, NOESCAPE const MatchFunction&
         queue.swap(newQueue);
     }
     ASSERT(!m_totalLoad == (!queueLength(locker) && !totalOngoingCompilations(locker)));
+
+    if (m_usesSharedHelperThreadPool)
+        publishDemand(locker);
 
     bool didCancelPlans = !deadPlanKeys.isEmpty();
     for (JITCompilationKey key : deadPlanKeys)

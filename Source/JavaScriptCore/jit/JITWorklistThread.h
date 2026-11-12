@@ -37,6 +37,32 @@ namespace JSC {
 class JITWorklist;
 class Safepoint;
 
+// The state of one in-flight compile. The set of slots is fixed, so the GC can enumerate them.
+class JITWorkerSlot final : public CanMakeThreadSafeCheckedPtr<JITWorkerSlot> {
+    WTF_MAKE_NONCOPYABLE(JITWorkerSlot);
+    WTF_MAKE_TZONE_ALLOCATED(JITWorkerSlot);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(JITWorkerSlot);
+
+    friend class JITWorklist;
+    friend class JITWorklistThread;
+    friend class Safepoint;
+
+public:
+    JITWorkerSlot() = default;
+
+    const Safepoint* safepoint() const { return m_safepoint; }
+
+private:
+    // The GC suspends compiles by locking every slot's m_rightToRun, and a compile
+    // releases it only inside a Safepoint.
+    Lock m_rightToRun;
+    RefPtr<JITPlan> m_plan { nullptr };
+    unsigned m_planLoad { 0 };
+    Safepoint* m_safepoint { nullptr };
+    // A pool thread owns this slot until its WorkScope ends, which is after m_plan has been handed off.
+    bool m_isInUse { false };
+};
+
 #if USE(PROTECTED_JIT_STACKS)
 using JITWorklistThreadBase = SequesteredAutomaticThread;
 #else
@@ -47,18 +73,10 @@ class JITWorklistThread final : public JITWorklistThreadBase {
     WTF_MAKE_TZONE_ALLOCATED(JITWorklistThread);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(JITWorklistThread);
 
-    class WorkScope;
-
-    friend class Safepoint;
-    friend class WorkScope;
-    friend class JITWorklist;
-
 public:
-    JITWorklistThread(const AbstractLocker&, JITWorklist&);
+    JITWorklistThread(const AbstractLocker&, JITWorklist&, JITWorkerSlot&);
 
     ASCIILiteral name() const final;
-
-    const Safepoint* safepoint() const { return m_safepoint; }
 
 private:
     PollResult poll(const AbstractLocker&) final;
@@ -68,11 +86,8 @@ private:
 
     void threadIsStopping(const AbstractLocker&) final;
 
-    Lock m_rightToRun;
     JITWorklist& m_worklist;
-    RefPtr<JITPlan> m_plan { nullptr };
-    unsigned m_planLoad { 0 };
-    Safepoint* m_safepoint { nullptr };
+    const CheckedRef<JITWorkerSlot> m_slot;
 };
 
 } // namespace JSC

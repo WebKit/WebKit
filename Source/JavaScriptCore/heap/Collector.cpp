@@ -28,6 +28,7 @@
 #include "HeapHelperPool.h"
 #include "HeapInlines.h"
 #include "HeapVerifier.h"
+#include "HelperThreadPool.h"
 #include "IncrementalSweeper.h"
 #include "JITWorklistInlines.h"
 #include "JSCInlines.h"
@@ -118,23 +119,74 @@ private:
     Collector& m_collector;
 };
 
+class Collector::ParallelMarkingClient final : public HelperThreadClient {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(ParallelMarkingClient);
+public:
+    explicit ParallelMarkingClient(Collector& collector)
+        : m_collector(collector)
+    {
+    }
+
+    TaskResult runOneTask() final
+    {
+        m_collector.runParallelMarkingHelper();
+        return TaskResult::Ran;
+    }
+
+private:
+    Collector& m_collector;
+};
+
+namespace {
+
+class GCThreadTypeScope {
+    WTF_MAKE_NONCOPYABLE(GCThreadTypeScope);
+public:
+    explicit GCThreadTypeScope(GCThreadType type)
+        : m_previousType(Thread::currentSingleton().gcThreadType())
+    {
+        Thread::registerGCThread(type);
+    }
+
+    ~GCThreadTypeScope()
+    {
+        Thread::registerGCThread(m_previousType);
+    }
+
+private:
+    GCThreadType m_previousType;
+};
+
+} // anonymous namespace
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Collector);
+
+auto Collector::createHelperClient(Collector& collector) -> HelperClient
+{
+    if (Options::useSharedHelperThreadPool())
+        return HelperClient(WTF::InPlaceType<std::unique_ptr<ParallelMarkingClient>>, makeUnique<ParallelMarkingClient>(collector));
+    return HelperClient(WTF::InPlaceType<ParallelHelperClient>, &heapHelperPool());
+}
 
 Collector::Collector()
     : m_sharedCollectorMarkStack(makeUnique<MarkStackArray>())
     , m_sharedMutatorMarkStack(makeUnique<MarkStackArray>())
     , m_raceMarkStack(makeUnique<MarkStackArray>())
     , m_collectorSlotVisitor(makeUnique<SlotVisitor>(*this, "C"_s))
-    , m_helperClient(&heapHelperPool())
+    , m_helperClient(createHelperClient(*this))
     , m_constraintSet(makeUnique<MarkingConstraintSet>())
     , m_threadLock(Box<Lock>::create())
     , m_threadCondition(AutomaticThreadCondition::create())
 {
-    for (unsigned i = 0, numberOfParallelThreads = heapHelperPool().numberOfThreads(); i < numberOfParallelThreads; ++i) {
+    auto* parallelMarkingClient = std::get_if<std::unique_ptr<ParallelMarkingClient>>(&m_helperClient);
+    unsigned numberOfParallelThreads = parallelMarkingClient ? HelperThreadPool::singleton().maxConcurrency(HelperThreadClass::GC) : heapHelperPool().numberOfThreads();
+    for (unsigned i = 0; i < numberOfParallelThreads; ++i) {
         std::unique_ptr<SlotVisitor> visitor = makeUnique<SlotVisitor>(*this, toASCIICString("P", i + 1));
         m_availableParallelSlotVisitors.append(visitor.get());
         m_parallelSlotVisitors.append(WTF::move(visitor));
     }
+    if (parallelMarkingClient)
+        HelperThreadPool::singleton().registerClient(**parallelMarkingClient, HelperThreadClass::GC, numberOfParallelThreads);
 
     if (Options::useConcurrentGC()) {
         if (Options::useStochasticMutatorScheduler())
@@ -165,6 +217,8 @@ Collector& Collector::globalCollector()
 
 Collector::~Collector()
 {
+    if (auto* parallelMarkingClient = std::get_if<std::unique_ptr<ParallelMarkingClient>>(&m_helperClient))
+        HelperThreadPool::singleton().unregisterClient(**parallelMarkingClient);
     RELEASE_ASSERT(m_heaps.isEmpty());
     RELEASE_ASSERT(!m_collectContinuouslyThread);
     {
@@ -443,26 +497,14 @@ NEVER_INLINE bool Collector::runBeginPhase(GCConductor conn)
 
     m_parallelMarkersShouldExit = false;
 
-    m_helperClient.setFunction(
-        [this] () {
-            SlotVisitor* visitor;
-            {
-                Locker locker { m_parallelSlotVisitorLock };
-                RELEASE_ASSERT_WITH_MESSAGE(!m_availableParallelSlotVisitors.isEmpty(), "Parallel SlotVisitors are allocated apriori");
-                visitor = m_availableParallelSlotVisitors.takeLast();
-            }
-
-            Thread::registerGCThread(GCThreadType::Helper);
-
-            {
-                ParallelModeEnabler parallelModeEnabler(*visitor);
-                visitor->drainFromShared(SlotVisitor::HelperDrain);
-            }
-
-            {
-                Locker locker { m_parallelSlotVisitorLock };
-                m_availableParallelSlotVisitors.append(visitor);
-            }
+    WTF::switchOn(m_helperClient,
+        [&](ParallelHelperClient& client) {
+            client.setFunction([this] {
+                runParallelMarkingHelper();
+            });
+        },
+        [&](std::unique_ptr<ParallelMarkingClient>& client) {
+            HelperThreadPool::singleton().setDemand(*client, m_parallelSlotVisitors.size());
         });
 
     m_constraintSet->didStartMarking();
@@ -526,6 +568,27 @@ void Collector::setUpVisitors(CollectionScope scope)
     if (Options::verifyGC()) [[unlikely]] {
         m_verifierSlotVisitor = makeUnique<VerifierSlotVisitor>(*this);
         m_verifierSlotVisitor->didStartMarking(scope, isAnalyzingHeap);
+    }
+}
+
+void Collector::runParallelMarkingHelper()
+{
+    SlotVisitor* visitor;
+    {
+        Locker locker { m_parallelSlotVisitorLock };
+        RELEASE_ASSERT_WITH_MESSAGE(!m_availableParallelSlotVisitors.isEmpty(), "Parallel SlotVisitors are allocated apriori");
+        visitor = m_availableParallelSlotVisitors.takeLast();
+    }
+
+    {
+        GCThreadTypeScope gcThreadTypeScope(GCThreadType::Helper);
+        ParallelModeEnabler parallelModeEnabler(*visitor);
+        visitor->drainFromShared(SlotVisitor::HelperDrain);
+    }
+
+    {
+        Locker locker { m_parallelSlotVisitorLock };
+        m_availableParallelSlotVisitors.append(visitor);
     }
 }
 
@@ -662,12 +725,21 @@ NEVER_INLINE bool Collector::runEndPhase(GCConductor conn)
     assertIsConductorWithWorldStopped(conn);
     m_scheduler->endCollection();
 
+    // Stop dispatching helpers first, so that one which returns below is not handed this client again.
+    if (auto* parallelMarkingClient = std::get_if<std::unique_ptr<ParallelMarkingClient>>(&m_helperClient))
+        HelperThreadPool::singleton().setDemand(**parallelMarkingClient, 0);
     {
         Locker locker { m_markingMutex };
         m_parallelMarkersShouldExit = true;
         m_markingConditionVariable.notifyAll();
     }
-    m_helperClient.finish();
+    WTF::switchOn(m_helperClient,
+        [](ParallelHelperClient& client) {
+            client.finish();
+        },
+        [](std::unique_ptr<ParallelMarkingClient>& client) {
+            HelperThreadPool::singleton().waitUntilIdle(*client);
+        });
 
     assertMarkStacksEmpty();
     RELEASE_ASSERT(m_raceMarkStack->isEmpty());

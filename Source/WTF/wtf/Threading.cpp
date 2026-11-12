@@ -411,6 +411,19 @@ void Thread::setCurrentThreadIsUserInitiated(int relativePriority)
 #endif
 }
 
+void Thread::setCurrentHelperThreadQOS(QOS qos)
+{
+    Thread& thread = currentSingleton();
+    if (thread.m_qos == qos)
+        return;
+    thread.m_qos = qos;
+#if HAVE(QOS_CLASSES)
+    pthread_set_qos_class_self_np(dispatchQOSClass(qos), 0);
+#else
+    thread.updateSchedulingAttributes(SchedulingState::Full);
+#endif
+}
+
 void Thread::setCurrentThreadQOS(QOS qos)
 {
     Thread& thread = currentSingleton();

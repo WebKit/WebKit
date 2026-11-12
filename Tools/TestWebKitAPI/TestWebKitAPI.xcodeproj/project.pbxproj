@@ -1313,6 +1313,7 @@
 			membershipExceptions = (
 				WTF/ASCIILiteral.cpp,
 				WTF/AtomString.cpp,
+				WTF/AutomaticThread.cpp,
 				WTF/Base64.cpp,
 				WTF/BitSet.cpp,
 				WTF/BitVector.cpp,

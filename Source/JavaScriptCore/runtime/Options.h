@@ -172,6 +172,7 @@ private:
 
     NODELETE static bool defaultTCSMValue();
     static unsigned computeNumberOfGCMarkers(unsigned maxNumberOfGCMarkers);
+    static unsigned defaultThreadPoolCapacity();
     static unsigned computeNumberOfWorkerThreads(int maxNumberOfWorkerThreads, int minimum = 1);
     static int32_t computePriorityDeltaOfWorkerThreads(int32_t twoCorePriorityDelta, int32_t multiCorePriorityDelta);
     static constexpr bool jitEnabledByDefault() { return isAddress64Bit(); }

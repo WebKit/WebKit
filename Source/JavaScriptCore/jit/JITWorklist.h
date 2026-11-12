@@ -27,9 +27,11 @@
 
 #if ENABLE(JIT)
 
+#include "HelperThreadPool.h"
 #include "JITPlan.h"
 #include "JITWorklistThread.h"
 #include <wtf/Deque.h>
+#include <wtf/FixedVector.h>
 #include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
@@ -41,7 +43,7 @@ namespace JSC {
 class CodeBlock;
 class VM;
 
-class JITWorklist {
+class JITWorklist final : public HelperThreadClient {
     WTF_MAKE_NONCOPYABLE(JITWorklist);
     WTF_MAKE_TZONE_ALLOCATED(JITWorklist);
 
@@ -59,6 +61,8 @@ public:
     void suspendAllThreads();
     void resumeAllThreads();
 
+    void lockRightToRun(JITWorkerSlot& slot) WTF_ACQUIRES_LOCK(slot.m_rightToRun);
+
     enum State { NotKnown, Compiling, Compiled };
     State compilationState(VM&, JITCompilationKey);
 
@@ -73,8 +77,8 @@ public:
 
     void removeDeadPlans(VM&);
 
-    NODELETE unsigned setMaximumNumberOfConcurrentDFGCompilations(unsigned);
-    NODELETE unsigned setMaximumNumberOfConcurrentFTLCompilations(unsigned);
+    unsigned setMaximumNumberOfConcurrentDFGCompilations(unsigned);
+    unsigned setMaximumNumberOfConcurrentFTLCompilations(unsigned);
 
     // Only called on the main thread after suspending all threads.
     template<typename Visitor>
@@ -88,10 +92,23 @@ public:
     size_t totalOngoingCompilations() const;
 
 private:
+    class WorkScope;
+
     JITWorklist();
 
     void wakeThreads(const AbstractLocker&, unsigned enqueuedTier);
+    unsigned maximumNumberOfConcurrentCompilations(unsigned tier) const;
+    unsigned numberOfRunnablePlans(const AbstractLocker&) const;
+    unsigned threadsForCurrentLoad() const;
     unsigned planLoad(JITPlan&);
+
+    bool canDequeueFromTier(unsigned tier) const;
+    bool hasDequeueablePlan() const;
+    bool dequeuePlan(const AbstractLocker&, JITWorkerSlot&);
+    void compileOnSlot(JITWorkerSlot&);
+
+    TaskResult runOneTask() final;
+    void publishDemand(const AbstractLocker&);
 
     size_t queueLength(const AbstractLocker&) const;
     NODELETE size_t totalOngoingCompilations(const AbstractLocker&) const;
@@ -111,6 +128,11 @@ private:
     std::array<unsigned, static_cast<size_t>(JITPlan::Tier::Count)> m_maximumNumberOfConcurrentCompilationsPerTier;
     std::array<unsigned, static_cast<size_t>(JITPlan::Tier::Count)> m_loadWeightsPerTier;
 
+    const bool m_usesSharedHelperThreadPool;
+    bool m_isSuspended { false };
+
+    // The GC walks this list without taking any locks. That's ok because this list is immutable after setup.
+    FixedVector<JITWorkerSlot> m_slots;
     Vector<Ref<JITWorklistThread>> m_threads;
 
     // Used to inform the thread about what work there is left to do.
