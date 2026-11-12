@@ -49,8 +49,9 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
         this._recordButton.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
         this._recordButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._recordButtonClicked, this);
 
-        this._recordStoppingSpinner = new WI.IndeterminateProgressSpinnerNavigationItem("record-stopping", WI.UIString("Stopping recording"));
+        this._recordStoppingSpinner = new WI.IndeterminateProgressSpinnerNavigationItem("record-stopping", WI.UIString("Stopping recording. Click to finish without the targets that have not stopped."));
         this._recordStoppingSpinner.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
+        this._recordStoppingSpinner.element.addEventListener("click", this._recordStoppingSpinnerClicked.bind(this));
         this._recordStoppingSpinner.hidden = true;
 
         this._continueButton = new WI.ButtonNavigationItem("record-continue", WI.UIString("Continue without automatically stopping"), "Images/Resume.svg", 13, 13);
@@ -570,6 +571,15 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
 
         this._recordButton.toggled = !WI.timelineManager.isCapturing();
         this._toggleRecording(shouldCreateNewRecording);
+    }
+
+    _recordStoppingSpinnerClicked(event)
+    {
+        // The spinner replaces the record button, so a double-click on the button would also click the spinner.
+        if (event.detail > 1)
+            return;
+
+        WI.timelineManager.stopWaitingForTargets();
     }
 
     _continueButtonClicked(event)

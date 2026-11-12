@@ -1,0 +1,247 @@
+<!DOCTYPE html><!-- webkit-test-runner [ jscOptions=--alwaysUseSharedArrayBuffer=true ] -->
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+let blockedWorker = null;
+let blockedWorkerState = null;
+
+function createBlockedWorker() {
+    blockedWorker = new Worker("resources/timeline-worker.js");
+    blockedWorkerState = new Int32Array(new SharedArrayBuffer(4));
+    blockedWorker.addEventListener("message", (event) => {
+        if (event.data === "blocked")
+            TestPage.dispatchEventToFrontend("WorkerBlocked");
+    });
+}
+
+// The Worker handles no inspector messages until `releaseWorker()`.
+function blockWorker() {
+    Atomics.store(blockedWorkerState, 0, 0);
+    blockedWorker.postMessage({block: blockedWorkerState.buffer});
+}
+
+function releaseWorker() {
+    Atomics.store(blockedWorkerState, 0, 1);
+    Atomics.notify(blockedWorkerState, 0);
+}
+
+function fireTimerInWorker() {
+    blockedWorker.postMessage("fire-timer");
+}
+
+function test()
+{
+    const domains = ["Timeline", "ScriptProfiler"];
+    const CapturingState = WI.TimelineManager.CapturingState;
+
+    let workerTarget = null;
+
+    // Record, in order, every report from a target that one of its domains started or stopped tracking, and every
+    // record that the Script timeline adds for the Worker.
+    let events = [];
+    let eventListeners = [];
+    for (let functionName of ["capturingStarted", "capturingStopped"]) {
+        let original = WI.timelineManager[functionName];
+        WI.timelineManager[functionName] = function(target, domain, ...rest) {
+            events.push({functionName, target, domain});
+            let result = original.call(this, target, domain, ...rest);
+
+            for (let listener of eventListeners.slice()) {
+                if (listener.functionName === functionName && listener.target === target && listener.domain === domain && !--listener.count) {
+                    eventListeners.remove(listener);
+                    listener.resolve();
+                }
+            }
+            return result;
+        };
+    }
+
+    function awaitTrackingEvent(functionName, target, domain, count = 1) {
+        return new Promise((resolve) => {
+            eventListeners.push({functionName, target, domain, count, resolve});
+        });
+    }
+
+    function awaitCapturingState(capturingState) {
+        return new Promise((resolve) => {
+            let listener = WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStateChanged, (event) => {
+                if (WI.timelineManager.capturingState !== capturingState)
+                    return;
+
+                WI.timelineManager.removeEventListener(WI.TimelineManager.Event.CapturingStateChanged, listener);
+                resolve();
+            });
+        });
+    }
+
+    function awaitWorkerTarget() {
+        return new Promise((resolve) => {
+            let listener = WI.targetManager.addEventListener(WI.TargetManager.Event.TargetAdded, (event) => {
+                let {target} = event.data;
+                if (target.type !== WI.TargetType.Worker)
+                    return;
+
+                WI.targetManager.removeEventListener(WI.TargetManager.Event.TargetAdded, listener);
+                resolve(target);
+            });
+        });
+    }
+
+    function awaitTimerFiredRecord(target) {
+        let scriptTimeline = WI.timelineManager.activeRecording.timelines.get(WI.TimelineRecord.Type.Script);
+        return new Promise((resolve) => {
+            let listener = scriptTimeline.addEventListener(WI.Timeline.Event.RecordAdded, (event) => {
+                let {record} = event.data;
+                if (record.eventType !== WI.ScriptTimelineRecord.EventType.TimerFired || record.target !== target)
+                    return;
+
+                scriptTimeline.removeEventListener(WI.Timeline.Event.RecordAdded, listener);
+                resolve(record);
+            });
+        });
+    }
+
+    // Starts capturing with a new recording. Resolves once capturing is active and, unless the Worker is blocked, the
+    // Worker started.
+    async function startCapturing(workerIsBlocked) {
+        events = [];
+
+        let workerStartedPromises = workerIsBlocked ? [] : domains.map((domain) => awaitTrackingEvent("capturingStarted", workerTarget, domain));
+        let activePromise = awaitCapturingState(CapturingState.Active);
+        const newRecording = true;
+        WI.timelineManager.startCapturing(newRecording);
+
+        let scriptTimeline = WI.timelineManager.activeRecording.timelines.get(WI.TimelineRecord.Type.Script);
+        scriptTimeline.addEventListener(WI.Timeline.Event.RecordAdded, (event) => {
+            events.push({functionName: "recordAdded", target: event.data.record.target});
+        });
+
+        await activePromise;
+        await Promise.all(workerStartedPromises);
+    }
+
+    async function stopCapturing() {
+        let inactivePromise = awaitCapturingState(CapturingState.Inactive);
+        WI.timelineManager.stopCapturing();
+        await inactivePromise;
+    }
+
+    async function blockWorker() {
+        let blockedPromise = InspectorTest.awaitEvent("WorkerBlocked");
+        await InspectorTest.evaluateInPage(`blockWorker()`);
+        await blockedPromise;
+    }
+
+    function releaseWorker() {
+        return InspectorTest.evaluateInPage(`releaseWorker()`);
+    }
+
+    function expectBreakpointsDisabled(disabled, message) {
+        InspectorTest.expectEqual(WI.debuggerManager.breakpointsDisabledTemporarily, disabled, message);
+    }
+
+    // Stops capturing, waits until every target except the blocked Worker has reported that it stopped, and then stops
+    // waiting for the Worker.
+    async function stopCapturingAndStopWaiting() {
+        let stoppedPromises = [];
+        for (let {functionName, target, domain} of events) {
+            if (functionName === "capturingStarted" && target !== workerTarget && !target.isDestroyed)
+                stoppedPromises.push(awaitTrackingEvent("capturingStopped", target, domain));
+        }
+        WI.timelineManager.stopCapturing();
+        await Promise.all(stoppedPromises);
+        InspectorTest.expectEqual(WI.timelineManager.capturingState, CapturingState.Stopping, "Capturing should still be stopping while the blocked Worker has not reported that it stopped.");
+        expectBreakpointsDisabled(true, "Breakpoints should still be disabled temporarily while stopping.");
+
+        WI.timelineManager.stopWaitingForTargets();
+        InspectorTest.expectEqual(WI.timelineManager.capturingState, CapturingState.Inactive, "Capturing should be inactive after the user stops waiting.");
+        expectBreakpointsDisabled(false, "Breakpoints should no longer be disabled temporarily.");
+    }
+
+    let suite = InspectorTest.createAsyncSuite("Timeline.StopWaiting");
+
+    suite.addTestCase({
+        name: "Timeline.StopWaiting.Setup",
+        async test() {
+            let workerTargetPromise = awaitWorkerTarget();
+            await InspectorTest.evaluateInPage(`createBlockedWorker()`);
+            workerTarget = await workerTargetPromise;
+            InspectorTest.pass("Added a Worker target.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Timeline.StopWaiting.BlockedWorker",
+        description: "Check that the user can stop waiting for a Worker that cannot report that it stopped, and that its later reports do not affect the next capture.",
+        async test() {
+            await startCapturing();
+            await blockWorker();
+            await stopCapturingAndStopWaiting();
+
+            // The Worker has the stops of the first capture queued, and will have the starts of the second.
+            await startCapturing(true);
+            InspectorTest.expectEqual(WI.timelineManager.capturingState, CapturingState.Active, "A new capture should become active while the Worker is blocked.");
+
+            let stoppedPromises = domains.map((domain) => awaitTrackingEvent("capturingStopped", workerTarget, domain));
+            let startedPromises = domains.map((domain) => awaitTrackingEvent("capturingStarted", workerTarget, domain));
+            await releaseWorker();
+            await Promise.all(stoppedPromises);
+            InspectorTest.expectEqual(WI.timelineManager.capturingState, CapturingState.Active, "The stops of the first capture should not end the new capture.");
+
+            await Promise.all(startedPromises);
+            InspectorTest.expectEqual(WI.timelineManager.capturingState, CapturingState.Active, "The new capture should still be active after the Worker starts for it.");
+
+            let firstStartIndex = events.findIndex((event) => event.functionName === "capturingStarted" && event.target === workerTarget);
+            let lateRecords = events.slice(0, firstStartIndex).filter((event) => event.functionName === "recordAdded" && event.target === workerTarget);
+            InspectorTest.expectEqual(lateRecords.length, 0, "The records of the first capture should not be added to the new capture.");
+
+            let workerRecordPromise = awaitTimerFiredRecord(workerTarget);
+            await InspectorTest.evaluateInPage(`fireTimerInWorker()`);
+            await workerRecordPromise;
+            InspectorTest.pass("Recorded a timer from the Worker in the new capture.");
+
+            await stopCapturing();
+            InspectorTest.pass("The new capture stopped after the Worker stopped.");
+            expectBreakpointsDisabled(false, "Breakpoints should no longer be disabled temporarily.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Timeline.StopWaiting.BlockedWorkerTwice",
+        description: "Check that the reports of two captures that the user stopped waiting for do not start a capture.",
+        async test() {
+            await startCapturing();
+            await blockWorker();
+            await stopCapturingAndStopWaiting();
+
+            await startCapturing(true);
+            await stopCapturingAndStopWaiting();
+
+            let capturingStates = [];
+            let listener = WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStateChanged, (event) => {
+                capturingStates.push(WI.timelineManager.capturingState);
+            });
+
+            // The Worker reports a stop for each capture, and a start for the second.
+            let stoppedPromises = domains.map((domain) => awaitTrackingEvent("capturingStopped", workerTarget, domain, 2));
+            await releaseWorker();
+            await Promise.all(stoppedPromises);
+            WI.timelineManager.removeEventListener(WI.TimelineManager.Event.CapturingStateChanged, listener);
+            InspectorTest.expectEqual(capturingStates.length, 0, "The reports of the two captures should not change the capturing state.");
+
+            await startCapturing();
+            await stopCapturing();
+            InspectorTest.pass("A new capture stopped after the Worker stopped.");
+            expectBreakpointsDisabled(false, "Breakpoints should no longer be disabled temporarily.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that the user can stop waiting for a Worker that cannot report that Timeline capturing stopped.</p>
+</body>
+</html>
