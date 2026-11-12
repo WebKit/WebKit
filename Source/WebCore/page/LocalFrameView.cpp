@@ -205,7 +205,7 @@ Pagination::Mode paginationModeForRenderStyle(const Style::ComputedStyle& style)
 
 LocalFrameView::LocalFrameView(LocalFrame& frame)
     : m_frame(frame)
-    , m_layoutContext(*this)
+    , m_layoutContext(makeUniqueRef<LocalFrameViewLayoutContext>(*this))
     , m_updateEmbeddedObjectsTimer(*this, &LocalFrameView::updateEmbeddedObjectsTimerFired)
     , m_updateWidgetPositionsTimer(*this, &LocalFrameView::updateWidgetPositionsTimerFired)
     , m_delayedScrollEventTimer(*this, &LocalFrameView::scheduleScrollEvent)

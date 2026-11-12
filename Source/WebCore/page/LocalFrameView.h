@@ -40,6 +40,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakRef.h>
 #include <wtf/text/WTFString.h>
@@ -1016,7 +1017,7 @@ private:
     NODELETE float deviceScaleFactor() const final;
 
     const Ref<LocalFrame> m_frame;
-    LocalFrameViewLayoutContext m_layoutContext;
+    const UniqueRef<LocalFrameViewLayoutContext> m_layoutContext;
 
     HashSet<SingleThreadWeakRef<Widget>> m_widgetsInRenderTree;
     const std::unique_ptr<ListHashSet<SingleThreadWeakRef<RenderEmbeddedObject>>> m_embeddedObjectsToUpdate;
