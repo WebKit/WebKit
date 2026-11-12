@@ -152,7 +152,7 @@ float FixedTableLayout::calcWidthArray()
         // FIXME: Support other length types. If the width is non-auto, it should probably just use
         // RenderBox::computeLogicalWidthInFragmentUsing to compute the width.
         if (auto fixedLogicalWidth = logicalWidth.tryFixed(); fixedLogicalWidth && fixedLogicalWidth->isPositive()) {
-            fixedBorderBoxLogicalWidth = cell->adjustBorderBoxLogicalWidthForBoxSizing(*fixedLogicalWidth);
+            fixedBorderBoxLogicalWidth = cell->adjustBorderBoxLogicalWidthForBoxSizing(logicalWidth, LayoutUnit { fixedLogicalWidth->resolveZoom(cell->style().usedZoomForLength()) }, 0_lu);
             logicalWidth = Style::PreferredSize::Fixed { fixedBorderBoxLogicalWidth };
         } else if (logicalWidth.isCalculated())
             logicalWidth = CSS::Keyword::Auto { };
@@ -201,8 +201,13 @@ std::pair<LayoutUnit, LayoutUnit> FixedTableLayout::computeIntrinsicLogicalWidth
 void FixedTableLayout::applyContentLogicalWidthQuirks(LayoutUnit& minWidth, LayoutUnit& maxWidth) const
 {
     auto& tableLogicalWidth = m_table->style().logicalWidth();
-    if (auto fixedTableLogicalWidth = tableLogicalWidth.tryFixed(); fixedTableLogicalWidth && fixedTableLogicalWidth->isPositive())
-        minWidth = maxWidth = std::max(minWidth, LayoutUnit(fixedTableLogicalWidth->resolveZoom(m_table->style().usedZoomForLength())) - m_table->bordersPaddingAndSpacingInRowDirection());
+    if (auto fixedTableLogicalWidth = tableLogicalWidth.tryFixed(); fixedTableLogicalWidth && fixedTableLogicalWidth->isPositive()) {
+        auto tableFixedWidth = LayoutUnit { fixedTableLogicalWidth->resolveZoom(m_table->style().usedZoomForLength()) };
+        // A stretch() takes its margins off, resolved against zero as the contributions resolve them.
+        if (tableLogicalWidth.isStretchFunction())
+            tableFixedWidth = m_table->adjustBorderBoxLogicalWidthForBoxSizing(tableLogicalWidth, tableFixedWidth, 0_lu);
+        minWidth = maxWidth = std::max(minWidth, tableFixedWidth - m_table->bordersPaddingAndSpacingInRowDirection());
+    }
 
     /*
         <table style="width:100%; background-color:red"><tr><td>

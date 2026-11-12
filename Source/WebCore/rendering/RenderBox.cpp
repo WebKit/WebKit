@@ -1720,6 +1720,9 @@ template<typename SizeType> LayoutUnit RenderBox::adjustBorderBoxLogicalWidthFor
 {
     if (!logicalWidth.isStretchFunction())
         return adjustBorderBoxLogicalWidthForBoxSizing(computedLogicalWidth);
+    // Margins don't apply to table cells, so their margin box is their border box.
+    if (isRenderTableCell())
+        return std::max(computedLogicalWidth, borderAndPaddingLogicalWidth());
     // stretch(): "Fit the margin box to the size specified by the argument"
     // Margin percentages always resolve against the containing block's inline size.
     auto zoom = style().usedZoomForLength();
@@ -1727,6 +1730,10 @@ template<typename SizeType> LayoutUnit RenderBox::adjustBorderBoxLogicalWidthFor
     auto margins = Style::evaluateMinimum<LayoutUnit>(style().marginStart(), *containingBlockLogicalWidth, zoom) + Style::evaluateMinimum<LayoutUnit>(style().marginEnd(), *containingBlockLogicalWidth, zoom);
     return std::max(computedLogicalWidth - margins, borderAndPaddingLogicalWidth());
 }
+
+template LayoutUnit RenderBox::adjustBorderBoxLogicalWidthForBoxSizing<Style::PreferredSize>(const Style::PreferredSize&, LayoutUnit, std::optional<LayoutUnit>) const;
+template LayoutUnit RenderBox::adjustBorderBoxLogicalWidthForBoxSizing<Style::MinimumSize>(const Style::MinimumSize&, LayoutUnit, std::optional<LayoutUnit>) const;
+template LayoutUnit RenderBox::adjustBorderBoxLogicalWidthForBoxSizing<Style::MaximumSize>(const Style::MaximumSize&, LayoutUnit, std::optional<LayoutUnit>) const;
 
 LayoutUnit RenderBox::adjustBorderBoxLogicalHeightForBoxSizing(LayoutUnit height) const
 {
@@ -1785,6 +1792,8 @@ template<typename SizeType> LayoutUnit RenderBox::adjustBorderBoxLogicalHeightFo
 {
     if (!logicalHeight.isStretchFunction())
         return adjustBorderBoxLogicalHeightForBoxSizing(computedLogicalHeight);
+    if (isRenderTableCell())
+        return std::max(computedLogicalHeight, borderAndPaddingLogicalHeight());
     auto zoom = style().usedZoomForLength();
     ASSERT(containingBlockLogicalWidth);
     auto margins = Style::evaluateMinimum<LayoutUnit>(style().marginBefore(), *containingBlockLogicalWidth, zoom) + Style::evaluateMinimum<LayoutUnit>(style().marginAfter(), *containingBlockLogicalWidth, zoom);
@@ -1798,6 +1807,9 @@ template<typename SizeType> LayoutUnit RenderBox::adjustContentBoxLogicalHeightF
     return adjustBorderBoxLogicalHeightForBoxSizing(logicalHeight, computedLogicalHeight, containingBlockLogicalWidth) - borderAndPaddingLogicalHeight();
 }
 
+template LayoutUnit RenderBox::adjustBorderBoxLogicalHeightForBoxSizing<Style::PreferredSize>(const Style::PreferredSize&, LayoutUnit, std::optional<LayoutUnit>) const;
+template LayoutUnit RenderBox::adjustBorderBoxLogicalHeightForBoxSizing<Style::MinimumSize>(const Style::MinimumSize&, LayoutUnit, std::optional<LayoutUnit>) const;
+template LayoutUnit RenderBox::adjustBorderBoxLogicalHeightForBoxSizing<Style::MaximumSize>(const Style::MaximumSize&, LayoutUnit, std::optional<LayoutUnit>) const;
 template LayoutUnit RenderBox::adjustContentBoxLogicalHeightForBoxSizing<Style::PreferredSize>(const Style::PreferredSize&, LayoutUnit, std::optional<LayoutUnit>) const;
 template LayoutUnit RenderBox::adjustContentBoxLogicalHeightForBoxSizing<Style::MinimumSize>(const Style::MinimumSize&, LayoutUnit, std::optional<LayoutUnit>) const;
 template LayoutUnit RenderBox::adjustContentBoxLogicalHeightForBoxSizing<Style::MaximumSize>(const Style::MaximumSize&, LayoutUnit, std::optional<LayoutUnit>) const;

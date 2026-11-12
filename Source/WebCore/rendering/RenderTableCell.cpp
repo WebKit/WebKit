@@ -246,7 +246,7 @@ void RenderTableCell::constrainIntrinsicLogicalWidthContributionsByMinMax(Layout
         // In quirks mode, when nowrap is set on a cell that also has an explicit fixed width,
         // WinIE/Moz treat the fixed width as the minimum width of the cell. Affected the top
         // of hiptop.com.
-        minContentLogicalWidthContribution = std::max(adjustBorderBoxLogicalWidthForBoxSizing(LayoutUnit(fixedLogicalWidth->resolveZoom(usedZoom))), minContentLogicalWidthContribution);
+        minContentLogicalWidthContribution = std::max(adjustBorderBoxLogicalWidthForBoxSizing(logicalWidth, LayoutUnit(fixedLogicalWidth->resolveZoom(usedZoom)), 0_lu), minContentLogicalWidthContribution);
     }
 }
 
