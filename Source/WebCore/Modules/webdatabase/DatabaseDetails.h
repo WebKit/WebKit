@@ -55,7 +55,7 @@ public:
     uint64_t currentUsage() const { return m_currentUsage; }
     std::optional<WallTime> creationTime() const { return m_creationTime; }
     std::optional<WallTime> modificationTime() const { return m_modificationTime; }
-#if ASSERT_ENABLED
+#if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
     uint32_t threadID() const { return m_threadID; }
 #endif
 
@@ -66,7 +66,7 @@ private:
     uint64_t m_currentUsage { 0 };
     Markable<WallTime> m_creationTime;
     Markable<WallTime> m_modificationTime;
-#if ASSERT_ENABLED
+#if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
     uint32_t m_threadID { currentThreadID() };
 #endif
 };
