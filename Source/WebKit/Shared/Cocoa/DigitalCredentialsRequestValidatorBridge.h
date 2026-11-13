@@ -32,18 +32,18 @@
 #include <WebCore/UnvalidatedDigitalCredentialRequest.h>
 #include <WebCore/ValidatedMobileDocumentRequest.h>
 #include <WebCore/ValidatedOpenID4VPRequest.h>
+#include <wtf/Function.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
-class Document;
-class SecurityOrigin;
+class SecurityOriginData;
 struct ValidatedMobileDocumentRequest;
 }
 
 namespace WebKit {
 namespace DigitalCredentials {
 
-Vector<std::optional<WebCore::ValidatedDigitalCredentialRequest>> validateRequests(const WebCore::SecurityOrigin&, const WebCore::Document&, const Vector<WebCore::UnvalidatedDigitalCredentialRequest>&);
+Vector<std::optional<WebCore::ValidatedDigitalCredentialRequest>> validateRequests(const WebCore::SecurityOriginData& topOrigin, const Vector<WebCore::UnvalidatedDigitalCredentialRequest>&, NOESCAPE const Function<void(const String&)>& reportFailure = { });
 
 } // namespace DigitalCredentials
 } // namespace WebKit

@@ -31,12 +31,10 @@
 
 namespace WebCore {
 
-class Document;
-
 class DigitalCredentialsRequestDataBuilder {
 
 public:
-    WEBCORE_EXPORT static ExceptionOr<std::pair<DigitalCredentialsRequestData, DigitalCredentialsRawRequests>> build(Vector<std::optional<ValidatedDigitalCredentialRequest>>&&, const Document&, Vector<UnvalidatedDigitalCredentialRequest>&&);
+    WEBCORE_EXPORT static ExceptionOr<std::pair<DigitalCredentialsRequestData, DigitalCredentialsRawRequests>> build(Vector<std::optional<ValidatedDigitalCredentialRequest>>&&, const DigitalCredentialsSecurityOriginData&, Vector<UnvalidatedDigitalCredentialRequest>&&);
 };
 
 } // namespace WebCore

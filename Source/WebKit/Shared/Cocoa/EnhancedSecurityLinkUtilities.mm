@@ -26,11 +26,12 @@
 #import "config.h"
 #import "EnhancedSecurityLinkUtilities.h"
 
+#import <wtf/CompletionHandler.h>
+
 #if HAVE(ENHANCED_SECURITY_LINKS)
 
 #import <LinkSecurity/LinkSecurity.h>
 #import <wtf/BlockPtr.h>
-#import <wtf/CompletionHandler.h>
 #import <wtf/MainThread.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/URL.h>
