@@ -2005,18 +2005,17 @@ void BBQJIT::emitArraySetUnchecked(TypeSignatureIndex typeIndex, Value arrayref,
                 };
             } else {
                 emitMove(fillBits, Location::fromGPR(valueGPR));
-                // A one-byte element goes to the memory fill, which takes its pattern as an i32.
-                TypeKind valueType = elementType.elementSize() == 1 ? TypeKind::I32 : TypeKind::I64;
+                TypeKind valueType = elementType.elementSize() <= sizeof(uint32_t) ? TypeKind::I32 : TypeKind::I64;
                 arguments = { payload, Value::pinned(valueType, Location::fromGPR(valueGPR)), count };
             }
         }
 
         if (fillsVector)
-            emitCCall(&operationWasmArrayFill16B, arguments);
+            emitCCall(&B3::operationMemoryFill128, arguments);
         else if (isRefType(elementType.unpacked())) {
             // A reference has to be stored whole or the concurrent collector could read a torn JSValue,
             // which a wider store does not promise.
-            emitCCall(&operationWasmArrayFillRefs, arguments);
+            emitCCall(&B3::operationGCSafeMemoryFill64, arguments);
 
             // emitWriteBarrier() allocates its own scratches, so stage the cell somewhere they cannot take.
             emitMove(arrayref, Location::fromGPR(wasmScratchGPR));
@@ -2024,16 +2023,16 @@ void BBQJIT::emitArraySetUnchecked(TypeSignatureIndex typeIndex, Value arrayref,
         } else {
             switch (elementType.elementSize()) {
             case 1:
-                emitCCall(&B3::operationMemoryFill, arguments);
+                emitCCall(&B3::operationMemoryFill8, arguments);
                 break;
             case 2:
-                emitCCall(&operationWasmArrayFill2B, arguments);
+                emitCCall(&B3::operationMemoryFill16, arguments);
                 break;
             case 4:
-                emitCCall(&operationWasmArrayFill4B, arguments);
+                emitCCall(&B3::operationMemoryFill32, arguments);
                 break;
             case 8:
-                emitCCall(&operationWasmArrayFill8B, arguments);
+                emitCCall(&B3::operationMemoryFill64, arguments);
                 break;
             default:
                 RELEASE_ASSERT_NOT_REACHED();
