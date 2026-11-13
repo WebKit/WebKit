@@ -1,0 +1,32 @@
+Tests that Network.resolveWebSocket resolves main-frame and cross-origin iframe WebSockets under Site Isolation.
+
+
+
+== Running test suite: SiteIsolation.Network.ResolveWebSocket
+-- Running test case: SiteIsolation.Network.ResolveWebSocket.CrossOriginIFrame
+PASS: Remote object should belong to the iframe's frame target.
+PASS: Should resolve a remote object.
+PASS: Remote object should have type "object".
+PASS: Remote object should have description "WebSocket".
+PASS: Remote object should be the WebSocket that opened the resource.
+PASS: Displayable properties should include "url".
+PASS: Displayable properties should include "readyState".
+
+-- Running test case: SiteIsolation.Network.ResolveWebSocket.MainFrame
+PASS: WebSocket should belong to the main frame.
+PASS: Remote object should belong to the page target.
+PASS: Remote object should belong to the target of the console's active execution context.
+PASS: Should resolve a remote object.
+PASS: Remote object should have type "object".
+PASS: Remote object should have description "WebSocket".
+PASS: Remote object should be the WebSocket that opened the resource.
+PASS: Displayable properties should include "url".
+PASS: Displayable properties should include "readyState".
+PASS: Saved console result should be the main frame's WebSocket.
+
+-- Running test case: SiteIsolation.Network.ResolveWebSocket.InvalidRequestIdentifier
+PASS: DOES_NOT_EXIST: resolveWebSocket should fail.
+  Error: Missing web socket for given requestId
+PASS: request-1.1: resolveWebSocket should fail.
+  Error: Missing web socket for given requestId
+

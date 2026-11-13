@@ -1,0 +1,79 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/websocket-test-utilities.js"></script>
+<script>
+// Global so the socket is kept alive.
+let webSocket = null;
+
+function openWebSocket(message) {
+    webSocket = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/echo");
+    webSocket.onopen = () => {
+        webSocket.send(message);
+    };
+    webSocket.onmessage = () => {
+        webSocket.close();
+    };
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.WebSocket");
+
+    let iframeWebSocketRequestIdentifier = null;
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.WebSocket.CrossOriginIFrame",
+        description: "A WebSocket opened by a cross-origin iframe should be reported once, on the iframe's frame, with its handshake and frames.",
+        async test() {
+            let frameTarget = await waitForFrameTargetForURLContaining("websocket-iframe.html");
+            InspectorTest.assert(frameTarget instanceof WI.FrameTarget, "Cross-origin iframe frame target should exist.");
+            await waitForExpressionInTarget(frameTarget, "typeof openWebSocket === 'function'");
+
+            let resourcePromise = awaitWebSocketResource("localhost:8880");
+            await frameTarget.RuntimeAgent.evaluate.invoke({expression: `openWebSocket("Hello from iframe")`, objectGroup: "test"});
+            let resource = await resourcePromise;
+            await awaitWebSocketClosed(resource);
+
+            InspectorTest.expectThat(resource instanceof WI.WebSocketResource, "WebSocket resource should be created.");
+            InspectorTest.expectThat(resource.parentFrame instanceof WI.Frame, "WebSocket should have a parent WI.Frame.");
+            InspectorTest.expectNotEqual(resource.parentFrame, WI.networkManager.mainFrame, "WebSocket should not be attributed to the main frame.");
+            InspectorTest.expectEqual(resource.parentFrame.parentFrame, WI.networkManager.mainFrame, "WebSocket's frame should be a direct child of the main frame.");
+            InspectorTest.expectThat(resource.parentFrame.mainResource.url.includes("websocket-iframe.html"), "WebSocket's frame should be the cross-origin iframe.");
+            InspectorTest.expectThat(resource.requestIdentifier.startsWith("websocket-"), "WebSocket requestId should be process-qualified.");
+            InspectorTest.expectEqual(resource.statusCode, 101, "Handshake response status should be 101.");
+            InspectorTest.expectEqual(resource.readyState, WI.WebSocketResource.ReadyState.Closed, "WebSocket should be closed.");
+            InspectorTest.expectEqual(countWebSocketResourcesForURL(resource.url), 1, "WebSocket should be reported once.");
+            logWebSocketFrames(resource);
+
+            iframeWebSocketRequestIdentifier = resource.requestIdentifier;
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.WebSocket.MainFrame",
+        description: "A WebSocket opened by the main frame should be reported once, on the main frame.",
+        async test() {
+            let resourcePromise = awaitWebSocketResource("127.0.0.1:8880");
+            InspectorTest.evaluateInPage(`openWebSocket("Hello from main frame")`);
+            let resource = await resourcePromise;
+            await awaitWebSocketClosed(resource);
+
+            InspectorTest.expectEqual(resource.parentFrame, WI.networkManager.mainFrame, "WebSocket should be attributed to the main frame.");
+            InspectorTest.expectThat(resource.requestIdentifier.startsWith("websocket-"), "WebSocket requestId should be process-qualified.");
+            InspectorTest.expectNotEqual(resource.requestIdentifier, iframeWebSocketRequestIdentifier, "Main frame and iframe WebSockets should have distinct requestIds.");
+            InspectorTest.expectEqual(resource.statusCode, 101, "Handshake response status should be 101.");
+            InspectorTest.expectEqual(resource.readyState, WI.WebSocketResource.ReadyState.Closed, "WebSocket should be closed.");
+            InspectorTest.expectEqual(countWebSocketResourcesForURL(resource.url), 1, "WebSocket should be reported once.");
+            logWebSocketFrames(resource);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Tests that WebSocket activity in a cross-origin iframe and in the main frame reaches the Network domain under Site Isolation, attributed to the right frame, once each.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/network/resources/websocket-iframe.html"></iframe>
+</body>
