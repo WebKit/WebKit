@@ -92,6 +92,7 @@ public:
 
     std::optional<WebCore::BackForwardFrameItemIdentifier> suspendedFrameItemID() const { return m_suspendedFrameItemID; }
     HashSet<Ref<WebProcessProxy>> iframeProcesses() const;
+    Vector<Ref<WebFrameProxy>> takeChildFramesOfSuspendedDocument();
 
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
@@ -113,6 +114,7 @@ private:
     void didProcessRequestToSuspend(SuspensionState);
     void suspensionTimedOut();
     void suspendSubframeProcesses(WebCore::BackForwardFrameItemIdentifier);
+    void removeFromSubframeProcesses();
     void dropNetworkActivityOnRemotePages();
     void maybeCompleteSuspension();
 
