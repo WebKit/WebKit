@@ -1,6 +1,4 @@
 
-Harness Error (FAIL), message = Error in remote: TypeError: undefined is not an object
-
 PASS Errors must be propagated backward: starts errored; preventCancel omitted; fulfilled cancel promise
 PASS Errors must be propagated backward: becomes errored before piping due to write; preventCancel omitted; fulfilled cancel promise
 PASS Errors must be propagated backward: becomes errored before piping due to write; preventCancel omitted; rejected cancel promise

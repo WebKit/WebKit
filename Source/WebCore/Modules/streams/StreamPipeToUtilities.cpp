@@ -160,6 +160,7 @@ private:
 
     bool m_readableIsClosing { false };
     bool m_shuttingDown { false };
+    bool m_isFinalized { false };
     WeakPtr<PipeToDefaultReadRequest> m_pendingReadRequest;
     RefPtr<DOMPromise> m_pendingWritePromise;
 };
@@ -392,6 +393,9 @@ void StreamPipeToState::doRead()
 
 void StreamPipeToState::doWrite(JSC::JSValue value)
 {
+    if (m_isFinalized)
+        return;
+
     auto* globalObject = this->globalObject();
     if (!globalObject)
         return;
@@ -716,6 +720,7 @@ void StreamPipeToState::finalize(GetError&& getError)
     if (!globalObject)
         return;
 
+    m_isFinalized = true;
     writableStreamDefaultWriterRelease(m_writer);
     m_reader->releaseLock(*globalObject);
 
