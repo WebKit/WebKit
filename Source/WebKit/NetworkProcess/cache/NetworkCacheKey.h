@@ -57,10 +57,12 @@ class Key {
 public:
     typedef SHA1::Digest HashType;
 
+    enum class IncludesCredentials : bool { No, Yes };
+
     Key() { }
     Key(const Key&);
     Key(Key&&) = default;
-    Key(const String& partition, const String& type, const String& range, const String& identifier, const Salt&);
+    Key(const String& partition, const String& type, const String& range, const String& identifier, const Salt&, IncludesCredentials = IncludesCredentials::Yes);
     Key(const DataKey&, const Salt&);
 
     Key& operator=(const Key&);
@@ -110,7 +112,7 @@ public:
 private:
     friend struct WTF::Persistence::Coder<Key>;
     static String hashAsString(const HashType&);
-    HashType computeHash(const Salt&) const;
+    HashType computeHash(const Salt&, IncludesCredentials) const;
     HashType computePartitionHash(const Salt&) const;
     static HashType partitionToPartitionHash(const String& partition, const Salt&);
     Key(String&& partition, String&& type, String&& identifier, String&& range, HashType hash, HashType partitionHash)

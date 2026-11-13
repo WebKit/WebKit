@@ -46,12 +46,12 @@ Key::Key(const Key& o)
 {
 }
 
-Key::Key(const String& partition, const String& type, const String& range, const String& identifier, const Salt& salt)
+Key::Key(const String& partition, const String& type, const String& range, const String& identifier, const Salt& salt, IncludesCredentials includesCredentials)
     : m_partition(partition)
     , m_type(type)
     , m_identifier(identifier)
     , m_range(range)
-    , m_hash(computeHash(salt))
+    , m_hash(computeHash(salt, includesCredentials))
     , m_partitionHash(computePartitionHash(salt))
 {
 }
@@ -65,7 +65,7 @@ Key::Key(const DataKey& dataKey, const Salt& salt)
     : m_partition(dataKey.partition)
     , m_type(dataKey.type)
     , m_identifier(hashAsString(dataKey.identifier))
-    , m_hash(computeHash(salt))
+    , m_hash(computeHash(salt, IncludesCredentials::Yes))
     , m_partitionHash(computePartitionHash(salt))
 {
 }
@@ -89,7 +89,7 @@ static void hashString(SHA1& sha1, const String& string)
     sha1.addUTF8Bytes(string);
 }
 
-Key::HashType Key::computeHash(const Salt& salt) const
+Key::HashType Key::computeHash(const Salt& salt, IncludesCredentials includesCredentials) const
 {
     // We don't really need a cryptographic hash. The key is always verified against the entry header.
     // SHA1 just happens to be suitably sized, fast and available.
@@ -100,6 +100,11 @@ Key::HashType Key::computeHash(const Salt& salt) const
     hashString(sha1, m_type);
     hashString(sha1, m_identifier);
     hashString(sha1, m_range);
+
+    if (includesCredentials == IncludesCredentials::No) {
+        static constexpr std::array<uint8_t, 1> withoutCredentials { 0 };
+        sha1.addBytes(std::span { withoutCredentials });
+    }
 
     SHA1::Digest hash;
     sha1.computeHash(hash);

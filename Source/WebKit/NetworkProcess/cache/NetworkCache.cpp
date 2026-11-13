@@ -184,7 +184,8 @@ Key Cache::makeCacheKey(RecordType recordType, const WebCore::ResourceRequest& r
     // FIXME: This implements minimal Range header disk cache support. We don't parse
     // ranges so only the same exact range request will be served from the cache.
     String range = request.httpHeaderField(WebCore::HTTPHeaderName::Range);
-    return { request.cachePartition(), recordTypeName(recordType), range, request.url().stringWithoutFragmentIdentifier(), m_storage->salt() };
+    auto includesCredentials = recordType == RecordType::Resource && !request.allowCookies() ? Key::IncludesCredentials::No : Key::IncludesCredentials::Yes;
+    return { request.cachePartition(), recordTypeName(recordType), range, request.url().stringWithoutFragmentIdentifier(), m_storage->salt(), includesCredentials };
 }
 
 NODELETE static bool cachePolicyAllowsExpired(WebCore::ResourceRequestCachePolicy policy)
@@ -385,6 +386,9 @@ void Cache::updateSpeculativeLoadManagerEnabledState()
 static bool inline canRequestUseSpeculativeRevalidation(const WebCore::ResourceRequest& request)
 {
     if (request.isConditional())
+        return false;
+
+    if (!request.allowCookies())
         return false;
 
     if (request.requester() == WebCore::ResourceRequestRequester::XHR || request.requester() == WebCore::ResourceRequestRequester::Fetch)
