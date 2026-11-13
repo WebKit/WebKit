@@ -8,6 +8,10 @@
         let styleSheetId;
         let ruleId;
         let styleId;
+        let documentStyleSheetId;
+        let originalStyleSheetText;
+
+        const editedStyleSheetText = ".after-edit { color: blue; }";
 
         suite.addTestCase({
             name: "SiteIsolation.CSS.EditingCommands.FrameTarget.Setup",
@@ -116,11 +120,61 @@
             }
         });
 
+        suite.addTestCase({
+            name: "SiteIsolation.CSS.EditingCommands.FrameTarget.SetStyleSheetTextThenUndo",
+            description: "setStyleSheetText should replace the stylesheet text, and undo on the frame target should restore the previous text via the frame's InspectorHistory.",
+            async test() {
+                // Use the frame document's own style sheet. For inspector style sheets, the frontend writes the content
+                // back with setStyleSheetText after each styleSheetChanged event, which would race with these edits.
+                let { headers } = await childFrameTarget.CSSAgent.getAllStyleSheets();
+                for (let header of headers) {
+                    let { text } = await childFrameTarget.CSSAgent.getStyleSheetText(header.styleSheetId);
+                    if (text.includes(".test-class")) {
+                        documentStyleSheetId = header.styleSheetId;
+                        originalStyleSheetText = text;
+                        break;
+                    }
+                }
+                InspectorTest.expectNotNull(documentStyleSheetId, "Should find the frame document's style sheet.");
+
+                // Checkpoint so undo() reverts only the text change that follows.
+                await childFrameTarget.DOMAgent.markUndoableState();
+
+                await childFrameTarget.CSSAgent.setStyleSheetText(documentStyleSheetId, editedStyleSheetText);
+                let { text: editedText } = await childFrameTarget.CSSAgent.getStyleSheetText(documentStyleSheetId);
+                InspectorTest.expectEqual(editedText, editedStyleSheetText, "setStyleSheetText should update the stylesheet text.");
+
+                await childFrameTarget.DOMAgent.undo();
+
+                let { text: undoneText } = await childFrameTarget.CSSAgent.getStyleSheetText(documentStyleSheetId);
+                InspectorTest.expectEqual(undoneText, originalStyleSheetText, "undo() should restore the previous stylesheet text.");
+
+                let { styleSheet } = await childFrameTarget.CSSAgent.getStyleSheet(documentStyleSheetId);
+                InspectorTest.expectNotNull(styleSheet.rules.find((rule) => rule.selectorList.text === ".test-class"), "The '.test-class' rule should be back after undo().");
+                InspectorTest.expectNull(styleSheet.rules.find((rule) => rule.selectorList.text === ".after-edit"), "The '.after-edit' rule should no longer be present after undo().");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.CSS.EditingCommands.FrameTarget.SetStyleSheetTextRedo",
+            description: "redo on the frame target should re-apply the undone stylesheet text change via the frame's InspectorHistory.",
+            async test() {
+                await childFrameTarget.DOMAgent.redo();
+
+                let { text: redoneText } = await childFrameTarget.CSSAgent.getStyleSheetText(documentStyleSheetId);
+                InspectorTest.expectEqual(redoneText, editedStyleSheetText, "redo() should re-apply the edited stylesheet text.");
+
+                let { styleSheet } = await childFrameTarget.CSSAgent.getStyleSheet(documentStyleSheetId);
+                InspectorTest.expectNotNull(styleSheet.rules.find((rule) => rule.selectorList.text === ".after-edit"), "The '.after-edit' rule should be back after redo().");
+                InspectorTest.expectNull(styleSheet.rules.find((rule) => rule.selectorList.text === ".test-class"), "The '.test-class' rule should no longer be present after redo().");
+            }
+        });
+
         suite.runTestCasesAndFinish();
     }
 </script>
 
 <body onload="runTest()">
-    <p>Test that CSS style/rule editing commands (setStyleText, setRuleSelector, setGroupingHeaderText, addRule) work correctly on frame targets under site isolation, routing undoable edits through the frame's InspectorHistory.</p>
+    <p>Test that CSS style/rule editing commands (setStyleText, setRuleSelector, setGroupingHeaderText, addRule, setStyleSheetText) work correctly on frame targets under site isolation, routing undoable edits through the frame's InspectorHistory.</p>
     <iframe src="http://localhost:8000/site-isolation/inspector/css/resources/frame-with-stylesheet.html"></iframe>
 </body>
