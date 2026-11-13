@@ -37,7 +37,15 @@ function didRemoveSwipeSnapshotCallback()
     shouldBe(true, isFirstPage(), "The swipe should have navigated back to the first page.");
     measuredDurationShouldBeLessThan("snapshotRemoval", 1000, "Because we're using the page cache, it shouldn't be long between the gesture completing and the snapshot being removed.")
 
-    testComplete();
+    onpagereveal = async (event) => {
+        log("programmaticBack");
+        shouldBe(true, !!event.viewTransition, "View transitions should be enabled for a programmatic back navigation after a swipe.");
+        if (event.viewTransition)
+            await event.viewTransition.finished;
+        testComplete();
+    };
+
+    history.forward();
 }
 
 function isFirstPage()
@@ -75,6 +83,19 @@ window.onload = async function () {
         }, 0);
         return;
     }
+
+    onpageshow = (event) => {
+        if (!event.persisted)
+            return;
+
+        onpagereveal = async (event) => {
+            log("programmaticForward");
+            shouldBe(true, !!event.viewTransition, "View transitions should be enabled for a programmatic forward navigation after a swipe.");
+            if (event.viewTransition)
+                await event.viewTransition.finished;
+            history.back();
+        };
+    };
 
     await startSwipeGesture();
 };

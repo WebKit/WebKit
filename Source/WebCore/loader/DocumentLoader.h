@@ -522,7 +522,7 @@ public:
     void setHasCrossOriginRedirect(bool hasCrossOriginRedirect) { m_hasCrossOriginRedirect = hasCrossOriginRedirect; }
 
     bool loadStartedDuringSwipeAnimation() const { return m_loadStartedDuringSwipeAnimation; }
-    void setLoadStartedDuringSwipeAnimation() { m_loadStartedDuringSwipeAnimation = true; }
+    void setLoadStartedDuringSwipeAnimation(bool loadStartedDuringSwipeAnimation) { m_loadStartedDuringSwipeAnimation = loadStartedDuringSwipeAnimation; }
 
     bool isHandledByAboutSchemeHandler() const { return m_isHandledByAboutSchemeHandler; }
     void setIsHandledByAboutSchemeHandler(bool isHandledByAboutSchemeHandler) { m_isHandledByAboutSchemeHandler = isHandledByAboutSchemeHandler; }
