@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,6 +40,8 @@ public:
     
     static SMILTime unresolved() { return unresolvedValue; }
     static SMILTime indefinite() { return indefiniteValue; }
+    // The largest finite value. Arithmetic on finite values is clamped to it, so that it can never produce a sentinel value.
+    static SMILTime latest() { return latestValue; }
     
     SMILTime& operator=(const SMILTime& o) { m_time = o.m_time; return *this; }
     double value() const { return m_time; }
@@ -51,6 +53,7 @@ public:
 private:
     static const double unresolvedValue;
     static const double indefiniteValue;
+    static const double latestValue;
 
     double m_time { 0 };
 };
