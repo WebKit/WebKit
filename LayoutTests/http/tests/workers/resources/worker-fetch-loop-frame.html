@@ -1,0 +1,5 @@
+<script>
+const worker = new Worker("worker-fetch-loop.js");
+worker.onmessage = () => parent.postMessage("started", "*");
+worker.postMessage("start");
+</script>
