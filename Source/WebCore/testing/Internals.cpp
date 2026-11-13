@@ -265,6 +265,7 @@
 #include "StorageNamespaceProvider.h"
 #include "StreamTransferUtilities.h"
 #include "StringCallback.h"
+#include "StyleAdjuster.h"
 #include "StyleBackgroundLayers.h"
 #include "StyleDocumentScope.h"
 #include "StyleExtractor.h"
@@ -1768,6 +1769,20 @@ void Internals::setAXCustomColorModeElementQuirksForTesting(const String& forceF
 String Internals::usedBackgroundColor(Element& element)
 {
     return serializationForCSS(protect(element.computedStyle())->usedBackgroundColorResolvingCurrentColor());
+}
+
+ExceptionOr<void> Internals::setOverrideBackgroundColor(Element& element, const String& colorValue)
+{
+    std::optional<Color> color;
+    if (!colorValue.isNull()) {
+        Ref document = element.document();
+        color = CSSPropertyParserHelpers::parseColorRaw(colorValue, document->cssParserContext(), document.get());
+        if (!color->isValid())
+            return Exception { ExceptionCode::SyntaxError };
+    }
+
+    Style::Adjuster::setOverrideBackgroundColorForTesting(element, WTF::move(color));
+    return { };
 }
 
 Node& Internals::ensureUserAgentShadowRoot(Element& host)

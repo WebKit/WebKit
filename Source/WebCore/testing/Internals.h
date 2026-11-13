@@ -326,6 +326,7 @@ public:
     void setAXCustomColorModeElementQuirksForTesting(const String& forceFilterSelector, const String& preserveAuthoredColorsSelector);
 #endif
     String usedBackgroundColor(Element&);
+    ExceptionOr<void> setOverrideBackgroundColor(Element&, const String& colorValue);
 
     Node& ensureUserAgentShadowRoot(Element& host);
     Node* shadowRoot(Element& host);

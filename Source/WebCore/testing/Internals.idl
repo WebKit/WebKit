@@ -601,6 +601,7 @@ enum LayerType {
     DOMString computedAppleColorFilter(Element element);
     [Conditional=AX_CUSTOM_COLOR_MODE] undefined setAXCustomColorModeElementQuirksForTesting(DOMString forceFilterSelector, DOMString preserveAuthoredColorsSelector);
     DOMString usedBackgroundColor(Element element);
+    undefined setOverrideBackgroundColor(Element element, DOMString? color);
 
     Node ensureUserAgentShadowRoot(Element host);
     Node? shadowRoot(Element host);

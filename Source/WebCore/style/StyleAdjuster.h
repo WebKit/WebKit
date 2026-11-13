@@ -32,6 +32,7 @@
 
 namespace WebCore {
 
+class Color;
 class Document;
 class Element;
 class EventTarget;
@@ -74,6 +75,8 @@ public:
     static AdjustmentForTextAutosizing adjustmentForTextAutosizing(const Style::ComputedStyle&, const Element&);
     static bool adjustForTextAutosizing(Style::ComputedStyle&, AdjustmentForTextAutosizing);
     static bool adjustForTextAutosizing(Style::ComputedStyle&, const Element&);
+
+    WEBCORE_EXPORT static void setOverrideBackgroundColorForTesting(Element&, std::optional<WebCore::Color>&&);
 
 private:
     NODELETE void adjustDisplayContentsStyle(Style::ComputedStyle&) const;

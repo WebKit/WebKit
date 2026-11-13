@@ -884,10 +884,8 @@ public:
 
 
         if (currentColorDiffers || &a.nonInheritedData() != &b.nonInheritedData()) {
-            if (currentColorDiffers || a.nonInheritedData().backgroundData.ptr() != b.nonInheritedData().backgroundData.ptr()) {
-                SUPPRESS_UNCOUNTED_ARG if (!backgroundIsEquivalentForPainting(a, b, currentColorDiffers))
-                    return true;
-            }
+            SUPPRESS_UNCOUNTED_ARG if (!backgroundIsEquivalentForPainting(a, b, currentColorDiffers))
+                return true;
 
             if (currentColorDiffers || a.nonInheritedData().surroundData.ptr() != b.nonInheritedData().surroundData.ptr()) {
                 if (!isEquivalentForPainting(a.nonInheritedData().surroundData->border, b.nonInheritedData().surroundData->border, currentColorDiffers))

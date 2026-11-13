@@ -89,6 +89,7 @@
 #include "VisibilityAdjustment.h"
 #include "WebAnimationTypes.h"
 #include <wtf/RobinHoodHashSet.h>
+#include <wtf/WeakHashMap.h>
 
 #if PLATFORM(COCOA)
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
@@ -443,6 +444,22 @@ void Adjuster::adjustFirstLineStyle(Style::ComputedStyle& style)
 
     // Force inline display.
     style.setDisplayMaintainingOriginalDisplay(DisplayType::InlineFlow);
+}
+
+static WeakHashMap<Element, WebCore::Color, WeakPtrImplWithEventTargetData>& overrideBackgroundColorsForTesting()
+{
+    static MainThreadNeverDestroyed<WeakHashMap<Element, WebCore::Color, WeakPtrImplWithEventTargetData>> colors;
+    return colors;
+}
+
+void Adjuster::setOverrideBackgroundColorForTesting(Element& element, std::optional<WebCore::Color>&& color)
+{
+    if (color)
+        overrideBackgroundColorsForTesting().set(element, WTF::move(*color));
+    else
+        overrideBackgroundColorsForTesting().remove(element);
+
+    element.invalidateStyle();
 }
 
 void Adjuster::adjust(Style::ComputedStyle& style) const
@@ -829,6 +846,11 @@ void Adjuster::adjust(Style::ComputedStyle& style) const
 #endif
 
     adjustForSiteSpecificQuirks(style);
+
+    if (m_element) {
+        if (auto overrideBackgroundColor = overrideBackgroundColorsForTesting().getOptional(*m_element)) [[unlikely]]
+            style.setOverrideBackgroundColor({ WTF::move(*overrideBackgroundColor) });
+    }
 
     adjustUsedUserSelect(style);
     // Don't allow selecting individual glyphs on text recognized inside an image:
