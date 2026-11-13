@@ -823,6 +823,7 @@ list(APPEND TestWebKit_SOURCES
     Tests/WebKit/WKWebView/NavigationResponseProcessSwapTests.swift
     Tests/WebKit/WKWebView/PDFLookUpTests.swift
     Tests/WebKit/WKWebView/ProcessSwapBackForwardTests.swift
+    Tests/WebKit/WKWebView/ProcessSwapNavigationAPITests.swift
     Tests/WebKit/WKWebView/ProcessSwapStaleNavigationTests.swift
     Tests/WebKit/WKWebView/SiteIsolationAnimationControlTests.swift
     Tests/WebKit/WKWebView/SiteIsolationAutocorrectionTests.swift

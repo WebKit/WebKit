@@ -614,6 +614,7 @@
 				WebKit/WKWebView/NavigationResponseProcessSwapTests.swift,
 				WebKit/WKWebView/PDFLookUpTests.swift,
 				WebKit/WKWebView/ProcessSwapBackForwardTests.swift,
+				WebKit/WKWebView/ProcessSwapNavigationAPITests.swift,
 				WebKit/WKWebView/ProcessSwapStaleNavigationTests.swift,
 				WebKit/WKWebView/SiteIsolationAnimationControlTests.swift,
 				WebKit/WKWebView/SiteIsolationAutocorrectionTests.swift,
