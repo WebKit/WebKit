@@ -161,6 +161,9 @@ public:
     void sharedPreferencesForWebProcessDidChange(WebProcessProxy&, SharedPreferencesForWebProcess&&, CompletionHandler<void()>&&);
     void securityFlagsDidChange(const SecurityFlags::Storage&);
     void isSecurityFlagEnabledForTesting(const String&, CompletionHandler<void(std::optional<bool>)>&&);
+#if HAVE(SECURITY_OVERRIDES) && defined(ENGINEERING_BUILD) && ENGINEERING_BUILD
+    void setSecurityOverridesForTesting(std::optional<HashMap<String, String>>&&, CompletionHandler<void()>&&);
+#endif
 
     Ref<DownloadProxy> createDownloadProxy(WebsiteDataStore&, Ref<API::DownloadClient>&&, const WebCore::ResourceRequest&, const std::optional<FrameInfoData>&, WebPageProxy* originatingPage);
     void dataTaskWithRequest(WebPageProxy&, PAL::SessionID, WebCore::ResourceRequest&&, const std::optional<WebCore::SecurityOriginData>& topOrigin, bool shouldRunAtForegroundPriority, CompletionHandler<void(API::DataTask&)>&&);
@@ -306,6 +309,10 @@ public:
 
     // The network process brokers MessagePort delivery but has no GPU process connection.
     void handOverTransferredImageBuffers(Vector<WebCore::ImageBufferTransferIdentifier>&&, WebCore::ProcessIdentifier destinationProcess);
+
+#if HAVE(SECURITY_OVERRIDES)
+    void setSecurityOverrides(HashMap<String, String>&&);
+#endif
 
     void resourceLoadDidSendRequest(WebPageProxyIdentifier, ResourceLoadInfo&&, WebCore::ResourceRequest&&, std::optional<IPC::FormDataReference>&&);
     void resourceLoadDidPerformHTTPRedirection(WebPageProxyIdentifier, ResourceLoadInfo&&, WebCore::ResourceResponse&&, WebCore::ResourceRequest&&);
@@ -544,6 +551,10 @@ private:
 #if PLATFORM(IOS_FAMILY)
     const RetainPtr<id> m_backgroundObserver;
     const RetainPtr<id> m_foregroundObserver;
+#endif
+
+#if HAVE(SECURITY_OVERRIDES)
+    bool m_isSecurityOverridesEnabled { false };
 #endif
 };
 

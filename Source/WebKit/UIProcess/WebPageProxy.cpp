@@ -33,6 +33,7 @@
 #include "APIContextMenuClient.h"
 #include "APIDiagnosticLoggingClient.h"
 #include "APIDictionary.h"
+#include "APIError.h"
 #include "APIFindClient.h"
 #include "APIFindMatchesClient.h"
 #include "APIFormClient.h"

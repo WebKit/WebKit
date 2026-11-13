@@ -89,6 +89,9 @@ struct NetworkProcessCreationParameters {
 #if HAVE(ENHANCED_SECURITY_LINKS)
     bool enableEnhancedSecurityLinks { false };
 #endif
+#if HAVE(SECURITY_OVERRIDES)
+    bool enableSecurityOverrides { false };
+#endif
     Vector<WebsiteDataStoreParameters> websiteDataStoreParameters;
     HashMap<WebCore::ProcessIdentifier, Vector<String>> allowedFilePaths;
     HashSet<String> localhostAliasesForTesting;

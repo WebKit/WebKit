@@ -635,6 +635,10 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
 #endif
 
     RELEASE_LOG(Process, "SecurityFlags: radar184485266 is %" PUBLIC_LOG_STRING, SecurityFlags::radar184485266() ? "enforced" : "disabled");
+
+#if HAVE(SECURITY_OVERRIDES)
+    parameters.enableSecurityOverrides = ![defaults objectForKey:WebPreferencesKey::securityOverridesEnabledKey().createNSString().get()] || [defaults boolForKey:WebPreferencesKey::securityOverridesEnabledKey().createNSString().get()];
+#endif
 }
 
 void WebProcessPool::platformInvalidateContext()
