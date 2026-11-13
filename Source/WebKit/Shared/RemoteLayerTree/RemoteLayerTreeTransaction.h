@@ -133,6 +133,7 @@ public:
 
     std::optional<WebCore::PlatformLayerIdentifier> rootLayerID() const { return m_rootLayerID.asOptional(); }
     NODELETE void setRootLayerID(WebCore::PlatformLayerIdentifier);
+    void copyRootStateFrom(const RemoteLayerTreeTransaction&);
     void layerPropertiesChanged(PlatformCALayerRemote&);
     void setCreatedLayers(Vector<LayerCreationProperties>);
     void setDestroyedLayerIDs(Vector<WebCore::PlatformLayerIdentifier>);
@@ -195,5 +196,7 @@ private:
     WebCore::AcceleratedTimelinesUpdate m_timelinesUpdate;
 #endif
 };
+
+using RemoteLayerTreeFullState = Vector<RemoteLayerTreeTransaction>;
 
 } // namespace WebKit
