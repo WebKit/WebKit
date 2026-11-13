@@ -670,6 +670,21 @@ static gboolean wpeToplevelWaylandSetMinimized(WPEToplevel* toplevel)
     return TRUE;
 }
 
+static gboolean wpeToplevelWaylandBeginMove(WPEToplevel* toplevel)
+{
+    auto* priv = WPE_TOPLEVEL_WAYLAND(toplevel)->priv;
+    if (!priv->xdgToplevel)
+        return FALSE;
+
+    auto* display = wpe_toplevel_get_display(toplevel);
+    auto* seat = display ? wpeDisplayWaylandGetSeat(WPE_DISPLAY_WAYLAND(display)) : nullptr;
+    if (!seat || !seat->pointerButtonSerial())
+        return FALSE;
+
+    xdg_toplevel_move(priv->xdgToplevel, seat->seat(), seat->pointerButtonSerial());
+    return TRUE;
+}
+
 static GRefPtr<WPEDRMDevice> wpeToplevelWaylandGetDRMDevice(WPEToplevel* toplevel, const dev_t* device)
 {
 #if USE(LIBDRM)
@@ -766,6 +781,7 @@ static void wpe_toplevel_wayland_class_init(WPEToplevelWaylandClass* toplevelWay
     toplevelClass->set_fullscreen = wpeToplevelWaylandSetFullscreen;
     toplevelClass->set_maximized = wpeToplevelWaylandSetMaximized;
     toplevelClass->set_minimized = wpeToplevelWaylandSetMinimized;
+    toplevelClass->begin_move = wpeToplevelWaylandBeginMove;
     toplevelClass->get_preferred_buffer_formats = wpeToplevelWaylandGetPreferredBufferFormats;
     toplevelClass->set_title = wpeToplevelWaylandSetTitle;
 }
