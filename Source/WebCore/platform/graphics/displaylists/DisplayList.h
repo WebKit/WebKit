@@ -40,6 +40,8 @@ class TextStream;
 namespace WebCore {
 namespace DisplayList {
 
+class ResourceCache;
+
 // Note: currently this class is not usable from multiple threads due to the underlying objects, such
 // Font instances, not being thread-safe.
 class DisplayList final : public ThreadSafeRefCounted<DisplayList>, public CanMakeThreadSafeCheckedPtr<DisplayList> {
@@ -51,7 +53,7 @@ public:
     {
         return adoptRef(*new DisplayList(WTF::move(items)));
     }
-    WEBCORE_EXPORT static RefPtr<const DisplayList> createResolvingResources(Vector<Item>&&, std::span<const Ref<const FontBase>> fonts, std::span<const Ref<const DisplayList>> displayLists);
+    WEBCORE_EXPORT static RefPtr<const DisplayList> createResolved(Vector<Item>&&, const ResourceCache&);
     WEBCORE_EXPORT ~DisplayList();
 
     std::span<const Item> items() const LIFETIME_BOUND { return m_items.span(); }

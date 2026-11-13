@@ -256,6 +256,10 @@
 #include <WebCore/VP9UtilitiesCocoa.h>
 #endif
 
+#if HAVE(LOCKDOWN_MODE_PDF_ADDITIONS)
+#include <pal/spi/cg/CoreGraphicsSPI.h>
+#endif
+
 #if OS(LINUX)
 #include <wtf/linux/HighPriorityThreads.h>
 #endif
@@ -1862,6 +1866,10 @@ void WebProcess::bindAccessibilityFrameWithData(WebCore::FrameIdentifier, std::s
 void WebProcess::prepareForPrinting(CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(m_isPrintProcess);
+#if HAVE(LOCKDOWN_MODE_PDF_ADDITIONS)
+    if (isLockdownModeEnabled())
+        CGEnterLockdownModeForPDF();
+#endif
     completionHandler(protect(ensureGPUProcessConnection())->waitForDidInitialize());
 }
 #endif

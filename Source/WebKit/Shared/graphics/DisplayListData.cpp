@@ -30,6 +30,11 @@
 
 #include "SharedFont.h"
 #include <WebCore/DisplayListRecorderImpl.h>
+#include <WebCore/DisplayListResourceCache.h>
+#include <WebCore/FEImage.h>
+#include <WebCore/ImageBuffer.h>
+#include <WebCore/NativeImage.h>
+#include <WebCore/Pattern.h>
 #include <wtf/Borrow.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -45,7 +50,7 @@ public:
     {
         if (!encodeDisplayList(displayList))
             return std::nullopt;
-        return DisplayListData { WTF::move(m_customFonts), WTF::move(m_fonts), WTF::move(m_bottomUpDisplayLists) };
+        return DisplayListData { WTF::move(m_customFonts), WTF::move(m_fonts), WTF::move(m_images), WTF::move(m_pdfDocuments), WTF::move(m_bottomUpDisplayLists) };
     }
 
 private:
@@ -110,25 +115,51 @@ private:
                 result.append(item);
                 return true;
             },
-            // FIXME: Serialize images, image buffers and patterns by value.
             [&](const DisplayList::SetState& item) {
-                if (item.state().fillBrush().pattern() || item.state().strokeBrush().pattern())
+                if (!addPatternImage(item.state().fillBrush()) || !addPatternImage(item.state().strokeBrush()))
                     return false;
                 result.append(item);
                 return true;
             },
             [&](const DisplayList::DrawFilteredImageBuffer& item) {
-                if (item.sourceImage() || !item.filter().effectsOfType(FilterFunction::Type::FEImage).isEmpty())
+                if (RefPtr sourceImage = item.sourceImage(); sourceImage && !addImage(*sourceImage))
                     return false;
+                Ref filter = item.filter();
+                for (auto& effect : filter->effectsOfType(FilterFunction::Type::FEImage)) {
+                    Ref feImage = downcast<FEImage>(effect);
+                    if (!addImage(feImage->sourceImage()))
+                        return false;
+                }
                 result.append(item);
                 return true;
             },
-            [](const DisplayList::ClipToNativeImage&) { return false; },
-            [](const DisplayList::DrawImageBuffer&) { return false; },
-            [](const DisplayList::DrawMeshGradient&) { return false; },
-            [](const DisplayList::DrawNativeImage&) { return false; },
-            [](const DisplayList::DrawPatternNativeImage&) { return false; },
-            [](const DisplayList::DrawPatternImageBuffer&) { return false; },
+            [&](const DisplayList::ClipToNativeImage& item) {
+                Ref image = item.nativeImage();
+                return appendItemWithImage(item, image.get(), result);
+            },
+            [&](const DisplayList::DrawImageBuffer& item) {
+                Ref imageBuffer = item.imageBuffer();
+                return appendItemWithImage(item, imageBuffer.get(), result);
+            },
+            [&](const DisplayList::DrawNativeImage& item) {
+                Ref image = item.nativeImage();
+                return appendItemWithImage(item, image.get(), result);
+            },
+            [&](const DisplayList::DrawPatternNativeImage& item) {
+                Ref image = item.nativeImage();
+                return appendItemWithImage(item, image.get(), result);
+            },
+            [&](const DisplayList::DrawPatternImageBuffer& item) {
+                Ref imageBuffer = item.imageBuffer();
+                return appendItemWithImage(item, imageBuffer.get(), result);
+            },
+            [&](const DisplayList::DrawPDFPage& item) {
+                Ref document = item.document();
+                if (m_pdfDocumentIdentifiers.add(document->renderingResourceIdentifier()).isNewEntry)
+                    m_pdfDocuments.append({ document->renderingResourceIdentifier(), Ref { document->data() } });
+                result.append(item);
+                return true;
+            },
 #if USE(SKIA)
             [](const DisplayList::DrawTextBlob&) { return false; },
 #endif
@@ -136,6 +167,66 @@ private:
                 result.constructAndAppend(WTF::InPlaceType<std::decay_t<decltype(item)>>, item);
                 return true;
             });
+    }
+
+    bool appendItemWithImage(const auto& item, auto& image, Vector<DisplayListDataItem>& result)
+    {
+        if (!addImage(image))
+            return false;
+        result.append(item);
+        return true;
+    }
+
+    bool addPatternImage(const SourceBrush& brush)
+    {
+        RefPtr pattern = brush.pattern();
+        return !pattern || addImage(pattern->tileImage());
+    }
+
+    bool addImage(const SourceImage& image)
+    {
+        if (RefPtr nativeImage = image.nativeImageIfExists())
+            return addImage(*nativeImage);
+        if (RefPtr imageBuffer = image.imageBufferIfExists())
+            return addImage(*imageBuffer);
+        return false;
+    }
+
+    bool addImage(const NativeImage& image)
+    {
+        auto identifier = image.renderingResourceIdentifier();
+        if (m_imageIdentifiers.contains(identifier))
+            return true;
+        return appendImage(identifier, image, std::nullopt);
+    }
+
+    bool addImage(ImageBuffer& imageBuffer)
+    {
+        auto identifier = imageBuffer.renderingResourceIdentifier();
+        if (m_imageIdentifiers.contains(identifier))
+            return true;
+        RefPtr image = imageBuffer.copyNativeImage();
+        if (!image)
+            return false;
+        return appendImage(identifier, *image, imageBuffer.parameters());
+    }
+
+    bool appendImage(RenderingResourceIdentifier identifier, const NativeImage& image, std::optional<ImageBufferParameters>&& imageBufferParameters)
+    {
+        RefPtr<ShareableBitmap> bitmap;
+#if USE(CG)
+        bitmap = ShareableBitmap::createFromImagePixels(image);
+#endif
+        if (!bitmap)
+            bitmap = image.toShareableBitmap();
+        if (!bitmap)
+            return false;
+        auto handle = bitmap->createReadOnlyHandle();
+        if (!handle)
+            return false;
+        m_images.append(DisplayListDataImage { identifier, WTF::move(*handle), WTF::move(imageBufferParameters) });
+        m_imageIdentifiers.add(identifier);
+        return true;
     }
 
     uint64_t fontIndex(const FontBase& font)
@@ -155,37 +246,68 @@ private:
 
     Vector<FontCustomPlatformSerializedData> m_customFonts;
     Vector<DisplayListDataFont> m_fonts;
+    Vector<DisplayListDataImage> m_images;
+    Vector<DisplayListDataPDFDocument> m_pdfDocuments;
     Vector<Vector<DisplayListDataItem>> m_bottomUpDisplayLists;
     HashMap<Ref<const FontCustomPlatformData>, uint64_t> m_customFontIndices;
     HashMap<Ref<const FontBase>, uint64_t> m_fontIndices;
+    HashSet<RenderingResourceIdentifier> m_imageIdentifiers;
+    HashSet<RenderingResourceIdentifier> m_pdfDocumentIdentifiers;
     HashMap<Ref<const DisplayList::DisplayList>, uint64_t> m_indices;
     HashSet<Ref<const DisplayList::DisplayList>> m_displayListsBeingEncoded;
 };
 
 } // namespace
 
-static std::optional<Vector<Ref<const FontBase>>> createFonts(const Vector<FontCustomPlatformSerializedData>& customFontData, const Vector<DisplayListDataFont>& fontData, bool shouldUseLockdownFontParser)
+static bool cacheFonts(DisplayList::ResourceCache& resourceCache, const Vector<FontCustomPlatformSerializedData>& customFontData, const Vector<DisplayListDataFont>& fontData, bool shouldUseLockdownFontParser)
 {
     Vector<Ref<FontCustomPlatformData>> customFonts(ReserveCapacityTag { }, customFontData.size());
     for (auto data : customFontData) {
         auto customFont = FontCustomPlatformData::tryMakeFromSerializationData(WTF::move(data), shouldUseLockdownFontParser);
         if (!customFont)
-            return std::nullopt;
+            return false;
         customFonts.append(WTF::move(*customFont));
     }
 
-    Vector<Ref<const FontBase>> fonts(ReserveCapacityTag { }, fontData.size());
     for (auto& data : borrow(fontData)) {
         RefPtr<FontCustomPlatformData> customFont;
         if (data.customFontIndex) {
             if (*data.customFontIndex >= customFonts.size())
-                return std::nullopt;
+                return false;
             customFont = customFonts[*data.customFontIndex].ptr();
         }
         auto platformData = FontPlatformData::create(data.platformData, customFont.get());
-        fonts.append(SharedFont::create(platformData, data.attributes.origin, data.attributes.isInterstitial, data.attributes.visibility, data.attributes.isTextOrientationFallback, data.attributes.isSmallCapsFace, data.attributes.renderingResourceIdentifier));
+        resourceCache.appendFont(SharedFont::create(platformData, data.attributes.origin, data.attributes.isInterstitial, data.attributes.visibility, data.attributes.isTextOrientationFallback, data.attributes.isSmallCapsFace, data.attributes.renderingResourceIdentifier));
     }
-    return fonts;
+    return true;
+}
+
+static bool cacheImages(DisplayList::ResourceCache& resourceCache, Vector<DisplayListDataImage>&& imageData)
+{
+    for (auto& data : borrow(imageData)) {
+        RefPtr bitmap = ShareableBitmap::create(WTF::move(data.bitmap), SharedMemory::Protection::ReadOnly);
+        if (!bitmap)
+            return false;
+        RefPtr nativeImage = NativeImage::create(bitmap->createPlatformImage(DontCopyBackingStore, ShouldInterpolate::Yes));
+        if (!nativeImage)
+            return false;
+        if (!data.imageBufferParameters) {
+            if (!resourceCache.cacheNativeImage(data.identifier, nativeImage.releaseNonNull()))
+                return false;
+            continue;
+        }
+
+        auto& parameters = *data.imageBufferParameters;
+        if (nativeImage->size() != parameters.backendSize())
+            return false;
+        RefPtr imageBuffer = ImageBuffer::create(parameters.logicalSize, RenderingMode::Unaccelerated, parameters.purpose, parameters.resolutionScale, parameters.colorSpace, parameters.bufferFormat);
+        if (!imageBuffer)
+            return false;
+        imageBuffer->context().drawNativeImage(*nativeImage, FloatRect { { }, parameters.logicalSize }, FloatRect { { }, nativeImage->size() }, { CompositeOperator::Copy });
+        if (!resourceCache.cacheImageBuffer(data.identifier, imageBuffer.releaseNonNull()))
+            return false;
+    }
+    return true;
 }
 
 std::optional<DisplayListData> DisplayListData::create(const DisplayList::DisplayList& displayList)
@@ -193,37 +315,50 @@ std::optional<DisplayListData> DisplayListData::create(const DisplayList::Displa
     return DisplayListDataEncoder { }.encode(displayList);
 }
 
-DisplayListData::DisplayListData(Vector<FontCustomPlatformSerializedData>&& customFonts, Vector<DisplayListDataFont>&& fonts, Vector<Vector<DisplayListDataItem>>&& bottomUpDisplayLists)
+DisplayListData::DisplayListData(Vector<FontCustomPlatformSerializedData>&& customFonts, Vector<DisplayListDataFont>&& fonts, Vector<DisplayListDataImage>&& images, Vector<DisplayListDataPDFDocument>&& pdfDocuments, Vector<Vector<DisplayListDataItem>>&& bottomUpDisplayLists)
     : m_customFonts(WTF::move(customFonts))
     , m_fonts(WTF::move(fonts))
+    , m_images(WTF::move(images))
+    , m_pdfDocuments(WTF::move(pdfDocuments))
     , m_bottomUpDisplayLists(WTF::move(bottomUpDisplayLists))
 {
 }
 
-RefPtr<const DisplayList::DisplayList> DisplayListData::createDisplayList(bool shouldUseLockdownFontParser) &&
+void DisplayListData::setOwnershipOfMemory(const ProcessIdentity& processIdentity) const
 {
-    auto fonts = createFonts(m_customFonts, m_fonts, shouldUseLockdownFontParser);
-    if (!fonts)
+    for (auto& image : borrow(m_images))
+        image.bitmap.setOwnershipOfMemory(processIdentity, MemoryLedger::Graphics);
+}
+
+RefPtr<const DisplayList::DisplayList> DisplayListData::createDisplayList(bool shouldUseLockdownFontParser, NOESCAPE const PDFDocumentFactory& createPDFDocument) &&
+{
+    DisplayList::ResourceCache resourceCache;
+    if (!cacheFonts(resourceCache, m_customFonts, m_fonts, shouldUseLockdownFontParser))
         return nullptr;
 
-    Vector<Ref<const DisplayList::DisplayList>> displayLists(ReserveCapacityTag { }, m_bottomUpDisplayLists.size());
+    if (!cacheImages(resourceCache, WTF::move(m_images)))
+        return nullptr;
+
+    for (auto& pdfDocument : borrow(m_pdfDocuments)) {
+        auto document = createPDFDocument ? createPDFDocument(pdfDocument.data.copyRef()) : DisplayList::PDFDocumentData::create(pdfDocument.data.copyRef());
+        if (!resourceCache.cachePDFDocument(pdfDocument.identifier, WTF::move(document)))
+            return nullptr;
+    }
+
+    RefPtr<const DisplayList::DisplayList> displayList;
     for (auto& dataItems : borrow(m_bottomUpDisplayLists)) {
         Vector<DisplayList::Item> items(ReserveCapacityTag { }, dataItems.size());
         for (auto& dataItem : borrow(dataItems)) {
-            if (auto* item = std::get_if<DisplayList::DrawFilteredImageBuffer>(&dataItem); item && !item->filter().effectsOfType(FilterFunction::Type::FEImage).isEmpty())
-                return nullptr;
             WTF::switchOn(dataItem, [&](auto& item) {
                 items.constructAndAppend(WTF::InPlaceType<std::decay_t<decltype(item)>>, WTF::move(item));
             });
         }
-        RefPtr displayList = DisplayList::DisplayList::createResolvingResources(WTF::move(items), borrow(*fonts)->span(), borrow(displayLists)->span());
+        displayList = DisplayList::DisplayList::createResolved(WTF::move(items), resourceCache);
         if (!displayList)
             return nullptr;
-        displayLists.append(displayList.releaseNonNull());
+        resourceCache.appendDisplayList(*displayList);
     }
-    if (displayLists.isEmpty())
-        return nullptr;
-    return displayLists.takeLast();
+    return displayList;
 }
 
 } // namespace WebKit

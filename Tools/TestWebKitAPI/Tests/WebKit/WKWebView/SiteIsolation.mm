@@ -22929,7 +22929,7 @@ TEST(SiteIsolation, PrintProcessDrawsDuringDOMPrint)
     EXPECT_EQ(counts.second, drawnAfterPrintProcessFailed);
 }
 
-TEST(SiteIsolation, GPUProcessDrawsWhatPrintProcessCannot)
+TEST(SiteIsolation, PrintProcessDrawsImages)
 {
     HTTPServer server({
         { "/mainframe"_s, { "<body>Mainframe<iframe src='https://b.com/subframe'></iframe></body>"_s } },
@@ -22941,6 +22941,151 @@ TEST(SiteIsolation, GPUProcessDrawsWhatPrintProcessCannot)
     RetainPtr data = createPDF(webView.get());
     ASSERT_NOT_NULL(data.get());
     expectPDFText(data.get(), @[ @"Mainframe", @"Subframe" ]);
+
+    auto counts = printProcessDrawingCounts(webView.get());
+    EXPECT_EQ(counts.first, drawnInPrintProcess + 1);
+    EXPECT_EQ(counts.second, drawnAfterPrintProcessFailed);
+}
+
+TEST(SiteIsolation, GPUProcessDrawsWhenPrintProcessDoesNotReply)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body>Mainframe<iframe src='https://b.com/subframe'></iframe></body>"_s } },
+        { "/subframe"_s, { "<body>Subframe</body>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = loadPageForPrintProcess(server);
+
+    computePagesForPrinting(webView.get());
+    auto printProcess = printProcessIdentifier(webView.get());
+    ASSERT_NE(printProcess, 0);
+
+    auto [drawnInPrintProcess, drawnAfterPrintProcessFailed] = printProcessDrawingCounts(webView.get());
+    kill(printProcess, SIGSTOP);
+    RetainPtr data = createPDF(webView.get());
+    kill(printProcess, SIGCONT);
+    ASSERT_NOT_NULL(data.get());
+    expectPDFText(data.get(), @[ @"Mainframe", @"Subframe" ]);
+
+    auto counts = printProcessDrawingCounts(webView.get());
+    EXPECT_EQ(counts.first, drawnInPrintProcess);
+    EXPECT_EQ(counts.second, drawnAfterPrintProcessFailed + 1);
+
+    Util::runFor(100_ms);
+    counts = printProcessDrawingCounts(webView.get());
+    EXPECT_EQ(counts.first, drawnInPrintProcess);
+    EXPECT_EQ(counts.second, drawnAfterPrintProcessFailed + 1);
+}
+
+static constexpr auto embeddedPDFMainframeHTML = "<body>Mainframe<iframe src='https://b.com/subframe' width='500' height='300'></iframe></body>"_s;
+// Not <embed>, which Lockdown Mode disables.
+static constexpr auto embeddedPDFSubframeHTML = "<body>Subframe<object data='/text.pdf' type='application/pdf' width='420' height='220'></object></body>"_s;
+static NSString * const embeddedPDFText = @"Visit our website for details";
+
+static HTTPResponse pdfWithTextResponse()
+{
+    return { { { "Content-Type"_s, "application/pdf"_s } }, testPDFDataWithLink().get() };
+}
+
+static bool pdfHasText(NSData *data, NSString *string)
+{
+    RetainPtr document = adoptNS([[TestPDFDocument alloc] initFromData:data]);
+    return [[[document pageAtIndex:0] text] containsString:string];
+}
+
+static void waitForEmbeddedPDF(TestWKWebView *webView)
+{
+    EXPECT_TRUE(Util::waitFor([&] {
+        RetainPtr data = createPDF(webView);
+        return pdfHasText(data.get(), embeddedPDFText) || !imageBitsPerComponentOnFirstPage(data.get()).isEmpty();
+    }));
+}
+
+TEST(SiteIsolation, PrintProcessDrawsEmbeddedPDFAsVectors)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { embeddedPDFMainframeHTML } },
+        { "/subframe"_s, { embeddedPDFSubframeHTML } },
+        { "/text.pdf"_s, pdfWithTextResponse() },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = loadPageForPrintProcess(server, true, false, nil, false);
+    waitForEmbeddedPDF(webView.get());
+
+    auto [drawnInPrintProcess, drawnAfterPrintProcessFailed] = printProcessDrawingCounts(webView.get());
+    RetainPtr data = createPDF(webView.get());
+    ASSERT_NOT_NULL(data.get());
+    expectPDFText(data.get(), @[ @"Mainframe", @"Subframe", embeddedPDFText ]);
+    EXPECT_TRUE(imageBitsPerComponentOnFirstPage(data.get()).isEmpty());
+
+    auto counts = printProcessDrawingCounts(webView.get());
+    EXPECT_EQ(counts.first, drawnInPrintProcess + 1);
+    EXPECT_EQ(counts.second, drawnAfterPrintProcessFailed);
+}
+
+// Lockdown Mode stops CoreGraphics from parsing PDFs, so the page can't show the PDF and prints the
+// page without it, like it does without Site Isolation.
+TEST(SiteIsolation, PrintProcessDrawsPageWithEmbeddedPDFInLockdownMode)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { embeddedPDFMainframeHTML } },
+        { "/subframe"_s, { embeddedPDFSubframeHTML } },
+        { "/text.pdf"_s, pdfWithTextResponse() },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = loadPageForPrintProcess(server, true, true, nil, false);
+    EXPECT_TRUE(Util::waitFor([&] {
+        return printingLaunchesPrintProcess(webView.get());
+    }));
+
+    auto [drawnInPrintProcess, drawnAfterPrintProcessFailed] = printProcessDrawingCounts(webView.get());
+    RetainPtr data = createPDF(webView.get());
+    ASSERT_NOT_NULL(data.get());
+    expectPDFText(data.get(), @[ @"Mainframe", @"Subframe" ]);
+    EXPECT_FALSE(pdfHasText(data.get(), embeddedPDFText));
+    EXPECT_TRUE(imageBitsPerComponentOnFirstPage(data.get()).isEmpty());
+
+    auto counts = printProcessDrawingCounts(webView.get());
+    EXPECT_EQ(counts.first, drawnInPrintProcess + 1);
+    EXPECT_EQ(counts.second, drawnAfterPrintProcessFailed);
+}
+
+TEST(SiteIsolation, GPUProcessDrawsEmbeddedPDFAsImageWithoutPrintProcess)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { embeddedPDFMainframeHTML } },
+        { "/subframe"_s, { embeddedPDFSubframeHTML } },
+        { "/text.pdf"_s, pdfWithTextResponse() },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = loadPageForPrintProcess(server, false, false, nil, false);
+    waitForEmbeddedPDF(webView.get());
+
+    RetainPtr data = createPDF(webView.get());
+    ASSERT_NOT_NULL(data.get());
+    expectPDFText(data.get(), @[ @"Mainframe", @"Subframe" ]);
+    EXPECT_FALSE(pdfHasText(data.get(), embeddedPDFText));
+    EXPECT_FALSE(imageBitsPerComponentOnFirstPage(data.get()).isEmpty());
+}
+
+TEST(SiteIsolation, GPUProcessDrawsEmbeddedPDFAsImageWhenPrintProcessDoesNotReply)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { embeddedPDFMainframeHTML } },
+        { "/subframe"_s, { embeddedPDFSubframeHTML } },
+        { "/text.pdf"_s, pdfWithTextResponse() },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = loadPageForPrintProcess(server, true, false, nil, false);
+    waitForEmbeddedPDF(webView.get());
+
+    computePagesForPrinting(webView.get());
+    auto printProcess = printProcessIdentifier(webView.get());
+    ASSERT_NE(printProcess, 0);
+
+    auto [drawnInPrintProcess, drawnAfterPrintProcessFailed] = printProcessDrawingCounts(webView.get());
+    kill(printProcess, SIGSTOP);
+    RetainPtr data = createPDF(webView.get());
+    kill(printProcess, SIGCONT);
+    ASSERT_NOT_NULL(data.get());
+    expectPDFText(data.get(), @[ @"Mainframe", @"Subframe" ]);
+    EXPECT_FALSE(pdfHasText(data.get(), embeddedPDFText));
+    EXPECT_FALSE(imageBitsPerComponentOnFirstPage(data.get()).isEmpty());
 
     auto counts = printProcessDrawingCounts(webView.get());
     EXPECT_EQ(counts.first, drawnInPrintProcess);

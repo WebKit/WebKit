@@ -43,12 +43,16 @@
 #include <WebCore/FontCustomPlatformData.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/ImageBuffer.h>
+#include <WebCore/MeshGradient.h>
 #include <WebCore/Pattern.h>
 #include <WebCore/PixelBuffer.h>
 #include <WebCore/SVGFilterRenderer.h>
 #include <WebCore/SVGUnitTypes.h>
+#include <WebCore/ShareableBitmap.h>
 #include <WebCore/SharedBuffer.h>
+#include <WebCore/SourceGraphic.h>
 #include <wtf/Borrow.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 #if ENABLE(APPLE_PAY)
@@ -85,10 +89,10 @@ static String displayListText(const DisplayList::DisplayList& displayList)
     return displayList.asText({ });
 }
 
-static std::optional<DisplayListData> encodeAndDecode(const DisplayListData& data)
+static std::optional<DisplayListData> encodeAndDecode(DisplayListData&& data)
 {
     IPC::Encoder encoder(IPC::MessageName::LegacySessionState, 0);
-    encoder << data;
+    encoder << WTF::move(data);
     // A connection stores the attachments it receives in reverse order.
     auto attachments = encoder.releaseAttachments();
     attachments.reverse();
@@ -103,7 +107,7 @@ static RefPtr<const DisplayList::DisplayList> encodeAndDecodeDisplayList(const D
     auto data = DisplayListData::create(displayList);
     if (!data)
         return nullptr;
-    auto decodedData = encodeAndDecode(*data);
+    auto decodedData = encodeAndDecode(WTF::move(*data));
     if (!decodedData)
         return nullptr;
     return WTF::move(*decodedData).createDisplayList(shouldUseLockdownFontParser);
@@ -130,6 +134,17 @@ static bool isBlank(const Vector<uint8_t>& pixels)
     });
 }
 
+static bool arePixelsClose(const Vector<uint8_t>& pixels, const Vector<uint8_t>& expectedPixels, uint8_t tolerance)
+{
+    if (pixels.size() != expectedPixels.size())
+        return false;
+    for (size_t i = 0; i < pixels.size(); ++i) {
+        if (std::abs(pixels[i] - expectedPixels[i]) > tolerance)
+            return false;
+    }
+    return true;
+}
+
 static RefPtr<const DisplayList::DisplayList> expectSameContents(Tester& tester, const DisplayList::DisplayList& displayList, ASCIILiteral name, bool shouldUseLockdownFontParser = false)
 {
     RefPtr decoded = encodeAndDecodeDisplayList(displayList, shouldUseLockdownFontParser);
@@ -139,14 +154,24 @@ static RefPtr<const DisplayList::DisplayList> expectSameContents(Tester& tester,
     return decoded;
 }
 
-static void expectSameDrawing(Tester& tester, const DisplayList::DisplayList& displayList, ASCIILiteral name, bool shouldUseLockdownFontParser = false)
+static void expectSamePixels(Tester& tester, const DisplayList::DisplayList& displayList, const DisplayList::DisplayList& decoded, ASCIILiteral name, uint8_t tolerance = 0)
+{
+    auto expectedPixels = drawToPixels(displayList);
+    tester.expect(!isBlank(expectedPixels), makeString(name, " draw something"_s));
+    tester.expect(arePixelsClose(drawToPixels(decoded), expectedPixels, tolerance), makeString(name, " draw the same pixels"_s));
+}
+
+static void expectSimilarDrawing(Tester& tester, const DisplayList::DisplayList& displayList, ASCIILiteral name, uint8_t tolerance, bool shouldUseLockdownFontParser = false)
 {
     RefPtr decoded = expectSameContents(tester, displayList, name, shouldUseLockdownFontParser);
     if (!decoded)
         return;
-    auto expectedPixels = drawToPixels(displayList);
-    tester.expect(!isBlank(expectedPixels), makeString(name, " draw something"_s));
-    tester.expect(drawToPixels(*decoded) == expectedPixels, makeString(name, " draw the same pixels"_s));
+    expectSamePixels(tester, displayList, *decoded, name, tolerance);
+}
+
+static void expectSameDrawing(Tester& tester, const DisplayList::DisplayList& displayList, ASCIILiteral name, bool shouldUseLockdownFontParser = false)
+{
+    expectSimilarDrawing(tester, displayList, name, 0, shouldUseLockdownFontParser);
 }
 
 static Path testPath()
@@ -427,7 +452,7 @@ static void testInvalidFonts(Tester& tester, const Vector<Ref<SharedBuffer>>& we
     auto withGlyphs = [&](DisplayList::DrawGlyphs&& item) {
         Vector<Vector<DisplayListDataItem>> displayLists;
         displayLists.append(Vector<DisplayListDataItem> { WTF::move(item) });
-        return DisplayListData { { }, { fontData }, WTF::move(displayLists) };
+        return DisplayListData { { }, { fontData }, { }, { }, WTF::move(displayLists) };
     };
 
     auto missingFont = glyphs;
@@ -443,7 +468,7 @@ static void testInvalidFonts(Tester& tester, const Vector<Ref<SharedBuffer>>& we
     missingFontData.customFontIndex = 0;
     Vector<Vector<DisplayListDataItem>> displayLists;
     displayLists.append(Vector<DisplayListDataItem> { glyphs });
-    tester.expect(!DisplayListData { { }, { WTF::move(missingFontData) }, WTF::move(displayLists) }.createDisplayList(false), "A font with missing font data fails to decode"_s);
+    tester.expect(!DisplayListData { { }, { WTF::move(missingFontData) }, { }, { }, WTF::move(displayLists) }.createDisplayList(false), "A font with missing font data fails to decode"_s);
 
     if (webFonts.isEmpty())
         return;
@@ -452,7 +477,7 @@ static void testInvalidFonts(Tester& tester, const Vector<Ref<SharedBuffer>>& we
         return;
     auto invalidFontData = customFont->serializedData();
     invalidFontData.fontFaceData = SharedBuffer::create(Vector<uint8_t>(FillWith { }, 64, 0xff));
-    tester.expect(!DisplayListData { { WTF::move(invalidFontData) }, { }, { Vector<DisplayListDataItem> { DisplayList::Save { } } } }.createDisplayList(false), "Invalid font data fails to decode"_s);
+    tester.expect(!DisplayListData { { WTF::move(invalidFontData) }, { }, { }, { }, { Vector<DisplayListDataItem> { DisplayList::Save { } } } }.createDisplayList(false), "Invalid font data fails to decode"_s);
 }
 #endif // USE(CORE_TEXT)
 
@@ -539,58 +564,328 @@ static Ref<Filter> filterWithEffect(Ref<FilterEffect>&& effect)
 static void testFilters(Tester& tester)
 {
     Vector<DisplayList::Item> items;
-    items.append(DisplayList::DrawFilteredImageBuffer { nullptr, testFilterGeometry().filterRegion, filterWithEffect(FEFlood::create(Color::green, 1)) });
+    items.append(DisplayList::DrawFilteredImageBuffer { std::nullopt, testFilterGeometry().filterRegion, filterWithEffect(FEFlood::create(Color::green, 1)) });
     expectSameDrawing(tester, DisplayList::DisplayList::create(WTF::move(items)), "Filters"_s);
+}
+
+static constexpr FloatSize testImageBufferSize { 20, 20 };
+
+static RefPtr<ImageBuffer> createImageBuffer(RenderingMode renderingMode = RenderingMode::Unaccelerated, float resolutionScale = 1)
+{
+    RefPtr imageBuffer = ImageBuffer::create(testImageBufferSize, renderingMode, RenderingPurpose::Unspecified, resolutionScale, ColorSpace::SRGB(), PixelFormat::BGRA8);
+    if (!imageBuffer)
+        return nullptr;
+    auto& context = imageBuffer->context();
+    context.fillRect({ { }, testImageBufferSize }, Color::red);
+    context.fillRect({ 0, 0, 10, 10 }, Color::blue);
+    context.fillRect({ 10, 10, 10, 10 }, Color::green.colorWithAlphaByte(128));
+    return imageBuffer;
 }
 
 static Ref<ImageBuffer> testImageBuffer()
 {
-    RefPtr imageBuffer = ImageBuffer::create(FloatSize { 10, 10 }, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, ColorSpace::SRGB(), PixelFormat::BGRA8);
+    RefPtr imageBuffer = createImageBuffer();
     RELEASE_ASSERT(imageBuffer);
-    imageBuffer->context().fillRect({ 0, 0, 10, 10 }, Color::red);
     return imageBuffer.releaseNonNull();
 }
 
-static void testItemsWithResources(Tester& tester)
+static Ref<NativeImage> testNativeImage()
 {
-    auto encodes = [](DisplayList::Item&& item) {
-        Vector<DisplayList::Item> items;
-        items.append(WTF::move(item));
-        return !!DisplayListData::create(DisplayList::DisplayList::create(WTF::move(items)));
+    RefPtr image = testImageBuffer()->copyNativeImage();
+    RELEASE_ASSERT(image);
+    return image.releaseNonNull();
+}
+
+static Ref<const DisplayList::DisplayList> drawingImage(DisplayList::Item&& item)
+{
+    Vector<DisplayList::Item> items;
+    items.append(WTF::move(item));
+    return DisplayList::DisplayList::create(WTF::move(items));
+}
+
+static void testNativeImages(Tester& tester)
+{
+    Ref image = testNativeImage();
+    FloatRect source { { }, image->size() };
+    Vector<DisplayList::Item> items;
+    items.append(DisplayList::DrawNativeImage { image, { 10, 10, 40, 40 }, source, { } });
+    items.append(DisplayList::DrawNativeImage { image, { 50, 50, 30, 20 }, { 5, 5, 10, 10 }, { } });
+    items.append(DisplayList::DrawPatternNativeImage { image, { 0, 60, 100, 40 }, source, AffineTransform::makeScale({ 0.5, 0.5 }), { 2, 3 }, { 1, 1 }, { } });
+    Ref displayList = DisplayList::DisplayList::create(WTF::move(items));
+
+    auto data = DisplayListData::create(displayList);
+    tester.expect(!!data, "Native images encode"_s);
+    if (data)
+        tester.expect(data->images().size() == 1, "An image drawn three times is encoded once"_s);
+    expectSameDrawing(tester, displayList, "Native images"_s);
+}
+
+#if USE(CG)
+static Ref<NativeImage> createNativeImage(CFStringRef colorSpaceName, size_t bitsPerComponent, CGBitmapInfo bitmapInfo)
+{
+    RetainPtr colorSpace = adoptCF(CGColorSpaceCreateWithName(colorSpaceName));
+    RetainPtr context = adoptCF(CGBitmapContextCreate(nullptr, 20, 20, bitsPerComponent, 0, colorSpace.get(), bitmapInfo));
+    RELEASE_ASSERT(context);
+    CGContextSetRGBFillColor(context.get(), 1, 0, 0, 1);
+    CGContextFillRect(context.get(), CGRectMake(0, 0, 20, 20));
+    CGContextSetRGBFillColor(context.get(), 0, 0.5, 1, 1);
+    CGContextFillRect(context.get(), CGRectMake(0, 0, 10, 10));
+    RefPtr image = NativeImage::create(adoptCF(CGBitmapContextCreateImage(context.get())));
+    RELEASE_ASSERT(image);
+    return image.releaseNonNull();
+}
+
+static void testNativeImageFormats(Tester& tester)
+{
+    auto drawingNativeImage = [](Ref<NativeImage>&& image) {
+        FloatRect source { { }, image->size() };
+        return drawingImage(DisplayList::DrawNativeImage { image, { 10, 10, 80, 80 }, source, { } });
+    };
+    expectSameDrawing(tester, drawingNativeImage(createNativeImage(kCGColorSpaceDisplayP3, 8, kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host)), "Display P3 images"_s);
+    expectSameDrawing(tester, drawingNativeImage(createNativeImage(kCGColorSpaceSRGB, 16, kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder16Host)), "16-bit images"_s);
+    expectSimilarDrawing(tester, drawingNativeImage(createNativeImage(kCGColorSpaceGenericGrayGamma2_2, 8, kCGImageAlphaNone)), "Grayscale images"_s, 2);
+    expectSimilarDrawing(tester, drawingNativeImage(createNativeImage(kCGColorSpaceGenericCMYK, 8, kCGImageAlphaNone)), "CMYK images"_s, 2);
+}
+#endif
+
+static void testImageBuffers(Tester& tester)
+{
+    Ref imageBuffer = testImageBuffer();
+    Ref image = testNativeImage();
+    FloatRect source { { }, testImageBufferSize };
+    Vector<DisplayList::Item> items;
+    items.append(DisplayList::DrawImageBuffer { imageBuffer, { 10, 10, 40, 40 }, source, { } });
+    items.append(DisplayList::DrawPatternImageBuffer { imageBuffer, { 0, 60, 100, 40 }, source, AffineTransform::makeScale({ 0.5, 0.5 }), { 2, 3 }, { 1, 1 }, { } });
+    items.constructAndAppend(WTF::InPlaceType<DisplayList::Save>);
+    items.append(DisplayList::ClipToNativeImage { image, { 50, 10, 40, 40 } });
+    items.append(DisplayList::FillRectWithColor { { 50, 10, 40, 40 }, Color::black });
+    items.constructAndAppend(WTF::InPlaceType<DisplayList::Restore>);
+    items.append(DisplayList::DrawNativeImage { image, { 60, 60, 20, 20 }, source, { } });
+    Ref displayList = DisplayList::DisplayList::create(WTF::move(items));
+
+    auto data = DisplayListData::create(displayList);
+    tester.expect(!!data, "Image buffers encode"_s);
+    if (data)
+        tester.expect(data->images().size() == 2, "Images used twice are encoded once"_s);
+    expectSameDrawing(tester, displayList, "Image buffers"_s);
+
+    RefPtr scaledImageBuffer = createImageBuffer(RenderingMode::Unaccelerated, 2);
+    tester.expect(!!scaledImageBuffer, "Scaled image buffers are created"_s);
+    if (scaledImageBuffer)
+        expectSameDrawing(tester, drawingImage(DisplayList::DrawImageBuffer { *scaledImageBuffer, { 10, 10, 80, 80 }, source, { } }), "Scaled image buffers"_s);
+
+    RefPtr acceleratedImageBuffer = createImageBuffer(RenderingMode::Accelerated, 2);
+    tester.expect(!!acceleratedImageBuffer, "Accelerated image buffers are created"_s);
+    if (acceleratedImageBuffer)
+        expectSameDrawing(tester, drawingImage(DisplayList::DrawImageBuffer { *acceleratedImageBuffer, { 10, 10, 80, 80 }, source, { } }), "Accelerated image buffers"_s);
+}
+
+static void testPatternBrushes(Tester& tester)
+{
+    GraphicsContextState state;
+    state.setFillPattern(WebCore::Pattern::create(SourceImage { testNativeImage() }, { true, true, AffineTransform::makeScale({ 0.5, 0.5 }) }));
+    state.setStrokePattern(WebCore::Pattern::create(SourceImage { testImageBuffer() }));
+    state.setStrokeThickness(10);
+
+    Vector<DisplayList::Item> items;
+    items.append(DisplayList::SetState { state });
+    items.append(DisplayList::FillRect { { 10, 10, 40, 80 }, GraphicsContext::RequiresClipToRect::Yes });
+    items.append(DisplayList::StrokeRect { { 60, 10, 30, 80 }, 10 });
+    Ref displayList = DisplayList::DisplayList::create(WTF::move(items));
+
+    RefPtr decoded = encodeAndDecodeDisplayList(displayList);
+    tester.expect(!!decoded, "Pattern brushes round trip"_s);
+    if (decoded)
+        expectSamePixels(tester, displayList, *decoded, "Pattern brushes"_s);
+}
+
+static void testFiltersWithImages(Tester& tester)
+{
+    FloatRect filterRegion = testFilterGeometry().filterRegion;
+    expectSameDrawing(tester, drawingImage(DisplayList::DrawFilteredImageBuffer { testImageBuffer(), filterRegion, filterWithEffect(SourceGraphic::create()) }), "Filters with a source image"_s);
+    expectSameDrawing(tester, drawingImage(DisplayList::DrawFilteredImageBuffer { std::nullopt, filterRegion, filterWithEffect(FEImage::create(SourceImage { testNativeImage() }, filterRegion)) }), "Filters with a native image"_s);
+    expectSameDrawing(tester, drawingImage(DisplayList::DrawFilteredImageBuffer { std::nullopt, filterRegion, filterWithEffect(FEImage::create(SourceImage { testImageBuffer() }, filterRegion)) }), "Filters with an image buffer"_s);
+}
+
+static void testMeshGradients(Tester& tester)
+{
+    Vector<MeshGradient::Point> points {
+        { { 0, 0 }, Color::red, { } },
+        { { 100, 0 }, Color::green, { } },
+        { { 0, 100 }, Color::blue, { } },
+        { { 100, 100 }, Color::yellow, { } },
+    };
+    Ref gradient = MeshGradient::create({ ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied }, 2, 2, WTF::move(points), Color::cyan);
+    expectSameDrawing(tester, drawingImage(DisplayList::DrawMeshGradient { WTF::move(gradient), { 10, 10, 80, 80 } }), "Mesh gradients"_s);
+}
+
+class RecordingPDFDocument final : public DisplayList::PDFDocumentData {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(RecordingPDFDocument);
+public:
+    static Ref<RecordingPDFDocument> create(Ref<SharedBuffer>&& data)
+    {
+        return adoptRef(*new RecordingPDFDocument(WTF::move(data)));
+    }
+
+    const Vector<unsigned>& drawnPages() const LIFETIME_BOUND { return m_drawnPages; }
+
+private:
+    explicit RecordingPDFDocument(Ref<SharedBuffer>&& data)
+        : PDFDocumentData(WTF::move(data))
+    {
+    }
+
+    void drawPage(GraphicsContext& context, unsigned pageIndex, const FloatRect& pageRect) final
+    {
+        m_drawnPages.append(pageIndex);
+        context.fillRect(pageRect, Color::blue);
+    }
+
+    Vector<unsigned> m_drawnPages;
+};
+
+static Ref<SharedBuffer> testPDFData()
+{
+    return SharedBuffer::create(Vector<uint8_t> { '%', 'P', 'D', 'F', '-', '1', '.', '4' });
+}
+
+static void testPDFPages(Tester& tester)
+{
+    Ref document = RecordingPDFDocument::create(testPDFData());
+    FloatRect firstPageRect { 10, 10, 40, 40 };
+    FloatRect secondPageRect { 50, 50, 40, 40 };
+    Vector<DisplayList::Item> items;
+    items.append(DisplayList::DrawPDFPage { document.copyRef(), 0, firstPageRect, testNativeImage() });
+    items.append(DisplayList::DrawPDFPage { document.copyRef(), 1, secondPageRect, testNativeImage() });
+    Ref displayList = DisplayList::DisplayList::create(WTF::move(items));
+
+    tester.expect(!isBlank(drawToPixels(displayList)), "PDF pages draw their fallback image in the GPU process"_s);
+    tester.expect(document->drawnPages().isEmpty(), "The GPU process does not draw PDF pages from the PDF data"_s);
+
+    auto data = DisplayListData::create(displayList);
+    tester.expect(!!data, "PDF pages encode"_s);
+    if (!data)
+        return;
+    tester.expect(data->pdfDocuments().size() == 1, "A PDF drawn on two pages is encoded once"_s);
+
+    auto decodedData = encodeAndDecode(WTF::move(*data));
+    tester.expect(!!decodedData, "PDF pages round trip"_s);
+    if (!decodedData)
+        return;
+
+    RefPtr<RecordingPDFDocument> decodedDocument;
+    RefPtr decoded = WTF::move(*decodedData).createDisplayList(false, [&](Ref<SharedBuffer>&& data) -> Ref<DisplayList::PDFDocumentData> {
+        Ref document = RecordingPDFDocument::create(WTF::move(data));
+        decodedDocument = document.ptr();
+        return document;
+    });
+    tester.expect(!!decoded, "PDF pages decode"_s);
+    if (!decoded || !decodedDocument)
+        return;
+    tester.expectEqual(displayListText(*decoded), displayListText(displayList), "PDF pages"_s);
+    Ref decodedPDFData = decodedDocument->data();
+    Ref pdfData = document->data();
+    tester.expect(decodedPDFData.get() == pdfData.get(), "PDF data round trips"_s);
+
+    drawToPixels(*decoded);
+    tester.expect(decodedDocument->drawnPages() == Vector<unsigned> { 0, 1 }, "The receiver draws PDF pages from the PDF data, without the fallback image"_s);
+}
+
+static void testInvalidPDFPages(Tester& tester)
+{
+    auto decode = [](Vector<DisplayListDataPDFDocument>&& documents, DisplayListDataItem&& item) {
+        Vector<Vector<DisplayListDataItem>> displayLists;
+        displayLists.append(Vector<DisplayListDataItem> { WTF::move(item) });
+        return DisplayListData { { }, { }, { }, WTF::move(documents), WTF::move(displayLists) }.createDisplayList(false);
     };
 
-    GraphicsContextState state;
-    state.setFillPattern(WebCore::Pattern::create(SourceImage { testImageBuffer() }));
-    tester.expect(!encodes(DisplayList::SetState { state }), "A graphics state with a pattern fails to encode"_s);
-
+    auto identifier = RenderingResourceIdentifier::generate();
     FloatRect rect { 0, 0, 10, 10 };
-    tester.expect(!encodes(DisplayList::DrawImageBuffer { testImageBuffer(), rect, rect, { } }), "Image buffers fail to encode"_s);
-    tester.expect(!encodes(DisplayList::DrawFilteredImageBuffer { testImageBuffer(), rect, filterWithEffect(FEFlood::create(Color::green, 1)) }), "Filters with a source image fail to encode"_s);
-    tester.expect(!encodes(DisplayList::DrawFilteredImageBuffer { nullptr, rect, filterWithEffect(FEImage::create(SourceImage { testImageBuffer() }, rect)) }), "Filters with an image fail to encode"_s);
+    Vector<DisplayListDataPDFDocument> documents;
+    documents.append(DisplayListDataPDFDocument { identifier, testPDFData() });
+    tester.expect(!!decode(WTF::move(documents), DisplayList::DrawPDFPage { identifier, 0, rect }), "A PDF document identifier decodes"_s);
+    tester.expect(!decode({ }, DisplayList::DrawPDFPage { identifier, 0, rect }), "A missing PDF document fails to decode"_s);
+
+    Vector<DisplayListDataPDFDocument> duplicates;
+    duplicates.append(DisplayListDataPDFDocument { identifier, testPDFData() });
+    duplicates.append(DisplayListDataPDFDocument { identifier, testPDFData() });
+    tester.expect(!decode(WTF::move(duplicates), DisplayList::DrawPDFPage { identifier, 0, rect }), "PDF documents with the same identifier fail to decode"_s);
+
+    tester.expect(!DisplayList::isResolved(DisplayList::DrawPDFPage { identifier, 0, rect }), "A PDF document identifier is unresolved"_s);
+}
+
+static DisplayListDataImage testImage(RenderingResourceIdentifier identifier, std::optional<ImageBufferParameters>&& imageBufferParameters = std::nullopt)
+{
+    RefPtr bitmap = ShareableBitmap::create({ IntSize { 10, 10 }, ColorSpace::SRGB() });
+    RELEASE_ASSERT(bitmap);
+    auto handle = bitmap->createReadOnlyHandle();
+    RELEASE_ASSERT(handle);
+    return DisplayListDataImage { identifier, WTF::move(*handle), WTF::move(imageBufferParameters) };
+}
+
+static void testInvalidImages(Tester& tester)
+{
+    auto decodeImages = [](Vector<DisplayListDataImage>&& images, DisplayListDataItem&& item) {
+        Vector<Vector<DisplayListDataItem>> displayLists;
+        displayLists.append(Vector<DisplayListDataItem> { WTF::move(item) });
+        return DisplayListData { { }, { }, WTF::move(images), { }, WTF::move(displayLists) }.createDisplayList(false);
+    };
+    auto decode = [&](DisplayListDataImage&& image, DisplayListDataItem&& item) {
+        Vector<DisplayListDataImage> images;
+        images.append(WTF::move(image));
+        return decodeImages(WTF::move(images), WTF::move(item));
+    };
+
+    auto identifier = RenderingResourceIdentifier::generate();
+    auto missingIdentifier = RenderingResourceIdentifier::generate();
+    FloatRect rect { 0, 0, 10, 10 };
+    ImageBufferParameters parameters { { 10, 10 }, 1, ColorSpace::SRGB(), { PixelFormat::BGRA8 }, RenderingPurpose::Unspecified };
+    tester.expect(!!decode(testImage(identifier), DisplayList::DrawNativeImage { identifier, rect, rect, { } }), "A native image identifier decodes"_s);
+    tester.expect(!!decode(testImage(identifier, parameters), DisplayList::DrawImageBuffer { identifier, rect, rect, { } }), "An image buffer identifier decodes"_s);
+    tester.expect(!decode(testImage(identifier), DisplayList::DrawNativeImage { missingIdentifier, rect, rect, { } }), "A missing native image fails to decode"_s);
+    tester.expect(!decode(testImage(identifier, parameters), DisplayList::DrawNativeImage { identifier, rect, rect, { } }), "An image buffer drawn as a native image fails to decode"_s);
+    tester.expect(!decode(testImage(identifier), DisplayList::DrawImageBuffer { identifier, rect, rect, { } }), "A native image drawn as an image buffer fails to decode"_s);
+    tester.expect(!decode(testImage(identifier, parameters), DisplayList::ClipToNativeImage { identifier, rect }), "An image buffer used as a mask fails to decode"_s);
+
+    Vector<DisplayListDataImage> duplicates;
+    duplicates.append(testImage(identifier));
+    duplicates.append(testImage(identifier, parameters));
+    tester.expect(!decodeImages(WTF::move(duplicates), DisplayList::DrawNativeImage { identifier, rect, rect, { } }), "Images with the same identifier fail to decode"_s);
+
+    auto wrongSize = parameters;
+    wrongSize.resolutionScale = 2;
+    tester.expect(!decode(testImage(identifier, wrongSize), DisplayList::DrawImageBuffer { identifier, rect, rect, { } }), "An image buffer whose pixels have the wrong size fails to decode"_s);
+
+    tester.expect(!decode(testImage(identifier, parameters), DisplayList::DrawFilteredImageBuffer { missingIdentifier, rect, filterWithEffect(FEFlood::create(Color::green, 1)) }), "A missing filter source image fails to decode"_s);
+    tester.expect(!decode(testImage(identifier), DisplayList::DrawFilteredImageBuffer { std::nullopt, rect, filterWithEffect(FEImage::create(SourceImage { missingIdentifier }, rect)) }), "An FEImage with a missing image fails to decode"_s);
+
+    GraphicsContextState state;
+    state.setFillPattern(WebCore::Pattern::create(SourceImage { missingIdentifier }));
+    tester.expect(!decode(testImage(identifier), DisplayList::SetState { state }), "A pattern with a missing image fails to decode"_s);
+
+    tester.expect(!DisplayList::isResolved(DisplayList::DrawNativeImage { identifier, rect, rect, { } }), "A native image identifier is unresolved"_s);
+    tester.expect(!DisplayList::isResolved(DisplayList::DrawFilteredImageBuffer { identifier, rect, filterWithEffect(FEFlood::create(Color::green, 1)) }), "A filter source image identifier is unresolved"_s);
+    tester.expect(!DisplayList::isResolved(DisplayList::SetState { state }), "A pattern image identifier is unresolved"_s);
 }
 
 static void testInvalidData(Tester& tester)
 {
-    tester.expect(!DisplayListData { { }, { }, { } }.createDisplayList(false), "Data without a display list fails to decode"_s);
+    tester.expect(!DisplayListData { { }, { }, { }, { }, { } }.createDisplayList(false), "Data without a display list fails to decode"_s);
 
     Vector<Vector<DisplayListDataItem>> drawingItself;
     drawingItself.append(Vector<DisplayListDataItem> { DisplayList::DrawDisplayList { 0 } });
-    tester.expect(!DisplayListData { { }, { }, WTF::move(drawingItself) }.createDisplayList(false), "A display list that draws itself fails to decode"_s);
+    tester.expect(!DisplayListData { { }, { }, { }, { }, WTF::move(drawingItself) }.createDisplayList(false), "A display list that draws itself fails to decode"_s);
 
     Vector<Vector<DisplayListDataItem>> drawingLater;
     drawingLater.append(Vector<DisplayListDataItem> { DisplayList::DrawDisplayList { 1 } });
     drawingLater.append(Vector<DisplayListDataItem> { DisplayList::Save { } });
-    tester.expect(!DisplayListData { { }, { }, WTF::move(drawingLater) }.createDisplayList(false), "A display list that draws a later one fails to decode"_s);
+    tester.expect(!DisplayListData { { }, { }, { }, { }, WTF::move(drawingLater) }.createDisplayList(false), "A display list that draws a later one fails to decode"_s);
 
     Vector<Vector<DisplayListDataItem>> drawingMissing;
     drawingMissing.append(Vector<DisplayListDataItem> { DisplayList::Save { } });
     drawingMissing.append(Vector<DisplayListDataItem> { DisplayList::DrawDisplayList { 5 } });
-    tester.expect(!DisplayListData { { }, { }, WTF::move(drawingMissing) }.createDisplayList(false), "A display list that draws a missing one fails to decode"_s);
+    tester.expect(!DisplayListData { { }, { }, { }, { }, WTF::move(drawingMissing) }.createDisplayList(false), "A display list that draws a missing one fails to decode"_s);
 
-    FloatRect rect { 0, 0, 10, 10 };
-    Vector<Vector<DisplayListDataItem>> filterWithImage;
-    filterWithImage.append(Vector<DisplayListDataItem> { DisplayList::DrawFilteredImageBuffer { rect, filterWithEffect(FEImage::create(SourceImage { testImageBuffer() }, rect)) } });
-    tester.expect(!DisplayListData { { }, { }, WTF::move(filterWithImage) }.createDisplayList(false), "A filter with an image fails to decode"_s);
 
     tester.expect(!DisplayList::isResolved(DisplayList::DrawDisplayList { 0 }), "A display list index is unresolved"_s);
     tester.expect(!DisplayList::isResolved(DisplayList::DrawGlyphs { 0, { }, { }, { }, FontSmoothingMode::Auto }), "A font index is unresolved"_s);
@@ -619,7 +914,17 @@ Vector<String> testDisplayListData(const Vector<Ref<SharedBuffer>>& webFonts)
     testControlParts(tester);
     testSystemImages(tester);
     testFilters(tester);
-    testItemsWithResources(tester);
+    testNativeImages(tester);
+#if USE(CG)
+    testNativeImageFormats(tester);
+#endif
+    testImageBuffers(tester);
+    testPatternBrushes(tester);
+    testFiltersWithImages(tester);
+    testMeshGradients(tester);
+    testInvalidImages(tester);
+    testPDFPages(tester);
+    testInvalidPDFPages(tester);
     testInvalidData(tester);
     return tester.takeFailures();
 }

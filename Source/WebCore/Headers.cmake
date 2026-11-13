@@ -2707,6 +2707,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/displaylists/DisplayListItems.h
     platform/graphics/displaylists/DisplayListRecorder.h
     platform/graphics/displaylists/DisplayListRecorderImpl.h
+    platform/graphics/displaylists/DisplayListResourceCache.h
 
     platform/graphics/egl/BitmapTexture.h
     platform/graphics/egl/BitmapTexturePool.h

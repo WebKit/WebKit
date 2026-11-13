@@ -39,6 +39,7 @@
 #include "Logging.h"
 #include "MediaOverridesForTesting.h"
 #include "MediaPlayerPrivateRemoteMessages.h"
+#include "PrintProcessPDFDocument.h"
 #include "RemoteAudioHardwareListenerMessages.h"
 #include "RemoteAudioSourceProviderManager.h"
 #include "RemoteAudioSourceProviderManagerMessages.h"
@@ -382,7 +383,13 @@ void GPUProcessConnection::drawDisplayListToPDF(DisplayListData&& displayListDat
         return;
     }
 
-    RefPtr displayList = WTF::move(displayListData).createDisplayList(webProcess->isLockdownModeEnabled());
+    DisplayListData::PDFDocumentFactory createPDFDocument;
+#if ENABLE(UNIFIED_PDF)
+    createPDFDocument = [](Ref<SharedBuffer>&& data) -> Ref<DisplayList::PDFDocumentData> {
+        return PrintProcessPDFDocument::create(WTF::move(data));
+    };
+#endif
+    RefPtr displayList = WTF::move(displayListData).createDisplayList(webProcess->isLockdownModeEnabled(), createPDFDocument);
     if (!displayList) {
         completionHandler(nullptr);
         return;

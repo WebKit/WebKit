@@ -27,12 +27,14 @@
 #include "DisplayListItems.h"
 
 #include "DisplayList.h"
+#include "FEImage.h"
 #include "Filter.h"
 #include "FilterResults.h"
 #include "FontCascade.h"
 #include "ImageBuffer.h"
 #include "MediaPlayer.h"
 #include "SharedBuffer.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 #if USE(SKIA)
@@ -134,6 +136,17 @@ SetState::SetState(const GraphicsContextState& state)
 {
 }
 
+static bool hasUnresolvedPattern(const SourceBrush& brush)
+{
+    RefPtr pattern = brush.pattern();
+    return pattern && !pattern->tileImage().isResolved();
+}
+
+bool SetState::isResolved() const
+{
+    return !hasUnresolvedPattern(m_state.fillBrush()) && !hasUnresolvedPattern(m_state.strokeBrush());
+}
+
 void SetState::apply(GraphicsContext& context) const
 {
     context.mergeLastChanges(m_state);
@@ -227,13 +240,14 @@ void ClipOutRoundedRect::dump(TextStream& ts, OptionSet<AsTextFlag>) const
 
 void ClipToNativeImage::apply(GraphicsContext& context) const
 {
-    context.clipToNativeImage(m_image, m_destinationRect);
+    RELEASE_ASSERT(isResolved());
+    context.clipToNativeImage(std::get<Ref<const NativeImage>>(m_image), m_destinationRect);
 }
 
 void ClipToNativeImage::dump(TextStream& ts, OptionSet<AsTextFlag> flags) const
 {
     if (flags.contains(AsTextFlag::IncludeResourceIdentifiers))
-        ts.dumpProperty("image-identifier"_s, m_image->renderingResourceIdentifier());
+        ts.dumpProperty("image-identifier"_s, imageIdentifier());
     ts.dumpProperty("dest-rect"_s, destinationRect());
 }
 
@@ -275,17 +289,27 @@ void ResetClip::apply(GraphicsContext& context) const
     context.resetClip();
 }
 
+bool DrawFilteredImageBuffer::isResolved() const
+{
+    if (!isSourceImageResolved())
+        return false;
+    return std::ranges::all_of(m_filter->effectsOfType(FilterFunction::Type::FEImage), [](auto& effect) {
+        return downcast<FEImage>(effect).sourceImage().isResolved();
+    });
+}
+
 void DrawFilteredImageBuffer::apply(GraphicsContext& context) const
 {
+    RefPtr sourceImage = this->sourceImage();
     FilterResults results;
-    context.drawFilteredImageBuffer(m_sourceImage.get(), m_sourceImageRect, m_filter, results);
+    context.drawFilteredImageBuffer(sourceImage.get(), m_sourceImageRect, m_filter, results);
 }
 
 void DrawFilteredImageBuffer::dump(TextStream& ts, OptionSet<AsTextFlag> flags) const
 {
     if (flags.contains(AsTextFlag::IncludeResourceIdentifiers)) {
-        if (m_sourceImage)
-            ts.dumpProperty("source-image-identifier"_s, m_sourceImage->renderingResourceIdentifier());
+        if (auto identifier = sourceImageIdentifier())
+            ts.dumpProperty("source-image-identifier"_s, *identifier);
     }
     ts.dumpProperty("source-image-rect"_s, sourceImageRect());
 }
@@ -379,26 +403,28 @@ void DrawPlaceholder::dump(TextStream&, OptionSet<AsTextFlag>) const
 
 void DrawImageBuffer::apply(GraphicsContext& context) const
 {
-    context.drawImageBuffer(m_imageBuffer, m_destinationRect, m_srcRect, m_options);
+    RELEASE_ASSERT(isResolved());
+    context.drawImageBuffer(std::get<Ref<ImageBuffer>>(m_imageBuffer), m_destinationRect, m_srcRect, m_options);
 }
 
 void DrawImageBuffer::dump(TextStream& ts, OptionSet<AsTextFlag> flags) const
 {
     if (flags.contains(AsTextFlag::IncludeResourceIdentifiers))
-        ts.dumpProperty("image-buffer-identifier"_s, m_imageBuffer->renderingResourceIdentifier());
+        ts.dumpProperty("image-buffer-identifier"_s, imageIdentifier());
     ts.dumpProperty("source-rect"_s, source());
     ts.dumpProperty("dest-rect"_s, destinationRect());
 }
 
 void DrawNativeImage::apply(GraphicsContext& context) const
 {
-    context.drawNativeImage(m_image, m_destinationRect, m_srcRect, m_options);
+    RELEASE_ASSERT(isResolved());
+    context.drawNativeImage(std::get<Ref<const NativeImage>>(m_image), m_destinationRect, m_srcRect, m_options);
 }
 
 void DrawNativeImage::dump(TextStream& ts, OptionSet<AsTextFlag> flags) const
 {
     if (flags.contains(AsTextFlag::IncludeResourceIdentifiers))
-        ts.dumpProperty("image-identifier"_s, m_image->renderingResourceIdentifier());
+        ts.dumpProperty("image-identifier"_s, imageIdentifier());
     ts.dumpProperty("source-rect"_s, source());
     ts.dumpProperty("dest-rect"_s, destinationRect());
 }
@@ -416,13 +442,14 @@ void DrawSystemImage::dump(TextStream& ts, OptionSet<AsTextFlag>) const
 
 void DrawPatternNativeImage::apply(GraphicsContext& context) const
 {
-    context.drawPattern(m_image, m_destination, m_tileRect, m_patternTransform, m_phase, m_spacing, m_options);
+    RELEASE_ASSERT(isResolved());
+    context.drawPattern(std::get<Ref<const NativeImage>>(m_image), m_destination, m_tileRect, m_patternTransform, m_phase, m_spacing, m_options);
 }
 
 void DrawPatternNativeImage::dump(TextStream& ts, OptionSet<AsTextFlag> flags) const
 {
     if (flags.contains(AsTextFlag::IncludeResourceIdentifiers))
-        ts.dumpProperty("image-identifier"_s, m_image->renderingResourceIdentifier());
+        ts.dumpProperty("image-identifier"_s, imageIdentifier());
     ts.dumpProperty("pattern-transform"_s, patternTransform());
     ts.dumpProperty("tile-rect"_s, tileRect());
     ts.dumpProperty("dest-rect"_s, destRect());
@@ -432,13 +459,14 @@ void DrawPatternNativeImage::dump(TextStream& ts, OptionSet<AsTextFlag> flags) c
 
 void DrawPatternImageBuffer::apply(GraphicsContext& context) const
 {
-    context.drawPattern(m_imageBuffer, m_destination, m_tileRect, m_patternTransform, m_phase, m_spacing, m_options);
+    RELEASE_ASSERT(isResolved());
+    context.drawPattern(std::get<Ref<ImageBuffer>>(m_imageBuffer), m_destination, m_tileRect, m_patternTransform, m_phase, m_spacing, m_options);
 }
 
 void DrawPatternImageBuffer::dump(TextStream& ts, OptionSet<AsTextFlag> flags) const
 {
     if (flags.contains(AsTextFlag::IncludeResourceIdentifiers))
-        ts.dumpProperty("image-identifier"_s, m_imageBuffer->renderingResourceIdentifier());
+        ts.dumpProperty("image-identifier"_s, imageIdentifier());
     ts.dumpProperty("pattern-transform"_s, patternTransform());
     ts.dumpProperty("tile-rect"_s, tileRect());
     ts.dumpProperty("dest-rect"_s, destRect());
@@ -780,6 +808,50 @@ void EndTransparencyLayer::apply(GraphicsContext& context) const
 {
     if (context.isInTransparencyLayer())
         context.endTransparencyLayer();
+}
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PDFDocumentData);
+
+Ref<PDFDocumentData> PDFDocumentData::create(Ref<SharedBuffer>&& data)
+{
+    return adoptRef(*new PDFDocumentData(WTF::move(data)));
+}
+
+PDFDocumentData::PDFDocumentData(Ref<SharedBuffer>&& data)
+    : m_data(WTF::move(data))
+{
+}
+
+PDFDocumentData::~PDFDocumentData() = default;
+
+void PDFDocumentData::drawPage(GraphicsContext&, unsigned, const FloatRect&)
+{
+}
+
+bool DrawPDFPage::isResolved() const
+{
+    if (!std::holds_alternative<Ref<PDFDocumentData>>(m_document))
+        return false;
+    return !m_fallbackImage || std::holds_alternative<Ref<const NativeImage>>(*m_fallbackImage);
+}
+
+void DrawPDFPage::apply(GraphicsContext& context) const
+{
+    RELEASE_ASSERT(isResolved());
+    if (m_fallbackImage) {
+        Ref image = std::get<Ref<const NativeImage>>(*m_fallbackImage);
+        context.drawNativeImage(image, m_pageRect, FloatRect { { }, image->size() });
+        return;
+    }
+    std::get<Ref<PDFDocumentData>>(m_document)->drawPage(context, m_pageIndex, m_pageRect);
+}
+
+void DrawPDFPage::dump(TextStream& ts, OptionSet<AsTextFlag> flags) const
+{
+    if (flags.contains(AsTextFlag::IncludeResourceIdentifiers))
+        ts.dumpProperty("document-identifier"_s, documentIdentifier());
+    ts.dumpProperty("page-index"_s, pageIndex());
+    ts.dumpProperty("page-rect"_s, pageRect());
 }
 
 #if USE(CG)

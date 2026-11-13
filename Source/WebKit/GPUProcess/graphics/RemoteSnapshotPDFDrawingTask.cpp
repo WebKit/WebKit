@@ -80,6 +80,7 @@ void RemoteSnapshotPDFDrawingTask::sendToPrintProcess(ProcessIdentifier printPro
         fallback();
         return;
     }
+    displayListData->setOwnershipOfMemory(connection->webProcessIdentity());
 
     protect(connection->connection())->sendWithAsyncReply(Messages::GPUProcessConnection::DrawDisplayListToPDF(WTF::move(*displayListData), snapshot->size()), [protectedThis = Ref { *this }](RefPtr<SharedBuffer>&& pdf) {
         if (pdf)

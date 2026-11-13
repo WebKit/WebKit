@@ -47,6 +47,7 @@ public:
     RemoteSnapshotRecorderIdentifier identifier() const { return RemoteSnapshotRecorderIdentifier { RemoteGraphicsContextProxy::identifier().toUInt64() }; }
 
     void drawSnapshotFrame(WebCore::FrameIdentifier);
+    void drawPDFPage(WebCore::RenderingResourceIdentifier documentIdentifier, RefPtr<WebCore::SharedBuffer>&&, unsigned pageIndex, const WebCore::FloatRect& pageRect, RefPtr<WebCore::NativeImage>&& fallbackImage);
 };
 
 }

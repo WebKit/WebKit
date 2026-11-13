@@ -29,6 +29,7 @@
 ]
 messages -> RemoteSnapshotRecorder : RemoteGraphicsContext Stream {
     DrawSnapshotFrame(WebCore::FrameIdentifier frameIdentifier)
+    DrawPDFPage(WebCore::RenderingResourceIdentifier documentIdentifier, RefPtr<WebCore::SharedBuffer> data, unsigned pageIndex, WebCore::FloatRect pageRect, std::optional<WebCore::RenderingResourceIdentifier> fallbackImageIdentifier) NotStreamEncodable
 }
 
 #endif // ENABLE(GPU_PROCESS)

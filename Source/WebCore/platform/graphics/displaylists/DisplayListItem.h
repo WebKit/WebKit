@@ -67,6 +67,7 @@ class DrawLine;
 class DrawLinesForText;
 class DrawMeshGradient;
 class DrawNativeImage;
+class DrawPDFPage;
 class DrawPath;
 class DrawPatternNativeImage;
 class DrawPatternImageBuffer;
@@ -138,6 +139,7 @@ using Item = Variant
     , DrawLinesForText
     , DrawMeshGradient
     , DrawNativeImage
+    , DrawPDFPage
     , DrawPath
     , DrawPatternNativeImage
     , DrawPatternImageBuffer

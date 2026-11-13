@@ -304,10 +304,18 @@ header: <WebCore/GraphicsContextState.h>
     ShadowsIgnoreTransforms,
 }
 
+header: <WebCore/Pattern.h>
+[CustomHeader, RefCounted] class WebCore::Pattern {
+    WebCore::SourceImage tileImage();
+    WebCore::PatternParameters parameters();
+}
+
 header: <WebCore/SourceBrush.h>
+using WebCore::SourceBrush::OptionalPatternGradient = Variant<std::monostate, WebCore::SourceBrushLogicalGradient, Ref<WebCore::Pattern>>;
+
 [CustomHeader] class WebCore::SourceBrush {
-    WebCore::Color color();
-    std::optional<WebCore::SourceBrushLogicalGradient> logicalGradient();
+    WebCore::Color m_color;
+    WebCore::SourceBrush::OptionalPatternGradient m_patternGradient;
 }
 
 [CustomHeader] class WebCore::GraphicsContextState {
@@ -330,6 +338,11 @@ header: <WebCore/SourceBrush.h>
 }
 
 header: <WebCore/DisplayListItems.h>
+[CustomHeader] class WebCore::DisplayList::ClipToNativeImage {
+    WebCore::RenderingResourceIdentifier imageIdentifier();
+    WebCore::FloatRect destinationRect();
+}
+
 [CustomHeader] class WebCore::DisplayList::DrawDisplayList {
     uint64_t displayListIndex();
 }
@@ -342,9 +355,55 @@ header: <WebCore/DisplayListItems.h>
     WebCore::FontSmoothingMode fontSmoothingMode();
 }
 
-[CustomHeader, DisableMissingMemberCheck] class WebCore::DisplayList::DrawFilteredImageBuffer {
+[CustomHeader] class WebCore::DisplayList::DrawFilteredImageBuffer {
+    std::optional<WebCore::RenderingResourceIdentifier> sourceImageIdentifier();
     WebCore::FloatRect m_sourceImageRect;
     Ref<WebCore::Filter> m_filter;
+}
+
+[CustomHeader] class WebCore::DisplayList::DrawImageBuffer {
+    WebCore::RenderingResourceIdentifier imageIdentifier();
+    WebCore::FloatRect destinationRect();
+    WebCore::FloatRect source();
+    WebCore::RasterDrawingOptions options();
+}
+
+[CustomHeader] class WebCore::DisplayList::DrawMeshGradient {
+    Ref<WebCore::MeshGradient> m_gradient;
+    WebCore::FloatRect m_destination;
+}
+
+[CustomHeader] class WebCore::DisplayList::DrawNativeImage {
+    WebCore::RenderingResourceIdentifier imageIdentifier();
+    WebCore::FloatRect destinationRect();
+    WebCore::FloatRect source();
+    WebCore::RasterDrawingOptions options();
+}
+
+[CustomHeader, DisableMissingMemberCheck] class WebCore::DisplayList::DrawPDFPage {
+    WebCore::RenderingResourceIdentifier documentIdentifier();
+    unsigned pageIndex();
+    WebCore::FloatRect pageRect();
+}
+
+[CustomHeader] class WebCore::DisplayList::DrawPatternNativeImage {
+    WebCore::RenderingResourceIdentifier imageIdentifier();
+    WebCore::FloatRect destRect();
+    WebCore::FloatRect tileRect();
+    WebCore::AffineTransform patternTransform();
+    WebCore::FloatPoint phase();
+    WebCore::FloatSize spacing();
+    WebCore::RasterDrawingOptions options();
+}
+
+[CustomHeader] class WebCore::DisplayList::DrawPatternImageBuffer {
+    WebCore::RenderingResourceIdentifier imageIdentifier();
+    WebCore::FloatRect destRect();
+    WebCore::FloatRect tileRect();
+    WebCore::AffineTransform patternTransform();
+    WebCore::FloatPoint phase();
+    WebCore::FloatSize spacing();
+    WebCore::RasterDrawingOptions options();
 }
 
 [CustomHeader] class WebCore::DisplayList::SetState {
@@ -356,6 +415,17 @@ header: "DisplayListData.h"
     WebCore::FontInternalAttributes attributes;
     WebCore::FontPlatformDataAttributes platformData;
     std::optional<uint64_t> customFontIndex;
+}
+
+[CustomHeader, RValue] struct WebKit::DisplayListDataImage {
+    WebCore::RenderingResourceIdentifier identifier;
+    WebCore::ShareableBitmapHandle bitmap;
+    std::optional<WebCore::ImageBufferParameters> imageBufferParameters;
+}
+
+[CustomHeader] struct WebKit::DisplayListDataPDFDocument {
+    WebCore::RenderingResourceIdentifier identifier;
+    Ref<WebCore::SharedBuffer> data;
 }
 
 using WebKit::DisplayListDataItem = Variant<
@@ -370,6 +440,7 @@ using WebKit::DisplayListDataItem = Variant<
     WebCore::DisplayList::ClipOutToPath,
     WebCore::DisplayList::ClipPath,
     WebCore::DisplayList::ClipTransformedPath,
+    WebCore::DisplayList::ClipToNativeImage,
     WebCore::DisplayList::ConcatenateCTM,
     WebCore::DisplayList::DrawControlPart,
     WebCore::DisplayList::DrawDotsForDocumentMarker,
@@ -379,9 +450,15 @@ using WebKit::DisplayListDataItem = Variant<
     WebCore::DisplayList::DrawFocusRingRects,
     WebCore::DisplayList::DrawGlyphs,
     WebCore::DisplayList::DrawDisplayList,
+    WebCore::DisplayList::DrawImageBuffer,
     WebCore::DisplayList::DrawLine,
     WebCore::DisplayList::DrawLinesForText,
+    WebCore::DisplayList::DrawMeshGradient,
+    WebCore::DisplayList::DrawNativeImage,
+    WebCore::DisplayList::DrawPDFPage,
     WebCore::DisplayList::DrawPath,
+    WebCore::DisplayList::DrawPatternNativeImage,
+    WebCore::DisplayList::DrawPatternImageBuffer,
     WebCore::DisplayList::DrawRect,
     WebCore::DisplayList::DrawSystemImage,
     WebCore::DisplayList::EndTransparencyLayer,
@@ -420,10 +497,12 @@ using WebKit::DisplayListDataItem = Variant<
     WebCore::DisplayList::SetURLForRect
 >;
 
-class WebKit::DisplayListData {
-    Vector<WebCore::FontCustomPlatformSerializedData> customFonts();
-    Vector<WebKit::DisplayListDataFont> fonts();
-    Vector<Vector<WebKit::DisplayListDataItem>> bottomUpDisplayLists();
+[RValue] class WebKit::DisplayListData {
+    Vector<WebCore::FontCustomPlatformSerializedData> m_customFonts;
+    Vector<WebKit::DisplayListDataFont> m_fonts;
+    Vector<WebKit::DisplayListDataImage> m_images;
+    Vector<WebKit::DisplayListDataPDFDocument> m_pdfDocuments;
+    Vector<Vector<WebKit::DisplayListDataItem>> m_bottomUpDisplayLists;
 }
 
 #endif

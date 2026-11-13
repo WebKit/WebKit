@@ -29,6 +29,7 @@
 #include <WebCore/Gradient.h>
 #include <WebCore/Pattern.h>
 #include <WebCore/SourceBrushLogicalGradient.h>
+#include <wtf/ArgumentCoder.h>
 
 namespace WebCore {
 
@@ -42,11 +43,10 @@ public:
     {
     }
 
-    SourceBrush(const Color& color, std::optional<SourceBrushLogicalGradient>&& gradient)
+    SourceBrush(const Color& color, OptionalPatternGradient&& patternGradient)
         : m_color(color)
+        , m_patternGradient(WTF::move(patternGradient))
     {
-        if (gradient)
-            m_patternGradient = WTF::move(*gradient);
     }
 
     // Color should be stored in the variant, in place of std::monospace. Currently a lot of code
@@ -65,19 +65,14 @@ public:
     WEBCORE_EXPORT void setGradient(Ref<Gradient>&&, const AffineTransform& spaceTransform = { });
     WEBCORE_EXPORT void setPattern(Ref<Pattern>&&);
 
-    std::optional<SourceBrushLogicalGradient> logicalGradient() const
-    {
-        if (auto* gradient = std::get_if<SourceBrushLogicalGradient>(&m_patternGradient))
-            return SourceBrushLogicalGradient { gradient->gradient.copyRef(), gradient->spaceTransform };
-        return std::nullopt;
-    }
-
     bool isVisible() const { return hasPatternOrGradient() || m_color.isVisible(); }
 
     bool hasPatternOrGradient() const { return !std::holds_alternative<std::monostate>(m_patternGradient); }
     friend bool operator==(const SourceBrush&, const SourceBrush&);
 
 private:
+    friend struct IPC::ArgumentCoder<SourceBrush>;
+
     Color m_color { Color::black };
     OptionalPatternGradient m_patternGradient;
 };

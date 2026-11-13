@@ -1086,6 +1086,7 @@ void RemoteGraphicsContextProxy::abandon()
 
 // Instantiate the send() helper for the few subclass messages here to avoid listing it in the header.
 template void RemoteGraphicsContextProxy::send<Messages::RemoteSnapshotRecorder::DrawSnapshotFrame>(Messages::RemoteSnapshotRecorder::DrawSnapshotFrame&&);
+template void RemoteGraphicsContextProxy::send<Messages::RemoteSnapshotRecorder::DrawPDFPage>(Messages::RemoteSnapshotRecorder::DrawPDFPage&&);
 
 }
 
