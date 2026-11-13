@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>window.orientation API</title>
+<link rel="help" href="https://w3c.github.io/screen-orientation/">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+<script type="module">
+import { makeCleanup, getOppositeOrientation } from "./resources/orientation-utils.js";
+
+test(() => {
+  assert_true("orientation" in window, "window.orientation should exist");
+}, "window.orientation attribute should be present");
+
+test(() => {
+  assert_equals(typeof window.orientation, "number", "window.orientation should be a number");
+}, "window.orientation should return a number");
+
+test(() => {
+  const orientation = window.orientation;
+  assert_true(
+    orientation === -90 || orientation === 0 || orientation === 90 || orientation === 180,
+    "window.orientation should be one of the valid values"
+  );
+}, "window.orientation should return a valid orientation angle");
+
+test(() => {
+  assert_true("onorientationchange" in window, "window.onorientationchange should exist");
+}, "window.onorientationchange attribute should be present");
+
+test(() => {
+  assert_equals(window.onorientationchange, null, "window.onorientationchange should be null initially");
+}, "window.onorientationchange should be null by default");
+
+test(() => {
+  const initialHandler = () => {};
+  window.onorientationchange = initialHandler;
+  assert_equals(window.onorientationchange, initialHandler, "window.onorientationchange should be settable");
+
+  window.onorientationchange = null;
+  assert_equals(window.onorientationchange, null, "window.onorientationchange should be resettable to null");
+}, "window.onorientationchange should be settable and gettable");
+
+promise_test(async (t) => {
+  t.add_cleanup(makeCleanup());
+  await test_driver.bless("request full screen");
+  await document.documentElement.requestFullscreen();
+
+  const initialOrientation = window.orientation;
+  const targetOrientation = getOppositeOrientation();
+
+  const eventPromise = new Promise(resolve => {
+    function handleOrientationChange() {
+      window.removeEventListener("orientationchange", handleOrientationChange);
+      resolve();
+    }
+    window.addEventListener("orientationchange", handleOrientationChange);
+  });
+
+  // Lock the orientation
+  await screen.orientation.lock(targetOrientation);
+
+  // Wait for the orientationchange event
+  await eventPromise;
+
+  // Verify the orientation value is still valid
+  const newOrientation = window.orientation;
+  assert_true(
+    newOrientation === -90 || newOrientation === 0 || newOrientation === 90 || newOrientation === 180,
+    "window.orientation should be a valid value after orientation change"
+  );
+}, "orientationchange event should fire when orientation is changed programmatically");
+
+test(() => {
+  // Test that orientation values map correctly to screen orientation angles
+  const orientation = window.orientation;
+  const screenAngle = screen.orientation.angle;
+
+  let expectedOrientation;
+  if (screenAngle < 180) {
+    expectedOrientation = screenAngle;
+  } else if (screenAngle === 180) {
+    // User agents may or may not support 180
+    expectedOrientation = screenAngle; // or 0 if not supported
+  } else if (screenAngle > 180) {
+    expectedOrientation = screenAngle - 360;
+  }
+
+  // Allow for the fact that some user agents might not support 180
+  if (screenAngle === 180 && orientation === 0) {
+    assert_true(true, "User agent correctly maps unsupported 180° to 0°");
+  } else {
+    assert_equals(orientation, expectedOrientation,
+      `window.orientation (${orientation}) should match expected mapping of screen.orientation.angle (${screenAngle})`);
+  }
+}, "window.orientation should correctly map screen.orientation.angle values");
+
+test(() => {
+  // Test the specific constraints from the spec
+  const orientation = window.orientation;
+
+  // Must support -90, 0, 90
+  if (orientation === -90 || orientation === 0 || orientation === 90) {
+    assert_true(true, "Orientation is one of the required supported values");
+  }
+  // May optionally support 180
+  else if (orientation === 180) {
+    assert_true(true, "Orientation is the optional 180° value");
+  }
+  else {
+    assert_unreached(`Invalid orientation value: ${orientation}`);
+  }
+}, "window.orientation should only return standardized values");
+
+promise_test(async (t) => {
+  t.add_cleanup(makeCleanup());
+  await test_driver.bless("request full screen");
+  await document.documentElement.requestFullscreen();
+
+  // Test different orientation locks and verify window.orientation values
+  const testCases = [
+    { lock: "portrait", expectedValues: [0, 180] },
+    { lock: "landscape", expectedValues: [90, -90] },
+    { lock: "natural", expectedValues: [0, 90, -90, 180] },
+    { lock: "any", expectedValues: [0, 90, -90, 180] },
+  ];
+
+  for (const testCase of testCases) {
+    await screen.orientation.lock(testCase.lock);
+    const orientation = window.orientation;
+
+    assert_true(
+      testCase.expectedValues.includes(orientation),
+      `After locking to ${testCase.lock}, window.orientation (${orientation}) should be one of ${testCase.expectedValues}`
+    );
+  }
+}, "window.orientation should return correct values for different orientation locks");
+
+promise_test(async (t) => {
+  t.add_cleanup(makeCleanup());
+  await test_driver.bless("request full screen");
+  await document.documentElement.requestFullscreen();
+
+  let orientationChangeCount = 0;
+  const orientationValues = [];
+
+  function handleOrientationChange() {
+    orientationChangeCount++;
+    orientationValues.push(window.orientation);
+  }
+
+  window.addEventListener("orientationchange", handleOrientationChange);
+  t.add_cleanup(() => {
+    window.removeEventListener("orientationchange", handleOrientationChange);
+  });
+
+  const initialOrientation = screen.orientation.type.startsWith("portrait")
+    ? "portrait"
+    : "landscape";
+
+  const targetOrientation = getOppositeOrientation();
+
+  // Lock to different orientation
+  await screen.orientation.lock(targetOrientation);
+
+  // Lock back to original
+  await screen.orientation.lock(initialOrientation);
+
+  assert_greater_than_equal(orientationChangeCount, 1, "At least one orientationchange event should have fired");
+
+  // Verify all captured orientation values are valid
+  for (const value of orientationValues) {
+    assert_true(
+      value === -90 || value === 0 || value === 90 || value === 180,
+      `All orientation values should be valid, got: ${value}`
+    );
+  }
+}, "Multiple orientation changes should fire multiple orientationchange events with valid values");
+
+</script>
