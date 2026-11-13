@@ -9637,6 +9637,16 @@ RefPtr<Element> Internals::spatialPortalAnchorForModel(HTMLModelElement& model)
     return controller->anchorModelForChild(model.nodeIdentifier());
 }
 
+RefPtr<Element> Internals::spatialPortalAnchorForPromotedChild(Element& element)
+{
+    RefPtr portal = element.parentElement();
+    CheckedPtr controller = portal ? portal->spatialPortalController() : nullptr;
+    if (!controller)
+        return nullptr;
+
+    return controller->anchorModelForPromotedChild(element.nodeIdentifier());
+}
+
 // Returned as column-major values.
 std::optional<Vector<double>> Internals::spatialPortalResolvedTransform(Element& element)
 {

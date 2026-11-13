@@ -58,6 +58,8 @@ struct PortalPromotedChild {
     WeakPtr<GraphicsLayer> layer;
     FloatRect quadRectInChildSpace;
     FloatPoint childOriginInPortal;
+    // The border box of the promoted child, whose center goes on the anchor when the child is anchored to a model.
+    FloatSize childSize;
     TransformationMatrix transform;
 };
 
@@ -67,6 +69,7 @@ struct PortalHostedLayer {
     NodeIdentifier rootNodeID;
     FloatRect quadRectInChildSpace;
     FloatPoint childOriginInPortal;
+    FloatSize childSize;
     TransformationMatrix transform;
     bool isOpaque { false };
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)

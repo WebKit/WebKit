@@ -2230,7 +2230,7 @@ void RenderLayerBacking::configureSpatialPortalLayer(SpatialPortalController& co
     controller.sizeMayHaveChanged();
 }
 
-static bool collectPortalHostedLayers(RenderLayer& promotedChild, NodeIdentifier rootNodeID, RenderLayer& layer, const FloatPoint& childOriginInPortal, Vector<PortalPromotedChild>& children)
+static bool collectPortalHostedLayers(RenderLayer& promotedChild, NodeIdentifier rootNodeID, RenderLayer& layer, const FloatPoint& childOriginInPortal, const FloatSize& childSize, Vector<PortalPromotedChild>& children)
 {
     if (auto* backing = layer.backing()) {
         if (backing->foregroundLayer() || backing->backgroundLayer() || backing->hasClippingLayer() || backing->hasAncestorClippingLayers() || backing->scrollContainerLayer() || backing->hasMaskLayer() || backing->viewportClippingOrAnchorLayer() || backing->overflowControlsContainer())
@@ -2256,6 +2256,7 @@ static bool collectPortalHostedLayers(RenderLayer& promotedChild, NodeIdentifier
                 .layer = *graphicsLayer,
                 .quadRectInChildSpace = quadRect,
                 .childOriginInPortal = childOriginInPortal,
+                .childSize = childSize,
                 .transform = *transform,
             });
         }
@@ -2276,13 +2277,13 @@ static bool collectPortalHostedLayers(RenderLayer& promotedChild, NodeIdentifier
     }
 
     for (CheckedPtr child : layer.normalFlowLayers()) {
-        if (!collectPortalHostedLayers(promotedChild, rootNodeID, *child, childOriginInPortal, children))
+        if (!collectPortalHostedLayers(promotedChild, rootNodeID, *child, childOriginInPortal, childSize, children))
             return false;
     }
 
     if (layer.isStackingContext()) {
         for (CheckedPtr child : layer.positiveZOrderLayers()) {
-            if (!collectPortalHostedLayers(promotedChild, rootNodeID, *child, childOriginInPortal, children))
+            if (!collectPortalHostedLayers(promotedChild, rootNodeID, *child, childOriginInPortal, childSize, children))
                 return false;
         }
     }
@@ -2308,7 +2309,8 @@ void RenderLayerBacking::updatePortalPromotedChildren(SpatialPortalController& c
 
         FloatSize offsetFromPortal { childLayer->offsetFromAncestor(&m_owningLayer) };
         Vector<PortalPromotedChild> hostedLayers;
-        if (collectPortalHostedLayers(*childLayer, childElement->nodeIdentifier(), *childLayer, toFloatPoint(offsetFromPortal - portalBorderOffset), hostedLayers))
+        FloatSize childSize { childLayer->rendererBorderBoxRect().size() };
+        if (collectPortalHostedLayers(*childLayer, childElement->nodeIdentifier(), *childLayer, toFloatPoint(offsetFromPortal - portalBorderOffset), childSize, hostedLayers))
             children.appendVector(WTF::move(hostedLayers));
     }
 

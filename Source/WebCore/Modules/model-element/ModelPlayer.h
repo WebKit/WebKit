@@ -183,6 +183,10 @@ public:
     virtual void portalPromotedChildEventRegionDidChange();
 #endif
     virtual bool hostsPortalPromotedChild(NodeIdentifier) const;
+    virtual void setPromotedChildAnchor(NodeIdentifier rootNodeID, std::optional<NodeIdentifier> anchorNode, const String& placement);
+    // Maps the border box of a promoted child that the scene places on its anchor to the portal's padding box, as the
+    // scene's orbit and `portal-transform` turn it, before perspective.
+    virtual std::optional<TransformationMatrix> anchoredPromotedChildTransform(NodeIdentifier rootNodeID) const;
 #endif
 
 #if ENABLE(MODEL_ELEMENT_STAGE_MODE)

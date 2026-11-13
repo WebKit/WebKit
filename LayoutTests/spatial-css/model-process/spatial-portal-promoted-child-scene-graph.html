@@ -1,0 +1,76 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../model-element/resources/model-utils.js"></script>
+<script src="../resources/spatial-portal-utils.js"></script>
+<style>
+    body {
+        margin: 0;
+    }
+    .portal {
+        spatial: portal;
+        position: relative;
+        width: 400px;
+        height: 300px;
+    }
+    .child {
+        position: absolute;
+        left: 100px;
+        top: 100px;
+        width: 80px;
+        height: 40px;
+        background-color: rgb(70, 70, 140);
+        transform-style: preserve-3d;
+    }
+</style>
+<body>
+<script>
+'use strict';
+
+const hostedLayerContainer = "WebKit:PortalHostedLayerContainer";
+
+const createChild = (test, { portalTransform, transform = "translateZ(-100px)" } = {}) => {
+    const portal = createPortal(test, { portalTransform });
+    const child = document.createElement("div");
+    child.className = "child";
+    child.id = "child";
+    child.style.transform = transform;
+    portal.appendChild(child);
+    return { portal, child };
+};
+
+// The layers of a promoted child that isn't anchored are drawn beside the container of the models.
+const hostedLayer = entities => entities.find(entity => entity.element === "#child" && entity.parent?.name === hostedLayerContainer);
+const isTurned = entity => !!entity && Math.abs(entity.rotation[3]) < 0.9999;
+
+promise_test(async test => {
+    const { portal } = createChild(test);
+    await waitForHostedPromotedChildren(portal, 1);
+
+    const entities = await waitForSceneGraph(portal, entities => hostedLayer(entities), "the child's layer is in the scene");
+    assert_equals(hostedLayer(entities).name, "WebKit:PortalHostedLayer");
+}, "A promoted child is hosted in the portal scene");
+
+promise_test(async test => {
+    const { portal, child } = createChild(test);
+    await waitForHostedPromotedChildren(portal, 1);
+
+    let entities = await waitForSceneGraph(portal, entities => hostedLayer(entities), "the child's layer is in the scene");
+    assert_less_than(hostedLayer(entities).translation[2], 0, "the child is behind the portal, as translateZ moves it");
+    assert_false(isTurned(hostedLayer(entities)), "the child isn't turned");
+
+    child.style.transform = "translateZ(-100px) rotateY(30deg)";
+    entities = await waitForSceneGraph(portal, entities => isTurned(hostedLayer(entities)), "the child's layer turns with its transform");
+    assert_less_than(hostedLayer(entities).translation[2], 0, "the turned child is still behind the portal");
+}, "The transform of a promoted child applies to its layer in the portal scene");
+
+promise_test(async test => {
+    const { portal } = createChild(test, { portalTransform: "auto rotate3d(0, 1, 0, 40deg)" });
+    await waitForHostedPromotedChildren(portal, 1);
+
+    await waitForSceneGraph(portal, entities => isTurned(hostedLayer(entities)), "the child's layer turns with the portal-transform");
+}, "portal-transform applies to the layers of promoted children");
+</script>
+</body>
+</html>

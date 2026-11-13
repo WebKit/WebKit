@@ -1802,6 +1802,7 @@ public:
     unsigned numberOfHostedPromotedChildrenInSpatialPortal(Element&);
     NODELETE bool establishesSpatialPortal(Element&);
     NODELETE RefPtr<Element> spatialPortalAnchorForModel(HTMLModelElement&);
+    RefPtr<Element> spatialPortalAnchorForPromotedChild(Element&);
     NODELETE std::optional<Vector<double>> spatialPortalResolvedTransform(Element&);
     NODELETE String effectiveEnvironmentMap(Element&);
 #endif

@@ -7311,6 +7311,7 @@ header: <WebCore/PortalTransform.h>
     WebCore::NodeIdentifier rootNodeID;
     WebCore::FloatRect quadRectInChildSpace;
     WebCore::FloatPoint childOriginInPortal;
+    WebCore::FloatSize childSize;
     WebCore::TransformationMatrix transform;
     bool isOpaque;
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)

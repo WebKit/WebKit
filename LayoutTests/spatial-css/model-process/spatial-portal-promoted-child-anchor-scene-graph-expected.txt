@@ -1,0 +1,6 @@
+PASS A promoted child with position-anchor and position-context: anchor is anchored to the named model
+PASS An anchor name with a placement anchors a promoted child to that entity of the model
+PASS Clearing position-anchor puts a promoted child back where layout places it
+PASS position-anchor alone doesn't anchor a promoted child, as it is also CSS anchor positioning
+PASS An anchored promoted child is hit where its anchor places it
+

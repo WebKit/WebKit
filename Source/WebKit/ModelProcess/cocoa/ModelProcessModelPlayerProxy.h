@@ -185,6 +185,7 @@ public:
     void setAnchor(WebCore::NodeIdentifier, std::optional<WebCore::NodeIdentifier> anchorNode, const String& placement) final;
     void setPortalHostedLayers(Vector<WebCore::PortalHostedLayer>&&);
     void setPortalHostedLayerContents(WebCore::NodeIdentifier, MachSendRight&&);
+    void setPromotedChildAnchor(WebCore::NodeIdentifier rootNodeID, std::optional<WebCore::NodeIdentifier> anchorNode, const String& placement);
 #endif
     void setStageMode(WebCore::StageModeOperation) final;
     void beginStageModeTransform(const WebCore::TransformationMatrix&) final;
@@ -278,6 +279,9 @@ private:
     void updateAnchorParenting();
     void updatePortalSceneLayerGeometry();
     void updateDisplayedPortalChildren();
+    void updatePortalChildAnchoring();
+    void updatePortalSceneLayerHierarchy();
+    void updateAnchoredPortalChildTransforms();
 #endif
     void applyDefaultIBL();
     void removeIBL();
@@ -371,6 +375,22 @@ private:
     };
     Vector<PortalSceneLayer> m_portalSceneLayers;
     RetainPtr<CALayer> m_portalSceneLayerContainer;
+
+    // A promoted child anchored to a model. The scene draws its layers in a group whose entity sits under the
+    // anchor's, so that the child moves with the model, as an anchored model does.
+    struct AnchoredPortalChild {
+        std::optional<WebCore::NodeIdentifier> anchorNode;
+        String placement;
+        RetainPtr<CALayer> groupLayer;
+        RetainPtr<WKRKEntity> groupEntity;
+        // The group's transform is set relative to the entity it is attached to.
+        RetainPtr<WKRKEntity> placementEntity;
+        // Turns the child back from the placement to the anchor model's own frame, captured when it is attached.
+        simd_quatf correction { simd_quaternion(0.0f, simd_make_float3(1, 0, 0)) };
+        bool isAttached { false };
+    };
+    HashMap<WebCore::NodeIdentifier, AnchoredPortalChild> m_anchoredPortalChildren;
+    Vector<std::pair<WebCore::NodeIdentifier, WebCore::TransformationMatrix>> m_lastSentAnchoredPortalChildTransforms;
     Vector<WebCore::NodeIdentifier> m_displayedPortalChildren;
 #endif
 

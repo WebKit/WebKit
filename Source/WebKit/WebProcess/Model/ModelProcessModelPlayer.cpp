@@ -189,6 +189,14 @@ void ModelProcessModelPlayer::didUpdatePortalTransform(const WebCore::Transforma
     protect(client())->didUpdatePortalTransform(*this, transform);
 }
 
+void ModelProcessModelPlayer::didUpdateAnchoredPortalChildTransforms(Vector<std::pair<WebCore::NodeIdentifier, WebCore::TransformationMatrix>>&& transforms)
+{
+    // Hit testing reads these when it needs them, so there is nothing to update in the page.
+    m_anchoredPortalChildTransforms.clear();
+    for (auto& [rootNodeID, transform] : transforms)
+        m_anchoredPortalChildTransforms.set(rootNodeID, transform);
+}
+
 void ModelProcessModelPlayer::didUpdateDisplayedPortalChildren(Vector<WebCore::NodeIdentifier>&& rootNodeIDs)
 {
     RELEASE_ASSERT(modelProcessEnabled());
@@ -663,6 +671,23 @@ bool ModelProcessModelPlayer::hostsPortalPromotedChild(WebCore::NodeIdentifier r
     return m_displayedPortalChildren.contains(rootNodeID);
 }
 
+void ModelProcessModelPlayer::setPromotedChildAnchor(WebCore::NodeIdentifier rootNodeID, std::optional<WebCore::NodeIdentifier> anchorNode, const String& placement)
+{
+    send(Messages::ModelProcessModelPlayerProxy::SetPromotedChildAnchor(rootNodeID, anchorNode, placement));
+}
+
+std::optional<WebCore::TransformationMatrix> ModelProcessModelPlayer::anchoredPromotedChildTransform(WebCore::NodeIdentifier rootNodeID) const
+{
+    // Only a child the scene draws is placed by its anchor; until then, it is drawn flat where layout puts it.
+    if (!m_displayedPortalChildren.contains(rootNodeID))
+        return std::nullopt;
+
+    auto it = m_anchoredPortalChildTransforms.find(rootNodeID);
+    if (it == m_anchoredPortalChildTransforms.end())
+        return std::nullopt;
+    return it->value;
+}
+
 void ModelProcessModelPlayer::resolvePortalHostedLayers()
 {
     Vector<WebCore::PortalHostedLayer> layers;
@@ -681,6 +706,7 @@ void ModelProcessModelPlayer::resolvePortalHostedLayers()
             .rootNodeID = child.rootNodeID,
             .quadRectInChildSpace = child.quadRectInChildSpace,
             .childOriginInPortal = child.childOriginInPortal,
+            .childSize = child.childSize,
             .transform = child.transform,
             .isOpaque = backing->isOpaque,
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
@@ -745,7 +771,7 @@ void ModelProcessModelPlayer::updatePortalHostedLayerContents()
         it->value.needsUpdate = false;
         it->value.isRequestPending = true;
         backing->bufferSet->frontBufferForExternalRead([weakThis = WeakPtr { *this }, nodeID = child.nodeID](std::optional<MachSendRight>&& surface) mutable {
-            if (RefPtr protectedThis = weakThis.get())
+            if (RefPtr protectedThis = weakThis)
                 protectedThis->didFetchPortalHostedLayerContents(nodeID, WTF::move(surface));
         });
     }
@@ -780,7 +806,7 @@ void ModelProcessModelPlayer::setDisplayedPortalChildren(Vector<WebCore::NodeIde
 
     m_displayedPortalChildren = WTF::move(rootNodeIDs);
 
-    if (RefPtr client = m_client.get())
+    if (RefPtr client = m_client)
         client->didUpdateHostedPortalChildren(*this);
 }
 
@@ -810,7 +836,7 @@ void ModelProcessModelPlayer::portalFrameTimerFired()
     bool isAnimating = false;
     if (!m_portalPromotedChildren.isEmpty()) {
         // Animated transforms run in the UI process, so WebCore samples them here and calls back with any that changed.
-        if (RefPtr client = m_client.get())
+        if (RefPtr client = m_client)
             isAnimating = client->willRenderPortalFrame(*this);
     }
 

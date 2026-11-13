@@ -1,0 +1,4 @@
+PASS A promoted child is hosted in the portal scene
+PASS The transform of a promoted child applies to its layer in the portal scene
+PASS portal-transform applies to the layers of promoted children
+

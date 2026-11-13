@@ -4877,7 +4877,16 @@ std::optional<TransformationMatrix> RenderLayer::hostedPortalContentProjection(c
     auto portalOffset = offsetFromAncestor(&space) - offsetFromAncestor(portalLayer.get());
     TransformationMatrix projection;
     projection.translate(portalOffset.width(), portalOffset.height());
-    projection.multiply(controller->hostedContentProjection());
+
+    // A child anchored to a model is placed by its anchor, in place of where layout puts it in the portal.
+    RefPtr element = renderer().element();
+    if (auto anchoredProjection = element ? controller->anchoredPromotedChildProjection(element->nodeIdentifier()) : std::nullopt) {
+        projection.multiply(*anchoredProjection);
+        auto offsetInPortal = offsetFromAncestor(portalLayer.get());
+        projection.translate(-offsetInPortal.width(), -offsetInPortal.height());
+    } else
+        projection.multiply(controller->hostedContentProjection());
+
     projection.translate(-portalOffset.width(), -portalOffset.height());
     return projection;
 }
