@@ -291,7 +291,6 @@ function mac_process_webpushd_entitlements()
         then
             plistbuddy Add :com.apple.security.hardened-process.checked-allocations.no-tagged-receive bool YES
         fi
-        plistbuddy Add :com.apple.security.hardened-process.checked-allocations.soft-mode bool YES
     fi
 }
 
@@ -625,7 +624,6 @@ function ios_family_process_webpushd_entitlements()
     plistbuddy Add :com.apple.security.exception.files.absolute-path.read-only:0 string /private/var/db/os_eligibility/eligibility.plist
     plistbuddy Add :com.apple.developer.hardened-process bool YES
     plistbuddy Add :com.apple.security.hardened-process.checked-allocations.no-tagged-receive bool YES
-    plistbuddy Add :com.apple.security.hardened-process.checked-allocations.soft-mode bool YES
 }
 
 function ios_family_process_network_entitlements()
