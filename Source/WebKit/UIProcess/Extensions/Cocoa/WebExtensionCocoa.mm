@@ -210,7 +210,7 @@ bool WebExtension::validateResourceData(NSURL *resourceURL, NSData *resourceData
 }
 #endif // PLATFORM(MAC)
 
-Expected<Ref<API::Data>, RefPtr<API::Error>> WebExtension::resourceDataForPath(const String& originalPath, CacheResult cacheResult, SuppressNotFoundErrors suppressErrors)
+Expected<Ref<API::Data>, RefPtr<API::Error>> WebExtension::resourceDataForPath(const String& originalPath, CacheResult cacheResult, SuppressNotFoundErrors suppressErrors, AllowInlineResourceURLs allowInlineResourceURLs)
 {
     ASSERT(originalPath);
 
@@ -222,16 +222,19 @@ Expected<Ref<API::Data>, RefPtr<API::Error>> WebExtension::resourceDataForPath(c
 
     auto *cocoaPath = path.createNSString().get();
 
-    if ([cocoaPath hasPrefix:@"data:"]) {
-        if (auto decodedURL = WebCore::DataURLDecoder::decode(URL { path }))
-            return API::Data::create(decodedURL.value().data);
+    if (allowInlineResourceURLs == AllowInlineResourceURLs::Yes)
+    {
+        if ([cocoaPath hasPrefix:@"data:"]) {
+            if (auto decodedURL = WebCore::DataURLDecoder::decode(URL { path }))
+                return API::Data::create(decodedURL.value().data);
 
-        ASSERT([cocoaPath isEqualToString:@"data:"]);
-        return API::Data::create(std::span<const uint8_t> { });
+            ASSERT([cocoaPath isEqualToString:@"data:"]);
+            return API::Data::create(std::span<const uint8_t> { });
+        }
+
+        if ([cocoaPath hasPrefix:@"symbol:"])
+            return makeUnexpected(nullptr);
     }
-
-    if ([cocoaPath hasPrefix:@"symbol:"])
-        return makeUnexpected(nullptr);
 
     // Remove leading slash to normalize the path for lookup/storage in the cache dictionary.
     if ([cocoaPath hasPrefix:@"/"])

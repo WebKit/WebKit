@@ -74,6 +74,7 @@ ResolvedEmojiPolicy FontCascade::resolveEmojiPolicy(FontVariantEmoji fontVariant
 
 RefPtr<const Font> FontCascade::fontForCombiningCharacterSequence(StringView stringView) const
 {
+    Ref fonts = *this->fonts();
     ASSERT(!stringView.isEmpty());
     auto codePoints = stringView.codePoints();
     auto codePointsIterator = codePoints.begin();
@@ -123,8 +124,10 @@ RefPtr<const Font> FontCascade::fontForCombiningCharacterSequence(StringView str
         return baseCharacterGlyphData.font.get();
 
     bool triedBaseCharacterFont = false;
-    for (unsigned i = 0; !fallbackRangesAt(i).isNull(); ++i) {
-        auto& fontRanges = fallbackRangesAt(i);
+    for (unsigned fallbackIndex = 0; ; ++fallbackIndex) {
+        auto& fontRanges = fallbackRangesAt(fonts, fallbackIndex);
+        if (fontRanges.isNull())
+            break;
         if (fontRanges.isGenericFontFamily() && isPrivateUseAreaCharacter(baseCharacter))
             continue;
 
@@ -161,7 +164,7 @@ RefPtr<const Font> FontCascade::fontForCombiningCharacterSequence(StringView str
     // Try a system fallback for the whole cluster if needed.
     if (clusterContainsOtherNonDefaultIgnorableCodePoints) {
         auto preferColoredFont = emojiPolicy == ResolvedEmojiPolicy::RequireEmoji ? FontCache::PreferColoredFont::Yes : FontCache::PreferColoredFont::No;
-        if (auto systemFallback = FontCache::forCurrentThread().systemFallbackForCharacterCluster(m_fontDescription, fallbackRangesAt(0).fontForFirstRange(), IsForPlatformFont::No, preferColoredFont, stringView)) {
+        if (auto systemFallback = FontCache::forCurrentThread().systemFallbackForCharacterCluster(m_fontDescription, fallbackRangesAt(fonts, 0).fontForFirstRange(), IsForPlatformFont::No, preferColoredFont, stringView)) {
             if (systemFallback->canRenderCombiningCharacterSequence(stringView))
                 return systemFallback.get();
         }

@@ -408,6 +408,7 @@ bool FontCascade::primaryFontIsSystemFont() const
 
 RefPtr<const Font> FontCascade::fontForCombiningCharacterSequence(StringView stringView) const
 {
+    Ref fonts = *this->fonts();
     auto codePoints = stringView.codePoints();
     auto codePointsIterator = codePoints.begin();
 
@@ -426,8 +427,10 @@ RefPtr<const Font> FontCascade::fontForCombiningCharacterSequence(StringView str
 
     bool triedBaseCharacterFont = false;
 
-    for (unsigned i = 0; !fallbackRangesAt(i).isNull(); ++i) {
-        auto& fontRanges = fallbackRangesAt(i);
+    for (unsigned fallbackIndex = 0; ; ++fallbackIndex) {
+        auto& fontRanges = fallbackRangesAt(fonts, fallbackIndex);
+        if (fontRanges.isNull())
+            break;
         if (fontRanges.isGenericFontFamily() && isPrivateUseAreaCharacter(baseCharacter))
             continue;
         RefPtr font = fontRanges.fontForCharacter(baseCharacter);
