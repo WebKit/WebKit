@@ -150,7 +150,8 @@ class OutputWGSLTraverser : public TIntermTraverser
                         UniformBlockMetadata *uniformBlockMetadata,
                         WGSLGenerationMetadataForUniforms *arrayElementTypesInUniforms,
                         const TUnorderedSet<TSymbolUniqueId> *overloadedFunctions,
-                        WGSLProgramPrelude *prelude);
+                        WGSLProgramPrelude *prelude,
+                        GLenum shaderType);
     ~OutputWGSLTraverser() override;
 
   protected:
@@ -227,6 +228,7 @@ class OutputWGSLTraverser : public TIntermTraverser
     WGSLGenerationMetadataForUniforms *mWGSLGenerationMetadataForUniforms;
     const TUnorderedSet<TSymbolUniqueId> *mOverloadedFunctions;
     WGSLProgramPrelude *mPrelude;
+    const GLenum mShaderType;
 
     int mIndentLevel        = -1;
     int mLastIndentationPos = -1;
@@ -240,14 +242,16 @@ OutputWGSLTraverser::OutputWGSLTraverser(
     UniformBlockMetadata *uniformBlockMetadata,
     WGSLGenerationMetadataForUniforms *wgslGenerationMetadataForUniforms,
     const TUnorderedSet<TSymbolUniqueId> *overloadedFunctions,
-    WGSLProgramPrelude *prelude)
+    WGSLProgramPrelude *prelude,
+    GLenum shaderType)
     : TIntermTraverser(true, false, false),
       mSink(*sink),
       mRewritePipelineVarOutput(rewritePipelineVarOutput),
       mUniformBlockMetadata(uniformBlockMetadata),
       mWGSLGenerationMetadataForUniforms(wgslGenerationMetadataForUniforms),
       mOverloadedFunctions(overloadedFunctions),
-      mPrelude(prelude)
+      mPrelude(prelude),
+      mShaderType(shaderType)
 {}
 
 OutputWGSLTraverser::~OutputWGSLTraverser() = default;
@@ -1650,7 +1654,8 @@ void OutputWGSLTraverser::emitTextureBuiltin(const TOperator op, const TIntermSe
     TBasicType samplerType = samplerNode->getType().getBasicType();
     ASSERT(IsSampler(samplerType));
 
-    bool isProj = false;
+    bool isProj       = false;
+    bool useLevelZero = false;
 
     auto setWgslTextureVarName = [&]() {
         wgslTextureVarName =
@@ -1663,8 +1668,9 @@ void OutputWGSLTraverser::emitTextureBuiltin(const TOperator op, const TIntermSe
     };
 
     auto setTextureSampleFunctionNameFromBias = [&]() {
-        // TODO(anglebug.com/389145696): these are incorrect translations in vertex shaders, where
-        // they should probably use textureLoad() (and textureDimensions()).
+        // Vertex shaders can't compute an implicit LOD, so use an explicit LOD of 0.
+        const bool isFragmentShader = mShaderType == GL_FRAGMENT_SHADER;
+        ASSERT(isFragmentShader || biasIndex == 0);
         if (IsShadowSampler(samplerType))
         {
             if (biasIndex != 0)
@@ -1676,12 +1682,18 @@ void OutputWGSLTraverser::emitTextureBuiltin(const TOperator op, const TIntermSe
             }
             else
             {
-                wgslFunctionName = ImmutableString("textureSampleCompare");
+                wgslFunctionName = ImmutableString(isFragmentShader ? "textureSampleCompare"
+                                                                    : "textureSampleCompareLevel");
             }
         }
         else
         {
-            if (biasIndex == 0)
+            if (!isFragmentShader)
+            {
+                wgslFunctionName = ImmutableString("textureSampleLevel");
+                useLevelZero     = true;
+            }
+            else if (biasIndex == 0)
             {
                 wgslFunctionName = ImmutableString("textureSample");
             }
@@ -1982,6 +1994,10 @@ void OutputWGSLTraverser::emitTextureBuiltin(const TOperator op, const TIntermSe
     {
         mSink << ", ";
         args[lodIndex]->traverse(this);
+    }
+    else if (useLevelZero)
+    {
+        mSink << ", 0.0f";
     }
 
     if (dpdxIndex != 0)
@@ -2930,7 +2946,7 @@ bool TranslatorWGSL::translate(TIntermBlock *root,
     TInfoSinkBase traverserOutput;
     OutputWGSLTraverser traverser(&traverserOutput, &rewritePipelineVarOutput,
                                   &uniformBlockMetadata, &wgslGenerationMetadataForUniforms,
-                                  &overloadedFunctions, &prelude);
+                                  &overloadedFunctions, &prelude, getShaderType());
     root->traverse(&traverser);
 
     // The makeup of the prelude is determined by the traverser, and then must be outputted near the

@@ -47,6 +47,9 @@ target_link_libraries(ANGLEUnitTests PRIVATE
     WebKit::gtest
     ${angle_test_libraries}
 )
+if (ENABLE_WEBGL_WEBGPU)
+    target_sources(ANGLEUnitTests PRIVATE "src/tests/compiler_tests/WGSLOutput_test.cpp")
+endif ()
 
 add_executable(ANGLEEnd2EndTests EXCLUDE_FROM_ALL ${angle_end2end_tests_sources})
 ANGLE_TEST_TARGET(ANGLEEnd2EndTests)

@@ -2546,7 +2546,6 @@
 // Shader compilation failure
 42267012 WGPU : ClearTestES3.MidRenderPassClearWithGaps/* = SKIP
 42266974 WGPU : Texture2DTest.Tex* = SKIP
-42266974 WGPU : Texture2DTest.Upload* = SKIP
 42266974 WGPU : Texture2DTest.*Superseding* = SKIP
 42266974 WGPU : Texture2DTest.*Copy* = SKIP
 529276211 WGPU : MipmapTestES3.GenerateMipmapPreservesOutOfRangeMips/* = SKIP
@@ -2604,7 +2603,6 @@
 42267100 WGPU : GLSLTest.MaxVaryingVec2Arrays/* = SKIP
 42267100 WGPU : GLSLTest.VerifyMaxVertexUniformVectorsWithSamplers/* = SKIP
 42267100 WGPU : GLSLTest.VerifyMaxFragmentUniformVectorsWithSamplers/* = SKIP
-42267100 WGPU : GLSLTest.TextureLODRewriteInVertexShader/* = SKIP
 42267100 WGPU : GLSLTest.ArrayOfStructContainingArrayOfSamplers/* = SKIP
 42267100 AST WGPU : GLSLTest.RenderTrisWithPointCoord/* = SKIP
 42267100 WGPU : GLSLTest.VaryingMatrixArray/* = SKIP
@@ -2695,14 +2693,10 @@
 42266907 WGPU : StateChangeTest.SetCurrentAttribute/* = SKIP
 42266907 WGPU : Texture2DTestWithDrawScale.MipmapsTwice/* = SKIP
 42266907 WGPU : TextureCubeTest.CubeMapFBOScissoredClear/* = SKIP
-42266907 WGPU : TextureLimitsTest.MaxActiveVertexTextures/* = SKIP
 42266907 WGPU : TextureLimitsTest.MaxCombinedTextures/* = SKIP
-42266907 WGPU : TextureLimitsTest.MaxVertexTextures/* = SKIP
-42266907 WGPU : TextureLimitsTest.TextureTypeConflict/* = SKIP
 42266907 WGPU : TextureUploadFormatTest.All/* = SKIP
 42266907 WGPU : TriangleFanDrawTest.DrawTriangleFan/* = SKIP
 42266907 WGPU : TriangleFanDrawTest.DrawTriangleFanElements/* = SKIP
-42266907 WGPU : UniformTest.SamplerUniformsAppearOnce/* = SKIP
 42266907 WGPU : UniformTest.UnusedUniformsInSamplerArray/* = SKIP
 42266907 WGPU : UnpackAlignmentTest.Alignment1AUByte/* = SKIP
 42266907 WGPU : UnpackAlignmentTest.Alignment1LAUByte/* = SKIP

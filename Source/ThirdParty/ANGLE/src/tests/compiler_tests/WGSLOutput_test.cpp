@@ -2615,9 +2615,7 @@ void main() {
 }
 )";
 
-    // TODO(anglebug.com/389145696): these are incorrect translations in vertex shaders, They should
-    // be textureLoad(), as the basic textureSample*() functions aren't available in WGSL vertex
-    // shaders.
+    // Implicit-LOD lookups use an explicit LOD of 0 in vertex shaders.
     const std::string &outputString =
         R"(diagnostic(warning,derivative_uniformity);
 struct ANGLE_Output_Global {
@@ -2661,10 +2659,10 @@ struct ANGLEUniformBlock
 fn _umain()
 {
   (ANGLE_output_global.gl_Position_) = (vec4<f32>(0.0f, 0.0f, 0.0f, 0.0f));
-  (ANGLE_output_global.gl_Position_) += (textureSample(ANGLE_texture_samp2D, ANGLE_sampler_samp2D, (vec2<f32>(0.0f, 0.0f)).xy));
-  (ANGLE_output_global.gl_Position_) += (textureSample(ANGLE_texture_samp2D, ANGLE_sampler_samp2D, (vec3<f32>(0.0f, 0.0f, 0.0f)).xy / (vec3<f32>(0.0f, 0.0f, 0.0f)).z));
-  (ANGLE_output_global.gl_Position_) += (textureSample(ANGLE_texture_samp2D, ANGLE_sampler_samp2D, (vec4<f32>(0.0f, 0.0f, 0.0f, 0.0f)).xy / (vec4<f32>(0.0f, 0.0f, 0.0f, 0.0f)).w));
-  (ANGLE_output_global.gl_Position_) += (textureSample(ANGLE_texture_sampCube, ANGLE_sampler_sampCube, (vec3<f32>(0.0f, 0.0f, 0.0f)).xyz));
+  (ANGLE_output_global.gl_Position_) += (textureSampleLevel(ANGLE_texture_samp2D, ANGLE_sampler_samp2D, (vec2<f32>(0.0f, 0.0f)).xy, 0.0f));
+  (ANGLE_output_global.gl_Position_) += (textureSampleLevel(ANGLE_texture_samp2D, ANGLE_sampler_samp2D, (vec3<f32>(0.0f, 0.0f, 0.0f)).xy / (vec3<f32>(0.0f, 0.0f, 0.0f)).z, 0.0f));
+  (ANGLE_output_global.gl_Position_) += (textureSampleLevel(ANGLE_texture_samp2D, ANGLE_sampler_samp2D, (vec4<f32>(0.0f, 0.0f, 0.0f, 0.0f)).xy / (vec4<f32>(0.0f, 0.0f, 0.0f, 0.0f)).w, 0.0f));
+  (ANGLE_output_global.gl_Position_) += (textureSampleLevel(ANGLE_texture_sampCube, ANGLE_sampler_sampCube, (vec3<f32>(0.0f, 0.0f, 0.0f)).xyz, 0.0f));
   (ANGLE_output_global.gl_Position_) += (textureSampleLevel(ANGLE_texture_samp2D, ANGLE_sampler_samp2D, (vec2<f32>(0.0f, 0.0f)).xy, 0.0f));
   (ANGLE_output_global.gl_Position_) += (textureSampleLevel(ANGLE_texture_samp2D, ANGLE_sampler_samp2D, (vec3<f32>(0.0f, 0.0f, 0.0f)).xy / (vec3<f32>(0.0f, 0.0f, 0.0f)).z, 0.0f));
   (ANGLE_output_global.gl_Position_) += (textureSampleLevel(ANGLE_texture_samp2D, ANGLE_sampler_samp2D, (vec4<f32>(0.0f, 0.0f, 0.0f, 0.0f)).xy / (vec4<f32>(0.0f, 0.0f, 0.0f, 0.0f)).w, 0.0f));
