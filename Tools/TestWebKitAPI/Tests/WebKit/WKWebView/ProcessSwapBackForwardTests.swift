@@ -27,6 +27,8 @@ import Testing
 import WebKit
 private import WebKit_Private.WKProcessPoolPrivate
 private import WebKit_Private.WKWebViewPrivate
+private import WebKit_Private.WKWebViewPrivateForTesting
+private import WebKit_Private.WKWebpagePreferencesPrivate
 
 import struct Foundation.URL
 import struct Swift.String
@@ -239,6 +241,62 @@ struct ProcessSwapBackForwardTests {
         }
     }
 
+    @Test(arguments: [WKSecurityRestrictionMode.lockdown, .maximizeCompatibility], [false, true])
+    func navigateBackIntoSecurityRestrictionModeAvoidsCachedPageProcess(
+        mode: WKSecurityRestrictionMode,
+        crossSite: Bool
+    ) async throws {
+        var server = try Self.cachedPageServer()
+        try await server.run { serverConfiguration in
+            let (webView, navigationDelegate) = siteIsolatedWebViewAndDelegate(
+                configuration: WKWebViewConfiguration(httpsProxyFor: serverConfiguration)
+            )
+            let cachedPageProcessIdentifier = try await Self.loadPageAndNavigateAway(
+                webView: webView,
+                navigationDelegate: navigationDelegate,
+                crossSite: crossSite
+            )
+
+            navigationDelegate.decidePolicyForNavigationActionWithPreferences = { _, preferences, decisionHandler in
+                preferences.securityRestrictionMode = mode
+                decisionHandler(.allow, preferences)
+            }
+            webView.goBack()
+            try await navigationDelegate.waitForDidFinishNavigation()
+
+            #expect(webView._webProcessIdentifier != cachedPageProcessIdentifier)
+            #expect(await !webView._isJITEnabled())
+            try await Self.expectCachedPageLoadedAgain(in: webView)
+        }
+    }
+
+    @Test(arguments: [false, true])
+    func navigateBackWithOtherWebsiteDataStoreAvoidsCachedPageProcess(crossSite: Bool) async throws {
+        var server = try Self.cachedPageServer()
+        try await server.run { serverConfiguration in
+            let (webView, navigationDelegate) = siteIsolatedWebViewAndDelegate(
+                configuration: WKWebViewConfiguration(httpsProxyFor: serverConfiguration)
+            )
+            let otherDataStore = WKWebViewConfiguration(httpsProxyFor: serverConfiguration).websiteDataStore
+            let cachedPageProcessIdentifier = try await Self.loadPageAndNavigateAway(
+                webView: webView,
+                navigationDelegate: navigationDelegate,
+                crossSite: crossSite
+            )
+
+            navigationDelegate.decidePolicyForNavigationActionWithPreferences = { _, preferences, decisionHandler in
+                preferences._websiteDataStore = otherDataStore
+                decisionHandler(.allow, preferences)
+            }
+            webView.goBack()
+            try await navigationDelegate.waitForDidFinishNavigation()
+
+            #expect(webView._webProcessIdentifier != cachedPageProcessIdentifier)
+            #expect(try await webView.callJavaScript(returning: String.self) { "return document.cookie" } == "")
+            try await Self.expectCachedPageLoadedAgain(in: webView)
+        }
+    }
+
     private static let crossOriginIsolation = [
         "Content-Type": "text/html",
         "Cross-Origin-Opener-Policy": "same-origin",
@@ -257,5 +315,39 @@ struct ProcessSwapBackForwardTests {
             frame: CGRect(x: 0, y: 0, width: 800, height: 600),
             siteIsolationEnabled: false
         )
+    }
+
+    private static func cachedPageServer() throws -> HTTPServer {
+        try HTTPServer(protocol: .httpsProxy) {
+            Route("/cached") {
+                "cached"
+            }
+
+            Route("/next") {
+                "next"
+            }
+        }
+    }
+
+    private static func loadPageAndNavigateAway(
+        webView: TestWKWebView,
+        navigationDelegate: TestNavigationDelegate,
+        crossSite: Bool
+    ) async throws -> pid_t {
+        webView.load(URLRequest(url: try #require(URL(string: "https://example.com/cached"))))
+        try await navigationDelegate.waitForDidFinishNavigation()
+        let cachedPageProcessIdentifier = webView._webProcessIdentifier
+        try await webView.callJavaScript { "window.marker = 'cached'; document.cookie = 'store=first'" }
+
+        let nextHost = crossSite ? "webkit.org" : "example.com"
+        webView.load(URLRequest(url: try #require(URL(string: "https://\(nextHost)/next"))))
+        try await navigationDelegate.waitForDidFinishNavigation()
+        try #require(await !webView._topDocumentURLsInBackForwardCacheAtIndex(forTesting: -1).isEmpty)
+        return cachedPageProcessIdentifier
+    }
+
+    private static func expectCachedPageLoadedAgain(in webView: TestWKWebView) async throws {
+        #expect(try await webView.callJavaScript(returning: String.self) { "return typeof window.marker" } == "undefined")
+        #expect(try await webView.callJavaScript(returning: String.self) { "return document.body.textContent" } == "cached")
     }
 }
