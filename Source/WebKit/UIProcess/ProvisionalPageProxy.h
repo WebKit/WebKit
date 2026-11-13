@@ -156,6 +156,7 @@ public:
     void loadRequest(API::Navigation&, WebCore::ResourceRequest&&, API::Object* userData, WebCore::ShouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain>, RefPtr<API::WebsitePolicies>&&, std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume, WebCore::NavigationUpgradeToHTTPSBehavior, MonotonicTime originalNavigationStartTime);
     void goToBackForwardItem(API::Navigation&, WebBackForwardListItem&, RefPtr<API::WebsitePolicies>&&, WebCore::ShouldTreatAsContinuingLoad, std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume = std::nullopt);
     void cancel(ProvisionalLoadIsReplaced);
+    void navigationWillContinueInAnotherProcess();
 
     void swipeAnimationDidEnd();
 
@@ -244,6 +245,7 @@ private:
     bool m_needsCookieAccessAddedInNetworkProcess { false };
     bool m_needsDidStartProvisionalLoad { true };
     bool m_shouldClosePage { true };
+    std::optional<WebCore::Site> m_siteOfTakenOverRemotePage;
     bool m_didFailProvisionalLoad { false };
     std::optional<WebCore::Site> m_deferredRemoteTransitionSite;
     RefPtr<FrameProcess> m_previousMainFrameProcess;

@@ -97,4 +97,140 @@ struct SiteIsolationProvisionalPageTests {
         configuration.preferences.javaScriptCanOpenWindowsAutomatically = true
         return configuration
     }
+
+    @Test
+    func popupStaysReachableFromOpenersIframeAfterCancelledNavigationMovesProcess() async throws {
+        var server = try HTTPServer(protocol: .httpsProxy) {
+            Self.openerWithIframeRoutes
+        }
+
+        try await server.run { serverConfiguration in
+            let alerts = AlertRecorder()
+            let (opener, popup) = try await Self.openerWithIframeAndPopup(serverConfiguration, popupAlerts: alerts)
+            defer { withExtendedLifetime(opener) {} }
+            var source = try await Self.messageSourceInOpenersIframe(from: popup.webView, alerts: alerts)
+            #expect(source == "has source")
+
+            popup.navigationDelegate.decidePolicyForNavigationResponse = { _, decisionHandler in
+                decisionHandler(.cancel)
+            }
+            popup.webView.startEvaluatingJavaScript("location.href = 'https://webkit.org/isolated'", withUserGesture: false)
+            _ = await popup.navigationDelegate.waitForDidFailProvisionalNavigation()
+            popup.navigationDelegate.decidePolicyForNavigationResponse = nil
+
+            source = try await Self.messageSourceInOpenersIframe(from: popup.webView, alerts: alerts)
+            #expect(source == "has source")
+        }
+    }
+
+    @Test
+    func popupStaysReachableFromOpenersIframeAfterNavigationMovesProcess() async throws {
+        var server = try HTTPServer(protocol: .httpsProxy) {
+            Self.openerWithIframeRoutes
+        }
+
+        try await server.run { serverConfiguration in
+            let alerts = AlertRecorder()
+            let (opener, popup) = try await Self.openerWithIframeAndPopup(serverConfiguration, popupAlerts: alerts)
+            let openerFrameTrees = await opener.webView.frameTreesInProcesses()
+            let iframeProcessIdentifier = try #require(openerFrameTrees.processIdentifier(hosting: "https://webkit.org"))
+
+            popup.webView.startEvaluatingJavaScript("location.href = 'https://webkit.org/isolated'", withUserGesture: false)
+            try await popup.navigationDelegate.waitForDidFinishNavigation()
+            #expect(popup.webView._webProcessIdentifier != iframeProcessIdentifier)
+
+            let source = try await Self.messageSourceInOpenersIframe(from: popup.webView, alerts: alerts)
+            #expect(source == "has source")
+        }
+    }
+
+    // A redirect moves the popup's navigation out of the process of the opener's iframe, where the landing page's iframe
+    // then loads, so the popup only finishes loading if that process still has a page for it.
+    @Test
+    func popupLoadsIframeInOpenersIframeProcessAfterRedirectMovesProcess() async throws {
+        var server = try HTTPServer(protocol: .httpsProxy) {
+            Self.openerWithIframeRoutes
+        }
+
+        try await server.run { serverConfiguration in
+            let alerts = AlertRecorder()
+            let (opener, popup) = try await Self.openerWithIframeAndPopup(serverConfiguration, popupAlerts: alerts)
+            defer { withExtendedLifetime(opener) {} }
+            let openerFrameTrees = await opener.webView.frameTreesInProcesses()
+            let iframeProcessIdentifier = try #require(openerFrameTrees.processIdentifier(hosting: "https://webkit.org"))
+
+            popup.webView.startEvaluatingJavaScript("location.href = 'https://webkit.org/redirect'", withUserGesture: false)
+            let message = try await alerts.nextAlert()
+            #expect(message == "loaded")
+            #expect(popup.webView._webProcessIdentifier != iframeProcessIdentifier)
+
+            let popupFrameTrees = await popup.webView.frameTreesInProcesses()
+            #expect(popupFrameTrees.processIdentifier(hosting: "https://webkit.org") == iframeProcessIdentifier)
+        }
+    }
+
+    private typealias WebViewAndDelegate = (webView: TestWKWebView, navigationDelegate: TestNavigationDelegate)
+
+    private static let documentIsolationPolicy = ["Document-Isolation-Policy": "isolate-and-require-corp"]
+
+    private static let openerWithIframeRoutes = Route("") {
+        Route("/opener") {
+            """
+            <iframe src='https://webkit.org/frame'></iframe>
+            <script>onmessage = (event) => popup.postMessage(event.data, '*')</script>
+            """
+        }
+
+        Route("/frame") {
+            "<script>onmessage = (event) => parent.postMessage(event.source ? 'has source' : 'no source', '*')</script>"
+        }
+
+        Route("/popup") {
+            "<script>onmessage = (event) => alert(event.data)</script>"
+        }
+
+        Route("/isolated", headerFields: documentIsolationPolicy) {
+            "<script>onmessage = (event) => alert(event.data)</script>"
+        }
+
+        Route("/redirect", statusCode: 302, headerFields: ["Location": "https://apple.com/landing"]) {
+            ""
+        }
+
+        Route("/landing") {
+            """
+            <iframe src='https://webkit.org/frame'></iframe>
+            <script>onload = () => alert('loaded')</script>
+            """
+        }
+    }
+
+    private static func openerWithIframeAndPopup(
+        _ server: HTTPServer.Configuration,
+        popupAlerts: AlertRecorder? = nil
+    ) async throws -> (opener: WebViewAndDelegate, popup: WebViewAndDelegate) {
+        let opener = siteIsolatedWebViewAndDelegate(configuration: configuration(server))
+        let openedWebViews = OpenedWebViewRecorder()
+        opener.webView.uiDelegate = openedWebViews
+
+        opener.webView.load(URLRequest(url: try #require(URL(string: "https://example.com/opener"))))
+        try await opener.navigationDelegate.waitForDidFinishNavigation()
+        opener.webView.startEvaluatingJavaScript("window.popup = open('/popup')", withUserGesture: false)
+        let popup = try await openedWebViews.nextOpenedWebView()
+        popup.webView.uiDelegate = popupAlerts
+
+        let frameTrees = await opener.webView.frameTreesInProcesses()
+        #expect(
+            frameTrees == [
+                .local("https://example.com", children: [.remote]),
+                .remote(children: [.local("https://webkit.org")]),
+            ]
+        )
+        return (opener, popup)
+    }
+
+    private static func messageSourceInOpenersIframe(from popup: WKWebView, alerts: AlertRecorder) async throws -> String {
+        popup.startEvaluatingJavaScript("opener.frames[0].postMessage('ping', '*')")
+        return try await alerts.nextAlert()
+    }
 }
