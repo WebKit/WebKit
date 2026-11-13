@@ -107,6 +107,8 @@ void StyleRuleImport::requestStyleSheet()
 {
     if (!m_parentStyleSheet)
         return;
+    if (!supportsMatches())
+        return;
     CheckedPtr document = m_parentStyleSheet->singleOwnerDocument();
     if (!document)
         return;

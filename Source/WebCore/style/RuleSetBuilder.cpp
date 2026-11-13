@@ -284,9 +284,6 @@ void RuleSetBuilder::addRulesFromSheetContents(const StyleSheetContents& sheet)
         if (!rule->styleSheet())
             continue;
 
-        if (!rule->supportsMatches())
-            continue;
-
         if (m_mediaQueryCollector.pushAndEvaluate(rule->mediaQueries())) {
             auto& cascadeLayerName = rule->cascadeLayerName();
             if (cascadeLayerName) {
