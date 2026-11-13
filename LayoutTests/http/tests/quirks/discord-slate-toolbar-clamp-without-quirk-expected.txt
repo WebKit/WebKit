@@ -1,0 +1,10 @@
+selection near the left edge: within viewport: false
+selection in the middle: within viewport: true
+selection near the right edge: within viewport: false
+toolbar wider than the viewport: aligned to the left edge: false
+toolbar positioned with right instead of left: within viewport: false
+toolbar recreated near the left edge: within viewport: false
+toolbar with its own scale transform: within viewport: false
+toolbar with a translate set by the site: translate left alone: true
+toolbar moved back inside: shifted while outside: false, shift cleared: true
+
