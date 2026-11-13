@@ -723,6 +723,9 @@ void Internals::resetToConsistentState(Page& page)
     captionPreferences->setCaptionDisplayMode(CaptionUserPreferences::CaptionDisplayMode::ForcedOnly);
     captionPreferences->setCaptionsStyleSheetOverride(emptyString());
     captionPreferences->setPreferredLanguage(emptyString());
+    captionPreferences->setPreferredAudioCharacteristic(emptyString());
+    captionPreferences->setPrimaryAudioTrackLanguageOverride(emptyString());
+    captionPreferences->setPreferredAudioCharacteristicsForTesting({ });
 
     if (page.mediaPlaybackIsSuspended())
         page.resumeAllMediaPlayback();
