@@ -26,6 +26,7 @@
 #pragma once
 
 #include "PrivateRelayed.h"
+#include <WebCore/NoVarySearch.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SharedBuffer.h>
@@ -61,14 +62,17 @@ public:
         // FIXME: This should probably be a variant<RefPtr, ResourceRequest> because we have one or the other but never both.
         RefPtr<WebCore::FragmentedSharedBuffer> buffer;
         WebCore::ResourceRequest redirectRequest;
+        WebCore::NoVarySearch noVarySearch;
     };
 
-    std::unique_ptr<Entry> take(const URL&);
+    enum class MatchNoVarySearch : bool { No, Yes };
+    std::unique_ptr<Entry> take(const URL&, MatchNoVarySearch);
     void store(const URL&, WebCore::ResourceResponse&&, PrivateRelayed, RefPtr<WebCore::FragmentedSharedBuffer>&&);
     void storeRedirect(const URL&, WebCore::ResourceResponse&&, WebCore::ResourceRequest&&);
 
 private:
     void clearExpiredEntries();
+    std::optional<URL> findKeyMatching(const URL&, MatchNoVarySearch) const;
 
     using PrefetchEntriesMap = HashMap<URL, std::unique_ptr<Entry>>;
     const std::unique_ptr<PrefetchEntriesMap> m_sessionPrefetches;

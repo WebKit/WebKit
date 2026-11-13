@@ -399,7 +399,7 @@ public:
 
     WEBCORE_EXPORT void prefetchDNSIfNeeded(const URL&);
 
-    void prefetch(const URL&, const Vector<String>&, std::optional<ReferrerPolicy>, bool lowPriority = false);
+    void prefetch(const URL&, const Vector<String>&, std::optional<ReferrerPolicy>, bool lowPriority = false, const String& noVarySearchHint = { });
     DocumentPrefetcher& documentPrefetcher() { return m_documentPrefetcher.get(); }
 
     bool loadChildHistoryItemIntoFrame(LocalFrame&);

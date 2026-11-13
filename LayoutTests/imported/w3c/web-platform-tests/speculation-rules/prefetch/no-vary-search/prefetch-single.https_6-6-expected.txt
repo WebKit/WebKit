@@ -1,0 +1,3 @@
+
+PASS Don't use prefetched response as the URLs have different value for c.
+

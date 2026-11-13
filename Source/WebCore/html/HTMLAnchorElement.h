@@ -81,7 +81,7 @@ public:
 
     AtomString target() const override;
 
-    void setShouldBePrefetched(SpeculationRules::Eagerness, Vector<String>&& tags, std::optional<ReferrerPolicy>&&);
+    void setShouldBePrefetched(SpeculationRules::Eagerness, Vector<String>&& tags, std::optional<ReferrerPolicy>&&, String&& noVarySearchHint);
 
     WEBCORE_EXPORT String prefetchEagernessForTesting() const;
 
@@ -138,6 +138,7 @@ private:
     PrefetchEagerness m_prefetchEagerness { PrefetchEagerness::None };
     Vector<String> m_speculationRulesTags;
     std::optional<ReferrerPolicy> m_prefetchReferrerPolicy;
+    String m_noVarySearchHint;
 
     bool m_hasRootEditableElementForSelectionOnMouseDown { false };
     bool m_wasShiftKeyDownOnMouseDown { false };
