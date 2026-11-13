@@ -656,7 +656,7 @@ WASM_IPINT_EXTERN_CPP_DECL(memory_init, int32_t dataIndex, IPIntStackEntry* sp, 
     const auto& info = instance->module().moduleInformation();
     uint64_t d = info.memory(memoryIndex).isMemory64() ? sp[2].i64 : static_cast<uint32_t>(sp[2].i32);
 
-    if (!Wasm::memoryInit(instance, dataIndex, d, s, n, memoryIndex))
+    if (!Wasm::memoryInit(instance, dataIndex, d, static_cast<uint32_t>(s), static_cast<uint32_t>(n), memoryIndex))
         IPINT_THROW(Wasm::ExceptionType::OutOfBoundsMemoryAccess);
     IPINT_END();
 }

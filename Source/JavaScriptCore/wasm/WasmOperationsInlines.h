@@ -672,7 +672,7 @@ inline int64_t memorySize(JSWebAssemblyInstance* instance, uint8_t memoryIndex)
     return instance->memory(memoryIndex)->memory().size();
 }
 
-inline bool memoryInit(JSWebAssemblyInstance* instance, unsigned dataSegmentIndex, uint64_t dstAddress, uint32_t srcAddress, uint32_t length, uint8_t memoryIndex)
+inline bool memoryInit(JSWebAssemblyInstance* instance, unsigned dataSegmentIndex, uint64_t dstAddress, uint64_t srcAddress, uint64_t length, uint8_t memoryIndex)
 {
     ASSERT(dataSegmentIndex < instance->module().moduleInformation().dataSegmentsCount());
     return instance->memoryInit(dstAddress, srcAddress, length, dataSegmentIndex, memoryIndex);
