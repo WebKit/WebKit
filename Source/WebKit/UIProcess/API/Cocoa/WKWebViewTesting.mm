@@ -83,6 +83,9 @@
 
 #if HAVE(LIBPROC)
 #include <libproc.h>
+#else
+extern "C" int proc_pidpath(int pid, void* buffer, uint32_t bufferSize);
+#define PROC_PIDPATHINFO_MAXSIZE (4 * MAXPATHLEN)
 #endif
 
 #if PLATFORM(MAC)
@@ -1804,7 +1807,6 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse, _WKCALaye
 
     Ref connection = process->connection();
 
-#if HAVE(LIBPROC)
     // The connection's peer pid is unavailable for ExtensionKit processes.
     if (auto pid = process->processID()) {
         char path[PROC_PIDPATHINFO_MAXSIZE] = "\0";
@@ -1821,7 +1823,6 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse, _WKCALaye
                 return @"standard";
         }
     }
-#endif // HAVE(LIBPROC)
 
 #if USE(APPLE_INTERNAL_SDK)
 

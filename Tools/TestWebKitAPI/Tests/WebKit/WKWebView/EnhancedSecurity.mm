@@ -42,9 +42,29 @@
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <wtf/Vector.h>
 
+// Disabling Lockdown Mode requires specific entitlements. We cannot use these
+// as a test within ProcessSwap also covers the case of throwing when the
+// entitlement is not present. Thus, only run these tests on non-iOS.
+#define HAVE_LOCKDOWNMODE_OPT_OUT !PLATFORM(IOS_FAMILY)
+
 namespace TestWebKitAPI {
 
-#if !PLATFORM(IOS)
+TEST(EnhancedSecurity, WebProcessLaunchesWithEnhancedSecurity)
+{
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    configuration.get().defaultWebpagePreferences.securityRestrictionMode = WKSecurityRestrictionModeMaximizeCompatibility;
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    NSURL *url = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
+    [webView loadRequest:[NSURLRequest requestWithURL:url]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    EXPECT_NE([webView _webProcessIdentifier], 0);
+    EXPECT_STREQ("security", [webView _webContentProcessVariantForFrame:nil].UTF8String);
+}
 
 static bool isEnhancedSecurityEnabled(WKWebView *webView)
 {
@@ -904,6 +924,8 @@ TEST(EnhancedSecurity, EnhancedSecurityRequestedWhenLockdownModeActive)
     EXPECT_STREQ("lockdown", [webView _webContentProcessVariantForFrame:nil].UTF8String);
 }
 
+#if HAVE(LOCKDOWNMODE_OPT_OUT)
+
 TEST(EnhancedSecurity, SystemLockdownModeEnablesEnhancedSecurityWhenLockdownOptsOut)
 {
     [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
@@ -919,25 +941,6 @@ TEST(EnhancedSecurity, SystemLockdownModeEnablesEnhancedSecurityWhenLockdownOpts
     EXPECT_EQ(true, isEnhancedSecurityEnabled(webView.get()));
     EXPECT_EQ(false, isJITEnabled(webView.get()));
     EXPECT_STREQ("security", [webView _webContentProcessVariantForFrame:nil].UTF8String);
-
-    [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
-}
-
-TEST(EnhancedSecurity, SystemLockdownModeIgnoresWhenSecurityRestrictionModeNoneSet)
-{
-    [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
-
-    RetainPtr webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
-    webViewConfiguration.get().defaultWebpagePreferences.securityRestrictionMode = WKSecurityRestrictionModeNone;
-
-    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
-    NSURL *url = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
-    [webView loadRequest:[NSURLRequest requestWithURL:url]];
-    [webView _test_waitForDidFinishNavigation];
-
-    EXPECT_EQ(false, isEnhancedSecurityEnabled(webView.get()));
-    EXPECT_EQ(false, isJITEnabled(webView.get()));
-    EXPECT_STREQ("lockdown", [webView _webContentProcessVariantForFrame:nil].UTF8String);
 
     [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
 }
@@ -958,6 +961,27 @@ TEST(EnhancedSecurity, SystemLockdownModeEnablesEnhancedSecurityWhenBothAPIOptsO
     EXPECT_EQ(true, isEnhancedSecurityEnabled(webView.get()));
     EXPECT_EQ(false, isJITEnabled(webView.get()));
     EXPECT_STREQ("security", [webView _webContentProcessVariantForFrame:nil].UTF8String);
+
+    [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
+}
+
+#endif // HAVE(LOCKDOWNMODE_OPT_OUT)
+
+TEST(EnhancedSecurity, SystemLockdownModeIgnoresWhenSecurityRestrictionModeNoneSet)
+{
+    [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
+
+    RetainPtr webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    webViewConfiguration.get().defaultWebpagePreferences.securityRestrictionMode = WKSecurityRestrictionModeNone;
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    NSURL *url = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
+    [webView loadRequest:[NSURLRequest requestWithURL:url]];
+    [webView _test_waitForDidFinishNavigation];
+
+    EXPECT_EQ(false, isEnhancedSecurityEnabled(webView.get()));
+    EXPECT_EQ(false, isJITEnabled(webView.get()));
+    EXPECT_STREQ("lockdown", [webView _webContentProcessVariantForFrame:nil].UTF8String);
 
     [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
 }
@@ -1359,6 +1383,8 @@ TEST(EnhancedSecurityPrecedence, SystemLockdownModeWithNoRequest)
     [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
 }
 
+#if HAVE(LOCKDOWNMODE_OPT_OUT)
+
 TEST(EnhancedSecurityPrecedence, SystemLockdownModeWithLockdownOptOutFallsBackToEnhancedSecurity)
 {
     [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
@@ -1385,6 +1411,8 @@ TEST(EnhancedSecurityPrecedence, SystemLockdownModeWithLockdownOptOutAndRequeste
 
     [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
 }
+
+#endif // HAVE(LOCKDOWNMODE_OPT_OUT)
 
 TEST(EnhancedSecurityPrecedence, SystemLockdownModeBeatsRequestedMaximizeCompatibility)
 {
@@ -1467,7 +1495,5 @@ TEST(EnhancedSecurityPrecedence, RequestedLockdownWithoutSystemLockdownMode)
     EXPECT_FALSE(isJITEnabled(webView.get()));
     EXPECT_STREQ("lockdown", processVariant(webView.get()));
 }
-
-#endif
 
 } // namespace TestWebKitAPI
