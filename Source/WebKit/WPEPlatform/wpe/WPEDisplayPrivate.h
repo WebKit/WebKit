@@ -30,4 +30,5 @@
 
 WPEView* wpeDisplayCreateView(WPEDisplay*);
 bool wpeDisplayCheckEGLExtension(WPEDisplay*, const char*);
+void wpeDisplayTerminateEGL(WPEDisplay*);
 WPEInputMethodContext* wpeDisplayCreateInputMethodContext(WPEDisplay*, WPEView*);
