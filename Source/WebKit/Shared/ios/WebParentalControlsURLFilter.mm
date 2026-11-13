@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WebParentalControlsURLFilter.h"
 
-#if HAVE(BROWSERENGINEKIT_WEBCONTENTFILTER)
+#if HAVE(BROWSERENGINEKIT_WEBCONTENTFILTER) && PLATFORM(IOS)
 
 #import "Logging.h"
 #import <UIKit/UIView.h>

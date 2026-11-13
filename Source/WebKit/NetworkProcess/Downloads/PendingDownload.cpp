@@ -54,7 +54,7 @@ PendingDownload::PendingDownload(IPC::Connection* parentProcessConnection, Netwo
     , m_webProcessID(webProcessID)
 {
 #if ENABLE(CONTENT_FILTERING)
-#if HAVE(BROWSERENGINEKIT_WEBCONTENTFILTER) && !HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
+#if HAVE(BROWSERENGINEKIT_WEBCONTENTFILTER) && !HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI) && PLATFORM(IOS)
     WebParentalControlsURLFilter::setSharedParentalControlsURLFilterIfNecessary();
 #endif
 #endif
