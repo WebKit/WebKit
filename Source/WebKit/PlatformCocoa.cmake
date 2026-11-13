@@ -1446,6 +1446,12 @@ unset(_migrated_excluded_for_ios)
 
 endif ()
 
+# The log-message generator has no --defines-file, so pass it the probed value.
+set(_log_defines "${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}")
+if (ENABLE_STREAMING_IPC_IN_LOG_FORWARDING)
+    string(APPEND _log_defines " ENABLE_STREAMING_IPC_IN_LOG_FORWARDING")
+endif ()
+
 if (WEBKIT_SDK_IS_IOS_FAMILY AND NOT WEBKIT_SDK_IS_MACCATALYST)
 
 target_compile_options(WebKit PRIVATE ${WEBKIT_PRIVATE_FRAMEWORKS_COMPILE_FLAG})
@@ -1512,7 +1518,6 @@ if (WEBKIT_ADDITIONS_SWIFT_SOURCES)
     unset(_fn)
 endif ()
 
-set(_log_defines "${FEATURE_DEFINES_WITH_SPACE_SEPARATOR} ENABLE_STREAMING_IPC_IN_LOG_FORWARDING")
 add_custom_command(
     OUTPUT ${_log_messages_generated}
     DEPENDS
@@ -2417,7 +2422,7 @@ add_custom_command(
         ${PYTHON_EXECUTABLE} ${WEBKIT_DIR}/Scripts/generate-derived-log-sources.py
         ${_log_messages_inputs}
         ${_log_messages_generated}
-        ${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}
+        "${_log_defines}"
     WORKING_DIRECTORY ${WebKit_DERIVED_SOURCES_DIR}
     VERBATIM
 )
