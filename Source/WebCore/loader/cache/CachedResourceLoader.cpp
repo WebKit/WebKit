@@ -47,6 +47,7 @@
 #include "ContentSecurityPolicy.h"
 #include "CookieJar.h"
 #include "CrossOriginAccessControl.h"
+#include "CrossOriginEmbedderPolicy.h"
 #include "CrossOriginMode.h"
 #include "CrossOriginOpenerPolicy.h"
 #include "CustomHeaderFields.h"
@@ -1026,8 +1027,8 @@ NODELETE static bool requiresCORP(const Document& document)
 {
     auto& embedderPolicy = document.crossOriginEmbedderPolicy();
     auto& documentIsolationPolicy = document.documentIsolationPolicy();
-    return embedderPolicy.value == CrossOriginEmbedderPolicyValue::RequireCORP || embedderPolicy.reportOnlyValue == CrossOriginEmbedderPolicyValue::RequireCORP
-        || documentIsolationPolicy.value == DocumentIsolationPolicyValue::IsolateAndRequireCORP || documentIsolationPolicy.reportOnlyValue == DocumentIsolationPolicyValue::IsolateAndRequireCORP;
+    return embedderPolicy.value != CrossOriginEmbedderPolicyValue::UnsafeNone || embedderPolicy.reportOnlyValue != CrossOriginEmbedderPolicyValue::UnsafeNone
+        || documentIsolationPolicy.value != DocumentIsolationPolicyValue::None || documentIsolationPolicy.reportOnlyValue != DocumentIsolationPolicyValue::None;
 }
 
 Ref<CachedResource> CachedResourceLoader::updateCachedResourceWithCurrentRequest(const CachedResource& resource, CachedResourceRequest&& request, PAL::SessionID sessionID, const CookieJar& cookieJar, const Settings& settings)
@@ -1761,13 +1762,13 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
             // Do not revalidate responses with the COOP header since they may cause a process-swap
             // and we could not make the swap work if the server responded with a 304.
             if (cachedResourceRequest.options().mode == FetchOptions::Mode::Navigate
-                && obtainCrossOriginOpenerPolicy(existingResource->response()).value != CrossOriginOpenerPolicyValue::UnsafeNone) {
+                && obtainCrossOriginOpenerPolicy(existingResource->response(), CredentiallessSupport::No).value != CrossOriginOpenerPolicyValue::UnsafeNone) {
                 return Reload;
             }
             // The same goes for navigations that may move to or from a process for documents with a Document-Isolation-Policy.
             if (cachedResourceRequest.options().mode == FetchOptions::Mode::Navigate && frame()
                 && frame()->settings().documentIsolationPolicyEnabled() && frame()->settings().siteIsolationEnabled()
-                && (ScriptExecutionContext::crossOriginMode() == CrossOriginMode::Isolated || obtainDocumentIsolationPolicy(existingResource->response(), IsSecureContext::Yes).value != DocumentIsolationPolicyValue::None)) {
+                && (ScriptExecutionContext::crossOriginMode() == CrossOriginMode::Isolated || obtainDocumentIsolationPolicy(existingResource->response(), IsSecureContext::Yes, credentiallessSupport(frame()->settings().values())).value != DocumentIsolationPolicyValue::None)) {
                 return Reload;
             }
             return Revalidate;

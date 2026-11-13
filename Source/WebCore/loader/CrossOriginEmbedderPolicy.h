@@ -53,6 +53,7 @@ class ScriptExecutionContext;
 
 struct ReportingClient;
 class SecurityOriginData;
+struct SettingsValues;
 
 enum class FetchOptionsDestination : uint8_t;
 
@@ -75,10 +76,14 @@ struct CrossOriginEmbedderPolicy {
 
 enum class COEPDisposition : bool { Reporting , Enforce };
 
-bool isRecognizedCrossOriginEmbedderPolicyToken(StringView);
-bool isUnsupportedCrossOriginEmbedderPolicyToken(StringView);
+enum class CredentiallessSupport : bool { No, Yes };
+NODELETE WEBCORE_EXPORT CredentiallessSupport credentiallessSupport(bool crossOriginEmbedderPolicyCredentiallessEnabled);
+NODELETE CredentiallessSupport credentiallessSupport(const SettingsValues&);
 
-WEBCORE_EXPORT CrossOriginEmbedderPolicy obtainCrossOriginEmbedderPolicy(const ResourceResponse&, IsSecureContext, const ScriptExecutionContext*);
+bool isRecognizedCrossOriginEmbedderPolicyToken(StringView, CredentiallessSupport);
+bool isUnsupportedCrossOriginEmbedderPolicyToken(StringView, CredentiallessSupport);
+
+WEBCORE_EXPORT CrossOriginEmbedderPolicy obtainCrossOriginEmbedderPolicy(const ResourceResponse&, IsSecureContext, CredentiallessSupport, const ScriptExecutionContext*);
 WEBCORE_EXPORT void sendCOEPInheritenceViolation(ReportingClient&, const URL& embedderURL, const String& endpoint, COEPDisposition, const String& type, const URL& blockedURL);
 void sendCOEPCORPViolation(ReportingClient&, const URL& embedderURL, const String& endpoint, COEPDisposition, FetchOptionsDestination, const URL& blockedURL);
 

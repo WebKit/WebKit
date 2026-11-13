@@ -49,29 +49,45 @@ static constexpr auto coepUnsafeNoneToken { "unsafe-none"_s };
 static constexpr auto coepRequireCORPToken { "require-corp"_s };
 static constexpr auto coepCredentiallessToken { "credentialless"_s };
 
-bool isRecognizedCrossOriginEmbedderPolicyToken(StringView token)
+CredentiallessSupport credentiallessSupport(bool crossOriginEmbedderPolicyCredentiallessEnabled)
 {
-    return token == coepRequireCORPToken || token == coepUnsafeNoneToken;
+    // FIXME: Omitting credentials doesn't protect resources that rely on their network position, so this has to
+    // require Local Network Access or Opaque Response Blocking before CrossOriginEmbedderPolicyCredentiallessEnabled can become stable.
+    return crossOriginEmbedderPolicyCredentiallessEnabled ? CredentiallessSupport::Yes : CredentiallessSupport::No;
 }
 
-bool isUnsupportedCrossOriginEmbedderPolicyToken(StringView token)
+CredentiallessSupport credentiallessSupport(const SettingsValues& settings)
 {
-    // FIXME: Support credentialless, then treat it as recognized.
-    return token == coepCredentiallessToken;
+    return credentiallessSupport(settings.crossOriginEmbedderPolicyCredentiallessEnabled);
+}
+
+bool isRecognizedCrossOriginEmbedderPolicyToken(StringView token, CredentiallessSupport credentiallessSupport)
+{
+    return token == coepRequireCORPToken || token == coepUnsafeNoneToken || (token == coepCredentiallessToken && credentiallessSupport == CredentiallessSupport::Yes);
+}
+
+bool isUnsupportedCrossOriginEmbedderPolicyToken(StringView token, CredentiallessSupport credentiallessSupport)
+{
+    return token == coepCredentiallessToken && credentiallessSupport == CredentiallessSupport::No;
 }
 
 // https://html.spec.whatwg.org/multipage/origin.html#obtain-an-embedder-policy
-CrossOriginEmbedderPolicy obtainCrossOriginEmbedderPolicy(const ResourceResponse& response, IsSecureContext isSecureContext, const ScriptExecutionContext* context)
+CrossOriginEmbedderPolicy obtainCrossOriginEmbedderPolicy(const ResourceResponse& response, IsSecureContext isSecureContext, CredentiallessSupport credentiallessSupport, const ScriptExecutionContext* context)
 {
-    auto parseCOEPHeader = [&response](HTTPHeaderName headerName, auto& value, auto& reportingEndpoint) {
+    auto parseCOEPHeader = [&response, credentiallessSupport](HTTPHeaderName headerName, auto& value, auto& reportingEndpoint) {
         auto coepParsingResult = RFC8941::parseItemStructuredFieldValue(response.httpHeaderField(headerName));
         if (!coepParsingResult)
             return;
         auto* policyString = std::get_if<RFC8941::Token>(&coepParsingResult->first);
-        if (!policyString || policyString->string() != coepRequireCORPToken)
+        if (!policyString)
             return;
 
-        value = CrossOriginEmbedderPolicyValue::RequireCORP;
+        if (policyString->string() == coepRequireCORPToken)
+            value = CrossOriginEmbedderPolicyValue::RequireCORP;
+        else if (policyString->string() == coepCredentiallessToken && credentiallessSupport == CredentiallessSupport::Yes)
+            value = CrossOriginEmbedderPolicyValue::Credentialless;
+        else
+            return;
         if (auto* reportToString = coepParsingResult->second.getIf<String>("report-to"_s))
             reportingEndpoint = *reportToString;
     };
@@ -109,19 +125,20 @@ CrossOriginEmbedderPolicy CrossOriginEmbedderPolicy::isolatedCopy() &&
 
 void CrossOriginEmbedderPolicy::addPolicyHeadersTo(ResourceResponse& response) const
 {
+    auto token = [](CrossOriginEmbedderPolicyValue value) {
+        return value == CrossOriginEmbedderPolicyValue::Credentialless ? coepCredentiallessToken : coepRequireCORPToken;
+    };
     if (value != CrossOriginEmbedderPolicyValue::UnsafeNone) {
-        ASSERT(value == CrossOriginEmbedderPolicyValue::RequireCORP);
         if (reportingEndpoint.isEmpty())
-            response.setHTTPHeaderField(HTTPHeaderName::CrossOriginEmbedderPolicy, "require-corp"_s);
+            response.setHTTPHeaderField(HTTPHeaderName::CrossOriginEmbedderPolicy, token(value));
         else
-            response.setHTTPHeaderField(HTTPHeaderName::CrossOriginEmbedderPolicy, makeString("require-corp; report-to=\""_s, reportingEndpoint, '\"'));
+            response.setHTTPHeaderField(HTTPHeaderName::CrossOriginEmbedderPolicy, makeString(token(value), "; report-to=\""_s, reportingEndpoint, '\"'));
     }
     if (reportOnlyValue != CrossOriginEmbedderPolicyValue::UnsafeNone) {
-        ASSERT(reportOnlyValue == CrossOriginEmbedderPolicyValue::RequireCORP);
         if (reportOnlyReportingEndpoint.isEmpty())
-            response.setHTTPHeaderField(HTTPHeaderName::CrossOriginEmbedderPolicyReportOnly, "require-corp"_s);
+            response.setHTTPHeaderField(HTTPHeaderName::CrossOriginEmbedderPolicyReportOnly, token(reportOnlyValue));
         else
-            response.setHTTPHeaderField(HTTPHeaderName::CrossOriginEmbedderPolicyReportOnly, makeString("require-corp; report-to=\""_s, reportOnlyReportingEndpoint, '\"'));
+            response.setHTTPHeaderField(HTTPHeaderName::CrossOriginEmbedderPolicyReportOnly, makeString(token(reportOnlyValue), "; report-to=\""_s, reportOnlyReportingEndpoint, '\"'));
     }
 }
 

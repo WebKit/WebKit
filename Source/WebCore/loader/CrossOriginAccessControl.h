@@ -53,8 +53,8 @@ struct CrossOriginEmbedderPolicy;
 struct DocumentIsolationPolicy;
 struct ResourceLoaderOptions;
 
-enum class CrossOriginEmbedderPolicyValue : bool;
-enum class DocumentIsolationPolicyValue : bool;
+enum class CrossOriginEmbedderPolicyValue : uint8_t;
+enum class DocumentIsolationPolicyValue : uint8_t;
 enum class FetchOptionsDestination : uint8_t;
 
 WEBCORE_EXPORT bool isSimpleCrossOriginAccessRequest(const String& method, const HTTPHeaderMap&);

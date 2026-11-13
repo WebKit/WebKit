@@ -81,6 +81,7 @@
 #include <WebCore/Cookie.h>
 #include <WebCore/CookieJar.h>
 #include <WebCore/CookieStoreGetOptions.h>
+#include <WebCore/CrossOriginEmbedderPolicy.h>
 #include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/DocumentStorageAccess.h>
 #include <WebCore/HTTPCookieAcceptPolicy.h>
@@ -573,6 +574,11 @@ void NetworkConnectionToWebProcess::removeSocketChannel(WebSocketIdentifier iden
 void NetworkConnectionToWebProcess::countWebSocketChannelsForTesting(CompletionHandler<void(uint32_t)>&& completionHandler)
 {
     completionHandler(static_cast<uint32_t>(m_networkSocketChannels.size()));
+}
+
+CredentiallessSupport NetworkConnectionToWebProcess::credentiallessSupport() const
+{
+    return WebCore::credentiallessSupport(m_sharedPreferencesForWebProcess.crossOriginEmbedderPolicyCredentiallessEnabled);
 }
 
 NetworkSession* NetworkConnectionToWebProcess::networkSession()

@@ -64,6 +64,7 @@
 #include "DocumentQuirks.h"
 #include "DocumentResourceLoader.h"
 #include "DocumentSecurityOrigin.h"
+#include "DocumentSettingsValues.h"
 #include "DocumentView.h"
 #include "DocumentWindow.h"
 #include "Editor.h"
@@ -877,7 +878,7 @@ static void logCrossOriginIsolationDiagnostics(Document& document, const Resourc
     if (coepHeader.isEmpty() && coepReportOnlyHeader.isEmpty() && coopHeader.isEmpty() && coopReportOnlyHeader.isEmpty())
         return;
 
-    auto checkValue = [&](const String& header, ASCIILiteral headerLabel, bool (*isRecognizedToken)(StringView), bool (*isUnsupportedToken)(StringView)) {
+    auto checkValue = [&](const String& header, ASCIILiteral headerLabel, auto isRecognizedToken, auto isUnsupportedToken) {
         if (header.isEmpty())
             return false;
 
@@ -886,7 +887,7 @@ static void logCrossOriginIsolationDiagnostics(Document& document, const Resourc
         if (token && isRecognizedToken(token->string()))
             return false;
 
-        if (token && isUnsupportedToken && isUnsupportedToken(token->string())) {
+        if (token && isUnsupportedToken(token->string())) {
             document.addConsoleMessage(MessageSource::Security, MessageLevel::Warning, makeString("The "_s, headerLabel, " header value '"_s, header, "' is not supported and is ignored (treated as 'unsafe-none')."_s));
             return true;
         }
@@ -894,10 +895,20 @@ static void logCrossOriginIsolationDiagnostics(Document& document, const Resourc
         return true;
     };
 
-    bool coepValueReported = checkValue(coepHeader, "Cross-Origin-Embedder-Policy"_s, isRecognizedCrossOriginEmbedderPolicyToken, isUnsupportedCrossOriginEmbedderPolicyToken);
-    checkValue(coepReportOnlyHeader, "Cross-Origin-Embedder-Policy-Report-Only"_s, isRecognizedCrossOriginEmbedderPolicyToken, isUnsupportedCrossOriginEmbedderPolicyToken);
-    bool coopValueReported = checkValue(coopHeader, "Cross-Origin-Opener-Policy"_s, isRecognizedCrossOriginOpenerPolicyToken, nullptr);
-    checkValue(coopReportOnlyHeader, "Cross-Origin-Opener-Policy-Report-Only"_s, isRecognizedCrossOriginOpenerPolicyToken, nullptr);
+    auto credentiallessSupport = WebCore::credentiallessSupport(document.settingsValues());
+    auto isRecognizedCOEPToken = [&](StringView token) {
+        return isRecognizedCrossOriginEmbedderPolicyToken(token, credentiallessSupport);
+    };
+    auto isUnsupportedCOEPToken = [&](StringView token) {
+        return isUnsupportedCrossOriginEmbedderPolicyToken(token, credentiallessSupport);
+    };
+    auto isUnsupportedCOOPToken = [](StringView) {
+        return false;
+    };
+    bool coepValueReported = checkValue(coepHeader, "Cross-Origin-Embedder-Policy"_s, isRecognizedCOEPToken, isUnsupportedCOEPToken);
+    checkValue(coepReportOnlyHeader, "Cross-Origin-Embedder-Policy-Report-Only"_s, isRecognizedCOEPToken, isUnsupportedCOEPToken);
+    bool coopValueReported = checkValue(coopHeader, "Cross-Origin-Opener-Policy"_s, isRecognizedCrossOriginOpenerPolicyToken, isUnsupportedCOOPToken);
+    checkValue(coopReportOnlyHeader, "Cross-Origin-Opener-Policy-Report-Only"_s, isRecognizedCrossOriginOpenerPolicyToken, isUnsupportedCOOPToken);
 
     if (!isMainFrame || (coopHeader.isEmpty() && coepHeader.isEmpty()) || document.crossOriginIsolated())
         return;
@@ -910,9 +921,9 @@ static void logCrossOriginIsolationDiagnostics(Document& document, const Resourc
     else if (auto coopValue = document.crossOriginOpenerPolicy().value; !coopValueReported && coopValue != CrossOriginOpenerPolicyValue::SameOrigin && coopValue != CrossOriginOpenerPolicyValue::SameOriginPlusCOEP)
         reason = makeString("the Cross-Origin-Opener-Policy header value '"_s, coopHeader, "' is not 'same-origin'"_s);
     else if (coepHeader.isEmpty())
-        reason = "the Cross-Origin-Embedder-Policy header is missing (it must be 'require-corp')"_s;
-    else if (!coepValueReported && document.crossOriginEmbedderPolicy().value != CrossOriginEmbedderPolicyValue::RequireCORP)
-        reason = makeString("the Cross-Origin-Embedder-Policy header value '"_s, coepHeader, "' is not 'require-corp'"_s);
+        reason = credentiallessSupport == CredentiallessSupport::Yes ? "the Cross-Origin-Embedder-Policy header is missing (it must be 'require-corp' or 'credentialless')"_s : "the Cross-Origin-Embedder-Policy header is missing (it must be 'require-corp')"_s;
+    else if (!coepValueReported && !isCompatibleWithCrossOriginIsolation(document.crossOriginEmbedderPolicy().value))
+        reason = makeString("the Cross-Origin-Embedder-Policy header value '"_s, coepHeader, credentiallessSupport == CredentiallessSupport::Yes ? "' is not 'require-corp' or 'credentialless'"_s : "' is not 'require-corp'"_s);
 
     // An unrecognized or unsupported value was already reported above; any other remaining cause is not one this message can name.
     if (reason.isEmpty())
@@ -957,7 +968,7 @@ void FrameLoader::didBeginDocument(bool dispatch, LocalDOMWindow* previousWindow
 
         if (document->url().protocolIsInHTTPFamilyOrBlob()) {
             auto isSecureContext = document->isSecureContext() ? IsSecureContext::Yes : IsSecureContext::No;
-            document->setCrossOriginEmbedderPolicy(obtainCrossOriginEmbedderPolicy(documentLoader->response(), isSecureContext, document.ptr()));
+            document->setCrossOriginEmbedderPolicy(obtainCrossOriginEmbedderPolicy(documentLoader->response(), isSecureContext, credentiallessSupport(document->settingsValues()), document.ptr()));
 
             if (auto ipAddressSpace = documentLoader->response().ipAddressSpace(); ipAddressSpace != IPAddressSpace::Unknown)
                 document->setIPAddressSpace(ipAddressSpace);
@@ -969,7 +980,7 @@ void FrameLoader::didBeginDocument(bool dispatch, LocalDOMWindow* previousWindow
                 // The UI process decides the value, since it determines the agent cluster. The rest is only for reporting.
                 DocumentIsolationPolicy documentIsolationPolicy;
                 if (settings->documentIsolationPolicyEnabled() && settings->siteIsolationEnabled())
-                    documentIsolationPolicy = obtainDocumentIsolationPolicy(documentLoader->response(), isSecureContext);
+                    documentIsolationPolicy = obtainDocumentIsolationPolicy(documentLoader->response(), isSecureContext, credentiallessSupport(document->settingsValues()));
                 ASSERT(documentIsolationPolicy.value == agentClusterAssignment.documentIsolationPolicy);
                 documentIsolationPolicy.value = agentClusterAssignment.documentIsolationPolicy;
                 document->setDocumentIsolationPolicy(documentIsolationPolicy);

@@ -98,6 +98,7 @@ class ResourceError;
 class ResourceRequest;
 class Site;
 enum class AdvancedPrivacyProtections : uint16_t;
+enum class CredentiallessSupport : bool;
 enum class StorageAccessScope : bool;
 enum class IsLoggedIn : uint8_t;
 enum class ShouldPartitionCookie : bool;
@@ -200,6 +201,7 @@ public:
     bool blobFileAccessEnforcementEnabled() const { return m_sharedPreferencesForWebProcess.blobFileAccessEnforcementEnabled; }
     bool compressionDictionaryEnabled();
     bool localNetworkAccessEnabled() const { return m_sharedPreferencesForWebProcess.localNetworkAccessEnabled; }
+    NODELETE WebCore::CredentiallessSupport credentiallessSupport() const;
 
     struct LocalNetworkAccessFrameRecord {
         WebCore::IPAddressSpace addressSpace;

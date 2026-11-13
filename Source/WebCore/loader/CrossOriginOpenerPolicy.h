@@ -42,6 +42,8 @@ class SecurityOrigin;
 struct NavigationRequester;
 struct ReportingClient;
 
+enum class CredentiallessSupport : bool;
+
 // https://html.spec.whatwg.org/multipage/origin.html#cross-origin-opener-policy-value
 enum class CrossOriginOpenerPolicyValue : uint8_t {
     UnsafeNone,
@@ -96,9 +98,9 @@ struct CrossOriginOpenerPolicyEnforcementResult {
 
 bool isRecognizedCrossOriginOpenerPolicyToken(StringView);
 
-WEBCORE_EXPORT CrossOriginOpenerPolicy obtainCrossOriginOpenerPolicy(const ResourceResponse&);
+WEBCORE_EXPORT CrossOriginOpenerPolicy obtainCrossOriginOpenerPolicy(const ResourceResponse&, CredentiallessSupport);
 WEBCORE_EXPORT CrossOriginOpenerPolicy crossOriginOpenerPolicyForEmptyDocument(const NavigationRequester&);
-WEBCORE_EXPORT std::optional<CrossOriginOpenerPolicyEnforcementResult> doCrossOriginOpenerHandlingOfResponse(ReportingClient&, const ResourceResponse&, const std::optional<NavigationRequester>&, ContentSecurityPolicy* responseCSP, SandboxFlags effectiveSandboxFlags, const String& referrer, bool isDisplayingInitialEmptyDocument, const CrossOriginOpenerPolicyEnforcementResult& currentCoopEnforcementResult);
+WEBCORE_EXPORT std::optional<CrossOriginOpenerPolicyEnforcementResult> doCrossOriginOpenerHandlingOfResponse(ReportingClient&, const ResourceResponse&, const std::optional<NavigationRequester>&, ContentSecurityPolicy* responseCSP, SandboxFlags effectiveSandboxFlags, const String& referrer, bool isDisplayingInitialEmptyDocument, const CrossOriginOpenerPolicyEnforcementResult& currentCoopEnforcementResult, CredentiallessSupport);
 WEBCORE_EXPORT bool coopValuesRequireBrowsingContextGroupSwitch(IsInitialAboutBlank, CrossOriginOpenerPolicyValue activeDocumentCOOPValue, const SecurityOrigin& activeDocumentNavigationOrigin, CrossOriginOpenerPolicyValue responseCOOPValue, const SecurityOrigin& responseOrigin);
 
 } // namespace WebCore

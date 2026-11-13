@@ -32,6 +32,7 @@
 #include "WebPreferencesKeys.h"
 #include "WebProcessPool.h"
 #include "WebsiteDataStore.h"
+#include <WebCore/CrossOriginEmbedderPolicy.h>
 #include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/LibWebRTCProvider.h>
 #include <WebCore/StorageBlockingPolicy.h>
@@ -104,6 +105,11 @@ bool WebPreferences::shouldUseUIProcessForBackForwardItemLoading() const
     // Site Isolation spreads a page's frames across Web processes, so no single Web process can
     // coordinate a back/forward traversal by itself; the UI process must always drive it.
     return useUIProcessForBackForwardItemLoading() || siteIsolationEnabled();
+}
+
+WebCore::CredentiallessSupport WebPreferences::credentiallessSupport() const
+{
+    return WebCore::credentiallessSupport(crossOriginEmbedderPolicyCredentiallessEnabled());
 }
 
 const Vector<RefPtr<API::Object>>& WebPreferences::experimentalFeatures()

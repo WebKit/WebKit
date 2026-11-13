@@ -37,6 +37,7 @@
 #include "ContentExtensionError.h"
 #include "ContentRuleListResults.h"
 #include "ContentSecurityPolicy.h"
+#include "CrossOriginEmbedderPolicy.h"
 #include "CrossOriginOpenerPolicy.h"
 #include "CustomHeaderFields.h"
 #include "DNS.h"
@@ -48,6 +49,7 @@
 #include "DocumentQuirks.h"
 #include "DocumentResourceLoader.h"
 #include "DocumentSecurityOrigin.h"
+#include "DocumentSettingsValues.h"
 #include "DocumentView.h"
 #include "DocumentWindow.h"
 #include "DocumentWriter.h"
@@ -873,7 +875,7 @@ std::optional<CrossOriginOpenerPolicyEnforcementResult> DocumentLoader::doCrossO
 
     auto currentCoopEnforcementResult = CrossOriginOpenerPolicyEnforcementResult::from(document->url(), document->securityOrigin(), document->crossOriginOpenerPolicy(), m_triggeringAction.requester(), openerURL);
 
-    auto newCoopEnforcementResult = WebCore::doCrossOriginOpenerHandlingOfResponse(*document, response, m_triggeringAction.requester(), protect(contentSecurityPolicy()).get(), frame->effectiveSandboxFlags(), m_request.httpReferrer(), frameLoader()->stateMachine().isDisplayingInitialEmptyDocument(), currentCoopEnforcementResult);
+    auto newCoopEnforcementResult = WebCore::doCrossOriginOpenerHandlingOfResponse(*document, response, m_triggeringAction.requester(), protect(contentSecurityPolicy()).get(), frame->effectiveSandboxFlags(), m_request.httpReferrer(), frameLoader()->stateMachine().isDisplayingInitialEmptyDocument(), currentCoopEnforcementResult, credentiallessSupport(document->settingsValues()));
     if (!newCoopEnforcementResult) {
         cancelMainResourceLoad(protect(frameLoader())->cancelledError(m_request));
         return std::nullopt;
@@ -966,7 +968,7 @@ void DocumentLoader::responseReceived(const CachedResource& resource, const Reso
         protect(contentSecurityPolicy())->didReceiveHeaders(ContentSecurityPolicyResponseHeaders { response }, m_request.httpReferrer(), ContentSecurityPolicy::ReportParsingErrors::No);
     }
     if (frame && frame->document() && frame->document()->settings().crossOriginOpenerPolicyEnabled())
-        m_responseCOOP = obtainCrossOriginOpenerPolicy(response);
+        m_responseCOOP = obtainCrossOriginOpenerPolicy(response, credentiallessSupport(frame->document()->settingsValues()));
 
     // https://w3c.github.io/webappsec-subresource-integrity/#parse-integrity-policy-headers
     m_integrityPolicy = processIntegrityPolicy(response, HTTPHeaderName::IntegrityPolicy);

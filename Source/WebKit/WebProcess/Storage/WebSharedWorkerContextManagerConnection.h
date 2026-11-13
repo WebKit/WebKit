@@ -38,7 +38,7 @@
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
-enum class CrossOriginEmbedderPolicyValue : bool;
+enum class CrossOriginEmbedderPolicyValue : uint8_t;
 
 struct ClientOrigin;
 struct WorkerFetchResult;

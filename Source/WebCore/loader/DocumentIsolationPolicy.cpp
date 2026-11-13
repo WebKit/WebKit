@@ -27,6 +27,7 @@
 #include "DocumentIsolationPolicy.h"
 
 #include "CORPViolationReportBody.h"
+#include "CrossOriginEmbedderPolicy.h"
 #include "FormData.h"
 #include "HTTPHeaderNames.h"
 #include "JSFetchRequestDestination.h"
@@ -39,16 +40,29 @@
 
 namespace WebCore {
 
-DocumentIsolationPolicy obtainDocumentIsolationPolicy(const ResourceResponse& response, IsSecureContext isSecureContext)
+static constexpr auto isolateAndRequireCORPToken { "isolate-and-require-corp"_s };
+static constexpr auto isolateAndCredentiallessToken { "isolate-and-credentialless"_s };
+
+DocumentIsolationPolicy obtainDocumentIsolationPolicy(const ResourceResponse& response, IsSecureContext isSecureContext, CredentiallessSupport credentiallessSupport)
 {
-    return obtainDocumentIsolationPolicy(response.url(), parseDocumentIsolationPolicy(response), isSecureContext);
+    return obtainDocumentIsolationPolicy(response.url(), parseDocumentIsolationPolicy(response), isSecureContext, credentiallessSupport);
 }
 
-DocumentIsolationPolicy obtainDocumentIsolationPolicy(const URL& url, DocumentIsolationPolicy headerPolicy, IsSecureContext isSecureContext)
+DocumentIsolationPolicy obtainDocumentIsolationPolicy(const URL& url, DocumentIsolationPolicy headerPolicy, IsSecureContext isSecureContext, CredentiallessSupport credentiallessSupport)
 {
     // FIXME: Get the blob URL entry's policy container directly instead of reading the headers it is reflected as.
     if (isSecureContext == IsSecureContext::No && !url.protocolIsBlob())
         return { };
+    if (credentiallessSupport == CredentiallessSupport::No) {
+        if (headerPolicy.value == DocumentIsolationPolicyValue::IsolateAndCredentialless) {
+            headerPolicy.value = DocumentIsolationPolicyValue::None;
+            headerPolicy.reportingEndpoint = { };
+        }
+        if (headerPolicy.reportOnlyValue == DocumentIsolationPolicyValue::IsolateAndCredentialless) {
+            headerPolicy.reportOnlyValue = DocumentIsolationPolicyValue::None;
+            headerPolicy.reportOnlyReportingEndpoint = { };
+        }
+    }
     return headerPolicy;
 }
 
@@ -60,13 +74,22 @@ static std::pair<DocumentIsolationPolicyValue, String> parseDocumentIsolationPol
     if (!parsedItem)
         return { };
 
-    // FIXME: Support isolate-and-credentialless.
     auto* token = std::get_if<RFC8941::Token>(&parsedItem->first);
-    if (!token || token->string() != "isolate-and-require-corp"_s)
+    if (!token)
+        return { };
+
+    auto value = [&] {
+        if (token->string() == isolateAndRequireCORPToken)
+            return DocumentIsolationPolicyValue::IsolateAndRequireCORP;
+        if (token->string() == isolateAndCredentiallessToken)
+            return DocumentIsolationPolicyValue::IsolateAndCredentialless;
+        return DocumentIsolationPolicyValue::None;
+    }();
+    if (value == DocumentIsolationPolicyValue::None)
         return { };
 
     auto* reportTo = parsedItem->second.getIf<String>("report-to"_s);
-    return { DocumentIsolationPolicyValue::IsolateAndRequireCORP, reportTo ? *reportTo : String { } };
+    return { value, reportTo ? *reportTo : String { } };
 }
 
 DocumentIsolationPolicy parseDocumentIsolationPolicy(const ResourceResponse& response)
@@ -81,12 +104,12 @@ void DocumentIsolationPolicy::addPolicyHeadersTo(ResourceResponse& response) con
     auto addHeader = [&response](HTTPHeaderName headerName, DocumentIsolationPolicyValue value, const String& reportingEndpoint) {
         if (value == DocumentIsolationPolicyValue::None)
             return;
-        ASSERT(value == DocumentIsolationPolicyValue::IsolateAndRequireCORP);
+        auto token = value == DocumentIsolationPolicyValue::IsolateAndCredentialless ? isolateAndCredentiallessToken : isolateAndRequireCORPToken;
         auto escapedReportingEndpoint = reportingEndpoint.isEmpty() ? std::nullopt : RFC8941::escapeString(reportingEndpoint);
         if (!escapedReportingEndpoint)
-            response.setHTTPHeaderField(headerName, "isolate-and-require-corp"_s);
+            response.setHTTPHeaderField(headerName, token);
         else
-            response.setHTTPHeaderField(headerName, makeString("isolate-and-require-corp; report-to=\""_s, *escapedReportingEndpoint, '"'));
+            response.setHTTPHeaderField(headerName, makeString(token, "; report-to=\""_s, *escapedReportingEndpoint, '"'));
     };
     addHeader(HTTPHeaderName::DocumentIsolationPolicy, value, reportingEndpoint);
     addHeader(HTTPHeaderName::DocumentIsolationPolicyReportOnly, reportOnlyValue, reportOnlyReportingEndpoint);

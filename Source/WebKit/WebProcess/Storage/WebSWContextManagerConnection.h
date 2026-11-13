@@ -51,7 +51,7 @@ class PendingStreamState;
 class ResourceRequest;
 class Site;
 
-enum class CrossOriginEmbedderPolicyValue : bool;
+enum class CrossOriginEmbedderPolicyValue : uint8_t;
 enum class WorkerThreadMode : bool;
 
 struct FetchOptions;

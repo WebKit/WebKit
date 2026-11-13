@@ -1779,6 +1779,16 @@ CoreMathMLEnabled:
       "PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
 
+# FIXME: This has to require Local Network Access or Opaque Response Blocking before it can become stable.
+CrossOriginEmbedderPolicyCredentiallessEnabled:
+  type: bool
+  status: unstable
+  category: security
+  humanReadableName: "Cross-Origin-Embedder-Policy: credentialless"
+  humanReadableDescription: "Support for credentialless Cross-Origin-Embedder-Policy and Document-Isolation-Policy values"
+  defaultValue: false
+  sharedPreferenceForWebProcess: true
+
 CrossOriginEmbedderPolicyEnabled:
   type: bool
   status: stable

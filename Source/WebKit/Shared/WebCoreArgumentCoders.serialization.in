@@ -2863,7 +2863,11 @@ enum class WebCore::AutocapitalizeType : uint8_t {
     AllCharacters
 };
 
-enum class WebCore::CrossOriginEmbedderPolicyValue : bool
+enum class WebCore::CrossOriginEmbedderPolicyValue : uint8_t {
+    UnsafeNone,
+    RequireCORP,
+    Credentialless
+};
 
 struct WebCore::CrossOriginEmbedderPolicy {
     WebCore::CrossOriginEmbedderPolicyValue value;
@@ -2873,7 +2877,11 @@ struct WebCore::CrossOriginEmbedderPolicy {
 };
 
 header: <WebCore/DocumentIsolationPolicy.h>
-enum class WebCore::DocumentIsolationPolicyValue : bool
+enum class WebCore::DocumentIsolationPolicyValue : uint8_t {
+    None,
+    IsolateAndRequireCORP,
+    IsolateAndCredentialless
+};
 
 struct WebCore::DocumentIsolationPolicy {
     WebCore::DocumentIsolationPolicyValue value;

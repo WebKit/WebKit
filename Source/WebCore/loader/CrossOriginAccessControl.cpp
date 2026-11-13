@@ -324,7 +324,7 @@ std::expected<void, String> validatePreflightResponse(PAL::SessionID sessionID, 
 // https://fetch.spec.whatwg.org/#cross-origin-resource-policy-internal-check
 static inline bool shouldCrossOriginResourcePolicyCancelLoad(CrossOriginEmbedderPolicyValue coep, DocumentIsolationPolicyValue documentIsolationPolicy, const SecurityOrigin& origin, bool isResponseNull, const URL& responseURL, const String& crossOriginResourcePolicyHeaderValue, ForNavigation forNavigation, const OriginAccessPatterns& patterns)
 {
-    if (forNavigation == ForNavigation::Yes && coep != CrossOriginEmbedderPolicyValue::RequireCORP)
+    if (forNavigation == ForNavigation::Yes && coep == CrossOriginEmbedderPolicyValue::UnsafeNone)
         return false;
 
     if (isResponseNull || origin.canRequest(responseURL, patterns))
@@ -333,7 +333,8 @@ static inline bool shouldCrossOriginResourcePolicyCancelLoad(CrossOriginEmbedder
     auto policy = parseCrossOriginResourcePolicyHeader(crossOriginResourcePolicyHeaderValue);
 
     // https://fetch.spec.whatwg.org/#cross-origin-resource-policy-internal-check (step 4).
-    if ((policy == CrossOriginResourcePolicy::None || policy == CrossOriginResourcePolicy::Invalid) && (coep == CrossOriginEmbedderPolicyValue::RequireCORP || documentIsolationPolicy == DocumentIsolationPolicyValue::IsolateAndRequireCORP))
+    // FIXME: Credentialless policies only require CORP of responses to requests that included credentials.
+    if ((policy == CrossOriginResourcePolicy::None || policy == CrossOriginResourcePolicy::Invalid) && (coep != CrossOriginEmbedderPolicyValue::UnsafeNone || documentIsolationPolicy != DocumentIsolationPolicyValue::None))
         return true;
 
     if (policy == CrossOriginResourcePolicy::SameOrigin)
@@ -385,20 +386,20 @@ std::optional<ResourceError> performCrossOriginResourcePolicyCheck(const CrossOr
         return error;
 
     if (reportContext) {
-        if (embedderPolicy.reportOnlyValue == CrossOriginEmbedderPolicyValue::RequireCORP && check(embedderPolicy.reportOnlyValue, DocumentIsolationPolicyValue::None))
+        if (embedderPolicy.reportOnlyValue != CrossOriginEmbedderPolicyValue::UnsafeNone && check(embedderPolicy.reportOnlyValue, DocumentIsolationPolicyValue::None))
             sendCOEPCORPViolation(reportContext->client, reportContext->contextURL, embedderPolicy.reportOnlyReportingEndpoint, COEPDisposition::Reporting, reportContext->destination, reportContext->blockedURL);
-        if (documentIsolationPolicy.reportOnlyValue == DocumentIsolationPolicyValue::IsolateAndRequireCORP && check(CrossOriginEmbedderPolicyValue::UnsafeNone, documentIsolationPolicy.reportOnlyValue))
+        if (documentIsolationPolicy.reportOnlyValue != DocumentIsolationPolicyValue::None && check(CrossOriginEmbedderPolicyValue::UnsafeNone, documentIsolationPolicy.reportOnlyValue))
             sendDocumentIsolationPolicyCORPViolation(reportContext->client, reportContext->contextURL, documentIsolationPolicy.reportOnlyReportingEndpoint, COEPDisposition::Reporting, reportContext->destination, reportContext->blockedURL);
     }
 
     // A response that both policies block gets a report for each.
     std::optional<ResourceError> error;
-    if (embedderPolicy.value == CrossOriginEmbedderPolicyValue::RequireCORP) {
+    if (embedderPolicy.value != CrossOriginEmbedderPolicyValue::UnsafeNone) {
         error = check(embedderPolicy.value, DocumentIsolationPolicyValue::None);
         if (error && reportContext)
             sendCOEPCORPViolation(reportContext->client, reportContext->contextURL, embedderPolicy.reportingEndpoint, COEPDisposition::Enforce, reportContext->destination, reportContext->blockedURL);
     }
-    if (documentIsolationPolicy.value == DocumentIsolationPolicyValue::IsolateAndRequireCORP) {
+    if (documentIsolationPolicy.value != DocumentIsolationPolicyValue::None) {
         if (auto documentIsolationPolicyError = check(CrossOriginEmbedderPolicyValue::UnsafeNone, documentIsolationPolicy.value)) {
             if (reportContext)
                 sendDocumentIsolationPolicyCORPViolation(reportContext->client, reportContext->contextURL, documentIsolationPolicy.reportingEndpoint, COEPDisposition::Enforce, reportContext->destination, reportContext->blockedURL);

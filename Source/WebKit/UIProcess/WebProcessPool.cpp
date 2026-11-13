@@ -731,7 +731,7 @@ void WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(Remo
 
     RefPtr requestingProcess = requestingProcessIdentifier ? WebProcessProxy::processForIdentifier(*requestingProcessIdentifier) : nullptr;
     auto lockdownMode = requestingProcess ? requestingProcess->lockdownMode() : (lockdownModeEnabledBySystem() ? WebProcessProxy::LockdownMode::Enabled : WebProcessProxy::LockdownMode::Disabled);
-    auto crossOriginMode = workerCrossOriginEmbedderPolicy == CrossOriginEmbedderPolicyValue::RequireCORP ? CrossOriginMode::Isolated : CrossOriginMode::Shared;
+    auto crossOriginMode = isCompatibleWithCrossOriginIsolation(workerCrossOriginEmbedderPolicy) ? CrossOriginMode::Isolated : CrossOriginMode::Shared;
     Ref processPool = requestingProcess ? requestingProcess->processPool() : processPools()[0].get();
     auto enhancedSecurity = requestingProcess ? requestingProcess->enhancedSecurity() : defaultEnhancedSecurity(processPool, lockdownMode, protect(processPool->defaultPageGroup().preferences()));
 

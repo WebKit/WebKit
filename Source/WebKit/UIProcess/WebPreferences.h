@@ -45,6 +45,9 @@
 #define DECLARE_INSPECTOR_OVERRIDE_STORE(KeyUpper, KeyLower, Type) \
     std::optional<Type> m_##KeyLower##InspectorOverride;
 
+namespace WebCore {
+enum class CredentiallessSupport : bool;
+}
 
 namespace WebKit {
 
@@ -72,6 +75,7 @@ public:
     FOR_EACH_WEBKIT_PREFERENCE_WITH_INSPECTOR_OVERRIDE(DECLARE_INSPECTOR_OVERRIDE_SETTERS)
 
     bool shouldUseUIProcessForBackForwardItemLoading() const;
+    WebCore::CredentiallessSupport credentiallessSupport() const;
 
     static const Vector<RefPtr<API::Object>>& features();
     static const Vector<RefPtr<API::Object>>& experimentalFeatures();

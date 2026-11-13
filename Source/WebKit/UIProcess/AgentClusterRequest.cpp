@@ -51,7 +51,7 @@ WebCore::DocumentIsolationPolicyValue documentIsolationPolicyForNavigationRespon
         return WebCore::DocumentIsolationPolicyValue::None;
     WebCore::DocumentIsolationPolicy policy;
     policy.value = headerPolicy;
-    return WebCore::obtainDocumentIsolationPolicy(url, WTF::move(policy), isSecureContextForNavigationResponse(url, topLevelIsSecureContext)).value;
+    return WebCore::obtainDocumentIsolationPolicy(url, WTF::move(policy), isSecureContextForNavigationResponse(url, topLevelIsSecureContext), preferences.credentiallessSupport()).value;
 }
 
 AgentClusterRequest AgentClusterRequest::forNavigationResponse(const WebCore::ResourceResponse& response, WebCore::SandboxFlags sandboxFlags, const URL& topLevelCreationURL, WebCore::IsSecureContext topLevelIsSecureContext, const WebPreferences& preferences)

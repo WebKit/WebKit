@@ -36,12 +36,14 @@ class ResourceResponse;
 struct ReportingClient;
 
 enum class COEPDisposition : bool;
+enum class CredentiallessSupport : bool;
 enum class FetchOptionsDestination : uint8_t;
 
 // https://wicg.github.io/document-isolation-policy/#dip-value
-enum class DocumentIsolationPolicyValue : bool {
+enum class DocumentIsolationPolicyValue : uint8_t {
     None,
-    IsolateAndRequireCORP
+    IsolateAndRequireCORP,
+    IsolateAndCredentialless
 };
 
 // https://wicg.github.io/document-isolation-policy/#dip-struct
@@ -60,8 +62,8 @@ struct DocumentIsolationPolicy {
 };
 
 // https://wicg.github.io/document-isolation-policy/#obtain-dip
-WEBCORE_EXPORT DocumentIsolationPolicy obtainDocumentIsolationPolicy(const ResourceResponse&, IsSecureContext);
-WEBCORE_EXPORT DocumentIsolationPolicy obtainDocumentIsolationPolicy(const URL&, DocumentIsolationPolicy headerPolicy, IsSecureContext);
+WEBCORE_EXPORT DocumentIsolationPolicy obtainDocumentIsolationPolicy(const ResourceResponse&, IsSecureContext, CredentiallessSupport);
+WEBCORE_EXPORT DocumentIsolationPolicy obtainDocumentIsolationPolicy(const URL&, DocumentIsolationPolicy headerPolicy, IsSecureContext, CredentiallessSupport);
 
 WEBCORE_EXPORT DocumentIsolationPolicy parseDocumentIsolationPolicy(const ResourceResponse&);
 

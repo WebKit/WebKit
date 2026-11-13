@@ -178,7 +178,8 @@ ResourceError ServiceWorkerSoftUpdateLoader::processResponse(const ResourceRespo
 
     m_contentSecurityPolicy = ContentSecurityPolicyResponseHeaders { response };
     // Service workers are always secure contexts.
-    m_crossOriginEmbedderPolicy = obtainCrossOriginEmbedderPolicy(response, IsSecureContext::Yes, nullptr);
+    // FIXME: A soft update has no web process whose preferences say whether credentialless policies are supported.
+    m_crossOriginEmbedderPolicy = obtainCrossOriginEmbedderPolicy(response, IsSecureContext::Yes, CredentiallessSupport::No, nullptr);
     m_referrerPolicy = response.httpHeaderField(HTTPHeaderName::ReferrerPolicy);
     m_responseEncoding = response.textEncodingName();
 

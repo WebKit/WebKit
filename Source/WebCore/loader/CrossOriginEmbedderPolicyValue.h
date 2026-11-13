@@ -26,16 +26,44 @@
 #pragma once
 
 #include <array>
+#include <cstdint>
+#include <wtf/EnumTraits.h>
 
 namespace WebCore {
 
 // https://html.spec.whatwg.org/multipage/origin.html#embedder-policy-value
 
-enum class CrossOriginEmbedderPolicyValue : bool {
+enum class CrossOriginEmbedderPolicyValue : uint8_t {
     UnsafeNone,
-    RequireCORP
+    RequireCORP,
+    Credentialless
 };
 
-inline constexpr std::array allCrossOriginEmbedderPolicyValues { CrossOriginEmbedderPolicyValue::UnsafeNone, CrossOriginEmbedderPolicyValue::RequireCORP };
+inline constexpr std::array allCrossOriginEmbedderPolicyValues { CrossOriginEmbedderPolicyValue::UnsafeNone, CrossOriginEmbedderPolicyValue::RequireCORP, CrossOriginEmbedderPolicyValue::Credentialless };
+
+// https://html.spec.whatwg.org/multipage/origin.html#compatible-with-cross-origin-isolation
+constexpr bool isCompatibleWithCrossOriginIsolation(CrossOriginEmbedderPolicyValue value)
+{
+    return value != CrossOriginEmbedderPolicyValue::UnsafeNone;
+}
+
+// Workers whose policies are compatible with cross-origin isolation share a context connection, and thereby a process.
+constexpr CrossOriginEmbedderPolicyValue contextConnectionCrossOriginEmbedderPolicyValue(CrossOriginEmbedderPolicyValue value)
+{
+    return isCompatibleWithCrossOriginIsolation(value) ? CrossOriginEmbedderPolicyValue::RequireCORP : CrossOriginEmbedderPolicyValue::UnsafeNone;
+}
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraitsForPersistence<WebCore::CrossOriginEmbedderPolicyValue> {
+    using values = EnumValues<
+        WebCore::CrossOriginEmbedderPolicyValue,
+        WebCore::CrossOriginEmbedderPolicyValue::UnsafeNone,
+        WebCore::CrossOriginEmbedderPolicyValue::RequireCORP,
+        WebCore::CrossOriginEmbedderPolicyValue::Credentialless
+    >;
+};
+
+} // namespace WTF

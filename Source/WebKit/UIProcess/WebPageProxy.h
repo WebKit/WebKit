@@ -233,7 +233,7 @@ enum class DataOwnerType : uint8_t;
 enum class DeviceOrientationOrMotionPermissionState : uint8_t;
 enum class DevicePostureType : uint8_t;
 enum class DiagnosticLoggingDomain : uint8_t;
-enum class DocumentIsolationPolicyValue : bool;
+enum class DocumentIsolationPolicyValue : uint8_t;
 enum class DragControllerAction : uint8_t;
 enum class DragEventHandled : bool;
 enum class DragHandlingMethod : uint8_t;

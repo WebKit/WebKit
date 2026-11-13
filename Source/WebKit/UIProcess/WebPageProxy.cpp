@@ -234,6 +234,7 @@
 #include <WebCore/ContentFilter.h>
 #include <WebCore/ContentSecurityPolicy.h>
 #include <WebCore/ContentSecurityPolicyResponseHeaders.h>
+#include <WebCore/CrossOriginEmbedderPolicy.h>
 #include <WebCore/CrossOriginOpenerPolicy.h>
 #include <WebCore/CrossSiteNavigationDataTransfer.h>
 #include <WebCore/CryptoKey.h>
@@ -12363,7 +12364,7 @@ void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process,
     RefPtr navigation = navigationID ? m_navigationState->navigation(*navigationID) : nullptr;
 
     // COOP only applies to top-level browsing contexts.
-    if (frame->isMainFrame() && coopValuesRequireBrowsingContextGroupSwitch(isShowingInitialAboutBlank ? WebCore::IsInitialAboutBlank::Yes : WebCore::IsInitialAboutBlank::No, activeDocumentCOOPValue, frame->documentSecurityOriginData().securityOrigin().get(), obtainCrossOriginOpenerPolicy(response).value, SecurityOrigin::create(response.url()).get())) {
+    if (frame->isMainFrame() && coopValuesRequireBrowsingContextGroupSwitch(isShowingInitialAboutBlank ? WebCore::IsInitialAboutBlank::Yes : WebCore::IsInitialAboutBlank::No, activeDocumentCOOPValue, frame->documentSecurityOriginData().securityOrigin().get(), obtainCrossOriginOpenerPolicy(response, protect(preferences())->credentiallessSupport()).value, SecurityOrigin::create(response.url()).get())) {
         mainFrame()->disownOpener();
         m_openedMainFrameName = { };
         m_openedByScriptDomain = { };

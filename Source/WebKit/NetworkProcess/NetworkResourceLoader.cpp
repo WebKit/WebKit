@@ -907,14 +907,14 @@ bool NetworkResourceLoader::shouldInterruptNavigationForCrossOriginEmbedderPolic
     ASSERT(isMainResource());
 
     // https://html.spec.whatwg.org/multipage/origin.html#check-a-navigation-response's-adherence-to-its-embedder-policy
-    if (m_parameters.parentCrossOriginEmbedderPolicy.value == WebCore::CrossOriginEmbedderPolicyValue::RequireCORP || m_parameters.parentCrossOriginEmbedderPolicy.reportOnlyValue == WebCore::CrossOriginEmbedderPolicyValue::RequireCORP) {
-        // A parent can only require CORP in a secure context, so only the response URL matters.
+    if (isCompatibleWithCrossOriginIsolation(m_parameters.parentCrossOriginEmbedderPolicy.value) || isCompatibleWithCrossOriginIsolation(m_parameters.parentCrossOriginEmbedderPolicy.reportOnlyValue)) {
+        // A parent can only have an embedder policy in a secure context, so only the response URL matters.
         auto isSecureContext = WebCore::SecurityOrigin::create(response.url())->isPotentiallyTrustworthy() ? WebCore::IsSecureContext::Yes : WebCore::IsSecureContext::No;
-        auto responseCOEP = WebCore::obtainCrossOriginEmbedderPolicy(response, isSecureContext, nullptr);
-        if (m_parameters.parentCrossOriginEmbedderPolicy.reportOnlyValue == WebCore::CrossOriginEmbedderPolicyValue::RequireCORP && responseCOEP.value != WebCore::CrossOriginEmbedderPolicyValue::RequireCORP)
+        auto responseCOEP = WebCore::obtainCrossOriginEmbedderPolicy(response, isSecureContext, connectionToWebProcess().credentiallessSupport(), nullptr);
+        if (isCompatibleWithCrossOriginIsolation(m_parameters.parentCrossOriginEmbedderPolicy.reportOnlyValue) && !isCompatibleWithCrossOriginIsolation(responseCOEP.value))
             sendCOEPInheritenceViolation(*this, m_parameters.parentFrameURL.isValid() ? m_parameters.parentFrameURL : aboutBlankURL(), m_parameters.parentCrossOriginEmbedderPolicy.reportOnlyReportingEndpoint, COEPDisposition::Reporting, "navigation"_s, m_firstResponseURL);
 
-        if (m_parameters.parentCrossOriginEmbedderPolicy.value != WebCore::CrossOriginEmbedderPolicyValue::UnsafeNone && responseCOEP.value != WebCore::CrossOriginEmbedderPolicyValue::RequireCORP) {
+        if (isCompatibleWithCrossOriginIsolation(m_parameters.parentCrossOriginEmbedderPolicy.value) && !isCompatibleWithCrossOriginIsolation(responseCOEP.value)) {
             String errorMessage = makeString("Refused to display '"_s, response.url().stringCenterEllipsizedToLength(), "' in a frame because of Cross-Origin-Embedder-Policy."_s);
             send(Messages::WebPage::AddConsoleMessage { frameID(),  MessageSource::Security, MessageLevel::Error, errorMessage, coreIdentifier() }, pageID());
             sendCOEPInheritenceViolation(*this, m_parameters.parentFrameURL.isValid() ? m_parameters.parentFrameURL : aboutBlankURL(), m_parameters.parentCrossOriginEmbedderPolicy.reportingEndpoint, COEPDisposition::Enforce, "navigation"_s, m_firstResponseURL);
@@ -931,13 +931,13 @@ bool NetworkResourceLoader::shouldInterruptWorkerLoadForCrossOriginEmbedderPolic
     if (m_parameters.options.destination != FetchOptions::Destination::Worker)
         return false;
 
-    if (m_parameters.crossOriginEmbedderPolicy.value == WebCore::CrossOriginEmbedderPolicyValue::RequireCORP || m_parameters.crossOriginEmbedderPolicy.reportOnlyValue == WebCore::CrossOriginEmbedderPolicyValue::RequireCORP) {
-        // An owner can only require CORP in a secure context, which its worker inherits.
-        auto responseCOEP = WebCore::obtainCrossOriginEmbedderPolicy(response, WebCore::IsSecureContext::Yes, nullptr);
-        if (m_parameters.crossOriginEmbedderPolicy.reportOnlyValue == WebCore::CrossOriginEmbedderPolicyValue::RequireCORP && responseCOEP.value == WebCore::CrossOriginEmbedderPolicyValue::UnsafeNone)
+    if (isCompatibleWithCrossOriginIsolation(m_parameters.crossOriginEmbedderPolicy.value) || isCompatibleWithCrossOriginIsolation(m_parameters.crossOriginEmbedderPolicy.reportOnlyValue)) {
+        // An owner can only have an embedder policy in a secure context, which its worker inherits.
+        auto responseCOEP = WebCore::obtainCrossOriginEmbedderPolicy(response, WebCore::IsSecureContext::Yes, connectionToWebProcess().credentiallessSupport(), nullptr);
+        if (isCompatibleWithCrossOriginIsolation(m_parameters.crossOriginEmbedderPolicy.reportOnlyValue) && !isCompatibleWithCrossOriginIsolation(responseCOEP.value))
             sendCOEPInheritenceViolation(*this, contextURLForReport(), m_parameters.crossOriginEmbedderPolicy.reportOnlyReportingEndpoint, COEPDisposition::Reporting, "worker initialization"_s, m_firstResponseURL);
 
-        if (m_parameters.crossOriginEmbedderPolicy.value == WebCore::CrossOriginEmbedderPolicyValue::RequireCORP && responseCOEP.value == WebCore::CrossOriginEmbedderPolicyValue::UnsafeNone) {
+        if (isCompatibleWithCrossOriginIsolation(m_parameters.crossOriginEmbedderPolicy.value) && !isCompatibleWithCrossOriginIsolation(responseCOEP.value)) {
             String errorMessage = makeString("Refused to load '"_s, response.url().stringCenterEllipsizedToLength(), "' worker because of Cross-Origin-Embedder-Policy."_s);
             send(Messages::WebPage::AddConsoleMessage { frameID(),  MessageSource::Security, MessageLevel::Error, errorMessage, coreIdentifier() }, pageID());
             sendCOEPInheritenceViolation(*this, contextURLForReport(), m_parameters.crossOriginEmbedderPolicy.reportingEndpoint, COEPDisposition::Enforce, "worker initialization"_s, m_firstResponseURL);
@@ -976,7 +976,7 @@ std::optional<ResourceError> NetworkResourceLoader::doCrossOriginOpenerHandlingO
         m_currentCoopEnforcementResult = CrossOriginOpenerPolicyEnforcementResult::from(m_parameters.documentURL, WTF::move(sourceOrigin), m_parameters.sourceCrossOriginOpenerPolicy, m_parameters.navigationRequester, m_parameters.openerURL);
     }
 
-    m_currentCoopEnforcementResult = WebCore::doCrossOriginOpenerHandlingOfResponse(*this, response, m_parameters.navigationRequester, CheckedPtr { contentSecurityPolicy.get() }, m_parameters.effectiveSandboxFlags, originalRequest().httpReferrer(), m_parameters.isDisplayingInitialEmptyDocument, *m_currentCoopEnforcementResult);
+    m_currentCoopEnforcementResult = WebCore::doCrossOriginOpenerHandlingOfResponse(*this, response, m_parameters.navigationRequester, CheckedPtr { contentSecurityPolicy }, m_parameters.effectiveSandboxFlags, originalRequest().httpReferrer(), m_parameters.isDisplayingInitialEmptyDocument, *m_currentCoopEnforcementResult, connectionToWebProcess().credentiallessSupport());
     if (!m_currentCoopEnforcementResult)
         return ResourceError { errorDomainWebKitInternal, 0, response.url(), "Navigation was blocked by Cross-Origin-Opener-Policy"_s, ResourceError::Type::AccessControl };
     return std::nullopt;
@@ -1645,7 +1645,7 @@ bool NetworkResourceLoader::shouldConsiderProcessSwapForDocumentIsolationPolicy(
 
     // This ignores the top-level creation URL, which the UI process takes into account when it decides.
     auto isSecureContext = SecurityOrigin::create(url)->isPotentiallyTrustworthy() ? IsSecureContext::Yes : IsSecureContext::No;
-    bool needsIsolation = obtainDocumentIsolationPolicy(response, isSecureContext).value != DocumentIsolationPolicyValue::None;
+    bool needsIsolation = obtainDocumentIsolationPolicy(response, isSecureContext, connection->credentiallessSupport()).value != DocumentIsolationPolicyValue::None;
     return needsIsolation != (crossOriginIsolation == ProcessCrossOriginIsolation::DocumentIsolationPolicy);
 }
 
