@@ -82,12 +82,12 @@ void LegacyRenderSVGShape::fillShape(GraphicsContext& context) const
 void LegacyRenderSVGShape::strokeShape(GraphicsContext& context) const
 {
     ASSERT(m_path);
-    Path* usePath = m_path.get();
+    if (hasNonScalingStroke()) {
+        context.strokePath(nonScalingStrokePath(*m_path, computeNonScalingStrokeTransform()));
+        return;
+    }
 
-    if (hasNonScalingStroke())
-        usePath = nonScalingStrokePath(usePath, computeNonScalingStrokeTransform());
-
-    context.strokePath(*usePath);
+    context.strokePath(*m_path);
 }
 
 bool LegacyRenderSVGShape::shapeDependentStrokeContains(const FloatPoint& point, PointCoordinateSpace pointCoordinateSpace)
@@ -95,8 +95,7 @@ bool LegacyRenderSVGShape::shapeDependentStrokeContains(const FloatPoint& point,
     if (hasNonScalingStroke() && pointCoordinateSpace != LocalCoordinateSpace) {
         ASSERT(m_path);
         AffineTransform nonScalingTransform = computeNonScalingStrokeTransform();
-        Path* usePath = nonScalingStrokePath(m_path.get(), nonScalingTransform);
-        return usePath->strokeContains(nonScalingTransform.mapPoint(point), [this] (GraphicsContext& context) {
+        return nonScalingStrokePath(*m_path, nonScalingTransform).strokeContains(nonScalingTransform.mapPoint(point), [this](GraphicsContext& context) {
             SVGRenderSupport::applyStrokeStyleToContext(context, style(), *this);
         });
     }
@@ -178,14 +177,11 @@ void LegacyRenderSVGShape::layout()
     clearNeedsLayout();
 }
 
-Path* LegacyRenderSVGShape::nonScalingStrokePath(const Path* path, const AffineTransform& strokeTransform) const
+Path LegacyRenderSVGShape::nonScalingStrokePath(const Path& path, const AffineTransform& strokeTransform) const
 {
-    static NeverDestroyed<Path> tempPath;
-
-    tempPath.get() = *path;
-    tempPath.get().transform(strokeTransform);
-
-    return &tempPath.get();
+    auto transformedPath = path;
+    transformedPath.transform(strokeTransform);
+    return transformedPath;
 }
 
 bool LegacyRenderSVGShape::setupNonScalingStrokeContext(AffineTransform& strokeTransform, GraphicsContextStateSaver& stateSaver)
@@ -326,8 +322,7 @@ bool LegacyRenderSVGShape::isPointInStroke(const FloatPoint& point)
 
     if (hasNonScalingStroke() && hasPath()) {
         AffineTransform nonScalingTransform = computeNonScalingStrokeTransform();
-        auto& usePath = *nonScalingStrokePath(m_path.get(), nonScalingTransform);
-        return usePath.strokeContains(nonScalingTransform.mapPoint(point), [checkedThis = CheckedRef { *this }](GraphicsContext& context) {
+        return nonScalingStrokePath(*m_path, nonScalingTransform).strokeContains(nonScalingTransform.mapPoint(point), [checkedThis = CheckedRef { *this }](GraphicsContext& context) {
             SVGRenderSupport::applyStrokeStyleToContext(context, checkedThis->style(), checkedThis.get());
         });
     }
@@ -401,8 +396,7 @@ FloatRect LegacyRenderSVGShape::calculateStrokeBoundingBox() const
         if (hasNonScalingStroke()) {
             AffineTransform nonScalingTransform = computeNonScalingStrokeTransform();
             if (std::optional<AffineTransform> inverse = nonScalingTransform.inverse()) {
-                Path* usePath = nonScalingStrokePath(m_path.get(), nonScalingTransform);
-                FloatRect strokeBoundingRect = usePath->strokeBoundingRect(Function<void(GraphicsContext&)> { [this] (GraphicsContext& context) {
+                FloatRect strokeBoundingRect = nonScalingStrokePath(*m_path, nonScalingTransform).strokeBoundingRect(Function<void(GraphicsContext&)> { [this](GraphicsContext& context) {
                     SVGRenderSupport::applyStrokeStyleToContext(context, style(), *this);
                 } });
                 strokeBoundingRect = inverse.value().mapRect(strokeBoundingRect);

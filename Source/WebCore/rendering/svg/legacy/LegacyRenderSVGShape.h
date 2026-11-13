@@ -100,7 +100,7 @@ protected:
 
     inline bool hasNonScalingStroke() const;
     AffineTransform computeNonScalingStrokeTransform() const;
-    Path* nonScalingStrokePath(const Path*, const AffineTransform&) const;
+    Path nonScalingStrokePath(const Path&, const AffineTransform&) const;
 
     virtual FloatRect adjustStrokeBoundingBoxForMarkersAndZeroLengthLinecaps(RepaintRectCalculation, FloatRect strokeBoundingBox) const { return strokeBoundingBox; }
 

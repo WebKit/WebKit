@@ -120,7 +120,7 @@ protected:
     float strokeWidthForMarkerUnits() const;
 
     inline bool hasNonScalingStroke() const;
-    Path* nonScalingStrokePath(const Path*, const AffineTransform&) const;
+    Path nonScalingStrokePath(const Path&, const AffineTransform&) const;
 
     virtual FloatRect adjustStrokeBoundingBoxForZeroLengthLinecaps(RepaintRectCalculation, FloatRect strokeBoundingBox) const { return strokeBoundingBox; }
 
