@@ -69,9 +69,11 @@ function testPreservesPitch(preservesPitch, playbackRate, expectedPitch, descrip
         }
 
         // Wait until we have played some audio. Otherwise, the detector
-        // might return a pitch of 0Hz.
+        // might return a pitch of 0Hz. Scale the threshold by the playback
+        // rate so that there is always enough wall-clock time for the
+        // analyser to accumulate data.
         audio.play();
-        await waitUntil(0.5);
+        await waitUntil(0.5 * Math.max(playbackRate, 1));
 
         var pitch = detector.detect();
 
