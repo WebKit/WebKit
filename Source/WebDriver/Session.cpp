@@ -1577,7 +1577,7 @@ void Session::getElementTagName(const String& elementID, Function<void(CommandRe
         parameters->setString("browsingContextHandle"_s, uncheckedTopLevelBrowsingContext());
         if (m_currentBrowsingContext)
             parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
-        parameters->setString("function"_s, "function(element) { return element.tagName.toLowerCase() }"_s);
+        parameters->setString("function"_s, "function(element) { return element.prefix ? element.prefix + ':' + element.localName : element.localName }"_s);
         parameters->setArray("arguments"_s, WTF::move(arguments));
         m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTF::move(parameters), [protectedThis, completionHandler = WTF::move(completionHandler)](SessionHost::CommandResponse&& response) {
             if (response.isError || !response.responseObject) {

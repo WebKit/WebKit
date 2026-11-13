@@ -2451,27 +2451,6 @@
         "subtests": {
             "test_no_such_element_with_shadow_root": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/230612"}}
-            },
-            "test_get_element_tag_name_namespace_created_via_script[custom mixed]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Get Element Tag Name lowercases the qualified name"}}
-            },
-            "test_get_element_tag_name_namespace_created_via_script[html upper]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Get Element Tag Name lowercases the qualified name"}}
-            },
-            "test_get_element_tag_name_namespace_created_via_script[svg mixed]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Get Element Tag Name lowercases the qualified name"}}
-            },
-            "test_get_element_tag_name_namespace_created_via_script[svg upper prefixed]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Get Element Tag Name lowercases the qualified name"}}
-            },
-            "test_get_element_tag_name_namespace_created_via_script[svg upper]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Get Element Tag Name lowercases the qualified name"}}
-            },
-            "test_get_element_tag_name_with_namespace_prefix": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Get Element Tag Name lowercases the qualified name"}}
-            },
-            "test_get_svg_element_tag_name": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Get Element Tag Name lowercases the qualified name"}}
             }
         }
     },
