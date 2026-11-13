@@ -152,6 +152,9 @@ public:
     std::optional<LayoutUnit> availableSpace(Style::GridTrackSizingDirection direction) const { return direction == Style::GridTrackSizingDirection::Columns ? m_availableSpaceColumns : m_availableSpaceRows; }
     NODELETE void setAvailableSpace(Style::GridTrackSizingDirection, std::optional<LayoutUnit>);
 
+    // For the repetitions of an intrinsic repeat(): treats the grid lanes container's items as auto-placed and stops after resolving intrinsic track sizes.
+    void setIsComputingHypotheticalTrackSizes(bool isComputingHypotheticalTrackSizes) { m_isComputingHypotheticalTrackSizes = isComputingHypotheticalTrackSizes; }
+
     LayoutUnit computeTrackBasedSize() const;
 
     bool hasAllLengthRowSizes() const;
@@ -296,6 +299,7 @@ private:
     bool m_needsSetup { true };
     bool m_hasPercentSizedRowsIndefiniteHeight { false };
     bool m_hasFlexibleMaxTrackBreadth { false };
+    bool m_isComputingHypotheticalTrackSizes { false };
     std::optional<LayoutUnit> m_availableSpaceRows;
     std::optional<LayoutUnit> m_availableSpaceColumns;
 

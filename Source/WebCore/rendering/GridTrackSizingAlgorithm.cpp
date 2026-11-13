@@ -1946,13 +1946,16 @@ void GridTrackSizingAlgorithm::computeDefiniteAndIndefiniteItemsForGridLanes(Std
         // traverseSubgridTreeForIntrinsicSizing only visits children of grid containers.
         CheckedRef parentGrid = downcast<RenderGrid>(*gridItem.parent());
         auto parentDirection = GridLayoutFunctions::flowAwareDirectionForGridItem(*m_renderGrid, parentGrid, m_direction);
+        bool isDirectChildOfGridLanesContainer = parentGrid.ptr() == m_renderGrid;
         // For display:grid subgrids (not display:grid-lanes) inside a grid-lanes parent,
         // items have been placed by the grid's auto-placement algorithm, so they should
         // not be considered indefinite even if their CSS style uses auto placement.
         // We check isGridLanes() to see if the parent uses grid-lanes display at all,
         // rather than isStackingAxis() for one specific direction.
-        bool isIndefinite = parentGrid->isGridLanes() && Style::GridPositionsResolver::resolveGridPositionsFromStyle(parentGrid, gridItem, parentDirection).isIndefinite();
-        bool isDirectChildOfGridLanesContainer = parentGrid.ptr() == m_renderGrid;
+        // When computing hypothetical track sizes, "Ignore explicit item placement. (That is, assume all items have an automatic position.)"
+        // FIXME: Also assume this for subgrids, so that their items contribute to every track.
+        bool isAssumedAutoPlaced = m_isComputingHypotheticalTrackSizes && isDirectChildOfGridLanesContainer;
+        bool isIndefinite = parentGrid->isGridLanes() && (isAssumedAutoPlaced || Style::GridPositionsResolver::resolveGridPositionsFromStyle(parentGrid, gridItem, parentDirection).isIndefinite());
 
         if (isIndefinite && !isDirectChildOfGridLanesContainer) {
             // Items inside a grid-lanes subgrid with indefinite placement could land in any
@@ -2293,6 +2296,9 @@ void GridTrackSizingAlgorithm::run(Style::GridTrackSizingDirection direction, un
     // Step 2.
     if (!m_contentSizedTracksIndex.isEmpty())
         (!m_renderGrid->isGridLanes()) ? resolveIntrinsicTrackSizes(gridLayoutState) : resolveIntrinsicTrackSizesGridLanes(gridLayoutState);
+
+    if (m_isComputingHypotheticalTrackSizes)
+        return;
 
     // This is not exactly a step of the track sizing algorithm, but we use the track sizes computed
     // up to this moment (before maximization) to calculate the grid container intrinsic sizes.

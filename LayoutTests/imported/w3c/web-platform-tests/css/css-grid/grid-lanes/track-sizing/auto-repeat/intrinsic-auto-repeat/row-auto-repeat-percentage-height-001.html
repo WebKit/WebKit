@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>CSS Grid Lanes Test: a percentage height counts as auto for intrinsic repeat(auto-fill) rows</title>
+  <link rel="author" title="Joanne Pan" href="mailto:jopan@apple.com">
+  <link rel="help" href="https://drafts.csswg.org/css-grid-3/#intrinsic-auto-repeat">
+  <meta name="assert" content="Test passes if an item with a percentage height gives a row grid lanes container the same number of intrinsic repeat(auto-fill) rows as an item with an auto height, on the first layout and after a relayout.">
+  <script src="/resources/testharness.js"></script>
+  <script src="/resources/testharnessreport.js"></script>
+  <style>
+    .grid-lanes {
+      display: grid-lanes;
+      grid-template-rows: repeat(auto-fill, auto);
+      gap: 10px;
+      width: 300px;
+      height: 600px;
+    }
+    .grid-lanes > div {
+      width: 10px;
+    }
+  </style>
+</head>
+<body>
+<div id="percentage" class="grid-lanes"><div style="height: 25%"></div><div id="fixed" style="height: 30px"></div></div>
+<div id="auto" class="grid-lanes"><div></div><div id="autoFixed" style="height: 30px"></div></div>
+<script>
+function rowCount(id) {
+  return getComputedStyle(document.getElementById(id)).gridTemplateRows.split(" ").length;
+}
+
+test(() => {
+  assert_equals(rowCount("percentage"), rowCount("auto"));
+}, "First layout");
+
+test(() => {
+  document.getElementById("fixed").style.height = "31px";
+  document.getElementById("autoFixed").style.height = "31px";
+  assert_equals(rowCount("percentage"), rowCount("auto"));
+}, "After a relayout");
+</script>
+</body>
+</html>

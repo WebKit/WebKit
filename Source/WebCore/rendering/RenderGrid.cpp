@@ -962,7 +962,7 @@ std::optional<LayoutUnit> RenderGrid::explicitIntrinsicInnerLogicalSize(Style::G
     return explicitIntrinsicInnerLogicalHeight();
 }
 
-unsigned RenderGrid::computeAutoRepeatTracksCount(Style::GridTrackSizingDirection direction, std::optional<LayoutUnit> availableSize) const
+unsigned RenderGrid::computeAutoRepeatTracksCount(Style::GridTrackSizingDirection direction, std::optional<LayoutUnit> availableSize)
 {
     ASSERT(!availableSize || availableSize.value() != -1);
     bool isRowAxis = direction == Style::GridTrackSizingDirection::Columns;
@@ -1061,14 +1061,22 @@ unsigned RenderGrid::computeAutoRepeatTracksCount(Style::GridTrackSizingDirectio
     }
 
     auto usedZoomForLength = style().usedZoomForLength();
+    std::optional<Vector<LayoutUnit>> hypotheticalAutoRepeatTrackSizes;
     LayoutUnit autoRepeatTracksSize;
-    for (auto& autoTrackSize : autoRepeatTracks) {
+    for (unsigned autoRepeatTrackIndex = 0; autoRepeatTrackIndex < autoRepeatTrackListLength; ++autoRepeatTrackIndex) {
+        auto& autoTrackSize = autoRepeatTracks[autoRepeatTrackIndex];
         auto& minTrackSizingFunction = autoTrackSize.minTrackBreadth();
         auto& maxTrackSizingFunction = autoTrackSize.maxTrackBreadth();
         bool hasDefiniteMaxTrackSizingFunction = maxTrackSizingFunction.isLength() && !maxTrackSizingFunction.isContentSized();
         bool hasDefiniteMinTrackSizingFunction = minTrackSizingFunction.isLength() && !minTrackSizingFunction.isContentSized();
-        if (!hasDefiniteMaxTrackSizingFunction && !hasDefiniteMinTrackSizingFunction)
-            return autoRepeatTrackListLength;
+        if (!hasDefiniteMaxTrackSizingFunction && !hasDefiniteMinTrackSizingFunction) {
+            if (!isGridLanes() || isStackingAxis(direction))
+                return autoRepeatTrackListLength;
+            if (!hypotheticalAutoRepeatTrackSizes)
+                hypotheticalAutoRepeatTrackSizes = computeHypotheticalAutoRepeatTrackSizes(direction, *availableSize);
+            autoRepeatTracksSize += (*hypotheticalAutoRepeatTrackSizes)[autoRepeatTrackIndex];
+            continue;
+        }
         ASSERT(minTrackSizingFunction.isLength());
         ASSERT(!minTrackSizingFunction.isFlex());
 
@@ -1176,6 +1184,103 @@ void RenderGrid::placeItems()
     placeItemsOnGrid(availableSpaceForColumns);
 }
 
+// The hypothetical grid repeats the listing only in the direction being sized.
+static void setAutoRepeatTracks(Grid& grid, Style::GridTrackSizingDirection direction, unsigned autoRepeatTracks)
+{
+    if (direction == Style::GridTrackSizingDirection::Rows)
+        grid.setAutoRepeatTracks(autoRepeatTracks, 0);
+    else
+        grid.setAutoRepeatTracks(0, autoRepeatTracks);
+}
+
+// Grid items should use the grid area sizes instead of the containing block (grid container) sizes, we initialize the overrides here if needed to ensure it.
+static void initializeGridAreaSizesIfNeeded(RenderBox& gridItem)
+{
+    if (!gridItem.gridAreaContentLogicalWidth())
+        gridItem.setGridAreaContentLogicalWidth(0_lu);
+    if (!gridItem.gridAreaContentLogicalHeight())
+        gridItem.setGridAreaContentLogicalHeight(std::nullopt);
+}
+
+// "In order to resolve the number of repetitions, a hypothetical size is calculated for such tracks by initializing the track sizes
+// and resolving intrinsic track sizes"
+Vector<LayoutUnit> RenderGrid::computeHypotheticalAutoRepeatTrackSizes(Style::GridTrackSizingDirection direction, LayoutUnit availableSize)
+{
+    unsigned autoRepeatTrackListLength = style().gridTemplateList(direction).autoRepeatSizes.size();
+    Vector<LayoutUnit> hypotheticalTrackSizes(autoRepeatTrackListLength);
+
+    Grid hypotheticalGrid;
+    auto currentGridScope = SetForScope(m_grid.m_currentGrid, std::ref(hypotheticalGrid));
+    // This pass measures the items under other conditions than the row sizing whose heights the cache keeps.
+    auto rowSizingCacheScope = SetForScope(m_intrinsicLogicalHeightsForRowSizingFirstPass, std::nullopt);
+    setAutoRepeatTracks(hypotheticalGrid, direction, autoRepeatTrackListLength);
+
+    // "Ignore explicit item placement. (That is, assume all items have an automatic position.)"
+    unsigned largestSpan = 1;
+    Vector<std::pair<CheckedRef<RenderBox>, unsigned>> gridItemSpanSizes;
+    {
+        OrderIteratorPopulator populator(hypotheticalGrid.orderIterator());
+        for (auto& gridItem : childrenOfType<RenderBox>(*this)) {
+            if (!populator.collectChild(gridItem))
+                continue;
+            auto gridAxisPosition = Style::GridPositionsResolver::resolveGridPositionsFromStyle(*this, gridItem, direction);
+            unsigned spanSize = gridAxisPosition.isIndefinite() ? Style::GridPositionsResolver::spanSizeForAutoPlacedItem(gridItem, direction) : gridAxisPosition.integerSpan();
+            largestSpan = std::max(largestSpan, spanSize);
+            gridItemSpanSizes.append({ gridItem, spanSize });
+        }
+    }
+    if (gridItemSpanSizes.isEmpty())
+        return hypotheticalTrackSizes;
+
+    // "Expand the repeated track listing to capture all possible automatic placements of each item, i.e. repeat the track listing
+    // 2 + (largest span - 2)/(number of tracks in repeat()) times, rounded down to a whole number."
+    // Without spanning items that is one repetition, which the unsigned arithmetic below can't compute.
+    constexpr unsigned spanningItemBaseRepetitions = 2;
+    unsigned repetitions = largestSpan > 1 ? spanningItemBaseRepetitions + (largestSpan - spanningItemBaseRepetitions) / autoRepeatTrackListLength : 1;
+    setAutoRepeatTracks(hypotheticalGrid, direction, clampAutoRepeatTracks(direction, repetitions * autoRepeatTrackListLength));
+
+    // The hypothetical grid is the explicit grid, without the implicit tracks that explicit placement would add.
+    hypotheticalGrid.ensureGridSize(std::max(1u, Style::GridPositionsResolver::explicitGridCount(*this, Style::GridTrackSizingDirection::Rows)), std::max(1u, Style::GridPositionsResolver::explicitGridCount(*this, Style::GridTrackSizingDirection::Columns)));
+    auto stackingAxisPosition = GridSpan::stackingAxisTranslatedDefiniteGridSpan();
+    for (auto& [gridItem, spanSize] : gridItemSpanSizes) {
+        initializeGridAreaSizesIfNeeded(gridItem);
+        auto gridAxisPosition = GridSpan::translatedDefiniteGridSpan(0, spanSize);
+        hypotheticalGrid.insert(gridItem, direction == Style::GridTrackSizingDirection::Rows ? GridArea { gridAxisPosition, stackingAxisPosition } : GridArea { stackingAxisPosition, gridAxisPosition });
+    }
+    hypotheticalGrid.setNeedsItemsPlacement(false);
+
+    for (CheckedRef gridItem : hypotheticalGrid.orderIterator().gridItems()) {
+        if (CheckedPtr subgrid = dynamicDowncast<RenderGrid>(gridItem); subgrid && (subgrid->isSubgridRows() || subgrid->isSubgridColumns()))
+            subgrid->placeItems();
+    }
+
+    // FIXME: The track sizing that follows the placement measures the items again. Reuse their contributions.
+    // FIXME: While computing intrinsic widths, the items of a row grid lanes container are measured at the width of its last layout,
+    // since gridAreaBreadthForGridItem() uses that width in the stacking axis.
+    GridTrackSizingAlgorithm algorithm(this, hypotheticalGrid);
+    algorithm.setIsComputingHypotheticalTrackSizes(true);
+    performPreLayoutForGridItems(algorithm, ShouldUpdateGridAreaLogicalSize::No);
+    auto alignmentContextType = direction == Style::GridTrackSizingDirection::Columns ? AlignmentContextTypes::Columns : AlignmentContextTypes::Rows;
+    cacheBaselineAlignedGridItems(*this, algorithm, { alignmentContextType }, [](RenderBox*) { }, !isSubgridRows());
+
+    RenderGridLayoutState gridLayoutState;
+    // The algorithm sizes the columns before the rows. When sizing rows the columns are the stacking axis, so this only advances its state.
+    if (direction == Style::GridTrackSizingDirection::Rows)
+        algorithm.run(Style::GridTrackSizingDirection::Columns, hypotheticalGrid.numTracks(Style::GridTrackSizingDirection::Columns), SizingOperation::TrackSizing, std::nullopt, gridLayoutState);
+    algorithm.run(direction, hypotheticalGrid.numTracks(direction), SizingOperation::TrackSizing, availableSize, gridLayoutState);
+
+    // "The hypothetical size of each track in the repeat() listing is given by the largest track corresponding to that entry (by index) in the listing."
+    // The spec doesn't say whether that is the base size or the growth limit. The growth limit is the max-content size of an auto track.
+    auto& tracks = algorithm.tracks(direction);
+    auto autoRepeatTracksRange = this->autoRepeatTracksRange(direction);
+    for (auto trackIndex : std::views::iota(autoRepeatTracksRange.begin(), autoRepeatTracksRange.end())) {
+        auto& track = tracks[trackIndex];
+        auto& hypotheticalTrackSize = hypotheticalTrackSizes[(trackIndex - autoRepeatTracksRange.begin()) % autoRepeatTrackListLength];
+        hypotheticalTrackSize = std::max(hypotheticalTrackSize, track->growthLimitIsInfinite() ? track->baseSize() : track->growthLimit());
+    }
+    return hypotheticalTrackSizes;
+}
+
 bool RenderGrid::isGridLanes() const
 {
     return hasStackingAxisRows() || hasStackingAxisColumns();
@@ -1250,12 +1355,7 @@ void RenderGrid::placeItemsOnGrid(std::optional<LayoutUnit> availableLogicalWidt
     Vector<RenderBox*> autoMajorAxisAutoGridItems;
     Vector<RenderBox*> specifiedMajorAxisAutoGridItems;
     for (CheckedRef gridItem : currentGrid().orderIterator().gridItems()) {
-        // Grid items should use the grid area sizes instead of the containing block (grid container)
-        // sizes, we initialize the overrides here if needed to ensure it.
-        if (!gridItem->gridAreaContentLogicalWidth())
-            gridItem->setGridAreaContentLogicalWidth(0_lu);
-        if (!gridItem->gridAreaContentLogicalHeight())
-            gridItem->setGridAreaContentLogicalHeight(std::nullopt);
+        initializeGridAreaSizesIfNeeded(gridItem);
 
         GridArea area = currentGrid().gridItemArea(gridItem);
         currentGrid().clampAreaToSubgridIfNeeded(area);

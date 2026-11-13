@@ -1,3 +1,3 @@
 
-FAIL CSS Grid Lanes Test: intrinsic auto-repeat rows sized by a larger trailing subgrid item assert_equals: expected "150px 150px 150px 150px" but got "600px"
+FAIL CSS Grid Lanes Test: intrinsic auto-repeat rows sized by a larger trailing subgrid item assert_equals: expected "150px 150px 150px 150px" but got "137.5px 137.5px 187.5px 137.5px"
 

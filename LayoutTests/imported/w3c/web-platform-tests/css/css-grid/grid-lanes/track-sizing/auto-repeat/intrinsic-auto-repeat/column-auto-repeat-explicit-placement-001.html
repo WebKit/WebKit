@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>CSS Grid Lanes Test: explicit placement doesn't change the number of intrinsic repeat(auto-fill) columns</title>
+  <link rel="author" title="Joanne Pan" href="mailto:jopan@apple.com">
+  <link rel="help" href="https://drafts.csswg.org/css-grid-3/#intrinsic-auto-repeat">
+  <meta name="assert" content="Test passes if placing an item at a line before or after the explicit grid gives a column grid lanes container the same number of intrinsic repeat(auto-fill) columns as auto-placing it, since the hypothetical track sizes ignore explicit item placement.">
+  <script src="/resources/testharness.js"></script>
+  <script src="/resources/testharnessreport.js"></script>
+  <style>
+    .grid-lanes {
+      display: grid-lanes;
+      grid-template-columns: repeat(auto-fill, auto);
+      grid-auto-columns: 0px;
+      width: 600px;
+    }
+    .grid-lanes > div {
+      height: 20px;
+    }
+    .spanning {
+      grid-column: span 2;
+      width: 200px;
+    }
+    .small {
+      width: 10px;
+    }
+  </style>
+</head>
+<body>
+<div id="auto" class="grid-lanes"><div class="spanning"></div><div class="small"></div></div>
+<div id="after" class="grid-lanes"><div class="spanning"></div><div class="small" style="grid-column: 5"></div></div>
+<div id="before" class="grid-lanes"><div class="spanning"></div><div class="small" style="grid-column: -4"></div></div>
+<script>
+function columnCount(id) {
+  return getComputedStyle(document.getElementById(id)).gridTemplateColumns.split(" ").length;
+}
+
+test(() => {
+  assert_equals(columnCount("after"), columnCount("auto"));
+}, "An item placed after the explicit grid");
+
+test(() => {
+  assert_equals(columnCount("before"), columnCount("auto"));
+}, "An item placed before the explicit grid");
+</script>
+</body>
+</html>

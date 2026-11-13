@@ -201,7 +201,8 @@ private:
     bool namedGridLinesDefinitionDidChange(const Style::ComputedStyle&) const;
     bool implicitGridLinesDefinitionDidChange(const Style::ComputedStyle&) const;
 
-    unsigned computeAutoRepeatTracksCount(Style::GridTrackSizingDirection, std::optional<LayoutUnit> availableSize) const;
+    unsigned computeAutoRepeatTracksCount(Style::GridTrackSizingDirection, std::optional<LayoutUnit> availableSize);
+    Vector<LayoutUnit> computeHypotheticalAutoRepeatTrackSizes(Style::GridTrackSizingDirection, LayoutUnit availableSize);
 
     NODELETE unsigned clampAutoRepeatTracks(Style::GridTrackSizingDirection, unsigned autoRepeatTracks) const;
 
