@@ -258,6 +258,12 @@ struct OverriddenLayoutParameters {
     CGSize maximumUnobscuredSize { CGSizeZero };
 };
 
+struct ZoomToRevealFocusedElementState {
+    double scaleBeforeZooming { 1 };
+    double zoomedScale { 1 };
+    bool didSameDocumentNavigationSinceZooming { false };
+};
+
 // This holds state that should be reset when the web process exits.
 struct PerWebProcessState {
     CGFloat viewportMetaTagWidth { WebCore::ViewportArguments::ValueAuto };
@@ -317,6 +323,8 @@ struct PerWebProcessState {
     std::optional<LiveResizeParameters> liveResizeParameters;
 
     std::optional<WebKit::TransactionID> firstTransactionIDAfterObscuredInsetChange;
+
+    std::optional<ZoomToRevealFocusedElementState> zoomToRevealFocusedElementState;
 
 #if ENABLE(RESPONSIVE_LIVE_RESIZE_UPDATE)
     std::optional<CGFloat> lastResizedViewWidth;

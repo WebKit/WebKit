@@ -8778,6 +8778,9 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
 
         [_webView.get() didEndFormControlInteraction];
         protect(_page)->setIsShowingInputViewForFocusedElement(_focusedElementInformation.frameID(), false);
+
+        if (!_isChangingFocus)
+            [_webView.get() _didBlurFocusedElement];
     }
 
     _page->setWaitingForPostLayoutEditorStateUpdateAfterFocusingElement(false);

@@ -50,6 +50,7 @@
 #import <JavaScriptCore/JSLock.h>
 #import <WebCore/CommonVM.h>
 #import <WebCore/DocumentLoader.h>
+#import <WebCore/DocumentView.h>
 #import <WebCore/FrameLoadRequest.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/HTMLMediaElement.h>

@@ -1020,6 +1020,7 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView, AllowPageBac
     _perProcessState.resetViewStateAfterTransactionID = protect(downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()))->nextMainFrameLayerTreeTransactionID();
 
     _perProcessState.hasCommittedLoadForMainFrame = YES;
+    _perProcessState.zoomToRevealFocusedElementState = std::nullopt;
 
     if (![self _scrollViewIsRubberBandingForRefreshControl])
         [_scrollView _wk_stopScrollingAndZooming];
@@ -1742,12 +1743,14 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (void)_zoomOutWithOrigin:(WebCore::FloatPoint)origin animated:(BOOL)animated
 {
+    _perProcessState.zoomToRevealFocusedElementState = std::nullopt;
     [self _zoomToCenter:origin atScale:[_scrollView minimumZoomScale] animated:animated honorScrollability:YES];
 }
 
 - (void)_zoomToInitialScaleWithOrigin:(WebCore::FloatPoint)origin animated:(BOOL)animated
 {
     ASSERT(_perProcessState.initialScaleFactor > 0);
+    _perProcessState.zoomToRevealFocusedElementState = std::nullopt;
     [self _zoomToCenter:origin atScale:_perProcessState.initialScaleFactor animated:animated honorScrollability:YES];
 }
 
@@ -1951,8 +1954,14 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
     WebCore::FloatPoint newCenter = CGPointMake(topLeft.x + CGRectGetWidth(self.bounds) / 2, topLeft.y + CGRectGetHeight(self.bounds) / 2);
 
-    if (scale != currentScale)
+    if (scale != currentScale) {
         _page->willStartUserTriggeredZooming();
+
+        // Copy the original scale forward when moving between fields.
+        auto& zoomState = _perProcessState.zoomToRevealFocusedElementState;
+        double scaleBeforeZooming = zoomState && WebKit::scalesAreEssentiallyEqual(zoomState->zoomedScale, currentScale) ? zoomState->scaleBeforeZooming : currentScale;
+        zoomState = ZoomToRevealFocusedElementState { scaleBeforeZooming, scale };
+    }
 
     LOG_WITH_STREAM(VisibleRects, stream << "_zoomToFocusRect: zooming to " << newCenter << " scale:" << scale);
 
@@ -1964,6 +1973,34 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 - (double)_initialScaleFactor
 {
     return _perProcessState.initialScaleFactor;
+}
+
+// If the page performs a same-document navigation and the focused element is blurred (in either order, e.g. after submitting a
+// login form in a single-page app), the zoom from revealing the focused element should be reset like it would for a real navigation.
+- (void)_zoomOutAfterNavigatingAwayFromFocusedElementIfNeeded
+{
+    auto& zoomState = _perProcessState.zoomToRevealFocusedElementState;
+    if (!zoomState || !zoomState->didSameDocumentNavigationSinceZooming || [_contentView isFocusingElement])
+        return;
+
+    auto state = *std::exchange(zoomState, std::nullopt);
+
+    // If the zoom has changed since revealing focus, don't reset it.
+    if (!WebKit::scalesAreEssentiallyEqual(contentZoomScale(self), state.zoomedScale))
+        return;
+
+    double targetScale = clampTo<double>(state.scaleBeforeZooming, [_scrollView minimumZoomScale], [_scrollView maximumZoomScale]);
+    auto bounds = [_scrollView bounds];
+    WebCore::FloatPoint center = [_scrollView convertPoint:CGPointMake(CGRectGetMidX(bounds), CGRectGetMidY(bounds)) toView:_contentView.get()];
+
+    LOG_WITH_STREAM(VisibleRects, stream << "_zoomOutAfterNavigatingAwayFromFocusedElementIfNeeded: zooming from " << state.zoomedScale << " to " << targetScale);
+
+    [self _zoomToCenter:center atScale:targetScale animated:YES honorScrollability:YES];
+}
+
+- (void)_didBlurFocusedElement
+{
+    [self _zoomOutAfterNavigatingAwayFromFocusedElementIfNeeded];
 }
 
 - (double)_contentZoomScale
@@ -1986,6 +2023,8 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 - (BOOL)_zoomToRect:(WebCore::FloatRect)targetRect withOrigin:(WebCore::FloatPoint)origin fitEntireRect:(BOOL)fitEntireRect minimumScale:(double)minimumScale maximumScale:(double)maximumScale minimumScrollDistance:(float)minimumScrollDistance
 {
     const float maximumScaleFactorDeltaForPanScroll = 0.02;
+
+    _perProcessState.zoomToRevealFocusedElementState = std::nullopt;
 
     double currentScale = contentZoomScale(self);
     double targetScale = [self _targetContentZoomScaleForRect:targetRect currentScale:currentScale fitEntireRect:fitEntireRect minimumScale:minimumScale maximumScale:maximumScale];
@@ -2148,6 +2187,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
     if (scrollView.pinchGestureRecognizer.state == UIGestureRecognizerStateBegan) {
         _page->willStartUserTriggeredZooming();
+        _perProcessState.zoomToRevealFocusedElementState = std::nullopt;
 
         [_contentView scrollViewWillStartPanOrPinchGesture];
     }
@@ -3665,6 +3705,10 @@ static WebCore::IntDegrees activeOrientation(WKWebView *webView)
 
     if (_gestureController)
         protect(_gestureController)->didSameDocumentNavigationForMainFrame(navigationType);
+
+    if (auto& zoomState = _perProcessState.zoomToRevealFocusedElementState)
+        zoomState->didSameDocumentNavigationSinceZooming = true;
+    [self _zoomOutAfterNavigatingAwayFromFocusedElementIfNeeded];
 }
 
 - (void)_adjustScrollViewForKeyboardCoalescingAdjustmentsIfNeeded:(NSDictionary *)keyboardInfo
