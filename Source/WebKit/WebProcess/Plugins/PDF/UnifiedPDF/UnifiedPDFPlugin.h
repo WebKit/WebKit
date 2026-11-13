@@ -55,6 +55,7 @@ namespace WebCore {
 class FrameView;
 class GraphicsLayer;
 class GraphicsLayerFactory;
+class ImageBuffer;
 class LocalFrameView;
 class PageOverlay;
 class PlatformWheelEvent;
@@ -494,6 +495,7 @@ private:
     float pageScaleFactor() const override;
 
     void paintPDFContent(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, const WebCore::FloatRect& clipRect, const std::optional<PDFLayoutRow>& = { }, AsyncPDFRenderer* = nullptr);
+    bool recordPageIntoRemoteSnapshot(WebCore::GraphicsContext&, PDFDocumentLayout::PageIndex, const WebCore::FloatRect& pageRect, PDFAccessibilityDisplayMode, WebCore::ImageBuffer& fallback);
     void paintPDFSelection(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, const WebCore::FloatRect& clipRect, std::optional<PDFLayoutRow> = { });
 
     void willChangeVisibleRow();

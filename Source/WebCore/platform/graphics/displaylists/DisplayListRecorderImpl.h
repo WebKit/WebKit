@@ -130,6 +130,8 @@ public:
     // The function should always produce the same GraphicsContext calls.
     WEBCORE_EXPORT void drawPlaceholder(Function<void(GraphicsContext&)>&&);
 
+    WEBCORE_EXPORT void drawPDFPage(Ref<PDFDocumentData>&&, unsigned pageIndex, const FloatRect& pageRect, std::optional<SourceNativeImage>&& fallbackImage);
+
 private:
     WEBCORE_EXPORT RecorderImpl(const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&, const ColorSpace&, DrawGlyphsMode);
 

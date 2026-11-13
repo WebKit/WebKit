@@ -42,6 +42,8 @@
 #include <WebCore/TextFlags.h>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/Box.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/TypeCasts.h>
 
 namespace WTF {
@@ -945,6 +947,67 @@ public:
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const { }
+};
+
+class PDFDocumentData : public ThreadSafeRefCounted<PDFDocumentData> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(PDFDocumentData, WEBCORE_EXPORT);
+public:
+    WEBCORE_EXPORT static Ref<PDFDocumentData> create(Ref<SharedBuffer>&&);
+    WEBCORE_EXPORT virtual ~PDFDocumentData();
+
+    SharedBuffer& data() const { return m_data; }
+    RenderingResourceIdentifier renderingResourceIdentifier() const { return m_renderingResourceIdentifier; }
+
+    virtual void drawPage(GraphicsContext&, unsigned pageIndex, const FloatRect& pageRect);
+
+protected:
+    WEBCORE_EXPORT explicit PDFDocumentData(Ref<SharedBuffer>&&);
+
+private:
+    const Ref<SharedBuffer> m_data;
+    const RenderingResourceIdentifier m_renderingResourceIdentifier { RenderingResourceIdentifier::generate() };
+};
+
+using SourcePDFDocument = Variant<Ref<PDFDocumentData>, RenderingResourceIdentifier>;
+
+class DrawPDFPage {
+public:
+    static constexpr ASCIILiteral name = "draw-pdf-page"_s;
+
+    DrawPDFPage(SourcePDFDocument&& document, unsigned pageIndex, const FloatRect& pageRect, std::optional<SourceNativeImage>&& fallbackImage = std::nullopt)
+        : m_document(WTF::move(document))
+        , m_pageIndex(pageIndex)
+        , m_pageRect(pageRect)
+        , m_fallbackImage(WTF::move(fallbackImage))
+    {
+    }
+
+    PDFDocumentData& document() const
+    {
+        RELEASE_ASSERT(std::holds_alternative<Ref<PDFDocumentData>>(m_document));
+        return std::get<Ref<PDFDocumentData>>(m_document);
+    }
+    void setDocument(Ref<PDFDocumentData>&& document) { m_document = WTF::move(document); }
+    bool isResolved() const;
+
+    RenderingResourceIdentifier documentIdentifier() const
+    {
+        if (auto* identifier = std::get_if<RenderingResourceIdentifier>(&m_document))
+            return *identifier;
+        return document().renderingResourceIdentifier();
+    }
+
+    unsigned pageIndex() const { return m_pageIndex; }
+    const FloatRect& pageRect() const LIFETIME_BOUND { return m_pageRect; }
+
+    WEBCORE_EXPORT void apply(GraphicsContext&) const;
+    void dump(TextStream&, OptionSet<AsTextFlag>) const;
+
+private:
+    SourcePDFDocument m_document;
+    unsigned m_pageIndex { 0 };
+    FloatRect m_pageRect;
+    std::optional<SourceNativeImage> m_fallbackImage;
 };
 
 class DrawRect {

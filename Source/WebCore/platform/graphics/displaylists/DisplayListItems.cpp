@@ -34,6 +34,7 @@
 #include "ImageBuffer.h"
 #include "MediaPlayer.h"
 #include "SharedBuffer.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 #if USE(SKIA)
@@ -807,6 +808,50 @@ void EndTransparencyLayer::apply(GraphicsContext& context) const
 {
     if (context.isInTransparencyLayer())
         context.endTransparencyLayer();
+}
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PDFDocumentData);
+
+Ref<PDFDocumentData> PDFDocumentData::create(Ref<SharedBuffer>&& data)
+{
+    return adoptRef(*new PDFDocumentData(WTF::move(data)));
+}
+
+PDFDocumentData::PDFDocumentData(Ref<SharedBuffer>&& data)
+    : m_data(WTF::move(data))
+{
+}
+
+PDFDocumentData::~PDFDocumentData() = default;
+
+void PDFDocumentData::drawPage(GraphicsContext&, unsigned, const FloatRect&)
+{
+}
+
+bool DrawPDFPage::isResolved() const
+{
+    if (!std::holds_alternative<Ref<PDFDocumentData>>(m_document))
+        return false;
+    return !m_fallbackImage || std::holds_alternative<Ref<const NativeImage>>(*m_fallbackImage);
+}
+
+void DrawPDFPage::apply(GraphicsContext& context) const
+{
+    RELEASE_ASSERT(isResolved());
+    if (m_fallbackImage) {
+        Ref image = std::get<Ref<const NativeImage>>(*m_fallbackImage);
+        context.drawNativeImage(image, m_pageRect, FloatRect { { }, image->size() });
+        return;
+    }
+    std::get<Ref<PDFDocumentData>>(m_document)->drawPage(context, m_pageIndex, m_pageRect);
+}
+
+void DrawPDFPage::dump(TextStream& ts, OptionSet<AsTextFlag> flags) const
+{
+    if (flags.contains(AsTextFlag::IncludeResourceIdentifiers))
+        ts.dumpProperty("document-identifier"_s, documentIdentifier());
+    ts.dumpProperty("page-index"_s, pageIndex());
+    ts.dumpProperty("page-rect"_s, pageRect());
 }
 
 #if USE(CG)

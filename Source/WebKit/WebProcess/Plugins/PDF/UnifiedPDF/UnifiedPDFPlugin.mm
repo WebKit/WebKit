@@ -1032,7 +1032,8 @@ void UnifiedPDFPlugin::paintPDFContent(const WebCore::GraphicsLayer* layer, Grap
                 // Recording contexts (e.g. for remote snapshotting) have no platform context for PDFKit to draw into,
                 // so render into a local (non-remote) buffer first.
                 drawPage(pageBuffer->context(), { 0, pageDestinationRect.height() });
-                context.drawImageBuffer(*pageBuffer, pageDestinationRect);
+                if (!recordPageIntoRemoteSnapshot(context, pageInfo.pageIndex, pageDestinationRect, displayMode, *pageBuffer))
+                    context.drawImageBuffer(*pageBuffer, pageDestinationRect);
             }
         }
 
@@ -1050,6 +1051,32 @@ void UnifiedPDFPlugin::paintPDFContent(const WebCore::GraphicsLayer* layer, Grap
             }
         }
     }
+}
+
+bool UnifiedPDFPlugin::recordPageIntoRemoteSnapshot(GraphicsContext& context, PDFDocumentLayout::PageIndex pageIndex, const FloatRect& pageRect, PDFAccessibilityDisplayMode displayMode, ImageBuffer& fallback)
+{
+#if ENABLE(GPU_PROCESS)
+    if (displayMode != PDFAccessibilityDisplayMode::None)
+        return false;
+
+    RefPtr webPage = this->webPage();
+    if (!webPage)
+        return false;
+
+    return webPage->recordPDFPageIntoRemoteSnapshot(context, identifier(), [&] -> RefPtr<SharedBuffer> {
+        RetainPtr data = liveData();
+        if (!data)
+            return nullptr;
+        return SharedBuffer::create(data.get());
+    }, static_cast<unsigned>(pageIndex), pageRect, fallback);
+#else
+    UNUSED_PARAM(context);
+    UNUSED_PARAM(pageIndex);
+    UNUSED_PARAM(pageRect);
+    UNUSED_PARAM(displayMode);
+    UNUSED_PARAM(fallback);
+    return false;
+#endif
 }
 
 bool UnifiedPDFPlugin::hasSelection() const

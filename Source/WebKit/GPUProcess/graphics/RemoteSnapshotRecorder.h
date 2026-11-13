@@ -55,10 +55,12 @@ private:
 
     // Messages.
     void drawSnapshotFrame(WebCore::FrameIdentifier);
+    void drawPDFPage(WebCore::RenderingResourceIdentifier documentIdentifier, RefPtr<WebCore::SharedBuffer>&&, unsigned pageIndex, const WebCore::FloatRect& pageRect, std::optional<WebCore::RenderingResourceIdentifier> fallbackImageIdentifier);
 
     const Ref<RemoteSnapshot> m_snapshot;
     const Ref<WebCore::DisplayList::RecorderImpl> m_recorder;
     const RemoteSnapshotRecorderIdentifier m_identifier;
+    HashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::DisplayList::PDFDocumentData>> m_pdfDocuments;
 };
 
 } // namespace WebKit

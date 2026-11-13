@@ -52,6 +52,7 @@
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/SourceGraphic.h>
 #include <wtf/Borrow.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 #if ENABLE(APPLE_PAY)
@@ -451,7 +452,7 @@ static void testInvalidFonts(Tester& tester, const Vector<Ref<SharedBuffer>>& we
     auto withGlyphs = [&](DisplayList::DrawGlyphs&& item) {
         Vector<Vector<DisplayListDataItem>> displayLists;
         displayLists.append(Vector<DisplayListDataItem> { WTF::move(item) });
-        return DisplayListData { { }, { fontData }, { }, WTF::move(displayLists) };
+        return DisplayListData { { }, { fontData }, { }, { }, WTF::move(displayLists) };
     };
 
     auto missingFont = glyphs;
@@ -467,7 +468,7 @@ static void testInvalidFonts(Tester& tester, const Vector<Ref<SharedBuffer>>& we
     missingFontData.customFontIndex = 0;
     Vector<Vector<DisplayListDataItem>> displayLists;
     displayLists.append(Vector<DisplayListDataItem> { glyphs });
-    tester.expect(!DisplayListData { { }, { WTF::move(missingFontData) }, { }, WTF::move(displayLists) }.createDisplayList(false), "A font with missing font data fails to decode"_s);
+    tester.expect(!DisplayListData { { }, { WTF::move(missingFontData) }, { }, { }, WTF::move(displayLists) }.createDisplayList(false), "A font with missing font data fails to decode"_s);
 
     if (webFonts.isEmpty())
         return;
@@ -476,7 +477,7 @@ static void testInvalidFonts(Tester& tester, const Vector<Ref<SharedBuffer>>& we
         return;
     auto invalidFontData = customFont->serializedData();
     invalidFontData.fontFaceData = SharedBuffer::create(Vector<uint8_t>(FillWith { }, 64, 0xff));
-    tester.expect(!DisplayListData { { WTF::move(invalidFontData) }, { }, { }, { Vector<DisplayListDataItem> { DisplayList::Save { } } } }.createDisplayList(false), "Invalid font data fails to decode"_s);
+    tester.expect(!DisplayListData { { WTF::move(invalidFontData) }, { }, { }, { }, { Vector<DisplayListDataItem> { DisplayList::Save { } } } }.createDisplayList(false), "Invalid font data fails to decode"_s);
 }
 #endif // USE(CORE_TEXT)
 
@@ -718,6 +719,101 @@ static void testMeshGradients(Tester& tester)
     expectSameDrawing(tester, drawingImage(DisplayList::DrawMeshGradient { WTF::move(gradient), { 10, 10, 80, 80 } }), "Mesh gradients"_s);
 }
 
+class RecordingPDFDocument final : public DisplayList::PDFDocumentData {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(RecordingPDFDocument);
+public:
+    static Ref<RecordingPDFDocument> create(Ref<SharedBuffer>&& data)
+    {
+        return adoptRef(*new RecordingPDFDocument(WTF::move(data)));
+    }
+
+    const Vector<unsigned>& drawnPages() const LIFETIME_BOUND { return m_drawnPages; }
+
+private:
+    explicit RecordingPDFDocument(Ref<SharedBuffer>&& data)
+        : PDFDocumentData(WTF::move(data))
+    {
+    }
+
+    void drawPage(GraphicsContext& context, unsigned pageIndex, const FloatRect& pageRect) final
+    {
+        m_drawnPages.append(pageIndex);
+        context.fillRect(pageRect, Color::blue);
+    }
+
+    Vector<unsigned> m_drawnPages;
+};
+
+static Ref<SharedBuffer> testPDFData()
+{
+    return SharedBuffer::create(Vector<uint8_t> { '%', 'P', 'D', 'F', '-', '1', '.', '4' });
+}
+
+static void testPDFPages(Tester& tester)
+{
+    Ref document = RecordingPDFDocument::create(testPDFData());
+    FloatRect firstPageRect { 10, 10, 40, 40 };
+    FloatRect secondPageRect { 50, 50, 40, 40 };
+    Vector<DisplayList::Item> items;
+    items.append(DisplayList::DrawPDFPage { document.copyRef(), 0, firstPageRect, testNativeImage() });
+    items.append(DisplayList::DrawPDFPage { document.copyRef(), 1, secondPageRect, testNativeImage() });
+    Ref displayList = DisplayList::DisplayList::create(WTF::move(items));
+
+    tester.expect(!isBlank(drawToPixels(displayList)), "PDF pages draw their fallback image in the GPU process"_s);
+    tester.expect(document->drawnPages().isEmpty(), "The GPU process does not draw PDF pages from the PDF data"_s);
+
+    auto data = DisplayListData::create(displayList);
+    tester.expect(!!data, "PDF pages encode"_s);
+    if (!data)
+        return;
+    tester.expect(data->pdfDocuments().size() == 1, "A PDF drawn on two pages is encoded once"_s);
+
+    auto decodedData = encodeAndDecode(WTF::move(*data));
+    tester.expect(!!decodedData, "PDF pages round trip"_s);
+    if (!decodedData)
+        return;
+
+    RefPtr<RecordingPDFDocument> decodedDocument;
+    RefPtr decoded = WTF::move(*decodedData).createDisplayList(false, [&](Ref<SharedBuffer>&& data) -> Ref<DisplayList::PDFDocumentData> {
+        Ref document = RecordingPDFDocument::create(WTF::move(data));
+        decodedDocument = document.ptr();
+        return document;
+    });
+    tester.expect(!!decoded, "PDF pages decode"_s);
+    if (!decoded || !decodedDocument)
+        return;
+    tester.expectEqual(displayListText(*decoded), displayListText(displayList), "PDF pages"_s);
+    Ref decodedPDFData = decodedDocument->data();
+    Ref pdfData = document->data();
+    tester.expect(decodedPDFData.get() == pdfData.get(), "PDF data round trips"_s);
+
+    drawToPixels(*decoded);
+    tester.expect(decodedDocument->drawnPages() == Vector<unsigned> { 0, 1 }, "The receiver draws PDF pages from the PDF data, without the fallback image"_s);
+}
+
+static void testInvalidPDFPages(Tester& tester)
+{
+    auto decode = [](Vector<DisplayListDataPDFDocument>&& documents, DisplayListDataItem&& item) {
+        Vector<Vector<DisplayListDataItem>> displayLists;
+        displayLists.append(Vector<DisplayListDataItem> { WTF::move(item) });
+        return DisplayListData { { }, { }, { }, WTF::move(documents), WTF::move(displayLists) }.createDisplayList(false);
+    };
+
+    auto identifier = RenderingResourceIdentifier::generate();
+    FloatRect rect { 0, 0, 10, 10 };
+    Vector<DisplayListDataPDFDocument> documents;
+    documents.append(DisplayListDataPDFDocument { identifier, testPDFData() });
+    tester.expect(!!decode(WTF::move(documents), DisplayList::DrawPDFPage { identifier, 0, rect }), "A PDF document identifier decodes"_s);
+    tester.expect(!decode({ }, DisplayList::DrawPDFPage { identifier, 0, rect }), "A missing PDF document fails to decode"_s);
+
+    Vector<DisplayListDataPDFDocument> duplicates;
+    duplicates.append(DisplayListDataPDFDocument { identifier, testPDFData() });
+    duplicates.append(DisplayListDataPDFDocument { identifier, testPDFData() });
+    tester.expect(!decode(WTF::move(duplicates), DisplayList::DrawPDFPage { identifier, 0, rect }), "PDF documents with the same identifier fail to decode"_s);
+
+    tester.expect(!DisplayList::isResolved(DisplayList::DrawPDFPage { identifier, 0, rect }), "A PDF document identifier is unresolved"_s);
+}
+
 static DisplayListDataImage testImage(RenderingResourceIdentifier identifier, std::optional<ImageBufferParameters>&& imageBufferParameters = std::nullopt)
 {
     RefPtr bitmap = ShareableBitmap::create({ IntSize { 10, 10 }, ColorSpace::SRGB() });
@@ -732,7 +828,7 @@ static void testInvalidImages(Tester& tester)
     auto decodeImages = [](Vector<DisplayListDataImage>&& images, DisplayListDataItem&& item) {
         Vector<Vector<DisplayListDataItem>> displayLists;
         displayLists.append(Vector<DisplayListDataItem> { WTF::move(item) });
-        return DisplayListData { { }, { }, WTF::move(images), WTF::move(displayLists) }.createDisplayList(false);
+        return DisplayListData { { }, { }, WTF::move(images), { }, WTF::move(displayLists) }.createDisplayList(false);
     };
     auto decode = [&](DisplayListDataImage&& image, DisplayListDataItem&& item) {
         Vector<DisplayListDataImage> images;
@@ -774,21 +870,21 @@ static void testInvalidImages(Tester& tester)
 
 static void testInvalidData(Tester& tester)
 {
-    tester.expect(!DisplayListData { { }, { }, { }, { } }.createDisplayList(false), "Data without a display list fails to decode"_s);
+    tester.expect(!DisplayListData { { }, { }, { }, { }, { } }.createDisplayList(false), "Data without a display list fails to decode"_s);
 
     Vector<Vector<DisplayListDataItem>> drawingItself;
     drawingItself.append(Vector<DisplayListDataItem> { DisplayList::DrawDisplayList { 0 } });
-    tester.expect(!DisplayListData { { }, { }, { }, WTF::move(drawingItself) }.createDisplayList(false), "A display list that draws itself fails to decode"_s);
+    tester.expect(!DisplayListData { { }, { }, { }, { }, WTF::move(drawingItself) }.createDisplayList(false), "A display list that draws itself fails to decode"_s);
 
     Vector<Vector<DisplayListDataItem>> drawingLater;
     drawingLater.append(Vector<DisplayListDataItem> { DisplayList::DrawDisplayList { 1 } });
     drawingLater.append(Vector<DisplayListDataItem> { DisplayList::Save { } });
-    tester.expect(!DisplayListData { { }, { }, { }, WTF::move(drawingLater) }.createDisplayList(false), "A display list that draws a later one fails to decode"_s);
+    tester.expect(!DisplayListData { { }, { }, { }, { }, WTF::move(drawingLater) }.createDisplayList(false), "A display list that draws a later one fails to decode"_s);
 
     Vector<Vector<DisplayListDataItem>> drawingMissing;
     drawingMissing.append(Vector<DisplayListDataItem> { DisplayList::Save { } });
     drawingMissing.append(Vector<DisplayListDataItem> { DisplayList::DrawDisplayList { 5 } });
-    tester.expect(!DisplayListData { { }, { }, { }, WTF::move(drawingMissing) }.createDisplayList(false), "A display list that draws a missing one fails to decode"_s);
+    tester.expect(!DisplayListData { { }, { }, { }, { }, WTF::move(drawingMissing) }.createDisplayList(false), "A display list that draws a missing one fails to decode"_s);
 
 
     tester.expect(!DisplayList::isResolved(DisplayList::DrawDisplayList { 0 }), "A display list index is unresolved"_s);
@@ -827,6 +923,8 @@ Vector<String> testDisplayListData(const Vector<Ref<SharedBuffer>>& webFonts)
     testFiltersWithImages(tester);
     testMeshGradients(tester);
     testInvalidImages(tester);
+    testPDFPages(tester);
+    testInvalidPDFPages(tester);
     testInvalidData(tester);
     return tester.takeFailures();
 }

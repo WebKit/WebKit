@@ -50,6 +50,7 @@ public:
     WEBCORE_EXPORT bool cacheNativeImage(RenderingResourceIdentifier, Ref<NativeImage>&&);
     WEBCORE_EXPORT bool cacheImageBuffer(RenderingResourceIdentifier, Ref<ImageBuffer>&&);
     WEBCORE_EXPORT void appendDisplayList(Ref<const DisplayList>&&);
+    WEBCORE_EXPORT bool cachePDFDocument(RenderingResourceIdentifier, Ref<PDFDocumentData>&&);
 
     bool resolveItem(Item&) const;
 
@@ -60,6 +61,7 @@ private:
     bool resolve(DrawGlyphs&) const;
     bool resolve(DrawImageBuffer&) const;
     bool resolve(DrawNativeImage&) const;
+    bool resolve(DrawPDFPage&) const;
     bool resolve(DrawPatternImageBuffer&) const;
     bool resolve(DrawPatternNativeImage&) const;
     bool resolve(SetState&) const;
@@ -74,6 +76,7 @@ private:
     HashMap<RenderingResourceIdentifier, Ref<NativeImage>> m_nativeImages;
     HashMap<RenderingResourceIdentifier, Ref<ImageBuffer>> m_imageBuffers;
     Vector<Ref<const DisplayList>> m_displayLists;
+    HashMap<RenderingResourceIdentifier, Ref<PDFDocumentData>> m_pdfDocuments;
 };
 
 } // namespace DisplayList

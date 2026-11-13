@@ -7719,6 +7719,26 @@ void WebPage::paintRemoteFrameContents(FrameIdentifier frameID, const IntRect& r
 #endif
 }
 
+#if ENABLE(GPU_PROCESS) && ENABLE(PDF_PLUGIN)
+bool WebPage::recordPDFPageIntoRemoteSnapshot(GraphicsContext& context, PDFPluginIdentifier pluginIdentifier, NOESCAPE const Function<RefPtr<SharedBuffer>()>& documentData, unsigned pageIndex, const FloatRect& pageRect, ImageBuffer& fallback)
+{
+    if (!m_remoteSnapshotState || m_remoteSnapshotState->recorder.ptr() != &context || context.renderingMode() != RenderingMode::PDFDocument)
+        return false;
+
+    RefPtr<SharedBuffer> data;
+    auto documentIdentifier = m_remoteSnapshotState->recordedPDFDocuments.getOptional(pluginIdentifier);
+    if (!documentIdentifier) {
+        data = documentData();
+        if (!data)
+            return false;
+        documentIdentifier = RenderingResourceIdentifier::generate();
+        m_remoteSnapshotState->recordedPDFDocuments.add(pluginIdentifier, *documentIdentifier);
+    }
+    m_remoteSnapshotState->recorder->drawPDFPage(*documentIdentifier, WTF::move(data), pageIndex, pageRect, fallback.copyNativeImage());
+    return true;
+}
+#endif
+
 #if ENABLE(GPU_PROCESS)
 
 bool WebPage::recordRemoteSnapshot(RemoteSnapshotIdentifier snapshotIdentifier, FrameIdentifier frameIdentifier, RemoteSnapshotRole role, RenderingMode renderingMode, const FloatRect& initialClip, const FloatSize& rootSize, Ref<MainRunLoopSuccessCallbackAggregator>&& callback, NOESCAPE const Function<void(GraphicsContext&)>& paint)

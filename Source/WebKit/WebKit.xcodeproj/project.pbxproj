@@ -3799,6 +3799,8 @@
 		0F189CAB24749F2F00E58D81 /* DisplayLinkObserverID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayLinkObserverID.h; sourceTree = "<group>"; };
 		0F23ADDE2B7D240B00E6199B /* AsyncPDFRenderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AsyncPDFRenderer.h; sourceTree = "<group>"; };
 		0F23ADDF2B7D240C00E6199B /* AsyncPDFRenderer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AsyncPDFRenderer.mm; sourceTree = "<group>"; };
+		C9F8A7436212E2D86130B319 /* PrintProcessPDFDocument.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrintProcessPDFDocument.h; sourceTree = "<group>"; };
+		9A187A1495B2A5BE15E52EA5 /* PrintProcessPDFDocument.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PrintProcessPDFDocument.mm; sourceTree = "<group>"; };
 		0F25C49F29A5DF8E00D2CF5A /* RemoteLayerTreeEventDispatcher.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerTreeEventDispatcher.mm; sourceTree = "<group>"; };
 		0F25C4A029A5DF8E00D2CF5A /* RemoteLayerTreeEventDispatcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteLayerTreeEventDispatcher.h; sourceTree = "<group>"; };
 		0F2E0DF628F0CD35006B9079 /* RemoteScrollingCoordinatorProxyMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteScrollingCoordinatorProxyMac.mm; sourceTree = "<group>"; };
@@ -10241,6 +10243,8 @@
 				0F8B2A182BED80DC0006F515 /* PDFPresentationController.mm */,
 				0F8B2A192BED80F10006F515 /* PDFScrollingPresentationController.h */,
 				0F8B2A1A2BED80F10006F515 /* PDFScrollingPresentationController.mm */,
+				C9F8A7436212E2D86130B319 /* PrintProcessPDFDocument.h */,
+				9A187A1495B2A5BE15E52EA5 /* PrintProcessPDFDocument.mm */,
 				0FFACF042AC2453300ED8DB6 /* UnifiedPDFPlugin.h */,
 				0FFACF032AC2453300ED8DB6 /* UnifiedPDFPlugin.mm */,
 			);

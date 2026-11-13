@@ -870,6 +870,7 @@ WebProcess/Plugins/PDF/UnifiedPDF/PDFDocumentLayout.mm @nonARC
 WebProcess/Plugins/PDF/UnifiedPDF/PDFPageCoverage.mm @nonARC
 WebProcess/Plugins/PDF/UnifiedPDF/PDFPresentationController.mm @nonARC @cost:3
 WebProcess/Plugins/PDF/UnifiedPDF/PDFScrollingPresentationController.mm @nonARC @cost:3
+WebProcess/Plugins/PDF/UnifiedPDF/PrintProcessPDFDocument.mm @nonARC
 WebProcess/Plugins/PDF/UnifiedPDF/UnifiedPDFPlugin.mm @nonARC @cost:7
 
 WebProcess/WebCoreSupport/WebCaptionPreferencesDelegate.cpp

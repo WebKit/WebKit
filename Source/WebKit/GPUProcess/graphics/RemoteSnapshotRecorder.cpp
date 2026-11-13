@@ -30,8 +30,11 @@
 
 #include "Logging.h"
 #include "RemoteGraphicsContextMessages.h"
+#include "RemoteResourceCache.h"
 #include "RemoteSnapshot.h"
 #include "RemoteSnapshotRecorderMessages.h"
+
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_renderingBackend->streamConnection());
 
 namespace WebKit {
 using namespace WebCore;
@@ -79,6 +82,26 @@ void RemoteSnapshotRecorder::drawSnapshotFrame(FrameIdentifier frameIdentifier)
     });
 }
 
+void RemoteSnapshotRecorder::drawPDFPage(RenderingResourceIdentifier documentIdentifier, RefPtr<SharedBuffer>&& data, unsigned pageIndex, const FloatRect& pageRect, std::optional<RenderingResourceIdentifier> fallbackImageIdentifier)
+{
+    if (data) {
+        bool isNewDocument = m_pdfDocuments.add(documentIdentifier, DisplayList::PDFDocumentData::create(data.releaseNonNull())).isNewEntry;
+        MESSAGE_CHECK(isNewDocument);
+    }
+    RefPtr document = m_pdfDocuments.get(documentIdentifier);
+    MESSAGE_CHECK(document);
+
+    std::optional<DisplayList::SourceNativeImage> fallbackImage;
+    if (fallbackImageIdentifier) {
+        RefPtr image = resourceCache().cachedNativeImage(*fallbackImageIdentifier);
+        MESSAGE_CHECK(image);
+        fallbackImage = Ref<const NativeImage> { image.releaseNonNull() };
+    }
+    m_recorder->drawPDFPage(document.releaseNonNull(), pageIndex, pageRect, WTF::move(fallbackImage));
 }
+
+}
+
+#undef MESSAGE_CHECK
 
 #endif

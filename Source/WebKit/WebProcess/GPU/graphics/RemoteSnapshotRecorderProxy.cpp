@@ -29,6 +29,8 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "RemoteSnapshotRecorderMessages.h"
+#include <WebCore/NativeImage.h>
+#include <WebCore/SharedBuffer.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -47,6 +49,16 @@ void RemoteSnapshotRecorderProxy::drawSnapshotFrame(FrameIdentifier frameIdentif
     sendPendingDrawsIfNecessary();
     appendStateChangeItemIfNecessary();
     send(Messages::RemoteSnapshotRecorder::DrawSnapshotFrame(frameIdentifier));
+}
+
+void RemoteSnapshotRecorderProxy::drawPDFPage(RenderingResourceIdentifier documentIdentifier, RefPtr<SharedBuffer>&& data, unsigned pageIndex, const FloatRect& pageRect, RefPtr<NativeImage>&& fallbackImage)
+{
+    sendPendingDrawsIfNecessary();
+    appendStateChangeItemIfNecessary();
+    std::optional<RenderingResourceIdentifier> fallbackImageIdentifier;
+    if (fallbackImage && recordResourceUse(*fallbackImage))
+        fallbackImageIdentifier = fallbackImage->renderingResourceIdentifier();
+    send(Messages::RemoteSnapshotRecorder::DrawPDFPage(documentIdentifier, WTF::move(data), pageIndex, pageRect, fallbackImageIdentifier));
 }
 
 }
