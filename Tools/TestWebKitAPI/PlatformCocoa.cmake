@@ -801,6 +801,8 @@ webkit_target_add_swift_options(TestWebKitAPILibrary
 foreach (_target IN ITEMS TestWTF TestWebKit TestWebKitAPILibrary)
     WEBKIT_RAISE_SWIFT_NINJA_PRIORITY(${_target} 6)
 endforeach ()
+# TestWebKit's compile steps are the slowest of any target nothing depends on so start them before the others.
+WEBKIT_RAISE_CXX_NINJA_PRIORITY(TestWebKit 4)
 
 webkit_target_add_swift_options(TestWebKit "-Xcc -I${CMAKE_SOURCE_DIR}/Source")
 
