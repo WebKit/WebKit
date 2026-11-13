@@ -5,7 +5,8 @@
 <body>
     <svg style="position: absolute; top: 10px; left: 10px; width: 500px; height: 300px;">
         <g>
-            <text id="test" x="0" y="50" font-size="25" fill="#000" text-rendering="geometricPrecision">Sphinx of black quartz, judge my vow.</text>
+            <!-- Kerning and ligatures make the text narrower than the sum of its separately measured characters. -->
+            <text id="test" x="0" y="50" font-size="25" fill="#000" text-rendering="geometricPrecision" style="font-kerning: none; font-variant-ligatures: none">Sphinx of black quartz, judge my vow.</text>
         </g>
         <g>
             <text id="measure" x="0" y="150" fill="#000" text-rendering="geometricPrecision" xml:space="preserve">&nbsp;</text>
