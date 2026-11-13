@@ -599,6 +599,7 @@ class VisitedLinkStore;
 class WebAuthenticatorCoordinatorProxy;
 class WebAutomationSession;
 class WebBackForwardCache;
+class WebBackForwardCacheEntry;
 #if ENABLE(BACK_FORWARD_LIST_SWIFT)
 class WebBackForwardListWrapper;
 #else
@@ -3982,6 +3983,9 @@ private:
     void didEvictBackForwardItem(WebCore::BackForwardItemIdentifier);
     void didTakeBackForwardItemForRestoration(WebCore::BackForwardItemIdentifier);
     void restoreOrCancelPendingBackForwardIframes(const PendingBackForwardIframeRestore&, WebCore::RestoredFromBackForwardCache);
+    void takeBackForwardCacheEntryForAllowedNavigation(API::Navigation&, WebProcessProxy& mainFrameProcess);
+    Ref<SuspendedPageProxy> takeSuspendedPageForAllowedNavigation(API::Navigation&, WebProcessProxy& mainFrameProcess);
+    void prepareToRestoreCachedChildFrames(API::Navigation&, WebBackForwardListItem&, WebBackForwardCacheEntry&, WebProcessProxy& mainFrameProcess, BrowsingContextGroup&);
 
     Vector<Ref<WebProcessProxy>> activeRemoteFrameProcesses() const;
     void discardBackForwardCacheEntry(WebCore::BackForwardItemIdentifier);

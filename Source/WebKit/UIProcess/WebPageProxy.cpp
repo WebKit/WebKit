@@ -3079,8 +3079,7 @@ RefPtr<API::Navigation> WebPageProxy::goToBackForwardItem(WebBackForwardListFram
 
     // Cross-site SuspendedPageProxy entries follow the unsuspend() path; skip them here.
     auto shouldRestoreFromBackForwardCache = ShouldRestoreFromBackForwardCache::Unspecified;
-    std::optional<WebCore::ProcessIdentifier> takenBackForwardCacheMainFrameProcessIdentifier;
-    std::unique_ptr<PendingBackForwardIframeRestore> pendingIframeRestore;
+    std::optional<WebCore::ProcessIdentifier> backForwardCacheMainFrameProcessIdentifier;
     Ref preferences = this->preferences();
     if (preferences->siteIsolationEnabled() && preferences->multiProcessBackForwardCacheEnabled()) {
         RefPtr entry = item->backForwardCacheEntry();
@@ -3092,62 +3091,16 @@ RefPtr<API::Navigation> WebPageProxy::goToBackForwardItem(WebBackForwardListFram
         }
         shouldRestoreFromBackForwardCache = entry ? ShouldRestoreFromBackForwardCache::Yes : ShouldRestoreFromBackForwardCache::No;
 
-        if (entry && !item->suspendedPage()) {
-            auto [cachedChildren, iframeProcesses] = entry->takeForRestoration();
-            auto itemID = item->identifier();
-            takenBackForwardCacheMainFrameProcessIdentifier = entry->processIdentifier();
-
-            protect(backForwardCache())->removeEntry(*item);
-
-            if (!cachedChildren.isEmpty()) {
-                auto mainFrameItemID = item->mainFrameItem().identifier();
-
-                internals().pendingBackForwardCachedChildren.set(itemID, WTF::move(cachedChildren));
-
-                auto aggregator = MainRunLoopSuccessCallbackAggregator::create(
-                    [weakThis = WeakPtr { *this }, itemID](bool success) {
-                        if (success)
-                            return;
-                        RefPtr page = weakThis.get();
-                        if (!page)
-                            return;
-                        page->internals().pendingBackForwardCachedChildren.remove(itemID);
-                        RELEASE_LOG_ERROR(ProcessSwapping, "WebPageProxy::goToBackForwardItem: iframe restore failed, reloading");
-                        page->reload(ReloadOption::ExpiredOnly);
-                    });
-
-                iframeProcesses.removeAllMatching([&](auto& iframeProcess) {
-                    // Children cached in the same process as the restored main frame are local
-                    // WebFrameProxys and they're reattached directly via
-                    // pendingBackForwardCachedChildren/adoptChildFrames once the main frame commits.
-                    if (iframeProcess.ptr() == process.ptr())
-                        return true;
-
-                    if (!protect(browsingContextGroup())->remotePageInProcess(*this, iframeProcess)) {
-                        RELEASE_LOG_ERROR(ProcessSwapping, "WebPageProxy::goToBackForwardItem: no RemotePageProxy for pid %i, signaling failure", iframeProcess->processID());
-                        aggregator->failed();
-                        return true;
-                    }
-                    return false;
-                });
-
-                for (Ref iframeProcess : iframeProcesses)
-                    iframeProcess->send(Messages::WebPage::PrepareToRestoreWithFrameItem(mainFrameItemID), webPageIDInProcess(iframeProcess));
-
-                if (!iframeProcesses.isEmpty())
-                    pendingIframeRestore = makeUnique<PendingBackForwardIframeRestore>(process->coreProcessIdentifier(), mainFrameItemID, WTF::move(iframeProcesses), WTF::move(aggregator));
-            }
-        }
+        if (entry && !item->suspendedPage())
+            backForwardCacheMainFrameProcessIdentifier = entry->processIdentifier();
     }
 
     RefPtr<WebBackForwardListItem> fromItem = committedItem;
     if (!fromItem)
         fromItem = backForwardList().currentItem();
     Ref navigation = m_navigationState->createBackForwardNavigation(process->coreProcessIdentifier(), frameItem, RefPtr { fromItem }, frameLoadType);
-    if (takenBackForwardCacheMainFrameProcessIdentifier)
-        navigation->setBackForwardCacheMainFrameProcessIdentifier(*takenBackForwardCacheMainFrameProcessIdentifier);
-    if (pendingIframeRestore)
-        internals().pendingBackForwardIframeRestores.set(navigation->navigationID(), WTF::move(pendingIframeRestore));
+    if (backForwardCacheMainFrameProcessIdentifier)
+        navigation->setBackForwardCacheMainFrameProcessIdentifier(*backForwardCacheMainFrameProcessIdentifier);
     Ref pageLoadState = internals().pageLoadState;
     auto transaction = pageLoadState->transaction();
     pageLoadState->setPendingAPIRequest(transaction, { navigation->navigationID(), URL { item->url() } });
@@ -6780,6 +6733,9 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
             return;
         }
 
+        if (frame->isMainFrame())
+            takeBackForwardCacheEntryForAllowedNavigation(navigation, processNavigatingTo);
+
         RefPtr pageClientProtector = pageClient();
         // With site isolation, a subframe navigation may already be loading in a provisional frame in another process
         // (e.g. on a redirect). Keep using that provisional frame when the navigation stays in its process.
@@ -6819,10 +6775,8 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
             // Make sure the process to be used for the navigation does not get shutDown now due to destroying SuspendedPageProxy or ProvisionalPageProxy objects.
             auto preventNavigationProcessShutdown = processNavigatingTo->shutdownPreventingScope();
 
-            Ref protectedBackForwardCache = backForwardCache();
-
             ASSERT(!destinationSuspendedPage || navigation->targetItem());
-            RefPtr suspendedPage = destinationSuspendedPage ? RefPtr { protectedBackForwardCache->takeSuspendedPage(*protect(navigation->targetItem())) } : nullptr;
+            RefPtr suspendedPage = destinationSuspendedPage ? RefPtr { takeSuspendedPageForAllowedNavigation(navigation, processNavigatingTo) } : nullptr;
 
             if (!destinationSuspendedPage && frame->isMainFrame())
                 removeSuspendedPagesBeforeNavigation(processNavigatingTo);
@@ -6874,6 +6828,8 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
                     cancelled = true;
 
                 if (cancelled) {
+                    if (auto pendingRestore = protectedThis->internals().pendingBackForwardIframeRestores.take(navigation->navigationID()))
+                        protectedThis->restoreOrCancelPendingBackForwardIframes(*pendingRestore, RestoredFromBackForwardCache::No);
                     protectedThis->receivedPolicyDecision(processInitiatingNavigation, PolicyAction::Ignore, navigation.ptr(), std::nullopt, WTF::move(navigationAction), WillContinueLoadInNewProcess::No, std::nullopt, WTF::move(message), WTF::move(completionHandler));
                     return;
                 }
@@ -22798,15 +22754,86 @@ void WebPageProxy::didCacheBackForwardItem(BackForwardItemIdentifier itemID, Com
     // They are stored in the cache entry, reattached in didCommitLoadForFrame when the page is restored,
     // and released when the entry is discarded.
     entry->setCachedChildren(mainFrame->takeChildFrames());
+    entry->setMainFrameURLAndOrigin(URL { mainFrame->url() }, mainFrame->documentSecurityOriginData());
 
     suspendIframeProcessesForBackForwardCache(*item, WTF::move(iframeProcesses), WTF::move(completionHandler));
 }
 
+void WebPageProxy::takeBackForwardCacheEntryForAllowedNavigation(API::Navigation& navigation, WebProcessProxy& mainFrameProcess)
+{
+    if (!navigation.backForwardCacheMainFrameProcessIdentifier())
+        return;
+
+    RefPtr item = navigation.targetItem();
+    RefPtr entry = item ? item->backForwardCacheEntry() : nullptr;
+    if (!entry || item->suspendedPage())
+        return;
+
+    prepareToRestoreCachedChildFrames(navigation, *item, *entry, mainFrameProcess, protect(browsingContextGroup()));
+    protect(backForwardCache())->removeEntry(*item);
+}
+
+Ref<SuspendedPageProxy> WebPageProxy::takeSuspendedPageForAllowedNavigation(API::Navigation& navigation, WebProcessProxy& mainFrameProcess)
+{
+    Ref item = *navigation.targetItem();
+    Ref entry = *item->backForwardCacheEntry();
+    Ref suspendedPage = protect(backForwardCache())->takeSuspendedPage(item);
+    prepareToRestoreCachedChildFrames(navigation, item, entry, mainFrameProcess, protect(suspendedPage->browsingContextGroup()));
+    return suspendedPage;
+}
+
+void WebPageProxy::prepareToRestoreCachedChildFrames(API::Navigation& navigation, WebBackForwardListItem& item, WebBackForwardCacheEntry& entry, WebProcessProxy& mainFrameProcess, BrowsingContextGroup& browsingContextGroup)
+{
+    auto [cachedChildren, iframeProcesses] = entry.takeForRestoration();
+    if (cachedChildren.isEmpty())
+        return;
+
+    auto itemID = item.identifier();
+    auto mainFrameItemID = item.mainFrameItem().identifier();
+
+    internals().pendingBackForwardCachedChildren.set(itemID, WTF::move(cachedChildren));
+
+    auto aggregator = MainRunLoopSuccessCallbackAggregator::create(
+        [weakThis = WeakPtr { *this }, itemID](bool success) {
+            if (success)
+                return;
+            RefPtr page = weakThis;
+            if (!page)
+                return;
+            page->internals().pendingBackForwardCachedChildren.remove(itemID);
+            RELEASE_LOG_ERROR(ProcessSwapping, "WebPageProxy::prepareToRestoreCachedChildFrames: iframe restore failed, reloading");
+            page->reload(ReloadOption::ExpiredOnly);
+        });
+
+    Vector<std::pair<Ref<WebProcessProxy>, WebCore::PageIdentifier>> iframePages;
+    for (Ref iframeProcess : iframeProcesses) {
+        // Children cached in the same process as the restored main frame are local
+        // WebFrameProxys and they're reattached directly via
+        // pendingBackForwardCachedChildren/adoptChildFrames once the main frame commits.
+        if (iframeProcess.ptr() == &mainFrameProcess)
+            continue;
+
+        RefPtr remotePage = browsingContextGroup.remotePageInProcess(*this, iframeProcess);
+        if (!remotePage) {
+            RELEASE_LOG_ERROR(ProcessSwapping, "WebPageProxy::prepareToRestoreCachedChildFrames: no RemotePageProxy for pid %i, signaling failure", iframeProcess->processID());
+            aggregator->failed();
+            continue;
+        }
+
+        auto pageID = remotePage->identifierInSiteIsolatedProcess();
+        iframeProcess->send(Messages::WebPage::PrepareToRestoreWithFrameItem(mainFrameItemID), pageID);
+        iframePages.append({ WTF::move(iframeProcess), pageID });
+    }
+
+    if (!iframePages.isEmpty())
+        internals().pendingBackForwardIframeRestores.set(navigation.navigationID(), makeUnique<PendingBackForwardIframeRestore>(mainFrameProcess.coreProcessIdentifier(), mainFrameItemID, WTF::move(iframePages), entry.mainFrameURLAndOrigin(), WTF::move(aggregator)));
+}
+
 void WebPageProxy::restoreOrCancelPendingBackForwardIframes(const PendingBackForwardIframeRestore& pendingRestore, RestoredFromBackForwardCache restoredFromBackForwardCache)
 {
-    for (Ref iframeProcess : pendingRestore.iframeProcesses) {
+    for (auto& [iframeProcess, pageID] : pendingRestore.iframePages) {
         if (restoredFromBackForwardCache == RestoredFromBackForwardCache::No) {
-            iframeProcess->send(Messages::WebPage::CancelRestoreWithFrameItem(pendingRestore.mainFrameItemID), webPageIDInProcess(iframeProcess));
+            iframeProcess->send(Messages::WebPage::CancelRestoreWithFrameItem(pendingRestore.mainFrameItemID), pageID);
             continue;
         }
 
@@ -22818,7 +22845,7 @@ void WebPageProxy::restoreOrCancelPendingBackForwardIframes(const PendingBackFor
             continue;
         }
         WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "restoreOrCancelPendingBackForwardIframes: dispatching RestoreWithFrameItem to pid %i", iframeProcess->processID());
-        iframeProcess->sendWithAsyncReply(Messages::WebPage::RestoreWithFrameItem(pendingRestore.mainFrameItemID, std::nullopt), protect(pendingRestore.aggregator)->chain(), webPageIDInProcess(iframeProcess));
+        iframeProcess->sendWithAsyncReply(Messages::WebPage::RestoreWithFrameItem(pendingRestore.mainFrameItemID, pendingRestore.mainFrameURLAndOrigin), protect(pendingRestore.aggregator)->chain(), pageID);
     }
 }
 
