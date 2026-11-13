@@ -22497,6 +22497,24 @@ void WebPageProxy::takeSnapshotForTargetedElement(const API::TargetedElementInfo
     sendWithAsyncReply(Messages::WebPage::TakeSnapshotForTargetedElement(info.nodeIdentifier(), info.documentIdentifier()), WTF::move(completion));
 }
 
+void WebPageProxy::cssPageBoxesSnapshotForTesting(const IntSize& defaultPageBoxSize, int defaultPageMargin, CompletionHandler<void(std::optional<ShareableBitmapHandle>&&)>&& completion)
+{
+    if (!hasRunningProcess())
+        return completion({ });
+
+#if PLATFORM(COCOA)
+    if (RefPtr mainFrame = m_mainFrame; shouldUseRemoteSnapshotting(mainFrame.get())) {
+        auto snapshotIdentifier = generateRemoteSnapshotIdentifier();
+        Ref gpuProcess = GPUProcessProxy::getOrCreate();
+        gpuProcess->sinkCompletedSnapshotToBitmap(snapshotIdentifier, mainFrame->frameID(), WTF::move(completion));
+        sendWithAsyncReply(Messages::WebPage::RemoteSnapshotCSSPageBoxesForTesting(defaultPageBoxSize, defaultPageMargin, snapshotIdentifier), gpuProcess->releaseSnapshotIfRootFails(snapshotIdentifier));
+        return;
+    }
+#endif
+
+    sendWithAsyncReply(Messages::WebPage::SnapshotCSSPageBoxesForTesting(defaultPageBoxSize, defaultPageMargin), WTF::move(completion));
+}
+
 void WebPageProxy::hasTextExtractionFilterRules(CompletionHandler<void(bool)>&& completion)
 {
     sendWithAsyncReply(Messages::WebPage::HasTextExtractionFilterRules(), WTF::move(completion));

@@ -4114,26 +4114,6 @@ RefPtr<WebImage> WebPage::snapshotAtSize(const IntRect& rect, const IntSize& bit
     return snapshot;
 }
 
-RefPtr<WebImage> WebPage::cssPageBoxesSnapshotForTesting(const IntSize& defaultPageBoxSize, const IntBoxExtent& defaultPageMargin)
-{
-    RefPtr coreFrame = m_mainFrame->coreLocalFrame();
-    if (!coreFrame)
-        return nullptr;
-
-    auto snapshotSize = PrintContext::cssPageBoxesSize(*coreFrame, defaultPageBoxSize, defaultPageMargin);
-    if (snapshotSize.isEmpty())
-        return nullptr;
-
-    auto snapshot = WebImage::create(snapshotSize, ImageOption::Shareable, ColorSpace::SRGB(), &m_page->chrome().client());
-    if (!snapshot->context())
-        return nullptr;
-
-    // FIXME: Paint remote frames, as drawPrintingPagesToSnapshot() does (rdar://191464084). Cross-site iframes are blank under site isolation.
-    // FIXME: Dispatch beforeprint and afterprint, as beginPrinting() does, and wait for loads that printing starts (rdar://191464243).
-    PrintContext::spoolAllCSSPageBoxes(*coreFrame, *snapshot->context(), defaultPageBoxSize, defaultPageMargin);
-    return snapshot;
-}
-
 RefPtr<WebImage> WebPage::snapshotNode(WebCore::Node& node, SnapshotOptions options, unsigned maximumPixelCount)
 {
     RefPtr frameView = protect(node.document())->view();
@@ -11647,6 +11627,56 @@ void WebPage::takeRemoteSnapshotForTargetedElement(NodeIdentifier nodeID, Script
 #else
     UNUSED_PARAM(nodeID);
     UNUSED_PARAM(documentID);
+    UNUSED_PARAM(snapshotIdentifier);
+    completionHandler(false);
+#endif
+}
+
+void WebPage::snapshotCSSPageBoxesForTesting(const IntSize& defaultPageBoxSize, int defaultPageMargin, CompletionHandler<void(std::optional<ShareableBitmapHandle>&&)>&& completionHandler)
+{
+    RefPtr coreFrame = m_mainFrame->coreLocalFrame();
+    if (!coreFrame)
+        return completionHandler({ });
+
+    // FIXME: Dispatch beforeprint and afterprint, as beginPrinting() does, and wait for loads that printing starts (rdar://191464243).
+    Ref printContext = PrintContext::create(coreFrame.get());
+    auto snapshotSize = printContext->beginCSSPageBoxes(defaultPageBoxSize, defaultPageMargin);
+    if (snapshotSize.isEmpty())
+        return completionHandler({ });
+
+    auto snapshot = WebImage::create(snapshotSize, ImageOption::Shareable, ColorSpace::SRGB(), &m_page->chrome().client());
+    if (!snapshot->context())
+        return completionHandler({ });
+
+    printContext->spoolCSSPageBoxes(*snapshot->context());
+    printContext->end();
+    completionHandler(snapshot->createHandle(SharedMemory::Protection::ReadOnly));
+}
+
+void WebPage::remoteSnapshotCSSPageBoxesForTesting(const IntSize& defaultPageBoxSize, int defaultPageMargin, RemoteSnapshotIdentifier snapshotIdentifier, CompletionHandler<void(bool)>&& completionHandler)
+{
+#if ENABLE(GPU_PROCESS)
+    ASSERT(m_page->settings().remoteSnapshottingEnabled());
+    completionHandler = failRemoteSnapshotIfRootFails(snapshotIdentifier, WTF::move(completionHandler));
+
+    RefPtr coreFrame = m_mainFrame->coreLocalFrame();
+    if (!coreFrame)
+        return completionHandler(false);
+
+    // FIXME: Dispatch beforeprint and afterprint, as beginPrinting() does, and wait for loads that printing starts (rdar://191464243).
+    Ref printContext = PrintContext::create(coreFrame.get());
+    auto snapshotSize = printContext->beginCSSPageBoxes(defaultPageBoxSize, defaultPageMargin);
+    if (snapshotSize.isEmpty())
+        return completionHandler(false);
+
+    recordRemoteSnapshot(snapshotIdentifier, coreFrame->frameID(), RemoteSnapshotRole::Root, RenderingMode::DisplayList, IntRect { { }, snapshotSize }, snapshotSize, MainRunLoopSuccessCallbackAggregator::create(WTF::move(completionHandler)), [&](GraphicsContext& context) {
+        printContext->spoolCSSPageBoxes(context);
+    });
+    // Frames in other processes record themselves after recordRemoteSnapshot() asks them to, so they must still be printing then.
+    printContext->end();
+#else
+    UNUSED_PARAM(defaultPageBoxSize);
+    UNUSED_PARAM(defaultPageMargin);
     UNUSED_PARAM(snapshotIdentifier);
     completionHandler(false);
 #endif

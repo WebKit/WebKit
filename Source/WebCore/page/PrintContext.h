@@ -23,6 +23,7 @@
 #include <WebCore/BoxExtents.h>
 #include <WebCore/CSSUnits.h>
 #include <WebCore/FrameDestructionObserver.h>
+#include <WebCore/IntSize.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>
@@ -37,7 +38,6 @@ class FloatRect;
 class FloatSize;
 class GraphicsContext;
 class IntRect;
-class IntSize;
 class LocalFrame;
 class Node;
 
@@ -88,8 +88,8 @@ public:
     WEBCORE_EXPORT static String pageSizeAndMarginsInPixels(LocalFrame*, int pageNumber, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft);
     WEBCORE_EXPORT static int numberOfPages(LocalFrame&, const FloatSize& pageSizeInPixels);
     // Used by print reftests.
-    WEBCORE_EXPORT static IntSize cssPageBoxesSize(LocalFrame&, const IntSize& defaultPageBoxSize, const IntBoxExtent& defaultPageMargin);
-    WEBCORE_EXPORT static void spoolAllCSSPageBoxes(LocalFrame&, GraphicsContext&, const IntSize& defaultPageBoxSize, const IntBoxExtent& defaultPageMargin);
+    WEBCORE_EXPORT IntSize beginCSSPageBoxes(const IntSize& defaultPageBoxSize, const IntBoxExtent& defaultPageMargin);
+    WEBCORE_EXPORT void spoolCSSPageBoxes(GraphicsContext&);
     // Draw all pages into a graphics context with lines which mean page boundaries.
     // The height of the graphics context should be
     // (pageSizeInPixels.height() + 1) * number-of-pages - 1
@@ -110,12 +110,21 @@ private:
 
     void computePageRectsWithPageSizeInternal(const FloatSize& pageSizeInPixels, bool allowHorizontalTiling);
     bool beginAndComputePageRectsWithPageSize(LocalFrame&, const FloatSize& pageSizeInPixels);
-    struct PageBox;
-    std::optional<PageBox> beginWithPageBoxSize(const IntSize& defaultPageBoxSize, const IntBoxExtent& defaultPageMargin);
+    struct PrintBox {
+        IntSize pageAreaSize;
+        IntBoxExtent margin;
+        unsigned pageCount { 0 };
+
+        IntSize pageSize() const;
+        IntSize totalSize() const;
+        IntRect pageRect(unsigned pageIndex) const;
+    };
+    std::optional<PrintBox> beginWithPrintBox(const PrintBox& defaultPrintBox);
     void collectLinkedDestinations(Document&);
     void outputLinkedDestinations(GraphicsContext&, Document&, const IntRect& pageRect);
 
     Vector<IntRect> m_pageRects;
+    std::optional<PrintBox> m_cssPrintBox;
     std::unique_ptr<HashMap<String, Ref<Element>>> m_linkedDestinations;
     // Used to prevent misuses of begin() and end() (e.g., call end without begin).
     bool m_isPrinting { false };

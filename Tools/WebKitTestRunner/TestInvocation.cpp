@@ -33,6 +33,7 @@
 #include "TestController.h"
 #include "UIScriptController.h"
 #include "WebCoreTestSupport.h"
+#include <WebCore/CSSUnits.h>
 #include <WebKit/WKCast.h>
 #include <WebKit/WKContextPrivate.h>
 #include <WebKit/WKData.h>
@@ -326,6 +327,28 @@ void TestInvocation::dumpResourceLoadStatisticsIfNecessary()
         m_savedResourceLoadStatistics = TestController::singleton().dumpResourceLoadStatistics();
 }
 
+// WPT print reftests default to a 5in by 3in page. wptrunner prints them with 0.5in margins.
+static constexpr double printReftestPageWidth = 5 * WebCore::CSS::pixelsPerInch;
+static constexpr double printReftestPageHeight = 3 * WebCore::CSS::pixelsPerInch;
+static constexpr double printReftestPageMargin = 0.5 * WebCore::CSS::pixelsPerInch;
+
+// FIXME: Apply fuzzy matching to each page separately, as WPT does (rdar://191464055). It applies to the whole image.
+// FIXME: Support <meta name=reftest-pages>, which limits the comparison to some of the pages (rdar://191464016).
+static WKRetainPtr<WKImageRef> takePrintReftestSnapshot()
+{
+    struct SnapshotResult {
+        bool done { false };
+        WKRetainPtr<WKImageRef> image;
+    } result;
+    WKPageTakeCSSPageBoxesSnapshotForTesting(TestController::singleton().mainWebView()->page(), WKSizeMake(printReftestPageWidth, printReftestPageHeight), printReftestPageMargin, &result, [](WKImageRef image, void* context) {
+        auto& result = *static_cast<SnapshotResult*>(context);
+        result.image = image;
+        result.done = true;
+    });
+    TestController::singleton().runUntil(result.done, TestController::noTimeout);
+    return result.image;
+}
+
 void TestInvocation::dumpResults()
 {
     auto& testController = TestController::singleton();
@@ -359,6 +382,8 @@ void TestInvocation::dumpResults()
     if (m_dumpPixels) {
         if (m_pixelResult)
             dumpPixelsAndCompareWithExpected(SnapshotResultType::WebContents, m_repaintRects.get(), m_pixelResult.get());
+        else if (m_pixelResultIsPending && options().dumpCSSPageBoxes())
+            dumpPixelsAndCompareWithExpected(SnapshotResultType::WebContents, nullptr, takePrintReftestSnapshot().get());
         else if (m_pixelResultIsPending) {
             if (m_forceRepaint) {
                 m_gotRepaint = false;

@@ -103,6 +103,7 @@
 #include <WebCore/ContentRuleListResults.h>
 #include <WebCore/Cursor.h>
 #include <WebCore/FrameLoaderClient.h>
+#include <WebCore/GraphicsContext.h>
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
 #include <WebCore/OrganizationStorageAccessPromptQuirk.h>
 #include <WebCore/Page.h>
@@ -3554,6 +3555,23 @@ bool WKPageIsEditingCommandEnabledForTesting(WKPageRef pageRef, WKStringRef comm
         return false;
 
     return pageForTesting->isEditingCommandEnabled(protect(toImpl(command))->string());
+}
+
+void WKPageTakeCSSPageBoxesSnapshotForTesting(WKPageRef pageRef, WKSize defaultPageBoxSize, double defaultPageMargin, void* context, WKPageTakeCSSPageBoxesSnapshotForTestingFunction callback)
+{
+    protect(toImpl(pageRef))->cssPageBoxesSnapshotForTesting(toIntSize(defaultPageBoxSize), static_cast<int>(defaultPageMargin), [context, callback](std::optional<ShareableBitmap::Handle>&& handle) {
+        RefPtr bitmap = handle ? ShareableBitmap::create(WTF::move(*handle), SharedMemory::Protection::ReadOnly) : nullptr;
+        if (!bitmap)
+            return callback(nullptr, context);
+
+        Ref image = WebImage::create(bitmap->size(), ImageOption::Shareable, ColorSpace::SRGB());
+        auto* graphicsContext = image->context();
+        if (!graphicsContext)
+            return callback(nullptr, context);
+
+        bitmap->paint(*graphicsContext, { }, { { }, bitmap->size() });
+        callback(toAPI(image.ptr()), context);
+    });
 }
 
 void WKPageGetStorageAreaMapCountForTesting(WKPageRef pageRef, void* context, WKPageGetStorageAreaMapCountForTestingFunction callback)
