@@ -343,7 +343,7 @@ extension WebGPU.Metal.CommandEncoder {
             return
         }
 
-        guard let temporaryBuffer = device.safeCreateBuffer(bufferLength) else {
+        guard let temporaryBuffer = device.zeroBuffer(bufferLength) else {
             return
         }
 
@@ -1106,6 +1106,7 @@ extension WebGPU.Metal.CommandEncoder {
         // FIXME: it shouldn't be necessary to pass colorAttachmentCount here
         var compositorTextureSlice: UInt32 = 0
         if descriptor.colorAttachmentCount() != 0 {
+            var promotedLazyClearMask: UInt8 = 0
             for i in 0..<descriptor.colorAttachmentCount() {
                 // An empty slot has no attachment.
                 guard let attachment = Optional(fromCxx: WebGPU.Metal.resolvedColorAttachment(descriptor, i)) else {
@@ -1297,28 +1298,43 @@ extension WebGPU.Metal.CommandEncoder {
                     compositorTextureSlice = compositorTexture.parentRelativeSlice()
                 }
 
-                #if compiler(>=6.4)
-                if let textureToClear {
-                    let textureWithResolve = TextureAndClearColor(texture: textureToClear)
-                    attachmentsToClear[i as NSNumber] = textureWithResolve
+                func configureLazyAttachmentClear(_ clearTexture: any MTLTexture) {
+                    // Promoting to .clear also keeps canDeferRenderCommandEncoder false so a draw-less pass still clears.
+                    if mtlAttachment.storeAction == .store && optionalResolveTarget == nil && mtlDescriptor.rasterizationRateMap == nil {
+                        mtlAttachment.loadAction = .clear
+                        mtlAttachment.clearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 0)
+                        promotedLazyClearMask |= 1 << UInt8(i)
+                    } else {
+                        attachmentsToClear[i as NSNumber] = TextureAndClearColor(texture: clearTexture)
+                    }
                     texture.setProvisionallyCleared(self)
                     // FIXME: (rdar://170907318) This should be changed to `if let` when possible.
                     if var resolveTarget = optionalResolveTarget {
                         resolveTarget.setProvisionallyCleared(self)
                     }
+                }
+
+                #if compiler(>=6.4)
+                if let textureToClear {
+                    configureLazyAttachmentClear(textureToClear)
                 }
                 #else
                 // FIXME: (rdar://170907318) Remove this branch once the minimum supported compiler is Swift 6.4.
                 if var textureToClear {
-                    let textureWithResolve = TextureAndClearColor(texture: textureToClear)
-                    attachmentsToClear[i as NSNumber] = textureWithResolve
-                    texture.setProvisionallyCleared(self)
-                    // FIXME: (rdar://170907318) This should be changed to `if let` when possible.
-                    if var resolveTarget = optionalResolveTarget {
-                        resolveTarget.setProvisionallyCleared(self)
-                    }
+                    configureLazyAttachmentClear(textureToClear)
                 }
                 #endif
+            }
+
+            if mtlDescriptor.rasterizationRateMap != nil && promotedLazyClearMask != 0 {
+                for i in 0..<descriptor.colorAttachmentCount() where (promotedLazyClearMask & (1 << UInt8(i))) != 0 {
+                    // swift-format-ignore: NeverForceUnwrap
+                    let mtlAttachment = mtlDescriptor.colorAttachments[i]!
+                    mtlAttachment.loadAction = .load
+                    if let clearTexture = mtlAttachment.texture {
+                        attachmentsToClear[i as NSNumber] = TextureAndClearColor(texture: clearTexture)
+                    }
+                }
             }
         }
 

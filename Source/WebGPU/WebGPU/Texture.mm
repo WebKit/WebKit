@@ -3408,8 +3408,9 @@ void Texture::resetGPUFrameCost() const
 
 void Texture::setCommandEncoder(CommandEncoder& commandEncoder) const
 {
-    commandEncoder.trackEncoderForTexture(*this, m_commandEncoders);
-    commandEncoder.addTexture(*this);
+    // Re-add when sharedEvent() is present so XR textures refresh CommandEncoder's signal value.
+    if (commandEncoder.trackEncoderForTexture(*this, m_commandEncoders) || sharedEvent())
+        commandEncoder.addTexture(*this);
     if (!m_canvasBacking && isDestroyed())
         commandEncoder.makeSubmitInvalid();
 }

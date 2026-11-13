@@ -2293,6 +2293,7 @@ void Queue::clearTextureIfNeeded(Texture& parentTexture, uint32_t mipLevelCount,
     if (!devicePtr)
         return;
 
+    bool encodedAnyClear = false;
     for (uint32_t slice = 0; slice < arrayLayerCount; ++slice) {
         for (uint32_t mipLevel = 0; mipLevel < mipLevelCount; ++mipLevel) {
             auto checkedParentMipLevel = checkedSum<uint32_t>(baseMipLevel, mipLevel);
@@ -2305,9 +2306,11 @@ void Queue::clearTextureIfNeeded(Texture& parentTexture, uint32_t mipLevelCount,
                 continue;
 
             CommandEncoder::clearTextureIfNeeded(parentTexture, parentMipLevel, parentSlice, *devicePtr, ensureBlitCommandEncoder());
+            encodedAnyClear = true;
         }
     }
-    finalizeBlitCommandEncoder();
+    if (encodedAnyClear)
+        finalizeBlitCommandEncoder();
 }
 
 void Queue::addProvisionalTextureClear(Texture& texture, uint32_t mipLevel, uint32_t slice, uint64_t commandEncoderId)
