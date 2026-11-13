@@ -96,4 +96,58 @@ TEST(WebCoreFlexLineBreaker, IndefiniteAvailableSpaceStillHonorsTheMinimumLineCo
     expectLineBreaks(WebCore::balancedLineBreaks(sizes.span(), LayoutUnit::max(), LayoutUnit(0), 5), { 2, 4, 6, 7, 8 });
 }
 
+TEST(WebCoreFlexLineBreaker, SmallestMainSizeOfNoItemsIsZero)
+{
+    EXPECT_EQ(LayoutUnit(0), WebCore::smallestMainSizeForLineCount({ }, LayoutUnit(20), 2));
+}
+
+TEST(WebCoreFlexLineBreaker, SmallestMainSizeFitsTheLineCount)
+{
+    auto sizes = itemSizes({ 40, 40, 40 });
+    EXPECT_EQ(LayoutUnit(100), WebCore::smallestMainSizeForLineCount(sizes.span(), LayoutUnit(20), 2));
+}
+
+TEST(WebCoreFlexLineBreaker, SmallestMainSizeForOneLineHoldsEveryItem)
+{
+    auto sizes = itemSizes({ 40, 40, 40 });
+    EXPECT_EQ(LayoutUnit(160), WebCore::smallestMainSizeForLineCount(sizes.span(), LayoutUnit(20), 1));
+}
+
+TEST(WebCoreFlexLineBreaker, SmallestMainSizeIsTheLongestItemWhenEachGetsALine)
+{
+    auto sizes = itemSizes({ 30, 100, 30 });
+    EXPECT_EQ(LayoutUnit(100), WebCore::smallestMainSizeForLineCount(sizes.span(), LayoutUnit(20), 5));
+}
+
+TEST(WebCoreFlexLineBreaker, SmallestMainSizeIsTheLongestLineOfTheTightestSplit)
+{
+    auto sizes = itemSizes({ 30, 100, 30 });
+    EXPECT_EQ(LayoutUnit(150), WebCore::smallestMainSizeForLineCount(sizes.span(), LayoutUnit(20), 2));
+}
+
+TEST(WebCoreFlexLineBreaker, SmallestMainSizeFloorsNegativeSizesAtZero)
+{
+    auto sizes = itemSizes({ -10, 40, 40 });
+    EXPECT_EQ(LayoutUnit(60), WebCore::smallestMainSizeForLineCount(sizes.span(), LayoutUnit(20), 2));
+}
+
+TEST(WebCoreFlexLineBreaker, SmallestMainSizeKeepsFractionalSizes)
+{
+    auto sizes = Vector<LayoutUnit> { LayoutUnit(10.5f), LayoutUnit(10.25f), LayoutUnit(10.5f) };
+    EXPECT_EQ(LayoutUnit(20.75f), WebCore::smallestMainSizeForLineCount(sizes.span(), LayoutUnit(0), 2));
+}
+
+TEST(WebCoreFlexLineBreaker, BalancedLineBreaksAtTheSmallestMainSizeHaveTheLineCount)
+{
+    auto sizes = itemSizes({ 30, 10, 60, 20, 50, 40, 10 });
+    auto gap = LayoutUnit(5);
+    for (size_t lineCount = 1; lineCount <= sizes.size(); ++lineCount) {
+        auto mainSize = WebCore::smallestMainSizeForLineCount(sizes.span(), gap, lineCount);
+        EXPECT_EQ(lineCount, WebCore::balancedLineBreaks(sizes.span(), mainSize, gap, lineCount).size());
+        // Below the longest item, that item overflows a line of its own instead.
+        if (mainSize > LayoutUnit(60))
+            EXPECT_GT(WebCore::greedyLineBreaks(sizes.span(), mainSize - LayoutUnit::fromRawValue(1), gap).size(), lineCount);
+    }
+}
+
 } // namespace TestWebKitAPI

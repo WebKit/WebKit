@@ -40,4 +40,8 @@ WEBCORE_EXPORT Vector<size_t> greedyLineBreaks(std::span<const LayoutUnit> itemM
 // lines, unless there are fewer items than that.
 WEBCORE_EXPORT Vector<size_t> balancedLineBreaks(std::span<const LayoutUnit> itemMainAxisSizes, LayoutUnit mainAxisAvailableSpace, LayoutUnit gapBetweenItems, size_t flexLineCount);
 
+// smallestMainSizeForLineCount is the smallest main size at which the items fit in flexLineCount lines, each item
+// floored at zero as balancedLineBreaks floors it. balancedLineBreaks breaks them into that many lines at that size.
+WEBCORE_EXPORT LayoutUnit smallestMainSizeForLineCount(std::span<const LayoutUnit> itemMainAxisSizes, LayoutUnit gapBetweenItems, size_t flexLineCount);
+
 } // namespace WebCore

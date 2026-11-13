@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<link rel="author" title="Tim Nguyen" href="https://github.com/nt1m">
+<link rel="help" href="https://drafts.csswg.org/css-flexbox-2/#flex-line-count-property">
+<link rel="help" href="https://drafts.csswg.org/css-flexbox-2/#algo-line-break">
+<meta name="assert" content="Tests that a balanced row flexbox sized at its max-content width keeps flex-line-count lines when its items are broken into lines at sizes other than their max-content contributions.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/check-layout-th.js"></script>
+<style>
+.flex {
+  display: flex;
+  width: max-content;
+  gap: 20px;
+  flex-wrap: balance;
+  flex-line-count: 2;
+}
+
+.flex > div {
+  width: 40px;
+  height: 10px;
+}
+</style>
+<!-- The items are broken into lines at their 60px flex base sizes. -->
+<div class="flex" data-expected-width="140" data-expected-height="40">
+  <div style="flex: 0 0 60px;"></div>
+  <div style="flex: 0 0 60px;"></div>
+  <div style="flex: 0 0 60px;"></div>
+</div>
+<!-- The items are broken into lines at their 20px flex base sizes, not at their 40px widths. -->
+<div class="flex" data-expected-width="60" data-expected-height="40">
+  <div style="flex: 0 0 20px;"></div>
+  <div style="flex: 0 0 20px;"></div>
+  <div style="flex: 0 0 20px;"></div>
+</div>
+<!-- The 200px flex bases are clamped to the 100px max-width. -->
+<div class="flex" data-expected-width="220" data-expected-height="40">
+  <div style="flex: 0 0 200px; max-width: 100px;"></div>
+  <div style="flex: 0 0 200px; max-width: 100px;"></div>
+  <div style="flex: 0 0 200px; max-width: 100px;"></div>
+</div>
+<!-- The 20px flex bases are clamped to the 50px min-width. -->
+<div class="flex" data-expected-width="120" data-expected-height="40">
+  <div style="flex: 0 0 20px; min-width: 50px;"></div>
+  <div style="flex: 0 0 20px; min-width: 50px;"></div>
+  <div style="flex: 0 0 20px; min-width: 50px;"></div>
+</div>
+<!-- The 40px content-box flex bases are 60px outer sizes with the padding. -->
+<div class="flex" data-expected-width="140" data-expected-height="40">
+  <div style="flex: 0 0 40px; padding: 0 10px;"></div>
+  <div style="flex: 0 0 40px; padding: 0 10px;"></div>
+  <div style="flex: 0 0 40px; padding: 0 10px;"></div>
+</div>
+<!-- The 60px border-box flex bases include the padding. -->
+<div class="flex" data-expected-width="140" data-expected-height="40">
+  <div style="box-sizing: border-box; flex: 0 0 60px; padding: 0 10px;"></div>
+  <div style="box-sizing: border-box; flex: 0 0 60px; padding: 0 10px;"></div>
+  <div style="box-sizing: border-box; flex: 0 0 60px; padding: 0 10px;"></div>
+</div>
+<!-- In order-modified document order the flex bases are 30px, 100px and 30px. -->
+<div class="flex" data-expected-width="150" data-expected-height="40">
+  <div style="flex: 0 0 100px;"></div>
+  <div style="flex: 0 0 30px; order: -1;"></div>
+  <div style="flex: 0 0 30px;"></div>
+</div>
+<!-- The 0% flex bases of 'flex: 1' are zero whatever the container's width. -->
+<div class="flex" data-expected-width="100" data-expected-height="40">
+  <div style="flex: 1;"></div>
+  <div style="flex: 1;"></div>
+  <div style="flex: 1;"></div>
+</div>
+<!-- The percentage flex bases resolve against the container's width. -->
+<div class="flex" data-expected-height="40">
+  <div style="flex: 0 0 40%;"></div>
+  <div style="flex: 0 0 40%;"></div>
+  <div style="flex: 0 0 40%;"></div>
+</div>
+<script>
+checkLayout('.flex');
+</script>

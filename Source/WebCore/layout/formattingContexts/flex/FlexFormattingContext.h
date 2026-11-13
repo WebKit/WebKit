@@ -135,6 +135,10 @@ public:
     using SizeList = Vector<LayoutUnit>;
     // CSS Flexbox 9.9.2. Lays out the items.
     LayoutUnit maximumContentSizeForMultilineColumn(FlexLayoutItems&, const SizeList& flexItemsMaxContentWidths);
+    // The smallest main size that fits the items in the minimum flex line count, from their outer max-content
+    // contributions. Takes the items in order-modified document order and lays out the ones whose flex base size
+    // is their block-axis content size.
+    LayoutUnit maximumContentSizeForBalancedRow(FlexLayoutItems&, const SizeList& flexItemsMaxContentContributions);
 
 private:
     struct FlexBaseAndHypotheticalMainSize {

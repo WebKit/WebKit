@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<link rel="author" title="Tim Nguyen" href="https://github.com/nt1m">
+<link rel="help" href="https://drafts.csswg.org/css-flexbox-2/#flex-line-count-property">
+<link rel="help" href="https://drafts.csswg.org/css-flexbox-2/#algo-line-break">
+<meta name="assert" content="Tests the max-content size of a balanced row flexbox whose items are reordered.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/check-layout-th.js"></script>
+<style>
+.flex {
+  display: flex;
+  width: max-content;
+  gap: 20px;
+  flex-wrap: balance;
+  flex-line-count: 2;
+}
+
+.flex > div {
+  height: 10px;
+}
+</style>
+<!-- In order-modified document order the items are 30px, 100px and 30px. -->
+<div class="flex" data-expected-width="150" data-expected-height="40">
+  <div style="width: 100px;"></div>
+  <div style="width: 30px; order: -1;"></div>
+  <div style="width: 30px;"></div>
+</div>
+<!-- In order-modified document order the items are 100px, 30px and 30px. -->
+<div class="flex" data-expected-width="100" data-expected-height="40">
+  <div style="width: 30px; order: 1;"></div>
+  <div style="width: 100px;"></div>
+  <div style="width: 30px;"></div>
+</div>
+<script>
+checkLayout('.flex');
+</script>

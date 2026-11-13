@@ -31,21 +31,67 @@
 
 namespace WebCore {
 
+// One past the last item of the line greedy line breaking starts at lineStartIndex.
+static size_t greedyLineEnd(std::span<const LayoutUnit> itemMainAxisSizes, size_t lineStartIndex, LayoutUnit mainAxisAvailableSpace, LayoutUnit gapBetweenItems)
+{
+    auto nextIndex = lineStartIndex;
+    LayoutUnit lineMainSize;
+    for (; nextIndex < itemMainAxisSizes.size(); ++nextIndex) {
+        if (nextIndex > lineStartIndex && lineMainSize + itemMainAxisSizes[nextIndex] > mainAxisAvailableSpace)
+            break;
+        lineMainSize += itemMainAxisSizes[nextIndex] + gapBetweenItems;
+    }
+    return nextIndex;
+}
+
 Vector<size_t> greedyLineBreaks(std::span<const LayoutUnit> itemMainAxisSizes, LayoutUnit mainAxisAvailableSpace, LayoutUnit gapBetweenItems)
 {
     Vector<size_t> lineBreaks;
-    size_t nextIndex = 0;
-    while (nextIndex < itemMainAxisSizes.size()) {
-        auto lineStartIndex = nextIndex;
-        LayoutUnit lineMainSize;
-        for (; nextIndex < itemMainAxisSizes.size(); ++nextIndex) {
-            if (nextIndex > lineStartIndex && lineMainSize + itemMainAxisSizes[nextIndex] > mainAxisAvailableSpace)
-                break;
-            lineMainSize += itemMainAxisSizes[nextIndex] + gapBetweenItems;
-        }
+    for (size_t nextIndex = 0; nextIndex < itemMainAxisSizes.size();) {
+        nextIndex = greedyLineEnd(itemMainAxisSizes, nextIndex, mainAxisAvailableSpace, gapBetweenItems);
         lineBreaks.append(nextIndex);
     }
     return lineBreaks;
+}
+
+// Greedy line breaking needs the fewest lines that fit a main size, and never more for a larger one, so a binary
+// search over the main size finds the smallest one that fits the items in flexLineCount lines. A line is at least as
+// long as its longest item, and at most as long as one line holding all of them.
+LayoutUnit smallestMainSizeForLineCount(std::span<const LayoutUnit> itemMainAxisSizes, LayoutUnit gapBetweenItems, size_t flexLineCount)
+{
+    ASSERT(gapBetweenItems >= 0);
+    ASSERT(flexLineCount >= 1);
+    if (itemMainAxisSizes.empty())
+        return { };
+
+    // Floored at zero as balancedLineBreaks floors them.
+    Vector<LayoutUnit> sizes(itemMainAxisSizes.size(), [&](size_t index) {
+        return std::max(0_lu, itemMainAxisSizes[index]);
+    });
+
+    auto fitsInLineCount = [&](LayoutUnit mainSize) {
+        size_t lineCount = 0;
+        for (size_t nextIndex = 0; nextIndex < sizes.size(); ++lineCount) {
+            if (lineCount == flexLineCount)
+                return false;
+            nextIndex = greedyLineEnd(sizes.span(), nextIndex, mainSize, gapBetweenItems);
+        }
+        return true;
+    };
+
+    auto smallest = std::ranges::max(sizes);
+    auto largest = (sizes.size() - 1) * gapBetweenItems;
+    for (auto size : sizes)
+        largest += size;
+
+    while (smallest < largest) {
+        auto mainSize = LayoutUnit::fromRawValue(smallest.rawValue() + (largest.rawValue() - smallest.rawValue()) / 2);
+        if (fitsInLineCount(mainSize))
+            largest = mainSize;
+        else
+            smallest = LayoutUnit::fromRawValue(mainSize.rawValue() + 1);
+    }
+    return largest;
 }
 
 // Knuth-Plass, minimizing the sum of the squares of each line's free space. Costs O(n * L * k) for

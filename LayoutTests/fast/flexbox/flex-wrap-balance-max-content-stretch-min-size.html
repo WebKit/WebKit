@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/check-layout-th.js"></script>
+<style>
+.flex {
+  display: flex;
+  width: max-content;
+  gap: 20px;
+  flex-wrap: balance;
+  flex-line-count: 2;
+}
+
+.flex > div {
+  width: 40px;
+  height: 10px;
+}
+</style>
+<!-- A stretch min-width resolves against the container's width, so the max-content width stays the sum of the contributions. -->
+<div class="flex" data-expected-width="160">
+  <div style="min-width: stretch;"></div>
+  <div style="min-width: stretch;"></div>
+  <div style="min-width: stretch;"></div>
+</div>
+<div class="flex" data-expected-width="160">
+  <div style="min-width: -webkit-fill-available;"></div>
+  <div style="min-width: -webkit-fill-available;"></div>
+  <div style="min-width: -webkit-fill-available;"></div>
+</div>
+<!-- So does a calc-size() min-width, which may refer to it. -->
+<div class="flex" data-expected-width="160">
+  <div style="min-width: calc-size(auto, size);"></div>
+  <div style="min-width: calc-size(auto, size);"></div>
+  <div style="min-width: calc-size(auto, size);"></div>
+</div>
+<script>
+checkLayout('.flex');
+</script>
