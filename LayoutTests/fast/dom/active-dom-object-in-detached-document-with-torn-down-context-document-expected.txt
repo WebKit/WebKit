@@ -1,0 +1,3 @@
+Tests creating active DOM objects on a detached document whose context document has already been torn down. This test passes if it does not crash.
+
+PASS

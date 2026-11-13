@@ -221,7 +221,7 @@ public:
     URL currentSourceURL(CallStackPosition = CallStackPosition::BottomMost) const;
 
     // Called from the constructor and destructors of ActiveDOMObject.
-    void didCreateActiveDOMObject(ActiveDOMObject&);
+    NODELETE void didCreateActiveDOMObject(ActiveDOMObject&);
     void willDestroyActiveDOMObject(ActiveDOMObject&);
 
     // Called after the construction of an ActiveDOMObject to synchronize suspend state.

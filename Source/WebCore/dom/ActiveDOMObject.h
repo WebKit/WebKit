@@ -140,14 +140,14 @@ public:
     }
 
 protected:
-    explicit ActiveDOMObject(ScriptExecutionContext*);
-    explicit ActiveDOMObject(Document*);
-    explicit ActiveDOMObject(Document&);
+    NODELETE explicit ActiveDOMObject(ScriptExecutionContext*);
+    NODELETE explicit ActiveDOMObject(Document*);
+    NODELETE explicit ActiveDOMObject(Document&);
     virtual ~ActiveDOMObject();
 
 private:
     enum CheckedScriptExecutionContextType { CheckedScriptExecutionContext };
-    ActiveDOMObject(ScriptExecutionContext*, CheckedScriptExecutionContextType);
+    NODELETE ActiveDOMObject(ScriptExecutionContext*, CheckedScriptExecutionContextType);
 
     // This is used by subclasses to indicate that they have pending activity, meaning that they would
     // like the JS wrapper to stay alive (because they may still fire JS events).

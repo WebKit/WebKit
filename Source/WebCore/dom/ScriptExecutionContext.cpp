@@ -491,7 +491,7 @@ void ScriptExecutionContext::suspendActiveDOMObjectIfNeeded(ActiveDOMObject& act
         activeDOMObject.stop();
 }
 
-void ScriptExecutionContext::didCreateActiveDOMObject(ActiveDOMObject& activeDOMObject)
+SUPPRESS_NODELETE void ScriptExecutionContext::didCreateActiveDOMObject(ActiveDOMObject& activeDOMObject)
 {
     // The m_activeDOMObjectAdditionForbidden check is a RELEASE_ASSERT because of the
     // consequences of having an ActiveDOMObject that is not correctly reflected in the set.

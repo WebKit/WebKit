@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Tests creating active DOM objects on a detached document whose context document has already been torn down. This test passes if it does not crash.</p>
+<iframe id="frame" srcdoc="<body>iframe</body>"></iframe>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+// An event keeps its relatedTarget alive from C++ without keeping it, or its document, reachable for GC.
+let svgDocumentHolder;
+let xmlDocumentHolder;
+let bodyHolder;
+
+frame.onload = () => {
+    const contentWindow = frame.contentWindow;
+    // Documents created by the iframe's DOMParser have the iframe's document as their context document.
+    const parser = new contentWindow.DOMParser();
+    svgDocumentHolder = new MouseEvent('x', { relatedTarget: parser.parseFromString('<svg xmlns="http://www.w3.org/2000/svg"><font-face font-family="f"/></svg>', 'image/svg+xml') });
+    xmlDocumentHolder = new MouseEvent('x', { relatedTarget: parser.parseFromString('<root/>', 'application/xml') });
+    // Keep a node of the iframe's document alive, so that the document outlives its last ref.
+    bodyHolder = new MouseEvent('x', { relatedTarget: contentWindow.document.body });
+    frame.remove();
+    setTimeout(step2, 0);
+};
+
+function step2() {
+    // Collects the iframe's window and document wrappers: the iframe's document is torn down and only its body keeps it alive.
+    if (window.GCController)
+        GCController.collect();
+
+    // Creates a CSSFontSelector and a FontFaceSet on the detached document; both are active DOM objects of the iframe's document.
+    xmlDocumentHolder.relatedTarget.fonts;
+
+    // Tears down the SVG document: SVGFontFaceElement::removingSteps() runs for its <font-face> element.
+    svgDocumentHolder = null;
+    if (window.GCController)
+        GCController.collect();
+
+    xmlDocumentHolder = null;
+    bodyHolder = null;
+    if (window.GCController)
+        GCController.collect();
+
+    document.body.appendChild(document.createTextNode('PASS'));
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+</body>
+</html>
