@@ -1550,6 +1550,15 @@ GapRects RenderBlock::selectionGaps(RenderBlock& rootBlock, const LayoutPoint& r
         return { };
     }
 
+    // Intrinsic padding counts as padding, so a short cell in a tall row stops at its content.
+    bool isTableCell = isRenderTableCell();
+    if (isTableCell) {
+        auto contentLogicalTop = borderAndPaddingBefore();
+        lastLogicalTop = blockDirectionOffset(rootBlock, offsetFromRootBlock) + contentLogicalTop;
+        lastLogicalLeft = logicalLeftSelectionOffset(rootBlock, contentLogicalTop, cache);
+        lastLogicalRight = logicalRightSelectionOffset(rootBlock, contentLogicalTop, cache);
+    }
+
     GapRects result;
     if (childrenInline())
         result = inlineSelectionGaps(rootBlock, rootBlockPhysicalPosition, offsetFromRootBlock, lastLogicalTop, lastLogicalLeft, lastLogicalRight, cache, paintInfo);
@@ -1558,8 +1567,9 @@ GapRects RenderBlock::selectionGaps(RenderBlock& rootBlock, const LayoutPoint& r
 
     // Fill the vertical gap all the way to the bottom of our block if the selection extends past our block.
     if (&rootBlock == this && (selectionState() != HighlightState::Both && selectionState() != HighlightState::End)) {
+        auto logicalBottom = isTableCell ? logicalHeight() - borderAndPaddingAfter() : logicalHeight();
         result.uniteCenter(blockSelectionGap(rootBlock, rootBlockPhysicalPosition, offsetFromRootBlock,
-            lastLogicalTop, lastLogicalLeft, lastLogicalRight, logicalHeight(), cache, paintInfo));
+            lastLogicalTop, lastLogicalLeft, lastLogicalRight, logicalBottom, cache, paintInfo));
     }
 
     return result;
