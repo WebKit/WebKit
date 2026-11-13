@@ -273,7 +273,12 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
 
     auto videoFrame = VideoFrame::createFromPixelBuffer(pixelBuffer.releaseNonNull(), {
         .presentationTime = init.timestamp ? timestampToMediaTime(*init.timestamp) : MediaTime { },
-        .colorSpace = { .primaries = PlatformVideoColorPrimaries::Bt709, .transfer = PlatformVideoTransferCharacteristics::Iec6196621, .matrix = PlatformVideoMatrixCoefficients::Rgb, .fullRange = true }
+        .colorSpace = {
+            .primaries = PlatformVideoColorPrimaries::Bt709,
+            .transfer = PlatformVideoTransferCharacteristics::Iec6196621,
+            .matrix = PlatformVideoMatrixCoefficients::Rgb,
+            .fullRange = true
+        }
     });
 
     if (!videoFrame)
