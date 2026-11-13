@@ -799,7 +799,25 @@ void WebPageProxy::tapHighlightAtPosition(const WebCore::FloatPoint& position, W
 
 void WebPageProxy::attemptSyntheticClick(const FloatPoint& location, OptionSet<WebEventModifier> modifiers, TransactionID layerTreeTransactionIdAtLastTouchStart)
 {
-    protect(legacyMainFrameProcess())->send(Messages::WebPage::AttemptSyntheticClick(roundedIntPoint(location), modifiers, layerTreeTransactionIdAtLastTouchStart), webPageIDInMainFrameProcess());
+    attemptSyntheticClickInFrame(std::nullopt, roundedIntPoint(location), modifiers, layerTreeTransactionIdAtLastTouchStart);
+}
+
+void WebPageProxy::attemptSyntheticClickInFrame(std::optional<FrameIdentifier> frameID, const IntPoint& point, OptionSet<WebEventModifier> modifiers, TransactionID layerTreeTransactionIdAtLastTouchStart)
+{
+    RefPtr frame = frameID ? WebFrameProxy::webFrame(*frameID) : m_mainFrame.get();
+    if (!frame || frame->page() != this)
+        return;
+
+    frame->notifyActivated(MonotonicTime::now());
+
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::AttemptSyntheticClick(frameID, point, modifiers, layerTreeTransactionIdAtLastTouchStart), Messages::WebPage::AttemptSyntheticClick::Reply { [weakThis = WeakPtr { *this }, modifiers, layerTreeTransactionIdAtLastTouchStart](auto remoteUserInputEventData) {
+        if (!remoteUserInputEventData)
+            return;
+        RefPtr protectedThis = weakThis;
+        if (!protectedThis)
+            return;
+        protectedThis->attemptSyntheticClickInFrame(remoteUserInputEventData->targetFrameID, roundedIntPoint(FloatPoint { remoteUserInputEventData->transformedPoint }), modifiers, layerTreeTransactionIdAtLastTouchStart);
+    } });
 }
 
 void WebPageProxy::didRecognizeLongPress()

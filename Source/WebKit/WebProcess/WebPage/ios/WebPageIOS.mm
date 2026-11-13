@@ -951,26 +951,36 @@ void WebPage::generateSyntheticEditingCommand(SyntheticEditingCommandType comman
     frame->eventHandler().keyEvent(keyEvent);
 }
 
-void WebPage::attemptSyntheticClick(const IntPoint& point, OptionSet<WebEventModifier> modifiers, TransactionID lastLayerTreeTransactionId)
+void WebPage::attemptSyntheticClick(std::optional<FrameIdentifier> frameID, const IntPoint& point, OptionSet<WebEventModifier> modifiers, TransactionID lastLayerTreeTransactionId, CompletionHandler<void(std::optional<RemoteUserInputEventData>)>&& completionHandler)
 {
+    if (frameID && !WebProcess::singleton().webFrame(*frameID))
+        return completionHandler(std::nullopt);
+
     FloatPoint adjustedPoint;
-    RefPtr localMainFrame = protect(*m_page)->localMainFrame();
-    RefPtr nodeRespondingToClick = localMainFrame ? localMainFrame->nodeRespondingToClickEvents(point, adjustedPoint) : nullptr;
+    RefPtr localRootFrame = this->localRootFrame(frameID);
+    RefPtr nodeRespondingToClick = localRootFrame ? localRootFrame->nodeRespondingToClickEvents(point, adjustedPoint) : nullptr;
+    if (auto remoteUserInputEventData = remoteUserInputEventDataForTapTarget(localRootFrame.get(), nodeRespondingToClick.get(), adjustedPoint))
+        return completionHandler(WTF::move(remoteUserInputEventData));
+    completionHandler(std::nullopt);
+
     RefPtr frameRespondingToClick = nodeRespondingToClick ? nodeRespondingToClick->document().frame() : nullptr;
     IntPoint adjustedIntPoint = roundedIntPoint(adjustedPoint);
 
     bool didNotHandleTapAsClick = !frameRespondingToClick;
     if (frameRespondingToClick) {
         auto firstTransactionID = WebFrame::fromCoreFrame(*frameRespondingToClick)->firstLayerTreeTransactionIDAfterDidCommitLoad();
-        didNotHandleTapAsClick = !firstTransactionID || lastLayerTreeTransactionId.lessThanSameProcess(*firstTransactionID);
+        // The transaction ID comes from the main frame's process, so it can't be compared with another process's.
+        bool transactionIDsAreFromSameProcess = firstTransactionID && lastLayerTreeTransactionId.processIdentifier() == firstTransactionID->processIdentifier();
+        bool tapPrecedesLoad = transactionIDsAreFromSameProcess && lastLayerTreeTransactionId.lessThanSameProcess(*firstTransactionID);
+        didNotHandleTapAsClick = !firstTransactionID || tapPrecedesLoad;
     }
 
     if (didNotHandleTapAsClick)
         send(Messages::WebPageProxy::DidNotHandleTapAsClick(adjustedIntPoint));
     else if (m_interactionNode == nodeRespondingToClick)
-        completeSyntheticClick(std::nullopt, *nodeRespondingToClick, adjustedPoint, modifiers, WebCore::SyntheticClickType::OneFingerTap);
+        completeSyntheticClick(frameID, *nodeRespondingToClick, adjustedPoint, modifiers, WebCore::SyntheticClickType::OneFingerTap);
     else
-        handleSyntheticClick(std::nullopt, *nodeRespondingToClick, adjustedPoint, modifiers);
+        handleSyntheticClick(frameID, *nodeRespondingToClick, adjustedPoint, modifiers);
 }
 
 void WebPage::requestFocusedElementInformation(CompletionHandler<void(const std::optional<FocusedElementInformation>&)>&& completionHandler)

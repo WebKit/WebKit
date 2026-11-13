@@ -102,7 +102,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
 
     SetInsertionPointColor(WebCore::Color color)
 
-    AttemptSyntheticClick(WebCore::IntPoint point, OptionSet<WebKit::WebEventModifier> modifiers, WebKit::TransactionID lastLayerTreeTransactionId)
+    AttemptSyntheticClick(std::optional<WebCore::FrameIdentifier> frameID, WebCore::IntPoint point, OptionSet<WebKit::WebEventModifier> modifiers, WebKit::TransactionID lastLayerTreeTransactionId) -> (struct std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData)
     TapHighlightAtPosition(WebKit::TapIdentifier requestID, WebCore::FloatPoint point)
     DidRecognizeLongPress()
     InspectorNodeSearchMovedToPosition(WebCore::FloatPoint point)

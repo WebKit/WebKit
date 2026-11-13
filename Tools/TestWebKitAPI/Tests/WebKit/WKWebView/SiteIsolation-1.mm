@@ -2144,6 +2144,38 @@ TEST(SiteIsolation, SelectWithTwoTouchesInUnfocusedCrossOriginIframe)
     }));
 }
 
+// "Open" in a link's context menu or action sheet sends a synthetic click to the point that was long-pressed. Over a
+// cross-origin iframe, only the iframe's process can find the link there; the main frame's process sees the <iframe>.
+TEST(SiteIsolation, OpenElementActionOnLinkInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameWithPositionedCrossOriginIframe } },
+        { "/iframe"_s, { "<body style='margin: 0'><a href='https://webkit.org/destination' style='display: block; width: 400px; height: 300px;'>link</a></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    __block bool navigationAttempted = false;
+    __block RetainPtr<NSURL> navigationURL;
+    __block bool targetsMainFrame = true;
+    [navigationDelegate setDecidePolicyForNavigationAction:^(WKNavigationAction *action, void (^decisionHandler)(WKNavigationActionPolicy)) {
+        navigationURL = action.request.URL;
+        targetsMainFrame = action.targetFrame.isMainFrame;
+        navigationAttempted = true;
+        decisionHandler(WKNavigationActionPolicyCancel);
+    }];
+
+    // The middle of the link, which fills the iframe at (100, 100) to (500, 400).
+    [webView _simulateElementAction:_WKElementActionTypeOpen atLocation:CGPointMake(300, 250)];
+
+    ASSERT_TRUE(Util::runFor(&navigationAttempted, 5_s));
+    EXPECT_WK_STREQ("https://webkit.org/destination", [navigationURL absoluteString]);
+    EXPECT_FALSE(targetsMainFrame);
+}
+
 #endif // PLATFORM(IOS_FAMILY)
 
 #if PLATFORM(MAC)
