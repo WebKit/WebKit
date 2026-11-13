@@ -2088,6 +2088,13 @@ function Legend(callback=null, plural=false, defaultWillFilterExpected=false, fl
                 };
             },
         });
+        const updateTimeAndFlakinessSwitchesForCondensedView = () => {
+            [showTimesSwitch, showTestFlakinessSwitch].forEach(switchRef => {
+                const row = switchRef.element?.closest('.input');
+                if (row)
+                    row.style.display = showCondensedView ? 'none' : '';
+            });
+        };
         let onCondensedViewPopState = null;
         const showCondensedViewSwitch = REF.createRef({
             onElementMount: (element) => {
@@ -2099,6 +2106,7 @@ function Legend(callback=null, plural=false, defaultWillFilterExpected=false, fl
                         showCondensedView = false;
                         condensedViewQuery.remove();
                     }
+                    updateTimeAndFlakinessSwitchesForCondensedView();
                     callback();
                 };
                 onCondensedViewPopState = () => {
@@ -2106,6 +2114,7 @@ function Legend(callback=null, plural=false, defaultWillFilterExpected=false, fl
                         return;
                     showCondensedView = !showCondensedView;
                     element.checked = showCondensedView;
+                    updateTimeAndFlakinessSwitchesForCondensedView();
                     callback();
                 };
                 window.addEventListener('popstate', onCondensedViewPopState);
@@ -2122,7 +2131,7 @@ function Legend(callback=null, plural=false, defaultWillFilterExpected=false, fl
             </label>
         </div>`
         if (!plural)
-            result += `<div class="input">
+            result += `<div class="input"${showCondensedView ? ' style="display: none"' : ''}>
                 <label>Show test times</label>
                 <label class="switch">
                     <input type="checkbox"${showTestTimes ? ' checked': ''} ref="${showTimesSwitch}">
@@ -2130,7 +2139,7 @@ function Legend(callback=null, plural=false, defaultWillFilterExpected=false, fl
                 </label>
             </div>`;
         if (flakinessSwitch)
-            result += `<div class="input">
+            result += `<div class="input"${showCondensedView ? ' style="display: none"' : ''}>
                 <label>Show test flakiness</label>
                 <label class="switch">
                     <input type="checkbox"${showTestFlakiness ? ' checked': ''} ref="${showTestFlakinessSwitch}">
