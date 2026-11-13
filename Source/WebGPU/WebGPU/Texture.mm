@@ -3408,8 +3408,8 @@ void Texture::resetGPUFrameCost() const
 
 void Texture::setCommandEncoder(CommandEncoder& commandEncoder) const
 {
-    commandEncoder.trackEncoderForTexture(*this, m_commandEncoders);
-    commandEncoder.addTexture(*this);
+    if (commandEncoder.trackEncoderForTexture(*this, m_commandEncoders) || sharedEvent())
+        commandEncoder.addTexture(*this);
     if (!m_canvasBacking && isDestroyed())
         commandEncoder.makeSubmitInvalid();
 }

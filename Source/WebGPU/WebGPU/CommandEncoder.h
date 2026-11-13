@@ -169,8 +169,8 @@ public:
     NODELETE bool validateClearBuffer(const Buffer&, uint64_t offset, uint64_t size);
     void clearTracking();
     bool trackEncoderForBuffer(const Buffer&, TrackedResourceContainer&);
-    void trackEncoderForTexture(const Texture&, TrackedResourceContainer&);
-    void trackEncoderForTextureView(const TextureView&, TrackedResourceContainer&);
+    bool trackEncoderForTexture(const Texture&, TrackedResourceContainer&);
+    bool trackEncoderForTextureView(const TextureView&, TrackedResourceContainer&);
     void trackEncoderForExternalTexture(const ExternalTexture&, TrackedResourceContainer&);
     void trackEncoderForQuerySet(const QuerySet&, TrackedResourceContainer&);
     static void trackEncoder(CommandEncoder&, HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>&);
@@ -225,7 +225,7 @@ private:
     Vector<Function<bool(CommandBuffer&, CommandEncoder&)>> m_onCommitHandlers;
     HashMap<uint64_t, Vector<std::pair<DrawIndexCacheContainerValue, uint32_t>>, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_skippedDrawIndexedValidationKeys;
     HashMap<uint64_t, Vector<ReusedIndirectIndexedDraw>, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_reusedIndirectIndexedDraws;
-    Vector<Ref<const BindGroup>> m_bindGroups;
+    HashSet<Ref<const BindGroup>> m_bindGroups;
     Vector<Ref<const Buffer>> m_trackedBuffers;
     Vector<Ref<const Texture>> m_trackedTextures;
     Vector<Ref<const TextureView>> m_trackedTextureViews;

@@ -719,7 +719,7 @@ void Queue::writeBuffer(Buffer& buffer, uint64_t bufferOffset, std::span<uint8_t
     }
     if (needsInvalidation)
         buffer.indirectBufferInvalidated();
-    if (isIdle()) {
+    if (m_submittedCommandBufferCount == m_completedCommandBufferCount && !m_stagedCopyEncoder) {
         switch (buffer.buffer().storageMode) {
         case MTLStorageModeShared:
             SUPPRESS_UNCOUNTED_ARG memcpySpan(borrow(buffer)->getBufferContents().subspan(bufferOffset, data.size()), data);
@@ -756,6 +756,9 @@ std::pair<id<MTLBuffer>, uint64_t> Queue::reserveTemporaryBuffer(size_t size)
 
     if (size >= largeBufferSize)
         return std::make_pair(device->safeCreateBuffer(size, skipMemoryAttribution), 0ull);
+
+    if (isIdle())
+        m_temporaryBufferOffset = 0;
 
     if (!m_temporaryBuffer || m_temporaryBufferOffset + size > m_temporaryBuffer.length) {
         m_temporaryBuffer = device->safeCreateBuffer(std::max(size, 64 * KB), skipMemoryAttribution);
@@ -2293,6 +2296,7 @@ void Queue::clearTextureIfNeeded(Texture& parentTexture, uint32_t mipLevelCount,
     if (!devicePtr)
         return;
 
+    bool encodedAnyClear = false;
     for (uint32_t slice = 0; slice < arrayLayerCount; ++slice) {
         for (uint32_t mipLevel = 0; mipLevel < mipLevelCount; ++mipLevel) {
             auto checkedParentMipLevel = checkedSum<uint32_t>(baseMipLevel, mipLevel);
@@ -2305,9 +2309,11 @@ void Queue::clearTextureIfNeeded(Texture& parentTexture, uint32_t mipLevelCount,
                 continue;
 
             CommandEncoder::clearTextureIfNeeded(parentTexture, parentMipLevel, parentSlice, *devicePtr, ensureBlitCommandEncoder());
+            encodedAnyClear = true;
         }
     }
-    finalizeBlitCommandEncoder();
+    if (encodedAnyClear)
+        finalizeBlitCommandEncoder();
 }
 
 void Queue::addProvisionalTextureClear(Texture& texture, uint32_t mipLevel, uint32_t slice, uint64_t commandEncoderId)

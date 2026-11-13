@@ -141,6 +141,13 @@ id<MTLBuffer> Device::safeCreateBuffer(NSUInteger length, bool skipAttribution) 
     return safeCreateBuffer(length, MTLStorageModeShared, skipAttribution);
 }
 
+id<MTLBuffer> Device::zeroBuffer(NSUInteger length) const
+{
+    if (!m_zeroBuffer || m_zeroBuffer.length < length)
+        m_zeroBuffer = safeCreateBuffer(std::max<NSUInteger>(length, 64 * KB), MTLStorageModeShared, true);
+    return m_zeroBuffer;
+}
+
 RefPtr<WebGPU::Buffer> Device::createBuffer(const WebGPU::BufferDescriptor& descriptor)
 {
     if (!isValid())
@@ -229,13 +236,15 @@ void Buffer::setCommandEncoder(CommandEncoder& commandEncoder, bool mayModifyBuf
 {
     UNUSED_PARAM(mayModifyBuffer);
     bool isNewEntry = commandEncoder.trackEncoderForBuffer(*this, m_commandEncoders);
+    if (isNewEntry) {
 #if !CPU(X86_64)
-    if (m_device->isShaderValidationEnabled())
+        if (m_device->isShaderValidationEnabled())
 #endif
-        commandEncoder.addBuffer(m_buffer);
+            commandEncoder.addBuffer(m_buffer);
 
-    if (m_state != State::Unmapped && isNewEntry)
-        commandEncoder.incrementBufferMapCount();
+        if (m_state != State::Unmapped)
+            commandEncoder.incrementBufferMapCount();
+    }
     if (isDestroyed())
         commandEncoder.makeSubmitInvalid();
 }
@@ -359,7 +368,7 @@ std::span<uint8_t> Buffer::getMappedRangeSpan(uint64_t apiOffset, std::optional<
 
     if (!m_buffer.contents)
         return { };
-    return getBufferContents().subspan(offset);
+    return getBufferContents().subspan(offset, rangeSize);
 }
 
 std::span<uint8_t> Buffer::mappedRangeForCAPI(uint64_t offset, std::optional<uint64_t> size)
@@ -719,10 +728,13 @@ void Buffer::didReadOOB(uint32_t v, id<MTLIndirectCommandBuffer> icb)
 
 void Buffer::indirectBufferInvalidated(CommandEncoder& commandEncoder)
 {
+    if (!m_usage.containsAny({ WebGPU::BufferUsage::Indirect, WebGPU::BufferUsage::Index }))
+        return;
+
     indirectBufferInvalidated();
 
-    if (m_usage.containsAny({ WebGPU::BufferUsage::Indirect, WebGPU::BufferUsage::Index }))
-        CommandEncoder::trackEncoder(commandEncoder, m_pendingIndexWriteCommandEncoders);
+    if (!m_pendingIndexWriteCommandEncoders.add(commandEncoder.uniqueId()).isNewEntry)
+        return;
 
     commandEncoder.addOnCommitHandler([weakThis = ThreadSafeWeakPtr { *this }, weakCommandEncoder = ThreadSafeWeakPtr { commandEncoder }](CommandBuffer&, CommandEncoder&) {
         if (!weakThis.get() || !weakCommandEncoder.get())

@@ -204,8 +204,8 @@ void TextureView::destroy()
 
 void TextureView::setCommandEncoder(CommandEncoder& commandEncoder) const
 {
-    commandEncoder.trackEncoderForTextureView(*this, m_commandEncoders);
-    m_parentTexture->setCommandEncoder(commandEncoder);
+    if (commandEncoder.trackEncoderForTextureView(*this, m_commandEncoders))
+        m_parentTexture->setCommandEncoder(commandEncoder);
     if (isDestroyed() && !m_parentTexture->isCanvasBacking())
         commandEncoder.makeSubmitInvalid();
 }
