@@ -20225,7 +20225,10 @@ void WebPageProxy::setURLSchemeHandlerForScheme(Ref<WebURLSchemeHandler>&& handl
     ASSERT_UNUSED(handlerIdentifierResult, handlerIdentifierResult.isNewEntry);
 
     WebCore::LegacySchemeRegistry::registerURLSchemeAsHandledBySchemeHandler(scheme);
-    if (!hasRunningProcess())
+
+    // No main frame means initializeWebPage() hasn't sent CreateWebPage yet, and its creation
+    // parameters already carry this handler.
+    if (!m_mainFrame || !hasRunningProcess())
         return;
 
     forEachWebContentProcess([&](auto& process, auto pageID) {
