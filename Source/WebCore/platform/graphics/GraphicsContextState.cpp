@@ -26,6 +26,8 @@
 #include "config.h"
 #include "GraphicsContextState.h"
 
+#include "FloatSize.h"
+#include <numbers>
 #include <wtf/MathExtras.h>
 #include <wtf/text/TextStream.h>
 
@@ -55,6 +57,42 @@ GraphicsContextState::GraphicsContextState(ChangeFlags changeFlags, SourceBrush&
     , m_shouldSubpixelQuantizeFonts(shouldSubpixelQuantizeFonts)
     , m_shadowsIgnoreTransforms(shadowsIgnoreTransforms)
 {
+}
+
+bool GraphicsContextState::scaleCTM(const FloatSize& size)
+{
+    if (areEssentiallyEqual(size, FloatSize { 1.f, 1.f }))
+        return false;
+    m_ctm.scale(size);
+    m_changeFlags.add(Change::CTM);
+    return true;
+}
+
+bool GraphicsContextState::rotateCTM(float angleInRadians)
+{
+    if (WTF::areEssentiallyEqual(0.f, fmodf(angleInRadians, std::numbers::pi_v<float> * 2.f)))
+        return false;
+    m_ctm.rotateRadians(angleInRadians);
+    m_changeFlags.add(Change::CTM);
+    return true;
+}
+
+bool GraphicsContextState::translateCTM(float x, float y)
+{
+    if (!x && !y)
+        return false;
+    m_ctm.translate(x, y);
+    m_changeFlags.add(Change::CTM);
+    return true;
+}
+
+bool GraphicsContextState::concatCTM(const AffineTransform& transform)
+{
+    if (transform.isIdentity())
+        return false;
+    m_ctm *= transform;
+    m_changeFlags.add(Change::CTM);
+    return true;
 }
 
 void GraphicsContextState::repurpose(Purpose purpose)
@@ -212,6 +250,9 @@ static ASCIILiteral stateChangeName(GraphicsContextState::Change change)
 
     case GraphicsContextState::Change::ShadowsIgnoreTransforms:
         return "shadows-ignore-transforms"_s;
+
+    case GraphicsContextState::Change::CTM:
+        return "ctm"_s;
     }
 
     RELEASE_ASSERT_NOT_REACHED();
@@ -224,7 +265,8 @@ TextStream& GraphicsContextState::dump(TextStream& ts) const
         forEachProperty([&](Change, auto) { ++count; });
         return count;
     };
-    // ShadowsIgnoreTransforms is the highest Change bit, so its index plus one is the number of changes.
+    // ShadowsIgnoreTransforms is the highest property Change bit, so its index plus one is the number of
+    // properties. Change::CTM is not a property.
     static_assert(numberOfProperties() == WTF::ctz(std::to_underlying(Change::ShadowsIgnoreTransforms)) + 1,
         "forEachProperty() must list every Change enumerator");
 

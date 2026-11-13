@@ -223,11 +223,8 @@ void NonCompositedFrameRenderer::updateRendering()
         // recordingContext is the GPU context, so we need to manually flip Y only
         // for non-GPU surfaces, because GPU surfaces are created with the right
         // GrSurfaceOrigin to leave skia handle that.
-        if (m_surface->shouldPaintMirrored() && !canvas->recordingContext()) {
-            SkMatrix matrix;
-            matrix.setScaleTranslate(1, -1, 0, webPage->size().height());
-            canvas->concat(matrix);
-        }
+        if (m_surface->shouldPaintMirrored() && !canvas->recordingContext())
+            graphicsContext.concatCTM(AffineTransform::makeTranslation({ 0, static_cast<float>(webPage->size().height()) }).scale(1, -1));
 
 #if ENABLE(DAMAGE_TRACKING)
         if (m_frameDamage) {
