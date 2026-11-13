@@ -27,7 +27,6 @@ import WebKit
 #if ENABLE_GPU_PROCESS_MODEL && canImport(RealityCoreDeformation, _version: 23.0.2) && canImport(ShaderGraph, _version: 159.0.3) && arch(arm64)
 import RealityKit
 import USDKit
-import DirectResource
 #endif
 
 @objc
@@ -706,7 +705,7 @@ extension WKBridgeSkinningData {
 }
 extension WKBridgeDeformationData {
     @nonobjc
-    convenience init?(_ request: DeformationData?, rootJointIndices: [UInt32] = []) {
+    convenience init?(_ request: USDPlayer.DeformationData?, rootJointIndices: [UInt32] = []) {
         guard let request else {
             return nil
         }
