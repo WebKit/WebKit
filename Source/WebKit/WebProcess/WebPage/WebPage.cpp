@@ -4524,6 +4524,18 @@ void WebPage::setLastKnownMousePosition(WebCore::FrameIdentifier frameID, const 
     frame->coreLocalFrame()->eventHandler().setLastKnownMousePosition(eventPoint, globalPoint, WTF::move(source));
 }
 
+void WebPage::dispatchFakeMouseMoveEventInFrame(WebCore::FrameIdentifier frameID, const DoublePoint& eventPoint, const DoublePoint& globalPoint)
+{
+    RefPtr frame = WebProcess::singleton().webFrame(frameID);
+    RefPtr localFrame = frame ? frame->coreLocalFrame() : nullptr;
+    if (!localFrame || !localFrame->view())
+        return;
+
+    CheckedRef eventHandler = localFrame->eventHandler();
+    eventHandler->setLastKnownMousePosition(eventPoint, globalPoint, LastKnownMousePositionSource::Mouse);
+    eventHandler->dispatchFakeMouseMoveEventSoon();
+}
+
 void WebPage::mousePointerDidDisappear()
 {
     if (RefPtr page = corePage()) {

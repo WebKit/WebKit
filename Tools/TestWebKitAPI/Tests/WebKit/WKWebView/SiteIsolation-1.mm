@@ -2522,6 +2522,34 @@ TEST(SiteIsolation, ModifierKeyChangeOverLinkInCrossOriginIframe)
     EXPECT_WK_STREQ("https://webkit.org/destination", [lastHover.hitTestResult absoluteLinkURL].absoluteString);
 }
 
+TEST(SiteIsolation, ScrollingMainFrameHoversElementInCrossOriginIframeUnderStillMouse)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0; height: 2000px'><iframe src='https://webkit.org/iframe' style='display: block; width: 300px; height: 300px; border: none'></iframe></body>"_s } },
+        { "/iframe"_s, { "<body style='margin: 0'><div id='a' style='height: 100px'></div><div id='b' style='height: 100px'></div>"
+            "<script>window.hovered = []; for (const id of ['a', 'b']) document.getElementById(id).addEventListener('mouseover', () => hovered.push(id));</script></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 400, 300));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+    RetainPtr childFrame = [webView firstChildFrame];
+    EXPECT_NE([webView mainFrame].info._processIdentifier, [childFrame _processIdentifier]);
+
+    CGPoint pointOverA = [webView convertPoint:CGPointMake(50, 50) toView:nil];
+    [webView mouseEnterAtPoint:pointOverA];
+    [webView mouseMoveToPoint:pointOverA withFlags:0];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView stringByEvaluatingJavaScript:@"hovered.join()" inFrame:childFrame.get()] isEqualToString:@"a"];
+    }));
+
+    [webView stringByEvaluatingJavaScript:@"scrollTo(0, 100)"];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView stringByEvaluatingJavaScript:@"hovered.join()" inFrame:childFrame.get()] isEqualToString:@"a,b"];
+    }));
+}
+
 #endif // PLATFORM(MAC)
 
 static void evaluateJavaScriptInFrame(TestWKWebView *webView, NSString *script, WKFrameInfo *frame, BOOL withUserGesture)

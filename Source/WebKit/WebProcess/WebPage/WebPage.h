@@ -2512,6 +2512,7 @@ private:
     void setLastKnownMousePosition(WebCore::FrameIdentifier, const WebCore::DoublePoint&, const WebCore::DoublePoint&, std::optional<WebCore::LastKnownMousePositionSource>&& = std::nullopt);
     void mousePointerDidDisappear();
     void mouseDidLeaveLocalRoot(WebCore::FrameIdentifier);
+    void dispatchFakeMouseMoveEventInFrame(WebCore::FrameIdentifier, const WebCore::DoublePoint&, const WebCore::DoublePoint&);
 
 #if ENABLE(IOS_TOUCH_EVENTS)
     void touchEventSync(const WebTouchEvent&, CompletionHandler<void(bool)>&&);

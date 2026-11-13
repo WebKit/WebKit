@@ -478,6 +478,7 @@ private:
 #endif
 
     bool shouldDispatchFakeMouseMoveEvents() const final;
+    void dispatchFakeMouseMoveEventInRemoteFrame(WebCore::FrameIdentifier, const WebCore::DoublePoint&, const WebCore::DoublePoint&) final;
 
     void handleAutoFillButtonClick(WebCore::HTMLInputElement&) final;
 

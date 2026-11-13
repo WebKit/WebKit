@@ -4245,7 +4245,11 @@ void EventHandler::fakeMouseMoveEventTimerFired()
 
     auto modifiers = PlatformKeyboardEvent::currentStateOfModifierKeys();
     PlatformMouseEvent fakeMouseMoveEvent(*m_lastKnownMousePosition, m_lastKnownMouseGlobalPosition, std::unexpected { MouseButtonState::None }, PlatformEvent::Type::MouseMoved, 0, modifiers, MonotonicTime::now(), 0, SyntheticClickType::NoTap, MouseEventInputSource::UserDriven);
-    mouseMoved(fakeMouseMoveEvent);
+    auto result = mouseMoved(fakeMouseMoveEvent);
+    if (auto remoteUserInputEventData = result.remoteUserInputEventData()) {
+        if (RefPtr page = frame->page())
+            page->chrome().client().dispatchFakeMouseMoveEventInRemoteFrame(remoteUserInputEventData->targetFrameID, remoteUserInputEventData->transformedPoint, m_lastKnownMouseGlobalPosition);
+    }
 }
 #endif // !ENABLE(IOS_TOUCH_EVENTS)
 

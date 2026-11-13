@@ -2130,6 +2130,12 @@ bool WebChromeClient::shouldDispatchFakeMouseMoveEvents() const
     return page && page->shouldDispatchFakeMouseMoveEvents();
 }
 
+void WebChromeClient::dispatchFakeMouseMoveEventInRemoteFrame(FrameIdentifier frameID, const DoublePoint& eventPoint, const DoublePoint& globalPoint)
+{
+    if (RefPtr page = m_page)
+        page->send(Messages::WebPageProxy::DispatchFakeMouseMoveEventInRemoteFrame(frameID, eventPoint, globalPoint));
+}
+
 RefPtr<API::Object> userDataFromJSONData(JSON::Value& value)
 {
     switch (value.type()) {

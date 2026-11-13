@@ -13485,6 +13485,19 @@ void WebPageProxy::mouseDidMoveOverElement(WebHitTestResultData&& hitTestResultD
     setToolTip(hitTestResultData.tooltipText);
 }
 
+void WebPageProxy::dispatchFakeMouseMoveEventInRemoteFrame(IPC::Connection& connection, FrameIdentifier frameID, const DoublePoint& eventPoint, const DoublePoint& globalPoint)
+{
+    RefPtr frame = WebFrameProxy::webFrame(frameID);
+    if (!frame)
+        return;
+
+    Ref process = WebProcessProxy::fromConnection(connection);
+    RefPtr parentFrame = frame->parentFrame();
+    MESSAGE_CHECK(process, frame->page() == this && parentFrame && &parentFrame->process() == process.ptr());
+
+    sendToProcessContainingFrame(frameID, Messages::WebPage::DispatchFakeMouseMoveEventInFrame(frameID, eventPoint, globalPoint));
+}
+
 void WebPageProxy::setIsResizable(bool isResizable)
 {
     m_uiClient->setIsResizable(*this, isResizable);

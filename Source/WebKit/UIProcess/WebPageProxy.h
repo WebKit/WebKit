@@ -159,6 +159,7 @@ class CornerRadii;
 class Cursor;
 class DataSegment;
 class DocumentSyncData;
+class DoublePoint;
 class DragData;
 class Exception;
 class FloatPoint;
@@ -3473,6 +3474,7 @@ private:
     void runJavaScriptPrompt(IPC::Connection&, WebCore::FrameIdentifier, FrameInfoData&&, String&&, String&&, CompletionHandler<void(const String&)>&&);
     void setStatusText(const String&);
     void mouseDidMoveOverElement(WebHitTestResultData&&, OptionSet<WebEventModifier>);
+    void dispatchFakeMouseMoveEventInRemoteFrame(IPC::Connection&, WebCore::FrameIdentifier, const WebCore::DoublePoint&, const WebCore::DoublePoint&);
     void performHitTestForModifierFlagsChangeInFrame(WebCore::FrameIdentifier, Ref<WebMouseEvent>&&);
 
     NODELETE void getIsViewVisible(bool&);

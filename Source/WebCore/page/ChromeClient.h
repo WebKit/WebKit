@@ -107,6 +107,7 @@ class DataListSuggestionsClient;
 class DateTimeChooser;
 class DateTimeChooserClient;
 class DisplayRefreshMonitorFactory;
+class DoublePoint;
 class Element;
 class FileChooser;
 class FileIconLoader;
@@ -710,6 +711,7 @@ public:
     virtual URL allowedQueryParametersForAdvancedPrivacyProtections(const URL& url) const { return url; }
 
     virtual bool shouldDispatchFakeMouseMoveEvents() const { return true; }
+    virtual void dispatchFakeMouseMoveEventInRemoteFrame(FrameIdentifier, const DoublePoint&, const DoublePoint&) { }
 
     virtual void handleAutoFillButtonClick(HTMLInputElement&) { }
 
