@@ -6,5 +6,16 @@
         "path": ".claude/plugins"
       }
     }
+  },
+  "enabledPlugins": {
+    "git-webkit@webkit-plugins": true
+  },
+  "permissions": {
+    "allow": [
+      "Skill(git-webkit:classify)",
+      "Skill(git-webkit:pull)",
+      "Skill(git-webkit:checkout)",
+      "Skill(git-webkit:find)"
+    ]
   }
 }
