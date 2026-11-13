@@ -98,6 +98,12 @@ WI.HeapSnapshotProxy = class HeapSnapshotProxy extends WI.Object
     updateForCollectionEvent(event)
     {
         console.assert(!this.invalid);
+
+        // Snapshot identifiers are only unique per target. Imported snapshots are numbered separately and never
+        // get collection data, even when their imported target has the identifier of a live target.
+        if (this.imported || event.data.targetId !== this._target.identifier)
+            return;
+
         if (!event.data.affectedSnapshots.includes(this._identifier))
             return;
 

@@ -384,8 +384,9 @@ HeapSnapshot = class HeapSnapshot
         console.assert(this._targetId, "Should never use an imported snapshot to modify snapshots");
         console.assert(snapshots.every((x) => x._targetId), "Should never modify nodes of imported snapshots");
 
-        let previousSnapshotIndex = snapshots.indexOf(this) - 1;
-        let previousSnapshot = snapshots[previousSnapshotIndex];
+        // Snapshots of other targets contain other objects, so compare only with this target's previous snapshot.
+        let index = snapshots.indexOf(this);
+        let previousSnapshot = snapshots.findLast((snapshot, snapshotIndex) => snapshotIndex < index && snapshot._targetId === this._targetId);
         if (!previousSnapshot)
             return null;
 
@@ -430,6 +431,7 @@ HeapSnapshot = class HeapSnapshot
             collectedNodes[collectedNodesList[i]] = true;
 
         return {
+            targetId: this._targetId,
             collectedNodes,
             affectedSnapshots,
         };

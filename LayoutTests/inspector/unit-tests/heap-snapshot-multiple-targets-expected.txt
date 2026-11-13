@@ -1,0 +1,18 @@
+Testing that heap snapshots of different targets are not compared with each other.
+
+
+== Running test suite: HeapSnapshot.MultipleTargets
+-- Running test case: HeapSnapshot.MultipleTargets.Setup
+PASS: The first page snapshot should include 10 markers.
+PASS: The first snapshots of the page and the worker should have the same identifier.
+PASS: The worker snapshot should not include the page's markers.
+
+-- Running test case: HeapSnapshot.MultipleTargets.CollectionEvent
+PASS: The collection event should affect the first page snapshot.
+PASS: The worker snapshot with the same identifier should not be updated by the page's collection event.
+PASS: Markers in the first page snapshot should be marked dead.
+
+-- Running test case: HeapSnapshot.MultipleTargets.ImportedSnapshots
+PASS: The first imported snapshot should have the same identifier as the first page snapshot.
+PASS: Imported snapshots and diffs of them should not be updated by the page's collection event.
+

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+let worker = new Worker("../worker/resources/worker-1.js");
+
+class HeapSnapshotMultipleTargetsMarker {}
+
+const markerCount = 10;
+let markers = null;
+
+function createMarkers() {
+    markers = [];
+    for (let i = 0; i < markerCount; ++i)
+        markers.push(new HeapSnapshotMultipleTargetsMarker);
+}
+
+function removeMarkers() {
+    markers = null;
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("HeapSnapshot.MultipleTargets");
+
+    const markerClassName = "HeapSnapshotMultipleTargetsMarker";
+    const markerCount = 10;
+
+    let workerProxy = WI.HeapSnapshotWorkerProxy.singleton();
+
+    let workerTarget = null;
+    let pageSnapshot1 = null;
+    let workerSnapshot1 = null;
+    let pageCollectionEvent = null;
+
+    async function takeSnapshot(target) {
+        let [error, , snapshotStringData] = await new Promise((resolve) => target.HeapAgent.snapshot((...args) => resolve(args)));
+        InspectorTest.assert(!error, `Should not have an error taking a snapshot: ${error}`);
+
+        let {objectId, snapshot: serializedSnapshot} = await new Promise((resolve) => workerProxy.createSnapshot(target.identifier, snapshotStringData, resolve));
+        let snapshot = WI.HeapSnapshotProxy.deserialize(target, objectId, serializedSnapshot);
+        snapshot.snapshotStringData = snapshotStringData;
+        return snapshot;
+    }
+
+    function waitForPendingSnapshotUpdates() {
+        // Calls to the heap snapshot worker are answered in order, so any update requested
+        // before this call has dispatched its events when this call is answered.
+        return new Promise((resolve) => pageSnapshot1.update(resolve));
+    }
+
+    suite.addTestCase({
+        name: "HeapSnapshot.MultipleTargets.Setup",
+        description: "Take a snapshot of the page that holds the markers, then one of a worker.",
+        async test() {
+            let findWorkerTarget = () => WI.targets.find((target) => target.type === WI.TargetType.Worker);
+            while (!findWorkerTarget())
+                await WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded);
+            workerTarget = findWorkerTarget();
+
+            await InspectorTest.evaluateInPage("createMarkers()");
+            pageSnapshot1 = await takeSnapshot(WI.mainTarget);
+            InspectorTest.expectEqual(pageSnapshot1.categories.get(markerClassName)?.objectCount, markerCount, `The first page snapshot should include ${markerCount} markers.`);
+
+            await InspectorTest.evaluateInPage("removeMarkers()");
+            workerSnapshot1 = await takeSnapshot(workerTarget);
+            InspectorTest.expectEqual(workerSnapshot1.identifier, pageSnapshot1.identifier, "The first snapshots of the page and the worker should have the same identifier.");
+            InspectorTest.expectFalse(workerSnapshot1.categories.has(markerClassName), "The worker snapshot should not include the page's markers.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "HeapSnapshot.MultipleTargets.CollectionEvent",
+        description: "The next page snapshot should be compared with the previous page snapshot, not with the worker snapshot taken between them.",
+        async test() {
+            let collectionEventPromise = new Promise((resolve) => {
+                let listener = workerProxy.addEventListener(WI.HeapSnapshotWorkerProxy.Event.Collection, (event) => {
+                    if (event.data.targetId !== WI.mainTarget.identifier)
+                        return;
+
+                    workerProxy.removeEventListener(WI.HeapSnapshotWorkerProxy.Event.Collection, listener);
+                    resolve(event);
+                });
+            });
+
+            await takeSnapshot(WI.mainTarget);
+            let collectionEvent = pageCollectionEvent = await collectionEventPromise;
+            InspectorTest.expectThat(collectionEvent.data.affectedSnapshots.includes(pageSnapshot1.identifier), "The collection event should affect the first page snapshot.");
+
+            let workerSnapshotUpdated = false;
+            workerSnapshot1.addEventListener(WI.HeapSnapshotProxy.Event.CollectedNodes, () => {
+                workerSnapshotUpdated = true;
+            });
+            let pageSnapshotUpdatedPromise = pageSnapshot1.awaitEvent(WI.HeapSnapshotProxy.Event.CollectedNodes);
+
+            // Both updates go through the heap snapshot worker in order, so the worker snapshot
+            // would be updated before the page snapshot if the event affected it.
+            workerSnapshot1.updateForCollectionEvent(collectionEvent);
+            pageSnapshot1.updateForCollectionEvent(collectionEvent);
+            await pageSnapshotUpdatedPromise;
+
+            InspectorTest.expectFalse(workerSnapshotUpdated, "The worker snapshot with the same identifier should not be updated by the page's collection event.");
+            InspectorTest.expectGreaterThan(pageSnapshot1.categories.get(markerClassName)?.deadCount, 0, "Markers in the first page snapshot should be marked dead.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "HeapSnapshot.MultipleTargets.ImportedSnapshots",
+        description: "Imported snapshots and diffs of them should ignore collection events of live targets.",
+        async test() {
+            async function importSnapshot(target) {
+                let {objectId, snapshot: serializedSnapshot} = await new Promise((resolve) => workerProxy.createImportedSnapshot(pageSnapshot1.snapshotStringData, "Imported", resolve));
+                return WI.HeapSnapshotProxy.deserialize(target, objectId, serializedSnapshot);
+            }
+
+            async function createDiff(snapshot1, snapshot2) {
+                let {objectId, snapshotDiff: serializedSnapshotDiff} = await new Promise((resolve) => workerProxy.createSnapshotDiff(snapshot1.proxyObjectId, snapshot2.proxyObjectId, resolve));
+                return WI.HeapSnapshotDiffProxy.deserialize(snapshot2.target, objectId, serializedSnapshotDiff);
+            }
+
+            // A snapshot file loaded with the Import button has no target.
+            let importedSnapshotWithoutTarget = await importSnapshot(null);
+            InspectorTest.expectEqual(importedSnapshotWithoutTarget.identifier, pageSnapshot1.identifier, "The first imported snapshot should have the same identifier as the first page snapshot.");
+
+            // A snapshot of an imported recording keeps the identifier of the target it was recorded from.
+            let importedTarget = WI.ImportedTarget.import({identifier: WI.mainTarget.identifier, type: WI.mainTarget.type, name: "Imported", url: "imported"});
+            let importedSnapshotWithImportedTarget = await importSnapshot(importedTarget);
+            let importedSnapshotWithImportedTarget2 = await importSnapshot(importedTarget);
+
+            let proxies = {
+                "imported snapshot without a target": importedSnapshotWithoutTarget,
+                "imported snapshot with an imported target": importedSnapshotWithImportedTarget,
+                "diff of imported snapshots without a target": await createDiff(importedSnapshotWithImportedTarget, importedSnapshotWithoutTarget),
+                "diff of imported snapshots with an imported target": await createDiff(importedSnapshotWithoutTarget, importedSnapshotWithImportedTarget2),
+            };
+
+            // Make the page's collection event affect every imported snapshot, as a later page snapshot could.
+            let affectedSnapshots = Object.values(proxies).map((proxy) => proxy.snapshot2?.identifier ?? proxy.identifier);
+            let collectionEvent = {data: {...pageCollectionEvent.data, affectedSnapshots}};
+
+            let updatedProxies = [];
+            for (let [name, proxy] of Object.entries(proxies)) {
+                proxy.addEventListener(WI.HeapSnapshotProxy.Event.CollectedNodes, () => {
+                    updatedProxies.push(name);
+                });
+                proxy.updateForCollectionEvent(collectionEvent);
+            }
+            await waitForPendingSnapshotUpdates();
+
+            InspectorTest.expectEqual(updatedProxies.length, 0, "Imported snapshots and diffs of them should not be updated by the page's collection event.");
+            for (let name of updatedProxies)
+                InspectorTest.log(`Updated: ${name}`);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Testing that heap snapshots of different targets are not compared with each other.</p>
+</body>
+</html>

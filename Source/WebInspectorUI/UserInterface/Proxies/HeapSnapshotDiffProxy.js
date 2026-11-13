@@ -27,7 +27,7 @@ WI.HeapSnapshotDiffProxy = class HeapSnapshotDiffProxy extends WI.Object
 {
     constructor(target, snapshotDiffObjectId, snapshot1, snapshot2, totalSize, totalObjectCount, categories)
     {
-        console.assert(target instanceof WI.Target, target);
+        console.assert(!target || target instanceof WI.Target || target instanceof WI.ImportedTarget, target);
 
         super();
 
@@ -70,6 +70,11 @@ WI.HeapSnapshotDiffProxy = class HeapSnapshotDiffProxy extends WI.Object
     updateForCollectionEvent(event)
     {
         console.assert(!this.invalid);
+
+        // See HeapSnapshotProxy.prototype.updateForCollectionEvent.
+        if (this._snapshot2.imported || event.data.targetId !== this._target.identifier)
+            return;
+
         if (!event.data.affectedSnapshots.includes(this._snapshot2._identifier))
             return;
 
