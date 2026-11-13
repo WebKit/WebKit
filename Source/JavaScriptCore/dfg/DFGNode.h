@@ -275,6 +275,7 @@ struct CallVarargsData {
     // Only for CallVarargsWithSpread, whose children are [callee, thisValue, elem0, ...]: bitVector
     // marks which of the interleaved arguments (elem i is child 2 + i) are spreads.
     BitVector* bitVector { nullptr };
+    bool isFunctionApply { false };
 };
 
 struct LoadVarargsData {

@@ -199,6 +199,7 @@ using JSOrWasmInstruction = Variant<const JSInstruction*, uintptr_t /* IPIntOffs
     inline CallFrame* calleeFrameForVarargs(CallFrame*, unsigned numUsedStackSlots, unsigned argumentCountIncludingThis);
 
     unsigned sizeOfVarargs(JSGlobalObject*, JSValue arguments, uint32_t firstVarArgOffset);
+    void throwIfNotFunctionApplyCallee(JSGlobalObject*, JSValue callee);
     static constexpr unsigned maxArguments = 0x100000;
     unsigned sizeFrameForVarargs(JSGlobalObject*, CallFrame*, VM&, JSValue arguments, unsigned numUsedStackSlots, uint32_t firstVarArgOffset);
     unsigned sizeFrameForVarargsWithSpread(JSGlobalObject*, CallFrame*, VM&, JSValue* values, unsigned argc, const BitVector&, unsigned numUsedStackSlots);
