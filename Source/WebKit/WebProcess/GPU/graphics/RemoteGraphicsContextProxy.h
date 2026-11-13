@@ -97,7 +97,9 @@ private:
     std::optional<WebCore::RenderingMethod> renderingMethod() const final { return std::nullopt; }
 
     void save(WebCore::GraphicsContextState::Purpose) final;
-    void restore(WebCore::GraphicsContextState::Purpose) final;
+    bool restore(WebCore::GraphicsContextState::Purpose) final;
+    void saveTransform() final;
+    bool restoreTransform() final;
     void translate(float x, float y) final;
     void rotate(float angle) final;
     void scale(const WebCore::FloatSize&) final;
