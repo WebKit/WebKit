@@ -2404,6 +2404,10 @@ table.attachment_entry {
     white-space: pre-wrap;
 }
 
+.bz_comment_text table th {
+   text-align: left;
+}
+
 #expert_fields_controller {
     font-size: var(--font-size-medium);
 }
