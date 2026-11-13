@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSSOM: resolved values of the inset properties for relative positioning on inline boxes</title>
+<link rel="help" href="https://drafts.csswg.org/cssom/#resolved-value">
+<link rel="help" href="https://drafts.csswg.org/css-position/#pos-sch">
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<script type="module">
+import {runTests, containerForInflow} from "./support/getComputedStyle-insets.js";
+runTests({
+  style: "position: relative; display: inline;",
+  containingBlockElement: containerForInflow,
+  containingBlockArea: "content",
+  preservesPercentages: false,
+  preservesAuto: false,
+  canStretchAutoSize: false,
+});
+</script>

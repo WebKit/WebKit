@@ -331,7 +331,7 @@ static bool isLayoutDependent(CSSPropertyID propertyID, const Style::ComputedSty
     case CSSPropertyID::InsetBlockEnd:
     case CSSPropertyID::InsetInlineStart:
     case CSSPropertyID::InsetInlineEnd:
-        return renderer && style && renderer->isRenderBox();
+        return renderer && style && (renderer->isRenderBox() || (renderer->isInlineBox() && renderer->isInFlowPositioned()));
     case CSSPropertyID::Width:
     case CSSPropertyID::Height:
     case CSSPropertyID::InlineSize:
