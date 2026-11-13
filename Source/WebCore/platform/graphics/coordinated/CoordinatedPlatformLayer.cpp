@@ -191,37 +191,41 @@ void CoordinatedPlatformLayer::notifyCompositionRequired()
     m_client->notifyCompositionRequired();
 }
 
-void CoordinatedPlatformLayer::notifyPositionChanged()
+void CoordinatedPlatformLayer::notifyScrollingPositionChanged()
 {
-    assertIsHeld(m_lock);
-    if (m_didNotifyPositionChange)
-        return;
-
     if (!m_client)
         return;
-
-    m_didNotifyPositionChange = true;
-    m_client->didChangeLayerPendingPosition(*this);
+    m_client->didChangeLayerPendingScrollingPosition(*this);
 }
 
-void CoordinatedPlatformLayer::setPosition(FloatPoint&& position)
+void CoordinatedPlatformLayer::setPosition(const FloatPoint& position)
 {
     assertIsHeld(m_lock);
-    m_pendingState.position = WTF::move(position);
-    notifyPositionChanged();
+    if (m_position == position)
+        return;
+
+    m_position = position;
+    m_pendingChanges.add(Change::Position);
+    {
+        Locker locker { m_scrollingPosition.lock };
+        m_scrollingPosition.currentPosition = std::nullopt;
+    }
+    notifyCompositionRequired();
 }
 
 void CoordinatedPlatformLayer::setPositionForScrolling(const FloatPoint& position)
 {
-    Locker locker { m_lock };
-    m_pendingState.positionForScrolling = position;
-    notifyPositionChanged();
+    Locker locker { m_scrollingPosition.lock };
+    m_scrollingPosition.pendingPosition = position;
+    if (!std::exchange(m_scrollingPosition.didNotifyPositionChange, true))
+        notifyScrollingPositionChanged();
 }
 
-const FloatPoint& CoordinatedPlatformLayer::position() const
+FloatPoint CoordinatedPlatformLayer::effectivePositionForScrolling() const
 {
     assertIsHeld(m_lock);
-    return m_position;
+    Locker locker { m_scrollingPosition.lock };
+    return m_scrollingPosition.currentPosition.value_or(m_position);
 }
 
 void CoordinatedPlatformLayer::setTopLeftPositionForScrolling(const FloatPoint& position)
@@ -237,36 +241,46 @@ void CoordinatedPlatformLayer::setTopLeftPositionForScrolling(const FloatPoint& 
 FloatPoint CoordinatedPlatformLayer::topLeftPositionForScrolling()
 {
     Locker locker { m_lock };
-    return m_position - toFloatSize(m_anchorPoint.xy()) * m_size;
+    return effectivePositionForScrolling() - toFloatSize(m_anchorPoint.xy()) * m_size;
 }
 
 void CoordinatedPlatformLayer::setBoundsOrigin(const FloatPoint& origin)
 {
     assertIsHeld(m_lock);
-    m_pendingState.boundsOrigin = origin;
-    notifyPositionChanged();
+    if (m_boundsOrigin == origin)
+        return;
+
+    m_boundsOrigin = origin;
+    m_pendingChanges.add(Change::BoundsOrigin);
+    {
+        Locker locker { m_scrollingPosition.lock };
+        m_scrollingPosition.currentBoundsOrigin = std::nullopt;
+    }
+    notifyCompositionRequired();
 }
 
 void CoordinatedPlatformLayer::setBoundsOriginForScrolling(const FloatPoint& origin)
 {
-    Locker locker { m_lock };
-    m_pendingState.boundsOriginForScrolling = origin;
-    notifyPositionChanged();
+    Locker locker { m_scrollingPosition.lock };
+    m_scrollingPosition.pendingBoundsOrigin = origin;
+    if (!std::exchange(m_scrollingPosition.didNotifyPositionChange, true))
+        notifyScrollingPositionChanged();
 }
 
-const FloatPoint& CoordinatedPlatformLayer::boundsOrigin() const
+FloatPoint CoordinatedPlatformLayer::effectiveBoundsOriginForScrolling() const
 {
     assertIsHeld(m_lock);
-    return m_boundsOrigin;
+    Locker locker { m_scrollingPosition.lock };
+    return m_scrollingPosition.currentBoundsOrigin.value_or(m_boundsOrigin);
 }
 
-void CoordinatedPlatformLayer::setAnchorPoint(FloatPoint3D&& point)
+void CoordinatedPlatformLayer::setAnchorPoint(const FloatPoint3D& point)
 {
     assertIsHeld(m_lock);
     if (m_anchorPoint == point)
         return;
 
-    m_anchorPoint = WTF::move(point);
+    m_anchorPoint = point;
     m_pendingChanges.add(Change::AnchorPoint);
     notifyCompositionRequired();
 }
@@ -277,13 +291,13 @@ const FloatPoint3D& CoordinatedPlatformLayer::anchorPoint() const
     return m_anchorPoint;
 }
 
-void CoordinatedPlatformLayer::setSize(FloatSize&& size)
+void CoordinatedPlatformLayer::setSize(const FloatSize& size)
 {
     assertIsHeld(m_lock);
     if (m_size == size)
         return;
 
-    m_size = WTF::move(size);
+    m_size = size;
     m_pendingChanges.add(Change::Size);
     notifyCompositionRequired();
 }
@@ -1114,6 +1128,12 @@ void CoordinatedPlatformLayer::requestComposition(CompositionReason reason)
         m_client->requestComposition(reason);
 }
 
+void CoordinatedPlatformLayer::didApplyLayerScrollingPositions()
+{
+    if (m_client)
+        m_client->didApplyLayerScrollingPositions();
+}
+
 RunLoop* CoordinatedPlatformLayer::compositingRunLoop() const
 {
     return m_client ? m_client->compositingRunLoop() : nullptr;
@@ -1154,68 +1174,57 @@ void CoordinatedPlatformLayer::waitUntilPaintingFinished()
         m_backingStoreProxy->waitUntilPaintingFinished();
 }
 
-void CoordinatedPlatformLayer::flushPendingState()
+void CoordinatedPlatformLayer::commitPendingScrollingPosition()
 {
-    Locker locker { m_lock };
-    m_didNotifyPositionChange = false;
-    if (!m_pendingState.position && !m_pendingState.boundsOrigin && !m_pendingState.positionForScrolling && !m_pendingState.boundsOriginForScrolling)
-        return;
+    bool needsComposition = false;
+    {
+        Locker scrollingLocker { m_scrollingPosition.lock };
+        if (m_scrollingPosition.pendingPosition) {
+            auto pendingPosition = std::exchange(m_scrollingPosition.pendingPosition, std::nullopt);
+            if (pendingPosition != m_scrollingPosition.currentPosition) {
+                m_scrollingPosition.committedPosition = pendingPosition;
+                m_scrollingPosition.currentPosition = pendingPosition;
+                needsComposition = true;
+            }
+        }
 
-    std::optional<FloatPoint> position;
-    if (m_pendingState.positionForScrolling) {
-        m_pendingState.position = std::nullopt;
-        position = *std::exchange(m_pendingState.positionForScrolling, std::nullopt);
-    } else if (m_pendingState.position)
-        position = *std::exchange(m_pendingState.position, std::nullopt);
-
-    std::optional<FloatPoint> boundsOrigin;
-    if (m_pendingState.boundsOriginForScrolling) {
-        m_pendingState.boundsOrigin = std::nullopt;
-        boundsOrigin = *std::exchange(m_pendingState.boundsOriginForScrolling, std::nullopt);
-    } else if (m_pendingState.boundsOrigin)
-        boundsOrigin = *std::exchange(m_pendingState.boundsOrigin, std::nullopt);
-
-    bool requireComposition = false;
-    if (position && m_position != *position) {
-        m_position = *position;
-        m_pendingChanges.add(Change::Position);
-        requireComposition = true;
+        if (m_scrollingPosition.pendingBoundsOrigin) {
+            auto pendingBoundsOrigin = std::exchange(m_scrollingPosition.pendingBoundsOrigin, std::nullopt);
+            if (pendingBoundsOrigin != m_scrollingPosition.currentBoundsOrigin) {
+                m_scrollingPosition.committedBoundsOrigin = pendingBoundsOrigin;
+                m_scrollingPosition.currentBoundsOrigin = pendingBoundsOrigin;
+                needsComposition = true;
+            }
+        }
+        m_scrollingPosition.didNotifyPositionChange = false;
     }
 
-    if (boundsOrigin && m_boundsOrigin != boundsOrigin) {
-        m_boundsOrigin = *boundsOrigin;
-        m_pendingChanges.add(Change::BoundsOrigin);
-        requireComposition = true;
-    }
-
-    if (requireComposition)
+    if (needsComposition)
         notifyCompositionRequired();
 }
 
-void CoordinatedPlatformLayer::flushPositionChanges(const OptionSet<CompositionReason>& reasons)
+void CoordinatedPlatformLayer::flushScrollingPositionChanges(const OptionSet<CompositionReason>& reasons)
 {
     ASSERT(!isMainThread());
     if (!reasons.containsAny({ CompositionReason::RenderingUpdate, CompositionReason::AsyncScrolling }))
         return;
 
-    Locker locker { m_lock };
-    if (!m_pendingChanges.containsAny({ Change::Position, Change::BoundsOrigin }))
+    std::optional<FloatPoint> position;
+    std::optional<FloatPoint> boundsOrigin;
+    {
+        Locker scrollingLocker { m_scrollingPosition.lock };
+        position = std::exchange(m_scrollingPosition.committedPosition, std::nullopt);
+        boundsOrigin = std::exchange(m_scrollingPosition.committedBoundsOrigin, std::nullopt);
+    }
+
+    if (!position && !boundsOrigin)
         return;
 
-    auto applyPositionChanges = [this](auto& layer) {
-        assertIsHeld(m_lock);
-        if (m_pendingChanges.contains(Change::Position)) {
-            layer.setPosition(m_position);
-            m_pendingChanges.remove(Change::Position);
-        }
-
-        if (m_pendingChanges.contains(Change::BoundsOrigin)) {
-            layer.setBoundsOrigin(m_boundsOrigin);
-            m_pendingChanges.remove(Change::BoundsOrigin);
-        }
-    };
-
-    applyPositionChanges(ensureTarget());
+    auto& layer = ensureTarget();
+    if (position)
+        layer.setPosition(*position);
+    if (boundsOrigin)
+        layer.setBoundsOrigin(*boundsOrigin);
 }
 
 #if USE(TEXTURE_MAPPER)
@@ -1251,6 +1260,16 @@ void CoordinatedPlatformLayer::flushCompositingStateOnTarget(const OptionSet<Com
     }
 
     if (reasons.contains(CompositionReason::RenderingUpdate)) {
+        if (m_pendingChanges.contains(Change::Position)) {
+            layer.setPosition(effectivePositionForScrolling());
+            m_pendingChanges.remove(Change::Position);
+        }
+
+        if (m_pendingChanges.contains(Change::BoundsOrigin)) {
+            layer.setBoundsOrigin(effectiveBoundsOriginForScrolling());
+            m_pendingChanges.remove(Change::BoundsOrigin);
+        }
+
         if (m_pendingChanges.contains(Change::AnchorPoint)) {
             layer.setAnchorPoint(m_anchorPoint);
             m_pendingChanges.remove(Change::AnchorPoint);
@@ -1454,6 +1473,16 @@ void CoordinatedPlatformLayer::flushCompositingStateProperties(const OptionSet<C
 
     auto& layer = ensureTarget();
     if (reasons.contains(CompositionReason::RenderingUpdate)) {
+        if (m_pendingChanges.contains(Change::Position)) {
+            layer.setPosition(effectivePositionForScrolling());
+            m_pendingChanges.remove(Change::Position);
+        }
+
+        if (m_pendingChanges.contains(Change::BoundsOrigin)) {
+            layer.setBoundsOrigin(effectiveBoundsOriginForScrolling());
+            m_pendingChanges.remove(Change::BoundsOrigin);
+        }
+
         if (m_pendingChanges.contains(Change::AnchorPoint)) {
             layer.setAnchorPoint(m_anchorPoint);
             m_pendingChanges.remove(Change::AnchorPoint);

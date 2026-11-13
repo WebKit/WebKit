@@ -89,10 +89,8 @@ void ScrollingTreeCoordinated::applyLayerPositionsInternal()
 
     ThreadedScrollingTree::applyLayerPositionsInternal();
 
-    if (ScrollingThread::isCurrentThread()) {
-        auto rootContentsLayer = static_cast<ScrollingTreeFrameScrollingNodeCoordinated*>(rootScrollingNode)->rootContentsLayer();
-        rootContentsLayer->requestComposition(CompositionReason::AsyncScrolling);
-    }
+    if (RefPtr rootContentsLayer = static_cast<ScrollingTreeFrameScrollingNodeCoordinated*>(rootScrollingNode)->rootContentsLayer())
+        rootContentsLayer->didApplyLayerScrollingPositions();
 }
 
 void ScrollingTreeCoordinated::didCompleteRenderingUpdate()
@@ -100,8 +98,8 @@ void ScrollingTreeCoordinated::didCompleteRenderingUpdate()
     // If there's a composition requested or ongoing, wait for didCompletePlatformRenderingUpdate() that will be
     // called once the composiiton finishes.
     if (auto* rootScrollingNode = rootNode()) {
-        auto rootContentsLayer = static_cast<ScrollingTreeFrameScrollingNodeCoordinated*>(rootScrollingNode)->rootContentsLayer();
-        if (rootContentsLayer->isCompositionRequiredOrOngoing())
+        RefPtr rootContentsLayer = static_cast<ScrollingTreeFrameScrollingNodeCoordinated*>(rootScrollingNode)->rootContentsLayer();
+        if (rootContentsLayer && rootContentsLayer->isCompositionRequiredOrOngoing())
             return;
     }
 
@@ -132,7 +130,7 @@ static void collectDescendantLayersAtPoint(Vector<LayerAndPoint, 16>& layersAtPo
         }
 
         children = parent->children();
-        parentBoundsOrigin = parent->boundsOrigin();
+        parentBoundsOrigin = parent->effectiveBoundsOriginForScrolling();
     }
 
     for (auto& layer : children) {
@@ -147,9 +145,10 @@ static void collectDescendantLayersAtPoint(Vector<LayerAndPoint, 16>& layersAtPo
 
             float originX = layer->anchorPoint().x() * layer->size().width();
             float originY = layer->anchorPoint().y() * layer->size().height();
+            auto position = layer->effectivePositionForScrolling();
 
             auto transform = TransformationMatrix()
-                .translate3d(originX + layer->position().x() - parentBoundsOrigin.x(), originY + layer->position().y() - parentBoundsOrigin.y(), layer->anchorPoint().z())
+                .translate3d(originX + position.x() - parentBoundsOrigin.x(), originY + position.y() - parentBoundsOrigin.y(), layer->anchorPoint().z())
                 .multiply(layer->transform())
                 .translate3d(-originX, -originY, -layer->anchorPoint().z())
                 .inverse()
@@ -183,7 +182,7 @@ static bool layerEventRegionContainsPoint(const Ref<CoordinatedPlatformLayer>& l
 {
     assertIsHeld(layer->lock());
     // Scrolling changes boundsOrigin on the scroll container layer, but we computed its event region ignoring scroll position, so factor out bounds origin.
-    auto originRelativePoint = localPoint - toFloatSize(layer->boundsOrigin());
+    auto originRelativePoint = localPoint - toFloatSize(layer->effectiveBoundsOriginForScrolling());
     return layer->eventRegion().contains(roundedIntPoint(originRelativePoint));
 }
 
@@ -240,7 +239,10 @@ RefPtr<ScrollingTreeNode> ScrollingTreeCoordinated::scrollingNodeForPoint(FloatP
 
     Locker locker { m_layerHitTestMutex };
 
-    auto rootContentsLayer = static_cast<ScrollingTreeFrameScrollingNodeCoordinated*>(rootScrollingNode.get())->rootContentsLayer();
+    RefPtr rootContentsLayer = static_cast<ScrollingTreeFrameScrollingNodeCoordinated*>(rootScrollingNode.get())->rootContentsLayer();
+    if (!rootContentsLayer)
+        return nullptr;
+
     FloatPoint scrollOrigin = rootScrollingNode->scrollOrigin();
     auto pointInContentsLayer = point;
     pointInContentsLayer.moveBy(scrollOrigin);
@@ -318,7 +320,9 @@ OptionSet<EventListenerRegionType> ScrollingTreeCoordinated::eventListenerRegion
 
     Locker locker { m_layerHitTestMutex };
 
-    auto rootContentsLayer = static_cast<ScrollingTreeFrameScrollingNodeCoordinated*>(rootScrollingNode.get())->rootContentsLayer();
+    RefPtr rootContentsLayer = static_cast<ScrollingTreeFrameScrollingNodeCoordinated*>(rootScrollingNode.get())->rootContentsLayer();
+    if (!rootContentsLayer)
+        return { };
 
     Vector<LayerAndPoint, 16> layersAtPoint;
     collectDescendantLayersAtPoint(layersAtPoint, *rootContentsLayer, point, [&] (auto layer, auto transformedPoint) {
@@ -345,10 +349,12 @@ static std::optional<LayerAndPoint> findLayerOfEventRegionAtPoint(const Scrollin
 
     ScrollingTree::HitTestLocker hitTestLocker(const_cast<ScrollingTreeCoordinated&>(scrollingTree));
 
-    Ref rootContentsLayer = *static_cast<ScrollingTreeFrameScrollingNodeCoordinated*>(rootScrollingNode.get())->rootContentsLayer();
+    RefPtr rootContentsLayer = static_cast<ScrollingTreeFrameScrollingNodeCoordinated*>(rootScrollingNode.get())->rootContentsLayer();
+    if (!rootContentsLayer)
+        return { };
 
     Vector<LayerAndPoint, 16> layersAtPoint;
-    collectDescendantLayersAtPoint(layersAtPoint, rootContentsLayer, point, [&] (auto layer, auto transformedPoint) {
+    collectDescendantLayersAtPoint(layersAtPoint, *rootContentsLayer, point, [&](auto layer, auto transformedPoint) {
         assertIsHeld(layer->lock());
         return layerEventRegionContainsPoint(layer, transformedPoint);
     });

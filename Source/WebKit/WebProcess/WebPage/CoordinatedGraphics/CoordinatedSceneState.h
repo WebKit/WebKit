@@ -55,7 +55,7 @@ public:
     void removeLayer(WebCore::CoordinatedPlatformLayer&);
 
     bool flush();
-    void flushPendingState();
+    void commitPendingScrollingPositions();
     enum class ChangedPreRenderedTiles : bool { No, Yes };
     ChangedPreRenderedTiles flushCompositingState(const OptionSet<WebCore::CompositionReason>&);
     void invalidate();
@@ -66,7 +66,7 @@ public:
 
     void waitUntilPaintingFinished();
 
-    void didChangeLayerPendingPosition(WebCore::CoordinatedPlatformLayer&);
+    void didChangeLayerPendingScrollingPosition(WebCore::CoordinatedPlatformLayer&);
 
     void willPaintTile();
     void didPaintTile();
@@ -89,8 +89,8 @@ private:
     HashSet<Ref<WebCore::CoordinatedPlatformLayer>> m_pendingLayersToRemove WTF_GUARDED_BY_LOCK(m_pendingLayersLock);
     std::atomic<bool> m_didChangeLayers { false };
     HashSet<Ref<WebCore::CoordinatedPlatformLayer>> m_committedLayers;
-    Lock m_layersWithPendingPositionLock;
-    Vector<Ref<WebCore::CoordinatedPlatformLayer>> m_layersWithPendingPosition WTF_GUARDED_BY_LOCK(m_layersWithPendingPositionLock);
+    Lock m_layersWithPendingScrollingPositionLock;
+    Vector<Ref<WebCore::CoordinatedPlatformLayer>> m_layersWithPendingScrollingPosition WTF_GUARDED_BY_LOCK(m_layersWithPendingScrollingPositionLock);
 #if USE(SKIA)
     Lock m_layersWithPreRenderedTilesLock;
     HashSet<Ref<WebCore::CoordinatedPlatformLayer>> m_layersWithPreRenderedTiles WTF_GUARDED_BY_LOCK(m_layersWithPreRenderedTilesLock);

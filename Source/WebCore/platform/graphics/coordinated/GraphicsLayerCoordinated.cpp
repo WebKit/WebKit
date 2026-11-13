@@ -790,7 +790,7 @@ static void dumpInnerLayer(TextStream& textStream, const String& label, Coordina
     textStream << indent << "(" << label << " ";
     if (options & LayerTreeAsTextOptions::Debug)
         textStream << " " << static_cast<void*>(layer);
-    textStream << layer->boundsOrigin().x() << ", " << layer->boundsOrigin().y() << " " << layer->size().width() << " x " << layer->size().height();
+    textStream << layer->effectiveBoundsOriginForScrolling().x() << ", " << layer->effectiveBoundsOriginForScrolling().y() << " " << layer->size().width() << " x " << layer->size().height();
     if (!layer->contentsVisible())
         textStream << " hidden";
     textStream << ")\n";
@@ -940,10 +940,10 @@ void GraphicsLayerCoordinated::updateGeometry(float pageScaleFactor, const Float
     FloatSize adjustedSize;
     computePixelAlignmentIfNeeded(pageScaleFactor, positionRelativeToBase, adjustedPosition, adjustedBoundsOrigin, adjustedAnchorPoint, adjustedSize);
 
-    m_platformLayer->setPosition(WTF::move(adjustedPosition));
-    m_platformLayer->setBoundsOrigin(WTF::move(adjustedBoundsOrigin));
-    m_platformLayer->setAnchorPoint(WTF::move(adjustedAnchorPoint));
-    m_platformLayer->setSize(WTF::move(adjustedSize));
+    m_platformLayer->setPosition(adjustedPosition);
+    m_platformLayer->setBoundsOrigin(adjustedBoundsOrigin);
+    m_platformLayer->setAnchorPoint(adjustedAnchorPoint);
+    m_platformLayer->setSize(adjustedSize);
 }
 
 void GraphicsLayerCoordinated::computeLayerTransformIfNeeded(bool affectedByTransformAnimation)

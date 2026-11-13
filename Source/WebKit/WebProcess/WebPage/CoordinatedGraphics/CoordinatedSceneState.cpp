@@ -78,11 +78,11 @@ void CoordinatedSceneState::removeLayer(CoordinatedPlatformLayer& layer)
     m_didChangeLayers = true;
 }
 
-void CoordinatedSceneState::didChangeLayerPendingPosition(CoordinatedPlatformLayer& layer)
+void CoordinatedSceneState::didChangeLayerPendingScrollingPosition(CoordinatedPlatformLayer& layer)
 {
-    Locker locker { m_layersWithPendingPositionLock };
-    ASSERT(!m_layersWithPendingPosition.contains(Ref { layer }));
-    m_layersWithPendingPosition.append(layer);
+    Locker locker { m_layersWithPendingScrollingPositionLock };
+    ASSERT(!m_layersWithPendingScrollingPosition.contains(Ref { layer }));
+    m_layersWithPendingScrollingPosition.append(layer);
 }
 
 bool CoordinatedSceneState::flush()
@@ -100,23 +100,21 @@ bool CoordinatedSceneState::flush()
             m_pendingLayersToRemove.addAll(std::exchange(m_layersToRemove, { }));
     }
 
-    flushPendingState();
-
     return didChangeLayers;
 }
 
-void CoordinatedSceneState::flushPendingState()
+void CoordinatedSceneState::commitPendingScrollingPositions()
 {
     Locker stateLock { m_stateLock };
 
     Vector<Ref<CoordinatedPlatformLayer>> layers;
     {
-        Locker pendingLayersLock { m_layersWithPendingPositionLock };
-        layers = WTF::move(m_layersWithPendingPosition);
+        Locker pendingLayersLock { m_layersWithPendingScrollingPositionLock };
+        layers = WTF::move(m_layersWithPendingScrollingPosition);
     }
 
     for (Ref layer : layers)
-        layer->flushPendingState();
+        layer->commitPendingScrollingPosition();
 }
 
 void CoordinatedSceneState::commitPendingLayers()
@@ -136,19 +134,19 @@ CoordinatedSceneState::ChangedPreRenderedTiles CoordinatedSceneState::flushCompo
 {
     commitPendingLayers();
 
-    {
-        Locker stateLock { m_stateLock };
-        m_rootLayer->flushPositionChanges(reasons);
-        for (auto& layer : m_committedLayers)
-            layer->flushPositionChanges(reasons);
-    }
-
     Vector<Ref<CoordinatedPlatformLayer>, 16> layersWithPendingTileUpdates;
     m_rootLayer->flushCompositingState(reasons);
     for (auto& layer : m_committedLayers) {
         layer->flushCompositingState(reasons);
         if (layer->hasPendingBackingStoreTileUpdates())
             layersWithPendingTileUpdates.append(Ref { layer });
+    }
+
+    {
+        Locker stateLock { m_stateLock };
+        m_rootLayer->flushScrollingPositionChanges(reasons);
+        for (auto& layer : m_committedLayers)
+            layer->flushScrollingPositionChanges(reasons);
     }
 
     if (layersWithPendingTileUpdates.isEmpty())
@@ -197,8 +195,8 @@ void CoordinatedSceneState::invalidate()
     }
 
     {
-        Locker pendingLayersLock { m_layersWithPendingPositionLock };
-        m_layersWithPendingPosition = { };
+        Locker pendingLayersLock { m_layersWithPendingScrollingPositionLock };
+        m_layersWithPendingScrollingPosition = { };
     }
 
 #if USE(SKIA)

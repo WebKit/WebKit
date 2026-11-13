@@ -401,21 +401,22 @@ bool LayerTreeHost::isCompositionRequiredOrOngoing() const
 
 void LayerTreeHost::requestComposition(CompositionReason)
 {
-#if ENABLE(SCROLLING_THREAD)
-    if (ScrollingThread::isCurrentThread()) {
-        m_sceneState->flushPendingState();
-        if (!m_compositionRequiredInScrollingThread)
-            return;
-        m_compositionRequiredInScrollingThread = false;
-    }
-#endif
-
     m_compositor->scheduleUpdate();
 }
 
-void LayerTreeHost::didChangeLayerPendingPosition(CoordinatedPlatformLayer& layer)
+void LayerTreeHost::didApplyLayerScrollingPositions()
 {
-    m_sceneState->didChangeLayerPendingPosition(layer);
+    m_sceneState->commitPendingScrollingPositions();
+
+#if ENABLE(SCROLLING_THREAD)
+    if (ScrollingThread::isCurrentThread() && std::exchange(m_compositionRequiredInScrollingThread, false))
+        requestComposition(CompositionReason::AsyncScrolling);
+#endif
+}
+
+void LayerTreeHost::didChangeLayerPendingScrollingPosition(CoordinatedPlatformLayer& layer)
+{
+    m_sceneState->didChangeLayerPendingScrollingPosition(layer);
 }
 
 RunLoop* LayerTreeHost::compositingRunLoop() const

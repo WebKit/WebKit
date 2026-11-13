@@ -77,7 +77,8 @@ public:
         virtual void notifyCompositionRequired() = 0;
         virtual bool isCompositionRequiredOrOngoing() const = 0;
         virtual void requestComposition(CompositionReason) = 0;
-        virtual void didChangeLayerPendingPosition(CoordinatedPlatformLayer&) = 0;
+        virtual void didChangeLayerPendingScrollingPosition(CoordinatedPlatformLayer&) = 0;
+        virtual void didApplyLayerScrollingPositions() = 0;
         virtual RunLoop* compositingRunLoop() const = 0;
         virtual int maxTextureSize() const = 0;
         virtual void willPaintTile() = 0;
@@ -116,17 +117,17 @@ public:
     void setDamageInGlobalCoordinateSpace(std::shared_ptr<Damage> damage) { m_damageInGlobalCoordinateSpace = WTF::move(damage); }
 #endif
 
-    void setPosition(FloatPoint&&) WTF_REQUIRES_LOCK(m_lock);
+    void setPosition(const FloatPoint&) WTF_REQUIRES_LOCK(m_lock);
     void setPositionForScrolling(const FloatPoint&);
-    const FloatPoint& position() const WTF_REQUIRES_LOCK(m_lock);
+    FloatPoint effectivePositionForScrolling() const WTF_REQUIRES_LOCK(m_lock);
     void setTopLeftPositionForScrolling(const FloatPoint&);
     FloatPoint topLeftPositionForScrolling();
     void setBoundsOrigin(const FloatPoint&) WTF_REQUIRES_LOCK(m_lock);
     void setBoundsOriginForScrolling(const FloatPoint&);
-    const FloatPoint& boundsOrigin() const WTF_REQUIRES_LOCK(m_lock);
-    void setAnchorPoint(FloatPoint3D&&) WTF_REQUIRES_LOCK(m_lock);
+    FloatPoint effectiveBoundsOriginForScrolling() const WTF_REQUIRES_LOCK(m_lock);
+    void setAnchorPoint(const FloatPoint3D&) WTF_REQUIRES_LOCK(m_lock);
     const FloatPoint3D& anchorPoint() const WTF_REQUIRES_LOCK(m_lock);
-    void setSize(FloatSize&&) WTF_REQUIRES_LOCK(m_lock);
+    void setSize(const FloatSize&) WTF_REQUIRES_LOCK(m_lock);
     const FloatSize& size() const WTF_REQUIRES_LOCK(m_lock);
     FloatRect bounds() const WTF_REQUIRES_LOCK(m_lock);
 
@@ -214,8 +215,8 @@ public:
     void updateContents(bool affectedByTransformAnimation) WTF_REQUIRES_LOCK(m_lock);
     void updateBackingStore();
 
-    void flushPendingState();
-    void flushPositionChanges(const OptionSet<CompositionReason>&);
+    void commitPendingScrollingPosition();
+    void flushScrollingPositionChanges(const OptionSet<CompositionReason>&);
     void flushCompositingState(const OptionSet<CompositionReason>&);
 
 #if USE(CAIRO)
@@ -228,6 +229,7 @@ public:
 #endif
     bool isCompositionRequiredOrOngoing() const;
     void requestComposition(CompositionReason);
+    void didApplyLayerScrollingPositions();
     RunLoop* compositingRunLoop() const;
     int maxTextureSize() const;
 
@@ -242,7 +244,7 @@ private:
     void removeFromParent();
 
     void notifyCompositionRequired();
-    void notifyPositionChanged() WTF_REQUIRES_LOCK(m_lock);
+    void notifyScrollingPositionChanged();
 
     bool needsBackingStore() const;
     void purgeBackingStores();
@@ -411,13 +413,16 @@ private:
     Markable<ScrollingNodeID> m_scrollingNodeID WTF_GUARDED_BY_LOCK(m_lock);
 #endif
 
-    bool m_didNotifyPositionChange WTF_GUARDED_BY_LOCK(m_lock) { false };
     struct {
-        std::optional<FloatPoint> position;
-        std::optional<FloatPoint> positionForScrolling;
-        std::optional<FloatPoint> boundsOrigin;
-        std::optional<FloatPoint> boundsOriginForScrolling;
-    } m_pendingState WTF_GUARDED_BY_LOCK(m_lock);
+        mutable Lock lock;
+        std::optional<FloatPoint> pendingPosition WTF_GUARDED_BY_LOCK(lock);
+        std::optional<FloatPoint> committedPosition WTF_GUARDED_BY_LOCK(lock);
+        std::optional<FloatPoint> currentPosition WTF_GUARDED_BY_LOCK(lock);
+        std::optional<FloatPoint> pendingBoundsOrigin WTF_GUARDED_BY_LOCK(lock);
+        std::optional<FloatPoint> committedBoundsOrigin WTF_GUARDED_BY_LOCK(lock);
+        std::optional<FloatPoint> currentBoundsOrigin WTF_GUARDED_BY_LOCK(lock);
+        bool didNotifyPositionChange WTF_GUARDED_BY_LOCK(lock) { false };
+    } m_scrollingPosition;
 };
 
 } // namespace WebCore
