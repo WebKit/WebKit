@@ -1444,7 +1444,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_private_name)
         if (newStructure->propertyAccessesAreCacheable() && baseCell == slot.base()) {
             if (slot.type() == PutPropertySlot::NewProperty) {
                 DeferGC deferGC(vm);
-                if (!newStructure->isDictionary() && newStructure->previousID()->outOfLineCapacity() == newStructure->outOfLineCapacity() && oldStructure == newStructure->previousID()) {
+                if (!newStructure->isDictionary() && newStructure->previousID()->outOfLineCapacity() == newStructure->outOfLineCapacity() && oldStructure == newStructure->previousID() && oldStructure->privateElementAdditionsAreCacheable()) {
                     ASSERT(oldStructure->transitionWatchpointSetHasBeenInvalidated());
 
                     bool sawPolyProto = false;
@@ -1502,20 +1502,21 @@ LLINT_SLOW_PATH_DECL(slow_path_set_private_brand)
 
     if (Options::useLLIntICs() && !oldStructure->isDictionary()) {
         GCSafeConcurrentJSLocker locker(codeBlock->m_lock, vm);
-        Structure* newStructure = baseObject->structure();
-
-        ASSERT(oldStructure == newStructure->previousID());
-        ASSERT(oldStructure->transitionWatchpointSetHasBeenInvalidated());
 
         // Start out by clearing out the old cache.
         metadata.m_oldStructureID = StructureID();
         metadata.m_newStructureID = StructureID();
         metadata.m_brand.clear();
 
-        if (!newStructure->isDictionary()) {
-            metadata.m_oldStructureID = oldStructure->id();
-            metadata.m_newStructureID = newStructure->id();
-            metadata.m_brand.set(vm, codeBlock, brand.asCell());
+        if (oldStructure->propertyAccessesAreCacheable() && oldStructure->privateElementAdditionsAreCacheable()) {
+            SUPPRESS_UNCOUNTED_ARG Structure* newStructure = Structure::setBrandTransitionFromExistingStructureConcurrently(oldStructure, &asSymbol(brand)->uid());
+            if (newStructure && newStructure == baseObject->structure() && !newStructure->isDictionary()) {
+                ASSERT(newStructure->previousID() == oldStructure);
+                ASSERT(oldStructure->transitionWatchpointSetHasBeenInvalidated());
+                metadata.m_oldStructureID = oldStructure->id();
+                metadata.m_newStructureID = newStructure->id();
+                metadata.m_brand.set(vm, codeBlock, brand.asCell());
+            }
         }
         vm.writeBarrier(codeBlock);
     }

@@ -71,6 +71,8 @@ struct HashTableValue;
 
 JS_EXPORT_PRIVATE Exception* throwTypeError(JSGlobalObject*, ThrowScope&, const String&);
 extern JS_EXPORT_PRIVATE const ASCIILiteral NonExtensibleObjectPropertyDefineError;
+extern JS_EXPORT_PRIVATE const ASCIILiteral NonExtensibleObjectPrivateFieldDefineError;
+extern JS_EXPORT_PRIVATE const ASCIILiteral NonExtensibleObjectPrivateMethodDefineError;
 extern JS_EXPORT_PRIVATE const ASCIILiteral ReadonlyPropertyWriteError;
 extern JS_EXPORT_PRIVATE const ASCIILiteral ReadonlyPropertyChangeError;
 extern JS_EXPORT_PRIVATE const ASCIILiteral UnableToDeletePropertyError;
@@ -541,7 +543,7 @@ public:
     // You should call this when performing [[IsExtensible]] trap in a place
     // that is described in the specification. This performs the fully virtual
     // [[IsExtensible]] trap.
-    bool isExtensible(JSGlobalObject*);
+    inline bool isExtensible(JSGlobalObject*);
     bool indexingShouldBeSparse()
     {
         return !isStructureExtensible()

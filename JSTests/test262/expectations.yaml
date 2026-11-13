@@ -111,10 +111,6 @@ test/language/expressions/yield/star-rhs-iter-thrw-res-done-no-value.js:
   strict mode: 3
 test/language/identifier-resolution/assign-to-global-undefined.js:
   strict mode: 3
-test/language/statements/class/elements/private-class-field-on-nonextensible-objects.js:
-  strict mode: 3
-test/language/statements/class/subclass/private-class-field-on-nonextensible-return-override.js:
-  strict mode: 3
 test/language/statements/with/get-binding-value-call-with-proxy-env.js:
   default: 3
 test/language/statements/with/get-binding-value-idref-with-proxy-env.js:
@@ -131,8 +127,6 @@ test/staging/sm/Function/arguments-parameter-shadowing.js:
 test/staging/sm/Function/function-toString-builtin-name.js:
   default: 3
   strict mode: 3
-test/staging/sm/PrivateName/modify-non-extensible.js:
-  default: 3
 test/staging/sm/RegExp/replace-sticky-lastIndex.js:
   default: 3
   strict mode: 3
