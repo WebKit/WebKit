@@ -726,6 +726,8 @@ void Internals::resetToConsistentState(Page& page)
 
     if (page.mediaPlaybackIsSuspended())
         page.resumeAllMediaPlayback();
+
+    page.resumeAllMediaBuffering();
 #endif
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
     if (RefPtr sessionManager = page.mediaSessionManager())
