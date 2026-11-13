@@ -70,6 +70,7 @@ public:
 private:
     RefPtr<WebSocketTask> createWebSocketTask(WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol, const WebCore::ClientOrigin&, bool, bool, OptionSet<WebCore::AdvancedPrivacyProtections>, WebCore::StoredCredentialsPolicy, WebCore::IsInitiatedByWorker) final;
     void clearCredentials(WallTime) final;
+    bool hasCompressionDictionarySupport() const final;
 
     const std::unique_ptr<WebCore::SoupNetworkSession> m_networkSession;
     bool m_persistentCredentialStorageEnabled { true };

@@ -2245,6 +2245,14 @@ bool NetworkConnectionToWebProcess::isAlwaysOnLoggingAllowed() const
     return m_sessionID.isAlwaysOnLoggingAllowed() || m_sharedPreferencesForWebProcess.allowPrivacySensitiveOperationsInNonPersistentDataStores;
 }
 
+bool NetworkConnectionToWebProcess::compressionDictionaryEnabled()
+{
+    if (!m_sharedPreferencesForWebProcess.compressionDictionaryEnabled)
+        return false;
+    CheckedPtr networkSession = this->networkSession();
+    return networkSession && networkSession->hasCompressionDictionarySupport();
+}
+
 void NetworkConnectionToWebProcess::updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess&& sharedPreferencesForWebProcess)
 {
     m_sharedPreferencesForWebProcess = WTF::move(sharedPreferencesForWebProcess);
