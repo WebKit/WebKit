@@ -38,6 +38,7 @@
 #include "ContainerNodeInlines.h"
 #include "CSSFontSelector.h"
 #include "CSSMarkup.h"
+#include "CSSParserFastPaths.h"
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParserConsumer+LengthDefinitions.h"
@@ -2625,12 +2626,46 @@ CanvasRenderingContext2DBase::StyleVariant CanvasRenderingContext2DBase::strokeS
     return toStyleVariant(state().strokeStyle);
 }
 
+std::optional<SRGBA<uint8_t>> CanvasRenderingContext2DBase::cachedStyleColor(const String& colorString) const
+{
+    auto* impl = colorString.impl();
+    if (!impl)
+        return std::nullopt;
+    for (auto& entry : m_styleColorCache) {
+        if (entry.string.get() == impl)
+            return entry.color;
+    }
+    return std::nullopt;
+}
+
+Color CanvasRenderingContext2DBase::parseStyleColor(const String& colorString)
+{
+    if (auto simpleColor = CSSParserFastPaths::parseSimpleColor(colorString, protect(canvasBase())->cssParserContext())) {
+        if (auto* impl = colorString.impl()) {
+            auto& entry = m_styleColorCache[m_styleColorCacheNextIndex];
+            entry.string = impl;
+            entry.color = *simpleColor;
+            m_styleColorCacheNextIndex = (m_styleColorCacheNextIndex + 1) % StyleColorCacheSize;
+        }
+        return *simpleColor;
+    }
+    return parseColorGeneral(colorString, protect(canvasBase()));
+}
+
 void CanvasRenderingContext2DBase::setStrokeStyle(String&& colorString)
 {
+    if (colorString.impl() == state().unparsedStrokeColor.impl())
+        return;
+
+    if (auto cachedColor = cachedStyleColor(colorString)) {
+        setStrokeColorImpl(Color { *cachedColor }, WTF::move(colorString));
+        return;
+    }
+
     if (colorString == state().unparsedStrokeColor)
         return;
 
-    auto color = parseColor(colorString, protect(canvasBase()));
+    auto color = parseStyleColor(colorString);
     if (!color.isValid())
         return;
 
@@ -2665,10 +2700,18 @@ CanvasRenderingContext2DBase::StyleVariant CanvasRenderingContext2DBase::fillSty
 
 void CanvasRenderingContext2DBase::setFillStyle(String&& colorString)
 {
+    if (colorString.impl() == state().unparsedFillColor.impl())
+        return;
+
+    if (auto cachedColor = cachedStyleColor(colorString)) {
+        setFillColorImpl(Color { *cachedColor }, WTF::move(colorString));
+        return;
+    }
+
     if (colorString == state().unparsedFillColor)
         return;
 
-    auto color = parseColor(colorString, protect(canvasBase()));
+    auto color = parseStyleColor(colorString);
     if (!color.isValid())
         return;
 
