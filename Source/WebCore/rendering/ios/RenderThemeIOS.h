@@ -172,7 +172,7 @@ private:
 
     Color checkboxRadioBorderColor(OptionSet<ControlStyle::State>, OptionSet<StyleColorOptions>);
     Color checkboxRadioBackgroundColor(const Style::ComputedStyle&, OptionSet<ControlStyle::State>, OptionSet<StyleColorOptions>);
-    RefPtr<Gradient> checkboxRadioBackgroundGradient(const FloatRect&, OptionSet<ControlStyle::State>);
+    RefPtr<const Gradient> checkboxRadioBackgroundGradient(const FloatRect&, OptionSet<ControlStyle::State>);
     Color checkboxRadioIndicatorColor(OptionSet<ControlStyle::State>, OptionSet<StyleColorOptions>);
 
     void paintCheckboxRadioInnerShadow(const PaintInfo&, const FloatRoundedRect&, OptionSet<ControlStyle::State>);

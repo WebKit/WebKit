@@ -55,7 +55,7 @@ private:
     bool requiresLayer() const final { return true; }
 
 protected:
-    RefPtr<Pattern> buildPattern(GraphicsContext&, const RenderLayerModelObject&, const std::optional<AffineTransform>& nonScalingStrokeTransform = std::nullopt);
+    RefPtr<const Pattern> buildPattern(GraphicsContext&, const RenderLayerModelObject&, const std::optional<AffineTransform>& nonScalingStrokeTransform = std::nullopt);
 
     void collectPatternAttributesIfNeeded();
 

@@ -151,7 +151,7 @@ void RemoteGraphicsContext::setFillCachedGradient(RemoteGradientIdentifier ident
     context().setFillGradient(gradient.releaseNonNull(), spaceTransform);
 }
 
-void RemoteGraphicsContext::setFillGradient(Ref<Gradient>&& gradient, const AffineTransform& spaceTransform)
+void RemoteGraphicsContext::setFillGradient(Ref<const Gradient>&& gradient, const AffineTransform& spaceTransform)
 {
     context().setFillGradient(WTF::move(gradient), spaceTransform);
 }
@@ -192,7 +192,7 @@ void RemoteGraphicsContext::setStrokeCachedGradient(RemoteGradientIdentifier ide
     context().setStrokeGradient(gradient.releaseNonNull(), spaceTransform);
 }
 
-void RemoteGraphicsContext::setStrokeGradient(Ref<Gradient>&& gradient, const AffineTransform& spaceTransform)
+void RemoteGraphicsContext::setStrokeGradient(Ref<const Gradient>&& gradient, const AffineTransform& spaceTransform)
 {
     context().setStrokeGradient(WTF::move(gradient), spaceTransform);
 }
@@ -560,12 +560,12 @@ void RemoteGraphicsContext::fillRectWithColor(const FloatRect& rect, const Color
     context().fillRect(rect, color);
 }
 
-void RemoteGraphicsContext::fillRectWithGradient(const FloatRect& rect, Ref<Gradient>&& gradient)
+void RemoteGraphicsContext::fillRectWithGradient(const FloatRect& rect, Ref<const Gradient>&& gradient)
 {
     context().fillRect(rect, gradient);
 }
 
-void RemoteGraphicsContext::fillRectWithGradientAndSpaceTransform(const FloatRect& rect, Ref<Gradient>&& gradient, const AffineTransform& transform, GraphicsContext::RequiresClipToRect requiresClipToRect)
+void RemoteGraphicsContext::fillRectWithGradientAndSpaceTransform(const FloatRect& rect, Ref<const Gradient>&& gradient, const AffineTransform& transform, GraphicsContext::RequiresClipToRect requiresClipToRect)
 {
     context().fillRect(rect, gradient, transform, requiresClipToRect);
 }

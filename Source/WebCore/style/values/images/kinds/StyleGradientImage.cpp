@@ -100,7 +100,7 @@ void GradientImage::load(CachedResourceLoader&, const ResourceLoaderOptions&)
 {
 }
 
-Ref<WebCore::Gradient> GradientImage::gradientForSize(const RenderElement& renderer, FloatSize size, bool isForFirstLine, CachedGradient*& cached) const
+Ref<const WebCore::Gradient> GradientImage::gradientForSize(const RenderElement& renderer, FloatSize size, bool isForFirstLine, CachedGradient*& cached) const
 {
     cached = nullptr;
 

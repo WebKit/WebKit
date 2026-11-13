@@ -1124,8 +1124,8 @@ class FillRectWithGradient {
 public:
     static constexpr ASCIILiteral name = "fill-rect-with-gradient"_s;
 
-    WEBCORE_EXPORT FillRectWithGradient(const FloatRect&, Gradient&);
-    WEBCORE_EXPORT FillRectWithGradient(FloatRect&&, Ref<Gradient>&&);
+    WEBCORE_EXPORT FillRectWithGradient(const FloatRect&, const Gradient&);
+    WEBCORE_EXPORT FillRectWithGradient(FloatRect&&, Ref<const Gradient>&&);
 
     const FloatRect& rect() const LIFETIME_BOUND { return m_rect; }
     const Gradient& gradient() const { return m_gradient; }
@@ -1137,15 +1137,15 @@ private:
     friend struct IPC::ArgumentCoder<FillRectWithGradient>;
 
     FloatRect m_rect;
-    const Ref<Gradient> m_gradient;
+    const Ref<const Gradient> m_gradient;
 };
 
 class FillRectWithGradientAndSpaceTransform {
 public:
     static constexpr ASCIILiteral name = "fill-rect-with-gradient-and-space-transform"_s;
 
-    WEBCORE_EXPORT FillRectWithGradientAndSpaceTransform(const FloatRect&, Gradient&, const AffineTransform&, GraphicsContext::RequiresClipToRect);
-    WEBCORE_EXPORT FillRectWithGradientAndSpaceTransform(FloatRect&&, Ref<Gradient>&&, AffineTransform&&, GraphicsContext::RequiresClipToRect);
+    WEBCORE_EXPORT FillRectWithGradientAndSpaceTransform(const FloatRect&, const Gradient&, const AffineTransform&, GraphicsContext::RequiresClipToRect);
+    WEBCORE_EXPORT FillRectWithGradientAndSpaceTransform(FloatRect&&, Ref<const Gradient>&&, AffineTransform&&, GraphicsContext::RequiresClipToRect);
 
     const FloatRect& rect() const LIFETIME_BOUND { return m_rect; }
     const Gradient& gradient() const { return m_gradient; }
@@ -1159,7 +1159,7 @@ private:
     friend struct IPC::ArgumentCoder<FillRectWithGradientAndSpaceTransform>;
 
     FloatRect m_rect;
-    const Ref<Gradient> m_gradient;
+    const Ref<const Gradient> m_gradient;
     AffineTransform m_gradientSpaceTransform;
     GraphicsContext::RequiresClipToRect m_requiresClipToRect;
 };

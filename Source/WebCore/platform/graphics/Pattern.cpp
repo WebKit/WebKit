@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-Ref<Pattern> Pattern::create(SourceImage&& tileImage, const Parameters& parameters)
+Ref<const Pattern> Pattern::create(SourceImage&& tileImage, const Parameters& parameters)
 {
     return adoptRef(*new Pattern(WTF::move(tileImage), parameters));
 }
@@ -45,12 +45,7 @@ Pattern::Pattern(SourceImage&& tileImage, const Parameters& parameters)
 
 Pattern::~Pattern() = default;
 
-void Pattern::setPatternSpaceTransform(const AffineTransform& patternSpaceTransform)
-{
-    m_parameters.patternSpaceTransform = patternSpaceTransform;
-}
-
-Ref<Pattern> Pattern::withPatternSpaceTransform(const AffineTransform& patternSpaceTransform) const
+Ref<const Pattern> Pattern::withPatternSpaceTransform(const AffineTransform& patternSpaceTransform) const
 {
     return create(SourceImage { m_tileImage }, { repeatX(), repeatY(), patternSpaceTransform });
 }
@@ -68,11 +63,6 @@ RefPtr<NativeImage> Pattern::tileNativeImage() const
 RefPtr<ImageBuffer> Pattern::tileImageBuffer() const
 {
     return m_tileImage.imageBuffer();
-}
-
-void Pattern::setTileImage(SourceImage&& tileImage)
-{
-    m_tileImage = WTF::move(tileImage);
 }
 
 }

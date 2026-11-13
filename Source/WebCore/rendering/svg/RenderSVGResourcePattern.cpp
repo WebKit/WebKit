@@ -60,7 +60,7 @@ void RenderSVGResourcePattern::collectPatternAttributesIfNeeded()
         m_attributes = WTF::move(attributes);
 }
 
-RefPtr<Pattern> RenderSVGResourcePattern::buildPattern(GraphicsContext& context, const RenderLayerModelObject& renderer, const std::optional<AffineTransform>& nonScalingStrokeTransform)
+RefPtr<const Pattern> RenderSVGResourcePattern::buildPattern(GraphicsContext& context, const RenderLayerModelObject& renderer, const std::optional<AffineTransform>& nonScalingStrokeTransform)
 {
     auto objectBoundingBox = renderer.objectBoundingBox();
 

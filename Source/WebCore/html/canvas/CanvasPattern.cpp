@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CanvasPattern.h"
 
+#include "CanvasStyle.h"
 #include "DOMMatrix2DInit.h"
 #include "DOMMatrixReadOnly.h"
 #include "NativeImage.h"
@@ -40,12 +41,20 @@ Ref<CanvasPattern> CanvasPattern::create(SourceImage&& image, bool repeatX, bool
 }
 
 CanvasPattern::CanvasPattern(SourceImage&& image, bool repeatX, bool repeatY, bool originClean)
-    : m_pattern(Pattern::create(WTF::move(image), { repeatX, repeatY }))
+    : m_tileImage(WTF::move(image))
+    , m_parameters(repeatX, repeatY)
     , m_originClean(originClean)
 {
 }
 
 CanvasPattern::~CanvasPattern() = default;
+
+Ref<const Pattern> CanvasPattern::createPattern() const
+{
+    Ref pattern = Pattern::create(SourceImage { m_tileImage }, m_parameters);
+    m_pattern = pattern.ptr();
+    return pattern;
+}
 
 bool CanvasPattern::parseRepetitionType(const String& type, bool& repeatX, bool& repeatY)
 {
@@ -78,7 +87,14 @@ ExceptionOr<void> CanvasPattern::setTransform(DOMMatrix2DInit&& matrixInit)
     if (checkValid.hasException())
         return checkValid.releaseException();
 
-    m_pattern->setPatternSpaceTransform({ matrixInit.a.value_or(1), matrixInit.b.value_or(0), matrixInit.c.value_or(0), matrixInit.d.value_or(1), matrixInit.e.value_or(0), matrixInit.f.value_or(0) });
+    m_parameters.patternSpaceTransform = { matrixInit.a.value_or(1), matrixInit.b.value_or(0), matrixInit.c.value_or(0), matrixInit.d.value_or(1), matrixInit.e.value_or(0), matrixInit.f.value_or(0) };
+    // Without a snapshot, no context holds a brush of this pattern that it could consider current.
+    if (m_pattern) {
+        // Keep the tile of the old snapshot. It may hold the native image that was created for an image buffer tile.
+        m_tileImage = m_pattern->tileImage();
+        m_pattern = nullptr;
+        CanvasStyle::gradientOrPatternDidChange();
+    }
     return { };
 }
 

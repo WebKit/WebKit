@@ -1,0 +1,906 @@
+Changing a CanvasPattern or CanvasGradient after it is assigned to fillStyle or strokeStyle affects the following draws.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() before the first draw, fillRect()
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() after a draw, fillRect()
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() after a draw, then drawn twice, fillRect()
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() after a draw, then drawn without the filter and with it, fillRect()
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() after a draw, then drawn with the filter and without it, fillRect()
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() after a draw, then assigned again, fillRect()
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() after another style object of the same type changed, fillRect()
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() between save() and restore(), fillRect()
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() between save() and restore(), with a draw before restore(), fillRect()
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() between save() and restore(), with a state change and a draw before restore(), fillRect()
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() between save() and restore(), while another style is set, fillRect()
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() between beginLayer() and endLayer(), fillRect()
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() after a draw, with the style used by two contexts, fillRect()
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() twice, with the style used by two contexts and one context drawing in between, fillRect()
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() before the first draw, fill()
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() after a draw, fill()
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() after a draw, then drawn twice, fill()
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() after a draw, then drawn without the filter and with it, fill()
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() after a draw, then drawn with the filter and without it, fill()
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() after a draw, then assigned again, fill()
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() after another style object of the same type changed, fill()
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() between save() and restore(), fill()
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() between save() and restore(), with a draw before restore(), fill()
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() between save() and restore(), with a state change and a draw before restore(), fill()
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() between save() and restore(), while another style is set, fill()
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() between beginLayer() and endLayer(), fill()
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() after a draw, with the style used by two contexts, fill()
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() twice, with the style used by two contexts and one context drawing in between, fill()
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() before the first draw, fill(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() after a draw, fill(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() after a draw, then drawn twice, fill(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() after a draw, then drawn without the filter and with it, fill(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() after a draw, then drawn with the filter and without it, fill(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() after a draw, then assigned again, fill(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() after another style object of the same type changed, fill(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() between save() and restore(), fill(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() between save() and restore(), with a draw before restore(), fill(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() between save() and restore(), with a state change and a draw before restore(), fill(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() between save() and restore(), while another style is set, fill(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() between beginLayer() and endLayer(), fill(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() after a draw, with the style used by two contexts, fill(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() twice, with the style used by two contexts and one context drawing in between, fill(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() before the first draw, fillText()
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() after a draw, fillText()
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() after a draw, then drawn twice, fillText()
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() after a draw, then drawn without the filter and with it, fillText()
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() after a draw, then drawn with the filter and without it, fillText()
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() after a draw, then assigned again, fillText()
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() after another style object of the same type changed, fillText()
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() between save() and restore(), fillText()
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() between save() and restore(), with a draw before restore(), fillText()
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() between save() and restore(), with a state change and a draw before restore(), fillText()
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() between save() and restore(), while another style is set, fillText()
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() between beginLayer() and endLayer(), fillText()
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() after a draw, with the style used by two contexts, fillText()
+PASS HTMLCanvasElement, filter none: CanvasPattern fillStyle, setTransform() twice, with the style used by two contexts and one context drawing in between, fillText()
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() before the first draw, strokeRect()
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() after a draw, strokeRect()
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() after a draw, then drawn twice, strokeRect()
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() after a draw, then drawn without the filter and with it, strokeRect()
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() after a draw, then drawn with the filter and without it, strokeRect()
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() after a draw, then assigned again, strokeRect()
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() after another style object of the same type changed, strokeRect()
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() between save() and restore(), strokeRect()
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() between save() and restore(), with a draw before restore(), strokeRect()
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() between save() and restore(), with a state change and a draw before restore(), strokeRect()
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() between save() and restore(), while another style is set, strokeRect()
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() between beginLayer() and endLayer(), strokeRect()
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() after a draw, with the style used by two contexts, strokeRect()
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() twice, with the style used by two contexts and one context drawing in between, strokeRect()
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() before the first draw, stroke()
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() after a draw, stroke()
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() after a draw, then drawn twice, stroke()
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() after a draw, then drawn without the filter and with it, stroke()
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() after a draw, then drawn with the filter and without it, stroke()
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() after a draw, then assigned again, stroke()
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() after another style object of the same type changed, stroke()
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() between save() and restore(), stroke()
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() between save() and restore(), with a draw before restore(), stroke()
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() between save() and restore(), with a state change and a draw before restore(), stroke()
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() between save() and restore(), while another style is set, stroke()
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() between beginLayer() and endLayer(), stroke()
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() after a draw, with the style used by two contexts, stroke()
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() twice, with the style used by two contexts and one context drawing in between, stroke()
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() before the first draw, stroke(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() after a draw, stroke(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() after a draw, then drawn twice, stroke(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() after a draw, then drawn without the filter and with it, stroke(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() after a draw, then drawn with the filter and without it, stroke(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() after a draw, then assigned again, stroke(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() after another style object of the same type changed, stroke(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() between save() and restore(), stroke(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() between save() and restore(), with a draw before restore(), stroke(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() between save() and restore(), with a state change and a draw before restore(), stroke(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() between save() and restore(), while another style is set, stroke(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() between beginLayer() and endLayer(), stroke(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() after a draw, with the style used by two contexts, stroke(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() twice, with the style used by two contexts and one context drawing in between, stroke(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() before the first draw, strokeText()
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() after a draw, strokeText()
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() after a draw, then drawn twice, strokeText()
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() after a draw, then drawn without the filter and with it, strokeText()
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() after a draw, then drawn with the filter and without it, strokeText()
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() after a draw, then assigned again, strokeText()
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() after another style object of the same type changed, strokeText()
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() between save() and restore(), strokeText()
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() between save() and restore(), with a draw before restore(), strokeText()
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() between save() and restore(), with a state change and a draw before restore(), strokeText()
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() between save() and restore(), while another style is set, strokeText()
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() between beginLayer() and endLayer(), strokeText()
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() after a draw, with the style used by two contexts, strokeText()
+PASS HTMLCanvasElement, filter none: CanvasPattern strokeStyle, setTransform() twice, with the style used by two contexts and one context drawing in between, strokeText()
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() before the first draw, fillRect()
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() after a draw, fillRect()
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() after a draw, then drawn twice, fillRect()
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() after a draw, then drawn without the filter and with it, fillRect()
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() after a draw, then drawn with the filter and without it, fillRect()
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() after a draw, then assigned again, fillRect()
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() after another style object of the same type changed, fillRect()
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() between save() and restore(), fillRect()
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() between save() and restore(), with a draw before restore(), fillRect()
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() between save() and restore(), with a state change and a draw before restore(), fillRect()
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() between save() and restore(), while another style is set, fillRect()
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() between beginLayer() and endLayer(), fillRect()
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() after a draw, with the style used by two contexts, fillRect()
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() twice, with the style used by two contexts and one context drawing in between, fillRect()
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() before the first draw, fill()
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() after a draw, fill()
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() after a draw, then drawn twice, fill()
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() after a draw, then drawn without the filter and with it, fill()
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() after a draw, then drawn with the filter and without it, fill()
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() after a draw, then assigned again, fill()
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() after another style object of the same type changed, fill()
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() between save() and restore(), fill()
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() between save() and restore(), with a draw before restore(), fill()
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() between save() and restore(), with a state change and a draw before restore(), fill()
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() between save() and restore(), while another style is set, fill()
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() between beginLayer() and endLayer(), fill()
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() after a draw, with the style used by two contexts, fill()
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() twice, with the style used by two contexts and one context drawing in between, fill()
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() before the first draw, fill(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() after a draw, fill(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() after a draw, then drawn twice, fill(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() after a draw, then drawn without the filter and with it, fill(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() after a draw, then drawn with the filter and without it, fill(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() after a draw, then assigned again, fill(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() after another style object of the same type changed, fill(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() between save() and restore(), fill(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() between save() and restore(), with a draw before restore(), fill(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() between save() and restore(), with a state change and a draw before restore(), fill(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() between save() and restore(), while another style is set, fill(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() between beginLayer() and endLayer(), fill(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() after a draw, with the style used by two contexts, fill(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() twice, with the style used by two contexts and one context drawing in between, fill(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() before the first draw, fillText()
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() after a draw, fillText()
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() after a draw, then drawn twice, fillText()
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() after a draw, then drawn without the filter and with it, fillText()
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() after a draw, then drawn with the filter and without it, fillText()
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() after a draw, then assigned again, fillText()
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() after another style object of the same type changed, fillText()
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() between save() and restore(), fillText()
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() between save() and restore(), with a draw before restore(), fillText()
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() between save() and restore(), with a state change and a draw before restore(), fillText()
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() between save() and restore(), while another style is set, fillText()
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() between beginLayer() and endLayer(), fillText()
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() after a draw, with the style used by two contexts, fillText()
+PASS HTMLCanvasElement, filter none: CanvasGradient fillStyle, addColorStop() twice, with the style used by two contexts and one context drawing in between, fillText()
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() before the first draw, strokeRect()
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, strokeRect()
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, then drawn twice, strokeRect()
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, then drawn without the filter and with it, strokeRect()
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, then drawn with the filter and without it, strokeRect()
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, then assigned again, strokeRect()
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() after another style object of the same type changed, strokeRect()
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() between save() and restore(), strokeRect()
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() between save() and restore(), with a draw before restore(), strokeRect()
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() between save() and restore(), with a state change and a draw before restore(), strokeRect()
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() between save() and restore(), while another style is set, strokeRect()
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() between beginLayer() and endLayer(), strokeRect()
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, with the style used by two contexts, strokeRect()
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() twice, with the style used by two contexts and one context drawing in between, strokeRect()
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() before the first draw, stroke()
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, stroke()
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, then drawn twice, stroke()
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, then drawn without the filter and with it, stroke()
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, then drawn with the filter and without it, stroke()
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, then assigned again, stroke()
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() after another style object of the same type changed, stroke()
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() between save() and restore(), stroke()
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() between save() and restore(), with a draw before restore(), stroke()
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() between save() and restore(), with a state change and a draw before restore(), stroke()
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() between save() and restore(), while another style is set, stroke()
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() between beginLayer() and endLayer(), stroke()
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, with the style used by two contexts, stroke()
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() twice, with the style used by two contexts and one context drawing in between, stroke()
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() before the first draw, stroke(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, stroke(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, then drawn twice, stroke(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, then drawn without the filter and with it, stroke(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, then drawn with the filter and without it, stroke(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, then assigned again, stroke(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() after another style object of the same type changed, stroke(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() between save() and restore(), stroke(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() between save() and restore(), with a draw before restore(), stroke(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() between save() and restore(), with a state change and a draw before restore(), stroke(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() between save() and restore(), while another style is set, stroke(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() between beginLayer() and endLayer(), stroke(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, with the style used by two contexts, stroke(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() twice, with the style used by two contexts and one context drawing in between, stroke(Path2D)
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() before the first draw, strokeText()
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, strokeText()
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, then drawn twice, strokeText()
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, then drawn without the filter and with it, strokeText()
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, then drawn with the filter and without it, strokeText()
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, then assigned again, strokeText()
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() after another style object of the same type changed, strokeText()
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() between save() and restore(), strokeText()
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() between save() and restore(), with a draw before restore(), strokeText()
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() between save() and restore(), with a state change and a draw before restore(), strokeText()
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() between save() and restore(), while another style is set, strokeText()
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() between beginLayer() and endLayer(), strokeText()
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, with the style used by two contexts, strokeText()
+PASS HTMLCanvasElement, filter none: CanvasGradient strokeStyle, addColorStop() twice, with the style used by two contexts and one context drawing in between, strokeText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() before the first draw, fillRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, fillRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, then drawn twice, fillRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, then drawn without the filter and with it, fillRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, then drawn with the filter and without it, fillRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, then assigned again, fillRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() after another style object of the same type changed, fillRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() between save() and restore(), fillRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() between save() and restore(), with a draw before restore(), fillRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() between save() and restore(), with a state change and a draw before restore(), fillRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() between save() and restore(), while another style is set, fillRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() between beginLayer() and endLayer(), fillRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, with the style used by two contexts, fillRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() twice, with the style used by two contexts and one context drawing in between, fillRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() before the first draw, fill()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, fill()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, then drawn twice, fill()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, then drawn without the filter and with it, fill()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, then drawn with the filter and without it, fill()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, then assigned again, fill()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() after another style object of the same type changed, fill()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() between save() and restore(), fill()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() between save() and restore(), with a draw before restore(), fill()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() between save() and restore(), with a state change and a draw before restore(), fill()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() between save() and restore(), while another style is set, fill()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() between beginLayer() and endLayer(), fill()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, with the style used by two contexts, fill()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() twice, with the style used by two contexts and one context drawing in between, fill()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() before the first draw, fill(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, fill(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, then drawn twice, fill(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, then drawn without the filter and with it, fill(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, then drawn with the filter and without it, fill(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, then assigned again, fill(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() after another style object of the same type changed, fill(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() between save() and restore(), fill(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() between save() and restore(), with a draw before restore(), fill(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() between save() and restore(), with a state change and a draw before restore(), fill(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() between save() and restore(), while another style is set, fill(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() between beginLayer() and endLayer(), fill(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, with the style used by two contexts, fill(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() twice, with the style used by two contexts and one context drawing in between, fill(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() before the first draw, fillText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, fillText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, then drawn twice, fillText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, then drawn without the filter and with it, fillText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, then drawn with the filter and without it, fillText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, then assigned again, fillText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() after another style object of the same type changed, fillText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() between save() and restore(), fillText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() between save() and restore(), with a draw before restore(), fillText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() between save() and restore(), with a state change and a draw before restore(), fillText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() between save() and restore(), while another style is set, fillText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() between beginLayer() and endLayer(), fillText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, with the style used by two contexts, fillText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern fillStyle, setTransform() twice, with the style used by two contexts and one context drawing in between, fillText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() before the first draw, strokeRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, strokeRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, then drawn twice, strokeRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, then drawn without the filter and with it, strokeRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, then drawn with the filter and without it, strokeRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, then assigned again, strokeRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() after another style object of the same type changed, strokeRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() between save() and restore(), strokeRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() between save() and restore(), with a draw before restore(), strokeRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() between save() and restore(), with a state change and a draw before restore(), strokeRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() between save() and restore(), while another style is set, strokeRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() between beginLayer() and endLayer(), strokeRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, with the style used by two contexts, strokeRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() twice, with the style used by two contexts and one context drawing in between, strokeRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() before the first draw, stroke()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, stroke()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, then drawn twice, stroke()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, then drawn without the filter and with it, stroke()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, then drawn with the filter and without it, stroke()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, then assigned again, stroke()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() after another style object of the same type changed, stroke()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() between save() and restore(), stroke()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() between save() and restore(), with a draw before restore(), stroke()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() between save() and restore(), with a state change and a draw before restore(), stroke()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() between save() and restore(), while another style is set, stroke()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() between beginLayer() and endLayer(), stroke()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, with the style used by two contexts, stroke()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() twice, with the style used by two contexts and one context drawing in between, stroke()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() before the first draw, stroke(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, stroke(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, then drawn twice, stroke(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, then drawn without the filter and with it, stroke(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, then drawn with the filter and without it, stroke(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, then assigned again, stroke(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() after another style object of the same type changed, stroke(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() between save() and restore(), stroke(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() between save() and restore(), with a draw before restore(), stroke(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() between save() and restore(), with a state change and a draw before restore(), stroke(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() between save() and restore(), while another style is set, stroke(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() between beginLayer() and endLayer(), stroke(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, with the style used by two contexts, stroke(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() twice, with the style used by two contexts and one context drawing in between, stroke(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() before the first draw, strokeText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, strokeText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, then drawn twice, strokeText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, then drawn without the filter and with it, strokeText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, then drawn with the filter and without it, strokeText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, then assigned again, strokeText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() after another style object of the same type changed, strokeText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() between save() and restore(), strokeText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() between save() and restore(), with a draw before restore(), strokeText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() between save() and restore(), with a state change and a draw before restore(), strokeText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() between save() and restore(), while another style is set, strokeText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() between beginLayer() and endLayer(), strokeText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, with the style used by two contexts, strokeText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasPattern strokeStyle, setTransform() twice, with the style used by two contexts and one context drawing in between, strokeText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() before the first draw, fillRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, fillRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, then drawn twice, fillRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, then drawn without the filter and with it, fillRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, then drawn with the filter and without it, fillRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, then assigned again, fillRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() after another style object of the same type changed, fillRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() between save() and restore(), fillRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() between save() and restore(), with a draw before restore(), fillRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() between save() and restore(), with a state change and a draw before restore(), fillRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() between save() and restore(), while another style is set, fillRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() between beginLayer() and endLayer(), fillRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, with the style used by two contexts, fillRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() twice, with the style used by two contexts and one context drawing in between, fillRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() before the first draw, fill()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, fill()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, then drawn twice, fill()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, then drawn without the filter and with it, fill()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, then drawn with the filter and without it, fill()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, then assigned again, fill()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() after another style object of the same type changed, fill()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() between save() and restore(), fill()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() between save() and restore(), with a draw before restore(), fill()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() between save() and restore(), with a state change and a draw before restore(), fill()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() between save() and restore(), while another style is set, fill()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() between beginLayer() and endLayer(), fill()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, with the style used by two contexts, fill()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() twice, with the style used by two contexts and one context drawing in between, fill()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() before the first draw, fill(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, fill(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, then drawn twice, fill(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, then drawn without the filter and with it, fill(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, then drawn with the filter and without it, fill(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, then assigned again, fill(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() after another style object of the same type changed, fill(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() between save() and restore(), fill(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() between save() and restore(), with a draw before restore(), fill(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() between save() and restore(), with a state change and a draw before restore(), fill(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() between save() and restore(), while another style is set, fill(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() between beginLayer() and endLayer(), fill(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, with the style used by two contexts, fill(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() twice, with the style used by two contexts and one context drawing in between, fill(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() before the first draw, fillText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, fillText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, then drawn twice, fillText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, then drawn without the filter and with it, fillText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, then drawn with the filter and without it, fillText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, then assigned again, fillText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() after another style object of the same type changed, fillText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() between save() and restore(), fillText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() between save() and restore(), with a draw before restore(), fillText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() between save() and restore(), with a state change and a draw before restore(), fillText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() between save() and restore(), while another style is set, fillText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() between beginLayer() and endLayer(), fillText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, with the style used by two contexts, fillText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient fillStyle, addColorStop() twice, with the style used by two contexts and one context drawing in between, fillText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() before the first draw, strokeRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, strokeRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, then drawn twice, strokeRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, then drawn without the filter and with it, strokeRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, then drawn with the filter and without it, strokeRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, then assigned again, strokeRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after another style object of the same type changed, strokeRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() between save() and restore(), strokeRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() between save() and restore(), with a draw before restore(), strokeRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() between save() and restore(), with a state change and a draw before restore(), strokeRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() between save() and restore(), while another style is set, strokeRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() between beginLayer() and endLayer(), strokeRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, with the style used by two contexts, strokeRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() twice, with the style used by two contexts and one context drawing in between, strokeRect()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() before the first draw, stroke()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, stroke()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, then drawn twice, stroke()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, then drawn without the filter and with it, stroke()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, then drawn with the filter and without it, stroke()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, then assigned again, stroke()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after another style object of the same type changed, stroke()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() between save() and restore(), stroke()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() between save() and restore(), with a draw before restore(), stroke()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() between save() and restore(), with a state change and a draw before restore(), stroke()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() between save() and restore(), while another style is set, stroke()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() between beginLayer() and endLayer(), stroke()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, with the style used by two contexts, stroke()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() twice, with the style used by two contexts and one context drawing in between, stroke()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() before the first draw, stroke(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, stroke(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, then drawn twice, stroke(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, then drawn without the filter and with it, stroke(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, then drawn with the filter and without it, stroke(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, then assigned again, stroke(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after another style object of the same type changed, stroke(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() between save() and restore(), stroke(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() between save() and restore(), with a draw before restore(), stroke(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() between save() and restore(), with a state change and a draw before restore(), stroke(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() between save() and restore(), while another style is set, stroke(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() between beginLayer() and endLayer(), stroke(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, with the style used by two contexts, stroke(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() twice, with the style used by two contexts and one context drawing in between, stroke(Path2D)
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() before the first draw, strokeText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, strokeText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, then drawn twice, strokeText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, then drawn without the filter and with it, strokeText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, then drawn with the filter and without it, strokeText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, then assigned again, strokeText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after another style object of the same type changed, strokeText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() between save() and restore(), strokeText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() between save() and restore(), with a draw before restore(), strokeText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() between save() and restore(), with a state change and a draw before restore(), strokeText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() between save() and restore(), while another style is set, strokeText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() between beginLayer() and endLayer(), strokeText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, with the style used by two contexts, strokeText()
+PASS HTMLCanvasElement, filter invert(100%): CanvasGradient strokeStyle, addColorStop() twice, with the style used by two contexts and one context drawing in between, strokeText()
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() before the first draw, fillRect()
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() after a draw, fillRect()
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() after a draw, then drawn twice, fillRect()
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() after a draw, then drawn without the filter and with it, fillRect()
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() after a draw, then drawn with the filter and without it, fillRect()
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() after a draw, then assigned again, fillRect()
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() after another style object of the same type changed, fillRect()
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() between save() and restore(), fillRect()
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() between save() and restore(), with a draw before restore(), fillRect()
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() between save() and restore(), with a state change and a draw before restore(), fillRect()
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() between save() and restore(), while another style is set, fillRect()
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() between beginLayer() and endLayer(), fillRect()
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() after a draw, with the style used by two contexts, fillRect()
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() twice, with the style used by two contexts and one context drawing in between, fillRect()
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() before the first draw, fill()
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() after a draw, fill()
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() after a draw, then drawn twice, fill()
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() after a draw, then drawn without the filter and with it, fill()
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() after a draw, then drawn with the filter and without it, fill()
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() after a draw, then assigned again, fill()
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() after another style object of the same type changed, fill()
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() between save() and restore(), fill()
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() between save() and restore(), with a draw before restore(), fill()
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() between save() and restore(), with a state change and a draw before restore(), fill()
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() between save() and restore(), while another style is set, fill()
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() between beginLayer() and endLayer(), fill()
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() after a draw, with the style used by two contexts, fill()
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() twice, with the style used by two contexts and one context drawing in between, fill()
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() before the first draw, fill(Path2D)
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() after a draw, fill(Path2D)
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() after a draw, then drawn twice, fill(Path2D)
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() after a draw, then drawn without the filter and with it, fill(Path2D)
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() after a draw, then drawn with the filter and without it, fill(Path2D)
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() after a draw, then assigned again, fill(Path2D)
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() after another style object of the same type changed, fill(Path2D)
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() between save() and restore(), fill(Path2D)
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() between save() and restore(), with a draw before restore(), fill(Path2D)
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() between save() and restore(), with a state change and a draw before restore(), fill(Path2D)
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() between save() and restore(), while another style is set, fill(Path2D)
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() between beginLayer() and endLayer(), fill(Path2D)
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() after a draw, with the style used by two contexts, fill(Path2D)
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() twice, with the style used by two contexts and one context drawing in between, fill(Path2D)
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() before the first draw, fillText()
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() after a draw, fillText()
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() after a draw, then drawn twice, fillText()
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() after a draw, then drawn without the filter and with it, fillText()
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() after a draw, then drawn with the filter and without it, fillText()
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() after a draw, then assigned again, fillText()
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() after another style object of the same type changed, fillText()
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() between save() and restore(), fillText()
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() between save() and restore(), with a draw before restore(), fillText()
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() between save() and restore(), with a state change and a draw before restore(), fillText()
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() between save() and restore(), while another style is set, fillText()
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() between beginLayer() and endLayer(), fillText()
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() after a draw, with the style used by two contexts, fillText()
+PASS OffscreenCanvas, filter none: CanvasPattern fillStyle, setTransform() twice, with the style used by two contexts and one context drawing in between, fillText()
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() before the first draw, strokeRect()
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() after a draw, strokeRect()
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() after a draw, then drawn twice, strokeRect()
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() after a draw, then drawn without the filter and with it, strokeRect()
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() after a draw, then drawn with the filter and without it, strokeRect()
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() after a draw, then assigned again, strokeRect()
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() after another style object of the same type changed, strokeRect()
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() between save() and restore(), strokeRect()
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() between save() and restore(), with a draw before restore(), strokeRect()
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() between save() and restore(), with a state change and a draw before restore(), strokeRect()
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() between save() and restore(), while another style is set, strokeRect()
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() between beginLayer() and endLayer(), strokeRect()
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() after a draw, with the style used by two contexts, strokeRect()
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() twice, with the style used by two contexts and one context drawing in between, strokeRect()
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() before the first draw, stroke()
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() after a draw, stroke()
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() after a draw, then drawn twice, stroke()
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() after a draw, then drawn without the filter and with it, stroke()
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() after a draw, then drawn with the filter and without it, stroke()
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() after a draw, then assigned again, stroke()
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() after another style object of the same type changed, stroke()
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() between save() and restore(), stroke()
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() between save() and restore(), with a draw before restore(), stroke()
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() between save() and restore(), with a state change and a draw before restore(), stroke()
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() between save() and restore(), while another style is set, stroke()
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() between beginLayer() and endLayer(), stroke()
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() after a draw, with the style used by two contexts, stroke()
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() twice, with the style used by two contexts and one context drawing in between, stroke()
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() before the first draw, stroke(Path2D)
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() after a draw, stroke(Path2D)
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() after a draw, then drawn twice, stroke(Path2D)
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() after a draw, then drawn without the filter and with it, stroke(Path2D)
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() after a draw, then drawn with the filter and without it, stroke(Path2D)
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() after a draw, then assigned again, stroke(Path2D)
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() after another style object of the same type changed, stroke(Path2D)
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() between save() and restore(), stroke(Path2D)
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() between save() and restore(), with a draw before restore(), stroke(Path2D)
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() between save() and restore(), with a state change and a draw before restore(), stroke(Path2D)
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() between save() and restore(), while another style is set, stroke(Path2D)
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() between beginLayer() and endLayer(), stroke(Path2D)
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() after a draw, with the style used by two contexts, stroke(Path2D)
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() twice, with the style used by two contexts and one context drawing in between, stroke(Path2D)
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() before the first draw, strokeText()
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() after a draw, strokeText()
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() after a draw, then drawn twice, strokeText()
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() after a draw, then drawn without the filter and with it, strokeText()
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() after a draw, then drawn with the filter and without it, strokeText()
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() after a draw, then assigned again, strokeText()
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() after another style object of the same type changed, strokeText()
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() between save() and restore(), strokeText()
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() between save() and restore(), with a draw before restore(), strokeText()
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() between save() and restore(), with a state change and a draw before restore(), strokeText()
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() between save() and restore(), while another style is set, strokeText()
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() between beginLayer() and endLayer(), strokeText()
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() after a draw, with the style used by two contexts, strokeText()
+PASS OffscreenCanvas, filter none: CanvasPattern strokeStyle, setTransform() twice, with the style used by two contexts and one context drawing in between, strokeText()
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() before the first draw, fillRect()
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() after a draw, fillRect()
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() after a draw, then drawn twice, fillRect()
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() after a draw, then drawn without the filter and with it, fillRect()
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() after a draw, then drawn with the filter and without it, fillRect()
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() after a draw, then assigned again, fillRect()
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() after another style object of the same type changed, fillRect()
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() between save() and restore(), fillRect()
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() between save() and restore(), with a draw before restore(), fillRect()
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() between save() and restore(), with a state change and a draw before restore(), fillRect()
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() between save() and restore(), while another style is set, fillRect()
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() between beginLayer() and endLayer(), fillRect()
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() after a draw, with the style used by two contexts, fillRect()
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() twice, with the style used by two contexts and one context drawing in between, fillRect()
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() before the first draw, fill()
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() after a draw, fill()
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() after a draw, then drawn twice, fill()
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() after a draw, then drawn without the filter and with it, fill()
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() after a draw, then drawn with the filter and without it, fill()
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() after a draw, then assigned again, fill()
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() after another style object of the same type changed, fill()
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() between save() and restore(), fill()
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() between save() and restore(), with a draw before restore(), fill()
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() between save() and restore(), with a state change and a draw before restore(), fill()
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() between save() and restore(), while another style is set, fill()
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() between beginLayer() and endLayer(), fill()
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() after a draw, with the style used by two contexts, fill()
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() twice, with the style used by two contexts and one context drawing in between, fill()
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() before the first draw, fill(Path2D)
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() after a draw, fill(Path2D)
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() after a draw, then drawn twice, fill(Path2D)
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() after a draw, then drawn without the filter and with it, fill(Path2D)
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() after a draw, then drawn with the filter and without it, fill(Path2D)
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() after a draw, then assigned again, fill(Path2D)
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() after another style object of the same type changed, fill(Path2D)
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() between save() and restore(), fill(Path2D)
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() between save() and restore(), with a draw before restore(), fill(Path2D)
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() between save() and restore(), with a state change and a draw before restore(), fill(Path2D)
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() between save() and restore(), while another style is set, fill(Path2D)
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() between beginLayer() and endLayer(), fill(Path2D)
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() after a draw, with the style used by two contexts, fill(Path2D)
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() twice, with the style used by two contexts and one context drawing in between, fill(Path2D)
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() before the first draw, fillText()
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() after a draw, fillText()
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() after a draw, then drawn twice, fillText()
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() after a draw, then drawn without the filter and with it, fillText()
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() after a draw, then drawn with the filter and without it, fillText()
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() after a draw, then assigned again, fillText()
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() after another style object of the same type changed, fillText()
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() between save() and restore(), fillText()
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() between save() and restore(), with a draw before restore(), fillText()
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() between save() and restore(), with a state change and a draw before restore(), fillText()
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() between save() and restore(), while another style is set, fillText()
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() between beginLayer() and endLayer(), fillText()
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() after a draw, with the style used by two contexts, fillText()
+PASS OffscreenCanvas, filter none: CanvasGradient fillStyle, addColorStop() twice, with the style used by two contexts and one context drawing in between, fillText()
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() before the first draw, strokeRect()
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, strokeRect()
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, then drawn twice, strokeRect()
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, then drawn without the filter and with it, strokeRect()
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, then drawn with the filter and without it, strokeRect()
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, then assigned again, strokeRect()
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() after another style object of the same type changed, strokeRect()
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() between save() and restore(), strokeRect()
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() between save() and restore(), with a draw before restore(), strokeRect()
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() between save() and restore(), with a state change and a draw before restore(), strokeRect()
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() between save() and restore(), while another style is set, strokeRect()
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() between beginLayer() and endLayer(), strokeRect()
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, with the style used by two contexts, strokeRect()
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() twice, with the style used by two contexts and one context drawing in between, strokeRect()
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() before the first draw, stroke()
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, stroke()
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, then drawn twice, stroke()
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, then drawn without the filter and with it, stroke()
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, then drawn with the filter and without it, stroke()
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, then assigned again, stroke()
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() after another style object of the same type changed, stroke()
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() between save() and restore(), stroke()
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() between save() and restore(), with a draw before restore(), stroke()
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() between save() and restore(), with a state change and a draw before restore(), stroke()
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() between save() and restore(), while another style is set, stroke()
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() between beginLayer() and endLayer(), stroke()
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, with the style used by two contexts, stroke()
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() twice, with the style used by two contexts and one context drawing in between, stroke()
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() before the first draw, stroke(Path2D)
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, stroke(Path2D)
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, then drawn twice, stroke(Path2D)
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, then drawn without the filter and with it, stroke(Path2D)
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, then drawn with the filter and without it, stroke(Path2D)
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, then assigned again, stroke(Path2D)
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() after another style object of the same type changed, stroke(Path2D)
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() between save() and restore(), stroke(Path2D)
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() between save() and restore(), with a draw before restore(), stroke(Path2D)
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() between save() and restore(), with a state change and a draw before restore(), stroke(Path2D)
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() between save() and restore(), while another style is set, stroke(Path2D)
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() between beginLayer() and endLayer(), stroke(Path2D)
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, with the style used by two contexts, stroke(Path2D)
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() twice, with the style used by two contexts and one context drawing in between, stroke(Path2D)
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() before the first draw, strokeText()
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, strokeText()
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, then drawn twice, strokeText()
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, then drawn without the filter and with it, strokeText()
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, then drawn with the filter and without it, strokeText()
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, then assigned again, strokeText()
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() after another style object of the same type changed, strokeText()
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() between save() and restore(), strokeText()
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() between save() and restore(), with a draw before restore(), strokeText()
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() between save() and restore(), with a state change and a draw before restore(), strokeText()
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() between save() and restore(), while another style is set, strokeText()
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() between beginLayer() and endLayer(), strokeText()
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() after a draw, with the style used by two contexts, strokeText()
+PASS OffscreenCanvas, filter none: CanvasGradient strokeStyle, addColorStop() twice, with the style used by two contexts and one context drawing in between, strokeText()
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() before the first draw, fillRect(): after the change, pixel 25,25 is lime, expected magenta
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, fillRect(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, then drawn twice, fillRect(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, then drawn without the filter and with it, fillRect(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, then drawn with the filter and without it, fillRect(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, then assigned again, fillRect(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() after another style object of the same type changed, fillRect(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() between save() and restore(), fillRect(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() between save() and restore(), with a draw before restore(), fillRect(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() between save() and restore(), with a state change and a draw before restore(), fillRect(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() between save() and restore(), while another style is set, fillRect(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() between beginLayer() and endLayer(), fillRect(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, with the style used by two contexts, fillRect(): before the change, context 1, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() twice, with the style used by two contexts and one context drawing in between, fillRect(): before the change, context 1, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() before the first draw, fill(): after the change, pixel 25,25 is lime, expected magenta
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, fill(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, then drawn twice, fill(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, then drawn without the filter and with it, fill(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, then drawn with the filter and without it, fill(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, then assigned again, fill(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() after another style object of the same type changed, fill(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() between save() and restore(), fill(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() between save() and restore(), with a draw before restore(), fill(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() between save() and restore(), with a state change and a draw before restore(), fill(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() between save() and restore(), while another style is set, fill(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() between beginLayer() and endLayer(), fill(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, with the style used by two contexts, fill(): before the change, context 1, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() twice, with the style used by two contexts and one context drawing in between, fill(): before the change, context 1, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() before the first draw, fill(Path2D): after the change, pixel 25,25 is lime, expected magenta
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, fill(Path2D): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, then drawn twice, fill(Path2D): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, then drawn without the filter and with it, fill(Path2D): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, then drawn with the filter and without it, fill(Path2D): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, then assigned again, fill(Path2D): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() after another style object of the same type changed, fill(Path2D): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() between save() and restore(), fill(Path2D): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() between save() and restore(), with a draw before restore(), fill(Path2D): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() between save() and restore(), with a state change and a draw before restore(), fill(Path2D): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() between save() and restore(), while another style is set, fill(Path2D): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() between beginLayer() and endLayer(), fill(Path2D): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, with the style used by two contexts, fill(Path2D): before the change, context 1, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() twice, with the style used by two contexts and one context drawing in between, fill(Path2D): before the change, context 1, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() before the first draw, fillText(): after the change, pixel 25,25 is lime, expected magenta
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, fillText(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, then drawn twice, fillText(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, then drawn without the filter and with it, fillText(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, then drawn with the filter and without it, fillText(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, then assigned again, fillText(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() after another style object of the same type changed, fillText(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() between save() and restore(), fillText(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() between save() and restore(), with a draw before restore(), fillText(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() between save() and restore(), with a state change and a draw before restore(), fillText(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() between save() and restore(), while another style is set, fillText(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() between beginLayer() and endLayer(), fillText(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() after a draw, with the style used by two contexts, fillText(): before the change, context 1, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern fillStyle, setTransform() twice, with the style used by two contexts and one context drawing in between, fillText(): before the change, context 1, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() before the first draw, strokeRect(): after the change, pixel 25,5 is lime, expected magenta
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, strokeRect(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, then drawn twice, strokeRect(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, then drawn without the filter and with it, strokeRect(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, then drawn with the filter and without it, strokeRect(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, then assigned again, strokeRect(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() after another style object of the same type changed, strokeRect(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() between save() and restore(), strokeRect(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() between save() and restore(), with a draw before restore(), strokeRect(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() between save() and restore(), with a state change and a draw before restore(), strokeRect(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() between save() and restore(), while another style is set, strokeRect(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() between beginLayer() and endLayer(), strokeRect(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, with the style used by two contexts, strokeRect(): before the change, context 1, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() twice, with the style used by two contexts and one context drawing in between, strokeRect(): before the change, context 1, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() before the first draw, stroke(): after the change, pixel 25,5 is lime, expected magenta
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, stroke(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, then drawn twice, stroke(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, then drawn without the filter and with it, stroke(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, then drawn with the filter and without it, stroke(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, then assigned again, stroke(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() after another style object of the same type changed, stroke(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() between save() and restore(), stroke(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() between save() and restore(), with a draw before restore(), stroke(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() between save() and restore(), with a state change and a draw before restore(), stroke(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() between save() and restore(), while another style is set, stroke(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() between beginLayer() and endLayer(), stroke(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, with the style used by two contexts, stroke(): before the change, context 1, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() twice, with the style used by two contexts and one context drawing in between, stroke(): before the change, context 1, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() before the first draw, stroke(Path2D): after the change, pixel 25,5 is lime, expected magenta
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, stroke(Path2D): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, then drawn twice, stroke(Path2D): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, then drawn without the filter and with it, stroke(Path2D): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, then drawn with the filter and without it, stroke(Path2D): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, then assigned again, stroke(Path2D): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() after another style object of the same type changed, stroke(Path2D): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() between save() and restore(), stroke(Path2D): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() between save() and restore(), with a draw before restore(), stroke(Path2D): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() between save() and restore(), with a state change and a draw before restore(), stroke(Path2D): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() between save() and restore(), while another style is set, stroke(Path2D): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() between beginLayer() and endLayer(), stroke(Path2D): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, with the style used by two contexts, stroke(Path2D): before the change, context 1, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() twice, with the style used by two contexts and one context drawing in between, stroke(Path2D): before the change, context 1, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() before the first draw, strokeText(): after the change, pixel 25,5 is lime, expected magenta
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, strokeText(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, then drawn twice, strokeText(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, then drawn without the filter and with it, strokeText(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, then drawn with the filter and without it, strokeText(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, then assigned again, strokeText(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() after another style object of the same type changed, strokeText(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() between save() and restore(), strokeText(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() between save() and restore(), with a draw before restore(), strokeText(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() between save() and restore(), with a state change and a draw before restore(), strokeText(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() between save() and restore(), while another style is set, strokeText(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() between beginLayer() and endLayer(), strokeText(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() after a draw, with the style used by two contexts, strokeText(): before the change, context 1, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasPattern strokeStyle, setTransform() twice, with the style used by two contexts and one context drawing in between, strokeText(): before the change, context 1, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() before the first draw, fillRect(): after the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, fillRect(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, then drawn twice, fillRect(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, then drawn without the filter and with it, fillRect(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, then drawn with the filter and without it, fillRect(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, then assigned again, fillRect(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() after another style object of the same type changed, fillRect(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() between save() and restore(), fillRect(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() between save() and restore(), with a draw before restore(), fillRect(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() between save() and restore(), with a state change and a draw before restore(), fillRect(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() between save() and restore(), while another style is set, fillRect(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() between beginLayer() and endLayer(), fillRect(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, with the style used by two contexts, fillRect(): before the change, context 1, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() twice, with the style used by two contexts and one context drawing in between, fillRect(): before the change, context 1, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() before the first draw, fill(): after the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, fill(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, then drawn twice, fill(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, then drawn without the filter and with it, fill(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, then drawn with the filter and without it, fill(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, then assigned again, fill(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() after another style object of the same type changed, fill(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() between save() and restore(), fill(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() between save() and restore(), with a draw before restore(), fill(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() between save() and restore(), with a state change and a draw before restore(), fill(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() between save() and restore(), while another style is set, fill(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() between beginLayer() and endLayer(), fill(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, with the style used by two contexts, fill(): before the change, context 1, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() twice, with the style used by two contexts and one context drawing in between, fill(): before the change, context 1, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() before the first draw, fill(Path2D): after the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, fill(Path2D): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, then drawn twice, fill(Path2D): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, then drawn without the filter and with it, fill(Path2D): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, then drawn with the filter and without it, fill(Path2D): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, then assigned again, fill(Path2D): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() after another style object of the same type changed, fill(Path2D): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() between save() and restore(), fill(Path2D): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() between save() and restore(), with a draw before restore(), fill(Path2D): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() between save() and restore(), with a state change and a draw before restore(), fill(Path2D): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() between save() and restore(), while another style is set, fill(Path2D): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() between beginLayer() and endLayer(), fill(Path2D): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, with the style used by two contexts, fill(Path2D): before the change, context 1, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() twice, with the style used by two contexts and one context drawing in between, fill(Path2D): before the change, context 1, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() before the first draw, fillText(): after the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, fillText(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, then drawn twice, fillText(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, then drawn without the filter and with it, fillText(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, then drawn with the filter and without it, fillText(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, then assigned again, fillText(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() after another style object of the same type changed, fillText(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() between save() and restore(), fillText(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() between save() and restore(), with a draw before restore(), fillText(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() between save() and restore(), with a state change and a draw before restore(), fillText(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() between save() and restore(), while another style is set, fillText(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() between beginLayer() and endLayer(), fillText(): before the change, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() after a draw, with the style used by two contexts, fillText(): before the change, context 1, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient fillStyle, addColorStop() twice, with the style used by two contexts and one context drawing in between, fillText(): before the change, context 1, pixel 25,25 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() before the first draw, strokeRect(): after the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, strokeRect(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, then drawn twice, strokeRect(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, then drawn without the filter and with it, strokeRect(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, then drawn with the filter and without it, strokeRect(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, then assigned again, strokeRect(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after another style object of the same type changed, strokeRect(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() between save() and restore(), strokeRect(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() between save() and restore(), with a draw before restore(), strokeRect(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() between save() and restore(), with a state change and a draw before restore(), strokeRect(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() between save() and restore(), while another style is set, strokeRect(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() between beginLayer() and endLayer(), strokeRect(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, with the style used by two contexts, strokeRect(): before the change, context 1, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() twice, with the style used by two contexts and one context drawing in between, strokeRect(): before the change, context 1, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() before the first draw, stroke(): after the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, stroke(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, then drawn twice, stroke(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, then drawn without the filter and with it, stroke(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, then drawn with the filter and without it, stroke(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, then assigned again, stroke(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after another style object of the same type changed, stroke(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() between save() and restore(), stroke(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() between save() and restore(), with a draw before restore(), stroke(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() between save() and restore(), with a state change and a draw before restore(), stroke(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() between save() and restore(), while another style is set, stroke(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() between beginLayer() and endLayer(), stroke(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, with the style used by two contexts, stroke(): before the change, context 1, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() twice, with the style used by two contexts and one context drawing in between, stroke(): before the change, context 1, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() before the first draw, stroke(Path2D): after the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, stroke(Path2D): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, then drawn twice, stroke(Path2D): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, then drawn without the filter and with it, stroke(Path2D): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, then drawn with the filter and without it, stroke(Path2D): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, then assigned again, stroke(Path2D): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after another style object of the same type changed, stroke(Path2D): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() between save() and restore(), stroke(Path2D): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() between save() and restore(), with a draw before restore(), stroke(Path2D): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() between save() and restore(), with a state change and a draw before restore(), stroke(Path2D): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() between save() and restore(), while another style is set, stroke(Path2D): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() between beginLayer() and endLayer(), stroke(Path2D): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, with the style used by two contexts, stroke(Path2D): before the change, context 1, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() twice, with the style used by two contexts and one context drawing in between, stroke(Path2D): before the change, context 1, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() before the first draw, strokeText(): after the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, strokeText(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, then drawn twice, strokeText(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, then drawn without the filter and with it, strokeText(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, then drawn with the filter and without it, strokeText(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, then assigned again, strokeText(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after another style object of the same type changed, strokeText(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() between save() and restore(), strokeText(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() between save() and restore(), with a draw before restore(), strokeText(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() between save() and restore(), with a state change and a draw before restore(), strokeText(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() between save() and restore(), while another style is set, strokeText(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() between beginLayer() and endLayer(), strokeText(): before the change, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() after a draw, with the style used by two contexts, strokeText(): before the change, context 1, pixel 25,5 is red, expected cyan
+FAIL OffscreenCanvas, filter invert(100%): CanvasGradient strokeStyle, addColorStop() twice, with the style used by two contexts and one context drawing in between, strokeText(): before the change, context 1, pixel 25,5 is red, expected cyan
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
+

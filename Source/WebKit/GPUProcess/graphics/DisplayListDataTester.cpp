@@ -456,7 +456,7 @@ static void testInvalidFonts(Tester& tester, const Vector<Ref<SharedBuffer>>& we
 }
 #endif // USE(CORE_TEXT)
 
-static Ref<Gradient> testGradient(Gradient::Data&& data)
+static Ref<const Gradient> testGradient(Gradient::Data&& data)
 {
     return Gradient::create(WTF::move(data), { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied }, GradientSpreadMethod::Pad, GradientColorStops { std::array { Color::red, Color::green, Color::blue } });
 }

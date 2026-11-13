@@ -63,6 +63,7 @@ enum class SwiftEnum : uint8_t;
 enum class SwiftBoolEnum : bool;
 enum class SwiftOptionSet : uint16_t;
 class ReturnRefClass;
+class ReturnConstRefClass;
 class ReturnUniqueRefClass;
 class CreateUsingUniqueRefClass;
 struct EmptyConstructorStruct;
@@ -188,6 +189,11 @@ template<> struct ArgumentCoder<Namespace::Subnamespace::StructName> {
 template<> struct ArgumentCoder<Namespace::ReturnRefClass> {
     static void encode(Encoder&, const Namespace::ReturnRefClass&);
     static std::optional<Ref<Namespace::ReturnRefClass>> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<Namespace::ReturnConstRefClass> {
+    static void encode(Encoder&, const Namespace::ReturnConstRefClass&);
+    static std::optional<Ref<const Namespace::ReturnConstRefClass>> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<Namespace::ReturnUniqueRefClass> {

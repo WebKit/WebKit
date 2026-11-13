@@ -1662,7 +1662,7 @@ static void drawShapeWithBorder(GraphicsContext& context, float deviceScaleFacto
     context.strokePath(path);
 }
 
-static RefPtr<Gradient> checkboxRadioBackgroundGradientForVectorBasedControls(const FloatRect& rect, OptionSet<ControlStyle::State> states)
+static RefPtr<const Gradient> checkboxRadioBackgroundGradientForVectorBasedControls(const FloatRect& rect, OptionSet<ControlStyle::State> states)
 {
     // FIXME: This is just a copy of RenderThemeIOS::checkboxRadioBackgroundGradient(...). Refactor to remove this duplicate code.
     bool isPressed = states.contains(ControlStyle::State::Pressed);

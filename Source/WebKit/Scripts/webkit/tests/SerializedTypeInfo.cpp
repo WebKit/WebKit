@@ -61,6 +61,7 @@
 #if ENABLE(OUTER_CONDITION)
 #include <Namespace/OuterClass.h>
 #endif
+#include <Namespace/ReturnConstRefClass.h>
 #include <Namespace/ReturnRefClass.h>
 #include <Namespace/ReturnUniqueRefClass.h>
 #if USE(APPKIT)
@@ -191,6 +192,12 @@ Vector<SerializedTypeInfo> allSerializedTypes()
             {
                 "std::unique_ptr<int>"_s,
                 "uniqueMember"_s
+            },
+        } },
+        { "Namespace::ReturnConstRefClass"_s, {
+            {
+                "double"_s,
+                "member"_s
             },
         } },
         { "Namespace::ReturnUniqueRefClass"_s, {

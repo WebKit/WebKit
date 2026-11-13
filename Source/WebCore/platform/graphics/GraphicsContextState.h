@@ -99,8 +99,8 @@ public:
     const SourceBrush& fillBrush() const LIFETIME_BOUND { return m_fillBrush; }
     void setFillBrush(const SourceBrush& brush) { setProperty(Change::FillBrush, &GraphicsContextState::m_fillBrush, brush); }
     void setFillColor(const Color& color) { setProperty(Change::FillBrush, &GraphicsContextState::m_fillBrush, { color }); }
-    void setFillGradient(Ref<Gradient>&& gradient, const AffineTransform& spaceTransform) { m_fillBrush.setGradient(WTF::move(gradient), spaceTransform); m_changeFlags.add(Change::FillBrush); }
-    void setFillPattern(Ref<Pattern>&& pattern) { m_fillBrush.setPattern(WTF::move(pattern)); m_changeFlags.add(Change::FillBrush); }
+    void setFillGradient(Ref<const Gradient>&& gradient, const AffineTransform& spaceTransform) { m_fillBrush.setGradient(WTF::move(gradient), spaceTransform); m_changeFlags.add(Change::FillBrush); }
+    void setFillPattern(Ref<const Pattern>&& pattern) { m_fillBrush.setPattern(WTF::move(pattern)); m_changeFlags.add(Change::FillBrush); }
 
     WindRule fillRule() const { return m_fillRule; }
     void setFillRule(WindRule fillRule) { setProperty(Change::FillRule, &GraphicsContextState::m_fillRule, fillRule); }
@@ -109,8 +109,8 @@ public:
     const SourceBrush& strokeBrush() const LIFETIME_BOUND { return m_strokeBrush; }
     void setStrokeBrush(const SourceBrush& brush) { setProperty(Change::StrokeBrush, &GraphicsContextState::m_strokeBrush, brush); }
     void setStrokeColor(const Color& color) { setProperty(Change::StrokeBrush, &GraphicsContextState::m_strokeBrush, { color }); }
-    void setStrokeGradient(Ref<Gradient>&& gradient, const AffineTransform& spaceTransform) { m_strokeBrush.setGradient(WTF::move(gradient), spaceTransform); m_changeFlags.add(Change::StrokeBrush); }
-    void setStrokePattern(Ref<Pattern>&& pattern) { m_strokeBrush.setPattern(WTF::move(pattern)); m_changeFlags.add(Change::StrokeBrush); }
+    void setStrokeGradient(Ref<const Gradient>&& gradient, const AffineTransform& spaceTransform) { m_strokeBrush.setGradient(WTF::move(gradient), spaceTransform); m_changeFlags.add(Change::StrokeBrush); }
+    void setStrokePattern(Ref<const Pattern>&& pattern) { m_strokeBrush.setPattern(WTF::move(pattern)); m_changeFlags.add(Change::StrokeBrush); }
 
     float strokeThickness() const { return m_strokeThickness; }
     void setStrokeThickness(float strokeThickness) { setProperty(Change::StrokeThickness, &GraphicsContextState::m_strokeThickness, strokeThickness); }

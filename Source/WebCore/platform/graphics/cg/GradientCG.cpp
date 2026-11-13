@@ -53,23 +53,18 @@ static std::optional<ColorSpace> nonLinearColorSpace(const ColorSpace& colorSpac
     }
 }
 
-void Gradient::stopsChanged()
-{
-    m_platformRenderer = { };
-}
-
-void Gradient::fill(GraphicsContext& context, const FloatRect& rect)
+void Gradient::fill(GraphicsContext& context, const FloatRect& rect) const
 {
     context.clip(rect);
     paint(context);
 }
 
-void Gradient::paint(GraphicsContext& context)
+void Gradient::paint(GraphicsContext& context) const
 {
     paint(protect(context.platformContext()), nonLinearColorSpace(context.colorSpace()));
 }
 
-void Gradient::paint(CGContextRef platformContext, std::optional<ColorSpace> colorSpace)
+void Gradient::paint(CGContextRef platformContext, std::optional<ColorSpace> colorSpace) const
 {
     if (!m_platformRenderer || m_platformRenderer->colorSpace() != colorSpace)
         m_platformRenderer = GradientRendererCG { m_colorInterpolationMethod, m_stops, colorSpace };
