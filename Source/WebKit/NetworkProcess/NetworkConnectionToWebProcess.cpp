@@ -1197,7 +1197,6 @@ void NetworkConnectionToWebProcess::domCookiesForHost(const URL& url, Completion
 {
     MESSAGE_CHECK_COMPLETION(HashSet<String>::isValidValue(url.host().toString()), completionHandler(std::nullopt));
     auto access = validateCookieAccess("domCookiesForHost"_s, url, url, nullptr, std::nullopt);
-    MESSAGE_CHECK_COMPLETION(access != CookieAccess::Terminate, completionHandler(std::nullopt));
     if (access != CookieAccess::Allow || RegistrableDomain(url).isEmpty())
         return completionHandler(std::nullopt);
 
