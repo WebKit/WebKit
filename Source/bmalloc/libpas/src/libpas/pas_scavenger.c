@@ -63,6 +63,7 @@ double pas_scavenger_deep_sleep_timeout_in_milliseconds = 10. * 1000.;
 #ifdef PAS_LIBMALLOC
 double pas_scavenger_period_in_milliseconds = 10.;
 uint64_t pas_scavenger_max_epoch_delta = 10ll * 1000ll * 1000ll;
+uint64_t pas_scavenger_recommit_retention_epoch_delta = 0;
 #else
 #if PAS_OS(DARWIN) && PAS_X86_64
 double pas_scavenger_period_in_milliseconds = 125.;
@@ -74,6 +75,7 @@ uint64_t pas_scavenger_max_epoch_delta = 600ll * 1000ll * 1000ll;
 #else
 uint64_t pas_scavenger_max_epoch_delta = 300ll * 1000ll * 1000ll;
 #endif
+uint64_t pas_scavenger_recommit_retention_epoch_delta = 1000ll * 1000ll * 1000ll;
 #endif
 
 static uint32_t pas_scavenger_tick_count = 0;

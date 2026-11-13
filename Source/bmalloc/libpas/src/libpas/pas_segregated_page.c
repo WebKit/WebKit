@@ -39,6 +39,7 @@
 #include "pas_log.h"
 #include "pas_page_sharing_pool.h"
 #include "pas_range.h"
+#include "pas_segregated_exclusive_view.h"
 #include "pas_segregated_page_inlines.h"
 #include "pas_segregated_size_directory.h"
 #include "pas_zero_memory.h"
@@ -284,6 +285,8 @@ void pas_segregated_page_construct(pas_segregated_page* page,
 void pas_segregated_page_note_emptiness(pas_segregated_page* page, pas_note_emptiness_action action)
 {
     static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
+    uint64_t use_epoch;
+
     if (page->lock_ptr)
         pas_lock_testing_assert_held(page->lock_ptr);
     if (verbose) {
@@ -292,17 +295,18 @@ void pas_segregated_page_note_emptiness(pas_segregated_page* page, pas_note_empt
                 pas_segregated_page_boundary(
                     page, *pas_segregated_view_get_page_config(page->owner)));
     }
+    use_epoch = pas_segregated_exclusive_view_get_empty_use_epoch(pas_segregated_view_get_exclusive(page->owner));
     switch (action) {
     case pas_note_emptiness_clear_num_non_empty_words: {
         pas_segregated_page_emptiness emptiness = {
-            .use_epoch = pas_get_epoch(),
+            .use_epoch = use_epoch,
             .num_non_empty_words = 0,
         };
         pas_atomic_store_pair_relaxed(&page->emptiness, *(pas_pair*)&emptiness);
         break;
     }
     case pas_note_emptiness_keep_num_non_empty_words:
-        page->emptiness.use_epoch = pas_get_epoch();
+        page->emptiness.use_epoch = use_epoch;
         break;
     }
     pas_segregated_view_note_emptiness(page->owner, page);

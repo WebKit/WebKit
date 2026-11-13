@@ -29,7 +29,12 @@
 #include "bmalloc_heap_innards.h"
 #include "pas_internal_config.h"
 #include "bmalloc_heap_utils.h"
+#include "pas_epoch.h"
 #include "pas_large_heap.h"
+#include "pas_page_sharing_pool.h"
+#include "pas_scavenger.h"
+#include "pas_segregated_exclusive_view.h"
+#include "pas_segregated_view.h"
 #include "tagged_bmalloc_heap.h"
 #include "tagged_bmalloc_heap_config.h"
 #include "tagged_bmalloc_heap_utils.h"
@@ -462,6 +467,112 @@ void testBmallocMallocSizeAcrossHeaps(BmallocHeapVariant variant)
     }
 }
 
+// The tests below check when recommitting a page soon after its decommit marks it for extra
+// retention time.
+pas_segregated_exclusive_view* exclusiveViewFor(void* mem)
+{
+    return pas_segregated_view_get_exclusive(
+        pas_segregated_view_for_object(reinterpret_cast<uintptr_t>(mem), &bmalloc_heap_config));
+}
+
+void checkRecommitRetentionIsEnabled()
+{
+    CHECK(!pas_epoch_is_counter);
+    CHECK(pas_scavenger_recommit_retention_epoch_delta);
+}
+
+void decommitPagesEmptyBeforeNow()
+{
+    pas_scavenger_clear_all_caches();
+    pas_physical_page_sharing_pool_scavenge(pas_get_epoch());
+}
+
+void testBmallocRecommitSoonAfterPeriodicDecommitMarksPage()
+{
+    static const bmalloc_type type = BMALLOC_TYPE_INITIALIZER(64, 8, "testBmallocRecommitSoonAfterPeriodicDecommitMarksPage");
+    static pas_heap_ref heapRef = BMALLOC_HEAP_REF_INITIALIZER(&type);
+
+    checkRecommitRetentionIsEnabled();
+    pas_scavenger_suspend();
+
+    void* mem = bmalloc_iso_allocate(&heapRef);
+    CHECK(mem);
+    pas_segregated_exclusive_view* view = exclusiveViewFor(mem);
+    bmalloc_deallocate(mem);
+
+    decommitPagesEmptyBeforeNow();
+    CHECK(!view->is_owned);
+    CHECK(!view->decommitted_by_forced_scavenge);
+
+    mem = bmalloc_iso_allocate(&heapRef);
+    CHECK(mem);
+    CHECK_EQUAL(exclusiveViewFor(mem), view);
+    CHECK(view->recommitted_soon_after_decommit);
+
+    bmalloc_deallocate(mem);
+    decommitPagesEmptyBeforeNow();
+    // Once the marked page is empty again, its use epoch is in the future, so it stays committed.
+    CHECK(view->is_owned);
+}
+
+void testBmallocRecommitSoonAfterForcedDecommitDoesNotMarkPage()
+{
+    static const bmalloc_type type = BMALLOC_TYPE_INITIALIZER(64, 8, "testBmallocRecommitSoonAfterForcedDecommitDoesNotMarkPage");
+    static pas_heap_ref heapRef = BMALLOC_HEAP_REF_INITIALIZER(&type);
+
+    checkRecommitRetentionIsEnabled();
+    pas_scavenger_suspend();
+
+    void* mem = bmalloc_iso_allocate(&heapRef);
+    CHECK(mem);
+    pas_segregated_exclusive_view* view = exclusiveViewFor(mem);
+    bmalloc_deallocate(mem);
+
+    pas_scavenger_run_synchronously_now();
+    CHECK(!view->is_owned);
+    CHECK(view->decommitted_by_forced_scavenge);
+
+    mem = bmalloc_iso_allocate(&heapRef);
+    CHECK(mem);
+    CHECK_EQUAL(exclusiveViewFor(mem), view);
+    // A forced scavenge decommits empty pages no matter how long they have been empty, so reusing
+    // the page right after a forced scavenge does not mark it.
+    CHECK(!view->recommitted_soon_after_decommit);
+    bmalloc_deallocate(mem);
+}
+
+void testBmallocRecommitAfterForcedDecommitClearsMark()
+{
+    static const bmalloc_type type = BMALLOC_TYPE_INITIALIZER(64, 8, "testBmallocRecommitAfterForcedDecommitClearsMark");
+    static pas_heap_ref heapRef = BMALLOC_HEAP_REF_INITIALIZER(&type);
+
+    checkRecommitRetentionIsEnabled();
+    pas_scavenger_suspend();
+
+    void* mem = bmalloc_iso_allocate(&heapRef);
+    CHECK(mem);
+    pas_segregated_exclusive_view* view = exclusiveViewFor(mem);
+    bmalloc_deallocate(mem);
+
+    decommitPagesEmptyBeforeNow();
+    mem = bmalloc_iso_allocate(&heapRef);
+    CHECK(mem);
+    CHECK_EQUAL(exclusiveViewFor(mem), view);
+    CHECK(view->recommitted_soon_after_decommit);
+    bmalloc_deallocate(mem);
+
+    pas_scavenger_run_synchronously_now();
+    CHECK(!view->is_owned);
+    CHECK(view->decommitted_by_forced_scavenge);
+
+    mem = bmalloc_iso_allocate(&heapRef);
+    CHECK(mem);
+    CHECK_EQUAL(exclusiveViewFor(mem), view);
+    // Reusing a marked page clears its mark, including when a forced scavenge decommitted it.
+    CHECK(!view->recommitted_soon_after_decommit);
+    bmalloc_deallocate(mem);
+}
+
 } // anonymous namespace
 
 void addBmallocTests()
@@ -480,4 +591,8 @@ void addBmallocTests()
         ADD_TEST(testBmallocLargeObjectDelegation(variant));
 #endif
     }
+
+    ADD_TEST(testBmallocRecommitSoonAfterPeriodicDecommitMarksPage());
+    ADD_TEST(testBmallocRecommitSoonAfterForcedDecommitDoesNotMarkPage());
+    ADD_TEST(testBmallocRecommitAfterForcedDecommitClearsMark());
 }
