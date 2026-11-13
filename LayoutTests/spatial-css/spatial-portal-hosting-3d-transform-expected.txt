@@ -1,0 +1,34 @@
+layer at (0,0) size 785x646 (composited [root], bounds=at (0,0) size 785x646, drawsContent=1, paints into ancestor=0)
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x646
+  RenderBlock {HTML} at (0,0) size 785x646
+    RenderBody {BODY} at (8,8) size 769x630
+layer at (8,8) size 300x600 (composited [spatial-portal], bounds=at (0,0) size 300x600, drawsContent=0, paints into ancestor=0)
+  RenderBlock {DIV} at (0,0) size 300x600
+    RenderBlock {DIV} at (0,300) size 300x30
+layer at (8,8) size 100x30 (composited [3D transform, spatial-portal-hosting], bounds=at (0,0) size 100x30, drawsContent=1, paints into ancestor=0)
+  RenderBlock {DIV} at (0,0) size 100x30 [bgcolor=#008000]
+layer at (8,38) size 100x30 (composited [3D transform, stacking, spatial-portal-hosting], bounds=at (0,0) size 100x30, drawsContent=1, paints into ancestor=0)
+  RenderBlock {DIV} at (0,30) size 100x30 [bgcolor=#008000]
+layer at (8,68) size 100x30 (composited [3D transform, stacking, spatial-portal-hosting], bounds=at (0,0) size 100x30, drawsContent=1, paints into ancestor=0)
+  RenderBlock {DIV} at (0,60) size 100x30 [bgcolor=#008000]
+layer at (8,98) size 100x30 (composited [3D transform, stacking, spatial-portal-hosting], bounds=at (0,0) size 100x30, drawsContent=1, paints into ancestor=0)
+  RenderBlock {DIV} at (0,90) size 100x30 [bgcolor=#008000]
+layer at (8,128) size 100x30 (composited [overlap], bounds=at (0,0) size 100x30, drawsContent=0, paints into ancestor=0)
+  RenderBlock {DIV} at (0,120) size 100x30 [bgcolor=#008000]
+layer at (8,158) size 100x30 (composited [overlap], bounds=at (0,0) size 100x30, drawsContent=0, paints into ancestor=0)
+  RenderBlock {DIV} at (0,150) size 100x30 [bgcolor=#008000]
+layer at (8,188) size 100x30 (composited [overlap], bounds=at (0,0) size 100x30, drawsContent=0, paints into ancestor=0)
+  RenderBlock {DIV} at (0,180) size 100x30 [bgcolor=#008000]
+layer at (8,218) size 100x30 (composited [stacking, spatial-portal-hosting], bounds=at (0,0) size 100x30, drawsContent=1, paints into ancestor=0)
+  RenderBlock {DIV} at (0,210) size 100x30 [bgcolor=#008000]
+layer at (8,248) size 100x30 (composited [3D transform, stacking, spatial-portal-hosting], bounds=at (0,0) size 100x30, drawsContent=1, paints into ancestor=0)
+  RenderBlock {DIV} at (0,240) size 100x30 [bgcolor=#008000]
+layer at (8,278) size 100x30 (composited [3D transform, stacking, spatial-portal-hosting], bounds=at (0,0) size 100x30, drawsContent=1, paints into ancestor=0)
+  RenderBlock (positioned) {DIV} at (8,278) size 100x30 [bgcolor=#008000]
+layer at (8,278) size 100x30 (composited [3D transform, stacking, spatial-portal-hosting], bounds=at (0,0) size 100x30, drawsContent=1, paints into ancestor=0)
+  RenderBlock {DIV} at (0,270) size 100x30 [bgcolor=#008000]
+layer at (8,308) size 100x30 (composited [3D transform, stacking], bounds=at (0,0) size 100x30, drawsContent=0, paints into ancestor=0)
+  RenderBlock {DIV} at (0,0) size 100x30 [bgcolor=#008000]
+layer at (8,608) size 100x30 (composited [3D transform, stacking], bounds=at (0,0) size 100x30, drawsContent=0, paints into ancestor=0)
+  RenderBlock {DIV} at (0,600) size 100x30 [bgcolor=#008000]

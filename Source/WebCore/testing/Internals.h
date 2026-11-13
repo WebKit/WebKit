@@ -1800,6 +1800,7 @@ public:
 
 #if ENABLE(SPATIAL_PORTAL)
     NODELETE unsigned numberOfHostedModelsInSpatialPortal(Element&);
+    unsigned numberOfHostedPromotedChildrenInSpatialPortal(Element&);
     NODELETE bool establishesSpatialPortal(Element&);
     NODELETE RefPtr<Element> spatialPortalAnchorForModel(HTMLModelElement&);
     NODELETE std::optional<Vector<double>> spatialPortalResolvedTransform(Element&);

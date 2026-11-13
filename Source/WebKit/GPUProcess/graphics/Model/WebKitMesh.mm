@@ -30,6 +30,7 @@
 
 #import <WebCore/IOSurface.h>
 #import <WebCore/ProcessIdentity.h>
+#import <pal/spi/cf/CoreVideoSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/Borrow.h>
 #import <wtf/CheckedArithmetic.h>
@@ -901,6 +902,19 @@ static RetainPtr<NSMutableArray> createMetalTextures(id<MTLDevice> device, const
     return textures;
 }
 
+#if ENABLE(SPATIAL_PORTAL) && ENABLE(GPU_PROCESS_MODEL)
+static std::optional<MTLPixelFormat> metalPixelFormatForPortalContent(IOSurfaceRef surface)
+{
+    switch (IOSurfaceGetPixelFormat(surface)) {
+    case kCVPixelFormatType_32BGRA:
+    case kCVPixelFormatType_Lossless_32BGRA:
+        return MTLPixelFormatBGRA8Unorm;
+    default:
+        return std::nullopt;
+    }
+}
+#endif
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebMesh);
 
 static MTLPixelFormat pixelFormatForDynamicRange(bool standardRange)
@@ -913,6 +927,9 @@ WebMesh::WebMesh(const WebModelCreateMeshDescriptor& descriptor)
 {
     id<MTLDevice> device = MTLCreateSystemDefaultDevice();
     m_textures = createMetalTextures(device, descriptor.ioSurfaces, descriptor.width, descriptor.height, pixelFormatForDynamicRange(m_standardDynamicRange));
+#if ENABLE(SPATIAL_PORTAL) && ENABLE(GPU_PROCESS_MODEL)
+    m_device = device;
+#endif
 
 #if ENABLE(GPU_PROCESS_MODEL)
     WKBridgeUSDConfiguration *configuration = [WebKit::allocWKBridgeUSDConfigurationInstance() initWithDevice:device memoryOwner:descriptor.processIdentity ? descriptor.processIdentity->taskIdToken() : 0];
@@ -1039,7 +1056,81 @@ void WebMesh::updateTexture(Vector<WebModel::UpdateTextureDescriptor>&& inputArr
 #if ENABLE(GPU_PROCESS_MODEL)
 static WKBridgeUpdateMaterial *convert(const WebModel::UpdateMaterialDescriptor& input)
 {
-    return [WebKit::allocWKBridgeUpdateMaterialInstance() initWithMaterialGraph:WebModel::convert(input.materialGraph) identifier:convert(input.identifier)];
+    WKBridgeTypedResourceId *portalContentTextureIdentifier = nil;
+#if ENABLE(SPATIAL_PORTAL)
+    if (input.portalContentTextureIdentifier)
+        portalContentTextureIdentifier = convert(*input.portalContentTextureIdentifier);
+#endif
+    return [WebKit::allocWKBridgeUpdateMaterialInstance() initWithMaterialGraph:WebModel::convert(input.materialGraph) identifier:convert(input.identifier) portalContentTextureIdentifier:portalContentTextureIdentifier];
+}
+#endif
+
+#if ENABLE(SPATIAL_PORTAL)
+bool WebMesh::updatePortalContentTexture(const WebModel::TypedResourceId& identifier, IOSurfaceRef surface, bool isOpaque, uint64_t bufferIdentifier)
+{
+#if ENABLE(GPU_PROCESS_MODEL)
+    RELEASE_ASSERT(m_receiver);
+
+    auto it = m_portalContentTextures.find(bufferIdentifier);
+    if (it == m_portalContentTextures.end()) {
+        if (!surface || !m_device)
+            return false;
+
+        size_t width = IOSurfaceGetWidth(surface);
+        size_t height = IOSurfaceGetHeight(surface);
+        if (!width || !height || width > static_cast<size_t>(WKBridgeMaximumTextureDimension) || height > static_cast<size_t>(WKBridgeMaximumTextureDimension))
+            return false;
+
+        auto pixelFormat = metalPixelFormatForPortalContent(surface);
+        if (!pixelFormat)
+            return false;
+
+        MTLTextureDescriptor *textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:*pixelFormat width:width height:height mipmapped:NO];
+        id<MTLDevice> device = m_device.get();
+        RetainPtr<id> texture = [device newTextureWithDescriptor:textureDescriptor iosurface:surface plane:0];
+        if (!texture)
+            return false;
+
+        it = m_portalContentTextures.set(bufferIdentifier, WTF::move(texture)).iterator;
+    }
+
+    [m_receiver updatePortalContentTexture:convert(identifier) texture:it->value.get() forceOpaque:isOpaque];
+    return true;
+#else
+    UNUSED_PARAM(identifier);
+    UNUSED_PARAM(surface);
+    UNUSED_PARAM(isOpaque);
+    UNUSED_PARAM(bufferIdentifier);
+    return false;
+#endif
+}
+
+void WebMesh::removePortalContentTexture(uint64_t bufferIdentifier)
+{
+#if ENABLE(GPU_PROCESS_MODEL)
+    m_portalContentTextures.remove(bufferIdentifier);
+#else
+    UNUSED_PARAM(bufferIdentifier);
+#endif
+}
+
+void WebMesh::clearPortalContentTextures()
+{
+#if ENABLE(GPU_PROCESS_MODEL)
+    m_portalContentTextures.clear();
+#endif
+}
+
+void WebMesh::setPortalContentOrder(Vector<WebModel::TypedResourceId>&& identifiers)
+{
+#if ENABLE(GPU_PROCESS_MODEL)
+    RELEASE_ASSERT(m_receiver);
+    [m_receiver setPortalContentOrder:createNSArray(identifiers, [](const WebModel::TypedResourceId& identifier) {
+        return convert(identifier);
+    }).get()];
+#else
+    UNUSED_PARAM(identifiers);
+#endif
 }
 #endif
 

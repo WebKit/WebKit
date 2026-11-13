@@ -128,6 +128,47 @@ void RemoteImageBufferSet::endPrepareForDisplay(RenderingUpdateID renderingUpdat
     completionHandler(WTF::move(outputData), renderingUpdateID);
 }
 
+#if HAVE(IOSURFACE)
+RemoteImageBufferSet::ExternalReadResult RemoteImageBufferSet::frontBufferSurfaceForExternalRead(const Vector<uint64_t>& alreadyMappedBuffers)
+{
+    assertIsCurrent(workQueue());
+
+    if (isPreparingForDisplay())
+        return { .isBusy = true };
+
+    RefPtr frontBuffer = m_frontBuffer;
+    if (!frontBuffer)
+        return { };
+
+    if (frontBuffer->setNonVolatile() == WebCore::SetNonVolatileResult::Empty)
+        return { };
+
+    auto bufferIdentifier = frontBuffer->renderingResourceIdentifier().toUInt64();
+    frontBuffer->flushDrawingContext();
+
+    if (alreadyMappedBuffers.contains(bufferIdentifier))
+        return { nullptr, bufferIdentifier };
+
+    auto* sharing = dynamicDowncast<ImageBufferBackendHandleSharing>(frontBuffer->toBackendSharing());
+    if (!sharing)
+        return { };
+
+    auto handle = sharing->createBackendHandle();
+    if (!handle)
+        return { };
+
+    auto* sendRight = std::get_if<MachSendRight>(&*handle);
+    if (!sendRight)
+        return { };
+
+    RetainPtr surface = adoptCF(IOSurfaceLookupFromMachPort(sendRight->sendRight()));
+    if (!surface)
+        return { };
+
+    return { WTF::move(surface), bufferIdentifier };
+}
+#endif
+
 SwapBuffersDisplayRequirement RemoteImageBufferSet::swapBuffersForDisplay(bool hasEmptyDirtyRegion, bool supportsPartialRepaint)
 {
     auto displayRequirement = SwapBuffersDisplayRequirement::NeedsNoDisplay;
