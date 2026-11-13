@@ -258,7 +258,7 @@ static bool rowIsKept(ASCIILiteral rowJSON)
 
 TEST_F(QuirksTest, MalformedQuirkTablesAreRejected)
 {
-    for (auto json : { "{"_s, "[]"_s, R"({ "rows": [] })"_s, R"({ "quirks": {} })"_s, R"({ "quirks": [], "extra": 1 })"_s }) {
+    for (auto json : { "{"_s, "[]"_s, R"({ "rows": [] })"_s, R"({ "quirks": {} })"_s, R"({ "quirks": [], "extra": 1 })"_s, R"({ "quirks": [], "constants": [] })"_s, R"({ "constants": {} })"_s, R"({ "quirks": [], "constants": {}, "extra": 1 })"_s }) {
         auto result = WebCore::parseQuirkTable(json);
         EXPECT_TRUE(result.table.quirks.isEmpty()) << json.characters();
         ASSERT_EQ(result.errors.size(), 1u) << json.characters();
@@ -321,11 +321,96 @@ TEST_F(QuirksTest, ParseErrorsDescribeWhereTheyAre)
         return result.errors.isEmpty() ? String { } : result.errors[0].description();
     };
 
-    EXPECT_EQ(onlyErrorDescription("[]"_s), "the top level must be an object whose only key is \"quirks\", an array of rows"_str);
+    EXPECT_EQ(onlyErrorDescription("[]"_s), "the top level must be an object with a \"quirks\" array of rows and an optional \"constants\" object"_str);
     EXPECT_EQ(onlyErrorDescription(R"({ "quirks": [5] })"_s), "quirks[0]: a row must be an object"_str);
     EXPECT_EQ(onlyErrorDescription(R"({ "quirks": [{ "matches": ["example.com"], "behaviors": [{ "id": "NeedsAirIndiaExpressLayeringQuirk" }] }] })"_s), "quirks[0] (example.com): invalid match pattern \"example.com\" in \"matches\""_str);
     EXPECT_EQ(onlyErrorDescription(R"({ "quirks": [{ "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsUserAgentStringOverrideQuirk" }] }] })"_s), "quirks[0] (*://*.example.com/*).behaviors[0] NeedsUserAgentStringOverrideQuirk: needs \"userAgent\""_str);
     EXPECT_EQ(onlyErrorDescription(R"({ "quirks": [{ "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NoSuchQuirk" }] }] })"_s), "quirks[0] (*://*.example.com/*).behaviors[0]: \"id\" \"NoSuchQuirk\" is not a behavior in QuirkBehaviors.yaml"_str);
+}
+
+TEST_F(QuirksTest, ConstantsAreSubstitutedForReferences)
+{
+    auto result = WebCore::parseQuirkTable(R"({
+        "constants": { "agent": "Agent/1.0", "cdn": ["*://cdn.example.com/*"], "site": ["*://*.example.com/*"] },
+        "quirks": [
+            { "matches": { "constant": "site" }, "behaviors": [{ "id": "NeedsUserAgentStringOverrideQuirk", "userAgent": { "constant": "agent" } }] },
+            { "matches": ["*://*.example.org/*"], "behaviors": [{ "id": "NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk", "script": "x", "secondaryURL": { "constant": "cdn" } }] }
+        ]
+    })"_s);
+
+    EXPECT_TRUE(result.errors.isEmpty()) << describeErrors(result.errors);
+    ASSERT_EQ(result.table.quirks.size(), 2u);
+    EXPECT_EQ(result.table.quirks[0].matches[0].string(), "*://*.example.com/*"_str);
+    EXPECT_EQ(result.table.quirks[0].behaviors[0].userAgent, "Agent/1.0"_str);
+    EXPECT_EQ(result.table.quirks[1].behaviors[0].secondaryURL[0].string(), "*://cdn.example.com/*"_str);
+}
+
+TEST_F(QuirksTest, NestedConstantsAreReferencedByDottedPath)
+{
+    auto result = WebCore::parseQuirkTable(R"({
+        "constants": {
+            "userAgents": { "chrome": { "mac": "Chrome/1.0" }, "safari": "Safari/1.0" },
+            "sites": { "example": ["*://*.example.com/*"] }
+        },
+        "quirks": [
+            { "matches": { "constant": "sites.example" }, "behaviors": [{ "id": "NeedsUserAgentStringOverrideQuirk", "userAgent": { "constant": "userAgents.chrome.mac" } }] },
+            { "matches": ["*://*.example.org/*"], "behaviors": [{ "id": "NeedsUserAgentStringOverrideQuirk", "userAgent": { "constant": "userAgents.safari" } }] }
+        ]
+    })"_s);
+
+    EXPECT_TRUE(result.errors.isEmpty()) << describeErrors(result.errors);
+    ASSERT_EQ(result.table.quirks.size(), 2u);
+    EXPECT_EQ(result.table.quirks[0].matches[0].string(), "*://*.example.com/*"_str);
+    EXPECT_EQ(result.table.quirks[0].behaviors[0].userAgent, "Chrome/1.0"_str);
+    EXPECT_EQ(result.table.quirks[1].behaviors[0].userAgent, "Safari/1.0"_str);
+}
+
+TEST_F(QuirksTest, BadConstantsAndReferencesAreRejected)
+{
+    using enum WebCore::QuirkTableParseErrorKind;
+
+    auto unknown = WebCore::parseQuirkTable(R"({ "constants": {}, "quirks": [
+        { "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsUserAgentStringOverrideQuirk", "userAgent": { "constant": "missing" } }] }
+    ] })"_s);
+    EXPECT_TRUE(unknown.table.quirks.isEmpty());
+    ASSERT_EQ(unknown.errors.size(), 1u) << describeErrors(unknown.errors);
+    EXPECT_EQ(unknown.errors[0].kind, UnknownConstant);
+    EXPECT_EQ(unknown.errors[0].description(), "quirks[0] (*://*.example.com/*).behaviors[0] NeedsUserAgentStringOverrideQuirk: \"userAgent\" refers to an unknown constant \"missing\""_str);
+
+    for (auto constants : { R"({ "empty": "" })"_s, R"({ "number": 5 })"_s, R"({ "list": [] })"_s, R"({ "mixed": ["a", 5] })"_s, R"({ "emptyNamespace": {} })"_s, R"({ "outer": { "inner": 5 } })"_s }) {
+        auto result = WebCore::parseQuirkTable(makeString("{ \"constants\": "_s, constants, ", \"quirks\": [] }"_s));
+        ASSERT_EQ(result.errors.size(), 1u) << constants.characters();
+        EXPECT_EQ(result.errors[0].kind, InvalidConstant) << constants.characters();
+    }
+    EXPECT_EQ(WebCore::parseQuirkTable(R"({ "constants": { "outer": { "inner": 5 } }, "quirks": [] })"_s).errors[0].value, "outer.inner"_str);
+
+    for (auto constants : { R"({ "": "A" })"_s, R"({ "a.b": "A" })"_s, R"({ "outer": { "a.b": "A" } })"_s }) {
+        auto result = WebCore::parseQuirkTable(makeString("{ \"constants\": "_s, constants, ", \"quirks\": [] }"_s));
+        ASSERT_EQ(result.errors.size(), 1u) << constants.characters();
+        EXPECT_EQ(result.errors[0].kind, InvalidConstantName) << constants.characters();
+    }
+
+    auto namespaceReference = WebCore::parseQuirkTable(R"({ "constants": { "userAgents": { "chrome": { "mac": "A" } } }, "quirks": [
+        { "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsUserAgentStringOverrideQuirk", "userAgent": { "constant": "userAgents.chrome" } }] }
+    ] })"_s);
+    EXPECT_TRUE(namespaceReference.table.quirks.isEmpty());
+    ASSERT_EQ(namespaceReference.errors.size(), 1u) << describeErrors(namespaceReference.errors);
+    EXPECT_EQ(namespaceReference.errors[0].kind, NamespaceReference);
+    EXPECT_EQ(namespaceReference.errors[0].value, "userAgents.chrome"_str);
+
+    auto unknownNested = WebCore::parseQuirkTable(R"({ "constants": { "userAgents": { "chrome": { "mac": "A" } } }, "quirks": [
+        { "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsUserAgentStringOverrideQuirk", "userAgent": { "constant": "userAgents.chrome.windows" } }] }
+    ] })"_s);
+    ASSERT_EQ(unknownNested.errors.size(), 1u) << describeErrors(unknownNested.errors);
+    EXPECT_EQ(unknownNested.errors[0].kind, UnknownConstant);
+    EXPECT_EQ(unknownNested.errors[0].value, "userAgents.chrome.windows"_str);
+
+    auto malformed = WebCore::parseQuirkTable(R"({ "constants": { "agent": "A" }, "quirks": [
+        { "matches": ["*://*.example.com/*"], "behaviors": [{ "id": "NeedsUserAgentStringOverrideQuirk", "userAgent": { "constant": "agent", "extra": 1 } }] }
+    ] })"_s);
+    EXPECT_TRUE(malformed.table.quirks.isEmpty());
+    ASSERT_EQ(malformed.errors.size(), 1u) << describeErrors(malformed.errors);
+    EXPECT_EQ(malformed.errors[0].kind, InvalidString);
 }
 
 TEST_F(QuirksTest, BugsAndCommentsAreAcceptedOnRowsAndBehaviors)

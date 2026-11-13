@@ -57,6 +57,10 @@ struct QuirkTable {
 
 enum class QuirkTableParseErrorKind : uint8_t {
     InvalidDocument,
+    InvalidConstant,
+    InvalidConstantName,
+    UnknownConstant,
+    NamespaceReference,
     InvalidRow,
     InvalidBehavior,
     UnknownField,

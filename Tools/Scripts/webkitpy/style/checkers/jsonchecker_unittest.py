@@ -538,8 +538,41 @@ class JSONQuirkTableCheckerTest(fake_filesystem_unittest.TestCase):
         self.assert_yaml_rejected('QuirkBuildConditions.yaml', 'mac: PLATFORM(MAC)\n  iOS: PLATFORM(IOS)\n', 'QuirkBuildConditions.yaml:2: expected "name: condition"')
 
     def test_top_level(self):
-        for table in ([], {'rows': []}, {'quirks': {}}, {'quirks': [], 'extra': 1}):
-            self.assertEqual(self.errors_for(table), ['The top level must be an object whose only key is "quirks", an array of rows.'])
+        for table in ([], {'rows': []}, {'quirks': {}}, {'quirks': [], 'extra': 1}, {'quirks': [], 'constants': []}, {'constants': {}}):
+            self.assertEqual(self.errors_for(table), ['The top level must be an object with a "quirks" array of rows and an optional "constants" object.'])
+
+    def test_constants(self):
+        self.assertEqual(self.errors_for({
+            'constants': {'site': ['*://*.example.com/*'], 'script': 'x'},
+            'quirks': [{'matches': {'constant': 'site'}, 'behaviors': [{'id': 'ScriptQuirk', 'script': {'constant': 'script'}}]}],
+        }), [])
+
+        for value in ('', 5, [], ['a', 5], {}):
+            self.assertEqual(self.errors_for({'constants': {'bad': value}, 'quirks': []}), ['constant "bad" must be a non-empty string, a non-empty array of non-empty strings, or a non-empty namespace object.'])
+        self.assertEqual(self.errors_for({'constants': {'outer': {'inner': 5}}, 'quirks': []}), ['constant "outer.inner" must be a non-empty string, a non-empty array of non-empty strings, or a non-empty namespace object.'])
+
+        for constants, path in (({'': 'A'}, ''), ({'a.b': 'A'}, 'a.b'), ({'outer': {'a.b': 'A'}}, 'outer.a.b')):
+            self.assertEqual(self.errors_for({'constants': constants, 'quirks': []}), ['constant "%s" has an empty name or a name containing ".".' % path])
+
+        nested = {'userAgents': {'chrome': {'mac': 'Chrome/1.0'}}, 'sites': {'example': ['*://*.example.com/*']}}
+        self.assertEqual(self.errors_for({
+            'constants': nested,
+            'quirks': [{'matches': {'constant': 'sites.example'}, 'behaviors': [{'id': 'ScriptQuirk', 'script': {'constant': 'userAgents.chrome.mac'}}]}],
+        }), [])
+
+        self.assertEqual(self.errors_for({
+            'constants': {'used': 'x', 'unused': 'y', 'outer': {'unused': 'z'}},
+            'quirks': [{'matches': ['*://*.example.com/*'], 'behaviors': [{'id': 'ScriptQuirk', 'script': {'constant': 'used'}}]}],
+        }), ['constant "outer.unused" is never used.', 'constant "unused" is never used.'])
+
+        errors = self.errors_for({'constants': nested, 'quirks': [{'matches': ['*://*.example.com/*'], 'behaviors': [{'id': 'ScriptQuirk', 'script': {'constant': 'userAgents.chrome'}}]}]})
+        self.assertIn('quirks[0] (*://*.example.com/*).behaviors[0]: "script" refers to "userAgents.chrome", which is a namespace, not a constant.', errors)
+
+        errors = self.errors_for({'constants': nested, 'quirks': [{'matches': ['*://*.example.com/*'], 'behaviors': [{'id': 'ScriptQuirk', 'script': {'constant': 'userAgents.chrome.windows'}}]}]})
+        self.assertIn('quirks[0] (*://*.example.com/*).behaviors[0]: "script" refers to an unknown constant "userAgents.chrome.windows".', errors)
+
+        errors = self.errors_for({'constants': {}, 'quirks': [{'matches': ['*://*.example.com/*'], 'behaviors': [{'id': 'ScriptQuirk', 'script': {'constant': 'missing'}}]}]})
+        self.assertIn('quirks[0] (*://*.example.com/*).behaviors[0]: "script" refers to an unknown constant "missing".', errors)
 
     def test_row_structure(self):
         self.assert_row_error('a row must have "matches" or "embeddedMatches"', matches=None)

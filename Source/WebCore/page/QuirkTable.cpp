@@ -30,6 +30,7 @@
 #include "QuirkBehaviorDeclarations.h"
 #include <array>
 #include <wtf/EnumTraits.h>
+#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/IndexedRange.h>
 #include <wtf/JSONValues.h>
@@ -255,6 +256,8 @@ private:
 
     class Fields;
 
+    void parseConstants(const JSON::Object& namespaceObject, const String& namespacePath = { });
+    RefPtr<JSON::Value> resolveConstant(Ref<JSON::Value>&&, ASCIILiteral field, const ErrorLocation&);
     std::optional<Quirk> parseRow(JSON::Value&, size_t index);
     Vector<QuirkBehavior> parseBehaviors(const JSON::Object& row, const ErrorLocation& rowLocation);
     std::optional<QuirkBehavior> parseBehavior(JSON::Value&, const ErrorLocation& rowLocation, size_t index);
@@ -270,6 +273,8 @@ private:
     }
 
     Vector<QuirkTableParseError> m_errors;
+    HashMap<String, Ref<JSON::Value>> m_constants;
+    HashSet<String> m_namespaces;
 };
 
 class QuirkTableParser::Fields {
@@ -330,7 +335,10 @@ public:
     {
         if (m_disallowedFields.contains(field))
             return nullptr;
-        return m_object->getValue(field);
+        RefPtr value = m_object->getValue(field);
+        if (!value)
+            return nullptr;
+        return m_parser.resolveConstant(value.releaseNonNull(), field, m_location);
     }
 
     String string(ASCIILiteral field)
@@ -378,11 +386,17 @@ QuirkTableParseResult QuirkTableParser::parse(StringView json)
 {
     RefPtr root = JSON::Value::parseJSON(json);
     RefPtr rootObject = root ? root->asObject() : nullptr;
-    RefPtr rows = rootObject && rootObject->size() == 1 ? rootObject->getArray("quirks"_s) : nullptr;
-    if (!rows) {
+    RefPtr rows = rootObject ? rootObject->getArray("quirks"_s) : nullptr;
+    RefPtr constants = rootObject ? rootObject->getValue("constants"_s) : nullptr;
+    RefPtr constantsObject = constants ? constants->asObject() : nullptr;
+    const unsigned expectedSize = constants ? 2 : 1;
+    if (!rows || (constants && !constantsObject) || rootObject->size() != expectedSize) {
         reject({ }, Kind::InvalidDocument);
         return { { }, WTF::move(m_errors) };
     }
+
+    if (constantsObject)
+        parseConstants(*constantsObject);
 
     QuirkTable table;
     table.quirks.reserveInitialCapacity(rows->length());
@@ -393,6 +407,48 @@ QuirkTableParseResult QuirkTableParser::parse(StringView json)
     }
     table.quirks.shrinkToFit();
     return { WTF::move(table), WTF::move(m_errors) };
+}
+
+void QuirkTableParser::parseConstants(const JSON::Object& namespaceObject, const String& namespacePath)
+{
+    for (auto& name : namespaceObject.keys()) {
+        auto path = namespacePath.isNull() ? name : makeString(namespacePath, '.', name);
+        if (name.isEmpty() || name.contains('.')) {
+            reject({ }, Kind::InvalidConstantName, "constants"_s, WTF::move(path));
+            continue;
+        }
+
+        RefPtr value = namespaceObject.getValue(name);
+        if (RefPtr nestedNamespace = value->asObject(); nestedNamespace && nestedNamespace->size()) {
+            m_namespaces.add(path);
+            parseConstants(*nestedNamespace, path);
+            continue;
+        }
+
+        if (nonEmptyString(*value).isNull() && !nonEmptyStrings(*value)) {
+            reject({ }, Kind::InvalidConstant, "constants"_s, WTF::move(path));
+            continue;
+        }
+        m_constants.add(WTF::move(path), value.releaseNonNull());
+    }
+}
+
+RefPtr<JSON::Value> QuirkTableParser::resolveConstant(Ref<JSON::Value>&& value, ASCIILiteral field, const ErrorLocation& location)
+{
+    RefPtr reference = value->asObject();
+    if (!reference || reference->size() != 1)
+        return WTF::move(value);
+    RefPtr nameValue = reference->getValue("constant"_s);
+    if (!nameValue)
+        return WTF::move(value);
+
+    auto path = nonEmptyString(*nameValue);
+    auto constant = m_constants.find(path);
+    if (constant != m_constants.end())
+        return constant->value.copyRef();
+
+    reject(location, m_namespaces.contains(path) ? Kind::NamespaceReference : Kind::UnknownConstant, field, WTF::move(path));
+    return nullptr;
 }
 
 std::optional<Quirk> QuirkTableParser::parseRow(JSON::Value& value, size_t index)
@@ -548,7 +604,15 @@ static String message(const QuirkTableParseError& error)
 
     switch (error.kind) {
     case InvalidDocument:
-        return "the top level must be an object whose only key is \"quirks\", an array of rows"_s;
+        return "the top level must be an object with a \"quirks\" array of rows and an optional \"constants\" object"_s;
+    case InvalidConstant:
+        return makeString("constant \""_s, error.value, "\" must be a non-empty string, a non-empty array of non-empty strings, or a non-empty namespace object"_s);
+    case InvalidConstantName:
+        return makeString("constant \""_s, error.value, "\" has an empty name or a name containing \".\""_s);
+    case UnknownConstant:
+        return makeString('"', error.field, "\" refers to an unknown constant \""_s, error.value, '"');
+    case NamespaceReference:
+        return makeString('"', error.field, "\" refers to \""_s, error.value, "\", which is a namespace, not a constant"_s);
     case InvalidRow:
         return "a row must be an object"_s;
     case InvalidBehavior:

@@ -1,4 +1,15 @@
 {
+    "constants": {
+        "userAgents": {
+            "chrome": {
+                "mac": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+                "v143Mac": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+            },
+            "safari": {
+                "v18_6Mac": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15"
+            }
+        }
+    },
     "quirks": [
         {
             "bugs": ["rdar://116491386"],
@@ -44,7 +55,7 @@
             "behaviors": [
                 {
                     "id": "NeedsUserAgentStringOverrideQuirk",
-                    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+                    "userAgent": { "constant": "userAgents.chrome.v143Mac" }
                 }
             ]
         },
@@ -69,7 +80,7 @@
             "behaviors": [
                 {
                     "id": "NeedsUserAgentStringOverrideQuirk",
-                    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36"
+                    "userAgent": { "constant": "userAgents.chrome.mac" }
                 }
             ]
         },
@@ -130,7 +141,7 @@
             "behaviors": [
                 {
                     "id": "NeedsUserAgentStringOverrideQuirk",
-                    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15"
+                    "userAgent": { "constant": "userAgents.safari.v18_6Mac" }
                 }
             ]
         },
@@ -182,7 +193,7 @@
             "behaviors": [
                 {
                     "id": "NeedsUserAgentStringOverrideQuirk",
-                    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36"
+                    "userAgent": { "constant": "userAgents.chrome.mac" }
                 }
             ]
         },
@@ -279,7 +290,7 @@
             "behaviors": [
                 {
                     "id": "NeedsUserAgentStringOverrideQuirk",
-                    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36"
+                    "userAgent": { "constant": "userAgents.chrome.mac" }
                 }
             ]
         },
@@ -297,7 +308,7 @@
             "behaviors": [
                 {
                     "id": "NeedsUserAgentStringOverrideQuirk",
-                    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36"
+                    "userAgent": { "constant": "userAgents.chrome.mac" }
                 }
             ]
         },
@@ -308,7 +319,7 @@
                 { "id": "NeedsCustomUserAgentData" },
                 {
                     "id": "NeedsUserAgentStringOverrideQuirk",
-                    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+                    "userAgent": { "constant": "userAgents.chrome.mac" },
                     "bugs": ["rdar://158721595"]
                 }
             ]
@@ -340,7 +351,7 @@
             "behaviors": [
                 {
                     "id": "NeedsUserAgentStringOverrideQuirk",
-                    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36"
+                    "userAgent": { "constant": "userAgents.chrome.mac" }
                 }
             ]
         },
@@ -402,7 +413,7 @@
             "behaviors": [
                 {
                     "id": "NeedsUserAgentStringOverrideQuirk",
-                    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36"
+                    "userAgent": { "constant": "userAgents.chrome.mac" }
                 }
             ]
         },
@@ -487,7 +498,7 @@
             "behaviors": [
                 {
                     "id": "NeedsUserAgentStringOverrideQuirk",
-                    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+                    "userAgent": { "constant": "userAgents.chrome.v143Mac" }
                 }
             ]
         },
@@ -642,7 +653,7 @@
             "behaviors": [
                 {
                     "id": "NeedsUserAgentStringOverrideQuirk",
-                    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36"
+                    "userAgent": { "constant": "userAgents.chrome.mac" }
                 }
             ]
         },
@@ -657,7 +668,7 @@
             "behaviors": [
                 {
                     "id": "NeedsUserAgentStringOverrideQuirk",
-                    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15"
+                    "userAgent": { "constant": "userAgents.safari.v18_6Mac" }
                 }
             ]
         },
@@ -685,7 +696,7 @@
             "behaviors": [
                 {
                     "id": "NeedsUserAgentStringOverrideQuirk",
-                    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36"
+                    "userAgent": { "constant": "userAgents.chrome.mac" }
                 }
             ]
         },
@@ -771,7 +782,7 @@
             "behaviors": [
                 {
                     "id": "NeedsUserAgentStringOverrideQuirk",
-                    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36"
+                    "userAgent": { "constant": "userAgents.chrome.mac" }
                 }
             ]
         },
@@ -796,7 +807,7 @@
                 },
                 {
                     "id": "NeedsUserAgentStringOverrideQuirk",
-                    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36"
+                    "userAgent": { "constant": "userAgents.chrome.mac" }
                 }
             ]
         },
@@ -806,7 +817,7 @@
             "behaviors": [
                 {
                     "id": "NeedsUserAgentStringOverrideQuirk",
-                    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36"
+                    "userAgent": { "constant": "userAgents.chrome.mac" }
                 }
             ]
         },
@@ -816,7 +827,7 @@
             "behaviors": [
                 {
                     "id": "NeedsUserAgentStringOverrideQuirk",
-                    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36"
+                    "userAgent": { "constant": "userAgents.chrome.mac" }
                 }
             ]
         },
@@ -861,7 +872,7 @@
                 },
                 {
                     "id": "NeedsUserAgentStringOverrideQuirk",
-                    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+                    "userAgent": { "constant": "userAgents.chrome.v143Mac" }
                 },
                 { "id": "ShouldAllowTouchMoveToChangeSelectionQuirk", "bugs": ["rdar://151851274"] }
             ]
@@ -1070,7 +1081,7 @@
             "behaviors": [
                 {
                     "id": "NeedsUserAgentStringOverrideQuirk",
-                    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36"
+                    "userAgent": { "constant": "userAgents.chrome.mac" }
                 }
             ]
         },
@@ -1145,7 +1156,7 @@
             "behaviors": [
                 {
                     "id": "NeedsUserAgentStringOverrideQuirk",
-                    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36"
+                    "userAgent": { "constant": "userAgents.chrome.mac" }
                 }
             ]
         },
@@ -1196,7 +1207,7 @@
             "behaviors": [
                 {
                     "id": "NeedsUserAgentStringOverrideQuirk",
-                    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36"
+                    "userAgent": { "constant": "userAgents.chrome.mac" }
                 }
             ]
         },
@@ -1227,7 +1238,7 @@
             "behaviors": [
                 {
                     "id": "NeedsUserAgentStringOverrideQuirk",
-                    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36"
+                    "userAgent": { "constant": "userAgents.chrome.mac" }
                 }
             ]
         },
@@ -1255,7 +1266,7 @@
                 { "id": "ShouldComputeSimulatedMouseEventMovementDeltaQuirk", "bugs": ["rdar://174179805"] },
                 {
                     "id": "NeedsUserAgentStringOverrideQuirk",
-                    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15",
+                    "userAgent": { "constant": "userAgents.safari.v18_6Mac" },
                     "bugs": ["rdar://154893648"]
                 },
                 {
@@ -1301,7 +1312,7 @@
             "behaviors": [
                 {
                     "id": "NeedsUserAgentStringOverrideQuirk",
-                    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36"
+                    "userAgent": { "constant": "userAgents.chrome.mac" }
                 }
             ]
         },

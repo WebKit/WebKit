@@ -59,12 +59,16 @@ class QuirkTableValidator(object):
         if self._behaviors is None or self._build_conditions is None or self._environments is None:
             return self._errors
 
-        if not isinstance(table, dict) or list(table.keys()) != ['quirks'] or not isinstance(table['quirks'], list):
-            self._error('The top level must be an object whose only key is "quirks", an array of rows.')
+        if not isinstance(table, dict) or not isinstance(table.get('quirks'), list) or not isinstance(table.get('constants', {}), dict) or not set(table) <= {'quirks', 'constants'}:
+            self._error('The top level must be an object with a "quirks" array of rows and an optional "constants" object.')
             return self._errors
 
+        self._namespaces = set()
+        self._constants = self._read_constants(table.get('constants', {}))
+        self._used_constants = set()
         for index, row in enumerate(table['quirks']):
             self._check_row(row, index)
+        self._check_unused_constants()
         return self._errors
 
     def _error(self, message):
@@ -206,6 +210,48 @@ class QuirkTableValidator(object):
             return 'quirks[%d] (%s)' % (index, patterns[0])
         return 'quirks[%d]' % index
 
+    def _read_constants(self, namespace, namespace_path=None, constants=None):
+        """Flattens nested namespace objects into a dict keyed by dotted path ("userAgents.chrome.mac")."""
+        if constants is None:
+            constants = {}
+        for name, value in namespace.items():
+            path = name if namespace_path is None else '%s.%s' % (namespace_path, name)
+            if not name or '.' in name:
+                self._error('constant "%s" has an empty name or a name containing ".".' % path)
+            elif isinstance(value, dict) and value:
+                self._namespaces.add(path)
+                self._read_constants(value, path, constants)
+            elif self._is_non_empty_string(value) or self._is_non_empty_string_list(value):
+                constants[path] = value
+            else:
+                self._error('constant "%s" must be a non-empty string, a non-empty array of non-empty strings, or a non-empty namespace object.' % path)
+        return constants
+
+    def _resolve_constants(self, entry, location, skipped_fields=()):
+        """Returns a copy of entry with each { "constant": path } field value replaced by that constant.
+        Like the runtime parser, a field naming an unknown constant is an error and is treated as having no value.
+        """
+        resolved = {}
+        for field, value in entry.items():
+            if field in skipped_fields or not isinstance(value, dict) or list(value) != ['constant']:
+                resolved[field] = value
+                continue
+            name = value['constant']
+            if name not in self._constants:
+                if isinstance(name, str) and name in self._namespaces:
+                    self._error('%s: "%s" refers to "%s", which is a namespace, not a constant.' % (location, field, name))
+                else:
+                    self._error('%s: "%s" refers to an unknown constant %s.' % (location, field, json.dumps(name)))
+                resolved[field] = None
+                continue
+            self._used_constants.add(name)
+            resolved[field] = self._constants[name]
+        return resolved
+
+    def _check_unused_constants(self):
+        for path in sorted(set(self._constants) - self._used_constants):
+            self._error('constant "%s" is never used.' % path)
+
     def _check_notes(self, entry, location):
         if 'comment' in entry and not self._is_non_empty_string(entry['comment']):
             self._error('%s: "comment" must be a non-empty string.' % location)
@@ -222,6 +268,7 @@ class QuirkTableValidator(object):
         if not isinstance(row, dict):
             self._error('%s: a row must be an object.' % location)
             return
+        row = self._resolve_constants(row, location, skipped_fields=('behaviors',))
 
         for field in row:
             if field not in self.ROW_FIELDS:
@@ -258,6 +305,7 @@ class QuirkTableValidator(object):
         if not isinstance(entry, dict):
             self._error('%s: a behavior must be an object.' % location)
             return
+        entry = self._resolve_constants(entry, location)
 
         for field in entry:
             if field not in self.BEHAVIOR_FIELDS:
