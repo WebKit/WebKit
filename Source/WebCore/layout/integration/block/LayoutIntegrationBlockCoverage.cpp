@@ -745,10 +745,12 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
         }
     }
 
-    // The layout state has no entry for the boxes inside the block formatting context, which is where line-clamp reaches the inline content
-    // below them.
-    if (!style->maxLines().isAuto())
-        return BlockAvoidanceReason::ContentHasLineClamp;
+    // FIXME: max-lines in the content of a -webkit-box with -webkit-line-clamp, whose count of lines the lines in the box still add to, besides
+    // the budget of the box's own (RenderLayoutState::legacyLineClamp).
+    if (!style->maxLines().isAuto() && style->overflowContinue() != OverflowContinue::WebkitLegacy) {
+        if (auto* layoutState = blockContainer->view().frameView().layoutContext().layoutState(); layoutState && layoutState->legacyLineClamp())
+            return BlockAvoidanceReason::ContentHasLineClamp;
+    }
     return { };
 }
 

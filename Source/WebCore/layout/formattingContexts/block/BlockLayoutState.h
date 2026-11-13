@@ -218,6 +218,14 @@ public:
     // The clamp point is between this in-flow block-level box and its next sibling, with no line box right before it (see the auto clamp point).
     const RenderBox* clampAfterBox() const { return m_clampAfterBox.get(); }
     void setClampAfterBox(const RenderBox* clampAfterBox) { m_clampAfterBox = clampAfterBox; }
+    // The line-clamp budgets around the block containers whose max-lines gives their content one of its own, from the outermost one, which they
+    // get back at their end (LineClampUpdater).
+    struct LineClampToRestore {
+        CheckedRef<const RenderBox> blockContainer;
+        std::optional<LineClamp> lineClamp;
+        CheckedPtr<const RenderBox> clampAfterBox;
+    };
+    Vector<LineClampToRestore>& lineClampsToRestore() LIFETIME_BOUND { return m_lineClampsToRestore; }
     TextBoxTrim textBoxTrim() const { return m_textBoxTrim; }
     Style::TextBoxEdge textBoxEdge() const { return m_textBoxEdge; }
     // The sides of the inline content laid out next to trim, and how.
@@ -281,6 +289,7 @@ public:
 private:
     std::optional<LineClamp> m_lineClamp;
     CheckedPtr<const RenderBox> m_clampAfterBox;
+    Vector<LineClampToRestore> m_lineClampsToRestore;
     TextBoxTrim m_textBoxTrim;
     Style::TextBoxEdge m_textBoxEdge;
     TextBoxTrimState m_textBoxTrimState;

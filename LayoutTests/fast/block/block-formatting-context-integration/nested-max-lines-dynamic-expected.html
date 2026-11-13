@@ -1,0 +1,10 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 10px/12px monospace; }
+.clamp { line-clamp: 5; width: 180px; border: 1px solid; margin: 2px; float: left; }
+p { margin: 3px 0; background: lightblue; }
+.nested { max-lines: 1; background: lightgreen; }
+</style>
+<div class="clamp"><p>one</p><div class="nested" id=first>nested with two lines of text in it</div><p>two lines of text after the nested one</p><p>hidden</p></div>
+<div class="clamp"><p>one</p><div class="nested" id=second>short</div><p>after</p><p>and more</p><p>hidden</p></div>
+<div class="clamp"><p>one</p><div id=third style="max-lines: 1;">no budget yet, with two lines</div><p>after</p><p>hidden</p></div>

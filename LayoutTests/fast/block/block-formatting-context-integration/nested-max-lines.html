@@ -1,0 +1,20 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 10px/12px monospace; }
+.clamp { line-clamp: 5; width: 180px; border: 1px solid; margin: 2px; float: left; }
+p { margin: 3px 0; background: lightblue; }
+.nested { max-lines: 1; background: lightgreen; }
+</style>
+<div class="clamp"><p>one</p><div class="nested">nested with two lines of text in it</div><p>two lines of text after the nested one</p><p>hidden</p></div>
+<div class="clamp"><p>one</p><div class="nested"><p>a block</p><p>and another one, all in the nested budget</p></div><p>after</p><p>and more</p><p>hidden</p></div>
+<div class="clamp"><div class="nested" style="max-lines: 2;">the nested budget does not hide <div>anything</div> in it</div><p>one</p><p>two</p><p>hidden</p></div>
+<div class="clamp">before <span>inline <div class="nested">block in inline with a budget of its own</div> after</span> tail<br>l5<br>hidden</div>
+<div class="clamp"><p>one</p><div class="nested" style="max-lines: none; -webkit-line-clamp: 1;">-webkit-line-clamp on a block counts in the budget around it</div><p>after</p><p>hidden</p></div>
+<div class="clamp"><p>one</p><div class="nested" style="max-lines: 3;"><div class="nested">nested in nested, one more line</div><p>after the inner one</p></div><p>after</p><p>hidden</p></div>
+<div class="clamp" style="line-clamp: 2;"><div class="nested" style="max-lines: 4;">the nested budget outlasts the one around it</div><p>after</p></div>
+<div class="clamp" style="line-clamp: 9;"><div class="nested" style="max-lines: 5;"><div class="nested">one line</div><p>fits in the budget of the box around it, so no ellipsis</p></div><p>after</p></div>
+<div class="clamp" style="line-clamp: 9;"><div class="nested" style="max-lines: 5;"><div>no budget of its own, two lines</div><p>fits in the budget around it too</p></div><p>after</p></div>
+<div class="clamp" style="line-clamp: auto; max-height: 40px;"><p>one</p><div class="nested">x</div><div style="height: 10px; background: green;"></div><p>hidden</p></div>
+<div style="display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4; overflow: hidden; width: 180px; border: 1px solid; margin: 2px; float: left;"><div><p>one</p><div class="nested">nested in a -webkit-box with two lines</div><p>two</p><p>three</p></div></div>
+<div class="clamp" style="line-clamp: 2;"><div class="nested" style="max-lines: 3;">three lines that end at the clamp point of a budget that outlasts the one around</div><p>after</p></div>
+<div style="clear: left; width: 180px; margin: 2px; border: 1px solid;"><div class="nested">outside any line-clamp container, with two lines</div><p>after</p></div>

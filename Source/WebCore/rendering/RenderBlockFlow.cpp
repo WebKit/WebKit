@@ -953,36 +953,6 @@ bool RenderBlockFlow::establishesLineClampContainer() const
     return LineClampUpdater::shouldDiscardOverflow(*this) && !multiColumnFlow();
 }
 
-static bool contentFitsWithinMaximumLines(const RenderBlockFlow& lineClampContainer)
-{
-    // The block ellipsis goes on the last formatted line of the block with the clamped line.
-    CheckedPtr<const RenderBlockFlow> blockWithClampedLine;
-    for (CheckedPtr<const RenderObject> descendant = &lineClampContainer; descendant; descendant = descendant->nextInPreOrder(&lineClampContainer)) {
-        auto* blockFlow = dynamicDowncast<RenderBlockFlow>(*descendant);
-        if (blockFlow && blockFlow->childrenInline() && blockFlow->inlineLayout() && blockFlow->inlineLayout()->hasEllipsisInBlockDirectionOnLastFormattedLine()) {
-            blockWithClampedLine = blockFlow;
-            break;
-        }
-    }
-    if (!blockWithClampedLine || !blockWithClampedLine->inlineLayout()->contentFitsWithinMaximumLines())
-        return false;
-    for (CheckedPtr<const RenderObject> renderer = blockWithClampedLine.get(); renderer && renderer != &lineClampContainer; renderer = renderer->parent()) {
-        CheckedPtr parent = renderer->parent();
-        if (parent->isInlineBox())
-            continue;
-        if (auto* blockFlow = dynamicDowncast<RenderBlockFlow>(*parent); blockFlow && blockFlow->childrenInline()) {
-            if (!blockFlow->inlineLayout() || !blockFlow->inlineLayout()->contentFitsWithinMaximumLines())
-                return false;
-            continue;
-        }
-        // "A point between two in-flow block-level sibling boxes in the line-clamp container's block formatting context."
-        // https://drafts.csswg.org/css-overflow-4/#line-clamp-containers
-        if (renderer->nextInFlowSibling())
-            return false;
-    }
-    return true;
-}
-
 auto RenderBlockFlow::layoutInFlowChildren(RelayoutChildren relayoutChildren, LayoutUnit previousHeight, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom, LayoutUnit& maxFloatLogicalBottom) -> ContentLayout
 {
     if (!firstChild()) {
@@ -1050,7 +1020,7 @@ auto RenderBlockFlow::layoutInFlowChildren(RelayoutChildren relayoutChildren, La
             lineClampUpdater.setIsStableTextWrap(false);
             relayoutContent();
             clampAtAutoClampPointIfNeeded();
-        } else if (!didClamp && lineClampUpdater.isLineClampRoot() && contentFitsWithinMaximumLines(*this)) {
+        } else if (!didClamp && lineClampUpdater.isLineClampRoot() && LineClampUpdater::contentFitsWithinMaximumLines(*this)) {
             lineClampUpdater.resetLineClamp();
             relayoutContent();
         }

@@ -34,6 +34,7 @@
 #include "FloatingContext.h"
 #include "FontCascadeInlines.h"
 #include "InlineContentConstrainer.h"
+#include "LineClampUpdater.h"
 #include "LocalFrameViewInlines.h"
 #include "OutOfFlowGeometry.h"
 #include "RenderBlockFlow.h"
@@ -173,6 +174,17 @@ BlockLayoutResult BlockFormattingContext::layoutContent(const ConstraintsForBloc
 
 void BlockFormattingContext::layoutBlockItems(const BlockItemList& blockItems, BlockLayoutResult& result)
 {
+    // The content of a block container with a line-clamp budget of its own that ends at its clamp point is laid out again without the budget,
+    // from the state the block formatting context had at its start (RenderBlockFlow::layoutInFlowChildren).
+    struct ClampedContent {
+        CheckedRef<const RenderBox> blockContainer;
+        size_t startIndex { 0 };
+        BlockLayoutState blockLayoutState;
+        size_t boxCount { 0 };
+        size_t outOfFlowBoxCount { 0 };
+        size_t invisibleBoxCount { 0 };
+    };
+    auto clampedContents = Vector<ClampedContent> { };
     auto blockContainerEndIndex = [&](size_t startIndex) {
         auto index = startIndex + 1;
         while (blockItems[index].type() != BlockItem::Type::BlockContainerEnd || &blockItems[index].renderer() != &blockItems[startIndex].renderer())
@@ -197,9 +209,24 @@ void BlockFormattingContext::layoutBlockItems(const BlockItemList& blockItems, B
 
         switch (blockItem.type()) {
         case BlockItem::Type::BlockContainerStart:
+            if (startsLineClamp(box) && !isLaidOutWithoutLineClamp(box))
+                clampedContents.append({ box, index, m_blockLayoutState, result.boxes.size(), result.outOfFlowBoxes.size(), result.invisibleBoxes.size() });
             handleBlockContainerStart(box);
             break;
         case BlockItem::Type::BlockContainerEnd:
+            if (!clampedContents.isEmpty() && clampedContents.last().blockContainer.ptr() == box.ptr()) {
+                auto clampedContent = clampedContents.takeLast();
+                if (LineClampUpdater::contentFitsWithinMaximumLines(downcast<RenderBlockFlow>(box))) {
+                    m_blockLayoutState = WTF::move(clampedContent.blockLayoutState);
+                    result.boxes.shrink(clampedContent.boxCount);
+                    result.outOfFlowBoxes.shrink(clampedContent.outOfFlowBoxCount);
+                    result.invisibleBoxes.shrink(clampedContent.invisibleBoxCount);
+                    m_blockContainersLaidOutWithoutLineClamp.append(box);
+                    // The loop moves on to the block container's start.
+                    index = clampedContent.startIndex - 1;
+                    continue;
+                }
+            }
             handleBlockContainerEnd(box, result);
             handleBlockLevelBoxEnd(box);
             break;
@@ -218,6 +245,59 @@ void BlockFormattingContext::layoutBlockItems(const BlockItemList& blockItems, B
             break;
         }
     }
+}
+
+// max-lines gives the content of a block container a line-clamp budget of its own, which -webkit-line-clamp on a block container does not
+// (LineClampUpdater).
+bool BlockFormattingContext::startsLineClamp(const RenderBox& blockContainer)
+{
+    CheckedRef style = blockContainer.style();
+    return !style->maxLines().isAuto() && style->overflowContinue() != OverflowContinue::WebkitLegacy;
+}
+
+bool BlockFormattingContext::isLaidOutWithoutLineClamp(const RenderBox& blockContainer) const
+{
+    return m_blockContainersLaidOutWithoutLineClamp.containsIf([&](auto& laidOutBlockContainer) {
+        return laidOutBlockContainer.ptr() == &blockContainer;
+    });
+}
+
+// Until the block container's end, where the lines of its inline content come off the budget around it, unless its content fit in its own
+// budget and was laid out again without it (LineClampUpdater::resetLineClamp).
+void BlockFormattingContext::startLineClamp(const RenderBox& blockContainer)
+{
+    if (!startsLineClamp(blockContainer))
+        return;
+    m_blockLayoutState.lineClampsToRestore().append({ blockContainer, m_blockLayoutState.lineClamp(), m_blockLayoutState.clampAfterBox() });
+    m_blockLayoutState.setClampAfterBox(nullptr);
+    if (isLaidOutWithoutLineClamp(blockContainer)) {
+        m_blockLayoutState.setLineClamp({ });
+        ++m_lineClampContainersLaidOutAgainCount;
+        return;
+    }
+    auto maximumLines = static_cast<size_t>(blockContainer.style().maxLines().tryValue()->value);
+    m_blockLayoutState.setLineClamp(BlockLayoutState::LineClamp { maximumLines, LineClampUpdater::shouldDiscardOverflow(downcast<RenderBlock>(blockContainer)), false });
+}
+
+void BlockFormattingContext::endLineClamp(const RenderBox& blockContainer)
+{
+    auto& lineClampsToRestore = m_blockLayoutState.lineClampsToRestore();
+    if (lineClampsToRestore.isEmpty() || lineClampsToRestore.last().blockContainer.ptr() != &blockContainer)
+        return;
+    auto lineClampToRestore = lineClampsToRestore.takeLast();
+    auto lineClamp = lineClampToRestore.lineClamp;
+    if (isLaidOutWithoutLineClamp(blockContainer)) {
+        ASSERT(m_lineClampContainersLaidOutAgainCount);
+        --m_lineClampContainersLaidOutAgainCount;
+    } else if (lineClamp) {
+        CheckedRef blockFlow = downcast<RenderBlockFlow>(blockContainer);
+        auto lineCount = blockFlow->childrenInline() ? static_cast<size_t>(blockFlow->lineCount()) : 0;
+        lineClamp->maximumLines -= std::min(lineClamp->maximumLines, lineCount);
+        if (auto contentLineClamp = m_blockLayoutState.lineClamp())
+            lineClamp->hasConstrainedTextWrapContent |= contentLineClamp->hasConstrainedTextWrapContent;
+    }
+    m_blockLayoutState.setLineClamp(lineClamp);
+    m_blockLayoutState.setClampAfterBox(lineClampToRestore.clampAfterBox.get());
 }
 
 // "Any in-flow or floating boxes that follow the clamp point in the box tree" are invisible boxes (css-overflow-4 §5.3.1): the content before
@@ -299,6 +379,7 @@ void BlockFormattingContext::handleBlockContainerStart(const RenderBox& blockCon
     if (blockContainerState.geometry.borderAndPaddingBefore())
         resolveBorderBoxLogicalTops(blockContainerState);
     startTextBoxTrim(downcast<RenderBlockFlow>(blockContainer), blockContainerState);
+    startLineClamp(blockContainer);
     // Its margin-trim discards the margins at the block-start edge of its content, its first child's block-start margin and the ones that
     // collapse with it (css-box-4 §3.3.1).
     auto marginTrim = blockContainer.style().marginTrim();
@@ -378,6 +459,7 @@ void BlockFormattingContext::handleBlockContainerEnd(const RenderBox& blockConta
     auto blockContainerState = m_blockLayoutState.containingBlockStates().takeLast();
     ASSERT(blockContainerState.blockContainer.ptr() == &blockContainer);
     endTextBoxTrim(downcast<RenderBlockFlow>(blockContainer), blockContainerState);
+    endLineClamp(blockContainer);
     if (auto trimsMargins = blockContainerState.trimsMarginsAtBlockStartEdgeToRestore) {
         auto& marginCollapse = m_blockLayoutState.marginCollapse();
         marginCollapse.setTrimsMarginsAtBlockStartEdge(*trimsMargins && marginCollapse.trimsMarginsAtBlockStartEdge());
@@ -626,7 +708,7 @@ void BlockFormattingContext::handleInlineContent(const RenderBox& blockContainer
         if (auto maximumLines = LayoutIntegration::BlockIntegrationUtils::legacyLineClampMaximumLines(inlineContentRoot))
             m_blockLayoutState.setLineClamp(BlockLayoutState::LineClamp { *maximumLines, false, true });
     }
-    auto inlineContentLayoutResult = integrationUtils().layoutInlineContent(inlineContentRoot, constraintsForInlineContent(blockContainer, blockContainerState), geometry, blockContainerState.contentBoxBlockSize, blockContainerState.fillAvailableBlockSize, blockContainerState.replacedElementAvailableBlockSize, orthogonalFlowAvailableInlineSpace(blockContainerState), blockContainerState.relayoutChildren || m_isLayingOutWithResolvedBorderBoxLogicalTops, m_blockLayoutState, intrudingFloats, *this, result);
+    auto inlineContentLayoutResult = integrationUtils().layoutInlineContent(inlineContentRoot, constraintsForInlineContent(blockContainer, blockContainerState), geometry, blockContainerState.contentBoxBlockSize, blockContainerState.fillAvailableBlockSize, blockContainerState.replacedElementAvailableBlockSize, orthogonalFlowAvailableInlineSpace(blockContainerState), blockContainerState.relayoutChildren || m_isLayingOutWithResolvedBorderBoxLogicalTops || m_lineClampContainersLaidOutAgainCount, m_blockLayoutState, intrudingFloats, *this, result);
     addInlineContentFloats(inlineContentLayoutResult.floats);
     // The floats of a line-clamp container are clipped to its block-end content edge, those the inline formatting context hid after the
     // clamp point included.

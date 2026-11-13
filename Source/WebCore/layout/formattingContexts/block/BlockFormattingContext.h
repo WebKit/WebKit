@@ -152,6 +152,10 @@ private:
     void handleBlockContainerStart(const RenderBox&);
     void handleEmptyEditableContent(const RenderBox& blockContainer, ContainingBlockState&);
     void handleBlockContainerEnd(const RenderBox&, BlockLayoutResult&);
+    static bool startsLineClamp(const RenderBox& blockContainer);
+    bool isLaidOutWithoutLineClamp(const RenderBox& blockContainer) const;
+    void startLineClamp(const RenderBox& blockContainer);
+    void endLineClamp(const RenderBox& blockContainer);
     void handleInlineContent(const RenderBox& blockContainer, BlockLayoutResult&);
     void handleIndependentFormattingContextRoot(const RenderBox&, BlockLayoutResult&);
     LayoutUnit layoutIndependentFormattingContextThroughRenderTree(const RenderBox&, ContainingBlockState& boxState, std::optional<LayoutUnit> borderBoxInlineSize = { });
@@ -216,6 +220,10 @@ private:
     bool m_isLayingOutWithResolvedBorderBoxLogicalTops { false };
     std::optional<ContainingBlockState::LineGrid> m_rootLineGrid;
     LineGridsAroundRoot m_lineGridsAroundRoot { LineGridsAroundRoot::Unknown };
+    // The block containers whose content ended at the clamp point of their own line-clamp budget, laid out again without it, and how many of
+    // them are around the content laid out now, whose inline content is laid out again too.
+    Vector<CheckedRef<const RenderBox>> m_blockContainersLaidOutWithoutLineClamp;
+    unsigned m_lineClampContainersLaidOutAgainCount { 0 };
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const BlockLayoutResult&);

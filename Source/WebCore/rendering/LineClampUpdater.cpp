@@ -141,6 +141,36 @@ LineClampUpdater::~LineClampUpdater()
     layoutState->setLineClamp(RenderLayoutState::LineClamp { m_previousLineClamp->maximumLines - std::min(m_previousLineClamp->maximumLines, lineCount), m_previousLineClamp->shouldDiscardOverflow, m_previousLineClamp->clampAfterBox, m_previousLineClamp->isStableTextWrap, hasConstrainedTextWrapContent });
 }
 
+bool LineClampUpdater::contentFitsWithinMaximumLines(const RenderBlockFlow& lineClampContainer)
+{
+    // The block ellipsis goes on the last formatted line of the block with the clamped line.
+    CheckedPtr<const RenderBlockFlow> blockWithClampedLine;
+    for (CheckedPtr<const RenderObject> descendant = &lineClampContainer; descendant; descendant = descendant->nextInPreOrder(&lineClampContainer)) {
+        auto* blockFlow = dynamicDowncast<RenderBlockFlow>(*descendant);
+        if (blockFlow && blockFlow->childrenInline() && blockFlow->inlineLayout() && blockFlow->inlineLayout()->hasEllipsisInBlockDirectionOnLastFormattedLine()) {
+            blockWithClampedLine = blockFlow;
+            break;
+        }
+    }
+    if (!blockWithClampedLine || !blockWithClampedLine->inlineLayout()->contentFitsWithinMaximumLines())
+        return false;
+    for (CheckedPtr<const RenderObject> renderer = blockWithClampedLine; renderer && renderer != &lineClampContainer; renderer = renderer->parent()) {
+        CheckedPtr parent = renderer->parent();
+        if (parent->isInlineBox())
+            continue;
+        if (auto* blockFlow = dynamicDowncast<RenderBlockFlow>(*parent); blockFlow && blockFlow->childrenInline()) {
+            if (!blockFlow->inlineLayout() || !blockFlow->inlineLayout()->contentFitsWithinMaximumLines())
+                return false;
+            continue;
+        }
+        // "A point between two in-flow block-level sibling boxes in the line-clamp container's block formatting context."
+        // https://drafts.csswg.org/css-overflow-4/#line-clamp-containers
+        if (renderer->nextInFlowSibling())
+            return false;
+    }
+    return true;
+}
+
 bool LineClampUpdater::isAutoLineClampRoot() const
 {
     // line-clamp: auto (or just a block-ellipsis value) leaves max-lines at auto on a line-clamp container.
