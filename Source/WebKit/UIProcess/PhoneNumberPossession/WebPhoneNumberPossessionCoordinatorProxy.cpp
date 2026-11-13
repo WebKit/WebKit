@@ -138,7 +138,7 @@ void WebPhoneNumberPossessionCoordinatorProxy::requestPhoneNumberPossession(IPC:
 
     auto identifier = ++m_lastRequestIdentifier;
     m_pendingRequest = PendingRequest { identifier, frameID, WTF::move(completionHandler), { } };
-    platformRequestPhoneNumberPossession(WTF::move(request), origin->data(), *page, [weakThis = WeakPtr { *this }, identifier](PhoneNumberPossessionResult&& result) mutable {
+    platformRequestPhoneNumberPossession(WTF::move(request), *page, [weakThis = WeakPtr { *this }, identifier](PhoneNumberPossessionResult&& result) mutable {
         if (RefPtr protectedThis = weakThis)
             protectedThis->didCompleteRequest(identifier, WTF::move(result));
     });

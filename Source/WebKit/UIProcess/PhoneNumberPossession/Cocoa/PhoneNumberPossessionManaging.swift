@@ -23,8 +23,11 @@
 
 #if ENABLE_PHONE_NUMBER_POSSESSION
 
-import WebKit_Internal
+import Foundation
+import JavaScriptCore_Private.Cxx.ArrayBuffer
 import WebCore_Private
+import WebKit_Internal
+import wtf
 
 #if WTF_PLATFORM_IOS_FAMILY
 import UIKit
@@ -44,7 +47,6 @@ protocol PhoneNumberPossessionManaging: AnyObject, Sendable {
 
     func requestPhoneNumberPossession(
         request: WebKit.RefCountedPhoneNumberPossessionRequest,
-        origin: WTF.String,
         presentationAnchor: PhoneNumberPossessionPresentationAnchor
     ) async throws(CxxUnexpected<WebKit.PhoneNumberPossessionError>) -> WebCore.PhoneNumberPossessionResponse
 }
@@ -59,11 +61,54 @@ final class UnavailablePhoneNumberPossessionManager: PhoneNumberPossessionManagi
 
     func requestPhoneNumberPossession(
         request: WebKit.RefCountedPhoneNumberPossessionRequest,
-        origin: WTF.String,
         presentationAnchor: PhoneNumberPossessionPresentationAnchor
     ) async throws(CxxUnexpected<WebKit.PhoneNumberPossessionError>) -> WebCore.PhoneNumberPossessionResponse {
         throw CxxUnexpected(error: .Unavailable)
     }
 }
+
+func phoneNumberPossessionChallenge(_ request: WebKit.RefCountedPhoneNumberPossessionRequest) -> Data {
+    #if compiler(>=6.5)
+    let challengeBuffer = request.pointee.challenge
+    return Data(copying: challengeBuffer.span().bytes)
+    #else
+    // FIXME: rdar://191033367 Reading a request's BufferSource copies it, which crashes the compiler, so read
+    // the challenge's bytes through a copy that C++ makes. Remove the copy and this #if once that's fixed.
+    let challengeBytes = WebKit.challengeBytes(request)
+    return data(challengeBytes.span())
+    #endif
+}
+
+extension WebCore.PhoneNumberPossessionResponse {
+    init(
+        encryptedResult: Data,
+        carrierDomain: String,
+        carrierConfigurationID: UInt16,
+        encryptedDecryptionKey: Data?,
+        clientDataJSON: Data
+    ) {
+        // FIXME: rdar://192714761 Fill in carrierPubKey and portingZKP.
+        self.init(
+            encryptedResult: JSC.ArrayBuffer.createFromSpan(encryptedResult.span),
+            carrierDomain: WTF.String(carrierDomain as CFString),
+            carrierConfigurationID: carrierConfigurationID,
+            encryptedDecryptionKey: encryptedDecryptionKey.map { .init(JSC.ArrayBuffer.createFromSpan($0.span).get()) } ?? .init(),
+            carrierPubKey: .init(),
+            clientDataJSON: JSC.ArrayBuffer.createFromSpan(clientDataJSON.span),
+            portingZKP: .init()
+        )
+    }
+}
+
+#if compiler(<6.5)
+// Data has no initializer that takes a Span.
+private func data(_ bytes: Span<UInt8>) -> Data {
+    var data = Data(capacity: bytes.count)
+    for index in bytes.indices {
+        data.append(bytes[index])
+    }
+    return data
+}
+#endif
 
 #endif // ENABLE_PHONE_NUMBER_POSSESSION

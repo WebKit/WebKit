@@ -554,6 +554,7 @@ set(WebKit_PROJECT_HEADERS
     UIProcess/DigitalCredentials/WKDigitalCredentialsPicker.h
 
     WebKitSwift/CredentialUpdaterShim.h
+    WebKitSwift/WKPhoneNumberPossessionPlatformManaging.h
     WebKitSwift/WebKitSwift.h
 
     WebKitSwift/AVKit/WKSExperienceController.h
