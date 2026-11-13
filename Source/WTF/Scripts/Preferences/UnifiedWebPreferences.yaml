@@ -1474,11 +1474,14 @@ CanvasColorSpaceEnabled:
 
 CanvasColorTypeEnabled:
   type: bool
-  status: testable
+  status: Supporthdr2dcanvas_feature_status
   category: dom
   humanReadableName: "Canvas Color Types and ImageData Pixel Formats"
   humanReadableDescription: "Allow different color types and pixel formats in 2D canvas"
-  defaultValue: false
+  defaultValue:
+    "ENABLE(ENABLE_HDR_2D_CANVAS)": true
+    default: false
+    WebKitLegacy: false
   disableInLockdownMode: true
   sharedPreferenceForWebProcess: true
 
