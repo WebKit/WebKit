@@ -798,7 +798,9 @@ webkit_target_add_swift_options(TestWebKitAPILibrary
     "-import-objc-header ${TESTWEBKITAPI_DIR}/Runner/TestWebKitAPI-Bridging-Header.h"
 )
 
-foreach (_target IN ITEMS TestWTF TestWebKit TestWebKitAPILibrary)
+# TestWTF's Swift waits for no framework link so it can take the full chain and run early.
+WEBKIT_RAISE_SWIFT_NINJA_PRIORITY(TestWTF)
+foreach (_target IN ITEMS TestWebKit TestWebKitAPILibrary)
     WEBKIT_RAISE_SWIFT_NINJA_PRIORITY(${_target} 6)
 endforeach ()
 
