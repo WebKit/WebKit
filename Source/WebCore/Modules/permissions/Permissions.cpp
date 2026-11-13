@@ -230,13 +230,14 @@ void Permissions::query(JSC::Strong<JSC::JSObject> permissionDescriptorValue, Re
 
     RefPtr origin = context->securityOrigin();
     auto originData = origin ? origin->data() : SecurityOriginData { };
+    auto topOriginData = context->topOrigin().data();
 
     auto contextIdentifier = context->identifier();
 
     auto promiseIdentifier = PromiseIdentifier::generate();
     m_queryPromises.add(promiseIdentifier, WTF::move(promise));
 
-    auto queryPermissionOnMainThread = [originData = WTF::move(originData).isolatedCopy(), permissionDescriptor, contextIdentifier, source = *source, promiseIdentifier, weakThis = WeakPtr { *this }] (ScriptExecutionContext& mainThreadContext) mutable {
+    auto queryPermissionOnMainThread = [originData = WTF::move(originData).isolatedCopy(), topOriginData = WTF::move(topOriginData).isolatedCopy(), permissionDescriptor, contextIdentifier, source = *source, promiseIdentifier, weakThis = WeakPtr { *this }](ScriptExecutionContext& mainThreadContext) mutable {
         ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
         Ref document = downcast<Document>(mainThreadContext);
@@ -264,7 +265,7 @@ void Permissions::query(JSC::Strong<JSC::JSObject> permissionDescriptorValue, Re
 
         RefPtr page = source == PermissionQuerySource::DedicatedWorker || source == PermissionQuerySource::Window ? document->page() : nullptr;
 
-        PermissionController::singleton().query(ClientOrigin { document->topOrigin().data(), WTF::move(originData) }, permissionDescriptor, page, source, [contextIdentifier, permissionDescriptor, weakThis = WTF::move(weakThis), promiseIdentifier, source, weakPage = WeakPtr { page.get() }, document = document.copyRef()](auto permissionState) mutable {
+        PermissionController::singleton().query(ClientOrigin { WTF::move(topOriginData), WTF::move(originData) }, permissionDescriptor, page, source, [contextIdentifier, permissionDescriptor, weakThis = WTF::move(weakThis), promiseIdentifier, source, weakPage = WeakPtr { page.get() }, document = document.copyRef()](auto permissionState) mutable {
             ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
 
             auto result = processPermissionQueryResult(permissionState, permissionDescriptor, document);

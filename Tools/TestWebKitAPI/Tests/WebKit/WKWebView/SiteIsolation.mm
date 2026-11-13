@@ -23358,6 +23358,28 @@ TEST(SiteIsolation, ThirdPartyCookieBlockingSpoofedWebPageProxyID)
     EXPECT_EQ([cookieCount unsignedIntegerValue], 0u);
 }
 
+TEST(SiteIsolation, SharedWorkerPermissionQueryDoesNotTerminateProcess)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe src='https://domain2.com/frame'></iframe>"_s } },
+        { "/frame"_s, { { { "Content-Type"_s, "text/html"_s } }, "<script>const worker = new SharedWorker('/worker.js'); worker.port.onmessage = (event) => alert(event.data); worker.port.start();</script>"_s } },
+        { "/worker.js"_s, { { { "Content-Type"_s, "text/javascript"_s } }, "onconnect = (event) => { const port = event.ports[0]; navigator.permissions.query({ name: 'notifications' }).then((status) => port.postMessage('state:' + status.state), (error) => port.postMessage('error:' + error.name)); };"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegateWithoutSharedProcess(server);
+
+    __block bool didTerminate = false;
+    navigationDelegate.get().webContentProcessDidTerminate = ^(WKWebView *, _WKProcessTerminationReason) {
+        didTerminate = true;
+    };
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+
+    RetainPtr result = [webView _test_waitForAlert];
+    EXPECT_TRUE([result hasPrefix:@"state:"]);
+    EXPECT_FALSE(didTerminate);
+}
+
 }
 
 #if PLATFORM(MAC)
