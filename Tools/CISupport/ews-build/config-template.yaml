@@ -363,7 +363,7 @@ workers:
       - {template: mac-sequoia-aircloud, prefix: ews, first: 2011, count: 5}
       - {template: mac-tahoe-aws, prefix: ews, first: 3000, count: 5}
       - {template: mac-golden-gate-aws, prefix: ews, first: 3005, count: 37}
-      - {template: mac-golden-gate-aws, prefix: bot, first: 10016, count: 2, tag: webdriver}
+      - {template: mac-golden-gate-aws, prefix: ews, first: 3042, count: 2, tag: webdriver}
     each(w):
       $if: "'template' in w"
       then:
