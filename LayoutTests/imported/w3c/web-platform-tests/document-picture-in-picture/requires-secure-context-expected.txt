@@ -1,0 +1,3 @@
+
+PASS documentPictureInPicture should not be available in insecure contexts
+

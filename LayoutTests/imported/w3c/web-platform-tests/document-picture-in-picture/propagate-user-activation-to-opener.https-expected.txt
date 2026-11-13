@@ -1,0 +1,6 @@
+
+PASS user activation propagates from PiP to opener
+PASS user activation propagates from iframe in PiP to opener
+PASS user activation does not propagate from PiP to iframe in opener
+PASS Consuming activation in PiP also consumes activation in iframes in opener
+

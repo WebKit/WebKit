@@ -1,0 +1,3 @@
+
+PASS Test that onbeforeunload is disabled for document picture in picture
+

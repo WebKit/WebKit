@@ -1,0 +1,6 @@
+
+PASS requestWindow resolves with the PiP window
+PASS Elements can be moved from opener to PiP document
+PASS PiP document is fully loaded
+PASS requestWindow timing
+

@@ -1,0 +1,6 @@
+  This test requires user interaction.
+Please click here to allow focus opener window.
+
+PASS Test that a document picture-in-picture window can use Window's focus()
+  API to focus its opener window
+

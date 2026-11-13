@@ -1,0 +1,8 @@
+
+PASS PIP window can be closed
+PASS PIP window closes when opener closes
+PASS window.closed becomes true after pagehide if not window.close() initiated
+PASS PIP window closes when navigated
+PASS PIP window closes when navigated by name
+PASS PIP window closes when opener navigates
+

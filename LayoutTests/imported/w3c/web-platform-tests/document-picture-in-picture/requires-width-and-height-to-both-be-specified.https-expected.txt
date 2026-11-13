@@ -1,0 +1,4 @@
+
+PASS requestWindow should fail when width is specified without height
+PASS requestWindow should fail when height is specified without width
+
