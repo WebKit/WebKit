@@ -1,0 +1,56 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+</head>
+<body style="margin: 0">
+<iframe id="frame" style="position: fixed; left: 10px; top: 100px; width: 240px; height: 100px; border: none;" src="http://localhost:8000/site-isolation/resources/text-input.html" onload="runTest()"></iframe>
+<div style="height: 3000px"></div>
+<script>
+description("The caret in a text field in a fixed cross-origin iframe follows the iframe when the main frame scrolls.");
+jsTestIsAsync = true;
+
+async function waitUntil(condition, maxAttempts = 100)
+{
+    for (let attempt = 0; attempt < maxAttempts; ++attempt) {
+        if (await condition())
+            return true;
+        await UIHelper.ensurePresentationUpdate();
+    }
+    return false;
+}
+
+// The UI caret is in document coordinates, while the fixed iframe is in viewport coordinates.
+async function caretIsInsideFrame()
+{
+    const caret = await UIHelper.getUICaretViewRect();
+    if (!caret || !caret.width)
+        return false;
+    const caretInViewport = { left: caret.left - pageXOffset, top: caret.top - pageYOffset, width: caret.width, height: caret.height };
+    return UIHelper.rectContainsOtherRect(document.getElementById("frame").getBoundingClientRect(), caretInViewport);
+}
+
+async function runTest()
+{
+    const frameRect = document.getElementById("frame").getBoundingClientRect();
+    await UIHelper.activateAndWaitForInputSessionAt(frameRect.left + 50, frameRect.top + 15);
+
+    window.caretIsInsideFrameBeforeScrolling = await waitUntil(caretIsInsideFrame);
+    shouldBeTrue("caretIsInsideFrameBeforeScrolling");
+
+    // Scroll the main frame by dragging on a part of it that doesn't have the iframe.
+    await UIHelper.dragFromPointToPoint(200, 400, 200, 200, 0.5);
+
+    window.scrolledMainFrame = await waitUntil(() => pageYOffset > 0);
+    shouldBeTrue("scrolledMainFrame");
+
+    // The iframe is fixed, so it moved in the document along with the scroll, and so should its caret.
+    window.caretIsInsideFrameAfterScrolling = await waitUntil(caretIsInsideFrame);
+    shouldBeTrue("caretIsInsideFrameAfterScrolling");
+
+    finishJSTest();
+}
+</script>
+</body>
+</html>

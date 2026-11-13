@@ -615,6 +615,7 @@ struct ImageAnalysisContextMenuActionData {
     NSInteger _dropAnimationCount;
 
     BOOL _waitingForEditorStateAfterScrollingSelectionContainer;
+    BOOL _hasPendingSiteIsolatedSelectionRefreshDuringScrolling;
     std::optional<WebCore::IntPoint> _lastSelectionChildScrollViewContentOffset;
     std::optional<CGPoint> _lastSelectionContainerViewOrigin;
 

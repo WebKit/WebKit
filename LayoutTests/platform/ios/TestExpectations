@@ -47,6 +47,8 @@ http/tests/site-isolation [ Pass ]
 http/tests/site-isolation/date-time-picker-in-cross-origin-iframe-001.html [ Skip ]
 http/tests/site-isolation/date-time-picker-in-cross-origin-iframe-002.html [ Skip ]
 
+webkit.org/b/331339 http/tests/site-isolation/ios/caret-follows-overflow-scroll-around-cross-origin-iframe.html [ Pass Failure ]
+
 fast/forms/switch [ Pass ]
 fast/snapshot [ Skip ]
 
