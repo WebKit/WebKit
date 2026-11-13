@@ -343,7 +343,7 @@ extension WebGPU.Metal.CommandEncoder {
             return
         }
 
-        guard let temporaryBuffer = device.safeCreateBuffer(bufferLength) else {
+        guard let temporaryBuffer = device.zeroBuffer(bufferLength) else {
             return
         }
 
@@ -1299,8 +1299,13 @@ extension WebGPU.Metal.CommandEncoder {
 
                 #if compiler(>=6.4)
                 if let textureToClear {
-                    let textureWithResolve = TextureAndClearColor(texture: textureToClear)
-                    attachmentsToClear[i as NSNumber] = textureWithResolve
+                    if mtlAttachment.storeAction == .store && optionalResolveTarget == nil {
+                        mtlAttachment.loadAction = .clear
+                        mtlAttachment.clearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 0)
+                    } else {
+                        let textureWithResolve = TextureAndClearColor(texture: textureToClear)
+                        attachmentsToClear[i as NSNumber] = textureWithResolve
+                    }
                     texture.setProvisionallyCleared(self)
                     // FIXME: (rdar://170907318) This should be changed to `if let` when possible.
                     if var resolveTarget = optionalResolveTarget {
@@ -1310,8 +1315,13 @@ extension WebGPU.Metal.CommandEncoder {
                 #else
                 // FIXME: (rdar://170907318) Remove this branch once the minimum supported compiler is Swift 6.4.
                 if var textureToClear {
-                    let textureWithResolve = TextureAndClearColor(texture: textureToClear)
-                    attachmentsToClear[i as NSNumber] = textureWithResolve
+                    if mtlAttachment.storeAction == .store && optionalResolveTarget == nil {
+                        mtlAttachment.loadAction = .clear
+                        mtlAttachment.clearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 0)
+                    } else {
+                        let textureWithResolve = TextureAndClearColor(texture: textureToClear)
+                        attachmentsToClear[i as NSNumber] = textureWithResolve
+                    }
                     texture.setProvisionallyCleared(self)
                     // FIXME: (rdar://170907318) This should be changed to `if let` when possible.
                     if var resolveTarget = optionalResolveTarget {

@@ -832,8 +832,13 @@ RefPtr<WebGPU::RenderPassEncoder> CommandEncoder::beginRenderPass(const WebGPU::
         }
 
         if (textureToClear) {
-            TextureAndClearColor *textureWithResolve = [[TextureAndClearColor alloc] initWithTexture:textureToClear];
-            [attachmentsToClear setObject:textureWithResolve forKey:@(i)];
+            if (mtlAttachment.storeAction == MTLStoreActionStore && !attachment.resolveTarget) {
+                mtlAttachment.loadAction = MTLLoadActionClear;
+                mtlAttachment.clearColor = MTLClearColorMake(0, 0, 0, 0);
+            } else {
+                TextureAndClearColor *textureWithResolve = [[TextureAndClearColor alloc] initWithTexture:textureToClear];
+                [attachmentsToClear setObject:textureWithResolve forKey:@(i)];
+            }
             texture.setProvisionallyCleared(*this);
             if (auto resolveTarget = attachment.resolveTarget)
                 resolveTarget->setProvisionallyCleared(*this);
@@ -1534,7 +1539,7 @@ void CommandEncoder::clearTextureIfNeeded(Texture& texture, NSUInteger mipLevel,
     NSUInteger bufferLength = checkedBufferLength.value();
     if (!bufferLength)
         return;
-    id<MTLBuffer> temporaryBuffer = device.safeCreateBuffer(bufferLength);
+    id<MTLBuffer> temporaryBuffer = device.zeroBuffer(bufferLength);
 
     if (!temporaryBuffer)
         return;
@@ -2555,15 +2560,19 @@ bool CommandEncoder::trackEncoderForBuffer(const Buffer& buffer, TrackedResource
         m_trackedBuffers.append(buffer);
     return addResult.isNewEntry;
 }
-void CommandEncoder::trackEncoderForTexture(const Texture& texture, TrackedResourceContainer& encoderContainer)
+bool CommandEncoder::trackEncoderForTexture(const Texture& texture, TrackedResourceContainer& encoderContainer)
 {
-    if (encoderContainer.add(uniqueId()).isNewEntry)
+    auto addResult = encoderContainer.add(uniqueId());
+    if (addResult.isNewEntry)
         m_trackedTextures.append(texture);
+    return addResult.isNewEntry;
 }
-void CommandEncoder::trackEncoderForTextureView(const TextureView& textureView, TrackedResourceContainer& encoderContainer)
+bool CommandEncoder::trackEncoderForTextureView(const TextureView& textureView, TrackedResourceContainer& encoderContainer)
 {
-    if (encoderContainer.add(uniqueId()).isNewEntry)
+    auto addResult = encoderContainer.add(uniqueId());
+    if (addResult.isNewEntry)
         m_trackedTextureViews.append(textureView);
+    return addResult.isNewEntry;
 }
 void CommandEncoder::trackEncoderForExternalTexture(const ExternalTexture& externalTexture, TrackedResourceContainer& encoderContainer)
 {
@@ -2618,7 +2627,7 @@ void CommandEncoder::skippedBundleIndirectDrawValidation(uint64_t bufferIdentifi
 
 void CommandEncoder::rebindSamplersPreCommit(const BindGroup& group)
 {
-    m_bindGroups.append(group);
+    m_bindGroups.add(group);
 }
 
 } // namespace WebGPU::Metal
