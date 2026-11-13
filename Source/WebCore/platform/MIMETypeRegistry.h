@@ -109,6 +109,8 @@ public:
 
     NODELETE WEBCORE_EXPORT static bool isGLTFMIMEType(const String& mimeType);
 
+    NODELETE WEBCORE_EXPORT static bool isSTLMIMEType(const String& mimeType);
+
     NODELETE WEBCORE_EXPORT static bool isSupportedModelMIMEType(const String& mimeType);
 
     // Check to see if a MIME type is suitable for being shown inside a page.

@@ -237,10 +237,10 @@ void ModelProcessModelPlayer::load(WebCore::NodeIdentifier nodeID, WebCore::Mode
 {
     RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayer load model id=%" PRIu64, this, m_id.toUInt64());
 
-    if (!WebCore::MIMETypeRegistry::isUSDMIMEType(model.mimeType())) {
+    if (!WebCore::MIMETypeRegistry::isSupportedModelMIMEType(model.mimeType())) {
         RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayer::load: Found unexpected model mimetype: %s", this, model.mimeType().utf8());
         if (RefPtr client = m_client.get())
-            client->logWarning(*this, makeString("Unexpected USDZ MIME type \""_s, model.mimeType(), "\" in <model> element. Expected \"model/vnd.usdz+zip\". Some features of <model> may not work properly. The model may fail to render in a future release."_s));
+            client->logWarning(*this, makeString("Unsupported model MIME type \""_s, model.mimeType(), "\" in <model> element. The model may fail to render."_s));
     }
 
     send(Messages::ModelProcessModelPlayerProxy::LoadModel(nodeID, model, size, isForImmersive));

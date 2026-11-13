@@ -114,9 +114,25 @@ TEST(MIMESniffer, ModelMIMETypes)
     ASSERT_EQ(modelMIMEType("PK\x03\x04"_s), String("model/vnd.usdz+zip"_s));
     ASSERT_EQ(modelMIMEType("glTF"_s), String("model/gltf-binary"_s));
     ASSERT_EQ(modelMIMEType("{\"asset\":{}}"_s), String("model/gltf+json"_s));
+    ASSERT_EQ(modelMIMEType("solid cube"_s), String("model/stl"_s));
 
-    ASSERT_TRUE(modelMIMEType("solid cube"_s).isNull());
+    // Binary STL: an 80-byte header, a little-endian triangle count, then 50 bytes per triangle.
+    auto binarySTL = [](uint8_t triangleCount, size_t extraBytes, ASCIILiteral header = ""_s) {
+        Vector<uint8_t> data(FillWith { }, 84 + triangleCount * 50 + extraBytes, 0);
+        memcpySpan(data.mutableSpan(), byteCast<uint8_t>(header.span()));
+        data[80] = triangleCount;
+        return MIMESniffer::getModelMIMETypeFromContent(data.span());
+    };
+    ASSERT_EQ(binarySTL(0, 0), String("model/stl"_s));
+    ASSERT_EQ(binarySTL(2, 0), String("model/stl"_s));
+    // A signature wins over a size that matches binary STL.
+    ASSERT_EQ(binarySTL(2, 0, "glTF"_s), String("model/gltf-binary"_s));
+    // The size must match the triangle count exactly.
+    ASSERT_TRUE(binarySTL(2, 1).isNull());
+
+    // The USDA signature includes the space after "#usda".
     ASSERT_TRUE(modelMIMEType("#usda1.0"_s).isNull());
+    // Only the first half of the ZIP signature.
     ASSERT_TRUE(modelMIMEType("PK"_s).isNull());
     ASSERT_TRUE(modelMIMEType(""_s).isNull());
 }

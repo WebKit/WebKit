@@ -361,6 +361,21 @@ String getMIMETypeFromContent(std::span<const uint8_t> sequence)
     return emptyString();
 }
 
+// Binary STL is an 80-byte header, a little-endian triangle count, then 50 bytes per triangle.
+NODELETE static bool isBinarySTL(std::span<const uint8_t> sequence)
+{
+    constexpr size_t headerSize = 80;
+    constexpr size_t triangleCountSize = 4;
+    constexpr size_t triangleSize = 50;
+
+    if (sequence.size() < headerSize + triangleCountSize)
+        return false;
+
+    auto count = sequence.subspan(headerSize, triangleCountSize);
+    uint64_t triangleCount = count[0] | count[1] << 8 | count[2] << 16 | static_cast<uint64_t>(count[3]) << 24;
+    return sequence.size() == headerSize + triangleCountSize + triangleCount * triangleSize;
+}
+
 String getModelMIMETypeFromContent(std::span<const uint8_t> sequence)
 {
     struct ModelSignature {
@@ -381,6 +396,11 @@ String getModelMIMETypeFromContent(std::span<const uint8_t> sequence)
         if (spanHasPrefix(sequence, signature))
             return mimeType;
     }
+
+    // STL has no signature: recognize binary STL by its size, and ASCII STL by its leading keyword.
+    if (isBinarySTL(sequence) || spanHasPrefix(sequence, span8("solid")))
+        return "model/stl"_s;
+
     return nullString();
 }
 

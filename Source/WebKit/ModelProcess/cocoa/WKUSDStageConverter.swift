@@ -42,6 +42,7 @@ private func usdStageType(forMIMEType mimeType: String) -> UTType {
     // so UTType(mimeType:) yields only a dyn.* placeholder for them.
     switch mimeType {
     case "model/usd", "model/vnd.pixar.usd": .usd
+    case "model/stl": UTType(filenameExtension: "stl") ?? .data
     default: UTType(mimeType: mimeType) ?? .usdz
     }
 }

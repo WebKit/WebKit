@@ -4459,6 +4459,16 @@ ModelElementImmersiveEnabled:
   disableInLockdownMode: true
   sharedPreferenceForWebProcess: true
 
+ModelElementSTLEnabled:
+  type: bool
+  status: preview
+  category: html
+  humanReadableName: "STL in HTML <model> element"
+  humanReadableDescription: "Enable loading STL models in the HTML <model> element"
+  condition: ENABLE(MODEL_ELEMENT)
+  defaultValue: false
+  disableInLockdownMode: true
+
 ModelNoPortalAttributeEnabled:
   type: bool
   status: unstable

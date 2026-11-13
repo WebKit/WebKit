@@ -262,7 +262,11 @@ URL HTMLModelElement::selectModelSource() const
 
     Ref document = this->document();
     for (Ref element : childrenOfType<HTMLSourceElement>(*this)) {
-        if (!isSupportedModelType(element->attributeWithoutSynchronization(typeAttr)))
+        auto& type = element->attributeWithoutSynchronization(typeAttr);
+        if (!isSupportedModelType(type))
+            continue;
+
+        if (MIMETypeRegistry::isSTLMIMEType(type) && !document->settings().modelElementSTLEnabled())
             continue;
 
         auto& queries = element->parsedMediaAttribute(document);
@@ -1845,25 +1849,35 @@ void HTMLModelElement::modelResourceFinished()
     };
 
     RefPtr resource = m_resource;
-    int status = resource->response().httpStatusCode();
-    if (resource->loadFailedOrCanceled() || (status && !isHttpOkStatus(status))) {
+
+    auto failLoading = [&](ExceptionCode code, ASCIILiteral message) {
         m_data.reset();
 
         ActiveDOMObject::queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
         invalidateResourceHandleAndUpdateRenderer();
 
         if (!m_readyPromise->isFulfilled())
-            m_readyPromise->reject(Exception { ExceptionCode::NetworkError });
+            m_readyPromise->reject(Exception { code });
 
-        triggerModelPlayerCreationCallbacksIfNeeded(Exception { ExceptionCode::NetworkError, "The model resource failed to load"_s });
+        triggerModelPlayerCreationCallbacksIfNeeded(Exception { code, message });
+    };
+
+    int status = resource->response().httpStatusCode();
+    if (resource->loadFailedOrCanceled() || (status && !isHttpOkStatus(status))) {
+        failLoading(ExceptionCode::NetworkError, "The model resource failed to load"_s);
+        return;
+    }
+
+    Ref data = m_data.takeBufferAsContiguous();
+    auto mimeType = modelMIMEType(data, resource->mimeType());
+    if (MIMETypeRegistry::isSTLMIMEType(mimeType) && !document().settings().modelElementSTLEnabled()) {
+        failLoading(ExceptionCode::NotSupportedError, "STL models are not supported"_s);
         return;
     }
 
     m_dataComplete = true;
-    m_dataMemoryCost.store(m_data.size(), std::memory_order_relaxed);
+    m_dataMemoryCost.store(data->size(), std::memory_order_relaxed);
     m_originalMIMEType = resource->mimeType();
-    Ref data = m_data.takeBufferAsContiguous();
-    auto mimeType = modelMIMEType(data, resource->mimeType());
     m_model = Model::create(WTF::move(data), WTF::move(mimeType), resource->url());
 
     ActiveDOMObject::queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().loadEvent, Event::CanBubble::No, Event::IsCancelable::No));

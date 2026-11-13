@@ -2342,6 +2342,8 @@ private func usdStageType(forMIMEType mimeType: String) -> UTType {
         return .usdz
     case "model/usd", "model/vnd.pixar.usd":
         return .usd
+    case "model/stl":
+        return UTType(filenameExtension: "stl") ?? .data
     default:
         return UTType(mimeType: mimeType) ?? .usdz
     }
