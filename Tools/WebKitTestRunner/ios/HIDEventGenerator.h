@@ -75,7 +75,7 @@ RetainPtr<IOHIDEventRef> createHIDKeyEvent(NSString *, uint64_t timestamp, bool 
 
 + (HIDEventGenerator *)sharedHIDEventGenerator;
 
-- (void)resetActiveModifiers;
+- (void)resetState;
 
 // Touches
 - (void)touchDown:(CGPoint)location touchCount:(NSUInteger)count completionBlock:(void (^)(void))completionBlock;
