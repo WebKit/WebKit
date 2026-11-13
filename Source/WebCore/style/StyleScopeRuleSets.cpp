@@ -83,11 +83,11 @@ void ScopeRuleSets::updateUserAgentMediaQueryStyleIfNeeded() const
     m_userAgentMediaQueryRuleCountOnUpdate = ruleCount;
 
     // Media queries on user agent sheet need to evaluated in document context. They behave like author sheets in this respect.
-    auto& mediaQueryEvaluator = m_styleResolver.mediaQueryEvaluator();
+    auto& mediaQueryEvaluator = m_styleResolver->mediaQueryEvaluator();
 
     m_userAgentMediaQueryStyle = RuleSet::create();
 
-    RuleSetBuilder builder(*m_userAgentMediaQueryStyle, mediaQueryEvaluator, &m_styleResolver);
+    RuleSetBuilder builder(protect(*m_userAgentMediaQueryStyle), mediaQueryEvaluator, protect(m_styleResolver).ptr());
     SUPPRESS_UNCOUNTED_ARG builder.addRulesFromSheet(*UserAgentStyle::mediaQueryStyleSheet);
 }
 
@@ -99,14 +99,14 @@ RuleSet* ScopeRuleSets::dynamicViewTransitionsStyle() const
 RuleSet* ScopeRuleSets::userStyle() const
 {
     if (m_usesSharedUserStyle)
-        return protect(m_styleResolver.document().styleScope())->resolver().ruleSets().userStyle();
+        return protect(m_styleResolver->document().styleScope())->resolver().ruleSets().userStyle();
     return m_userStyle.get();
 }
 
 RuleSet* ScopeRuleSets::quirkStyle() const
 {
     if (m_usesSharedUserStyle)
-        return protect(m_styleResolver.document().styleScope())->resolver().ruleSets().quirkStyle();
+        return protect(m_styleResolver->document().styleScope())->resolver().ruleSets().quirkStyle();
     return m_quirkStyle.get();
 }
 
@@ -132,21 +132,22 @@ RuleSet* ScopeRuleSets::styleForDeclarationOrigin(DeclarationOrigin origin)
 
 void ScopeRuleSets::initializeUserStyle()
 {
-    CheckedRef extensionStyleSheets = protect(m_styleResolver.document())->extensionStyleSheets();
-    auto& mediaQueryEvaluator = m_styleResolver.mediaQueryEvaluator();
+    Ref styleResolver = m_styleResolver;
+    CheckedRef extensionStyleSheets = protect(styleResolver->document())->extensionStyleSheets();
+    auto& mediaQueryEvaluator = styleResolver->mediaQueryEvaluator();
 
     auto userStyle = RuleSet::create();
 
     if (RefPtr pageUserSheet = extensionStyleSheets->pageUserSheet()) {
-        RuleSetBuilder builder(userStyle, mediaQueryEvaluator, &m_styleResolver);
+        RuleSetBuilder builder(userStyle, mediaQueryEvaluator, styleResolver.ptr());
         builder.addRulesFromSheet(protect(pageUserSheet->contents()));
     }
 
 #if ENABLE(APP_BOUND_DOMAINS)
-    RefPtr page = m_styleResolver.document().page();
+    RefPtr page = styleResolver->document().page();
     RefPtr localMainFrame = page ? dynamicDowncast<LocalFrame>(page->mainFrame()) : nullptr;
     if (!extensionStyleSheets->injectedUserStyleSheets().isEmpty() && page && localMainFrame && localMainFrame->loader().client().shouldEnableInAppBrowserPrivacyProtections())
-        protect(m_styleResolver.document())->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "Ignoring user style sheet for non-app bound domain."_s);
+        protect(styleResolver->document())->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "Ignoring user style sheet for non-app bound domain."_s);
     else {
         collectRulesFromUserStyleSheets(extensionStyleSheets->injectedUserStyleSheets(), userStyle, mediaQueryEvaluator);
         if (page && localMainFrame && !extensionStyleSheets->injectedUserStyleSheets().isEmpty())
@@ -162,7 +163,7 @@ void ScopeRuleSets::initializeUserStyle()
 
     // Quirk style sheets are author-level sheets, but they are cascaded in their own origin above all others.
     auto quirkStyle = RuleSet::create();
-    RuleSetBuilder quirkBuilder(quirkStyle, mediaQueryEvaluator, &m_styleResolver);
+    RuleSetBuilder quirkBuilder(quirkStyle, mediaQueryEvaluator, styleResolver.ptr());
     for (auto& sheet : extensionStyleSheets->quirkStyleSheets())
         quirkBuilder.addRulesFromSheet(protect(sheet->contents()));
 
@@ -172,7 +173,7 @@ void ScopeRuleSets::initializeUserStyle()
 
 void ScopeRuleSets::collectRulesFromUserStyleSheets(const Vector<Ref<CSSStyleSheet>>& userSheets, RuleSet& userStyle, const MQ::MediaQueryEvaluator& mediaQueryEvaluator)
 {
-    RuleSetBuilder builder(userStyle, mediaQueryEvaluator, &m_styleResolver);
+    RuleSetBuilder builder(userStyle, mediaQueryEvaluator, protect(m_styleResolver).ptr());
     for (auto& sheet : userSheets) {
         ASSERT(sheet->contents().isUserStyleSheet());
         builder.addRulesFromSheet(protect(sheet->contents()));
@@ -247,7 +248,7 @@ std::optional<DynamicMediaQueryEvaluationChanges> ScopeRuleSets::evaluateDynamic
 {
     std::optional<DynamicMediaQueryEvaluationChanges> evaluationChanges;
 
-    auto evaluate = [&](auto* ruleSet) {
+    auto evaluate = [&](RefPtr<RuleSet>&& ruleSet) {
         if (!ruleSet)
             return;
         if (auto changes = ruleSet->evaluateDynamicMediaQueryRules(evaluator)) {
@@ -268,7 +269,7 @@ std::optional<DynamicMediaQueryEvaluationChanges> ScopeRuleSets::evaluateDynamic
 
 void ScopeRuleSets::appendAuthorStyleSheets(std::span<const Ref<CSSStyleSheet>> styleSheets, MQ::MediaQueryEvaluator* mediaQueryEvaluator, InspectorCSSOMWrappers& inspectorCSSOMWrappers)
 {
-    RuleSetBuilder builder(*m_authorStyle, *mediaQueryEvaluator, &m_styleResolver, RuleSetBuilder::ShrinkToFit::Enable);
+    RuleSetBuilder builder(protect(*m_authorStyle), *mediaQueryEvaluator, protect(m_styleResolver).ptr(), RuleSetBuilder::ShrinkToFit::Enable);
 
     RefPtr<CSSStyleSheet> previous;
     for (auto& cssSheet : styleSheets) {
@@ -414,7 +415,7 @@ static Vector<InvalidationRuleSet> buildInvalidationRuleSets(const RuleFeatureVe
 
     return WTF::map(ruleSetMap, [](auto& entry) {
         auto& key = entry.key;
-        entry.value->shrinkToFit();
+        protect(entry.value)->shrinkToFit();
         auto invalidationSelector = [&] {
             if (key.invalidationSelector && key.scopeSelector)
                 return CSSSelectorParser::makeHasArgumentWithScope(*key.invalidationSelector, *key.scopeSelector);
@@ -479,7 +480,7 @@ const HashSet<AtomString>& ScopeRuleSets::customPropertyNamesInStyleContainerQue
     if (!m_customPropertyNamesInStyleContainerQueries) {
         HashSet<AtomString> propertyNames;
 
-        auto collectPropertyNames = [&](auto* ruleSet) {
+        auto collectPropertyNames = [&](RefPtr<RuleSet>&& ruleSet) {
             if (!ruleSet)
                 return;
             for (auto rule : ruleSet->containerQueryRules()) {

@@ -30,6 +30,7 @@
 #include <wtf/OptionSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 
@@ -142,7 +143,7 @@ private:
     RefPtr<RuleSet> m_userStyle;
     RefPtr<RuleSet> m_quirkStyle;
 
-    Resolver& m_styleResolver;
+    const SingleThreadWeakRef<Resolver> m_styleResolver;
     mutable RuleFeatureSet m_features;
     mutable HashMap<AtomString, std::unique_ptr<Vector<InvalidationRuleSet>>> m_idInvalidationRuleSets;
     mutable HashMap<AtomString, std::unique_ptr<Vector<InvalidationRuleSet>>> m_classInvalidationRuleSets;

@@ -325,7 +325,7 @@ template<CSSPropertyID propertyID> struct InsetEdgeSharedAdaptor {
         if (!box)
             return functor(value);
 
-        auto* containingBlock = dynamicDowncast<RenderBoxModelObject>(box->container());
+        CheckedPtr containingBlock = dynamicDowncast<RenderBoxModelObject>(box->container());
 
         // Resolve a "computed value" percentage if the element is positioned.
         if (containingBlock && value.isPercentOrCalculated() && box->isPositioned()) {
@@ -333,11 +333,11 @@ template<CSSPropertyID propertyID> struct InsetEdgeSharedAdaptor {
 
             LayoutUnit containingBlockSize;
             if (box->isStickilyPositioned()) {
-                auto& enclosingClippingBox = box->enclosingClippingBoxForStickyPosition().first;
-                if (isVerticalProperty == enclosingClippingBox.isHorizontalWritingMode())
-                    containingBlockSize = enclosingClippingBox.contentBoxLogicalHeight();
+                CheckedRef enclosingClippingBox = box->enclosingClippingBoxForStickyPosition().first;
+                if (isVerticalProperty == enclosingClippingBox->isHorizontalWritingMode())
+                    containingBlockSize = enclosingClippingBox->contentBoxLogicalHeight();
                 else
-                    containingBlockSize = enclosingClippingBox.contentBoxLogicalWidth();
+                    containingBlockSize = enclosingClippingBox->contentBoxLogicalWidth();
             } else {
                 if (box->isOutOfFlowPositioned()) {
                     if (isVerticalProperty)
@@ -484,7 +484,7 @@ template<CSSPropertyID propertyID> struct MarginEdgeSharedAdaptor {
 template<CSSPropertyID propertyID> struct PaddingEdgeSharedAdaptor {
     template<typename F> decltype(auto) computedValue(ExtractorState& state, const PaddingEdge& value, NOESCAPE const F& functor) const
     {
-        auto* box = dynamicDowncast<RenderBox>(state.renderer);
+        CheckedPtr box = dynamicDowncast<RenderBox>(state.renderer);
         if (!box || value.value.isFixed())
             return functor(value);
 
@@ -571,7 +571,7 @@ template<CSSPropertyID> struct MaximumSizeSharedAdaptor {
 template<CSSPropertyID> struct MinimumSizeSharedAdaptor {
     template<typename F> decltype(auto) computedValue(ExtractorState& state, const MinimumSize& value, NOESCAPE const F& functor) const
     {
-        auto isFlexOrGridItem = [](auto renderer) {
+        auto isFlexOrGridItem = [](const RenderElement* renderer) {
             auto* box = dynamicDowncast<RenderBox>(renderer);
             return box && (box->isFlexItem() || box->isGridItem());
         };
@@ -1378,7 +1378,7 @@ template<GridTrackSizingDirection direction> Ref<CSSValue> extractGridTemplateVa
             list.append(toCSS(lineNames, state.style));
     };
 
-    auto* renderGrid = dynamicDowncast<RenderGrid>(state.renderer);
+    CheckedPtr renderGrid = dynamicDowncast<RenderGrid>(state.renderer);
 
     auto& tracks = state.style->gridTemplateList(direction);
     auto& trackSizes = tracks.sizes;
@@ -1822,7 +1822,7 @@ inline RefPtr<CSSValue> cornerRadiiValue(std::span<const RefPtr<CSSValue>> radii
     auto appendAxis = [&](CSSValueListBuilder& list, const Vector<RefPtr<CSSValue>>& values) {
         auto lastIndex = lastCornerIndexToSerialize(values.span());
         for (unsigned i = 0; i <= lastIndex; ++i)
-            list.append(*values[i]);
+            list.append(Ref { *values[i] });
     };
     appendAxis(horizontal, horizontalValues);
     if (!serializeVertical)
@@ -1839,7 +1839,7 @@ inline RefPtr<CSSValue> cornerShapesValue(std::span<const RefPtr<CSSValue>> shap
     CSSValueListBuilder list;
     auto lastIndex = lastCornerIndexToSerialize(shapes);
     for (unsigned i = 0; i <= lastIndex; ++i)
-        list.append(*shapes[i]);
+        list.append(Ref { *shapes[i] });
     return CSSValueList::createSpaceSeparated(WTF::move(list));
 }
 
@@ -1908,7 +1908,7 @@ inline Ref<CSSValue> extractBorderRadiusShorthand(ExtractorState& state, CSSProp
         if (size != b.size())
             return false;
         for (unsigned i = 0; i < size; ++i) {
-            if (!a[i]->equals(b[i]))
+            if (!protect(a[i])->equals(b[i]))
                 return false;
         }
         return true;
@@ -1997,7 +1997,7 @@ inline RefPtr<CSSValue> extractBorderRadiusSideShorthand(ExtractorState& state, 
     bool includeVertical = horizontalRadii.size() != verticalRadii.size();
     if (!includeVertical) {
         for (unsigned i = 0; i < horizontalRadii.size(); ++i) {
-            if (!horizontalRadii[i]->equals(verticalRadii[i])) {
+            if (!protect(horizontalRadii[i])->equals(verticalRadii[i])) {
                 includeVertical = true;
                 break;
             }
@@ -2020,7 +2020,7 @@ template<CSSPropertyID property> inline Ref<CSSValue> extractFillLayerPropertySh
     static_assert(property == CSSPropertyID::Background || property == CSSPropertyID::Mask);
 
     auto computeRenderStyle = [&](std::unique_ptr<ComputedStyle>& ownedStyle) -> const ComputedStyle* {
-        if (auto renderer = state.element->renderer(); renderer && renderer->isComposited() && Interpolation::isAccelerated(property, state.element->document().settings())) {
+        if (CheckedPtr renderer = state.element->renderer(); renderer && renderer->isComposited() && Interpolation::isAccelerated(property, protect(state.element->document().settings()))) {
             ownedStyle = renderer->animatedStyle();
             if (state.pseudoElementIdentifier) {
                 // FIXME: This cached pseudo style will only exist if the animation has been run at least once.
@@ -2036,7 +2036,7 @@ template<CSSPropertyID property> inline Ref<CSSValue> extractFillLayerPropertySh
         // FIXME: Why does this not use state.style?
 
         std::unique_ptr<ComputedStyle> ownedStyle;
-        auto style = computeRenderStyle(ownedStyle);
+        CheckedPtr style = computeRenderStyle(ownedStyle);
         if (!style)
             return 0;
 
@@ -2082,10 +2082,10 @@ template<CSSPropertyID property> inline Ref<CSSValue> extractFillLayerPropertySh
         if (i == layerCount - 1 && lastValue)
             beforeList.append(*lastValue);
         for (size_t j = 0; j < propertiesBeforeSlashSeparator.length(); j++)
-            beforeList.append(valueForLayer(*before->item(j), i));
+            beforeList.append(Ref { valueForLayer(*before->item(j), i) });
         CSSValueListBuilder afterList;
         for (size_t j = 0; j < propertiesAfterSlashSeparator.length(); j++)
-            afterList.append(valueForLayer(*after->item(j), i));
+            afterList.append(Ref { valueForLayer(*after->item(j), i) });
         auto list = CSSValueList::createSlashSeparated(CSSValueList::createSpaceSeparated(WTF::move(beforeList)), CSSValueList::createSpaceSeparated(WTF::move(afterList)));
         if (layerCount == 1)
             return list;

@@ -219,7 +219,7 @@ void Resolver::addCurrentSVGFontFaceRules()
     if (document().svgExtensionsIfExists()) {
         auto& svgFontFaceElements = document().svgExtensionsIfExists()->svgFontFaceElements();
         for (Ref svgFontFaceElement : svgFontFaceElements)
-            protect(document())->fontSelector().addFontFaceRule(svgFontFaceElement->fontFaceRule(), svgFontFaceElement->isInUserAgentShadowTree());
+            protect(protect(document())->fontSelector())->addFontFaceRule(svgFontFaceElement->fontFaceRule(), svgFontFaceElement->isInUserAgentShadowTree());
     }
 }
 
@@ -227,8 +227,8 @@ void Resolver::appendAuthorStyleSheets(std::span<const Ref<CSSStyleSheet>> style
 {
     m_ruleSets.appendAuthorStyleSheets(styleSheets, &m_mediaQueryEvaluator, m_inspectorCSSOMWrappers);
 
-    if (auto renderView = document().renderView())
-        renderView->style().fontCascade().update(&protect(document())->fontSelector());
+    if (CheckedPtr renderView = document().renderView())
+        protect(renderView->style().fontCascade())->update(&protect(document())->fontSelector());
 }
 
 KeyframesRuleMap& Resolver::userAgentKeyframes()
@@ -427,7 +427,8 @@ std::unique_ptr<Style::ComputedStyle> Resolver::styleForKeyframe(Element& elemen
     auto state = State(element, nullptr, context.documentElementStyle, context.treeResolutionState.get());
 
     state.setStyle(Style::ComputedStyle::clonePtr(elementStyle));
-    state.setParentStyle(Style::ComputedStyle::clonePtr(context.parentStyle ? *context.parentStyle : elementStyle));
+    CheckedRef style = *state.style();
+    state.setParentStyle(Style::ComputedStyle::clonePtr(context.parentStyle ? *protect(context.parentStyle) : elementStyle));
 
     ElementRuleCollector collector(element, m_ruleSets, context.selectorMatchingState);
 
@@ -443,19 +444,19 @@ std::unique_ptr<Style::ComputedStyle> Resolver::styleForKeyframe(Element& elemen
         collector.matchUserRules();
     }
     collector.addAuthorKeyframeRules(keyframe);
-    Builder builder(*state.style(), builderContext(state), collector.matchResult());
+    Builder builder(style, builderContext(state), protect(collector.matchResult()));
     builder.state().setIsBuildingKeyframeStyle();
     builder.applyAllProperties();
 
     // Ignore interpolate-size in keyframes. The element's computed value applies.
     // https://drafts.csswg.org/css-values-5/#interpolate-size
-    state.style()->setInterpolateSize(elementStyle.interpolateSize());
+    style->setInterpolateSize(elementStyle.interpolateSize());
 
     if (state.style()->usesViewportUnits())
         element.document().setHasStyleWithViewportUnits();
 
-    Adjuster adjuster(document(), *state.parentStyle(), nullptr, !pseudoElementIdentifier ? &element : nullptr);
-    adjuster.adjust(*state.style());
+    Adjuster adjuster(protect(document()), *state.parentStyle(), nullptr, !pseudoElementIdentifier ? &element : nullptr);
+    adjuster.adjust(style);
 
     blendingKeyframe.setHasPropertiesWithRevertRuleOrLayer(builder.state().hasRevertRuleOrLayerInKeyframeStyle());
 
@@ -497,7 +498,7 @@ Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& 
         return { };
 
     auto compositeOperationForKeyframe = [](Ref<StyleRuleKeyframe> keyframe) -> CompositeOperation {
-        if (auto compositeOperationCSSValue = keyframe->properties().getPropertyCSSValue(CSSPropertyID::AnimationComposition)) {
+        if (auto compositeOperationCSSValue = protect(keyframe->properties())->getPropertyCSSValue(CSSPropertyID::AnimationComposition)) {
             if (auto compositeOperation = toCompositeOperation(*compositeOperationCSSValue))
                 return *compositeOperation;
         }
@@ -505,7 +506,7 @@ Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& 
     };
 
     auto timingFunctionForKeyframe = [&](Ref<StyleRuleKeyframe> keyframe) -> Ref<const TimingFunction> {
-        if (RefPtr timingFunctionCSSValue = keyframe->properties().getPropertyCSSValue(CSSPropertyID::AnimationTimingFunction)) {
+        if (RefPtr timingFunctionCSSValue = protect(keyframe->properties())->getPropertyCSSValue(CSSPropertyID::AnimationTimingFunction)) {
             if (RefPtr timingFunction = createTimingFunctionDeprecated(timingFunctionCSSValue.releaseNonNull()))
                 return timingFunction.releaseNonNull();
         }
@@ -556,7 +557,7 @@ Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& 
             auto [offsetRangeName, offsetPercentage] = deprecatedStyleRuleKeyframeKeyToStyle(key);
             KeyframeUniqueKey uniqueKey { offsetRangeName, offsetPercentage.value / 100, timingFunction, compositeOperation };
             if (RefPtr existingStyleRuleKeyframe = keyframesMap.get(uniqueKey)) {
-                protect(existingStyleRuleKeyframe->mutableProperties())->mergeAndOverrideOnConflict(originalKeyframe->properties());
+                protect(existingStyleRuleKeyframe->mutableProperties())->mergeAndOverrideOnConflict(protect(originalKeyframe->properties()));
                 if (existingStyleRuleKeyframe->keys()[0].rangeName == CSSValueID::Normal)
                     continue;
                 deduplicatedKeyframes.removeFirstMatching([&](const auto& styleRuleKeyframe) {
@@ -566,7 +567,7 @@ Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& 
             } else {
                 auto styleRuleKeyframe = StyleRuleKeyframe::create(MutableStyleProperties::create());
                 styleRuleKeyframe->setKey(key);
-                protect(styleRuleKeyframe->mutableProperties())->mergeAndOverrideOnConflict(originalKeyframe->properties());
+                protect(styleRuleKeyframe->mutableProperties())->mergeAndOverrideOnConflict(protect(originalKeyframe->properties()));
                 keyframesMap.set(uniqueKey, styleRuleKeyframe);
                 deduplicatedKeyframes.append(styleRuleKeyframe);
             }
@@ -586,19 +587,20 @@ bool Resolver::keyframeStylesForAnimation(Element& element, const Style::Compute
 
     // Construct and populate the style for each keyframe.
     for (auto& keyframeRule : keyframeRules) {
+        Ref properties = keyframeRule->properties();
         // Add this keyframe style to all the indicated key times
         for (auto& key : keyframeRule->keys()) {
             auto [offsetRangeName, offsetPercentage] = deprecatedStyleRuleKeyframeKeyToStyle(key);
             BlendingKeyframe blendingKeyframe({ offsetRangeName, offsetPercentage }, { nullptr });
             blendingKeyframe.setStyle(styleForKeyframe(element, elementStyle, context, keyframeRule.get(), blendingKeyframe));
-            if (RefPtr timingFunctionCSSValue = keyframeRule->properties().getPropertyCSSValue(CSSPropertyID::AnimationTimingFunction))
+            if (RefPtr timingFunctionCSSValue = properties->getPropertyCSSValue(CSSPropertyID::AnimationTimingFunction))
                 blendingKeyframe.setTimingFunction(createTimingFunctionDeprecated(timingFunctionCSSValue.releaseNonNull()));
-            if (RefPtr compositeOperationCSSValue = keyframeRule->properties().getPropertyCSSValue(CSSPropertyID::AnimationComposition)) {
+            if (RefPtr compositeOperationCSSValue = properties->getPropertyCSSValue(CSSPropertyID::AnimationComposition)) {
                 if (auto compositeOperation = toCompositeOperation(compositeOperationCSSValue.releaseNonNull()))
                     blendingKeyframe.setCompositeOperation(*compositeOperation);
             }
             list.insert(WTF::move(blendingKeyframe));
-            list.updatePropertiesMetadata(keyframeRule->properties());
+            list.updatePropertiesMetadata(properties);
         }
     }
 
@@ -758,12 +760,12 @@ Vector<Ref<const StyleRule>> Resolver::pseudoStyleRulesForElement(const Element*
 
 void Resolver::invalidateMatchedDeclarationsCache()
 {
-    m_matchedDeclarationsCache.invalidate();
+    protect(m_matchedDeclarationsCache)->invalidate();
 }
 
 void Resolver::clearCachedDeclarationsAffectedByViewportUnits()
 {
-    m_matchedDeclarationsCache.clearEntriesAffectedByViewportUnits();
+    protect(m_matchedDeclarationsCache)->clearEntriesAffectedByViewportUnits();
 }
 
 void Resolver::applyMatchedProperties(State& state, const MatchResult& matchResult, PropertyCascade::IncludedProperties&& includedProperties)

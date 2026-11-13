@@ -112,7 +112,7 @@ private:
 
     struct Scope : RefCounted<Scope> {
         WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Scope, TreeResolverScope);
-        Ref<Resolver> resolver;
+        const Ref<Resolver> resolver;
         SelectorMatchingState selectorMatchingState;
         RefPtr<ShadowRoot> shadowRoot;
         RefPtr<Scope> enclosingScope;

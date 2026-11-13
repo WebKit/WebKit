@@ -2351,7 +2351,7 @@ void RenderBox::imageChanged(WrappedImagePtr image, const IntRect*)
             ObjectSizeNegotiation::SizingConstraint::None,
         }, ScaleByUsedZoom::Yes)));
         if (auto styleable = Styleable::fromRenderer(*this))
-            protect(document())->didLoadImage(protect(styleable->element).get(), protect(styleImage->cachedImage()));
+            protect(document())->didLoadImage(styleable->element, protect(styleImage->cachedImage()));
     }
 
     if (!isComposited())
