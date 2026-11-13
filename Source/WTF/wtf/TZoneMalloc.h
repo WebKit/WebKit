@@ -50,6 +50,10 @@
 #define WTF_MAKE_COMPACT_TZONE_ALLOCATED(name) WTF_DEPRECATED_MAKE_FAST_COMPACT_ALLOCATED(name)
 #define WTF_MAKE_COMPACT_TZONE_ALLOCATED_EXPORT(name, exportMacro) WTF_DEPRECATED_MAKE_FAST_COMPACT_ALLOCATED(name)
 
+// special struct (e.g. those used with CompactPtr) allocators with FastMalloc fallback if TZoneHeap is disabled.
+#define WTF_MAKE_STRUCT_COMPACT_TZONE_ALLOCATED(name) WTF_DEPRECATED_MAKE_STRUCT_FAST_COMPACT_ALLOCATED(name)
+#define WTF_MAKE_STRUCT_COMPACT_TZONE_ALLOCATED_EXPORT(name, exportMacro) WTF_DEPRECATED_MAKE_STRUCT_FAST_COMPACT_ALLOCATED(name)
+
 // types which prefer to be compact-allocated, but for which it is not required for
 // program correctness -- generally they instead prefer such for performance reasons.
 // FastMalloc fallback for if TZoneHeap is disabled.
@@ -103,6 +107,14 @@
     WTF_ALLOW_COMPACT_POINTERS; \
     MAKE_BTZONE_MALLOCED(name, Compact, exportMacro)
 
+// special struct (e.g. those used with CompactPtr) allocators with FastMalloc fallback if TZoneHeap is enabled.
+#define WTF_MAKE_STRUCT_COMPACT_TZONE_ALLOCATED(name) \
+    WTF_ALLOW_STRUCT_COMPACT_POINTERS; \
+    MAKE_STRUCT_BTZONE_MALLOCED(name, Compact, WTF_NOEXPORT)
+#define WTF_MAKE_STRUCT_COMPACT_TZONE_ALLOCATED_EXPORT(name, exportMacro) \
+    WTF_ALLOW_STRUCT_COMPACT_POINTERS; \
+    MAKE_STRUCT_BTZONE_MALLOCED(name, Compact, exportMacro)
+
 // types which prefer to be compact-allocated, but for which it is not required for
 // program correctness -- generally they instead prefer such for performance reasons.
 #if ENABLE(COMPACT_ALLOCATION_FOR_PREFERABLY_COMPACT_TYPES)
@@ -143,6 +155,87 @@
     using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
 
 #endif
+
+// Allocators for types that use a WTF_DEPRECATED_MAKE_*FAST*_ALLOCATED_WITH_HEAP_IDENTIFIER macro.
+// When MALLOC_HEAP_BREAKDOWN is enabled these allocate from the named heap group, so heap breakdown
+// is unchanged. Otherwise they are the corresponding WTF_MAKE_*TZONE_ALLOCATED macro and, like it,
+// need the matching _IMPL from <wtf/TZoneMallocInlines.h> in a .cpp file.
+
+#if ENABLE(MALLOC_HEAP_BREAKDOWN)
+
+// Implementation detail of the macros below; do not use directly. Only exists with MALLOC_HEAP_BREAKDOWN.
+#define WTF_TZONE_HEAP_IDENTIFIER_ALLOCATOR_INTERNAL(heapgroup) \
+    void* operator new(size_t, void* p) { return p; } \
+    void* operator new[](size_t, void* p) { return p; } \
+    \
+    void* operator new(size_t size) \
+    { \
+        return heapgroup##Malloc::malloc(size); \
+    } \
+    \
+    void operator delete(void* p) \
+    { \
+        heapgroup##Malloc::free(p); \
+    } \
+    \
+    void* operator new[](size_t size) \
+    { \
+        return heapgroup##Malloc::malloc(size); \
+    } \
+    \
+    void operator delete[](void* p) \
+    { \
+        heapgroup##Malloc::free(p); \
+    } \
+    void* operator new(size_t, NotNullTag, void* location) \
+    { \
+        ASSERT(location); \
+        return location; \
+    } \
+    static void freeAfterDestruction(void* p) \
+    { \
+        heapgroup##Malloc::free(p); \
+    } \
+    using WTFIsFastMallocAllocated = int; \
+
+#define WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(name, heapgroup) \
+public: \
+    WTF_TZONE_HEAP_IDENTIFIER_ALLOCATOR_INTERNAL(heapgroup) \
+private: \
+using __makeTZoneMallocedMacroSemicolonifier UNUSED_TYPE_ALIAS = int
+#define WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_EXPORT(name, heapgroup, exportMacro) WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(name, heapgroup)
+
+#define WTF_MAKE_STRUCT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(name, heapgroup) \
+public: \
+    WTF_TZONE_HEAP_IDENTIFIER_ALLOCATOR_INTERNAL(heapgroup) \
+using __makeTZoneMallocedMacroSemicolonifier UNUSED_TYPE_ALIAS = int
+#define WTF_MAKE_STRUCT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_EXPORT(name, heapgroup, exportMacro) WTF_MAKE_STRUCT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(name, heapgroup)
+
+#define WTF_MAKE_COMPACT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(name, heapgroup) \
+    WTF_ALLOW_COMPACT_POINTERS; \
+    WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(name, heapgroup)
+#define WTF_MAKE_COMPACT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_EXPORT(name, heapgroup, exportMacro) WTF_MAKE_COMPACT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(name, heapgroup)
+
+#define WTF_MAKE_STRUCT_COMPACT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(name, heapgroup) \
+    WTF_ALLOW_STRUCT_COMPACT_POINTERS; \
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(name, heapgroup)
+#define WTF_MAKE_STRUCT_COMPACT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_EXPORT(name, heapgroup, exportMacro) WTF_MAKE_STRUCT_COMPACT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(name, heapgroup)
+
+#else // ENABLE(MALLOC_HEAP_BREAKDOWN)
+
+#define WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(name, heapgroup) WTF_MAKE_TZONE_ALLOCATED(name)
+#define WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_EXPORT(name, heapgroup, exportMacro) WTF_MAKE_TZONE_ALLOCATED_EXPORT(name, exportMacro)
+
+#define WTF_MAKE_STRUCT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(name, heapgroup) WTF_MAKE_STRUCT_TZONE_ALLOCATED(name)
+#define WTF_MAKE_STRUCT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_EXPORT(name, heapgroup, exportMacro) WTF_MAKE_STRUCT_TZONE_ALLOCATED_EXPORT(name, exportMacro)
+
+#define WTF_MAKE_COMPACT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(name, heapgroup) WTF_MAKE_COMPACT_TZONE_ALLOCATED(name)
+#define WTF_MAKE_COMPACT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_EXPORT(name, heapgroup, exportMacro) WTF_MAKE_COMPACT_TZONE_ALLOCATED_EXPORT(name, exportMacro)
+
+#define WTF_MAKE_STRUCT_COMPACT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(name, heapgroup) WTF_MAKE_STRUCT_COMPACT_TZONE_ALLOCATED(name)
+#define WTF_MAKE_STRUCT_COMPACT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_EXPORT(name, heapgroup, exportMacro) WTF_MAKE_STRUCT_COMPACT_TZONE_ALLOCATED_EXPORT(name, exportMacro)
+
+#endif // ENABLE(MALLOC_HEAP_BREAKDOWN)
 
 // Annotation to forbid use with dynamic allocation
 
