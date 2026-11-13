@@ -38,12 +38,13 @@ public:
     static ExceptionOr<Ref<CustomEffect>> create(Document&, Ref<CustomEffectCallback>&&, Variant<double, EffectTiming>&&);
     ~CustomEffect();
 
+    void triggerCallback();
+
 private:
     CustomEffect(Ref<CustomEffectCallback>&&);
 
     // AnimationEffect
     bool isCustomEffect() const final { return true; }
-    void animationDidTick() final;
     bool ticksContinuouslyWhileActive() const final { return true; }
 
     const Ref<CustomEffectCallback> m_callback;
