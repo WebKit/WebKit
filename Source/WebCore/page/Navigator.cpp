@@ -371,6 +371,19 @@ bool Navigator::standalone() const
 
 #endif
 
+#if HAVE(WEBGPU_IMPLEMENTATION)
+// Used both for the first backing of navigator.gpu and for each one that replaces a lost backing.
+static RefPtr<WebGPUIntegration> createGPUForWebGPU(LocalFrame& frame)
+{
+    if (!frame.settings().webGPUEnabled())
+        return nullptr;
+    RefPtr page = frame.page();
+    if (!page)
+        return nullptr;
+    return page->chrome().createGPUForWebGPU();
+}
+#endif
+
 GPU* Navigator::gpu()
 {
 #if HAVE(WEBGPU_IMPLEMENTATION)
@@ -378,16 +391,16 @@ GPU* Navigator::gpu()
         RefPtr frame = this->frame();
         if (!frame)
             return nullptr;
-        if (!frame->settings().webGPUEnabled())
-            return nullptr;
-        RefPtr page = frame->page();
-        if (!page)
-            return nullptr;
-        RefPtr gpu = page->chrome().createGPUForWebGPU();
+        RefPtr gpu = createGPUForWebGPU(*frame);
         if (!gpu)
             return nullptr;
 
-        lazyInitialize(m_gpuForWebGPU, GPU::create(*gpu));
+        lazyInitialize(m_gpuForWebGPU, GPU::create(*gpu, [weakFrame = WeakPtr { *frame }] -> RefPtr<WebGPUIntegration> {
+            RefPtr frame = weakFrame;
+            if (!frame)
+                return nullptr;
+            return createGPUForWebGPU(*frame);
+        }));
     }
 #endif
 

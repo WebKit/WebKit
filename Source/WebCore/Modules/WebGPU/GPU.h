@@ -29,6 +29,7 @@
 #include <WebCore/WebGPU.h>
 #include <optional>
 #include <wtf/Deque.h>
+#include <wtf/Function.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -48,9 +49,13 @@ struct GPURequestAdapterOptions;
 
 class GPU : public RefCounted<GPU> {
 public:
-    static Ref<GPU> create(Ref<WebGPUIntegration>&& backing)
+    using CreateBacking = Function<RefPtr<WebGPUIntegration>()>;
+
+    // createBacking makes a new backing for backing() once the current one is lost, as it is when
+    // the GPU process exits.
+    static Ref<GPU> create(Ref<WebGPUIntegration>&& backing, CreateBacking&& createBacking)
     {
-        return adoptRef(*new GPU(WTF::move(backing)));
+        return adoptRef(*new GPU(WTF::move(backing), WTF::move(createBacking)));
     }
     WEBCORE_EXPORT ~GPU();
 
@@ -60,20 +65,25 @@ public:
     NODELETE GPUTextureFormat getPreferredCanvasFormat() const;
     WGSLLanguageFeatures& wgslLanguageFeatures() const { return m_wgslLanguageFeatures; }
 
-    RefPtr<GPUPresentationContext> createPresentationContext(const GPUPresentationContextDescriptor&);
+    static RefPtr<GPUPresentationContext> createPresentationContext(WebGPUIntegration&, const GPUPresentationContextDescriptor&);
 
-    RefPtr<GPUCompositorIntegration> createCompositorIntegration();
+    static RefPtr<GPUCompositorIntegration> createCompositorIntegration(WebGPUIntegration&);
 
     void paintToCanvas(NativeImage&, const IntSize&, GraphicsContext&);
-    const WebGPUIntegration& backing() const { return m_backing; }
-    WebGPUIntegration& backing() { return m_backing; }
+    // The backing to make new objects from: the current one, or a new one in its place if it is lost.
+    // Everything that makes objects from the GPU, such as adapters, canvas contexts and models, has to
+    // go through here, so that none of them is made from a backing that cannot create anything.
+    Ref<WebGPUIntegration> backing();
 
 private:
-    GPU(Ref<WebGPUIntegration>&&);
+    GPU(Ref<WebGPUIntegration>&&, CreateBacking&&);
+
+    void requestAdapter(::WebGPU::RequestAdapterOptions&&, RequestAdapterPromise&&, bool retryIfBackingIsLost);
 
     struct PendingRequestAdapterArguments;
-    const Ref<WebGPUIntegration> m_backing;
+    Ref<WebGPUIntegration> m_backing;
     const Ref<WGSLLanguageFeatures> m_wgslLanguageFeatures;
+    const CreateBacking m_createBacking;
 };
 
 }
