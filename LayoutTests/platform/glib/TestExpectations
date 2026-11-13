@@ -2743,7 +2743,7 @@ webkit.org/b/216071 fast/canvas/webgl/move-canvas-in-document-while-clean.html [
 
 webkit.org/b/210239 fast/canvas/webgl/out-of-bounds-simulated-vertexAttrib0-drawArrays.html [ Slow ]
 
-webkit.org/b/251195 webgl/1.0.x/conformance/extensions/ext-color-buffer-half-float.html [ Failure ]
+webkit.org/b/251195 webgl/1.0.x/conformance/extensions/ext-color-buffer-half-float.html [ Failure Pass ]
 webkit.org/b/251514 webgl/1.0.x/conformance/extensions/khr-parallel-shader-compile.html [ Skip ]
 webkit.org/b/251514 webgl/2.0.y/conformance/extensions/khr-parallel-shader-compile.html [ Skip ]
 
@@ -5336,6 +5336,11 @@ webkit.org/b/330318 webaudio/audioworklet-stops-on-document-stop.html [ Failure 
 
 webkit.org/b/330502 [ Debug ] media/video-source-error.html [ Failure Pass ]
 webkit.org/b/330503 [ Debug ] http/tests/workers/service/indexeddb-file-posted-to-message-port-after-release.html [ Pass Timeout ]
+
+webkit.org/b/327259 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/pagereveal/order-in-new-document-navigation-iframe.html [ Failure Pass ]
+webkit.org/b/331423 imported/w3c/web-platform-tests/gpc/navigator-globalPrivacyControl.https.html [ Failure Pass ]
+webkit.org/b/331425 http/tests/workers/service/Client-properties-subframe.html [ Crash Pass ]
+webkit.org/b/297001 http/tests/local/blob/navigate-blob.html [ Crash Failure Pass ]
 
 # End: Common failures between GTK and WPE.
 
