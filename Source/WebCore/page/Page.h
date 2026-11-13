@@ -1447,7 +1447,7 @@ public:
 
 #if ENABLE(MODEL_ELEMENT)
     bool shouldDisableModelLoadDelaysForTesting() const { return m_modelLoadDelaysDisabledForTesting; }
-    void disableModelLoadDelaysForTesting() { m_modelLoadDelaysDisabledForTesting = true; }
+    void setModelLoadDelaysDisabledForTesting(bool disabled) { m_modelLoadDelaysDisabledForTesting = disabled; }
 #endif
 
     bool requiresUserGestureForAudioPlayback() const;
