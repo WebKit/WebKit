@@ -102,3 +102,11 @@ function(WEBKIT_RAISE_SWIFT_NINJA_PRIORITY _target)
     endforeach ()
     add_custom_target(${_target}_Dispatch ALL DEPENDS "${_dispatch_dep}")
 endfunction()
+
+# WEBKIT_ORDER_SWIFT_COMPILE_AFTER(<target> <predecessor>)
+# Compile <target>'s Swift after <predecessor>'s. All Swift targets share one module cache, and an SDK
+# module that two compile steps build at once can end up rebuilt by every later build.
+function(WEBKIT_ORDER_SWIFT_COMPILE_AFTER _target _predecessor)
+    add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${_target}_SwiftRebuildTrigger.swift" APPEND
+        DEPENDS "$<FILTER:$<TARGET_OBJECTS:${_predecessor}>,INCLUDE,\\.swift\\.o>")
+endfunction()

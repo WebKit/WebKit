@@ -109,6 +109,8 @@ if (SWIFT_REQUIRED AND APPLE)
     WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER(PAL pal
         "${PAL_HEADERS_DIR}"
         "PALSwift-Generated.h")
+    # Don't build the same SDK modules as WebGPU at the same time including on platforms without SwiftPrewarmMac.
+    WEBKIT_ORDER_SWIFT_COMPILE_AFTER(PAL WebGPU)
 
     webkit_target_add_swift_options(PAL
         "-library-level spi"

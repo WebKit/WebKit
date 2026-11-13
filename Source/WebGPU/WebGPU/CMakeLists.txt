@@ -170,6 +170,10 @@ if (SWIFT_REQUIRED)
     WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER(WebGPU WebGPU
         "${WebGPU_HEADERS_DIR}"
         "WebGPUSwift-Generated.h")
+    if (WEBKIT_PLATFORM_MAC)
+        # Reuse the SDK modules SwiftPrewarmMac builds instead of building them at the same time.
+        WEBKIT_ORDER_SWIFT_COMPILE_AFTER(WebGPU SwiftPrewarmMac)
+    endif ()
 
     WEBKIT_DEFINE_SUBTARGET(WebGPU_SwiftInterop WebGPU ${WebGPU_SWIFT_INTEROP_SOURCES})
     target_precompile_headers(WebGPU_SwiftInterop REUSE_FROM WebGPU)
