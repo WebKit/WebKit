@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+        }
+        .absolute {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 200px;
+            height: 200px;
+            background-color: green;
+        }
+    </style>
+</head>
+<body>
+    <p>There should be a 200x200 green square below.</p>
+    <div style="position: relative">
+        <div class="absolute"></div>
+    </div>
+</body>
+</html>
