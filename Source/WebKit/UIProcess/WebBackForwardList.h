@@ -106,7 +106,7 @@ public:
     RefPtr<FrameState> findFrameStateInItem(WebCore::BackForwardItemIdentifier, WebCore::FrameIdentifier parentFrameID, WebCore::FrameIdentifier childFrameID, uint64_t childFrameIndex, const String& childFrameName);
     void updateFrameIdentifier(WebCore::FrameIdentifier oldFrameID, WebCore::FrameIdentifier newFrameID);
 
-    void replaceFrameStateForChild(WebBackForwardListItem&, WebCore::FrameIdentifier, Ref<FrameState>&& newFrameState);
+    void replaceFrameStateForChild(WebBackForwardListItem&, WebCore::FrameIdentifier, Ref<FrameState>&& newFrameState, WebCore::ProcessIdentifier);
 
     String loggingString() const;
 

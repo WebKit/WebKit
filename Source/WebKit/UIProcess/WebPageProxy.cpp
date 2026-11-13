@@ -10394,9 +10394,9 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
         MESSAGE_CHECK_BASE(redirectReplaceFrameState->children.isEmpty(), connection);
         if (RefPtr currentItem = backForwardList().currentItem())
 #if ENABLE(BACK_FORWARD_LIST_SWIFT)
-            backForwardList().replaceFrameStateForChild(&*currentItem, frameID, redirectReplaceFrameState.releaseNonNull());
+            backForwardList().replaceFrameStateForChild(&*currentItem, frameID, redirectReplaceFrameState.releaseNonNull(), WebProcessProxy::fromConnection(connection)->coreProcessIdentifier());
 #else
-            backForwardList().replaceFrameStateForChild(*currentItem, frameID, redirectReplaceFrameState.releaseNonNull());
+            backForwardList().replaceFrameStateForChild(*currentItem, frameID, redirectReplaceFrameState.releaseNonNull(), WebProcessProxy::fromConnection(connection)->coreProcessIdentifier());
 #endif
     }
 
