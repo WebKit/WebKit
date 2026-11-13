@@ -16314,18 +16314,56 @@ NODELETE static bool shouldReloadAfterProcessTermination(ProcessTerminationReaso
     return false;
 }
 
-void WebPageProxy::dispatchProcessDidTerminate(WebProcessProxy& process, ProcessTerminationReason reason)
+void WebPageProxy::clearStateForTerminatedProcess(WebProcessProxy& process)
 {
-    WEBPAGEPROXY_RELEASE_LOG_ERROR(Loading, "dispatchProcessDidTerminate: reason=%" PUBLIC_LOG_STRING, processTerminationReasonToString(reason).characters());
-
     revokeOutstandingForcedUserActivationsForProcess(process);
 
     m_inspectorController->processDidTerminate(process);
 
-    if (protect(preferences())->siteIsolationEnabled()) {
+    if (protect(preferences())->siteIsolationEnabled())
         processDidBecomeResponsive(process); // Check if all other processes are responsive.
+}
+
+void WebPageProxy::mainFrameProcessDidTerminate(WebProcessProxy& process)
+{
+    clearStateForTerminatedProcess(process);
+
+    if (protect(preferences())->siteIsolationEnabled())
         protect(browsingContextGroup())->processDidTerminate(*this, process);
+}
+
+void WebPageProxy::nonMainFrameProcessDidTerminate(WebProcessProxy& process)
+{
+    stopAllURLSchemeTasks(&process);
+    resetFocusedFrameIfInProcess(process);
+    if (RefPtr drawingArea = m_drawingArea)
+        drawingArea->remotePageProcessDidTerminate(process.coreProcessIdentifier());
+    if (RefPtr mainFrame = m_mainFrame)
+        mainFrame->remoteProcessDidTerminate(process);
+    clearStateForTerminatedProcess(process);
+}
+
+bool WebPageProxy::hasCommittedFrameInProcess(const WebProcessProxy& process) const
+{
+    for (RefPtr frame = m_mainFrame; frame; frame = frame->traverseNext().frame) {
+        if (&frame->process() == &process)
+            return true;
     }
+    return false;
+}
+
+void WebPageProxy::dispatchProcessDidTerminate(ProcessID processID, ProcessTerminationScope scope, ProcessTerminationReason reason)
+{
+    // FIXME: Other reasons, e.g. ExceededMemoryLimit, still report a subframe process kill as a
+    // termination of the page's process, and reload the page if the client doesn't handle it. Tell
+    // the client the actual reason and whether the main frame was affected.
+    if (scope != ProcessTerminationScope::MainFrame && reason == ProcessTerminationReason::Crash)
+        reason = ProcessTerminationReason::NonMainFrameWebContentProcessCrash;
+
+    WEBPAGEPROXY_RELEASE_LOG_ERROR(Loading, "dispatchProcessDidTerminate: terminatedPID=%d (%" PUBLIC_LOG_STRING "), reason=%" PUBLIC_LOG_STRING, processID, processTerminationScopeToString(scope).characters(), processTerminationReasonToString(reason).characters());
+
+    if (m_isClosed || scope == ProcessTerminationScope::NoFrames)
+        return;
 
     bool handledByClient = false;
     if (m_loaderClient)
@@ -16334,7 +16372,7 @@ void WebPageProxy::dispatchProcessDidTerminate(WebProcessProxy& process, Process
         handledByClient = m_navigationClient->processDidTerminate(*this, reason);
 
     if (!handledByClient && shouldReloadAfterProcessTermination(reason)) {
-        if (&process != &siteIsolatedProcess() && hasMainFrameNavigationInFlight()) {
+        if (hasMainFrameNavigationInFlight()) {
             WEBPAGEPROXY_RELEASE_LOG_ERROR(Loading, "dispatchProcessDidTerminate: Not reloading the page because a main frame navigation is in progress");
             return;
         }
@@ -16374,14 +16412,16 @@ void WebPageProxy::maybeReloadAfterCrashWhenVisible()
 
 bool WebPageProxy::hasMainFrameNavigationInFlight() const
 {
-    if (m_provisionalPage || pageLoadState().isProvisional())
+    // This can be called while handling a process termination, which keeps a PageLoadState
+    // transaction open. So read the uncommitted state, which is the latest one.
+    if (m_provisionalPage || pageLoadState().hasUncommittedProvisionalLoad())
         return true;
 
     if (m_mainFrame && m_mainFrame->hasActiveNavigationPolicyListener())
         return true;
 
     // pendingAPIRequest is not cleared when a load becomes a download, so also check m_navigationState.
-    auto navigationID = pageLoadState().pendingAPIRequest().navigationID;
+    auto navigationID = pageLoadState().uncommittedPendingAPIRequest().navigationID;
     if (!navigationID)
         return false;
     RefPtr navigation = m_navigationState->navigation(*navigationID);

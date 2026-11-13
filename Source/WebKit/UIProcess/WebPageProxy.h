@@ -760,6 +760,7 @@ enum class PDFPluginDisplayMode : uint8_t;
 enum class PasteboardAccessIntent : bool;
 enum class ProcessSwapRequestedByClient : bool;
 enum class ProcessTerminationReason : uint8_t;
+enum class ProcessTerminationScope : uint8_t;
 enum class ProcessThrottlerActivityType : bool;
 enum class ProvisionalLoadIsReplaced : bool;
 enum class QuickLookPreviewActivity : uint8_t;
@@ -1966,7 +1967,10 @@ public:
     void resetStateAfterProcessTermination(ProcessTerminationReason);
     void provisionalProcessDidTerminate();
     void provisionalLoadWasCancelledBeforeStarting(WebCore::NavigationIdentifier);
-    void dispatchProcessDidTerminate(WebProcessProxy&, ProcessTerminationReason);
+    void mainFrameProcessDidTerminate(WebProcessProxy&);
+    void nonMainFrameProcessDidTerminate(WebProcessProxy&);
+    void dispatchProcessDidTerminate(ProcessID, ProcessTerminationScope, ProcessTerminationReason);
+    bool hasCommittedFrameInProcess(const WebProcessProxy&) const;
     void willChangeProcessIsResponsive();
     void didChangeProcessIsResponsive();
 
@@ -3795,6 +3799,7 @@ private:
     void contentFilterDidBlockLoadForFrame(IPC::Connection&, const WebCore::ContentFilterUnblockHandler&, WebCore::FrameIdentifier);
 #endif
 
+    void clearStateForTerminatedProcess(WebProcessProxy&);
     void tryReloadAfterProcessTermination();
     void maybeReloadAfterCrashWhenVisible();
     bool hasMainFrameNavigationInFlight() const;

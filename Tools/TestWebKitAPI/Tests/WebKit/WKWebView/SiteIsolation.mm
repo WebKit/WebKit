@@ -10243,6 +10243,50 @@ TEST(SiteIsolation, ProcessTerminationReason)
     EXPECT_EQ(server.totalRequests(), 5u);
 }
 
+TEST(SiteIsolation, MainFrameCrashDuringSameProcessLoadReloads)
+{
+    unsigned exampleRequests { 0 };
+    bool receivedDelayedRequest { false };
+    HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
+        while (1) {
+            auto request = co_await connection.awaitableReceiveHTTPRequest();
+            auto path = HTTPServer::parsePath(request);
+            if (path == "/example"_s) {
+                ++exampleRequests;
+                co_await connection.awaitableSend(HTTPResponse("example"_s).serialize());
+                continue;
+            }
+            if (path == "/delayed"_s) {
+                // Never answered, so the main frame load stays provisional.
+                receivedDelayedRequest = true;
+                continue;
+            }
+        }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    RetainPtr navigationDelegate = adoptNS([NavigationDelegateAllowingAllTLS new]);
+    enableSiteIsolation(configuration.get());
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_EQ(exampleRequests, 1u);
+
+    // A same-site navigation stays in the main frame process.
+    [webView evaluateJavaScript:@"location.href = 'https://example.com/delayed'" completionHandler:nil];
+    while (!receivedDelayedRequest)
+        Util::spinRunLoop();
+    EXPECT_FALSE([webView _provisionalWebProcessIdentifier]);
+
+    // The delegate doesn't handle the crash, so WebKit reloads the page.
+    kill([webView _webProcessIdentifier], SIGKILL);
+    EXPECT_TRUE(Util::waitFor([&] {
+        return exampleRequests == 2;
+    }));
+}
+
 TEST(SiteIsolation, HistoryTraversalAfterProvisionalProcessTerminatesBeforeCommit)
 {
     size_t requestsForA { 0 };
@@ -12955,7 +12999,8 @@ static void runCloseViewsInsideTerminationCallbackTest(CloseViewsTiming closeVie
         [openerView _close];
         [openedView _close];
     };
-    openerNavigationDelegate.get().webContentProcessDidTerminate = ^(WKWebView *, _WKProcessTerminationReason) {
+    // webContentProcessDidTerminate isn't called for the opener's iframe crash.
+    openerNavigationDelegate.get().webContentProcessDidTerminateForTesting = ^(WKWebView *, _WKProcessTerminationReason) {
         ++openerTerminationCount;
         if (closeViewsTiming == CloseViewsTiming::OpenerViewCallback)
             closeViews();
@@ -12984,6 +13029,169 @@ TEST(SiteIsolation, CloseViewsInsideMainFrameTerminationCallback)
 TEST(SiteIsolation, CloseViewsInsideRemotePageTerminationCallback)
 {
     runCloseViewsInsideTerminationCallbackTest(CloseViewsTiming::OpenerViewCallback);
+}
+
+struct OpenedWindow {
+    RetainPtr<TestWKWebView> webView;
+    RetainPtr<TestNavigationDelegate> navigationDelegate;
+};
+
+static OpenedWindow openWindowFromFrame(TestWKWebView *opener, TestUIDelegate *openerUIDelegate, NSString *url, WKFrameInfo *frame)
+{
+    __block OpenedWindow opened;
+    openerUIDelegate.createWebViewWithConfiguration = ^(WKWebViewConfiguration *configuration, WKNavigationAction *, WKWindowFeatures *) {
+        opened.navigationDelegate = adoptNS([TestNavigationDelegate new]);
+        [opened.navigationDelegate allowAnyTLSCertificate];
+        opened.webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+        opened.webView.get().navigationDelegate = opened.navigationDelegate.get();
+        return opened.webView.get();
+    };
+    [opener evaluateJavaScript:[NSString stringWithFormat:@"window.open('%@')", url] inFrame:frame completionHandler:nil];
+    while (!opened.webView)
+        Util::spinRunLoop();
+    [opened.navigationDelegate waitForDidFinishNavigation];
+    openerUIDelegate.createWebViewWithConfiguration = nil;
+    return opened;
+}
+
+TEST(SiteIsolation, OpenerWithoutFramesInTerminatedProcessIsNotNotified)
+{
+    HTTPServer server({
+        { "/example"_s, { "<!DOCTYPE html>example"_s } },
+        { "/apple"_s, { "<!DOCTYPE html><iframe src='https://webkit.org/webkit'></iframe>"_s } },
+        { "/webkit"_s, { "<!DOCTYPE html>webkit"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [openerView, openerNavigationDelegate] = siteIsolatedViewAndDelegateWithoutSharedProcess(server);
+    openerView.get().configuration.preferences.javaScriptCanOpenWindowsAutomatically = YES;
+    RetainPtr openerUIDelegate = adoptNS([TestUIDelegate new]);
+    [openerView setUIDelegate:openerUIDelegate.get()];
+    [openerView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [openerNavigationDelegate waitForDidFinishNavigation];
+
+    // The opener gets a remote page in the process of the opened window's iframe, but has no frames there.
+    auto opened = openWindowFromFrame(openerView.get(), openerUIDelegate.get(), @"https://apple.com/apple", [openerView mainFrame].info);
+    pid_t iframeProcess = [opened.webView firstChildFrame]._processIdentifier;
+    EXPECT_NE(iframeProcess, [opened.webView _webProcessIdentifier]);
+    EXPECT_NE(iframeProcess, [openerView _webProcessIdentifier]);
+
+    __block unsigned openerTerminationCount = 0;
+    __block unsigned openedTerminationCount = 0;
+    openerNavigationDelegate.get().webContentProcessDidTerminateForTesting = ^(WKWebView *, _WKProcessTerminationReason) {
+        ++openerTerminationCount;
+    };
+    opened.navigationDelegate.get().webContentProcessDidTerminateForTesting = ^(WKWebView *, _WKProcessTerminationReason) {
+        ++openedTerminationCount;
+    };
+
+    // WebKit notifies all the pages that a termination affects at the same time, so the counts are
+    // final after the first notification.
+    kill(iframeProcess, SIGKILL);
+    EXPECT_TRUE(Util::waitFor(^{
+        return openedTerminationCount > 0;
+    }));
+    EXPECT_EQ(openedTerminationCount, 1u);
+    EXPECT_EQ(openerTerminationCount, 0u);
+}
+
+TEST(SiteIsolation, ProvisionalMainFrameNavigationToIframeSiteThenProcessCrash)
+{
+    bool receivedDelayedRequest { false };
+    HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
+        while (1) {
+            auto request = co_await connection.awaitableReceiveHTTPRequest();
+            auto path = HTTPServer::parsePath(request);
+            if (path == "/example"_s) {
+                co_await connection.awaitableSend(HTTPResponse("<!DOCTYPE html><iframe src='https://webkit.org/webkit'></iframe>"_s).serialize());
+                continue;
+            }
+            if (path == "/webkit"_s || path == "/apple"_s) {
+                co_await connection.awaitableSend(HTTPResponse("hi"_s).serialize());
+                continue;
+            }
+            if (path == "/delayed"_s) {
+                // Never answered, so the main frame navigation stays provisional.
+                receivedDelayedRequest = true;
+                continue;
+            }
+            EXPECT_FALSE(true);
+        }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegateWithoutSharedProcess(server);
+    webView.get().configuration.preferences.javaScriptCanOpenWindowsAutomatically = YES;
+    RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+    [webView setUIDelegate:uiDelegate.get()];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    pid_t iframeProcess = [webView firstChildFrame]._processIdentifier;
+
+    // With an opened window, a main frame navigation started by the page stays in the browsing
+    // context group, so it goes to the iframe's process. It reuses the main frame, taking over the
+    // page's remote page in that process.
+    auto opened = openWindowFromFrame(webView.get(), uiDelegate.get(), @"https://apple.com/apple", [webView mainFrame].info);
+
+    __block unsigned terminationCount = 0;
+    navigationDelegate.get().webContentProcessDidTerminateForTesting = ^(WKWebView *, _WKProcessTerminationReason) {
+        ++terminationCount;
+    };
+    [webView evaluateJavaScript:@"location.href = 'https://webkit.org/delayed'" completionHandler:nil];
+    while (!receivedDelayedRequest)
+        Util::spinRunLoop();
+    ASSERT_EQ([webView _provisionalWebProcessIdentifier], iframeProcess);
+
+    kill(iframeProcess, SIGKILL);
+    while ([webView _provisionalWebProcessIdentifier])
+        Util::spinRunLoop();
+    // WebKit notifies all the pages that a termination affects at the same time, so the count is
+    // final after the first notification.
+    EXPECT_TRUE(Util::waitFor(^{
+        return terminationCount > 0;
+    }));
+    EXPECT_EQ(terminationCount, 1u);
+}
+
+TEST(SiteIsolation, SameSiteOpenerAndOpeneeMainProcessCrashCallbackReloadsOther)
+{
+    HTTPServer server({
+        { "/example"_s, { "<!DOCTYPE html><iframe src='https://webkit.org/webkit'></iframe>"_s } },
+        { "/opened"_s, { "<!DOCTYPE html><iframe src='https://webkit.org/webkit'></iframe>"_s } },
+        { "/apple"_s, { "<!DOCTYPE html><iframe src='https://webkit.org/webkit'></iframe>"_s } },
+        { "/webkit"_s, { "<!DOCTYPE html>webkit"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [openerView, openerNavigationDelegate] = siteIsolatedViewAndDelegateWithoutSharedProcess(server);
+    openerView.get().configuration.preferences.javaScriptCanOpenWindowsAutomatically = YES;
+    RetainPtr openerUIDelegate = adoptNS([TestUIDelegate new]);
+    [openerView setUIDelegate:openerUIDelegate.get()];
+    [openerView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [openerNavigationDelegate waitForDidFinishNavigation];
+
+    auto opened = openWindowFromFrame(openerView.get(), openerUIDelegate.get(), @"https://example.com/opened", [openerView mainFrame].info);
+    pid_t mainFrameProcess = [openerView _webProcessIdentifier];
+    EXPECT_EQ([opened.webView _webProcessIdentifier], mainFrameProcess);
+
+    // A third page keeps the iframes' process in the browsing context group when the main frame process crashes.
+    auto apple = openWindowFromFrame(openerView.get(), openerUIDelegate.get(), @"https://apple.com/apple", [openerView mainFrame].info);
+    pid_t iframeProcess = [opened.webView firstChildFrame]._processIdentifier;
+    EXPECT_EQ([apple.webView firstChildFrame]._processIdentifier, iframeProcess);
+
+    __block unsigned openerTerminationCount = 0;
+    __block unsigned openedTerminationCount = 0;
+    __block RetainPtr<TestWKWebView> openedView = opened.webView;
+    openerNavigationDelegate.get().webContentProcessDidTerminate = ^(WKWebView *, _WKProcessTerminationReason) {
+        ++openerTerminationCount;
+        [openedView reload];
+    };
+    opened.navigationDelegate.get().webContentProcessDidTerminate = ^(WKWebView *, _WKProcessTerminationReason) {
+        ++openedTerminationCount;
+    };
+
+    kill(mainFrameProcess, SIGKILL);
+    [opened.navigationDelegate waitForDidFinishNavigation];
+    EXPECT_EQ(openerTerminationCount, 1u);
+    EXPECT_EQ(openedTerminationCount, 1u);
+
+    EXPECT_NE([opened.webView _webProcessIdentifier], mainFrameProcess);
+    EXPECT_EQ([opened.webView firstChildFrame]._processIdentifier, iframeProcess);
+    EXPECT_WK_STREQ([opened.webView objectByEvaluatingJavaScript:@"document.body.textContent" inFrame:[opened.webView firstChildFrame]], "webkit");
 }
 
 TEST(SiteIsolation, SharedProcessShutsDownWhenLastRemoteFrameIsRemoved)

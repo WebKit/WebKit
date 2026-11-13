@@ -104,7 +104,7 @@ public:
     NODELETE WebPageProxy* page() const;
 
     void injectPageIntoNewProcess();
-    void processDidTerminate(WebProcessProxy&, ProcessTerminationReason);
+    void processDidTerminate();
 
     WebPageProxyMessageReceiverRegistration& messageReceiverRegistration() LIFETIME_BOUND { return m_messageReceiverRegistration; }
 

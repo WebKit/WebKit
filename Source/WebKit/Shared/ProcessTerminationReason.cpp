@@ -66,4 +66,18 @@ ASCIILiteral processTerminationReasonToString(ProcessTerminationReason reason)
     return ""_s;
 }
 
+ASCIILiteral processTerminationScopeToString(ProcessTerminationScope scope)
+{
+    switch (scope) {
+    case ProcessTerminationScope::NoFrames:
+        return "no frames"_s;
+    case ProcessTerminationScope::Subframes:
+        return "subframes"_s;
+    case ProcessTerminationScope::MainFrame:
+        return "main frame"_s;
+    }
+
+    return ""_s;
+}
+
 }

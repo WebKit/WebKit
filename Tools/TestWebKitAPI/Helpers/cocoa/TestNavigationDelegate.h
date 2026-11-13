@@ -49,6 +49,8 @@ NS_SWIFT_UI_ACTOR
 @property (nonatomic, copy, nullable) void (^didSameDocumentNavigation)(WKWebView *, WKNavigation * _Null_unspecified);
 @property (nonatomic, copy, nullable) void (^renderingProgressDidChange)(WKWebView *, _WKRenderingProgressEvents);
 @property (nonatomic, copy, nullable) void (^webContentProcessDidTerminate)(WKWebView *, _WKProcessTerminationReason);
+// Also called for terminations that webContentProcessDidTerminate isn't, such as subframe process crashes.
+@property (nonatomic, copy, nullable) void (^webContentProcessDidTerminateForTesting)(WKWebView *, _WKProcessTerminationReason);
 @property (nonatomic, copy, nullable) void (^didReceiveAuthenticationChallenge)(WKWebView *, NSURLAuthenticationChallenge *, void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential * _Nullable));
 @property (nonatomic, copy, nullable) void (^contentRuleListPerformedAction)(WKWebView *, NSString *, _WKContentRuleListAction *, NSURL *);
 @property (nonatomic, copy, nullable) void (^didChangeLookalikeCharactersFromURL)(WKWebView *, NSURL *, NSURL *);

@@ -162,6 +162,7 @@ class WebsiteDataStore;
 struct CoreIPCAuditToken;
 struct GPUProcessConnectionParameters;
 struct ModelProcessConnectionParameters;
+struct PageProcessTermination;
 struct ScriptMessageHandlerIdentifierType;
 struct UserContentControllerIdentifierType;
 struct UserMessage;
@@ -810,6 +811,7 @@ private:
     void updateBackgroundResponsivenessTimer();
 
     void processDidTerminateOrFailedToLaunch(ProcessTerminationReason);
+    Vector<PageProcessTermination> classifyAffectedPagesUponTermination() const;
 
     void didStartRunningProcess();
     void didStopRunningProcess();

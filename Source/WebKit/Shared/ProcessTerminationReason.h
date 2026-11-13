@@ -48,4 +48,13 @@ enum class ProcessTerminationReason : uint8_t {
 
 ASCIILiteral processTerminationReasonToString(ProcessTerminationReason);
 
+// Which of a page's committed frames were hosted by a terminated WebContent process.
+enum class ProcessTerminationScope : uint8_t {
+    NoFrames,
+    Subframes,
+    MainFrame,
+};
+
+ASCIILiteral processTerminationScopeToString(ProcessTerminationScope);
+
 }

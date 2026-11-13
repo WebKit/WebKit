@@ -148,6 +148,8 @@ public:
     bool isFinished() const { return m_committedState.state == State::Finished; }
 
     bool hasUncommittedLoad() const { return isLoading(m_uncommittedState); }
+    bool hasUncommittedProvisionalLoad() const { return m_uncommittedState.state == State::Provisional; }
+    const PendingAPIRequest& uncommittedPendingAPIRequest() const LIFETIME_BOUND { return m_uncommittedState.pendingAPIRequest; }
 
     const URL& provisionalURL() const LIFETIME_BOUND { return m_committedState.provisionalURL; }
     const URL& url() const LIFETIME_BOUND { return m_committedState.url; }
