@@ -180,13 +180,13 @@ set_target_properties(WebKitLegacy PROPERTIES
 )
 
 target_link_options(WebKitLegacy PRIVATE
-    -exported_symbols_list ${WEBKITLEGACY_DIR}/WebKitLegacy-iOS.exp
+    "LINKER:-exported_symbols_list,${WEBKITLEGACY_DIR}/WebKitLegacy-iOS.exp"
 )
 # WebEventRegion.mm is compiled only with ENABLE(IOS_TOUCH_EVENTS), which
 # requires the internal SDK.
 if (ENABLE_IOS_TOUCH_EVENTS)
     target_link_options(WebKitLegacy PRIVATE
-        -exported_symbols_list ${WEBKITLEGACY_DIR}/WebKitLegacy-iOS-touch-events.exp
+        "LINKER:-exported_symbols_list,${WEBKITLEGACY_DIR}/WebKitLegacy-iOS-touch-events.exp"
     )
 endif ()
 
