@@ -753,20 +753,6 @@ void Element::cloneShadowTreeIfPossible(Element& newHost) const
         Ref clone = oldShadowRoot->cloneNodeInternal(protect(newHost.document()), Node::CloningOperation::SelfWithTemplateContent, nullptr);
         return downcast<ShadowRoot>(WTF::move(clone));
     }();
-    if (oldShadowRoot->usesNullCustomElementRegistry())
-        clonedShadowRoot->setUsesNullCustomElementRegistry(); // Set this flag for Element::insertionSteps.
-    else {
-        clonedShadowRoot->clearUsesNullCustomElementRegistry(); // Unset flag potentially set by DocumentFragment constructor
-        if (RefPtr registry = oldShadowRoot->customElementRegistry()) {
-            if (!registry->isScoped())
-                registry = newHost.document().effectiveGlobalCustomElementRegistry();
-            if (registry)
-                clonedShadowRoot->setCustomElementRegistry(WTF::move(registry));
-            else
-                clonedShadowRoot->setUsesNullCustomElementRegistry();
-        }
-    }
-    clonedShadowRoot->setKeepsCustomElementRegistryNull(oldShadowRoot->keepsCustomElementRegistryNull());
     newHost.addShadowRoot(clonedShadowRoot.copyRef());
     oldShadowRoot->cloneChildNodes(protect(newHost.document()), nullptr, clonedShadowRoot);
 }
@@ -3640,28 +3626,16 @@ ExceptionOr<ShadowRoot&> Element::attachShadow(const ShadowRootInit& init, std::
         registry = *init.customElementRegistry;
         if (registry && !registry->isScoped() && registry != document().customElementRegistry())
             return Exception { ExceptionCode::NotSupportedError };
-        if (!registry)
-            registryKind = CustomElementRegistryKind::Null;
-    }
-    auto scopedRegistry = ShadowRootScopedCustomElementRegistry::No;
-    if (!registryKind)
-        registryKind = CustomElementRegistryKind::Window;
-    if (registryKind == CustomElementRegistryKind::Null) {
-        ASSERT(!registry);
-        scopedRegistry = ShadowRootScopedCustomElementRegistry::Yes;
-    } else if (registry) {
-        ASSERT(registryKind == CustomElementRegistryKind::Window);
-        scopedRegistry = ShadowRootScopedCustomElementRegistry::Yes;
-    } else
+    } else if (registryKind != CustomElementRegistryKind::Null)
         registry = document().customElementRegistry();
+    // Only declarative shadow roots pass a kind, and those with a null registry keep it null.
+    auto keepsRegistryNull = registryKind == CustomElementRegistryKind::Null ? ShadowRootKeepsCustomElementRegistryNull::Yes : ShadowRootKeepsCustomElementRegistryNull::No;
     Ref shadow = ShadowRoot::create(protect(document()), init.mode, init.slotAssignment,
         init.delegatesFocus ? ShadowRootDelegatesFocus::Yes : ShadowRootDelegatesFocus::No,
         init.clonable ? ShadowRoot::Clonable::Yes : ShadowRoot::Clonable::No,
         init.serializable ? ShadowRootSerializable::Yes : ShadowRootSerializable::No,
         isPrecustomizedOrDefinedCustomElement() ? ShadowRootAvailableToElementInternals::Yes : ShadowRootAvailableToElementInternals::No,
-        WTF::move(registry), scopedRegistry);
-    if (registryKind == CustomElementRegistryKind::Null)
-        shadow->setUsesNullCustomElementRegistry(); // Set this flag for Element::insertionSteps.
+        WTF::move(registry), keepsRegistryNull);
     shadow->setReferenceTarget(AtomString(init.referenceTarget));
     addShadowRoot(shadow.copyRef());
     return shadow.get();
@@ -3685,7 +3659,6 @@ ExceptionOr<ShadowRoot&> Element::attachDeclarativeShadow(ShadowRootMode mode, S
     Ref shadowRoot = exceptionOrShadowRoot.releaseReturnValue();
     shadowRoot->setIsDeclarativeShadowRoot(true);
     shadowRoot->setIsAvailableToElementInternals(true);
-    shadowRoot->setKeepsCustomElementRegistryNull(registryKind == CustomElementRegistryKind::Null);
     return shadowRoot.get();
 }
 

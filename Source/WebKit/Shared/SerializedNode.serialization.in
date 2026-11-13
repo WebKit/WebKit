@@ -82,7 +82,8 @@ header: <WebCore/Document.h>
     WebCore::ShadowRootDelegatesFocus delegatesFocus;
     WebCore::ShadowRootSerializable serializable;
     WebCore::ShadowRootAvailableToElementInternals availableToElementInternals;
-    WebCore::ShadowRootScopedCustomElementRegistry hasScopedCustomElementRegistry;
+    bool usesNullCustomElementRegistry;
+    WebCore::ShadowRootKeepsCustomElementRegistryNull keepsCustomElementRegistryNull;
 };
 [Nested] struct WebCore::SerializedNode::HTMLTemplateElement : WebCore::SerializedNode::Element {
     std::optional<WebCore::SerializedNode::DocumentFragment> content;
@@ -91,7 +92,7 @@ header: <WebCore/Document.h>
 [Nested] enum class WebCore::ShadowRootDelegatesFocus : bool
 [Nested] enum class WebCore::ShadowRootSerializable : bool
 [Nested] enum class WebCore::ShadowRootAvailableToElementInternals : bool
-[Nested] enum class WebCore::ShadowRootScopedCustomElementRegistry : bool
+[Nested] enum class WebCore::ShadowRootKeepsCustomElementRegistryNull : bool
 
 struct WebCore::SerializedNode {
     Variant<WebCore::SerializedNode::Attr, WebCore::SerializedNode::CDATASection, WebCore::SerializedNode::Comment, WebCore::SerializedNode::Document, WebCore::SerializedNode::DocumentFragment, WebCore::SerializedNode::DocumentType, WebCore::SerializedNode::Element, WebCore::SerializedNode::ProcessingInstruction, WebCore::SerializedNode::ShadowRoot, WebCore::SerializedNode::Text, WebCore::SerializedNode::HTMLTemplateElement> data;

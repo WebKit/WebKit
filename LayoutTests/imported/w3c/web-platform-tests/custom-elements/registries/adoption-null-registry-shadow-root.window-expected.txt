@@ -3,6 +3,7 @@ PASS Shadow root with a null registry adopted into a document with a scoped regi
 PASS Shadow root attached in a document with a null registry, adopted into a document with a scoped registry
 PASS Shadow root adopted into a document with a null registry and back
 PASS Shadow root cloned into a document with a null registry, then adopted
+PASS Shadow root with a null registry cloned into a document with a global registry
 PASS initialize() on a shadow root attached in a document with a null registry
 PASS initialize() on a shadow root adopted into a document with a null registry
 

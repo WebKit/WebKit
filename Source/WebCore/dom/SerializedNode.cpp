@@ -72,8 +72,8 @@ static void addShadowRootIfNecessary(Element& element, std::optional<SerializedN
         WebCore::ShadowRoot::Clonable::Yes,
         serializedRoot->serializable,
         serializedRoot->availableToElementInternals,
-        nullptr,
-        serializedRoot->hasScopedCustomElementRegistry
+        serializedRoot->usesNullCustomElementRegistry ? nullptr : element.document().effectiveGlobalCustomElementRegistry(),
+        serializedRoot->keepsCustomElementRegistryNull
     ));
 }
 

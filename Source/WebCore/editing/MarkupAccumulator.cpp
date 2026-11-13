@@ -421,9 +421,8 @@ void MarkupAccumulator::startAppendingNode(const Node& node, Namespaces* namespa
 
             auto* documentRegistry = document.customElementRegistry();
             auto* shadowRegistry = shadowRoot->customElementRegistry();
-            bool documentHasGlobalRegistry = (documentRegistry && !documentRegistry->isScoped()) || document.window();
-            bool shadowHasGlobalRegistry = (shadowRegistry && !shadowRegistry->isScoped())
-                || (!shadowRegistry && !shadowRoot->usesNullCustomElementRegistry() && document.window());
+            bool documentHasGlobalRegistry = documentRegistry && !documentRegistry->isScoped();
+            bool shadowHasGlobalRegistry = shadowRegistry && !shadowRegistry->isScoped();
             return !(documentHasGlobalRegistry && shadowHasGlobalRegistry);
         }();
         if (shouldAppendRegistryAttribute)

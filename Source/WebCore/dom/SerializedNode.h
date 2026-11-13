@@ -44,7 +44,7 @@ enum class ClonedDocumentType : uint8_t;
 enum class ShadowRootAvailableToElementInternals : bool;
 enum class ShadowRootDelegatesFocus : bool;
 enum class ShadowRootSerializable : bool;
-enum class ShadowRootScopedCustomElementRegistry : bool;
+enum class ShadowRootKeepsCustomElementRegistryNull : bool;
 enum class SlotAssignmentMode : bool;
 
 struct SerializedNode {
@@ -85,7 +85,8 @@ struct SerializedNode {
         ShadowRootDelegatesFocus delegatesFocus;
         ShadowRootSerializable serializable;
         ShadowRootAvailableToElementInternals availableToElementInternals;
-        ShadowRootScopedCustomElementRegistry hasScopedCustomElementRegistry;
+        bool usesNullCustomElementRegistry;
+        ShadowRootKeepsCustomElementRegistryNull keepsCustomElementRegistryNull;
     };
     struct Element : public ContainerNode {
         struct Attribute {

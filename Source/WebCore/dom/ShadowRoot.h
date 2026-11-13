@@ -45,7 +45,7 @@ class WebAnimation;
 
 enum class ParserContentPolicy : uint8_t;
 enum class ShadowRootAvailableToElementInternals : bool { No, Yes };
-enum class ShadowRootScopedCustomElementRegistry : bool { No, Yes };
+enum class ShadowRootKeepsCustomElementRegistryNull : bool { No, Yes };
 
 struct GetHTMLOptions;
 
@@ -67,9 +67,9 @@ public:
 
     static Ref<ShadowRoot> create(Document& document, ShadowRootMode type, SlotAssignmentMode assignmentMode = SlotAssignmentMode::Named,
         ShadowRootDelegatesFocus delegatesFocus = ShadowRootDelegatesFocus::No, Clonable clonable = Clonable::No, ShadowRootSerializable serializable = ShadowRootSerializable::No, ShadowRootAvailableToElementInternals availableToElementInternals = ShadowRootAvailableToElementInternals::No,
-        RefPtr<CustomElementRegistry>&& registry = nullptr, ShadowRootScopedCustomElementRegistry scopedRegistry = ShadowRootScopedCustomElementRegistry::No, const AtomString& referenceTarget = nullAtom())
+        RefPtr<CustomElementRegistry>&& registry = nullptr, ShadowRootKeepsCustomElementRegistryNull keepsRegistryNull = ShadowRootKeepsCustomElementRegistryNull::No, const AtomString& referenceTarget = nullAtom())
     {
-        return adoptRef(*new ShadowRoot(document, type, assignmentMode, delegatesFocus, clonable, serializable, availableToElementInternals, WTF::move(registry), scopedRegistry, referenceTarget));
+        return adoptRef(*new ShadowRoot(document, type, assignmentMode, delegatesFocus, clonable, serializable, availableToElementInternals, WTF::move(registry), keepsRegistryNull, referenceTarget));
     }
 
     static Ref<ShadowRoot> create(Document& document, std::unique_ptr<SlotAssignment>&& assignment)
@@ -103,10 +103,7 @@ public:
     Element* host() const { return m_host; }
     void setHost(WeakPtr<Element, WeakPtrImplWithEventTargetData>&& host) { m_host = WTF::move(host); }
 
-    bool hasScopedCustomElementRegistry() const { return m_hasScopedCustomElementRegistry; }
     bool keepsCustomElementRegistryNull() const { return m_keepsCustomElementRegistryNull; }
-    void setKeepsCustomElementRegistryNull(bool flag) { m_keepsCustomElementRegistryNull = flag; }
-    CustomElementRegistry* registryForBindings() const;
 
     ExceptionOr<void> setHTMLUnsafe(Variant<Ref<TrustedHTML>, String>&&);
     String getHTML(GetHTMLOptions&&) const;
@@ -163,7 +160,7 @@ public:
     }
 
 private:
-    ShadowRoot(Document&, ShadowRootMode, SlotAssignmentMode, ShadowRootDelegatesFocus, Clonable, ShadowRootSerializable, ShadowRootAvailableToElementInternals, RefPtr<CustomElementRegistry>&&, ShadowRootScopedCustomElementRegistry, const AtomString& referenceTarget);
+    ShadowRoot(Document&, ShadowRootMode, SlotAssignmentMode, ShadowRootDelegatesFocus, Clonable, ShadowRootSerializable, ShadowRootAvailableToElementInternals, RefPtr<CustomElementRegistry>&&, ShadowRootKeepsCustomElementRegistryNull, const AtomString& referenceTarget);
     ShadowRoot(Document&, std::unique_ptr<SlotAssignment>&&);
 
     Node::NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) override;
@@ -180,7 +177,6 @@ private:
     bool m_containsFocusedElement : 1 { false };
     bool m_availableToElementInternals : 1 { false };
     bool m_isDeclarativeShadowRoot : 1 { false };
-    bool m_hasScopedCustomElementRegistry : 1 { false };
     bool m_keepsCustomElementRegistryNull : 1 { false };
     ShadowRootMode m_mode { ShadowRootMode::UserAgent };
     SlotAssignmentMode m_slotAssignmentMode { SlotAssignmentMode::Named };

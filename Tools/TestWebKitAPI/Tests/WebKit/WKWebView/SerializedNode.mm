@@ -102,4 +102,35 @@ TEST(SerializedNode, Basic)
     Util::run(&done);
 }
 
+TEST(SerializedNode, ShadowRootCustomElementRegistry)
+{
+    RetainPtr webView = adoptNS([WKWebView new]);
+    [webView loadHTMLString:@"<div id='host'><template shadowrootmode='open' shadowrootclonable shadowrootcustomelementregistry></template></div>" baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
+    [webView _test_waitForDidFinishNavigation];
+
+    RetainPtr worldConfiguration = adoptNS([WKContentWorldConfiguration new]);
+    worldConfiguration.get().nodeSnapshotCreationEnabled = YES;
+    RetainPtr world = [WKContentWorld worldWithConfiguration:worldConfiguration.get()];
+
+    // The registries of the shadow root and of an element parsed into it, then again after adopting the host into an iframe's document.
+    auto registriesAfterDeserialization = [world, webView](NSString *host) -> RetainPtr<id> {
+        RetainPtr serializedNode = [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"window.webkit.createNodeSnapshot(%@, { deep: true })", host] inFrame:nil inContentWorld:world.get()];
+        RetainPtr other = adoptNS([TestWKWebView new]);
+        [other synchronouslyLoadHTMLString:@"<body></body>"];
+        return [other objectByCallingAsyncFunction:@""
+            "const describe = (node, window) => node.customElementRegistry === null ? 'null' : node.customElementRegistry === window.customElements ? 'global' : 'other';"
+            "n.shadowRoot.innerHTML = '<test-element></test-element>';"
+            "const before = describe(n.shadowRoot, window) + ' ' + describe(n.shadowRoot.firstChild, window);"
+            "const iframe = document.body.appendChild(document.createElement('iframe'));"
+            "iframe.contentDocument.adoptNode(n);"
+            "return before + ', ' + describe(n.shadowRoot, iframe.contentWindow) + ' ' + describe(n.shadowRoot.firstChild, iframe.contentWindow);"
+            withArguments:@{ @"n" : serializedNode.get() }];
+    };
+
+    EXPECT_WK_STREQ(registriesAfterDeserialization(@"document.getElementById('host')").get(), "null null, null null");
+    EXPECT_WK_STREQ(registriesAfterDeserialization(@"(() => { const host = document.createElement('div'); host.attachShadow({ mode: 'open', clonable: true, customElementRegistry: null }); return host; })()").get(), "null null, global global");
+    EXPECT_WK_STREQ(registriesAfterDeserialization(@"(() => { const host = document.createElement('div'); host.attachShadow({ mode: 'open', clonable: true }); return host; })()").get(), "global global, global global");
+    EXPECT_WK_STREQ(registriesAfterDeserialization(@"(() => { const host = document.createElement('div'); host.attachShadow({ mode: 'open', clonable: true, customElementRegistry: new CustomElementRegistry }); return host; })()").get(), "null null, null null");
+}
+
 }
