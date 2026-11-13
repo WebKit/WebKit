@@ -56,8 +56,10 @@ protected:
 private:
     bool isSVGGeometryElement() const override { return true; }
 
-    float calculateTotalLength() const;
-    ExceptionOr<Ref<SVGPoint>> calculatePointAtLength(float distance) const;
+    // Returns the path cached by the renderer, if it has one. Returns std::nullopt for non-rendered
+    // elements (e.g. display:none) and for shapes whose renderer draws without caching a path
+    // (rect/ellipse fast paths); callers then compute the geometry via pathFromGraphicsElement().
+    std::optional<Path> cachedRendererPath() const;
 
     const Ref<SVGAnimatedNumber> m_pathLength { SVGAnimatedNumber::create(this) };
 };
