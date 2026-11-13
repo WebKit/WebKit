@@ -60,12 +60,14 @@ Recorder::Recorder(IsDeferred isDeferred, const GraphicsContextState& state, con
     ASSERT(!state.changes());
     // The state may be a clone of another context's state, which does not have the CTM of this one.
     m_state.setCTM(initialCTM);
-    m_stateStack.append({ initialCTM.mapRect(initialClip), { } });
+    // The state may be a clone of another context's state, which does not have the clip bounds of this one.
+    m_state.setDeviceClipBounds(m_initialClip);
+    m_state.setCommittedChanges({ });
 }
 
 Recorder::~Recorder()
 {
-    ASSERT(m_stateStack.size() == 1); // If this fires, it indicates mismatched save/restore.
+    ASSERT(!stackSize()); // If this fires, it indicates mismatched save/restore.
 }
 
 void Recorder::appendDisplayList(const DisplayList& displayList)
@@ -112,19 +114,18 @@ void Recorder::updateStateForSave(GraphicsContextState::Purpose purpose)
     ASSERT(purpose == GraphicsContextState::Purpose::SaveRestore);
     appendStateChangeItemIfNecessary();
     GraphicsContext::save(purpose);
-    m_stateStack.append(ContextState { currentState().clipBounds, { } });
+    m_state.setCommittedChanges({ });
 }
 
 bool Recorder::updateStateForRestore(GraphicsContextState::Purpose purpose)
 {
-    if (m_stateStack.size() <= 1 || !canRestore(purpose))
+    if (!canRestore(purpose))
         return false;
 
     ASSERT(purpose == GraphicsContextState::Purpose::SaveRestore);
     appendStateChangeItemIfNecessary();
-    auto committedChanges = currentState().committedChanges;
+    auto committedChanges = m_state.committedChanges();
     GraphicsContext::restore(purpose);
-    m_stateStack.removeLast();
     m_committedState.copyPropertiesFrom(m_state, committedChanges);
     ASSERT(m_state.propertiesEqualIgnoring(m_committedState, m_state.indeterminateProperties()));
     return true;
@@ -139,7 +140,7 @@ GraphicsContextState::ChangeFlags Recorder::computeStateChanges()
 void Recorder::commitStateChanges(GraphicsContextState::ChangeFlags changes)
 {
     m_committedState.copyPropertiesFrom(m_state, changes);
-    currentState().committedChanges.add(changes);
+    m_state.addCommittedChanges(changes);
     // These properties have now been written out, so their value in the target is known until the
     // enclosing save() is restored.
     m_state.markDeterminate(changes);
@@ -186,7 +187,8 @@ void Recorder::updateStateForSetCTM(const AffineTransform& transform)
 
 void Recorder::updateStateForSaveTransform()
 {
-    // No ContextState is pushed, since restoreTransform() keeps the clip bounds.
+    // restoreTransform() keeps the clip bounds and the committed changes, so the changes committed until then
+    // are synchronized when the enclosing save() is restored.
     GraphicsContext::saveTransform();
 }
 
@@ -228,17 +230,16 @@ void Recorder::pushStateForTransparencyLayer()
     // m_committedState with m_state wholesale rather than assuming the two resets agree. Mark the whole
     // state as pushed by this level so that ending the layer rolls all of it back.
     m_committedState.copyPropertiesFrom(m_state, GraphicsContextState::ChangeFlags::all());
-    m_stateStack.append(ContextState { currentState().clipBounds, GraphicsContextState::ChangeFlags::all() });
+    m_state.setCommittedChanges(GraphicsContextState::ChangeFlags::all());
 }
 
 bool Recorder::updateStateForEndTransparencyLayer()
 {
-    if (stateStack().size() <= 1 || !canRestore(GraphicsContextState::Purpose::TransparencyLayer))
+    if (!canRestore(GraphicsContextState::Purpose::TransparencyLayer))
         return false;
     GraphicsContext::endTransparencyLayer();
     appendStateChangeItemIfNecessary();
-    auto committedChanges = currentState().committedChanges;
-    m_stateStack.removeLast();
+    auto committedChanges = m_state.committedChanges();
     GraphicsContext::restore(GraphicsContextState::Purpose::TransparencyLayer);
     m_committedState.copyPropertiesFrom(m_state, committedChanges);
     ASSERT(m_state.propertiesEqualIgnoring(m_committedState, m_state.indeterminateProperties()));
@@ -247,7 +248,7 @@ bool Recorder::updateStateForEndTransparencyLayer()
 
 void Recorder::updateStateForResetClip()
 {
-    currentState().clipBounds = initialClip();
+    m_state.setDeviceClipBounds(initialClip());
 }
 
 FloatRect Recorder::initialClip() const
@@ -261,13 +262,13 @@ FloatRect Recorder::initialClip() const
 void Recorder::updateStateForClip(const FloatRect& rect)
 {
     appendStateChangeItemIfNecessary(); // Conservative: we do not know if the clip application might use state such as antialiasing.
-    currentState().clipBounds.intersect(ctm().mapRect(rect));
+    m_state.intersectDeviceClipBounds(ctm().mapRect(rect));
 }
 
 void Recorder::updateStateForClipRoundedRect(const FloatRoundedRect& rect)
 {
     appendStateChangeItemIfNecessary(); // Conservative: we do not know if the clip application might use state such as antialiasing.
-    currentState().clipBounds.intersect(ctm().mapRect(rect.rect()));
+    m_state.intersectDeviceClipBounds(ctm().mapRect(rect.rect()));
 }
 
 void Recorder::updateStateForClipOut(const FloatRect&)
@@ -291,29 +292,29 @@ void Recorder::updateStateForClipOut(const Path&)
 void Recorder::updateStateForClipPath(const Path& path)
 {
     appendStateChangeItemIfNecessary(); // Conservative: we do not know if the clip application might use state such as antialiasing.
-    currentState().clipBounds.intersect(ctm().mapRect(path.fastBoundingRect()));
+    m_state.intersectDeviceClipBounds(ctm().mapRect(path.fastBoundingRect()));
 }
 
 void Recorder::updateStateForClipTransformedPath(const AffineTransform& pathTransform, const Path& path)
 {
     appendStateChangeItemIfNecessary(); // Conservative: we do not know if the clip application might use state such as antialiasing.
-    currentState().clipBounds.intersect((ctm() * pathTransform).mapRect(path.fastBoundingRect()));
+    m_state.intersectDeviceClipBounds((ctm() * pathTransform).mapRect(path.fastBoundingRect()));
 }
 
 void Recorder::updateStateForClipToImage(const FloatRect& rect)
 {
     appendStateChangeItemIfNecessary(); // Conservative: we do not know if the clip application might use state such as antialiasing.
-    currentState().clipBounds.intersect(ctm().mapRect(rect));
+    m_state.intersectDeviceClipBounds(ctm().mapRect(rect));
 }
 
 IntRect Recorder::clipBounds() const
 {
     if (auto inverse = ctm().inverse())
-        return enclosingIntRect(inverse->mapRect(currentState().clipBounds));
+        return enclosingIntRect(inverse->mapRect(m_state.deviceClipBounds()));
 
     // If the CTM is not invertible, return the original rect.
     // This matches CGRectApplyInverseAffineTransform behavior.
-    return enclosingIntRect(currentState().clipBounds);
+    return enclosingIntRect(m_state.deviceClipBounds());
 }
 
 void Recorder::updateStateForApplyDeviceScaleFactor(float deviceScaleFactor)
@@ -328,12 +329,13 @@ void Recorder::updateStateForApplyDeviceScaleFactor(float deviceScaleFactor)
 
 void Recorder::updateStateForBeginPage()
 {
-    ASSERT(m_stateStack.size() == 1);
+    ASSERT(!stackSize());
     ASSERT(!m_state.changes());
     m_state = m_initialState;
     m_state.setCTM(m_initialCTM);
+    m_state.setDeviceClipBounds(m_initialClip);
+    m_state.setCommittedChanges({ });
     m_committedState = m_initialState;
-    m_stateStack.last() = { m_initialClip, { } };
 }
 
 const AffineTransform& Recorder::ctm() const

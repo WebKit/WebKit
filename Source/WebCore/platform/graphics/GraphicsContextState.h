@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/AffineTransform.h>
+#include <WebCore/FloatRect.h>
 #include <WebCore/GraphicsStyle.h>
 #include <WebCore/GraphicsTypes.h>
 #include <WebCore/SourceBrush.h>
@@ -169,6 +170,17 @@ public:
     const AffineTransform& ctm() const LIFETIME_BOUND { return m_ctm; }
     void setCTM(const AffineTransform& ctm) { m_ctm = ctm; }
 
+    // The bounds of the clip in device space, for the contexts that track them, such as DisplayList::Recorder.
+    const FloatRect& deviceClipBounds() const LIFETIME_BOUND { return m_deviceClipBounds; }
+    void setDeviceClipBounds(const FloatRect& bounds) { m_deviceClipBounds = bounds; }
+    void intersectDeviceClipBounds(const FloatRect& bounds) { m_deviceClipBounds.intersect(bounds); }
+
+    // For DisplayList::Recorder: the properties committed to the recording since this state was saved, which
+    // are synchronized when the state is restored.
+    ChangeFlags committedChanges() const { return m_committedChanges; }
+    void setCommittedChanges(ChangeFlags changes) { m_committedChanges = changes; }
+    void addCommittedChanges(ChangeFlags changes) { m_committedChanges.add(changes); }
+
     // Restores from the state saved for Purpose::Transform: the CTM and the purpose are restored, the
     // properties keep their current values.
     void restoreTransform(const GraphicsContextState& saved)
@@ -212,6 +224,10 @@ private:
     // GraphicsContext::restoreTransform(), and does not follow the CTM otherwise. Not one of the properties
     // copied, compared or serialized with the state.
     AffineTransform m_ctm;
+    // The clip bounds and the committed changes are not properties either: they are not copied, compared or
+    // serialized with the properties. They are saved and restored with the state.
+    FloatRect m_deviceClipBounds;
+    ChangeFlags m_committedChanges;
     SourceBrush m_fillBrush { Color::black };
     SourceBrush m_strokeBrush { Color::black };
     // Changes not appiled to the underlying platform context.
