@@ -1,0 +1,8 @@
+
+PASS Available-Dictionary is a forbidden request header name
+PASS Available-Dictionary is allowed in Response headers
+PASS Available-Dictionary is allowed in Headers with guard none
+PASS Dictionary-ID is a forbidden request header name
+PASS Dictionary-ID is allowed in Response headers
+PASS Dictionary-ID is allowed in Headers with guard none
+

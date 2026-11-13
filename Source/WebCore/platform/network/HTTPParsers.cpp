@@ -818,11 +818,13 @@ bool isForbiddenHeaderName(const String& name)
         case HTTPHeaderName::AcceptEncoding:
         case HTTPHeaderName::AccessControlRequestHeaders:
         case HTTPHeaderName::AccessControlRequestMethod:
+        case HTTPHeaderName::AvailableDictionary:
         case HTTPHeaderName::Connection:
         case HTTPHeaderName::ContentLength:
         case HTTPHeaderName::Cookie:
         case HTTPHeaderName::Cookie2:
         case HTTPHeaderName::Date:
+        case HTTPHeaderName::DictionaryID:
         case HTTPHeaderName::DNT:
         case HTTPHeaderName::Expect:
         case HTTPHeaderName::Host:
