@@ -5434,10 +5434,14 @@ ClipRects* RenderLayer::clipRects(const ClipRectsContext& context) const
     return m_clipRectsCache->getClipRects(context);
 }
 
-bool RenderLayer::clipCrossesPaintingBoundary() const
+bool RenderLayer::clipCrossesPaintingBoundary(ClipRectsType clipRectsType) const
 {
     if (parent()->enclosingPaginationLayer(IncludeCompositedPaginatedLayers) != enclosingPaginationLayer(IncludeCompositedPaginatedLayers))
         return true;
+
+    // Root-relative clip rects don't depend on the repaint target.
+    if (clipRectsType == RootRelativeClipRects)
+        return false;
 
     // In this case, enclosingRepaintTargetLayer() starts at parent() and finds the same target as
     // parent()->enclosingRepaintTargetLayer().
@@ -5551,7 +5555,7 @@ RefPtr<ClipRects> RenderLayer::parentClipRects(const ClipRectsContext& clipRects
     if (clipRectsContext.options.contains(ClipRectsOption::Temporary) || clipRectsContext.options.contains(ClipRectsOption::OutsideFilter))
         return temporaryParentClipRects(clipRectsContext);
 
-    if (clipRectsContext.clipRectsType != AbsoluteClipRects && clipCrossesPaintingBoundary()) {
+    if (clipRectsContext.clipRectsType != AbsoluteClipRects && clipCrossesPaintingBoundary(clipRectsContext.clipRectsType)) {
         ClipRectsContext tempClipRectsContext(clipRectsContext);
         tempClipRectsContext.options.add(ClipRectsOption::Temporary);
         return temporaryParentClipRects(tempClipRectsContext);
