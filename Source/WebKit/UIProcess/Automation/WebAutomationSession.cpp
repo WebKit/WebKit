@@ -1405,21 +1405,16 @@ Vector<Inspector::CommandCallback<void>> WebAutomationSession::takePendingPageNa
 void WebAutomationSession::navigationOccurredForFrame(const WebFrameProxy& frame, API::Navigation* finishedNavigation, NavigationNotification notification)
 {
     if (frame.isMainFrame()) {
-        // New page loaded, clear frame handles previously cached for frame's page.
-        // FIXME: This also discards the handles of frames that still exist: the ones that the new document created while
-        // it loaded, and after a same-document navigation, all of them. Events and realms already reported those frames
-        // with the discarded handles, and the frames get new ones. Frames that go away lose their handles in
-        // didDestroyFrame() anyway. https://bugs.webkit.org/show_bug.cgi?id=330642
-        HashSet<String> handlesToRemove;
-        for (const auto& iter : m_handleWebFrameMap) {
-            RefPtr webFrame = WebFrameProxy::webFrame(iter.value);
-            if (webFrame && webFrame->page() == frame.page()) {
-                handlesToRemove.add(iter.key);
-                m_webFrameHandleMap.remove(iter.value);
-            }
-        }
+        // Child frames keep their handles across a load or a same-document navigation of the main frame: the frames
+        // that the new document created while it loaded, and every frame of a document that only navigated within
+        // itself, still exist and were already reported with these handles. didDestroyFrame() removes the handle
+        // of a frame that goes away. Only handles of frames that no longer exist at all are dropped here, in case
+        // their removal was never reported, e.g. because their process crashed.
         m_handleWebFrameMap.removeIf([&](auto& iter) {
-            return handlesToRemove.contains(iter.key);
+            if (WebFrameProxy::webFrame(iter.value))
+                return false;
+            m_webFrameHandleMap.remove(iter.value);
+            return true;
         });
 
         // A wait for the eager strategy normally ends when the document has loaded. The navigation it is bound
