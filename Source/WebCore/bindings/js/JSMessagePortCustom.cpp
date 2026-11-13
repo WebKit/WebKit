@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,10 +26,23 @@
 
 #include "config.h"
 #include "JSMessagePort.h"
+
+#include "EventNames.h"
+#include "JSEventListener.h"
 #include "WebCoreOpaqueRootInlines.h"
 
 namespace WebCore {
 using namespace JSC;
+
+// https://html.spec.whatwg.org/multipage/web-messaging.html#message-ports
+void JSMessagePort::setOnmessage(JSGlobalObject&, JSValue value)
+{
+    Ref port = wrapped();
+    setEventHandlerAttribute<JSEventListener>(port, eventNames().messageEvent, value, *this);
+    vm().writeBarrier(this, value);
+    ensureStillAliveHere(value);
+    port->start();
+}
 
 template<typename Visitor>
 void JSMessagePort::visitAdditionalChildrenInGCThread(Visitor& visitor)
