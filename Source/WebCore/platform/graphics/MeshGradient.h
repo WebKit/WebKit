@@ -94,6 +94,9 @@ public:
     class ColorControlValues;
     ColorControlValues colorControlValues() const LIFETIME_BOUND;
 
+    // The same for the points missing their alpha. Empty when no point is missing its alpha.
+    ColorControlValues colorControlValuesMissingAlpha() const LIFETIME_BOUND;
+
     RefPtr<NativeImage> renderedImage(const IntSize& pixelSize, float scale, const ColorSpace&) const;
     void setRenderedImage(const IntSize& pixelSize, float scale, Ref<NativeImage>&&) const;
 
@@ -110,7 +113,8 @@ private:
     //
     // A point has no weight for a component it is missing. With premultiplied alpha, its weight for every component
     // except alpha and hue is its alpha. A point missing its alpha has to be premultiplied by the interpolated alpha,
-    // which isn't known until the mesh is evaluated, so its terms are kept apart until then.
+    // which isn't known until the mesh is evaluated, so its terms are kept apart, in m_colorPatchesMissingAlpha, until
+    // then.
     //
     // Between two points this gives the same colors as interpolateColorComponents().
     //
@@ -119,21 +123,17 @@ private:
     struct WeightedColor {
         Components weightedValues;
         Components weights;
-        Components weightedValuesMissingAlpha;
-        Components weightsMissingAlpha;
 
         WeightedColor& operator+=(const WeightedColor& other)
         {
             weightedValues += other.weightedValues;
             weights += other.weights;
-            weightedValuesMissingAlpha += other.weightedValuesMissingAlpha;
-            weightsMissingAlpha += other.weightsMissingAlpha;
             return *this;
         }
 
         friend WeightedColor weighted(const WeightedColor& color, float weight)
         {
-            return { color.weightedValues * weight, color.weights * weight, color.weightedValuesMissingAlpha * weight, color.weightsMissingAlpha * weight };
+            return { color.weightedValues * weight, color.weights * weight };
         }
     };
 
@@ -158,11 +158,6 @@ private:
     using PositionPatch = BicubicBezierPatch<FloatPoint>;
     using ColorPatch = BicubicBezierPatch<WeightedColor>;
 
-    struct Patch {
-        PositionPatch position;
-        ColorPatch color;
-    };
-
     MeshGradient(ColorInterpolationMethod, unsigned rows, unsigned columns, Vector<Point>&&, const Color& backgroundColor);
 
     unsigned index(unsigned row, unsigned column) const { return row * m_columns + column; }
@@ -170,10 +165,10 @@ private:
     PositionPatch makePositionPatch(unsigned row, unsigned column) const;
     ColorPatch makeColorPatch(unsigned row, unsigned column, const Vector<WeightedColor>&) const;
 
-    static std::pair<Components, Components> weightedMean(const Patch&, float u, float v);
-    static Components interpolatedColor(const Patch&, float u, float v);
+    std::pair<Components, Components> weightedMean(uint32_t patchIndex, float u, float v) const;
+    Components interpolatedColor(uint32_t patchIndex, float u, float v) const;
 
-    unsigned subdivisions(const Patch&, float scale) const;
+    unsigned subdivisions(const PositionPatch&, float scale) const;
 
     ColorInterpolationMethod m_colorInterpolationMethod;
     unsigned m_rows;
@@ -182,7 +177,11 @@ private:
     Color m_backgroundColor;
 
     // One patch per cell of the grid, in row order.
-    Vector<Patch> m_patches;
+    Vector<PositionPatch> m_positionPatches;
+    Vector<ColorPatch> m_colorPatches;
+
+    // Empty when no point is missing its alpha.
+    Vector<ColorPatch> m_colorPatchesMissingAlpha;
 
     mutable Lock m_renderedImageLock;
     mutable IntSize m_renderedImagePixelSize WTF_GUARDED_BY_LOCK(m_renderedImageLock);
@@ -194,8 +193,8 @@ private:
 
 class MeshGradient::ColorControlValues : public std::ranges::view_interface<ColorControlValues> {
 public:
-    explicit ColorControlValues(std::span<const Patch> patches)
-        : m_values { patches | std::views::transform(&controlValues) | std::views::join }
+    explicit ColorControlValues(const Vector<ColorPatch>& patches LIFETIME_BOUND)
+        : m_values { patches | std::views::transform(&ColorPatch::controlValues) | std::views::join }
         , m_size { patches.size() * 16 }
     {
     }
@@ -205,15 +204,18 @@ public:
     size_t size() const { return m_size; }
 
 private:
-    static const std::array<WeightedColor, 16>& controlValues(const Patch& patch) { return patch.color.controlValues; }
-
-    std::ranges::join_view<std::ranges::transform_view<std::span<const Patch>, decltype(&controlValues)>> m_values;
+    std::ranges::join_view<std::ranges::transform_view<std::ranges::ref_view<const Vector<ColorPatch>>, decltype(&ColorPatch::controlValues)>> m_values;
     size_t m_size;
 };
 
 inline MeshGradient::ColorControlValues MeshGradient::colorControlValues() const
 {
-    return ColorControlValues { m_patches.span() };
+    return ColorControlValues { m_colorPatches };
+}
+
+inline MeshGradient::ColorControlValues MeshGradient::colorControlValuesMissingAlpha() const
+{
+    return ColorControlValues { m_colorPatchesMissingAlpha };
 }
 
 WEBCORE_EXPORT TextStream& operator<<(TextStream&, const MeshGradient::Point&);

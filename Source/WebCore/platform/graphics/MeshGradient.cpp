@@ -302,8 +302,11 @@ MeshGradient::MeshGradient(ColorInterpolationMethod colorInterpolationMethod, un
     }
 
     bool isPremultiplied = m_colorInterpolationMethod.alphaPremultiplication == AlphaPremultiplication::Premultiplied;
-    auto weightedColors = colors.map([&](auto& color) {
-        WeightedColor weightedColor;
+    bool hasPointsMissingAlpha = false;
+    Vector<WeightedColor> weightedColors(colors.size());
+    Vector<WeightedColor> weightedColorsMissingAlpha(colors.size());
+    for (size_t point = 0; point < colors.size(); ++point) {
+        auto& color = colors[point];
         float alpha = color[3];
         for (size_t component = 0; component < 4; ++component) {
             float value = color[component];
@@ -311,22 +314,26 @@ MeshGradient::MeshGradient(ColorInterpolationMethod colorInterpolationMethod, un
                 continue;
 
             if (!isPremultiplied || component == 3 || component == hueIndex) {
-                weightedColor.weightedValues[component] = value;
-                weightedColor.weights[component] = 1;
+                weightedColors[point].weightedValues[component] = value;
+                weightedColors[point].weights[component] = 1;
             } else if (!std::isnan(alpha)) {
-                weightedColor.weightedValues[component] = value * alpha;
-                weightedColor.weights[component] = alpha;
+                weightedColors[point].weightedValues[component] = value * alpha;
+                weightedColors[point].weights[component] = alpha;
             } else {
-                weightedColor.weightedValuesMissingAlpha[component] = value;
-                weightedColor.weightsMissingAlpha[component] = 1;
+                weightedColorsMissingAlpha[point].weightedValues[component] = value;
+                weightedColorsMissingAlpha[point].weights[component] = 1;
+                hasPointsMissingAlpha = true;
             }
         }
-        return weightedColor;
-    });
+    }
 
     for (unsigned row = 0; row + 1 < m_rows; ++row) {
-        for (unsigned column = 0; column + 1 < m_columns; ++column)
-            m_patches.append({ makePositionPatch(row, column), makeColorPatch(row, column, weightedColors) });
+        for (unsigned column = 0; column + 1 < m_columns; ++column) {
+            m_positionPatches.append(makePositionPatch(row, column));
+            m_colorPatches.append(makeColorPatch(row, column, weightedColors));
+            if (hasPointsMissingAlpha)
+                m_colorPatchesMissingAlpha.append(makeColorPatch(row, column, weightedColorsMissingAlpha));
+        }
     }
 }
 
@@ -370,12 +377,10 @@ auto MeshGradient::makeColorPatch(unsigned row, unsigned column, const Vector<We
     auto segment = [](const WeightedColor& color0, const WeightedColor& color1, const WeightedColor& color2, const WeightedColor& color3) {
         auto weightedValues = monotoneSegment(color0.weightedValues, color1.weightedValues, color2.weightedValues, color3.weightedValues);
         auto weights = monotoneSegment(color0.weights, color1.weights, color2.weights, color3.weights);
-        auto weightedValuesMissingAlpha = monotoneSegment(color0.weightedValuesMissingAlpha, color1.weightedValuesMissingAlpha, color2.weightedValuesMissingAlpha, color3.weightedValuesMissingAlpha);
-        auto weightsMissingAlpha = monotoneSegment(color0.weightsMissingAlpha, color1.weightsMissingAlpha, color2.weightsMissingAlpha, color3.weightsMissingAlpha);
 
         std::array<WeightedColor, 4> segment;
         for (size_t i = 0; i < 4; ++i)
-            segment[i] = { weightedValues[i], weights[i], weightedValuesMissingAlpha[i], weightsMissingAlpha[i] };
+            segment[i] = { weightedValues[i], weights[i] };
         return segment;
     };
 
@@ -390,25 +395,39 @@ auto MeshGradient::makeColorPatch(unsigned row, unsigned column, const Vector<We
 }
 
 // The two sums of the weighted mean at (u, v), with the terms of the points missing their alpha added in.
-std::pair<MeshGradient::Components, MeshGradient::Components> MeshGradient::weightedMean(const Patch& patch, float u, float v)
+std::pair<MeshGradient::Components, MeshGradient::Components> MeshGradient::weightedMean(uint32_t patchIndex, float u, float v) const
 {
-    auto color = patch.color.evaluate(cubicBernsteinPolynomialsAt(u), cubicBernsteinPolynomialsAt(v));
+    auto basisU = cubicBernsteinPolynomialsAt(u);
+    auto basisV = cubicBernsteinPolynomialsAt(v);
+    auto [weightedValues, weights] = m_colorPatches[patchIndex].evaluate(basisU, basisV);
 
     // Like interpolateAlphaPremulitplied(), premultiply the points missing their alpha by the interpolated alpha. If
     // every point is missing its alpha, they aren't premultiplied.
-    float alpha = color.weights[3] > 0 ? clampedAlpha(color.weightedValues[3] / color.weights[3]) : 1;
+    if (!m_colorPatchesMissingAlpha.isEmpty()) {
+        float alpha = weights[3] > 0 ? clampedAlpha(weightedValues[3] / weights[3]) : 1;
+        auto missingAlpha = m_colorPatchesMissingAlpha[patchIndex].evaluate(basisU, basisV);
+        weightedValues += missingAlpha.weightedValues * alpha;
+        weights += missingAlpha.weights * alpha;
+    }
 
-    auto weightedValues = color.weightedValues;
-    weightedValues += color.weightedValuesMissingAlpha * alpha;
-    auto weights = color.weights;
-    weights += color.weightsMissingAlpha * alpha;
     return { weightedValues, weights };
 }
 
 // The color at (u, v), in the interpolation color space. Components missing from every point that contributes are 0.
-auto MeshGradient::interpolatedColor(const Patch& patch, float u, float v) -> Components
+auto MeshGradient::interpolatedColor(uint32_t patchIndex, float u, float v) const -> Components
 {
-    auto [weightedValues, weights] = weightedMean(patch, u, v);
+    auto [weightedValues, weights] = weightedMean(patchIndex, u, v);
+
+    Components color;
+    bool hasComponentWithoutWeight = false;
+    for (size_t component = 0; component < 4; ++component) {
+        if (weights[component] > 0)
+            color[component] = weightedValues[component] / weights[component];
+        else
+            hasComponentWithoutWeight = true;
+    }
+    if (!hasComponentWithoutWeight)
+        return color;
 
     // At a point missing a component, the points that have it have no weight. The same goes along an edge between two
     // such points. interpolateColorComponents() takes the other color's value in this case, even at either end. To
@@ -420,16 +439,12 @@ auto MeshGradient::interpolatedColor(const Patch& patch, float u, float v) -> Co
     //       |         |
     //     C o---------o D
     static constexpr float nudge = 1.0f / 1024.0f;
-    auto [nudgedWeightedValues, nudgedWeights] = weightedMean(patch, u + (0.5f - u) * nudge, v + (0.5f - v) * nudge);
+    auto [nudgedWeightedValues, nudgedWeights] = weightedMean(patchIndex, u + (0.5f - u) * nudge, v + (0.5f - v) * nudge);
 
-    Components color;
     for (size_t component = 0; component < 4; ++component) {
         if (weights[component] > 0)
-            color[component] = weightedValues[component] / weights[component];
-        else if (nudgedWeights[component] > 0)
-            color[component] = nudgedWeightedValues[component] / nudgedWeights[component];
-        else
-            color[component] = 0;
+            continue;
+        color[component] = nudgedWeights[component] > 0 ? nudgedWeightedValues[component] / nudgedWeights[component] : 0;
     }
     return color;
 }
@@ -496,11 +511,9 @@ void MeshGradient::setRenderedImage(const IntSize& pixelSize, float scale, Ref<N
 //
 // D. Filip, R. Magedson and R. Markot, "Surface Algorithms Using Bounds on Derivatives" (1986)
 // https://doi.org/10.1016/0167-8396(86)90005-1
-unsigned MeshGradient::subdivisions(const Patch& patch, float scale) const
+unsigned MeshGradient::subdivisions(const PositionPatch& position, float scale) const
 {
     static constexpr unsigned maximumSubdivisions = 256;
-
-    auto& position = patch.position;
 
     float alongU = 0;
     float alongV = 0;
@@ -545,7 +558,7 @@ auto MeshGradient::triangles(float scale) const -> Vector<Triangle>
     Vector<unsigned> subdivisionsAlongU(FillWith { }, patchColumns, 1u);
     for (unsigned row = 0; row < patchRows; ++row) {
         for (unsigned column = 0; column < patchColumns; ++column) {
-            unsigned subdivisions = this->subdivisions(m_patches[row * patchColumns + column], scale);
+            unsigned subdivisions = this->subdivisions(m_positionPatches[row * patchColumns + column], scale);
             subdivisionsAlongV[row] = std::max(subdivisionsAlongV[row], subdivisions);
             subdivisionsAlongU[column] = std::max(subdivisionsAlongU[column], subdivisions);
         }
@@ -561,7 +574,7 @@ auto MeshGradient::triangles(float scale) const -> Vector<Triangle>
     for (unsigned row = 0; row < patchRows; ++row) {
         for (unsigned column = 0; column < patchColumns; ++column) {
             uint32_t patchIndex = row * patchColumns + column;
-            auto& patch = m_patches[patchIndex];
+            auto& positionPatch = m_positionPatches[patchIndex];
 
             // Evaluate the patch on an evenly spaced grid of (u, v), then split each grid cell into two triangles.
             unsigned columnsInGrid = subdivisionsAlongU[column];
@@ -572,7 +585,7 @@ auto MeshGradient::triangles(float scale) const -> Vector<Triangle>
                 float v = static_cast<float>(j) / rowsInGrid;
                 for (unsigned i = 0; i <= columnsInGrid; ++i) {
                     float u = static_cast<float>(i) / columnsInGrid;
-                    auto position = patch.position.evaluate(cubicBernsteinPolynomialsAt(u), cubicBernsteinPolynomialsAt(v));
+                    auto position = positionPatch.evaluate(cubicBernsteinPolynomialsAt(u), cubicBernsteinPolynomialsAt(v));
                     grid.append({ position.scaled(scale), u, v, patchIndex });
                 }
             }
@@ -599,7 +612,7 @@ auto MeshGradient::triangles(float scale) const -> Vector<Triangle>
 
 ResolvedPremultiplied<ColorComponents<float, 4>> MeshGradient::premultipliedColor(uint32_t patchIndex, float u, float v, ColorSpaceName colorSpace) const
 {
-    return toPremultipliedColor(m_colorInterpolationMethod, interpolatedColor(m_patches[patchIndex], u, v), colorSpace);
+    return toPremultipliedColor(m_colorInterpolationMethod, interpolatedColor(patchIndex, u, v), colorSpace);
 }
 
 TextStream& operator<<(TextStream& ts, const MeshGradient::Point& point)

@@ -72,14 +72,13 @@ struct RasterizerData {
 
 struct MeshUniforms {
     uint clampsToAlpha;
+    uint hasPointsMissingAlpha;
 };
 
 // Equivalent to MeshGradient::WeightedColor in MeshGradient.h.
 struct WeightedColor {
     float4 weightedValues;
     float4 weights;
-    float4 weightedValuesMissingAlpha;
-    float4 weightsMissingAlpha;
 };
 
 struct WeightedMean {
@@ -101,44 +100,58 @@ static WeightedColor evaluate(constant WeightedColor* controlValues, float4 basi
 {
     // Equivalent to MeshGradient::BicubicBezierPatch::evaluate() in MeshGradient.cpp.
 
-    WeightedColor result = { float4(0), float4(0), float4(0), float4(0) };
+    WeightedColor result = { float4(0), float4(0) };
     for (uint row = 0; row < 4; ++row) {
         for (uint column = 0; column < 4; ++column) {
             constant WeightedColor& controlValue = controlValues[row * 4 + column];
             float weight = basisV[row] * basisU[column];
             result.weightedValues += controlValue.weightedValues * weight;
             result.weights += controlValue.weights * weight;
-            result.weightedValuesMissingAlpha += controlValue.weightedValuesMissingAlpha * weight;
-            result.weightsMissingAlpha += controlValue.weightsMissingAlpha * weight;
         }
     }
     return result;
 }
 
-static WeightedMean weightedMean(constant WeightedColor* controlValues, float u, float v)
+static WeightedMean weightedMean(constant WeightedColor* controlValues, constant WeightedColor* controlValuesMissingAlpha, bool hasPointsMissingAlpha, float u, float v)
 {
     // Equivalent to MeshGradient::weightedMean() in MeshGradient.cpp.
 
-    WeightedColor color = evaluate(controlValues, cubicBernsteinPolynomialsAt(u), cubicBernsteinPolynomialsAt(v));
+    float4 basisU = cubicBernsteinPolynomialsAt(u);
+    float4 basisV = cubicBernsteinPolynomialsAt(v);
+    WeightedColor color = evaluate(controlValues, basisU, basisV);
 
-    float alpha = color.weights.a > 0 ? saturate(color.weightedValues.a / color.weights.a) : 1;
-    return { color.weightedValues + color.weightedValuesMissingAlpha * alpha, color.weights + color.weightsMissingAlpha * alpha };
+    if (hasPointsMissingAlpha) {
+        float alpha = color.weights.a > 0 ? saturate(color.weightedValues.a / color.weights.a) : 1;
+        WeightedColor missingAlpha = evaluate(controlValuesMissingAlpha, basisU, basisV);
+        color.weightedValues += missingAlpha.weightedValues * alpha;
+        color.weights += missingAlpha.weights * alpha;
+    }
+
+    return { color.weightedValues, color.weights };
 }
 
-static float4 interpolatedColor(constant WeightedColor* controlValues, float u, float v)
+static float4 interpolatedColor(constant WeightedColor* controlValues, constant WeightedColor* controlValuesMissingAlpha, bool hasPointsMissingAlpha, float u, float v)
 {
     // Equivalent to MeshGradient::interpolatedColor() in MeshGradient.cpp.
 
-    WeightedMean mean = weightedMean(controlValues, u, v);
-
-    const float nudge = 1.0 / 1024;
-    WeightedMean nudgedMean = weightedMean(controlValues, u + (0.5 - u) * nudge, v + (0.5 - v) * nudge);
+    WeightedMean mean = weightedMean(controlValues, controlValuesMissingAlpha, hasPointsMissingAlpha, u, v);
 
     float4 color = float4(0);
+    bool hasComponentWithoutWeight = false;
     for (int component = 0; component < 4; ++component) {
         if (mean.weights[component] > 0)
             color[component] = mean.weightedValues[component] / mean.weights[component];
-        else if (nudgedMean.weights[component] > 0)
+        else
+            hasComponentWithoutWeight = true;
+    }
+    if (!hasComponentWithoutWeight)
+        return color;
+
+    const float nudge = 1.0 / 1024;
+    WeightedMean nudgedMean = weightedMean(controlValues, controlValuesMissingAlpha, hasPointsMissingAlpha, u + (0.5 - u) * nudge, v + (0.5 - v) * nudge);
+
+    for (int component = 0; component < 4; ++component) {
+        if (mean.weights[component] <= 0 && nudgedMean.weights[component] > 0)
             color[component] = nudgedMean.weightedValues[component] / nudgedMean.weights[component];
     }
     return color;
@@ -156,11 +169,11 @@ static float4 toPremultipliedColor(float4 components, constant ColorConversionUn
     return float4(color * components.a, components.a);
 }
 
-static float4 premultipliedColor(constant WeightedColor* controlValues, uint patchIndex, float u, float v, constant ColorConversionUniforms& colorConversion)
+static float4 premultipliedColor(constant WeightedColor* controlValues, constant WeightedColor* controlValuesMissingAlpha, bool hasPointsMissingAlpha, uint patchIndex, float u, float v, constant ColorConversionUniforms& colorConversion)
 {
     // Equivalent to MeshGradient::premultipliedColor() in MeshGradient.cpp.
 
-    return toPremultipliedColor(interpolatedColor(controlValues + patchIndex * 16, u, v), colorConversion);
+    return toPremultipliedColor(interpolatedColor(controlValues + patchIndex * 16, controlValuesMissingAlpha + patchIndex * 16, hasPointsMissingAlpha, u, v), colorConversion);
 }
 
 static float4 clampedToAlpha(float4 color)
@@ -187,7 +200,7 @@ vertex RasterizerData meshGradientVertex(uint vertexID [[vertex_id]], constant V
 
 // Called for each pixel a triangle covers (even partly). Evaluates the color at the pixel's center from the (u, v) the
 // rasterizer interpolated there, and returns it premultiplied in the destination color space.
-fragment float4 meshGradientFragment(RasterizerData in [[stage_in]], constant WeightedColor* controlValues [[buffer(0)]], constant ColorConversionUniforms& colorConversion [[buffer(1)]], constant MeshUniforms& uniforms [[buffer(2)]])
+fragment float4 meshGradientFragment(RasterizerData in [[stage_in]], constant WeightedColor* controlValues [[buffer(0)]], constant ColorConversionUniforms& colorConversion [[buffer(1)]], constant MeshUniforms& uniforms [[buffer(2)]], constant WeightedColor* controlValuesMissingAlpha [[buffer(3)]])
 {
     // Equivalent to the body of the loop in drawTriangle() in MeshGradientRendererCPU.cpp, and writePixel().
 
@@ -195,7 +208,7 @@ fragment float4 meshGradientFragment(RasterizerData in [[stage_in]], constant We
     // covers still has its center evaluated, which can be outside the patch.
     float2 parameters = saturate(in.parameters);
 
-    float4 color = premultipliedColor(controlValues, in.patchIndex, parameters.x, parameters.y, colorConversion);
+    float4 color = premultipliedColor(controlValues, controlValuesMissingAlpha, uniforms.hasPointsMissingAlpha, in.patchIndex, parameters.x, parameters.y, colorConversion);
 
     if (uniforms.clampsToAlpha)
         color = clampedToAlpha(color);
@@ -215,16 +228,31 @@ static_assert(sizeof(ShaderVertex) == 20);
 // Matches `MeshUniforms` in the shader.
 struct ShaderMeshUniforms {
     uint32_t clampsToAlpha;
+    uint32_t hasPointsMissingAlpha;
 };
 
 // Matches `WeightedColor` in the shader.
 struct ShaderWeightedColor {
     simd_float4 weightedValues;
     simd_float4 weights;
-    simd_float4 weightedValuesMissingAlpha;
-    simd_float4 weightsMissingAlpha;
 };
-static_assert(sizeof(ShaderWeightedColor) == 64);
+static_assert(sizeof(ShaderWeightedColor) == 32);
+
+static RetainPtr<id<MTLBuffer>> makeControlValueBuffer(id<MTLDevice> device, const MeshGradient::ColorControlValues& controlValues)
+{
+    RetainPtr buffer = adoptNS([device newBufferWithLength:controlValues.size() * sizeof(ShaderWeightedColor) options:MTLResourceStorageModeShared]);
+    if (!buffer)
+        return nullptr;
+
+    auto toSIMD = [](auto& components) {
+        return simd_float4 { components[0], components[1], components[2], components[3] };
+    };
+    auto contents = unsafeMakeSpan(static_cast<ShaderWeightedColor*>([buffer contents]), controlValues.size());
+    std::ranges::copy(controlValues | std::views::transform([&](auto& color) {
+        return ShaderWeightedColor { toSIMD(color.weightedValues), toSIMD(color.weights) };
+    }), contents.begin());
+    return buffer;
+}
 
 static std::optional<MTLPixelFormat> texturePixelFormat(PixelFormat format)
 {
@@ -345,7 +373,8 @@ bool MeshGradientRendererMetal::render(const MeshGradient& gradient, const Pixel
         return false;
 
     bool clampsToAlpha = destination.format.pixelFormat == PixelFormat::RGBA8;
-    ShaderMeshUniforms meshUniforms { clampsToAlpha };
+    auto controlValuesMissingAlpha = gradient.colorControlValuesMissingAlpha();
+    ShaderMeshUniforms meshUniforms { clampsToAlpha, controlValuesMissingAlpha.size() > 0 };
 
     @autoreleasepool {
         RetainPtr multisampledTexture = makeTexture(m_device.get(), *pixelFormat, size, sampleCount);
@@ -377,21 +406,16 @@ bool MeshGradientRendererMetal::render(const MeshGradient& gradient, const Pixel
             auto vertexBytes = asByteSpan(vertices.span());
             RetainPtr vertexBuffer = adoptNS([m_device newBufferWithBytes:vertexBytes.data() length:vertexBytes.size() options:MTLResourceStorageModeShared]);
 
-            auto controlValues = gradient.colorControlValues();
-            RetainPtr controlValueBuffer = adoptNS([m_device newBufferWithLength:controlValues.size() * sizeof(ShaderWeightedColor) options:MTLResourceStorageModeShared]);
+            RetainPtr controlValueBuffer = makeControlValueBuffer(m_device.get(), gradient.colorControlValues());
 
-            if (!vertexBuffer || !controlValueBuffer) {
+            // The shader only reads the buffer for the points missing their alpha when there are some. Otherwise any buffer
+            // will do there.
+            RetainPtr controlValueBufferMissingAlpha = meshUniforms.hasPointsMissingAlpha ? makeControlValueBuffer(m_device.get(), controlValuesMissingAlpha) : controlValueBuffer;
+
+            if (!vertexBuffer || !controlValueBuffer || !controlValueBufferMissingAlpha) {
                 [renderEncoder endEncoding];
                 return false;
             }
-
-            auto toSIMD = [](auto& components) {
-                return simd_float4 { components[0], components[1], components[2], components[3] };
-            };
-            auto controlValueBufferContents = unsafeMakeSpan(static_cast<ShaderWeightedColor*>([controlValueBuffer contents]), controlValues.size());
-            std::ranges::copy(controlValues | std::views::transform([&](auto& color) {
-                return ShaderWeightedColor { toSIMD(color.weightedValues), toSIMD(color.weights), toSIMD(color.weightedValuesMissingAlpha), toSIMD(color.weightsMissingAlpha) };
-            }), controlValueBufferContents.begin());
 
             simd_float2 viewportSize { static_cast<float>(size.width()), static_cast<float>(size.height()) };
 
@@ -401,6 +425,7 @@ bool MeshGradientRendererMetal::render(const MeshGradient& gradient, const Pixel
             [renderEncoder setFragmentBuffer:controlValueBuffer.get() offset:0 atIndex:0];
             [renderEncoder setFragmentBytes:&*colorConversion length:sizeof(MetalColorConversionUniforms) atIndex:1];
             [renderEncoder setFragmentBytes:&meshUniforms length:sizeof(meshUniforms) atIndex:2];
+            [renderEncoder setFragmentBuffer:controlValueBufferMissingAlpha.get() offset:0 atIndex:3];
             [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangle vertexStart:0 vertexCount:vertices.size()];
         }
         [renderEncoder endEncoding];
