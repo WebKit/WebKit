@@ -5479,6 +5479,7 @@ using WebCore::PredefinedColorSpace = WebCore::PredefinedColorSpace
     Ref<WebCore::SharedBuffer> data()
     String mimeType()
     URL url()
+    std::optional<WebCore::Color> surfaceColor()
 }
 
 class WebCore::ModelPlayerAnimationState {

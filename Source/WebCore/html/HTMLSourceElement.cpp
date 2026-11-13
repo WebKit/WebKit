@@ -241,6 +241,7 @@ void HTMLSourceElement::attributeChanged(const QualifiedName& name, const AtomSt
         break;
 #if ENABLE(MODEL_ELEMENT)
     case AttributeNames::srcAttr:
+    case AttributeNames::surfacecolorAttr:
         if (RefPtr parent = dynamicDowncast<HTMLModelElement>(parentElement()))
             parent->sourcesChanged();
         break;

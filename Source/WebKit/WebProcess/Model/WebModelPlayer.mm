@@ -435,7 +435,8 @@ void WebModelPlayer::loadHostedModel(WebCore::NodeIdentifier nodeID, WebCore::Mo
 
     hosted.retainedData = modelSource.data()->createNSData();
     Ref protectedThis { *this };
-    if ([hosted.loader loadModel:hosted.retainedData.get() mimeType:modelSource.mimeType().createNSString().get()]) {
+    RetainPtr surfaceColor = modelSource.surfaceColor() ? WebCore::cachedCGColor(*modelSource.surfaceColor()) : nullptr;
+    if ([hosted.loader loadModel:hosted.retainedData.get() mimeType:modelSource.mimeType().createNSString().get() surfaceColor:surfaceColor.get()]) {
 #if ENABLE(SPATIAL_PORTAL)
         for (auto& dependent : m_hostedModels.values()) {
             if (dependent->anchorNode == nodeID)
