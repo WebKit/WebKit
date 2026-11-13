@@ -31,7 +31,10 @@
 #include "SVGElementTypeHelpers.h"
 #include "SVGTextBoxPainter.h"
 #include "VisiblePosition.h"
+#include <unicode/ubrk.h>
 #include <wtf/MathExtras.h>
+#include <wtf/text/TextBreakIterator.h>
+#include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 
@@ -204,6 +207,57 @@ void SVGTextQuery::modifyStartEndPositionsRespectingLigatures(Data* queryData, c
     endPosition = fragmentOffsetInBox;
 }
 
+// https://w3c.github.io/svgwg/svg2-draft/text.html#TermFindTypographicCharacterForCharacter
+// Same grapheme cluster boundaries as SVGTextLayoutAlgorithm::collectTextContent().
+class TypographicCharacterBoundaries {
+public:
+    explicit TypographicCharacterBoundaries(StringView text)
+        : m_text(text)
+    {
+        if (!text.is8Bit())
+            m_clusterIterator.emplace(text);
+    }
+
+    // Start of the typographic character containing the character at position, without leaving the fragment.
+    unsigned start(const SVGTextFragment& fragment, unsigned position)
+    {
+        if (!position)
+            return 0;
+        unsigned offset = fragment.characterOffset + position;
+        if (!m_clusterIterator)
+            return isLineFeedAfterCarriageReturn(offset) ? position - 1 : position;
+        auto boundary = ubrk_preceding(*m_clusterIterator, offset + 1);
+        if (boundary == UBRK_DONE)
+            return 0;
+        return std::max<unsigned>(boundary, fragment.characterOffset) - fragment.characterOffset;
+    }
+
+    // End of the typographic character containing the character before position, without leaving the fragment.
+    unsigned end(const SVGTextFragment& fragment, unsigned position)
+    {
+        ASSERT(position);
+        if (position >= fragment.length)
+            return position;
+        unsigned offset = fragment.characterOffset + position;
+        if (!m_clusterIterator)
+            return isLineFeedAfterCarriageReturn(offset) ? position + 1 : position;
+        auto boundary = ubrk_following(*m_clusterIterator, offset - 1);
+        if (boundary == UBRK_DONE)
+            return fragment.length;
+        return std::min<unsigned>(boundary - fragment.characterOffset, fragment.length);
+    }
+
+private:
+    // Latin-1 has no combining marks, so every character starts a grapheme cluster except a line feed after a carriage return.
+    bool isLineFeedAfterCarriageReturn(unsigned offset) const
+    {
+        return offset && m_text[offset] == newlineCharacter && m_text[offset - 1] == carriageReturn;
+    }
+
+    StringView m_text;
+    std::optional<NonSharedCharacterBreakIterator> m_clusterIterator;
+};
+
 // Identity for lengthAdjust="spacing", which widens the gaps rather than the glyphs.
 NODELETE static inline float lengthAdjustInlineScale(const SVGTextQuery::Data& queryData, const SVGTextFragment& fragment)
 {
@@ -331,6 +385,7 @@ bool SVGTextQuery::startPositionOfCharacterCallback(Data* queryData, const SVGTe
     unsigned endPosition = startPosition + 1;
     if (!mapStartEndPositionsIntoFragmentCoordinates(queryData, fragment, startPosition, endPosition))
         return false;
+    startPosition = TypographicCharacterBoundaries { queryData->textRenderer->text() }.start(fragment, startPosition);
 
     data->startPosition = FloatPoint(fragment.x, fragment.y);
 
@@ -393,6 +448,7 @@ bool SVGTextQuery::endPositionOfCharacterCallback(Data* queryData, const SVGText
     unsigned endPosition = startPosition + 1;
     if (!mapStartEndPositionsIntoFragmentCoordinates(queryData, fragment, startPosition, endPosition))
         return false;
+    endPosition = TypographicCharacterBoundaries { queryData->textRenderer->text() }.end(fragment, endPosition);
 
     data->endPosition = FloatPoint(fragment.x, fragment.y);
 
@@ -405,7 +461,7 @@ bool SVGTextQuery::endPositionOfCharacterCallback(Data* queryData, const SVGText
             data->endPosition.move(0, fragment.baselineShift);
     }
 
-    SVGTextMetrics metrics = SVGTextMetrics::measureCharacterRange(*queryData->textRenderer, fragment.characterOffset, startPosition + 1);
+    SVGTextMetrics metrics = SVGTextMetrics::measureCharacterRange(*queryData->textRenderer, fragment.characterOffset, endPosition);
     if (queryData->isVerticalText)
         data->endPosition.move(0, metrics.height());
     else
@@ -492,7 +548,7 @@ SPECIALIZE_TYPE_TRAITS_SVGTEXTQUERY_DATA(ExtentOfCharacterData, ExtentOfCharacte
 
 namespace WebCore {
 
-static inline void calculateGlyphBoundaries(SVGTextQuery::Data* queryData, const SVGTextFragment& fragment, unsigned startPosition, FloatRect& extent)
+static inline void calculateGlyphBoundaries(SVGTextQuery::Data* queryData, const SVGTextFragment& fragment, unsigned startPosition, unsigned endPosition, FloatRect& extent)
 {
     float scalingFactor = queryData->textRenderer->scalingFactor();
     ASSERT(scalingFactor);
@@ -507,7 +563,7 @@ static inline void calculateGlyphBoundaries(SVGTextQuery::Data* queryData, const
             extent.move(metrics.width(), 0);
     }
 
-    SVGTextMetrics metrics = SVGTextMetrics::measureCharacterRange(*queryData->textRenderer, fragment.characterOffset + startPosition, 1);
+    SVGTextMetrics metrics = SVGTextMetrics::measureCharacterRange(*queryData->textRenderer, fragment.characterOffset + startPosition, endPosition - startPosition);
     extent.setSize(FloatSize(metrics.width(), metrics.height()));
 
     AffineTransform fragmentTransform;
@@ -539,8 +595,11 @@ bool SVGTextQuery::extentOfCharacterCallback(Data* queryData, const SVGTextFragm
     unsigned endPosition = startPosition + 1;
     if (!mapStartEndPositionsIntoFragmentCoordinates(queryData, fragment, startPosition, endPosition))
         return false;
+    TypographicCharacterBoundaries boundaries { queryData->textRenderer->text() };
+    startPosition = boundaries.start(fragment, startPosition);
+    endPosition = boundaries.end(fragment, endPosition);
 
-    calculateGlyphBoundaries(queryData, fragment, startPosition, data->extent);
+    calculateGlyphBoundaries(queryData, fragment, startPosition, endPosition, data->extent);
     return true;
 }
 
@@ -577,14 +636,14 @@ bool SVGTextQuery::characterNumberAtPositionCallback(Data* queryData, const SVGT
     if (!fragmentExtents.contains(data->position))
         return false;
 
-    // Iterate through the glyphs in this fragment, and check if their extents
+    // Iterate through the typographic characters in this fragment, and check if their extents
     // contain the query point.
     FloatRect extent;
-    auto& textMetrics = queryData->textRenderer->textMetrics();
-    unsigned textMetricsOffset = fragment.metricsListOffset;
+    TypographicCharacterBoundaries boundaries { queryData->textRenderer->text() };
     unsigned fragmentOffset = 0;
     while (fragmentOffset < fragment.length) {
-        calculateGlyphBoundaries(queryData, fragment, fragmentOffset, extent);
+        unsigned endPosition = boundaries.end(fragment, fragmentOffset + 1);
+        calculateGlyphBoundaries(queryData, fragment, fragmentOffset, endPosition, extent);
         if (extent.contains(data->position)) {
             // Compute the character offset of the glyph within the text box
             // and add to processedCharacters.
@@ -592,8 +651,7 @@ bool SVGTextQuery::characterNumberAtPositionCallback(Data* queryData, const SVGT
             data->processedCharacters += characterOffset - data->textBox->start();
             return true;
         }
-        fragmentOffset += textMetrics[textMetricsOffset].length();
-        ++textMetricsOffset;
+        fragmentOffset = endPosition;
     }
     return false;
 }
