@@ -231,8 +231,7 @@ bool ResizeObserver::isReachableFromOpaqueRoots(JSC::AbstractSlotVisitor& visito
     Locker locker { m_observationTargetsLock };
 
     for (const auto& weakTarget : m_activeObservationTargets) {
-        RefPtr target = weakTarget.get();
-        if (target && containsWebCoreOpaqueRoot(visitor, target.get()))
+        SUPPRESS_UNCOUNTED_LOCAL if (auto* target = weakTarget.get(); target && containsWebCoreOpaqueRoot(visitor, target))
             return true;
     }
     for (const auto& weakTarget : m_targetsWaitingForFirstObservation) {
