@@ -141,8 +141,10 @@ void FormListedElement::formOwnerRemovedFromTree(const Node& formRoot)
     }
 
     // We are no longer in the same tree as our form owner so clear our owner.
-    if (!*formHasSameRootNode)
+    if (!*formHasSameRootNode) {
         setForm(nullptr);
+        resetFormOwner();
+    }
 }
 
 void FormListedElement::setFormInternal(RefPtr<HTMLFormElement>&& newForm)
