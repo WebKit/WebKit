@@ -49,13 +49,23 @@ Ref<InternalObserverFromScript> InternalObserverFromScript::create(ScriptExecuti
 
 void InternalObserverFromScript::next(JSC::JSValue value)
 {
-    if (RefPtr next = m_next)
+    RefPtr<SubscriptionObserverCallback> next;
+    {
+        Locker locker { m_callbacksLock };
+        next = m_next;
+    }
+    if (next)
         next->invoke(value);
 }
 
 void InternalObserverFromScript::error(JSC::JSValue value)
 {
-    if (RefPtr error = m_error) {
+    RefPtr<SubscriptionObserverCallback> error;
+    {
+        Locker locker { m_callbacksLock };
+        error = m_error;
+    }
+    if (error) {
         error->invoke(value);
         return;
     }
@@ -65,22 +75,43 @@ void InternalObserverFromScript::error(JSC::JSValue value)
 
 void InternalObserverFromScript::complete()
 {
-    if (RefPtr complete = m_complete)
+    RefPtr<VoidCallback> complete;
+    {
+        Locker locker { m_callbacksLock };
+        complete = m_complete;
+    }
+    if (complete)
         complete->invoke();
 
     m_active = false;
 }
 
+void InternalObserverFromScript::stop()
+{
+    RefPtr<SubscriptionObserverCallback> next;
+    RefPtr<SubscriptionObserverCallback> error;
+    RefPtr<VoidCallback> complete;
+    {
+        Locker locker { m_callbacksLock };
+        next = std::exchange(m_next, nullptr);
+        error = std::exchange(m_error, nullptr);
+        complete = std::exchange(m_complete, nullptr);
+    }
+    // The callbacks are destroyed here, outside of the lock.
+}
+
 void InternalObserverFromScript::visitAdditionalChildrenInGCThread(JSC::AbstractSlotVisitor& visitor) const
 {
-    if (RefPtr next = m_next)
-        next->visitJSFunctionInGCThread(visitor);
+    // Do not ref anything in this function, which runs in a GC thread concurrently to the main thread.
+    Locker locker { m_callbacksLock };
+    if (m_next)
+        SUPPRESS_UNCOUNTED_ARG m_next->visitJSFunctionInGCThread(visitor);
 
-    if (RefPtr error = m_error)
-        error->visitJSFunctionInGCThread(visitor);
+    if (m_error)
+        SUPPRESS_UNCOUNTED_ARG m_error->visitJSFunctionInGCThread(visitor);
 
-    if (RefPtr complete = m_complete)
-        complete->visitJSFunctionInGCThread(visitor);
+    if (m_complete)
+        SUPPRESS_UNCOUNTED_ARG m_complete->visitJSFunctionInGCThread(visitor);
 }
 
 InternalObserverFromScript::InternalObserverFromScript(ScriptExecutionContext& context, RefPtr<JSSubscriptionObserverCallback> callback)

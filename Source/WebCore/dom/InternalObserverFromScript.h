@@ -27,6 +27,7 @@
 
 #include "InternalObserver.h"
 #include "VoidCallback.h"
+#include <wtf/Lock.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -52,17 +53,14 @@ public:
 
 protected:
     // ActiveDOMObject
-    void stop() final
-    {
-        m_next = nullptr;
-        m_error = nullptr;
-        m_complete = nullptr;
-    }
+    void stop() final;
 
 private:
-    RefPtr<SubscriptionObserverCallback> m_next;
-    RefPtr<SubscriptionObserverCallback> m_error;
-    RefPtr<VoidCallback> m_complete;
+    // The callbacks are visited from GC threads, so they can only be changed while holding m_callbacksLock.
+    mutable Lock m_callbacksLock;
+    RefPtr<SubscriptionObserverCallback> m_next WTF_GUARDED_BY_LOCK(m_callbacksLock);
+    RefPtr<SubscriptionObserverCallback> m_error WTF_GUARDED_BY_LOCK(m_callbacksLock);
+    RefPtr<VoidCallback> m_complete WTF_GUARDED_BY_LOCK(m_callbacksLock);
 };
 
 } // namespace WebCore
