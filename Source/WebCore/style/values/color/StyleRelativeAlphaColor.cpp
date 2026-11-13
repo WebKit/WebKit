@@ -90,6 +90,19 @@ bool containsCurrentColor(const RelativeAlphaColor& value)
     return WebCore::Style::containsCurrentColor(value.origin);
 }
 
+bool containsCurrentAccentColor(const RelativeAlphaColor& value)
+{
+    return WebCore::Style::containsCurrentAccentColor(value.origin);
+}
+
+Color replaceCurrentAccentColor(const RelativeAlphaColor& relativeAlphaColor, const Color& replaced)
+{
+    return RelativeAlphaColor {
+        .origin = replaceCurrentAccentColor(relativeAlphaColor.origin, replaced),
+        .alpha = relativeAlphaColor.alpha
+    };
+}
+
 // MARK: - Serialization
 
 void serializationForCSSTokenization(StringBuilder& builder, const CSS::SerializationContext& context, const RelativeAlphaColor& value)

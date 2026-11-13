@@ -41,6 +41,7 @@
 #include "GraphicsContext.h"
 #include "HTMLCanvasElement.h"
 #include "NodeDocument.h"
+#include "StyleComputedStyle.h"
 #include "StylePropertiesInlines.h"
 
 #if ENABLE(OFFSCREEN_CANVAS)
@@ -56,10 +57,20 @@ public:
     {
     }
 
+    Color accentColor() const final;
     Color currentColor() const final;
 
     const Ref<HTMLCanvasElement> m_canvasElement;
 };
+
+Color CanvasStyleColorResolutionDelegate::accentColor() const
+{
+    if (CheckedPtr computedStyle = m_canvasElement->computedStyle())
+        return computedStyle->accentColorResolvingCurrentColor();
+
+    static NeverDestroyed<Color> defaultColor { CSS::colorFromKeyword(CSSValueID::Accentcolor, { }) };
+    return defaultColor;
+}
 
 Color CanvasStyleColorResolutionDelegate::currentColor() const
 {

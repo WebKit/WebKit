@@ -155,6 +155,7 @@ bool SVGFEDropShadowElement::taintsOrigin() const
     CheckedPtr renderer = this->renderer();
     if (!renderer)
         return false;
+    // FIXME: the spec doesn't mention AccentColor, but should it include AccentColor too?
     return renderer->style().floodColor().containsCurrentColor();
 }
 

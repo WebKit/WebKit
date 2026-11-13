@@ -48,12 +48,12 @@ bool Filter::isReferenceFilter() const
     return size() == 1 && WTF::holdsAlternative<FilterReference>(first());
 }
 
-bool Filter::hasFilterThatRequiresRepaintForCurrentColorChange() const
+bool Filter::hasFilterThatRequiresRepaintForStyleDependentColorsChange() const
 {
     return std::ranges::any_of(*this, [](auto& filterValue) {
         return WTF::switchOn(filterValue,
             [](auto& op) {
-                return op->requiresRepaintForCurrentColorChange();
+                return op->requiresRepaintForStyleDependentColorsChange();
             }
         );
     });

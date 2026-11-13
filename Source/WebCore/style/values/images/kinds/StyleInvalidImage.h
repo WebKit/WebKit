@@ -55,7 +55,7 @@ private:
     void load(CachedResourceLoader&, const ResourceLoaderOptions&) final;
     bool knownToBeOpaque(const RenderElement&) const { return false; }
     bool canDraw(const RenderElement&) const final { return false; }
-    bool containsCurrentColor() const final { return false; }
+    bool containsStyleDependentColors() const final { return false; }
     bool canDrawAtSize(const RenderElement&, const FloatSize&) const final { return false; }
 
     ImageDrawResult draw(GraphicsContext&, const RenderElement&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& source, bool isForFirstLine) const final;

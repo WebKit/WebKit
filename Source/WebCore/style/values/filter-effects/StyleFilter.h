@@ -96,8 +96,9 @@ struct Filter : ListOrNone<FilterValueList> {
 
     using ListOrNone<FilterValueList>::ListOrNone;
 
-    // True if any filter requires a repaint when `currentColor` changes.
-    bool hasFilterThatRequiresRepaintForCurrentColorChange() const;
+    // True if any filter requires a repaint when a color that refers to another color in a style changes.
+    // e.g currentColor and AccentColor.
+    bool hasFilterThatRequiresRepaintForStyleDependentColorsChange() const;
     // True if any filter can cause the the alpha channel of any pixel to change.
     bool hasFilterThatAffectsOpacity() const;
     // True if any filter can cause the value of one pixel to affect the value of another pixel, such as blur.

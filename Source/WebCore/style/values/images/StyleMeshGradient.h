@@ -142,7 +142,7 @@ template<size_t I> const auto& get(const MeshGradient& value)
 
 DEFINE_TYPE_MAPPING(CSS::MeshGradient, MeshGradient)
 
-bool containsCurrentColor(const MeshGradient&);
+bool containsStyleDependentColors(const MeshGradient&);
 
 Ref<WebCore::MeshGradient> createPlatformMeshGradient(const MeshGradient&, FloatSize, const ComputedStyle&);
 

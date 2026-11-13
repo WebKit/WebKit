@@ -166,7 +166,7 @@ template<size_t I> const auto& get(const SVGPaint::URLColor& value)
         return value.color;
 }
 
-bool containsCurrentColor(const Style::SVGPaint&);
+bool containsStyleDependentColors(const Style::SVGPaint&);
 
 // MARK: - Conversion
 

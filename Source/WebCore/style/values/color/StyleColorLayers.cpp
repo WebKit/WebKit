@@ -92,6 +92,21 @@ bool containsCurrentColor(const ColorLayers& colorLayers)
     });
 }
 
+bool containsCurrentAccentColor(const ColorLayers& colorLayers)
+{
+    return std::ranges::any_of(colorLayers.colors, [&](auto& color) {
+        return WebCore::Style::containsCurrentAccentColor(color);
+    });
+}
+
+Color replaceCurrentAccentColor(const ColorLayers& colorLayers, const Color& replaced)
+{
+    return ColorLayers {
+        .blendMode = colorLayers.blendMode,
+        .colors = colorLayers.colors.map([&](const Color& color) { return replaceCurrentAccentColor(color, replaced); })
+    };
+}
+
 // MARK: - Serialization
 
 void serializationForCSSTokenization(StringBuilder& builder, const CSS::SerializationContext& context, const ColorLayers& value)

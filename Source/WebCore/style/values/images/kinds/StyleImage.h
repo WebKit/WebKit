@@ -112,7 +112,7 @@ public:
     virtual ImageRenditionOptions renditionOptionsForRenderer(const RenderElement&, ImageRenditionOptions rendition) const { return rendition; }
     virtual bool knownToBeOpaque(const RenderElement&) const = 0;
     virtual bool canDraw(const RenderElement&) const { return true; }
-    virtual bool containsCurrentColor() const = 0;
+    virtual bool containsStyleDependentColors() const = 0;
     virtual bool canDrawAtSize(const RenderElement&, const FloatSize& size) const { return !size.isEmpty(); }
     virtual bool drawsSVGImage() const { return false; }
     virtual WTF::String accessibilityDescription() const { return { }; }

@@ -37,13 +37,14 @@ namespace CSS {
 
 enum class LightDarkColorAppearance : bool;
 
-// Used to resolves a CSS::Color to a WebCore::Color (platform color) without going through Style::Color / style building.
+// Used to resolve a CSS::Color to a WebCore::Color (platform color) without going through Style::Color / style building.
 
 class WEBCORE_EXPORT PlatformColorResolutionDelegate {
 public:
     virtual ~PlatformColorResolutionDelegate();
 
     // Colors to use that usually get resolved dynamically using Document & StyleComputedStyle.
+    virtual WebCore::Color accentColor() const;               // For CSSValueID::Accentcolor
     virtual WebCore::Color currentColor() const;              // For CSSValueID::Currentcolor
     virtual WebCore::Color internalDocumentTextColor() const; // For CSSValueID::InternalDocumentTextColor
     virtual WebCore::Color webkitLink() const;                // For CSSValueID::WebkitLink [Style::ForVisitedLink::No]
@@ -78,12 +79,18 @@ struct PlatformColorResolutionState {
     //   2. If a delegate has been set, calling the associated delegate function,
     //      storing the result below, and returning that color.
     //   3. Returning the invalid `Color` value.
+    mutable std::optional<WebCore::Color> resolvedAccentColor = std::nullopt;
     mutable std::optional<WebCore::Color> resolvedCurrentColor = std::nullopt;
     mutable std::optional<WebCore::Color> resolvedInternalDocumentTextColor = std::nullopt;
     mutable std::optional<WebCore::Color> resolvedWebkitLink = std::nullopt;
     mutable std::optional<WebCore::Color> resolvedWebkitLinkVisited = std::nullopt;
     mutable std::optional<WebCore::Color> resolvedWebkitActiveLink = std::nullopt;
     mutable std::optional<WebCore::Color> resolvedWebkitFocusRingColor = std::nullopt;
+
+    WebCore::Color accentColor() const
+    {
+        return resolveColor(resolvedAccentColor, &PlatformColorResolutionDelegate::accentColor);
+    }
 
     WebCore::Color currentColor() const
     {

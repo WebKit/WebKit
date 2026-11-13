@@ -92,7 +92,7 @@ public:
     Resolution<> imageResolution() const final;
     bool knownToBeOpaque(const RenderElement&) const final;
     bool canDraw(const RenderElement&) const final;
-    bool containsCurrentColor() const final { return false; }
+    bool containsStyleDependentColors() const final { return false; }
     bool canDrawAtSize(const RenderElement&, const FloatSize&) const final;
     bool drawsSVGImage() const final;
     WTF::String accessibilityDescription() const final;

@@ -60,7 +60,7 @@ private:
     ImageDrawResult draw(GraphicsContext&, const RenderElement&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& source, bool isForFirstLine) const final;
     ImageDrawResult drawAsPattern(GraphicsContext&, const RenderElement&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& tile, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, bool isForFirstLine) const final;
     bool knownToBeOpaque(const RenderElement&) const final;
-    bool containsCurrentColor() const final;
+    bool containsStyleDependentColors() const final;
     void didAddClient(RenderElement&) final { }
     void didRemoveClient(RenderElement&) final { }
 
@@ -68,7 +68,7 @@ private:
     Ref<WebCore::MeshGradient> gradientForSize(const RenderElement&, FloatSize, bool isForFirstLine, CachedGradient*&) const;
 
     Gradient m_gradient;
-    bool m_containsCurrentColor { false };
+    bool m_containsStyleDependentColors { false };
     mutable GeneratedImageCache<WebCore::MeshGradient> m_gradients;
 };
 

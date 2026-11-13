@@ -162,14 +162,14 @@ Ref<WebCore::MeshGradient> createPlatformMeshGradient(const MeshGradient& gradie
     return WebCore::MeshGradient::create(gradient.colorInterpolationMethod.method.value, rows, columns, WTF::move(points), backgroundColor);
 }
 
-bool containsCurrentColor(const MeshGradient& gradient)
+bool containsStyleDependentColors(const MeshGradient& gradient)
 {
-    if (gradient.backgroundColor && containsCurrentColor(*gradient.backgroundColor))
+    if (gradient.backgroundColor && containsStyleDependentColors(*gradient.backgroundColor))
         return true;
 
     return std::ranges::any_of(gradient.rows, [](auto& row) {
         return std::ranges::any_of(row, [](auto& point) {
-            return containsCurrentColor(point.color);
+            return containsStyleDependentColors(point.color);
         });
     });
 }

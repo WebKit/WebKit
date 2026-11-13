@@ -287,9 +287,9 @@ FloatRect MultiImage::mapChangedRectToSource(const RenderElement& renderer, Conc
     return protect(m_selectedImage)->mapChangedRectToSource(renderer, concreteObjectSize, changedRect);
 }
 
-bool MultiImage::containsCurrentColor() const
+bool MultiImage::containsStyleDependentColors() const
 {
-    return m_selectedImage && protect(m_selectedImage)->containsCurrentColor();
+    return m_selectedImage && protect(m_selectedImage)->containsStyleDependentColors();
 }
 
 } // namespace Style

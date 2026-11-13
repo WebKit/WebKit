@@ -117,7 +117,7 @@ struct BorderData {
     const Style::CornerShapeValue& bottomLeftCornerShape() const LIFETIME_BOUND { return cornerShapes.bottomLeft(); }
     const Style::CornerShapeValue& bottomRightCornerShape() const LIFETIME_BOUND { return cornerShapes.bottomRight(); }
 
-    bool containsCurrentColor() const;
+    bool containsStyleDependentColors() const;
 
     bool operator==(const BorderData&) const = default;
 

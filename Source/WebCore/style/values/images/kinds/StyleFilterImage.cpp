@@ -243,10 +243,10 @@ InterpolationQuality FilterImage::interpolationQualityForImageDraw(GraphicsConte
     return ImageQualityController::chooseInterpolationQuality(context, renderer, calculateImageBufferBackendSize(size, 1), layer, size);
 }
 
-bool FilterImage::containsCurrentColor() const
+bool FilterImage::containsStyleDependentColors() const
 {
-    return (m_image && protect(m_image)->containsCurrentColor())
-        || m_filter.hasFilterThatRequiresRepaintForCurrentColorChange();
+    return (m_image && protect(m_image)->containsStyleDependentColors())
+        || m_filter.hasFilterThatRequiresRepaintForStyleDependentColorsChange();
 }
 
 NaturalDimensions FilterImage::naturalDimensions(const RenderElement& renderer, const ImageSizingContext& context) const

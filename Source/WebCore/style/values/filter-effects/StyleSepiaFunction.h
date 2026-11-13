@@ -47,7 +47,7 @@ struct Sepia {
 
     NODELETE static Sepia passthroughForInterpolation();
 
-    constexpr bool requiresRepaintForCurrentColorChange() const { return false; }
+    constexpr bool requiresRepaintForStyleDependentColorsChange() const { return false; }
     constexpr bool affectsOpacity() const { return false; }
     constexpr bool movesPixels() const { return false; }
     constexpr bool shouldBeRestrictedBySecurityOrigin() const { return false; }
