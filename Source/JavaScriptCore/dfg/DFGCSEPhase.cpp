@@ -583,6 +583,8 @@ private:
                         case Array::Float16Array:
                         case Array::Float32Array:
                         case Array::Float64Array:
+                        case Array::BigInt64Array:
+                        case Array::BigUint64Array:
                             if (!mode.isInBounds())
                                 break;
                             heap = HeapLocation(
