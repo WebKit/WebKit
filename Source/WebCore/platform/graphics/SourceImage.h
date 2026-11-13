@@ -57,6 +57,7 @@ public:
     NODELETE ImageBuffer* imageBufferIfExists() const;
     ImageBuffer* imageBuffer() const;
 
+    bool isResolved() const;
     RenderingResourceIdentifier imageIdentifier() const;
     IntSize size() const;
 

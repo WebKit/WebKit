@@ -199,7 +199,10 @@ void RecorderImpl::clipTransformedPath(const AffineTransform& pathTransform, con
 void RecorderImpl::drawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter& filter, FilterResults&)
 {
     appendStateChangeItemIfNecessary();
-    m_items.append(DrawFilteredImageBuffer(sourceImage, sourceImageRect, filter));
+    std::optional<SourceImageBuffer> source;
+    if (sourceImage)
+        source = Ref { *sourceImage };
+    m_items.append(DrawFilteredImageBuffer(WTF::move(source), sourceImageRect, filter));
 }
 
 void RecorderImpl::drawGlyphs(const Font& font, std::span<const GlyphBufferGlyph> glyphs, std::span<const GlyphBufferAdvance> advances, const FloatPoint& localAnchor, FontSmoothingMode smoothingMode)
