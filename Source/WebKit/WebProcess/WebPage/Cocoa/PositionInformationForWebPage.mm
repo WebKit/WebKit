@@ -40,6 +40,7 @@
 #import <WebCore/DocumentQuirks.h>
 #import <WebCore/Editor.h>
 #import <WebCore/Element.h>
+#import <WebCore/ElementChildIteratorInlines.h>
 #import <WebCore/ElementInlines.h>
 #import <WebCore/EventHandler.h>
 #import <WebCore/EventNames.h>
@@ -56,6 +57,7 @@
 #import <WebCore/HTMLSelectElement.h>
 #import <WebCore/HTMLTextAreaElement.h>
 #import <WebCore/HTMLVideoElement.h>
+#import <WebCore/HitTestLocation.h>
 #import <WebCore/HitTestRequest.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/ImageOverlay.h>
@@ -89,8 +91,150 @@
 #import <WebCore/SpatialPortalController.h>
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/PositionInformationForWebPageAdditions.mm>
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+
+namespace WebKit {
+
+static bool isRangeInput(const RefPtr<WebCore::Node>&);
+static bool isARIASlider(const WebCore::Element&);
+
+static constexpr float minimumComfortableDimension = 48;
+static constexpr float hitAreaExpansion = 12.5;
+static constexpr unsigned maximumARIASliderDepthBelowTrack = 3;
+
+static WebCore::FloatPoint pointAdjustedIntoRect(WebCore::FloatPoint point, const WebCore::FloatRect& rect)
+{
+    auto adjustedCoordinate = [](float coordinate, float minimum, float maximum) {
+        if (maximum - minimum >= minimumComfortableDimension)
+            return coordinate;
+        return coordinate >= minimum && coordinate < maximum ? coordinate : (minimum + maximum) / 2;
+    };
+
+    return {
+        adjustedCoordinate(point.x(), rect.x(), rect.maxX()),
+        adjustedCoordinate(point.y(), rect.y(), rect.maxY())
+    };
+}
+
+static RefPtr<WebCore::Element> ariaSliderAtOrBelow(WebCore::Element& element, unsigned remainingDepth)
+{
+    if (isARIASlider(element))
+        return &element;
+
+    if (!remainingDepth)
+        return nullptr;
+
+    for (Ref child : WebCore::childrenOfType<WebCore::Element>(element)) {
+        if (RefPtr slider = ariaSliderAtOrBelow(child, remainingDepth - 1))
+            return slider;
+    }
+
+    return nullptr;
+}
+
+// Pressing a slider track jumps the thumb there and starts a drag. It is difficult for touches to reliably hit
+// on tracks that are styled to be thin, c.f. the sliders in Adobe Photoshop Editor (c.f. rdar://186965160).
+//
+// The expansion follows SliderThumbElement::handleTouchStart() and reuses its constants, which
+// match UISlider heuristics. That expands the thumb alone, whereas this covers the whole track.
+
+// FIXME: Consider expanding this to other content that influences `prefersInteraction` in the
+// gesture controller's _panShouldBeginAtLocation:?
+
+static void automationAdjustedInteractionPositionInformation(WebCore::LocalFrame& frame, WebCore::LocalFrameView& frameView, const WebCore::IntPoint& contentsPoint, InteractionInformationAtPosition& info)
+{
+    RefPtr document = frame.document();
+    if (!document)
+        return;
+
+    WebCore::LayoutRect searchRect { contentsPoint, WebCore::LayoutSize { } };
+    searchRect.inflate(WebCore::LayoutUnit { hitAreaExpansion });
+
+    constexpr OptionSet searchHitType {
+        WebCore::HitTestRequest::Type::ReadOnly,
+        WebCore::HitTestRequest::Type::Active,
+        WebCore::HitTestRequest::Type::AllowVisibleChildFrameContentOnly,
+        WebCore::HitTestRequest::Type::DisallowUserAgentShadowContent,
+        WebCore::HitTestRequest::Type::CollectMultipleElements,
+        WebCore::HitTestRequest::Type::IncludeAllElementsUnderPoint,
+    };
+
+    WebCore::HitTestLocation location { searchRect };
+    WebCore::HitTestResult result { location };
+    document->hitTest(WebCore::HitTestRequest { searchHitType }, location, result);
+
+    auto searchPoint = WebCore::FloatPoint { contentsPoint };
+
+    RefPtr<WebCore::Node> nearestControl;
+    bool nearestControlIsRangeInput = false;
+    WebCore::FloatRect nearestBounds;
+    float nearestDistance = std::numeric_limits<float>::max();
+
+    for (Ref node : result.listBasedTestResult()) {
+        CheckedPtr renderer = node->renderer();
+        if (!renderer)
+            continue;
+
+        // Only controls too small to be hit reliably are expanded; anything already comfortably
+        // sized is left to answer for itself, so the search cannot reach past a control that was
+        // genuinely missed.
+        auto bounds = WebCore::FloatRect { renderer->absoluteBoundingBoxRect(true) };
+        bool isThin = bounds.width() < minimumComfortableDimension || bounds.height() < minimumComfortableDimension;
+
+        bool nodeIsRangeInput = isRangeInput(node.ptr());
+        RefPtr<WebCore::Element> ariaSlider;
+        // Some sites (TikTok for example) label only the filled portion of a slider as an ARIA slider, not the whole track.
+        // So, also accept thin elements that contain an ARIA slider close beneath them.
+        if (RefPtr element = dynamicDowncast<WebCore::Element>(node); element && isThin && !nodeIsRangeInput)
+            ariaSlider = ariaSliderAtOrBelow(*element, maximumARIASliderDepthBelowTrack);
+
+        if (!nodeIsRangeInput && !ariaSlider)
+            continue;
+
+        auto hitArea = bounds;
+        if (isThin)
+            hitArea.inflate(hitAreaExpansion);
+
+        if (!hitArea.contains(searchPoint))
+            continue;
+
+        // Aim directly at the slider in the skinny direction, but along the container in the longer dimension,
+        // to minimize the distance that we drag the touch away from its origin.
+        auto targetBounds = bounds;
+        if (CheckedPtr sliderRenderer = ariaSlider ? ariaSlider->renderer() : nullptr) {
+            auto sliderBounds = WebCore::FloatRect { sliderRenderer->absoluteBoundingBoxRect(true) };
+            if (bounds.width() >= bounds.height())
+                targetBounds = { bounds.x(), sliderBounds.y(), bounds.width(), sliderBounds.height() };
+            else
+                targetBounds = { sliderBounds.x(), bounds.y(), sliderBounds.width(), bounds.height() };
+        }
+
+        auto distance = WebCore::FloatSize {
+            std::max(0.0f, std::max(targetBounds.x() - searchPoint.x(), searchPoint.x() - targetBounds.maxX())),
+            std::max(0.0f, std::max(targetBounds.y() - searchPoint.y(), searchPoint.y() - targetBounds.maxY()))
+        }.diagonalLength();
+
+        if (distance >= nearestDistance)
+            continue;
+
+        nearestControl = node.ptr();
+        nearestControlIsRangeInput = nodeIsRangeInput;
+        nearestBounds = targetBounds;
+        nearestDistance = distance;
+    }
+
+    if (!nearestControl)
+        return;
+
+    if (nearestControlIsRangeInput)
+        info.isRangeInput = true;
+    else
+        info.isARIASlider = true;
+    info.automationAdjustedInteractionLocation = WebCore::roundedIntPoint(frameView.contentsToRootView(pointAdjustedIntoRect(searchPoint, nearestBounds)));
+}
+
+}
+
 #endif
 
 namespace WebKit {

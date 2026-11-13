@@ -29,7 +29,12 @@
 
 #if HAVE(APPKIT_GESTURES_SUPPORT)
 
+#import "IdentifierTypes.h"
+#import "RemoteLayerTreeNode.h"
+#import "RemoteScrollingTreeCocoa.h"
 #import "WKDeferringGestureRecognizer.h"
+#import "WebPageProxy.h"
+#import "WebMouseEvent.h"
 #import <AppKit/NSGestureRecognizer.h>
 #import <wtf/Forward.h>
 #import <wtf/ObjectIdentifier.h>
@@ -50,9 +55,24 @@ OBJC_CLASS NSPanGestureRecognizer;
 OBJC_CLASS WKClickHighlightController;
 OBJC_CLASS WKWebView;
 
-#if __has_include(<WebKitAdditions/WKAppKitGestureControllerAdditionsBefore.mm>) && !__has_feature(modules)
-#import <WebKitAdditions/WKAppKitGestureControllerAdditionsBefore.mm>
-#endif
+namespace WebKit {
+using ClickIdentifier = TapIdentifier;
+
+static constexpr auto mouseTrackingGestureCount = 2;
+}
+
+#define potentialClickAtPosition potentialTapAtPosition
+#define commitPotentialClick commitPotentialTap
+
+static inline void handleDoubleClickForDoubleClickAtPoint(WebKit::WebPageProxy& page, const WebCore::IntPoint& location, OptionSet<WebKit::WebEventModifier> modifierFlags, WebKit::TransactionID lastLayerTreeTransactionId, WebKit::WebEventInputSource inputSource)
+{
+    page.handleDoubleTapForDoubleClickAtPoint(location, modifierFlags, lastLayerTreeTransactionId, inputSource, WebKit::WebMouseEventSyntheticClickType::OneFingerTap);
+}
+
+static inline BOOL isSystemWindowResizeGestureRecognizer(NSGestureRecognizer *gestureRecognizer)
+{
+    return [gestureRecognizer.name isEqualToString:@"NSThemeFrame.panTouchGestureRecognizer"];
+}
 
 NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
