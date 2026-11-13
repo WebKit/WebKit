@@ -9,5 +9,5 @@ PASS The range ends at the last character
 PASS A character index past the end throws
 FAIL Letter spacing after a character counts assert_equals: expected 15 but got 10
 FAIL Word spacing after a space counts assert_equals: the space expected 15 but got 10
-FAIL A ligature counts for its first character assert_equals: first character expected 28.975000381469727 but got 17.625
+FAIL A ligature counts for its first character assert_equals: second character expected 0 but got 28.975000381469727
 

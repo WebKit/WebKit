@@ -236,13 +236,13 @@ layer at (0,0) size 800x600
           RenderSVGContainer {g} at (39,476) size 119x48 [transform={m=((1.00,0.00)(0.00,1.00)) t=(1.00,426.00)}]
             RenderSVGContainer {g} at (39,476) size 119x48
               RenderSVGRect {rect} at (39,476) size 119x48 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F0F8FF]}] [x=0.00] [y=0.00] [width=150.00] [height=60.00]
-              RenderSVGContainer {g} at (43,480) size 113x37
+              RenderSVGContainer {g} at (43,480) size 112x37
                 RenderSVGText {text} at (5,5) size 143x46 contains 1 chunk(s)
                   RenderSVGInlineText {#text} at (0,0) size 133x14
                     chunk 1 text run 1 at (5.00,16.00) startOffset 0 endOffset 24 width 132.70: "This is a minimal window"
                   RenderSVGTSpan {tspan} at (0,16) size 143x14
                     RenderSVGInlineText {#text} at (0,16) size 143x14
-                      chunk 1 text run 1 at (5.00,32.00) startOffset 0 endOffset 29 width 142.75: "without title and status bar."
+                      chunk 1 text run 1 at (5.00,32.00) startOffset 0 endOffset 29 width 142.08: "without title and status bar."
                   RenderSVGTSpan {tspan} at (0,32) size 119x14
                     RenderSVGInlineText {#text} at (0,32) size 119x14
                       chunk 1 text run 1 at (5.00,48.00) startOffset 0 endOffset 23 width 118.73: "it is also not moveable"

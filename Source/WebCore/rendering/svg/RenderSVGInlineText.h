@@ -29,6 +29,13 @@
 
 namespace WebCore {
 
+struct SVGTextShapingRun {
+    unsigned start { 0 };
+    TextDirection direction { TextDirection::LTR };
+
+    friend bool operator==(const SVGTextShapingRun&, const SVGTextShapingRun&) = default;
+};
+
 class RenderSVGInlineText final : public RenderText {
     WTF_MAKE_TZONE_ALLOCATED(RenderSVGInlineText);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGInlineText);
@@ -38,11 +45,13 @@ public:
 
     Text& textNode() const { return downcast<Text>(nodeForNonAnonymous()); }
 
-    // Used by SVGTextLayoutAlgorithm, which measures only when the text or the font changes.
+    // Used by SVGTextLayoutAlgorithm, which measures only when the text, the font or the shaping runs change.
     Vector<SVGTextMetrics>& textMetrics() LIFETIME_BOUND { return m_textMetrics; }
     const Vector<SVGTextMetrics>& textMetrics() const LIFETIME_BOUND { return m_textMetrics; }
     bool hasValidTextMetrics() const { return m_hasValidTextMetrics; }
     void setHasValidTextMetrics(bool value) { m_hasValidTextMetrics = value; }
+    const Vector<SVGTextShapingRun>& shapingRuns() const LIFETIME_BOUND { return m_shapingRuns; }
+    void setShapingRuns(Vector<SVGTextShapingRun>&& runs) { m_shapingRuns = WTF::move(runs); }
 
     static float computeNonScalingStrokeScaleForRenderer(const RenderObject&);
 
@@ -74,6 +83,7 @@ private:
     float m_scalingFactor;
     FontCascade m_scaledFont;
     Vector<SVGTextMetrics> m_textMetrics;
+    Vector<SVGTextShapingRun> m_shapingRuns;
     bool m_hasValidTextMetrics { false };
     std::optional<bool> m_canUseSimplifiedTextMeasuringWithScaledFont;
 };

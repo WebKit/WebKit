@@ -4,8 +4,8 @@ layer at (0,0) size 450x500
   RenderSVGRoot {svg} at (0,0) size 448x498
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGText {text} at (172,15) size 106x19 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 106x18
-        chunk 1 (middle anchor) text run 1 at (172.09,30.00) startOffset 0 endOffset 15 width 105.83: "Text Position 2"
+      RenderSVGInlineText {#text} at (0,0) size 105x18
+        chunk 1 (middle anchor) text run 1 at (172.97,30.00) startOffset 0 endOffset 15 width 104.05: "Text Position 2"
     RenderSVGContainer {g} at (50,58) size 388x296
       RenderSVGText {text} at (50,58) size 54x28 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 54x27
@@ -32,7 +32,7 @@ layer at (0,0) size 450x500
           chunk 1 text run 5 at (130.00,140.00) startOffset 4 endOffset 5 width 12.00: "k"
       RenderSVGText {text} at (50,150) size 164x13 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 164x12
-          chunk 1 text run 1 at (50.00,160.00) startOffset 0 endOffset 35 width 163.77: "<text x=\"50 70 90 110 130\" y=\"140\">"
+          chunk 1 text run 1 at (50.00,160.00) startOffset 0 endOffset 35 width 163.03: "<text x=\"50 70 90 110 130\" y=\"140\">"
       RenderSVGText {text} at (240,118) size 134x28 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 134x27
           chunk 1 text run 1 at (240.00,140.00) startOffset 0 endOffset 1 width 15.98: "B"
@@ -70,9 +70,9 @@ layer at (0,0) size 450x500
             chunk 1 text run 3 at (90.00,260.00) startOffset 2 endOffset 3 width 6.65: "t"
             chunk 1 text run 4 at (110.00,260.00) startOffset 3 endOffset 4 width 5.33: "i"
             chunk 1 text run 5 at (130.00,260.00) startOffset 4 endOffset 5 width 12.00: "k"
-      RenderSVGText {text} at (50,270) size 173x13 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 173x12
-          chunk 1 text run 1 at (50.00,280.00) startOffset 0 endOffset 36 width 172.11: "<tspan x=\"50 70 90 110 130\" y=\"260\">"
+      RenderSVGText {text} at (50,270) size 172x13 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 172x12
+          chunk 1 text run 1 at (50.00,280.00) startOffset 0 endOffset 36 width 171.37: "<tspan x=\"50 70 90 110 130\" y=\"260\">"
       RenderSVGText {text} at (240,238) size 134x28 contains 1 chunk(s)
         RenderSVGTSpan {tspan} at (0,0) size 134x27
           RenderSVGInlineText {#text} at (0,0) size 134x27
