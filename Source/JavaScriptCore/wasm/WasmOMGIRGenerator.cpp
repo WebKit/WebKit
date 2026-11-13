@@ -65,10 +65,14 @@
 #include "JSWebAssemblyArrayInlines.h"
 #include "JSWebAssemblyInstance.h"
 #include "JSWebAssemblyStruct.h"
+#include "LinkBuffer.h"
+#include "Options.h"
 #include "ProbeContext.h"
 #include "ProfilerSupport.h"
 #include "SIMDShuffle.h"
 #include "ScratchRegisterAllocator.h"
+#include "VM.h"
+#include "VMTraps.h"
 #include "WasmBaselineData.h"
 #include "WasmBranchHints.h"
 #include "WasmByteLoopIdiom.h"
@@ -944,6 +948,7 @@ private:
     }
 
     void emitExceptionCheck(CCallHelpers&, Origin, ExceptionType);
+    void emitLoopStopCheck();
 
     void emitWriteBarrierForJSWrapper();
     void emitWriteBarrier(Value* cell);
@@ -4958,8 +4963,63 @@ auto OMGIRGenerator::addLoop(BlockSignature&& signature, std::span<TypedExpressi
     }
 
     m_currentBlock = body;
+    emitLoopStopCheck();
 
     return { };
+}
+
+void OMGIRGenerator::emitLoopStopCheck()
+{
+    bool polling = Options::usePollingTraps();
+    B3::PatchpointValue* check = m_currentBlock->appendNew<B3::PatchpointValue>(m_proc, B3::Void, origin());
+    check->effects = B3::Effects::forCheck();
+    check->effects.controlDependent = false;
+    bool usesSIMD = m_proc.usesSIMD();
+    Ref<OptimizingJITCallee> callee = *m_callee;
+    if (polling) {
+        check->appendSomeRegister(instanceValue());
+        check->numGPScratchRegisters = 1;
+    }
+    check->setGenerator([=](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+        CCallHelpers::Jump taken;
+        CCallHelpers::Label patch;
+        if (polling) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            GPRReg scratch = params.gpScratch(0);
+            jit.loadPtr(CCallHelpers::Address(params[0].gpr(), JSWebAssemblyInstance::offsetOfVM()), scratch);
+            jit.load32(CCallHelpers::Address(scratch, VM::offsetOfTrapsBits()), scratch);
+            taken = jit.branchTest32(CCallHelpers::NonZero, scratch, CCallHelpers::TrustedImm32(VMTraps::AsyncEvents));
+        } else
+            patch = jit.watchpointLabel();
+        MacroAssembler::Label resume = jit.label();
+        params.addLatePath([taken, patch, resume, polling, usesSIMD, callee](CCallHelpers& jit) {
+            if (polling)
+                taken.link(&jit);
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            MacroAssembler::Label stub = jit.label();
+            auto registersToSpill = RegisterSet::registersToSaveForCCall(usesSIMD ? RegisterSet::allRegisters() : RegisterSet::allScalarRegisters()).normalizeWidths();
+            unsigned bytes = ScratchRegisterAllocator::preserveRegistersToStackForCall(jit, registersToSpill, 0);
+            jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfVM()), GPRInfo::nonPreservedNonArgumentGPR0);
+            jit.copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(GPRInfo::nonPreservedNonArgumentGPR0);
+            jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
+            jit.setupArguments<decltype(operationWasmLoopStopCheck)>(GPRInfo::wasmContextInstancePointer);
+            jit.callOperation<OperationPtrTag>(operationWasmLoopStopCheck);
+            auto keepGoing = jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::returnValueGPR);
+            jit.farJump(GPRInfo::returnValueGPR, ExceptionHandlerPtrTag);
+            keepGoing.link(&jit);
+            if (!polling) {
+                jit.move(CCallHelpers::TrustedImmPtr(callee.ptr()), GPRInfo::nonPreservedNonArgumentGPR0);
+                jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
+                jit.setupArguments<decltype(operationWasmRestoreTrapPatchPoint)>(GPRInfo::nonPreservedNonArgumentGPR0);
+                jit.callOperation<OperationPtrTag>(operationWasmRestoreTrapPatchPoint);
+                jit.addLinkTask([patch, stub, callee](LinkBuffer& linkBuffer) {
+                    callee->addTrapPatchPoint(linkBuffer.locationOf<JSInternalPtrTag>(patch), linkBuffer.locationOf<JSInternalPtrTag>(stub));
+                });
+            }
+            ScratchRegisterAllocator::restoreRegistersFromStackForCall(jit, registersToSpill, RegisterSet { GPRInfo::returnValueGPR }, bytes, 0);
+            jit.jump(resume);
+        });
+    });
 }
 
 OMGIRGenerator::ControlData OMGIRGenerator::addTopLevel(BlockSignature&& signature)

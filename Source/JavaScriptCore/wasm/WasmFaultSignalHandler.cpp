@@ -78,6 +78,10 @@ static SignalAction trapHandler(Signal signal, SigInfo& sigInfo, PlatformRegiste
     // we might have crashed in code that is already holding one of the locks we want to aquire.
     assertIsNotTagged(faultingInstruction);
     if (isJITPC(faultingInstruction) || LLInt::isWasmIPIntPC(faultingInstruction)) {
+#if ENABLE(WEBASSEMBLY_BBQJIT) || ENABLE(WEBASSEMBLY_OMGJIT)
+        if (isJITPC(faultingInstruction) && OptimizingJITCallee::tryFireTrapPatchPoint(faultingInstruction))
+            return SignalAction::Handled;
+#endif
         std::optional<Wasm::ExceptionType> exception;
         {
             void* faultingAddress = sigInfo.faultingAddress;

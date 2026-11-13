@@ -643,6 +643,15 @@ WASM_IPINT_EXTERN_CPP_DECL(memory_grow, int64_t delta, uint8_t memoryIndex)
     WASM_RETURN_TWO(reinterpret_cast<void*>(Wasm::growMemory(instance, delta, memoryIndex)), 0);
 }
 
+WASM_IPINT_EXTERN_CPP_DECL_1P(check_traps)
+{
+    WasmSlowPathWithoutCallFrameTracer tracer(instance->vm());
+    VM& vm = instance->vm();
+    if (vm.traps().handleTrapsIfNeeded() && vm.hasPendingTerminationException())
+        IPINT_THROW(Wasm::ExceptionType::Termination);
+    IPINT_END();
+}
+
 WASM_IPINT_EXTERN_CPP_DECL(memory_size, uint8_t memoryIndex)
 {
     ASSERT_WITH_MESSAGE(memoryIndex, "memory zero should go through the fast path");

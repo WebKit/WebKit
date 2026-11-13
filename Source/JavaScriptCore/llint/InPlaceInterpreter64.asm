@@ -287,6 +287,10 @@ end
 ipintOp(_loop, macro()
     # loop
     # We already validateOpcodeConfig in ipintLoopOSRCheck.
+    loadp JSWebAssemblyInstance::m_vm[wasmInstance], t0
+    loadi VM::m_threadContext+VMThreadContext::m_traps+VMTraps::m_trapBits[t0], t0
+    andi constexpr(VMTraps::AsyncEvents), t0
+    btpnz t0, _ipint_op_loop_stop
     ipintLoopOSRCheck(1, _ipint_op_loop_tier_up)
     ipintLoopTail()
 end)
@@ -10641,6 +10645,11 @@ _ipint_op_global_set_ref:
 
 _ipint_op_loop_tier_up:
     ipintLoopOSRTierUp()
+    ipintLoopTail()
+
+_ipint_op_loop_stop:
+    operationCallMayThrow(macro() cCall2(_ipint_extern_check_traps) end)
+    ipintLoopOSRCheck(1, _ipint_op_loop_tier_up)
     ipintLoopTail()
 
 _ipint_op_throw:
