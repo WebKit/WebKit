@@ -139,11 +139,6 @@ RenderBlockFlow* RenderListOutsideMarker::contentContainer() const
     return dynamicDowncast<RenderBlockFlow>(firstChild());
 }
 
-LayoutRect RenderListOutsideMarker::localSelectionRect()
-{
-    return LayoutRect(LayoutPoint(), borderBoxSize());
-}
-
 void RenderListOutsideMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (usedStyle().visibility() != UsedVisibility::Visible)
@@ -162,12 +157,6 @@ void RenderListOutsideMarker::paint(PaintInfo& paintInfo, const LayoutPoint& pai
     if (paintInfo.phase == PaintPhase::Accessibility) {
         paintInfo.accessibilityRegionContext()->takeBounds(*this, LayoutRect(boxOrigin, borderBoxSize()));
         return;
-    }
-
-    if (paintInfo.phase == PaintPhase::Foreground && selectionState() != HighlightState::None) {
-        LayoutRect selectionRect = localSelectionRect();
-        selectionRect.moveBy(boxOrigin);
-        paintInfo.context().fillRect(snappedIntRect(selectionRect), m_listItem->selectionBackgroundColor());
     }
 
     // Paint the generated-content subtree as an atomic inline: paintAsInlineBlock fans out all

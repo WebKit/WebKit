@@ -111,8 +111,6 @@ private:
     void setContentContainerImageSize(LayoutSize);
     void layoutContentContainer(RenderBlockFlow&);
 
-    NODELETE LayoutRect localSelectionRect();
-
 private:
     SingleThreadWeakPtr<RenderListItem> m_listItem;
     std::pair<float, float> m_layoutBounds;
