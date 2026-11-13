@@ -28,9 +28,7 @@
 #if ENABLE(WEB_AUTHN)
 
 #include <WebCore/DigitalCredentialsRequestDataBuilder.h>
-#include <WebCore/DocumentInlines.h>
-#include <WebCore/ProcessWarming.h>
-#include <WebCore/Settings.h>
+#include <WebCore/SecurityOriginData.h>
 #include <WebCore/ValidatedOpenID4VPRequest.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -38,11 +36,10 @@ namespace TestWebKitAPI {
 
 using namespace WebCore;
 
-static Ref<Document> createDocument()
+static DigitalCredentialsSecurityOriginData exampleOrigins()
 {
-    ProcessWarming::initializeNames();
-    auto settings = Settings::create(nullptr);
-    return Document::create(settings.get(), URL { "https://example.com/"_s });
+    auto origin = SecurityOriginData::fromURL(URL { "https://example.com/"_s });
+    return { origin, origin };
 }
 
 static UnvalidatedDigitalCredentialRequest mobileDocumentRequest(ASCIILiteral deviceRequest)
@@ -91,11 +88,9 @@ static Vector<String> rawRequestIdentifiers(const DigitalCredentialsRawRequests&
 
 TEST(DigitalCredentialsRequestDataBuilder, RawRequestsOmitRequestsThatDidNotValidate)
 {
-    auto document = createDocument();
-
     auto result = DigitalCredentialsRequestDataBuilder::build(
         { std::nullopt, validatedMobileDocument(), std::nullopt, validatedMobileDocument() },
-        document,
+        exampleOrigins(),
         { mobileDocumentRequest("invalid-1"_s), mobileDocumentRequest("valid-1"_s), mobileDocumentRequest("invalid-2"_s), mobileDocumentRequest("valid-2"_s) });
     ASSERT_FALSE(result.hasException());
 
@@ -106,11 +101,9 @@ TEST(DigitalCredentialsRequestDataBuilder, RawRequestsOmitRequestsThatDidNotVali
 
 TEST(DigitalCredentialsRequestDataBuilder, PresentsMobileDocumentAndOpenID4VPRequestsInPageOrder)
 {
-    auto document = createDocument();
-
     auto result = DigitalCredentialsRequestDataBuilder::build(
         { validatedOpenID4VP(DigitalCredentialPresentationProtocol::Openid4vpV1Signed), validatedMobileDocument() },
-        document,
+        exampleOrigins(),
         { signedRequest("openid4vp"_s), mobileDocumentRequest("mdoc"_s) });
     ASSERT_FALSE(result.hasException());
 
@@ -123,8 +116,6 @@ TEST(DigitalCredentialsRequestDataBuilder, PresentsMobileDocumentAndOpenID4VPReq
 
 TEST(DigitalCredentialsRequestDataBuilder, PresentsOpenID4VPRequestsOfDifferentProtocols)
 {
-    auto document = createDocument();
-
     Vector<std::optional<ValidatedDigitalCredentialRequest>> validatedRequests {
         validatedOpenID4VP(DigitalCredentialPresentationProtocol::Openid4vpV1Unsigned),
         validatedOpenID4VP(DigitalCredentialPresentationProtocol::Openid4vpV1Signed),
@@ -133,7 +124,7 @@ TEST(DigitalCredentialsRequestDataBuilder, PresentsOpenID4VPRequestsOfDifferentP
     };
     auto result = DigitalCredentialsRequestDataBuilder::build(
         WTF::move(validatedRequests),
-        document,
+        exampleOrigins(),
         { unsignedRequest("unsigned-1"_s), signedRequest("signed"_s), unsignedRequest("invalid"_s), unsignedRequest("unsigned-2"_s) });
     ASSERT_FALSE(result.hasException());
 
@@ -147,19 +138,15 @@ TEST(DigitalCredentialsRequestDataBuilder, PresentsOpenID4VPRequestsOfDifferentP
 
 TEST(DigitalCredentialsRequestDataBuilder, RejectsValidationThatDoesNotCoverEveryRequest)
 {
-    auto document = createDocument();
-
     auto result = DigitalCredentialsRequestDataBuilder::build(
         { validatedMobileDocument() },
-        document,
+        exampleOrigins(),
         { mobileDocumentRequest("first"_s), mobileDocumentRequest("second"_s) });
     EXPECT_TRUE(result.hasException());
 }
 
 TEST(DigitalCredentialsRequestDataBuilder, PresentsAtMostTheMaximumNumberOfOpenID4VPRequests)
 {
-    auto document = createDocument();
-
     Vector<std::optional<ValidatedDigitalCredentialRequest>> validatedRequests;
     Vector<UnvalidatedDigitalCredentialRequest> unvalidatedRequests;
     for (size_t index = 0; index <= maxOpenID4VPRequestCount; ++index) {
@@ -169,7 +156,7 @@ TEST(DigitalCredentialsRequestDataBuilder, PresentsAtMostTheMaximumNumberOfOpenI
     validatedRequests.append(validatedMobileDocument());
     unvalidatedRequests.append(mobileDocumentRequest("mdoc"_s));
 
-    auto result = DigitalCredentialsRequestDataBuilder::build(WTF::move(validatedRequests), document, WTF::move(unvalidatedRequests));
+    auto result = DigitalCredentialsRequestDataBuilder::build(WTF::move(validatedRequests), exampleOrigins(), WTF::move(unvalidatedRequests));
     ASSERT_FALSE(result.hasException());
 
     auto [requestData, rawRequests] = result.releaseReturnValue();

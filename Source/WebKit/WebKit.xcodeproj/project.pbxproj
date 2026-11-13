@@ -9948,15 +9948,6 @@
 			path = Implementation;
 			sourceTree = "<group>";
 		};
-		079AB5292DC1202600C0CDFF /* IdentityDocumentServices */ = {
-			isa = PBXGroup;
-			children = (
-				F4F94AD82D8E05DB0087FE6F /* DigitalCredentialsRequestValidatorBridge.h */,
-				F4F94ADD2D8E066A0087FE6F /* DigitalCredentialsRequestValidatorBridge.mm */,
-			);
-			path = IdentityDocumentServices;
-			sourceTree = "<group>";
-		};
 		07C75C172399A3DB0088E65B /* media */ = {
 			isa = PBXGroup;
 			children = (
@@ -13666,6 +13657,8 @@
 				86AA5252293674E30065399E /* DataDetectionResult.serialization.in */,
 				49DAA38D24CBA1BD00793D75 /* DefaultWebBrowserChecks.h */,
 				49DAA38B24CBA1A800793D75 /* DefaultWebBrowserChecks.mm */,
+				F4F94AD82D8E05DB0087FE6F /* DigitalCredentialsRequestValidatorBridge.h */,
+				F4F94ADD2D8E066A0087FE6F /* DigitalCredentialsRequestValidatorBridge.mm */,
 				5630659F2F2A2E92000BF1BF /* EnhancedSecurityLinkUtilities.h */,
 				5630659E2F2A2E70000BF1BF /* EnhancedSecurityLinkUtilities.mm */,
 				07187E092F2DC276005FC058 /* GestureTypes.h */,
@@ -15418,7 +15411,6 @@
 		7C6E70F818B2D47E00F24E2E /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
-				079AB5292DC1202600C0CDFF /* IdentityDocumentServices */,
 				CD4570CB2440FB2A00A3DCEB /* AudioSessionRoutingArbitrator.cpp */,
 				CD4570CA2440FB2A00A3DCEB /* AudioSessionRoutingArbitrator.h */,
 				C14D37FC24ACDF45007FF014 /* LaunchServicesDatabaseManager.h */,

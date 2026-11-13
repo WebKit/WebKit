@@ -31,13 +31,11 @@
 #import "Logging.h"
 #import "WKIdentityDocumentRawRequestValidator.h"
 #import <Foundation/Foundation.h>
-#import <JavaScriptCore/ConsoleMessage.h>
 #import <WebCore/CertificateInfo.h>
 #import <WebCore/DigitalCredentialsProtocols.h>
-#import <WebCore/Document.h>
 #import <WebCore/ExceptionData.h>
 #import <WebCore/ISO18013.h>
-#import <WebCore/SecurityOrigin.h>
+#import <WebCore/SecurityOriginData.h>
 #import <WebCore/UnvalidatedDigitalCredentialRequest.h>
 #import <WebCore/ValidatedOpenID4VPRequest.h>
 #import <WebCore/X509SubjectKeyIdentifier.h>
@@ -301,7 +299,7 @@ static std::optional<std::pair<DigitalCredentialPresentationProtocol, RetainPtr<
 }
 #endif // HAVE(DIGITAL_CREDENTIALS_OPENID4VP)
 
-static void reportValidationFailure(const Document &document, const String &protocolName, NSError *error)
+static void reportValidationFailure(NOESCAPE const Function<void(const String&)>& reportFailure, const String &protocolName, NSError *error)
 {
     RetainPtr debugDescription = dynamic_objc_cast<NSString>(error.userInfo[NSDebugDescriptionErrorKey]);
     String errorMessage = makeString("An error occurred validating the incoming '"_s, protocolName, "' request. The request will be ignored."_s);
@@ -309,16 +307,13 @@ static void reportValidationFailure(const Document &document, const String &prot
     if ([debugDescription length])
         errorMessage = makeString(errorMessage, " ("_s, String(debugDescription.get()), ")"_s);
 
-    const_cast<Document &>(document).addConsoleMessage(makeUnique<Inspector::ConsoleMessage>(
-        MessageSource::JS,
-        MessageType::Log,
-        MessageLevel::Warning,
-        errorMessage));
+    if (reportFailure)
+        reportFailure(errorMessage);
 
-    LOG(DigitalCredentials, "DigitalCredentials::validateRequests() - WebProcess: Validation failed for request: %@", error);
+    LOG(DigitalCredentials, "DigitalCredentials::validateRequests() - Validation failed for request: %@", error);
 }
 
-static std::optional<WebCore::ValidatedDigitalCredentialRequest> validateRequest(WKIdentityDocumentRawRequestValidator *validator, NSURL *topOrigin, const Document &document, const WebCore::UnvalidatedDigitalCredentialRequest &unvalidatedRequest)
+static std::optional<WebCore::ValidatedDigitalCredentialRequest> validateRequest(WKIdentityDocumentRawRequestValidator *validator, NSURL *topOrigin, NOESCAPE const Function<void(const String&)>& reportFailure, const WebCore::UnvalidatedDigitalCredentialRequest &unvalidatedRequest)
 {
     auto* mobileDocumentRequest = std::get_if<WebCore::MobileDocumentRequest>(&unvalidatedRequest);
     if (!mobileDocumentRequest) {
@@ -338,13 +333,13 @@ static std::optional<WebCore::ValidatedDigitalCredentialRequest> validateRequest
             if (WebCore::isWithinOpenID4VPRequestLimits(requestObject))
                 return WebCore::ValidatedOpenID4VPRequest { protocol, WTF::move(requestObject) };
             RetainPtr limitsError = [NSError errorWithDomain:NSCocoaErrorDomain code:NSValidationErrorMaximum userInfo:@{ NSDebugDescriptionErrorKey: @"The request is too large." }];
-            reportValidationFailure(document, WebCore::digitalCredentialPresentationProtocolToString(protocol), limitsError.get());
+            reportValidationFailure(reportFailure, WebCore::digitalCredentialPresentationProtocolToString(protocol), limitsError.get());
             return std::nullopt;
         }
         if (openID4VPError)
-            reportValidationFailure(document, WebCore::digitalCredentialPresentationProtocolToString(protocol), openID4VPError);
+            reportValidationFailure(reportFailure, WebCore::digitalCredentialPresentationProtocolToString(protocol), openID4VPError);
 #else
-        LOG(DigitalCredentials, "DigitalCredentials::validateRequests() - WebProcess: no platform support for OpenID4VP; the request will be ignored.");
+        LOG(DigitalCredentials, "DigitalCredentials::validateRequests() - no platform support for OpenID4VP; the request will be ignored.");
 #endif // HAVE(DIGITAL_CREDENTIALS_OPENID4VP)
         return std::nullopt;
     }
@@ -360,20 +355,20 @@ static std::optional<WebCore::ValidatedDigitalCredentialRequest> validateRequest
     if (validatedISORequest)
         return buildValidatedRequest(validatedISORequest.get());
     if (error)
-        reportValidationFailure(document, "org-iso-mdoc"_s, error);
+        reportValidationFailure(reportFailure, "org-iso-mdoc"_s, error);
     return std::nullopt;
 }
 
-Vector<std::optional<WebCore::ValidatedDigitalCredentialRequest>> DigitalCredentials::validateRequests(const SecurityOrigin &topOrigin, const Document &document, const Vector<WebCore::UnvalidatedDigitalCredentialRequest> &unvalidatedRequests)
+Vector<std::optional<WebCore::ValidatedDigitalCredentialRequest>> DigitalCredentials::validateRequests(const SecurityOriginData& topOrigin, const Vector<WebCore::UnvalidatedDigitalCredentialRequest>& unvalidatedRequests, NOESCAPE const Function<void(const String&)>& reportFailure)
 {
     RetainPtr convertedTopOrigin = topOrigin.toURL().createNSURL().get();
     RetainPtr validator = adoptNS([WebKit::allocWKIdentityDocumentRawRequestValidatorInstance() init]);
 
     auto validatedRequests = unvalidatedRequests.map([&](auto& unvalidatedRequest) {
-        return validateRequest(validator.get(), convertedTopOrigin.get(), document, unvalidatedRequest);
+        return validateRequest(validator.get(), convertedTopOrigin.get(), reportFailure, unvalidatedRequest);
     });
 
-    LOG(DigitalCredentials, "DigitalCredentials::validateRequests() - WebProcess: validated %zu of %zu requests", static_cast<size_t>(std::ranges::count_if(validatedRequests, [](auto& request) {
+    LOG(DigitalCredentials, "DigitalCredentials::validateRequests() - validated %zu of %zu requests", static_cast<size_t>(std::ranges::count_if(validatedRequests, [](auto& request) {
         return request.has_value();
     })), validatedRequests.size());
     return validatedRequests;
