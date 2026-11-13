@@ -59,6 +59,56 @@ function(webkit_target_add_swift_options _target)
     endif ()
 endfunction()
 
+function(_webkit_swift_targets_in_directory _dir _outvar)
+    get_property(_targets DIRECTORY "${_dir}" PROPERTY BUILDSYSTEM_TARGETS)
+    set(_swift_targets "")
+    foreach (_target IN LISTS _targets)
+        get_target_property(_sources ${_target} SOURCES)
+        list(FILTER _sources INCLUDE REGEX "\\.swift$")
+        if (_sources)
+            list(APPEND _swift_targets ${_target})
+        endif ()
+    endforeach ()
+    get_property(_subdirs DIRECTORY "${_dir}" PROPERTY SUBDIRECTORIES)
+    foreach (_subdir IN LISTS _subdirs)
+        _webkit_swift_targets_in_directory("${_subdir}" _subdir_targets)
+        list(APPEND _swift_targets ${_subdir_targets})
+    endforeach ()
+    set(${_outvar} ${_swift_targets} PARENT_SCOPE)
+endfunction()
+
+# FIXME: Remove once swiftc's dependency scan hash includes the optimization level (rdar://192478621).
+# Until then, a saved -incremental-dependency-scan from before a compile option change breaks the build.
+function(_webkit_add_discard_swift_dependency_scans_target)
+    _webkit_swift_targets_in_directory("${CMAKE_SOURCE_DIR}" _targets)
+    string(TOUPPER "${CMAKE_BUILD_TYPE}" _config)
+    set(_options "${CMAKE_Swift_FLAGS}\n${CMAKE_Swift_FLAGS_${_config}}\n")
+    set(_scans "")
+    foreach (_target IN LISTS _targets)
+        get_target_property(_target_options ${_target} COMPILE_OPTIONS)
+        string(APPEND _options "${_target}: ${_target_options}\n")
+        get_target_property(_binary_dir ${_target} BINARY_DIR)
+        list(APPEND _scans "${_binary_dir}/CMakeFiles/${_target}.dir/$<CONFIG>/${_target}.swiftmoduledeps")
+    endforeach ()
+    string(SHA256 _key "${_options}")
+
+    set(_key_file "${CMAKE_BINARY_DIR}/SwiftCompileOptions.sha256")
+    set(_stamp "${CMAKE_BINARY_DIR}/DiscardSwiftDependencyScans.stamp")
+    file(GENERATE OUTPUT "${_key_file}" CONTENT "${_key}\n")
+    add_custom_command(
+        OUTPUT "${_stamp}"
+        COMMAND "${CMAKE_COMMAND}" -E rm -f ${_scans}
+        COMMAND "${CMAKE_COMMAND}" -E touch "${_stamp}"
+        DEPENDS "${_key_file}"
+        COMMENT "Discarding saved Swift dependency scans"
+        VERBATIM
+    )
+    add_custom_target(DiscardSwiftDependencyScans DEPENDS "${_stamp}")
+    foreach (_target IN LISTS _targets)
+        add_dependencies(${_target} DiscardSwiftDependencyScans)
+    endforeach ()
+endfunction()
+
 # Global flag sets
 
 set(WEBKIT_SWIFT_LANGUAGE_FLAGS
@@ -173,6 +223,7 @@ if (APPLE)
         # reads ~16K files and takes ~14 s, on every rebuild of its Swift module.
         -incremental-dependency-scan
     )
+    cmake_language(DEFER DIRECTORY "${CMAKE_SOURCE_DIR}" CALL _webkit_add_discard_swift_dependency_scans_target)
 
     webkit_add_swift_options(
         # Needed for compatibility with modules in the (internal) SDK:
