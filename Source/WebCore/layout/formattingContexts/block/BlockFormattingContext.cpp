@@ -109,10 +109,9 @@ BlockFormattingContext::BlockFormattingContext(const RenderBlockFlow& root, Layo
 {
 }
 
-BlockLayoutResult BlockFormattingContext::layout(const ConstraintsForBlockContent& constraints, const BoxGeometry& rootGeometry, std::optional<ContainingBlockState::LineGrid> rootLineGrid, LineGridsAroundRoot lineGridsAroundRoot)
+BlockLayoutResult BlockFormattingContext::layout(const ConstraintsForBlockContent& constraints, const BoxGeometry& rootGeometry, const RootLineGrid& rootLineGrid)
 {
-    m_rootLineGrid = WTF::move(rootLineGrid);
-    m_lineGridsAroundRoot = lineGridsAroundRoot;
+    m_rootLineGrid = rootLineGrid;
     // Floats placed from a provisional top beside or below floats from before may go elsewhere from the top the margins give their block
     // container: the content is laid out again with those tops, like the render tree path lays out a block that moved while its floats were
     // placed again (RenderBlockFlow::layoutBlockChild).
@@ -133,7 +132,7 @@ BlockLayoutResult BlockFormattingContext::layoutContent(const ConstraintsForBloc
     ASSERT(m_blockLayoutState.containingBlockStates().isEmpty());
     auto result = BlockLayoutResult { };
     m_blockLayoutState.containingBlockStates().append(containingBlockStateForRoot(constraints, rootGeometry));
-    m_blockLayoutState.containingBlockStates().last().lineGrid = m_rootLineGrid;
+    m_blockLayoutState.containingBlockStates().last().lineGrid = m_rootLineGrid.lineGrid;
     m_blockLayoutState.marginCollapse().startBlockFormattingContextRoot(m_blockLayoutState.containingBlockStates().last());
     // The margins of a box that establishes a block formatting context do not collapse with its children's (CSS 2.2 §8.3.1).
     m_blockLayoutState.marginCollapse().resetAdjoiningMargins(m_blockLayoutState.containingBlockStates().last().contentBoxLogicalTop());
@@ -708,7 +707,7 @@ void BlockFormattingContext::handleInlineContent(const RenderBox& blockContainer
         if (auto maximumLines = LayoutIntegration::BlockIntegrationUtils::legacyLineClampMaximumLines(inlineContentRoot))
             m_blockLayoutState.setLineClamp(BlockLayoutState::LineClamp { *maximumLines, false, true });
     }
-    auto inlineContentLayoutResult = integrationUtils().layoutInlineContent(inlineContentRoot, constraintsForInlineContent(blockContainer, blockContainerState), geometry, blockContainerState.contentBoxBlockSize, blockContainerState.fillAvailableBlockSize, blockContainerState.replacedElementAvailableBlockSize, orthogonalFlowAvailableInlineSpace(blockContainerState), blockContainerState.relayoutChildren || m_isLayingOutWithResolvedBorderBoxLogicalTops || m_lineClampContainersLaidOutAgainCount, m_blockLayoutState, intrudingFloats, *this, result);
+    auto inlineContentLayoutResult = integrationUtils().layoutInlineContent(inlineContentRoot, constraintsForInlineContent(blockContainer, blockContainerState), geometry, blockContainerState.contentBoxBlockSize, blockContainerState.fillAvailableBlockSize, blockContainerState.replacedElementAvailableBlockSize, orthogonalFlowAvailableInlineSpace(blockContainerState), blockContainerState.relayoutChildren || m_isLayingOutWithResolvedBorderBoxLogicalTops || m_lineClampContainersLaidOutAgainCount, m_blockLayoutState, intrudingFloats, lineGridInLayoutState(blockContainerState, borderBoxLogicalLeftAndTopInRoot(blockContainerState)), *this, result);
     addInlineContentFloats(inlineContentLayoutResult.floats);
     // The floats of a line-clamp container are clipped to its block-end content edge, those the inline formatting context hid after the
     // clamp point included.
@@ -1038,6 +1037,10 @@ std::optional<LayoutUnit> BlockFormattingContext::placeBesideFloats(const Render
     auto laidOutState = std::optional<ContainingBlockState> { };
     auto laidOutContentBlockSize = std::optional<LayoutUnit> { };
     auto laidOutGivenBorderBoxInlineSize = std::optional<LayoutUnit> { };
+    // The content of a box in a line grid snaps to it from where the box is, so a box that would go elsewhere is laid out again there.
+    auto snapsToLineGrid = containingBlockState.lineGrid && !box.isUnsplittableForPagination();
+    auto layoutBorderBoxLogicalTop = hypotheticalBorderBoxLogicalTop;
+    auto laidOutBorderBoxLogicalTop = std::optional<LayoutUnit> { };
     auto containingBlockBorderBoxInlineSize = std::optional<LayoutUnit> { };
     auto placementIn = [&](LayoutUnit spaceStart, LayoutUnit spaceEnd) {
         auto geometry = boxState.geometry;
@@ -1067,11 +1070,15 @@ std::optional<LayoutUnit> BlockFormattingContext::placeBesideFloats(const Render
                 return laidOutGivenBorderBoxInlineSize == placement.borderBoxInlineSize;
             return laidOutState->geometry.borderBoxWidth() == placement.geometry.borderBoxWidth();
         };
-        if (laidOutState && hasInlineSize())
+        if (laidOutState && hasInlineSize() && (!snapsToLineGrid || laidOutBorderBoxLogicalTop == layoutBorderBoxLogicalTop))
             return laidOutState->geometry.borderBoxHeight();
         auto state = containingBlockStateFor(box, placement.geometry, containingBlockState);
         state.margins = boxState.margins;
+        if (snapsToLineGrid)
+            state.borderBoxLogicalTop = layoutBorderBoxLogicalTop;
         laidOutContentBlockSize = layoutContent(state, placement.borderBoxInlineSize).first;
+        state.borderBoxLogicalTop = { };
+        laidOutBorderBoxLogicalTop = layoutBorderBoxLogicalTop;
         laidOutGivenBorderBoxInlineSize = placement.borderBoxInlineSize;
         if (!state.isLaidOutThroughRenderTree)
             computeBlockSize(box, laidOutContentBlockSize.value_or(0_lu), containingBlockState, state.geometry);
@@ -1081,6 +1088,7 @@ std::optional<LayoutUnit> BlockFormattingContext::placeBesideFloats(const Render
     // Whether the border box fits the space beside the floats at a position, for its whole block size, which it is laid out for. Floats
     // further down narrow that space, which an auto inline size then stretches into, once more at most.
     auto placementAt = [&](LayoutUnit top) -> std::pair<Placement, bool> {
+        layoutBorderBoxLogicalTop = top;
         auto [spaceStart, spaceEnd] = spaceBetween(top, top);
         auto placement = placementIn(spaceStart, spaceEnd);
         auto blockSize = layoutFor(placement);
@@ -1217,7 +1225,7 @@ void BlockFormattingContext::handleIndependentFormattingContextRoot(const Render
             // The render tree path shifts the content instead of laying it out again, which would count its lines again.
             auto initialLegacyLineClamp = LayoutIntegration::BlockIntegrationUtils::legacyLineClamp(box);
             auto layoutRootContent = [&](LayoutUnit shift) {
-                return BlockFormattingContext { *root, integrationUtils(), blockLayoutState }.layout({ { horizontalConstraints, state.borderAndPaddingBefore + shift }, state.contentBoxBlockSize, state.fillAvailableBlockSize, state.replacedElementAvailableBlockSize, state.relayoutChildren }, state.geometry, lineGridForNestedRoot(state), LineGridsAroundRoot::Unknown);
+                return BlockFormattingContext { *root, integrationUtils(), blockLayoutState }.layout({ { horizontalConstraints, state.borderAndPaddingBefore + shift }, state.contentBoxBlockSize, state.fillAvailableBlockSize, state.replacedElementAvailableBlockSize, state.relayoutChildren }, state.geometry, rootLineGridForNestedRoot(state));
             };
             auto rootResult = layoutRootContent({ });
             // align-content moves the content as a unit in the block size the root gets from that of its content, where it is laid out again.
@@ -1320,7 +1328,7 @@ static bool decidesItsOwnInlineSize(const RenderBox& box, WritingMode writingMod
 // context, laid out through the render tree, which lays out its content: the inline size it decides (decidesItsOwnInlineSize), unless it is
 // a table that shrinks into the space beside floats (placeBesideFloats), the block size, border and padding, and what it adds to the
 // block-start margin, which collapses with the others once the box is laid out.
-LayoutUnit BlockFormattingContext::layoutIndependentFormattingContextThroughRenderTree(const RenderBox& box, ContainingBlockState& boxState, std::optional<LayoutUnit> borderBoxInlineSize)
+LayoutUnit BlockFormattingContext::layoutIndependentFormattingContextThroughRenderTree(const RenderBox& box, ContainingBlockState& boxState, std::optional<LayoutUnit> borderBoxInlineSize, std::optional<LayoutSize> placedBorderBoxLogicalLeftAndTopInRoot)
 {
     auto& containingBlockState = m_blockLayoutState.containingBlockStates().last();
     auto containingBlockInlineSize = containingBlockState.inlineRange.size();
@@ -1346,19 +1354,30 @@ LayoutUnit BlockFormattingContext::layoutIndependentFormattingContextThroughRend
         .containingBlockAvailableBlockSize = containingBlockState.fillAvailableBlockSize,
         .containingBlockAvailableBlockSizeIncludingMarginBorderPadding = containingBlockState.replacedElementAvailableBlockSize
     };
-    auto layoutResult = integrationUtils().layoutIndependentFormattingContext(box, constraints);
-
-    geometry.setBorder(layoutResult.border);
-    geometry.setPadding(layoutResult.padding);
-    setContentBoxInlineSize(geometry, layoutResult.borderBoxInlineSize);
-    setContentBoxBlockSize(geometry, layoutResult.borderBoxBlockSize);
-    CheckedRef containingBlockStyle = containingBlockState.blockContainer->style();
-    auto [marginStart, marginEnd] = BlockFormattingUtils::inlineMargins(box, layoutResult.borderBoxInlineSize, containingBlockInlineSize, containingBlockStyle);
-    geometry.setHorizontalMargin({ marginStart, marginEnd });
-    computeLogicalLeft(box, containingBlockState, geometry);
+    // Its content snaps to the line grid around it from where the box is (RenderBlockFlow::layoutBlockChild places a block before its layout).
+    auto offsetInRoot = [&] {
+        if (placedBorderBoxLogicalLeftAndTopInRoot)
+            return *placedBorderBoxLogicalLeftAndTopInRoot;
+        return logicalLeftAndTopInRoot(inlineStartInRoot(containingBlockState, BoxGeometry::borderBoxLeft(geometry), geometry.borderBoxWidth()), geometry.borderBoxWidth(), borderBoxOffsetInRoot(boxState).height());
+    };
+    auto lineGrid = std::optional<LineGridInLayoutState> { };
+    auto layout = [&] {
+        lineGrid = lineGridForBoxLaidOutThroughRenderTree(box, containingBlockState, offsetInRoot());
+        auto layoutResult = integrationUtils().layoutIndependentFormattingContext(box, constraints, lineGrid);
+        geometry.setBorder(layoutResult.border);
+        geometry.setPadding(layoutResult.padding);
+        setContentBoxInlineSize(geometry, layoutResult.borderBoxInlineSize);
+        setContentBoxBlockSize(geometry, layoutResult.borderBoxBlockSize);
+        CheckedRef containingBlockStyle = containingBlockState.blockContainer->style();
+        auto [marginStart, marginEnd] = BlockFormattingUtils::inlineMargins(box, layoutResult.borderBoxInlineSize, containingBlockInlineSize, containingBlockStyle);
+        geometry.setHorizontalMargin({ marginStart, marginEnd });
+        computeLogicalLeft(box, containingBlockState, geometry);
+        return layoutResult.legendMarginBefore;
+    };
+    auto legendMarginBefore = layout();
     boxState.borderAndPaddingBefore = geometry.borderAndPaddingBefore();
     boxState.isLaidOutThroughRenderTree = true;
-    return layoutResult.legendMarginBefore;
+    return legendMarginBefore;
 }
 
 void BlockFormattingContext::handleFloat(const RenderBox& box, BlockLayoutResult& result)
@@ -1397,6 +1416,18 @@ void BlockFormattingContext::handleFloat(const RenderBox& box, BlockLayoutResult
     if (isOpposite)
         geometryInRoot.setHorizontalMargin({ geometry.marginEnd(), geometry.marginStart() });
     geometryInRoot.setTopLeft(floatingContext.positionForFloat(box.layoutBox(), geometryInRoot, containingBlock));
+    // Its content snaps to the line grid around it from where it goes (RenderBlockFlow::positionNewFloats places a float before its layout),
+    // where it stays.
+    if (lineGridForBoxLaidOutThroughRenderTree(box, containingBlockState, { })) {
+        auto placedOffsetInRoot = logicalLeftAndTopInRoot(containingBlockOffsetInRoot.width() + BoxGeometry::borderBoxLeft(geometryInRoot), geometry.borderBoxWidth(), containingBlockOffsetInRoot.height() + BoxGeometry::borderBoxTop(geometryInRoot));
+        auto placedGeometry = geometry;
+        layoutIndependentFormattingContextThroughRenderTree(box, boxState, { }, placedOffsetInRoot);
+        geometry.setHorizontalMargin({ placedGeometry.marginStart(), placedGeometry.marginEnd() });
+        geometry.setVerticalMargin({ placedGeometry.marginBefore(), placedGeometry.marginAfter() });
+        auto topLeft = BoxGeometry::borderBoxTopLeft(geometryInRoot);
+        geometryInRoot.setContentBoxSize(geometry.contentBoxSize());
+        geometryInRoot.setTopLeft(topLeft);
+    }
     addFloats({ floatingContext.makeFloatItem(box.layoutBox(), geometryInRoot, containingBlock) }, containingBlockState);
     auto borderBoxLeft = BoxGeometry::borderBoxLeft(geometryInRoot);
     geometry.setTopLeft({ isOpposite ? containingBlockInlineSize - borderBoxLeft - geometry.borderBoxWidth() : borderBoxLeft, BoxGeometry::borderBoxTop(geometryInRoot) });
@@ -1550,7 +1581,7 @@ BlockLayoutResult BlockFormattingContext::layoutOutOfFlowBox(const RenderBox& ou
         auto relayoutChildren = LayoutIntegration::BlockIntegrationUtils::contentBoxInlineSizeChanged(box, geometry.contentBoxWidth());
         // Coverage keeps out the line grids around a box that can be split across pages, and the box establishes the one its name asks for.
         auto lineGrid = box->style().lineGrid().isNone() ? std::nullopt : std::optional { ContainingBlockState::LineGrid { box, { } } };
-        auto contentResult = contentFormattingContext.layout({ { horizontalConstraints, geometry.borderAndPaddingBefore() }, contentBoxBlockSize, availableBlockSize, availableBlockSize, relayoutChildren }, geometry, WTF::move(lineGrid), LineGridsAroundRoot::Unknown);
+        auto contentResult = contentFormattingContext.layout({ { horizontalConstraints, geometry.borderAndPaddingBefore() }, contentBoxBlockSize, availableBlockSize, availableBlockSize, relayoutChildren }, geometry, { WTF::move(lineGrid), { }, false, { } });
         intrinsicContentBlockSize = contentResult.intrinsicContentBlockSize;
         result.boxes.appendVector(WTF::move(contentResult.boxes));
         result.outOfFlowBoxes.appendVector(WTF::move(contentResult.outOfFlowBoxes));
@@ -1658,7 +1689,7 @@ std::optional<ContainingBlockState::LineGrid> BlockFormattingContext::lineGridFo
             return state.lineGrid;
     }
     // FIXME: The ones around a root that the block formatting context it is in lays out.
-    if (m_lineGridsAroundRoot == LineGridsAroundRoot::InLayoutState) {
+    if (m_rootLineGrid.isInLayoutStateOfRoot) {
         if (auto lineGridOutsideRoot = LayoutIntegration::BlockIntegrationUtils::lineGridOutsideRoot(root(), name, *currentGridContainer))
             return lineGridOutsideRoot;
     }
@@ -1666,15 +1697,75 @@ std::optional<ContainingBlockState::LineGrid> BlockFormattingContext::lineGridFo
 }
 
 // From the left of the root's border box, like the offsets of the render tree layout state (RenderLayoutState::layoutOffset).
+LayoutSize BlockFormattingContext::logicalLeftAndTopInRoot(LayoutUnit inlineStartInRoot, LayoutUnit borderBoxInlineSize, LayoutUnit logicalTopInRoot) const
+{
+    if (root().writingMode().isLogicalLeftInlineStart())
+        return { inlineStartInRoot, logicalTopInRoot };
+    return { m_blockLayoutState.containingBlockStates().first().geometry.borderBoxWidth() - inlineStartInRoot - borderBoxInlineSize, logicalTopInRoot };
+}
+
 LayoutSize BlockFormattingContext::borderBoxLogicalLeftAndTopInRoot(const ContainingBlockState& blockContainerState)
 {
-    auto& rootState = m_blockLayoutState.containingBlockStates().first();
-    if (&blockContainerState == &rootState)
+    if (&blockContainerState == &m_blockLayoutState.containingBlockStates().first())
         return { };
     auto offsetInRoot = borderBoxOffsetInRoot(blockContainerState);
-    if (!root().writingMode().isLogicalLeftInlineStart())
-        offsetInRoot.setWidth(rootState.geometry.borderBoxWidth() - offsetInRoot.width() - blockContainerState.geometry.borderBoxWidth());
-    return offsetInRoot;
+    return logicalLeftAndTopInRoot(offsetInRoot.width(), blockContainerState.geometry.borderBoxWidth(), offsetInRoot.height());
+}
+
+// The line grid of the content of a block container, and the ones around it, from a box's border box in the root, in the coordinates of the render
+// tree layout state.
+std::optional<LineGridInLayoutState> BlockFormattingContext::lineGridInLayoutState(const ContainingBlockState& containingBlockState, LayoutSize borderBoxOffset)
+{
+    if (!containingBlockState.lineGrid)
+        return { };
+    auto inLayoutState = [&](LayoutSize offsetInRoot) {
+        auto offset = m_rootLineGrid.borderBoxOffsetInLayoutState + offsetInRoot;
+        return root().writingMode().isHorizontal() ? offset : offset.transposedSize();
+    };
+    // From the containing block to the root, which those around the root follow, unless one in between has none, which ends the search for a
+    // name. The containing block is in the containing block states, or the state of a box being laid out whose parent is the last one.
+    auto& containingBlockStates = m_blockLayoutState.containingBlockStates();
+    auto isInContainingBlockStates = containingBlockStates.containsIf([&](auto& state) {
+        return &state == &containingBlockState;
+    });
+    auto states = Vector<const ContainingBlockState*> { };
+    if (!isInContainingBlockStates)
+        states.append(&containingBlockState);
+    auto skipsInnerStates = isInContainingBlockStates;
+    for (auto& state : containingBlockStates | std::views::reverse) {
+        if (skipsInnerStates) {
+            if (&state != &containingBlockState)
+                continue;
+            skipsInnerStates = false;
+        }
+        states.append(&state);
+    }
+    auto innerStateCount = size_t { 0 };
+    while (innerStateCount < states.size() && states[innerStateCount]->lineGrid)
+        ++innerStateCount;
+    auto lineGrids = Vector<LineGridInLayoutState::LineGrid> { };
+    auto addLineGrid = [&](const RenderBlockFlow& blockContainer, LayoutSize offset) {
+        if (lineGrids.isEmpty() || lineGrids.last().blockContainer.ptr() != &blockContainer)
+            lineGrids.append({ blockContainer, offset });
+    };
+    if (innerStateCount == states.size()) {
+        for (auto& lineGrid : m_rootLineGrid.lineGridsAroundRoot)
+            addLineGrid(lineGrid.blockContainer, lineGrid.borderBoxOffset);
+    }
+    for (auto index = innerStateCount; index--;) {
+        auto& lineGrid = *states[index]->lineGrid;
+        addLineGrid(lineGrid.blockContainer, inLayoutState(lineGridBorderBoxOffsetAndBorderAndPaddingBefore(lineGrid).first));
+    }
+    return LineGridInLayoutState { WTF::move(lineGrids), inLayoutState(borderBoxOffset) };
+}
+
+// A box the render tree lays out on its own gets the line grid around it from the layout state of its containing block, which the block
+// formatting context lays out, unless it cannot be split across pages (RenderLayoutState::propagateLineGridInfo).
+std::optional<LineGridInLayoutState> BlockFormattingContext::lineGridForBoxLaidOutThroughRenderTree(const RenderBox& box, const ContainingBlockState& containingBlockState, LayoutSize borderBoxOffset)
+{
+    if (box.isUnsplittableForPagination())
+        return { };
+    return lineGridInLayoutState(containingBlockState, borderBoxOffset);
 }
 
 std::pair<LayoutSize, LayoutUnit> BlockFormattingContext::lineGridBorderBoxOffsetAndBorderAndPaddingBefore(const ContainingBlockState::LineGrid& lineGrid)
@@ -1703,6 +1794,19 @@ std::optional<ContainingBlockState::LineGrid> BlockFormattingContext::lineGridFo
         return ContainingBlockState::LineGrid { lineGrid->blockContainer, { } };
     auto [gridOffset, borderAndPaddingBefore] = lineGridBorderBoxOffsetAndBorderAndPaddingBefore(*lineGrid);
     return ContainingBlockState::LineGrid { lineGrid->blockContainer, ContainingBlockState::LineGrid::OutsideRoot { gridOffset - borderBoxLogicalLeftAndTopInRoot(rootState), borderAndPaddingBefore } };
+}
+
+// The line grid of the content of a block formatting context root the block formatting context lays out, and the ones around it.
+RootLineGrid BlockFormattingContext::rootLineGridForNestedRoot(const ContainingBlockState& rootState)
+{
+    auto offsetInRoot = borderBoxLogicalLeftAndTopInRoot(rootState);
+    auto lineGridsAround = lineGridInLayoutState(m_blockLayoutState.containingBlockStates().last(), offsetInRoot);
+    return {
+        lineGridForNestedRoot(rootState),
+        m_rootLineGrid.borderBoxOffsetInLayoutState + offsetInRoot,
+        false,
+        lineGridsAround ? WTF::move(lineGridsAround->lineGrids) : Vector<LineGridInLayoutState::LineGrid> { }
+    };
 }
 
 // What the inline formatting context snaps the lines of a block container to (RenderBlockFlow's lineGrid): the line grid in the same writing

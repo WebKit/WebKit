@@ -104,15 +104,21 @@ static bool removesLineGridName(const RenderElement& renderer)
     return parent && !hasLineGridName(renderer) && hasLineGridName(*parent);
 }
 
-// The render tree lays out a box on its own in the layout state of the root, which has no entry for the boxes in between, at the offset its
-// line grid comes from: not a box that cannot be split across pages, which the line grid around it does not reach, or one with no line grid
-// around it, which establishes the one it names (RenderLayoutState::propagateLineGridInfo, establishLineGrid).
-static std::optional<BlockAvoidanceReason> lineGridAvoidanceReason(const RenderBox& box)
+// A box the render tree lays out on its own that the line grid around it reaches: not one that cannot be split across pages, or one with no line
+// grid around it, which establishes the one it names (RenderLayoutState::propagateLineGridInfo, establishLineGrid).
+static bool isInLineGridAround(const RenderBox& box)
 {
     if (box.isUnsplittableForPagination())
-        return { };
+        return false;
     CheckedPtr containingBlock = box.containingBlock();
-    if (hasLineGridName(*box.parent()) || (containingBlock && hasLineGridName(*containingBlock)))
+    return hasLineGridName(*box.parent()) || (containingBlock && hasLineGridName(*containingBlock));
+}
+
+// FIXME: The render tree lays out the out-of-flow boxes in the layout state of the root, which has no entry for the boxes in between, at the
+// offset the line grid around them comes from.
+static std::optional<BlockAvoidanceReason> lineGridAvoidanceReason(const RenderBox& box)
+{
+    if (isInLineGridAround(box))
         return BlockAvoidanceReason::ContentHasLineGrid;
     return { };
 }
@@ -528,8 +534,6 @@ static std::optional<BlockAvoidanceReason> outOfFlowBoxesInLeafAvoidanceReason(c
 
 static std::optional<BlockAvoidanceReason> independentFormattingContextAvoidanceReason(const RenderBox& box, const RenderBlockFlow& rootContainer)
 {
-    if (auto reason = lineGridAvoidanceReason(box))
-        return reason;
     if (box.parent()->isInlineBox()) {
         // FIXME: Anonymous block-level boxes in inline content, and a fieldset, whose block-start margin takes its legend's, which the inline
         // formatting context does not get (BlockLevelBoxInInlineContent).
@@ -568,8 +572,6 @@ static std::optional<BlockAvoidanceReason> independentFormattingContextAvoidance
 // §9.5.1), and its own formatting context lays out through the render tree.
 static std::optional<BlockAvoidanceReason> floatAvoidanceReason(const RenderBox& floatBox, const RenderBlockFlow& rootContainer)
 {
-    if (auto reason = lineGridAvoidanceReason(floatBox))
-        return reason;
     // FIXME: -webkit-line-align, which the block formatting context does not place floats with.
     if (alignsBlockLevelBoxesToLineGrid(*floatBox.parent()))
         return BlockAvoidanceReason::ContentHasLineGrid;
@@ -603,12 +605,10 @@ static std::optional<BlockAvoidanceReason> floatAvoiderAvoidanceReason(const Ren
     auto textAlign = containingBlockStyle->textAlign();
     if (textAlign == Style::TextAlign::WebKitCenter || textAlign == Style::TextAlign::WebKitLeft || textAlign == Style::TextAlign::WebKitRight)
         return BlockAvoidanceReason::ContentHasFloat;
-    // FIXME: -webkit-line-align, which the block formatting context does not place boxes beside floats with, and a line grid, which the content
-    // of a box beside floats snaps to from where it ends up (RenderBlockFlow::layoutBlockChild lays it out where it estimates it goes).
-    if (alignsBlockLevelBoxesToLineGrid(*box.containingBlock()))
+    // FIXME: -webkit-line-align, which the block formatting context does not place boxes beside floats with, and which aligns the lines in a box
+    // beside floats from where it starts in the inline direction, which the block formatting context knows only once it is laid out.
+    if (alignsBlockLevelBoxesToLineGrid(*box.containingBlock()) || (isInLineGridAround(box) && box.style().lineAlign() != LineAlign::None))
         return BlockAvoidanceReason::ContentHasLineGrid;
-    if (auto reason = lineGridAvoidanceReason(box))
-        return reason;
     for (CheckedPtr<const RenderBlock> ancestor = box.containingBlock(); ancestor; ancestor = ancestor->containingBlock()) {
         auto marginTrim = ancestor->style().marginTrim();
         if (marginTrim.contains(Style::MarginTrimSide::BlockStart) || marginTrim.contains(Style::MarginTrimSide::BlockEnd))

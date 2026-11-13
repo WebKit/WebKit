@@ -150,6 +150,31 @@ struct ContainingBlockState {
     LayoutUnit contentBoxLogicalTop() const { return *borderBoxLogicalTop + borderAndPaddingBefore; }
 };
 
+// The line grid the content of a box the render tree lays out on its own snaps to (-webkit-line-grid), which the render tree layout state
+// carries, in its coordinates: the block containers that establish the line grids around the box, from the outermost one, the last one being
+// the line grid of the box, where their border boxes are, and where the box's is. The block containers in the block formatting context have
+// no layout states of their own, which the ones of the boxes in the box look for a line grid with a name in (RenderLayoutState::establishLineGrid).
+struct LineGridInLayoutState {
+    struct LineGrid {
+        CheckedRef<const RenderBlockFlow> blockContainer;
+        LayoutSize borderBoxOffset;
+    };
+    Vector<LineGrid> lineGrids;
+    LayoutSize boxBorderBoxOffset;
+};
+
+// The line grid the content of a block formatting context root snaps to, where the root's border box is in the coordinates of the render tree
+// layout state (from its logical left), which the boxes in the content the render tree lays out on their own get the line grid in, and whether
+// that layout state is the root's, with the line grids around the root.
+// A root the block formatting context it is in lays out also gets the line grids around it there, like a box laid out on its own
+// (LineGridInLayoutState).
+struct RootLineGrid {
+    std::optional<ContainingBlockState::LineGrid> lineGrid;
+    LayoutSize borderBoxOffsetInLayoutState;
+    bool isInLayoutStateOfRoot { false };
+    Vector<LineGridInLayoutState::LineGrid> lineGridsAroundRoot { };
+};
+
 // This class holds block level information shared across child inline formatting contexts, and what the block formatting context changes
 // as it lays out its content.
 class BlockLayoutState {

@@ -227,6 +227,7 @@ private:
     friend class ListItemExcludedMarkerScope;
     friend class LayoutFrameScope;
     friend class LayoutStateMaintainer;
+    friend class LineGridLayoutStateMaintainer;
     friend class LayoutStateDisabler;
     friend class SubtreeLayoutStateMaintainer;
     friend class FlexPercentResolveDisabler;

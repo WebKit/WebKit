@@ -123,10 +123,8 @@ public:
     BlockFormattingContext(const RenderBlockFlow& root, LayoutIntegration::BlockIntegrationUtils&, BlockLayoutState&);
 
     // The root's geometry is the one the formatting context it is in gave it.
-    // The line grid the root's content snaps to, which a box laid out by the block formatting context it is in gets from there, and whether
-    // the render tree layout state is the root's, with the line grids around the root.
-    enum class LineGridsAroundRoot : bool { Unknown, InLayoutState };
-    BlockLayoutResult layout(const ConstraintsForBlockContent&, const BoxGeometry& rootGeometry, std::optional<ContainingBlockState::LineGrid> rootLineGrid, LineGridsAroundRoot);
+    // A root the block formatting context it is in lays out gets the line grid of its content from there.
+    BlockLayoutResult layout(const ConstraintsForBlockContent&, const BoxGeometry& rootGeometry, const RootLineGrid&);
     // A block-level box in the inline content of the innermost block container being laid out, on the line the inline formatting context
     // reached it on, below lineCount lines with content, of which lineCountForLineClamp count towards the line-clamp budget with the lines of
     // the block-level boxes before it. It and its content join the result. The floats the inline formatting context placed so far, in the
@@ -158,7 +156,7 @@ private:
     void endLineClamp(const RenderBox& blockContainer);
     void handleInlineContent(const RenderBox& blockContainer, BlockLayoutResult&);
     void handleIndependentFormattingContextRoot(const RenderBox&, BlockLayoutResult&);
-    LayoutUnit layoutIndependentFormattingContextThroughRenderTree(const RenderBox&, ContainingBlockState& boxState, std::optional<LayoutUnit> borderBoxInlineSize = { });
+    LayoutUnit layoutIndependentFormattingContextThroughRenderTree(const RenderBox&, ContainingBlockState& boxState, std::optional<LayoutUnit> borderBoxInlineSize = { }, std::optional<LayoutSize> placedBorderBoxLogicalLeftAndTopInRoot = { });
     BlockLayoutResult layoutOutOfFlowIndependentFormattingContext(const RenderBox&, const OutOfFlowContainingBlock&, const OutOfFlowGeometry::StaticPosition&, const std::optional<OutOfFlowGeometry::DefaultAnchor>&);
     void handleFloat(const RenderBox&, BlockLayoutResult&);
     template<typename LayoutContent> std::optional<LayoutUnit> placeBesideFloats(const RenderBox&, ContainingBlockState& boxState, LayoutUnit marginsBeforeLogicalBottom, const LayoutContent&);
@@ -169,7 +167,11 @@ private:
     std::optional<ContainingBlockState::LineGrid> lineGridFor(const RenderBox& blockContainer, const ContainingBlockState& parentState) const;
     std::optional<BlockLayoutState::LineGrid> lineGridForInlineContent(const ContainingBlockState&);
     std::optional<ContainingBlockState::LineGrid> lineGridForNestedRoot(const ContainingBlockState& rootState);
+    RootLineGrid rootLineGridForNestedRoot(const ContainingBlockState& rootState);
     std::pair<LayoutSize, LayoutUnit> lineGridBorderBoxOffsetAndBorderAndPaddingBefore(const ContainingBlockState::LineGrid&);
+    LayoutSize logicalLeftAndTopInRoot(LayoutUnit inlineStartInRoot, LayoutUnit borderBoxInlineSize, LayoutUnit logicalTopInRoot) const;
+    std::optional<LineGridInLayoutState> lineGridInLayoutState(const ContainingBlockState&, LayoutSize borderBoxOffset);
+    std::optional<LineGridInLayoutState> lineGridForBoxLaidOutThroughRenderTree(const RenderBox&, const ContainingBlockState&, LayoutSize borderBoxOffset);
     LayoutSize borderBoxLogicalLeftAndTopInRoot(const ContainingBlockState&);
 
     BoxGeometry computeBorderAndPadding(const RenderBox&, LayoutUnit containingBlockInlineSize) const;
@@ -218,8 +220,7 @@ private:
     Vector<std::pair<CheckedRef<const RenderBox>, LayoutUnit>> m_resolvedBorderBoxLogicalTops;
     bool m_needsLayoutWithResolvedBorderBoxLogicalTops { false };
     bool m_isLayingOutWithResolvedBorderBoxLogicalTops { false };
-    std::optional<ContainingBlockState::LineGrid> m_rootLineGrid;
-    LineGridsAroundRoot m_lineGridsAroundRoot { LineGridsAroundRoot::Unknown };
+    RootLineGrid m_rootLineGrid;
     // The block containers whose content ended at the clamp point of their own line-clamp budget, laid out again without it, and how many of
     // them are around the content laid out now, whose inline content is laid out again too.
     Vector<CheckedRef<const RenderBox>> m_blockContainersLaidOutWithoutLineClamp;

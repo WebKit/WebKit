@@ -66,6 +66,9 @@ public:
     RenderLayoutState() = default;
     RenderLayoutState(const LocalFrameViewLayoutContext::LayoutStateStack&, RenderBox&, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged, std::optional<LineClamp>, std::optional<LegacyLineClamp>);
     explicit RenderLayoutState(RenderElement&);
+    // A block container the block formatting context lays out, which has no layout state of its own: the boxes in it the render tree lays out
+    // on their own snap their content to the line grid of its content, from the offset the block formatting context gives them.
+    RenderLayoutState(const RenderLayoutState& ancestor, RenderBox& blockContainer, LayoutSize layoutOffset, RenderBlockFlow& lineGrid, LayoutSize lineGridOffset);
 
     bool isPaginated() const { return m_isPaginated; }
 
@@ -182,6 +185,20 @@ public:
 private:
     LocalFrameViewLayoutContext* m_context { nullptr };
     bool m_didDisablePaintOffsetCache { false };
+};
+
+// Pushes the layout states of block containers the block formatting context lays out (LayoutIntegration::BlockIntegrationUtils::layoutIndependentFormattingContext).
+class LineGridLayoutStateMaintainer {
+    WTF_MAKE_NONCOPYABLE(LineGridLayoutStateMaintainer);
+public:
+    explicit LineGridLayoutStateMaintainer(LocalFrameViewLayoutContext&);
+    ~LineGridLayoutStateMaintainer();
+
+    void push(RenderBox& blockContainer, LayoutSize layoutOffset, RenderBlockFlow& lineGrid, LayoutSize lineGridOffset);
+
+private:
+    LocalFrameViewLayoutContext& m_context;
+    unsigned m_pushedLayoutStateCount { 0 };
 };
 
 class LayoutStateDisabler {

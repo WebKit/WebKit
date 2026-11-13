@@ -215,7 +215,7 @@ void BlockLayout::layout(RelayoutChildren relayoutChildren, LayoutUnit& repaintL
             blockLayoutState.setTextBoxTrimState({ blockLayoutState.textBoxTrimState().trimsFirstFormattedLine, lastFormattedLineRoot.get() });
         auto initialBlockLayoutState = blockLayoutState;
         auto constraints = constraintsForBlockContent(rootRenderer(), relayoutChildren);
-        auto result = Layout::BlockFormattingContext { rootRenderer(), integrationUtils, blockLayoutState }.layout(constraints, BlockIntegrationUtils::rootGeometry(rootRenderer()), rootLineGrid, Layout::BlockFormattingContext::LineGridsAroundRoot::InLayoutState);
+        auto result = Layout::BlockFormattingContext { rootRenderer(), integrationUtils, blockLayoutState }.layout(constraints, BlockIntegrationUtils::rootGeometry(rootRenderer()), rootLineGrid);
         // align-content moves the content as a unit in the block size the root gets from that of its content (RenderBlockFlow::layoutBlock),
         // where it is laid out again.
         if (!rootRenderer().style().alignContent().isNormal()) {
@@ -226,7 +226,7 @@ void BlockLayout::layout(RelayoutChildren relayoutChildren, LayoutUnit& repaintL
                 if (renderTreeLegacyLineClamp)
                     renderTreeLayoutState->setLegacyLineClamp(renderTreeLegacyLineClamp);
                 auto shiftedConstraints = Layout::ConstraintsForBlockContent { { constraints.horizontal(), constraints.logicalTop() + shift }, constraints.contentBoxBlockSize(), constraints.fillAvailableBlockSize(), constraints.replacedElementAvailableBlockSize(), constraints.relayoutChildren() };
-                result = Layout::BlockFormattingContext { rootRenderer(), integrationUtils, blockLayoutState }.layout(shiftedConstraints, BlockIntegrationUtils::rootGeometry(rootRenderer()), rootLineGrid, Layout::BlockFormattingContext::LineGridsAroundRoot::InLayoutState);
+                result = Layout::BlockFormattingContext { rootRenderer(), integrationUtils, blockLayoutState }.layout(shiftedConstraints, BlockIntegrationUtils::rootGeometry(rootRenderer()), rootLineGrid);
             }
         }
         LOG_WITH_STREAM(Layout, stream << "BlockLayout for root (" << &rootRenderer() << "): " << result);

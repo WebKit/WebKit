@@ -234,7 +234,19 @@ static void registerOrthogonalBoxForLayout(RenderBox& box)
     box.view().addPercentHeightDescendant(box);
 }
 
-BlockIntegrationUtils::IndependentFormattingContextLayoutResult BlockIntegrationUtils::layoutIndependentFormattingContext(const RenderBox& root, const Layout::ConstraintsForIndependentFormattingContext& constraints)
+// The layout states of the block containers around a box the render tree lays out on its own that have none of their own, with the line grids
+// around it, the last one being the one of its containing block, from which the box goes where the block formatting context puts it.
+static void pushLineGridLayoutStates(LineGridLayoutStateMaintainer& lineGridLayoutStates, RenderBox& containingBlock, const Layout::LineGridInLayoutState& lineGrid, LayoutSize containingBlockLayoutOffset)
+{
+    for (size_t index = 0; index < lineGrid.lineGrids.size(); ++index) {
+        auto& [blockContainer, borderBoxOffset] = lineGrid.lineGrids[index];
+        SUPPRESS_MEMORY_UNSAFE_CAST auto& gridContainer = const_cast<RenderBlockFlow&>(blockContainer.get());
+        auto isContainingBlock = index == lineGrid.lineGrids.size() - 1;
+        lineGridLayoutStates.push(containingBlock, isContainingBlock ? containingBlockLayoutOffset : borderBoxOffset, gridContainer, borderBoxOffset);
+    }
+}
+
+BlockIntegrationUtils::IndependentFormattingContextLayoutResult BlockIntegrationUtils::layoutIndependentFormattingContext(const RenderBox& root, const Layout::ConstraintsForIndependentFormattingContext& constraints, const std::optional<Layout::LineGridInLayoutState>& lineGrid)
 {
     // Only the root and its content are written here, by the root's own formatting context, but for the block-direction margins the block
     // formatting context gives it, and to a quirks mode body those of the root element, which nothing else in the block formatting context reads.
@@ -282,8 +294,14 @@ BlockIntegrationUtils::IndependentFormattingContextLayoutResult BlockIntegration
             layoutContext->setContainingBlockBlockSizes(*drawableContent, containingBlockBlockSizes);
     }
     {
-        // The layout state has the paint offset of the block formatting context root only, not of the boxes inside.
+        // The layout state has the paint offset of the block formatting context root only, not of the boxes inside, and the line grid of the
+        // containing block's content, from where the box goes, which it is laid out for every time.
         auto layoutStateDisabler = LayoutStateDisabler { layoutContext.get() };
+        auto lineGridLayoutStates = LineGridLayoutStateMaintainer { layoutContext.get() };
+        if (lineGrid) {
+            box->setNeedsLayout(MarkingBehavior::OnlyThis);
+            pushLineGridLayoutStates(lineGridLayoutStates, containingBlock, *lineGrid, lineGrid->boxBorderBoxOffset - box->locationOffset());
+        }
         box->layoutIfNeeded();
     }
     if (!isOrthogonal) {
@@ -530,18 +548,20 @@ static LayoutSize lineGridOffsetFromRoot(const RenderLayoutState& rootLayoutStat
     return root.writingMode().isHorizontal() ? offset : offset.transposedSize();
 }
 
-std::optional<Layout::ContainingBlockState::LineGrid> BlockIntegrationUtils::lineGridForRoot(const RenderBlockFlow& root)
+Layout::RootLineGrid BlockIntegrationUtils::lineGridForRoot(const RenderBlockFlow& root)
 {
     // The root pushes a layout state of its own when there is a line grid around it or it has a -webkit-line-grid name
     // (LocalFrameViewLayoutContext::pushLayoutState).
     auto* layoutState = root.view().frameView().layoutContext().layoutState();
     if (!layoutState || !layoutState->lineGrid())
-        return { };
+        return { { }, { }, true };
     ASSERT(layoutState->renderer() == &root);
+    auto borderBoxOffsetInLayoutState = root.writingMode().isHorizontal() ? layoutState->layoutOffset() : layoutState->layoutOffset().transposedSize();
     CheckedRef gridContainer = *layoutState->lineGrid();
     if (gridContainer.ptr() == &root)
-        return Layout::ContainingBlockState::LineGrid { gridContainer.get(), { } };
-    return Layout::ContainingBlockState::LineGrid { gridContainer.get(), Layout::ContainingBlockState::LineGrid::OutsideRoot { lineGridOffsetFromRoot(*layoutState, layoutState->lineGridOffset(), root), gridContainer->borderAndPaddingBefore() } };
+        return { Layout::ContainingBlockState::LineGrid { gridContainer.get(), { } }, borderBoxOffsetInLayoutState, true };
+    auto outsideRoot = Layout::ContainingBlockState::LineGrid::OutsideRoot { lineGridOffsetFromRoot(*layoutState, layoutState->lineGridOffset(), root), gridContainer->borderAndPaddingBefore() };
+    return { Layout::ContainingBlockState::LineGrid { gridContainer.get(), outsideRoot }, borderBoxOffsetInLayoutState, true };
 }
 
 // Like RenderLayoutState::establishLineGrid, through the line grids in the layout states of the boxes around the root, past the one of the root.
@@ -661,7 +681,7 @@ bool BlockIntegrationUtils::inlineContentMakesLineBoxesBeforeBlockLevelBoxes(con
     return false;
 }
 
-BlockIntegrationUtils::InlineContentLayoutResult BlockIntegrationUtils::layoutInlineContent(const RenderBlockFlow& blockContainer, const Layout::ConstraintsForInlineContent& constraints, const Layout::BoxGeometry& geometry, std::optional<LayoutUnit> contentBoxBlockSize, LayoutUnit fillAvailableBlockSize, LayoutUnit replacedElementAvailableBlockSize, LayoutUnit orthogonalFlowAvailableInlineSpace, bool relayoutChildren, const Layout::BlockLayoutState& blockLayoutState, const Layout::PlacedFloats::List& intrudingFloats, Layout::BlockFormattingContext& blockFormattingContext, Layout::BlockLayoutResult& blockLayoutResult)
+BlockIntegrationUtils::InlineContentLayoutResult BlockIntegrationUtils::layoutInlineContent(const RenderBlockFlow& blockContainer, const Layout::ConstraintsForInlineContent& constraints, const Layout::BoxGeometry& geometry, std::optional<LayoutUnit> contentBoxBlockSize, LayoutUnit fillAvailableBlockSize, LayoutUnit replacedElementAvailableBlockSize, LayoutUnit orthogonalFlowAvailableInlineSpace, bool relayoutChildren, const Layout::BlockLayoutState& blockLayoutState, const Layout::PlacedFloats::List& intrudingFloats, const std::optional<Layout::LineGridInLayoutState>& contentLineGrid, Layout::BlockFormattingContext& blockFormattingContext, Layout::BlockLayoutResult& blockLayoutResult)
 {
     // Only the line layout of this block container and its inline content are written here, and nothing else in the block formatting
     // context reads them.
@@ -755,7 +775,36 @@ BlockIntegrationUtils::InlineContentLayoutResult BlockIntegrationUtils::layoutIn
         // The lines before the damage would need the floats in the content placed before them, which only the render tree's float lists keep.
         auto hasFloats = !intrudingFloats.isEmpty() || inlineContentHasFloats(inlineContentRoot);
         auto forceFullLayout = invalidateChildren || hasBlockLevelBoxes || hasFloats ? LineLayout::ForceFullLayout::Yes : LineLayout::ForceFullLayout::No;
-        paintInvalidationScope.setDamagedRect(lineLayout->layout(blockLayoutState, blockFormattingContext, blockLayoutResult, intrudingFloats, forceFullLayout).repaintRect);
+        auto damagedRect = lineLayout->layout(blockLayoutState, blockFormattingContext, blockLayoutResult, intrudingFloats, forceFullLayout).repaintRect;
+        // The inline formatting context lays the floats in the content out before it places them, and their content snaps to the line grid
+        // from where they go (RenderBlockFlow::positionNewFloats places a float before its layout), where they are laid out again, and the
+        // content with the block sizes that gives them, unless block-level boxes in it took part in the block formatting context already.
+        if (contentLineGrid) {
+            auto layoutFloatsWhereTheyGo = [&] {
+                auto floatSizeChanged = false;
+                for (auto& box : atomicInlineLevelBoxes) {
+                    if (!box->isFloating() || box->isUnsplittableForPagination())
+                        continue;
+                    auto borderBoxSize = box->borderBoxRect().size();
+                    auto lineGridLayoutStates = LineGridLayoutStateMaintainer { layoutContext.get() };
+                    pushLineGridLayoutStates(lineGridLayoutStates, inlineContentRoot, *contentLineGrid, contentLineGrid->boxBorderBoxOffset);
+                    box->setNeedsLayout(MarkingBehavior::OnlyThis);
+                    box->layoutIfNeeded();
+                    floatSizeChanged |= box->borderBoxRect().size() != borderBoxSize;
+                }
+                return floatSizeChanged;
+            };
+            // The inline formatting context lays them out again in its own layout state.
+            if (layoutFloatsWhereTheyGo() && !lineLayout->hasBlocks()) {
+                auto contentDamagedRect = lineLayout->layout(blockLayoutState, blockFormattingContext, blockLayoutResult, intrudingFloats, LineLayout::ForceFullLayout::Yes).repaintRect;
+                if (damagedRect && contentDamagedRect)
+                    damagedRect->unite(*contentDamagedRect);
+                else if (contentDamagedRect)
+                    damagedRect = contentDamagedRect;
+                layoutFloatsWhereTheyGo();
+            }
+        }
+        paintInvalidationScope.setDamagedRect(damagedRect);
     }
     for (auto& box : atomicInlineLevelBoxes) {
         box->clearOverridingContainingBlockContentSize();

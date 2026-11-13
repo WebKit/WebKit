@@ -1,0 +1,24 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 9px/11px sans-serif; margin: 4px; }
+.grid { -webkit-line-grid: grid; -webkit-line-snap: baseline; font-size: 14px; line-height: 19px; width: 250px; padding: 3px; margin-bottom: 4px; }
+.small { font-size: 9px; line-height: 11px; }
+.moves { -webkit-line-snap: none; font-size: 9px; line-height: 11px; }
+</style>
+<div class=grid>
+  <div class=moves id=first>x</div>
+  <div class=small style="float: left; width: 80px; margin-top: 4px;">a float with<br>two lines</div>
+  <div class=small style="margin-top: 2px;">a block beside the float</div>
+  <div class=small style="float: right; width: 70px; margin-top: 3px;">a right float<br>two</div>
+  <div class=small style="clear: both; margin-top: 3px;">after</div>
+</div>
+<div class=grid>
+  <div class=moves id=second>x</div>
+  <div class=small>first line <span style="float: left; margin-top: 3px; width: 70px;">a float in<br>inline content</span> text that wraps beside the float for a few lines</div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("first").firstChild.data = "text that grows by lines that are not on the grid, a few of them";
+document.getElementById("second").firstChild.data = "more text that grows by lines that are not on the grid";
+document.body.offsetHeight;
+</script>

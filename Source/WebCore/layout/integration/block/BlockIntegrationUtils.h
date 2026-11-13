@@ -126,7 +126,7 @@ public:
     // scratch, like when the inline size, border or padding of the block container changed. The block formatting context lays out the
     // block-level boxes in the content when the inline formatting context reaches them, and adds them to the result it is building.
     // The floats that intrude into the content are in the logical coordinates of the block container's border box.
-    InlineContentLayoutResult layoutInlineContent(const RenderBlockFlow&, const Layout::ConstraintsForInlineContent&, const Layout::BoxGeometry&, std::optional<LayoutUnit> contentBoxBlockSize, LayoutUnit fillAvailableBlockSize, LayoutUnit replacedElementAvailableBlockSize, LayoutUnit orthogonalFlowAvailableInlineSpace, bool relayoutChildren, const Layout::BlockLayoutState&, const Layout::PlacedFloats::List& intrudingFloats, Layout::BlockFormattingContext&, Layout::BlockLayoutResult&);
+    InlineContentLayoutResult layoutInlineContent(const RenderBlockFlow&, const Layout::ConstraintsForInlineContent&, const Layout::BoxGeometry&, std::optional<LayoutUnit> contentBoxBlockSize, LayoutUnit fillAvailableBlockSize, LayoutUnit replacedElementAvailableBlockSize, LayoutUnit orthogonalFlowAvailableInlineSpace, bool relayoutChildren, const Layout::BlockLayoutState&, const Layout::PlacedFloats::List& intrudingFloats, const std::optional<Layout::LineGridInLayoutState>& contentLineGrid, Layout::BlockFormattingContext&, Layout::BlockLayoutResult&);
     // Whether the inline content of a block container has floats, outside of the boxes in it that establish formatting contexts.
     static bool inlineContentHasFloats(const RenderBlockFlow&);
     // Whether the inline content of a block container makes line boxes before its first block-level box, which separate its block-start margin
@@ -152,7 +152,7 @@ public:
     // An independent formatting context root the block formatting context does not lay out itself, such as a table or a flex container,
     // laid out by its own formatting context through the render tree (RenderBox::layoutIfNeeded). Its position and margins are the block
     // formatting context's, which BlockLayout::updateRenderers writes.
-    IndependentFormattingContextLayoutResult layoutIndependentFormattingContext(const RenderBox&, const Layout::ConstraintsForIndependentFormattingContext&);
+    IndependentFormattingContextLayoutResult layoutIndependentFormattingContext(const RenderBox&, const Layout::ConstraintsForIndependentFormattingContext&, const std::optional<Layout::LineGridInLayoutState>&);
     // An out-of-flow replaced element or flex container, laid out by its own formatting context through the render tree once its containing
     // block has its size, at the border box size the block formatting context gives it: none for a replaced element, which sizes itself, and
     // no block size when it comes from the content. The border box size it gets; its position and margins are the block formatting context's,
@@ -190,7 +190,7 @@ public:
     static void restoreLegacyLineClamp(const RenderBox&, const std::optional<RenderLayoutState::LegacyLineClamp>&);
     // The line grid around the root, which the render tree layout state of the root has (RenderLayoutState::lineGrid), and the nearest one
     // with a name around it, past the line grid a box in its content snaps to.
-    static std::optional<Layout::ContainingBlockState::LineGrid> lineGridForRoot(const RenderBlockFlow& root);
+    static Layout::RootLineGrid lineGridForRoot(const RenderBlockFlow& root);
     static std::optional<Layout::ContainingBlockState::LineGrid> lineGridOutsideRoot(const RenderBlockFlow& root, const Style::WebkitLineGrid& name, const RenderBlockFlow& rootGridContainer);
     // A table, a flex or grid container, or a block formatting context root whose content the block formatting context cannot lay out (canUseForNestedBlockLayout).
     static bool laysOutThroughRenderTree(const RenderBox&);

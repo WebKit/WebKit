@@ -13,6 +13,9 @@ body { font: 9px/11px sans-serif; margin: 4px; }
   <div class=small style="-webkit-line-snap: none;">not snapped<br>two</div>
   <span class=small>inline <div style="margin-top: 2px;">block in inline</div> after</span>
 </div>
+<div class="section grid" style="-webkit-line-grid: a; line-height: 23px; padding-top: 1px;">
+  <div style="-webkit-line-grid: c; line-height: 13px; padding-top: 2px;"><div style="display: flow-root; margin-top: 1px;"><table class=small><tr><td>cell on c<div style="-webkit-line-grid: a;">back on a<br>two</div></td></tr></table></div></div>
+</div>
 <div class="section grid" style="padding-top: 2px;">
   <div class=small style="line-height: 11px;">snapped</div>
   <div class=small style="contain: size; height: 24px; margin-top: 5px; line-height: 11px;">size containment<br>has a grid of its own</div>
@@ -45,9 +48,9 @@ body { font: 9px/11px sans-serif; margin: 4px; }
   <div class=grid style="-webkit-line-grid: cleared;"><div class=small style="clear: left;">below the float<br>two</div></div>
 </div>
 <div class=section style="display: flow-root;">
-  <div class=grid style="padding: 2px;">
-    <div class=small>text<div style="float: left; margin-top: 3px;">a float<br>two</div>beside</div>
-    <div class=small style="position: absolute; left: 150px; margin-top: 2px;">out-of-flow<br>two</div>
+  <div class=grid style="padding: 2px; position: relative;">
+    <div class=small>text beside</div>
+    <div class=small style="position: absolute; left: 150px; top: 5px;">out-of-flow<br>two</div>
   </div>
 </div>
 </div>
