@@ -554,7 +554,7 @@ bool WebFrameProxy::didHandleContentFilterUnblockNavigation(const ResourceReques
     bool webContentRestrictionsAskToEnabled = page->preferences().webContentRestrictionsAskToEnabled();
     if (webContentRestrictionsAskToEnabled)
         unblockRequestURL = request.url();
-#if HAVE(BROWSERENGINEKIT_WEBCONTENTFILTER)
+#if HAVE(BROWSERENGINEKIT_WEBCONTENTFILTER) && HAVE(UI_VIEW)
     RetainPtr<CocoaView> presentingView = webContentRestrictionsAskToEnabled ? reinterpret_cast<CocoaView *>(page->cocoaView().get()) : nullptr;
 #endif
 #endif
@@ -588,7 +588,7 @@ bool WebFrameProxy::didHandleContentFilterUnblockNavigation(const ResourceReques
         if (unblocked)
             page->reload({ });
     }, unblockRequestURL
-#if HAVE(WEBCONTENTRESTRICTIONS_ASK_TO) && HAVE(BROWSERENGINEKIT_WEBCONTENTFILTER)
+#if HAVE(WEBCONTENTRESTRICTIONS_ASK_TO) && HAVE(BROWSERENGINEKIT_WEBCONTENTFILTER) && HAVE(UI_VIEW)
     , presentingView
 #endif
     );

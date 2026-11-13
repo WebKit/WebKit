@@ -158,14 +158,14 @@ bool ContentFilterUnblockHandler::canHandleRequest(const ResourceRequest& reques
 }
 
 void ContentFilterUnblockHandler::requestUnblockAsync(DecisionHandlerFunction&& decisionHandler, std::optional<URL> requestURL
-#if HAVE(WEBCONTENTRESTRICTIONS_ASK_TO) && HAVE(BROWSERENGINEKIT_WEBCONTENTFILTER)
+#if HAVE(WEBCONTENTRESTRICTIONS_ASK_TO) && HAVE(BROWSERENGINEKIT_WEBCONTENTFILTER) && HAVE(UI_VIEW)
     , CocoaView* presentingView
 #endif
     )
 {
     // FIXME: Remove once all platforms use the same flow to request unblocking content, rdar://170455406
     UNUSED_PARAM(requestURL);
-#if HAVE(WEBCONTENTRESTRICTIONS_ASK_TO) && HAVE(BROWSERENGINEKIT_WEBCONTENTFILTER)
+#if HAVE(WEBCONTENTRESTRICTIONS_ASK_TO) && HAVE(BROWSERENGINEKIT_WEBCONTENTFILTER) && HAVE(UI_VIEW)
     UNUSED_PARAM(presentingView);
 #endif
 #if HAVE(WEBCONTENTRESTRICTIONS)
@@ -177,7 +177,7 @@ void ContentFilterUnblockHandler::requestUnblockAsync(DecisionHandlerFunction&& 
 #endif
 #if HAVE(WEBCONTENTRESTRICTIONS_ASK_TO)
         if (requestURL) {
-#if HAVE(BROWSERENGINEKIT_WEBCONTENTFILTER)
+#if HAVE(BROWSERENGINEKIT_WEBCONTENTFILTER) && HAVE(UI_VIEW)
             filter->requestPermissionForURL(*m_evaluatedURL, *requestURL, [decisionHandler = WTF::move(decisionHandler)](bool didAllow) mutable {
                 callOnMainThread([decisionHandler = WTF::move(decisionHandler), didAllow]() {
                     decisionHandler(didAllow);

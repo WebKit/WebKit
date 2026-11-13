@@ -31,7 +31,7 @@
 #include <WebCore/ParentalControlsURLFilterParameters.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
-#if HAVE(BROWSERENGINEKIT_WEBCONTENTFILTER)
+#if HAVE(BROWSERENGINEKIT_WEBCONTENTFILTER) && HAVE(UI_VIEW)
 #include <WebCore/CocoaView.h>
 #endif
 
@@ -66,7 +66,7 @@ public:
     WEBCORE_EXPORT void isURLAllowed(IsMainFrameLoad, const URL& mainDocumentURL, const URL&, CompletionHandler<void(bool, NSData *)>&&);
     virtual void allowURL(const URL&, CompletionHandler<void(bool)>&&);
 #if HAVE(WEBCONTENTRESTRICTIONS_ASK_TO)
-#if HAVE(BROWSERENGINEKIT_WEBCONTENTFILTER)
+#if HAVE(BROWSERENGINEKIT_WEBCONTENTFILTER) && HAVE(UI_VIEW)
     virtual void requestPermissionForURL(const URL&, const URL& referrerURL, CompletionHandler<void(bool)>&&, CocoaView* presentingView = nullptr);
 #else
     WEBCORE_EXPORT void requestPermissionForURL(const URL&, const URL& referrerURL, CompletionHandler<void(bool)>&&);

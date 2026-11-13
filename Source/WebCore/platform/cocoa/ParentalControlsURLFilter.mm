@@ -264,7 +264,7 @@ void ParentalControlsURLFilter::allowURL(const ParentalControlsURLFilterParamete
 
 #if HAVE(WEBCONTENTRESTRICTIONS_ASK_TO)
 void ParentalControlsURLFilter::requestPermissionForURL(const URL& url, const URL& referrerURL, CompletionHandler<void(bool)>&& completionHandler
-#if HAVE(BROWSERENGINEKIT_WEBCONTENTFILTER)
+#if HAVE(BROWSERENGINEKIT_WEBCONTENTFILTER) && HAVE(UI_VIEW)
     , CocoaView*
 #endif
 )

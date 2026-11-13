@@ -1909,6 +1909,10 @@
 #define HAVE_UISCROLLVIEW_DECELERATION_TRACKING_BEHAVIOR 1
 #endif
 
+#if !defined(HAVE_UI_VIEW) && __has_include(<UIKit/UIView.h>)
+#define HAVE_UI_VIEW 1
+#endif
+
 #if !defined(HAVE_UI_HINGE_INTERACTION) && PLATFORM(IOS) && __has_include(<UIKit/UIHingeInteraction.h>)
 #define HAVE_UI_HINGE_INTERACTION 1
 #endif

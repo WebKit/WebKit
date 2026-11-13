@@ -77,7 +77,7 @@ public:
     NODELETE WEBCORE_EXPORT bool needsUIProcess() const;
     WEBCORE_EXPORT bool canHandleRequest(const ResourceRequest&) const;
     WEBCORE_EXPORT void requestUnblockAsync(DecisionHandlerFunction&&, std::optional<URL> requestURL = std::nullopt
-#if HAVE(WEBCONTENTRESTRICTIONS_ASK_TO) && HAVE(BROWSERENGINEKIT_WEBCONTENTFILTER)
+#if HAVE(WEBCONTENTRESTRICTIONS_ASK_TO) && HAVE(BROWSERENGINEKIT_WEBCONTENTFILTER) && HAVE(UI_VIEW)
         , CocoaView* presentingView = nullptr
 #endif
     );
