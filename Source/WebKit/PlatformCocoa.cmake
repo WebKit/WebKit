@@ -1043,7 +1043,8 @@ target_link_libraries(WebKitSwift PRIVATE
     WebKit
     $<$<BOOL:${WRITINGTOOLSUI_LIBRARY}>:${WRITINGTOOLSUI_LIBRARY}>
 )
-add_dependencies(WebKitSwift WebKit)
+
+add_dependencies(WebKitSwift WebKit WebKit::_WebKit_SwiftUI)
 
 WEBKIT_LIBRARY(WebKitSwift)
 
