@@ -714,15 +714,20 @@ void PointerCaptureController::cancelPointer(PointerID pointerId, const IntPoint
     capturingData->pendingTargetOverride = nullptr;
     capturingData->state = CapturingData::State::Cancelled;
 
-    capturingData->previousTarget = nullptr;
+    RefPtr previousTarget = std::exchange(capturingData->previousTarget, nullptr);
 
     auto target = [&]() -> RefPtr<Element> {
         if (capturingData->targetOverride)
             return capturingData->targetOverride;
-        constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowChildFrameContent };
         RefPtr localMainFrame = page->localMainFrame();
-        if (!localMainFrame)
+        if (!localMainFrame) {
+            // The main frame is in another process, so documentPoint isn't in this process's coordinate space.
+            // Target the element that last received an event for this pointer instead.
+            if (previousTarget && previousTarget->isConnected() && previousTarget->document().frame())
+                return previousTarget;
             return nullptr;
+        }
+        constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowChildFrameContent };
         return localMainFrame->eventHandler().hitTestResultAtPoint(documentPoint, hitType).innerNonSharedElement();
     }();
 

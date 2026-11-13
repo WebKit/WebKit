@@ -6241,17 +6241,24 @@ void WebPageProxy::handleTouchEvent(IPC::Connection* connection, Ref<NativeWebTo
 
 void WebPageProxy::cancelPointer(WebCore::PointerID pointerId, const WebCore::IntPoint& documentPoint)
 {
-    send(Messages::WebPage::CancelPointer(pointerId, documentPoint));
+    // The pointer may be active in a process other than the main frame's (e.g. a cross-origin iframe).
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.send(Messages::WebPage::CancelPointer(pointerId, documentPoint), pageID);
+    });
 }
 
 void WebPageProxy::touchWithIdentifierWasRemoved(WebCore::PointerID pointerId)
 {
-    send(Messages::WebPage::TouchWithIdentifierWasRemoved(pointerId));
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.send(Messages::WebPage::TouchWithIdentifierWasRemoved(pointerId), pageID);
+    });
 }
 
 void WebPageProxy::resetPointerCapture()
 {
-    send(Messages::WebPage::ResetPointerCapture());
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.send(Messages::WebPage::ResetPointerCapture(), pageID);
+    });
 }
 
 void WebPageProxy::scrollBy(ScrollDirection direction, ScrollGranularity granularity)

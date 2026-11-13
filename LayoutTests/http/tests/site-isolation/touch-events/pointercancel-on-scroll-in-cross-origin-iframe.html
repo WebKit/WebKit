@@ -1,0 +1,30 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script>
+description("Scrolling an overflow scroller inside a cross-origin iframe must dispatch pointercancel, not pointerup, to the iframe.");
+jsTestIsAsync = true;
+
+let result;
+addEventListener("message", async (event) => {
+    if (event.data === "ready") {
+        await UIHelper.ensurePresentationUpdate();
+        await UIHelper.dragFromPointToPoint(100, 180, 100, 30, 0.3);
+        await UIHelper.waitForZoomingOrScrollingToEnd();
+        document.querySelector("iframe").contentWindow.postMessage("report", "*");
+        return;
+    }
+
+    result = event.data;
+    shouldBeGreaterThan("result.scrollTop", "0");
+    shouldBeEqualToString("result.events.join(' ')", "pointerdown pointercancel");
+    finishJSTest();
+});
+</script>
+</head>
+<body style="margin: 0;">
+<iframe style="position: absolute; left: 0; top: 0; width: 300px; height: 300px; border: none;" src="http://localhost:8000/site-isolation/touch-events/resources/overflow-scroller-reports-pointer-events.html"></iframe>
+</body>
+</html>

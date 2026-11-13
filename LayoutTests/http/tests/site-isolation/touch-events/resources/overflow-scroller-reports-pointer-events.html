@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body { margin: 0; }
+#scroller { width: 200px; height: 200px; overflow-y: scroll; }
+#content { height: 1000px; }
+</style>
+</head>
+<body>
+<div id="scroller"><div id="content"></div></div>
+<script>
+let events = [];
+for (let type of ["pointerdown", "pointerup", "pointercancel"])
+    scroller.addEventListener(type, (event) => events.push(event.type));
+
+addEventListener("message", (event) => {
+    if (event.data === "report")
+        window.top.postMessage({ events, scrollTop: scroller.scrollTop }, "*");
+});
+
+onload = () => {
+    requestAnimationFrame(() => requestAnimationFrame(() => window.top.postMessage("ready", "*")));
+};
+</script>
+</body>
+</html>
