@@ -164,7 +164,7 @@
     "web-platform-tests/digital-credentials": "import",
     "web-platform-tests/direct-sockets": "skip",
     "web-platform-tests/docs": "import",
-    "web-platform-tests/document-picture-in-picture": "skip",
+    "web-platform-tests/document-picture-in-picture": "import",
     "web-platform-tests/document-policy": "skip",
     "web-platform-tests/dom": "import",
     "web-platform-tests/domparsing": "import",

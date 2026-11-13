@@ -1,0 +1,38 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/document-picture-in-picture/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/document-picture-in-picture/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/document-picture-in-picture/base-uri.https.html
+/LayoutTests/imported/w3c/web-platform-tests/document-picture-in-picture/beforeunload-is-disabled.https.html
+/LayoutTests/imported/w3c/web-platform-tests/document-picture-in-picture/clears-session-on-close.https.html
+/LayoutTests/imported/w3c/web-platform-tests/document-picture-in-picture/closes-on-navigation-or-destroy.https.html
+/LayoutTests/imported/w3c/web-platform-tests/document-picture-in-picture/copy-document-mode-quirks.https.html
+/LayoutTests/imported/w3c/web-platform-tests/document-picture-in-picture/copy-document-mode.https.html
+/LayoutTests/imported/w3c/web-platform-tests/document-picture-in-picture/display-mode.https.html
+/LayoutTests/imported/w3c/web-platform-tests/document-picture-in-picture/enter-event.https.html
+/LayoutTests/imported/w3c/web-platform-tests/document-picture-in-picture/focus-opener.https.html
+/LayoutTests/imported/w3c/web-platform-tests/document-picture-in-picture/iframe-document-pip.https.html
+/LayoutTests/imported/w3c/web-platform-tests/document-picture-in-picture/open-pip-window-from-pip-window.https.html
+/LayoutTests/imported/w3c/web-platform-tests/document-picture-in-picture/pip-fullscreen.https.html
+/LayoutTests/imported/w3c/web-platform-tests/document-picture-in-picture/pip-move.https.html
+/LayoutTests/imported/w3c/web-platform-tests/document-picture-in-picture/pip-receives-focus.https.html
+/LayoutTests/imported/w3c/web-platform-tests/document-picture-in-picture/pip-resize.https.html
+/LayoutTests/imported/w3c/web-platform-tests/document-picture-in-picture/pip-size.optional.https.html
+/LayoutTests/imported/w3c/web-platform-tests/document-picture-in-picture/propagate-user-activation-from-opener.https.html
+/LayoutTests/imported/w3c/web-platform-tests/document-picture-in-picture/propagate-user-activation-to-opener.https.html
+/LayoutTests/imported/w3c/web-platform-tests/document-picture-in-picture/requires-secure-context.html
+/LayoutTests/imported/w3c/web-platform-tests/document-picture-in-picture/requires-user-gesture.https.html
+/LayoutTests/imported/w3c/web-platform-tests/document-picture-in-picture/requires-width-and-height-to-both-be-specified.https.html
+/LayoutTests/imported/w3c/web-platform-tests/document-picture-in-picture/returns-window-with-document.https.html
