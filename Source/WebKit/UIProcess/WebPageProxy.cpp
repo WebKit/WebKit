@@ -4675,7 +4675,7 @@ void WebPageProxy::dragExited(DragData& dragData)
         targets.append(*lastTarget);
     internals().lastResolvedDragEventNumber = dragEventNumber;
 
-    for (auto& target : targets) {
+    for (auto& target : borrow(targets)) {
         if (target.frameID)
             sendDragExitedToFrame(target.frameID, target.clientPosition, dragData);
     }
@@ -4872,7 +4872,7 @@ void WebPageProxy::dragWasHandledInFrame(uint64_t dragEventNumber, const std::op
 
         // FIXME: A frame the drag left in the same process doesn't get dragleave, but Exited would also reset the drag caret
         // and file input state of the frame the drag is now over.
-        for (auto& previousTarget : previousTargets) {
+        for (auto& previousTarget : borrow(previousTargets)) {
             if (processContainingFrame(previousTarget.frameID).ptr() != process.ptr())
                 sendDragExitedToFrame(previousTarget.frameID, previousTarget.clientPosition, dragData);
         }

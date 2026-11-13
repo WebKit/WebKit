@@ -1,7 +1,7 @@
 Platform/IPC/ArgumentCoders.cpp
 Platform/IPC/ArgumentCoders.h
 Platform/IPC/SwiftCoding.h
-UIProcess/Cocoa/MediaPermissionUtilities.mm
+[ macOS ] UIProcess/Cocoa/MediaPermissionUtilities.mm
 [ iOS ] UIProcess/Cocoa/WebPasteboardProxyCocoa.mm
 [ iOS ] UIProcess/ios/DragDropInteractionState.mm
 [ iOS ] UIProcess/ios/WKTouchEventsGestureRecognizer.mm
