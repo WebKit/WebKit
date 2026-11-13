@@ -176,6 +176,7 @@ public:
     bool isExtrinsicallySized() const;
 
     LayoutRange gridAreaRangeForOutOfFlow(const RenderBox&, Style::GridTrackSizingDirection) const;
+    void setGridAreaContentSizeForOutOfFlow(RenderBox&) const;
 
 private:
     friend class GridTrackSizingAlgorithm;
@@ -231,7 +232,6 @@ private:
     bool canPerformSimplifiedLayout() const final;
     void prepareGridItemForPositionedLayout(RenderBox&);
     NODELETE bool hasStaticPositionForGridItem(const RenderBox&, Style::GridTrackSizingDirection) const;
-    void layoutOutOfFlowBox(RenderBox&, RelayoutChildren, bool fixedPositionObjectsOnly) override;
 
     void computeTrackSizesForDefiniteSize(Style::GridTrackSizingDirection, LayoutUnit availableSpace, RenderGridLayoutState&);
     std::pair<LayoutUnit, LayoutUnit> computeTrackSizesForIndefiniteSize(GridTrackSizingAlgorithm&, Style::GridTrackSizingDirection, RenderGridLayoutState&) const;

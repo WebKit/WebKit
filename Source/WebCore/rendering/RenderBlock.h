@@ -250,6 +250,9 @@ public:
 
     void layoutOutOfFlowBoxes(RelayoutChildren, bool fixedPositionObjectsOnly = false);
 
+    void estimateFragmentRangeForBoxChild(const RenderBox&) const;
+    bool updateFragmentRangeForBoxChild(const RenderBox&) const;
+
     static void relayoutRenderBlockForScrollbarChange(RenderBlock&);
 
     // Gives the query containers that a style-interleaved layout sized without laying out their content back their
@@ -264,10 +267,6 @@ protected:
     bool establishesIndependentFormattingContextIgnoringDisplayType(const Style::ComputedStyle&) const;
 
     void layout() override;
-
-    virtual void layoutOutOfFlowBox(RenderBox&, RelayoutChildren, bool fixedPositionObjectsOnly);
-    
-    void markFixedPositionBoxForLayoutIfNeeded(RenderBox& child);
 
     std::pair<LayoutUnit, LayoutUnit> intrinsicLogicalMarginStartAndEnd(const RenderBox&) const;
     inline LayoutUnit marginIntrinsicLogicalWidthForChild(const RenderBox&) const;
@@ -313,9 +312,6 @@ protected:
     void addVisualOverflowFromTheme();
 
     void computeFragmentRangeForBoxChild(const RenderBox&) const;
-
-    void estimateFragmentRangeForBoxChild(const RenderBox&) const;
-    bool updateFragmentRangeForBoxChild(const RenderBox&) const;
 
     void updateBlockChildDirtyBitsBeforeLayout(RelayoutChildren, RenderBox&);
 
