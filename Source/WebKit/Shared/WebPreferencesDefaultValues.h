@@ -52,6 +52,12 @@
 #define Supporthdrdisplay_feature_status Testable
 #endif
 
+#if defined(ENABLE_HDR_2D_CANVAS) && ENABLE_HDR_2D_CANVAS && defined(HAVE_SUPPORT_HDR_DISPLAY) && HAVE_SUPPORT_HDR_DISPLAY
+#define Supporthdr2dcanvas_feature_status Stable
+#else
+#define Supporthdr2dcanvas_feature_status Testable
+#endif
+
 #if defined(ENABLE_WEBXR_LAYERS) && ENABLE_WEBXR_LAYERS && USE(OPENXR)
 #define Webxr_layers_feature_status Testable
 #else
