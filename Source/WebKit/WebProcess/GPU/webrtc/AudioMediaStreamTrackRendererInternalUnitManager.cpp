@@ -235,6 +235,7 @@ void AudioMediaStreamTrackRendererInternalUnitManagerProxy::setLastDeviceUsed(co
 void AudioMediaStreamTrackRendererInternalUnitManagerProxy::deleteUnitForTesting()
 {
     protect(WebProcess::singleton().ensureGPUProcessConnection().connection())->send(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::DeleteUnit { identifier() }, 0);
+    m_didClose = true;
 }
 
 void AudioMediaStreamTrackRendererInternalUnitManagerProxy::stopThread()
