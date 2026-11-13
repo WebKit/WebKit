@@ -572,6 +572,21 @@ void Adjuster::adjust(Style::ComputedStyle& style) const
             style.setTextDecorationLineInEffect(style.textDecorationLine());
     }
 
+    if (!style.display().isGridLanesBox()) {
+        auto hasIntrinsicAutoRepeat = [](const GridTemplateList& templateList) {
+            return std::ranges::any_of(templateList.autoRepeatSizes, [](const GridTrackSize& trackSize) {
+                auto isDefinite = [](const GridTrackBreadth& breadth) {
+                    return breadth.isLength() && !breadth.isContentSized();
+                };
+                return !isDefinite(trackSize.minTrackBreadth()) && !isDefinite(trackSize.maxTrackBreadth());
+            });
+        };
+        if (hasIntrinsicAutoRepeat(style.gridTemplateColumns()))
+            style.setGridTemplateColumns(ComputedStyle::initialGridTemplateColumns());
+        if (hasIntrinsicAutoRepeat(style.gridTemplateRows()))
+            style.setGridTemplateRows(ComputedStyle::initialGridTemplateRows());
+    }
+
     auto hasAutoZIndex = [](const Style::ComputedStyle& style, const Style::ComputedStyle& parentBoxStyle, const Element* element) {
         if (style.specifiedZIndex().isAuto())
             return true;
