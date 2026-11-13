@@ -13,6 +13,6 @@ PASS Declarative shadow DOM without shadowrootcustomelementregistry attribute wi
 PASS Declarative shadow DOM with shadowrootcustomelementregistry attribute without registry initialized should remain null registry after adoption.
 PASS Null registry element should gain effective global registry of global registry from its parent upon adoption.
 PASS Null registry element should gain effective global registry of null from its parent upon adoption.
-FAIL Null registry element should gain effective global registry of scoped registry from its parent upon adoption. assert_equals: expected null but got object "[object CustomElementRegistry]"
+PASS Null registry element should gain effective global registry of scoped registry from its parent upon adoption.
 FAIL Global registry element should gain effective global registry of scoped registry from its parent upon adoption. assert_equals: expected object "[object CustomElementRegistry]" but got object "[object CustomElementRegistry]"
 

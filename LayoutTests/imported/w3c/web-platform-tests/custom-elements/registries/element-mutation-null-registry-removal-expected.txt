@@ -1,3 +1,4 @@
 
 PASS An element's null customElementRegistry should not mutate after removal from a declarative shadow root with shadowrootcustomelementregistry.
+PASS An element's null customElementRegistry should not mutate after removal from a shadow root with a scoped registry.
 

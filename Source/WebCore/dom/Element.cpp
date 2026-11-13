@@ -3246,7 +3246,7 @@ RenderPtr<RenderElement> Element::createElementRenderer(Style::ComputedStyle&& s
 
 static void preserveCustomElementRegistryAfterLeavingTreeScope(Element& element, ContainerNode& oldParent)
 {
-    if (!oldParent.isInShadowTree())
+    if (!oldParent.isInShadowTree() || element.usesNullCustomElementRegistry())
         return;
     if (RefPtr registry = oldParent.treeScope().customElementRegistry()) {
         if (registry->isScoped() && !element.usesScopedCustomElementRegistryMap()) [[unlikely]]

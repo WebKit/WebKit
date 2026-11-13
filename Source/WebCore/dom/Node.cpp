@@ -2311,6 +2311,20 @@ inline void Node::adoptCustomElementRegistryIntoScopedRegistryDocument()
         setUsesNullCustomElementRegistry();
 }
 
+// https://dom.spec.whatwg.org/#concept-node-adopt
+static bool shouldClearNullCustomElementRegistryOnAdoption(const Node& node, Document& newDocument)
+{
+    if (newDocument.usesNullCustomElementRegistry() || node.isShadowRoot())
+        return false;
+    if (!is<Element>(node))
+        return true;
+    RefPtr parent = node.parentNode();
+    if (!parent || (parent->isDocumentFragment() && !parent->isShadowRoot()))
+        return true;
+    RefPtr registry = CustomElementRegistry::registryForNodeOrTreeScope(*parent, protect(parent->isInShadowTree() ? parent->treeScope() : newDocument));
+    return registry && !registry->isScoped();
+}
+
 void Node::moveNodeToNewDocumentFastCase(Document& oldDocument, Document& newDocument)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!oldDocument.shouldInvalidateNodeListAndCollectionCaches());
@@ -2329,7 +2343,7 @@ void Node::moveNodeToNewDocumentFastCase(Document& oldDocument, Document& newDoc
 
     ensureWrapperForAdoptedNodeWithForeignGlobalObjectIfNeeded(*this, oldDocument, newDocument);
 
-    if (usesNullCustomElementRegistry() && !newDocument.usesNullCustomElementRegistry() && !isShadowRoot()) [[unlikely]]
+    if (usesNullCustomElementRegistry() && shouldClearNullCustomElementRegistryOnAdoption(*this, newDocument)) [[unlikely]]
         clearUsesNullCustomElementRegistry();
 
     if (auto* newRegistry = newDocument.customElementRegistry(); newRegistry && newRegistry->isScoped()) [[unlikely]]
@@ -2353,7 +2367,7 @@ void Node::moveNodeToNewDocumentSlowCase(Document& oldDocument, Document& newDoc
     newDocument.incrementReferencingNodeCount();
     oldDocument.decrementReferencingNodeCount();
 
-    if (usesNullCustomElementRegistry() && !newDocument.usesNullCustomElementRegistry() && !isShadowRoot()) [[unlikely]]
+    if (usesNullCustomElementRegistry() && shouldClearNullCustomElementRegistryOnAdoption(*this, newDocument)) [[unlikely]]
         clearUsesNullCustomElementRegistry();
 
     if (auto* newRegistry = newDocument.customElementRegistry(); newRegistry && newRegistry->isScoped()) [[unlikely]]

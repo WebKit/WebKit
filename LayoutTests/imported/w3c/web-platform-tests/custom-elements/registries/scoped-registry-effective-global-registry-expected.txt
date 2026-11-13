@@ -1,14 +1,14 @@
 
 PASS Null registry element with element parent without custom element registry attribute (null registry) appended to new document
 PASS Null registry element with element parent without custom element registry attribute (global registry) appended to new document
-FAIL Null registry element with element parent without custom element registry attribute (scoped registry) appended to new document assert_equals: expected null but got object "[object CustomElementRegistry]"
+PASS Null registry element with element parent without custom element registry attribute (scoped registry) appended to new document
 PASS Null registry element with declarative shadow root parent without custom element registry attribute appended to new document
 PASS Null registry element with declarative shadow root parent with custom element registry attribute (null registry) appended to new document
 PASS Null registry element with declarative shadow root parent with custom element registry attribute (global registry) appended to new document
-FAIL Null registry element with declarative shadow root parent with custom element registry attribute (scoped registry) appended to new document assert_equals: expected null but got object "[object CustomElementRegistry]"
+PASS Null registry element with declarative shadow root parent with custom element registry attribute (scoped registry) appended to new document
 PASS Null registry element with imperative shadow root parent (null registry) appended to new document
 PASS Null registry element with imperative shadow root parent (global registry) appended to new document
-FAIL Null registry element with imperative shadow root parent (scoped registry) appended to new document assert_equals: expected null but got object "[object CustomElementRegistry]"
+PASS Null registry element with imperative shadow root parent (scoped registry) appended to new document
 PASS Global registry element with element parent without custom element registry attribute (null registry) appended to new document
 PASS Global registry element with element parent without custom element registry attribute (global registry) appended to new document
 PASS Global registry element with element parent without custom element registry attribute (scoped registry) appended to new document
@@ -31,14 +31,14 @@ PASS Scoped registry element with imperative shadow root parent (global registry
 PASS Scoped registry element with imperative shadow root parent (scoped registry) appended to new document
 PASS Null registry element with element parent without custom element registry attribute (null registry) adopted by new document
 PASS Null registry element with element parent without custom element registry attribute (global registry) adopted by new document
-FAIL Null registry element with element parent without custom element registry attribute (scoped registry) adopted by new document assert_equals: expected null but got object "[object CustomElementRegistry]"
+PASS Null registry element with element parent without custom element registry attribute (scoped registry) adopted by new document
 PASS Null registry element with declarative shadow root parent without custom element registry attribute adopted by new document
 PASS Null registry element with declarative shadow root parent with custom element registry attribute (null registry) adopted by new document
 PASS Null registry element with declarative shadow root parent with custom element registry attribute (global registry) adopted by new document
-FAIL Null registry element with declarative shadow root parent with custom element registry attribute (scoped registry) adopted by new document assert_equals: expected null but got object "[object CustomElementRegistry]"
+PASS Null registry element with declarative shadow root parent with custom element registry attribute (scoped registry) adopted by new document
 PASS Null registry element with imperative shadow root parent (null registry) adopted by new document
 PASS Null registry element with imperative shadow root parent (global registry) adopted by new document
-FAIL Null registry element with imperative shadow root parent (scoped registry) adopted by new document assert_equals: expected null but got object "[object CustomElementRegistry]"
+PASS Null registry element with imperative shadow root parent (scoped registry) adopted by new document
 PASS Global registry element with element parent without custom element registry attribute (null registry) adopted by new document
 PASS Global registry element with element parent without custom element registry attribute (global registry) adopted by new document
 PASS Global registry element with element parent without custom element registry attribute (scoped registry) adopted by new document

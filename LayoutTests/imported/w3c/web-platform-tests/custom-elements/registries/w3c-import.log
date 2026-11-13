@@ -31,6 +31,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/ShadowRoot-innerHTML.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/adoption-before-upgrade.window.js
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/adoption-null-registry-element.window.js
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/adoption-null-registry-shadow-root.window.js
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/adoption.window.js
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/constructor-direct-call-fallback-registry.window.js

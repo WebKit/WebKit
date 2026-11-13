@@ -1,0 +1,5 @@
+
+PASS Null registry elements adopted in a shadow root with a null registry stay null when appended elsewhere
+PASS Null registry elements appended from a document with a null registry into a shadow root with a scoped registry
+PASS Null registry element appended from a shadow root with a scoped registry to another document
+
