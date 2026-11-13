@@ -333,7 +333,7 @@ BlockIntegrationUtils::IndependentFormattingContextLayoutResult BlockIntegration
     };
 }
 
-LayoutSize BlockIntegrationUtils::layoutOutOfFlowIndependentFormattingContext(const RenderBox& root, std::optional<LayoutUnit> borderBoxInlineSize, std::optional<LayoutUnit> borderBoxBlockSize, std::optional<LayoutUnit> borderBoxInlinePosition)
+LayoutSize BlockIntegrationUtils::layoutOutOfFlowIndependentFormattingContext(const RenderBox& root, std::optional<LayoutUnit> borderBoxInlineSize, std::optional<LayoutUnit> borderBoxBlockSize, std::optional<LayoutUnit> borderBoxInlinePosition, const std::optional<Layout::LineGridInLayoutState>& lineGrid)
 {
     SUPPRESS_MEMORY_UNSAFE_CAST CheckedRef box = const_cast<RenderBox&>(root);
     // Its size may depend on the size of its containing block, which the block formatting context has just laid out.
@@ -355,9 +355,15 @@ LayoutSize BlockIntegrationUtils::layoutOutOfFlowIndependentFormattingContext(co
     if (borderBoxBlockSize)
         box->setOverridingBorderBoxLogicalHeight(*borderBoxBlockSize);
     {
-        // The layout state has the paint offset of the block formatting context root only, not of the boxes inside.
+        // The layout state has the paint offset of the block formatting context root only, not of the boxes inside, and the line grid of the
+        // containing block's content, from where the box goes.
         CheckedRef layoutContext = box->view().frameView().layoutContext();
         auto layoutStateDisabler = LayoutStateDisabler { layoutContext.get() };
+        auto lineGridLayoutStates = LineGridLayoutStateMaintainer { layoutContext.get() };
+        if (lineGrid) {
+            box->setNeedsLayout(MarkingBehavior::OnlyThis);
+            pushLineGridLayoutStates(lineGridLayoutStates, *box->containingBlock(), *lineGrid, lineGrid->boxBorderBoxOffset - box->locationOffset());
+        }
         box->layoutIfNeeded();
     }
     if (borderBoxInlineSize)

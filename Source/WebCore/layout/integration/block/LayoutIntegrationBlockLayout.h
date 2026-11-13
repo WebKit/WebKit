@@ -25,8 +25,10 @@
 
 #pragma once
 
+#include <WebCore/BlockLayoutState.h>
 #include <WebCore/LayoutUnit.h>
 #include <wtf/CheckedRef.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -34,6 +36,7 @@ enum class RelayoutChildren : bool;
 
 class RenderBlock;
 class RenderBlockFlow;
+class RenderBox;
 
 namespace Layout {
 struct BlockLayoutResult;
@@ -65,10 +68,13 @@ public:
 private:
     bool updateRenderers(const Layout::BlockLayoutResult&, PaintInvalidation&);
     void layoutOutOfFlowBoxes(const RenderBlock& containingBlock, PaintInvalidation&);
+    std::optional<Layout::LineGridInLayoutState> lineGridOfOutOfFlowContainingBlock(const RenderBlock&) const;
 
     RenderBlockFlow& rootRenderer() const { return m_rootRenderer; }
 
     const CheckedRef<RenderBlockFlow> m_rootRenderer;
+    // The line grids of the content of the containing blocks the block formatting context laid out, which the out-of-flow boxes in them get.
+    Vector<std::pair<CheckedRef<const RenderBox>, Layout::LineGridInLayoutState>> m_outOfFlowContainingBlockLineGrids;
 };
 
 } // namespace LayoutIntegration

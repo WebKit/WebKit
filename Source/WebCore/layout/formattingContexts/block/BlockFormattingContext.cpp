@@ -167,6 +167,7 @@ BlockLayoutResult BlockFormattingContext::layoutContent(const ConstraintsForBloc
             contentLogicalBottom = std::max(contentLogicalBottom, *floatsLogicalBottom);
     }
     result.intrinsicContentBlockSize = std::max(0_lu, contentLogicalBottom - rootState.contentBoxLogicalTop());
+    addLineGridOfOutOfFlowContainingBlock(root(), rootState, result);
     m_blockLayoutState.containingBlockStates().clear();
     return result;
 }
@@ -459,6 +460,7 @@ void BlockFormattingContext::handleBlockContainerEnd(const RenderBox& blockConta
     ASSERT(blockContainerState.blockContainer.ptr() == &blockContainer);
     endTextBoxTrim(downcast<RenderBlockFlow>(blockContainer), blockContainerState);
     endLineClamp(blockContainer);
+    addLineGridOfOutOfFlowContainingBlock(blockContainer, blockContainerState, result);
     if (auto trimsMargins = blockContainerState.trimsMarginsAtBlockStartEdgeToRestore) {
         auto& marginCollapse = m_blockLayoutState.marginCollapse();
         marginCollapse.setTrimsMarginsAtBlockStartEdge(*trimsMargins && marginCollapse.trimsMarginsAtBlockStartEdge());
@@ -1244,6 +1246,7 @@ void BlockFormattingContext::handleIndependentFormattingContextRoot(const Render
             result.boxes.appendVector(WTF::move(rootResult.boxes));
             contentBlockSize = rootResult.intrinsicContentBlockSize;
             result.outOfFlowBoxes.appendVector(WTF::move(rootResult.outOfFlowBoxes));
+            result.outOfFlowContainingBlockLineGrids.appendVector(WTF::move(rootResult.outOfFlowContainingBlockLineGrids));
         }
         return std::pair { contentBlockSize, legendMarginBefore };
     };
@@ -1524,7 +1527,7 @@ void BlockFormattingContext::handleOutOfFlowBox(const RenderBox& box, BlockLayou
 // A replaced element, a table, a flex container, a WebVTT cue box, a form control or a block container whose content the block formatting
 // context does not lay out as a nested root, whose own formatting context lays it out through the render tree; the block formatting context
 // places it, and sizes it when it is neither replaced nor a table (css-position-3 §4.3), from its content when its block size is auto.
-BlockLayoutResult BlockFormattingContext::layoutOutOfFlowIndependentFormattingContext(const RenderBox& root, const OutOfFlowContainingBlock& containingBlock, const OutOfFlowGeometry::StaticPosition& staticPosition, const std::optional<OutOfFlowGeometry::DefaultAnchor>& defaultAnchor)
+BlockLayoutResult BlockFormattingContext::layoutOutOfFlowIndependentFormattingContext(const RenderBox& root, const OutOfFlowContainingBlock& containingBlock, const OutOfFlowGeometry::StaticPosition& staticPosition, const std::optional<OutOfFlowGeometry::DefaultAnchor>& defaultAnchor, const std::optional<LineGridInLayoutState>& containingBlockLineGrid)
 {
     auto geometry = computeBorderAndPadding(root, containingBlock.inlineSize);
     auto outOfFlowGeometry = OutOfFlowGeometry { root, { containingBlock.inlineSize, containingBlock.blockSize, containingBlock.writingMode, containingBlock.isScrollContainer, containingBlock.scrollableContainingBlock, containingBlock.fillAvailableBlockSize, containingBlock.fixedPositionOverflowArea }, staticPosition, defaultAnchor, geometry.horizontalBorderAndPadding(), geometry.verticalBorderAndPadding() };
@@ -1532,7 +1535,9 @@ BlockLayoutResult BlockFormattingContext::layoutOutOfFlowIndependentFormattingCo
         // A replaced element from its natural size and aspect ratio (CSS 2.2 §10.3.8, §10.6.5), and a table from its columns, which do not
         // stretch it (css-position-3 §4.3, RenderTable::updateLogicalWidth).
         if (root.isRenderReplaced() || root.isRenderOrLegacyRenderSVGRoot() || is<RenderTable>(root)) {
-            auto borderBoxSize = integrationUtils().layoutOutOfFlowIndependentFormattingContext(root);
+            // The content of a table snaps to the line grid around it from where it would go with no size (RenderBlock::layoutOutOfFlowBox).
+            auto lineGrid = lineGridForOutOfFlowBox(root, containingBlock, containingBlockLineGrid, containingBlock.inlineStart + outOfFlowGeometry.computeReplacedInlineAxisGeometry({ }).borderBoxStart, containingBlock.blockStart + outOfFlowGeometry.computeReplacedBlockAxisGeometry({ }).borderBoxStart, { });
+            auto borderBoxSize = integrationUtils().layoutOutOfFlowIndependentFormattingContext(root, { }, { }, { }, lineGrid);
             return { outOfFlowGeometry.computeReplacedInlineAxisGeometry(borderBoxSize.width()), outOfFlowGeometry.computeReplacedBlockAxisGeometry(borderBoxSize.height()) };
         }
         auto contentInlineSizes = std::optional<IntrinsicWidthConstraints> { };
@@ -1548,7 +1553,10 @@ BlockLayoutResult BlockFormattingContext::layoutOutOfFlowIndependentFormattingCo
             auto borderBoxSize = integrationUtils().layoutOutOfFlowIndependentFormattingContext(root, inlineAxis.borderBoxSize, { }, containingBlock.inlineStart + inlineAxis.borderBoxStart);
             return { inlineAxis, outOfFlowGeometry.computeBlockAxisGeometry(borderBoxSize.height() - geometry.verticalBorderAndPadding(), inlineAxis.borderBoxSize) };
         }
-        auto borderBoxSize = integrationUtils().layoutOutOfFlowIndependentFormattingContext(root, inlineAxis.borderBoxSize, borderBoxBlockSize);
+        // Its content snaps to the line grid around it from where it goes before it is laid out (RenderBlock::layoutOutOfFlowBox).
+        auto borderBoxBlockStart = outOfFlowGeometry.computeBlockAxisGeometry(borderBoxBlockSize.value_or(geometry.verticalBorderAndPadding()) - geometry.verticalBorderAndPadding(), inlineAxis.borderBoxSize).borderBoxStart;
+        auto lineGrid = lineGridForOutOfFlowBox(root, containingBlock, containingBlockLineGrid, containingBlock.inlineStart + inlineAxis.borderBoxStart, containingBlock.blockStart + borderBoxBlockStart, inlineAxis.borderBoxSize);
+        auto borderBoxSize = integrationUtils().layoutOutOfFlowIndependentFormattingContext(root, inlineAxis.borderBoxSize, borderBoxBlockSize, { }, lineGrid);
         return { inlineAxis, outOfFlowGeometry.computeBlockAxisGeometry(borderBoxSize.height() - geometry.verticalBorderAndPadding(), inlineAxis.borderBoxSize) };
     }();
     setContentBoxInlineSize(geometry, inlineAxis.borderBoxSize);
@@ -1574,10 +1582,10 @@ BlockLayoutResult BlockFormattingContext::layoutOutOfFlowIndependentFormattingCo
     return result;
 }
 
-BlockLayoutResult BlockFormattingContext::layoutOutOfFlowBox(const RenderBox& outOfFlowBox, const OutOfFlowContainingBlock& containingBlock, const OutOfFlowGeometry::StaticPosition& staticPosition, const std::optional<OutOfFlowGeometry::DefaultAnchor>& defaultAnchor)
+BlockLayoutResult BlockFormattingContext::layoutOutOfFlowBox(const RenderBox& outOfFlowBox, const OutOfFlowContainingBlock& containingBlock, const OutOfFlowGeometry::StaticPosition& staticPosition, const std::optional<OutOfFlowGeometry::DefaultAnchor>& defaultAnchor, const std::optional<LineGridInLayoutState>& containingBlockLineGrid)
 {
     if (!is<RenderBlockFlow>(outOfFlowBox) || outOfFlowBox.isRenderVTTCue() || LayoutIntegration::BlockIntegrationUtils::laysOutThroughRenderTree(outOfFlowBox))
-        return layoutOutOfFlowIndependentFormattingContext(outOfFlowBox, containingBlock, staticPosition, defaultAnchor);
+        return layoutOutOfFlowIndependentFormattingContext(outOfFlowBox, containingBlock, staticPosition, defaultAnchor, containingBlockLineGrid);
     auto result = BlockLayoutResult { };
     CheckedRef box = downcast<RenderBlockFlow>(outOfFlowBox);
     // In the box's own writing mode, which its content is laid out in.
@@ -1611,12 +1619,15 @@ BlockLayoutResult BlockFormattingContext::layoutOutOfFlowBox(const RenderBox& ou
         // Coverage keeps out the -webkit-fill-available block sizes inside, and the percentage block sizes of replaced elements in quirks mode.
         auto availableBlockSize = contentBoxBlockSize.value_or(0_lu);
         auto relayoutChildren = LayoutIntegration::BlockIntegrationUtils::contentBoxInlineSizeChanged(box, geometry.contentBoxWidth());
-        // Coverage keeps out the line grids around a box that can be split across pages, and the box establishes the one its name asks for.
-        auto lineGrid = box->style().lineGrid().isNone() ? std::nullopt : std::optional { ContainingBlockState::LineGrid { box, { } } };
-        auto contentResult = contentFormattingContext.layout({ { horizontalConstraints, geometry.borderAndPaddingBefore() }, contentBoxBlockSize, availableBlockSize, availableBlockSize, relayoutChildren }, geometry, { WTF::move(lineGrid), { }, false, { } });
+        // Its content snaps to the line grid around it from where it goes before it is laid out, without content, like the render tree path,
+        // which lays it out again where it goes but keeps the lines (RenderBlock::layoutOutOfFlowBox).
+        auto borderBoxBlockStart = outOfFlowGeometry.computeBlockAxisGeometry(geometry.verticalSpaceForScrollbar(), inlineAxis.borderBoxSize).borderBoxStart;
+        auto lineGrid = lineGridForOutOfFlowBox(box, containingBlock, containingBlockLineGrid, containingBlock.inlineStart + inlineAxis.borderBoxStart, containingBlock.blockStart + borderBoxBlockStart, inlineAxis.borderBoxSize);
+        auto contentResult = contentFormattingContext.layout({ { horizontalConstraints, geometry.borderAndPaddingBefore() }, contentBoxBlockSize, availableBlockSize, availableBlockSize, relayoutChildren }, geometry, rootLineGridForOutOfFlowBox(box, lineGrid));
         intrinsicContentBlockSize = contentResult.intrinsicContentBlockSize;
         result.boxes.appendVector(WTF::move(contentResult.boxes));
         result.outOfFlowBoxes.appendVector(WTF::move(contentResult.outOfFlowBoxes));
+        result.outOfFlowContainingBlockLineGrids.appendVector(WTF::move(contentResult.outOfFlowContainingBlockLineGrids));
     } else if (auto contentBlockSize = BlockFormattingUtils::emptyEditableContentBlockSize(box))
         intrinsicContentBlockSize = *contentBlockSize;
     // Size containment sizes the box as if it had no content (css-contain-2 §3.2, RenderBox::overrideLogicalHeightForSizeContainment).
@@ -1784,9 +1795,19 @@ std::optional<LineGridInLayoutState> BlockFormattingContext::lineGridInLayoutSta
         for (auto& lineGrid : m_rootLineGrid.lineGridsAroundRoot)
             addLineGrid(lineGrid.blockContainer, lineGrid.borderBoxOffset);
     }
+    // The block container that establishes a line grid in the root is in the states, which may not be in the containing block states anymore.
+    auto gridContainerOffset = [&](const ContainingBlockState::LineGrid& lineGrid) {
+        if (lineGrid.outsideRoot)
+            return lineGrid.outsideRoot->borderBoxOffset;
+        for (auto* state : states) {
+            if (state->blockContainer.ptr() == lineGrid.blockContainer.ptr())
+                return borderBoxLogicalLeftAndTopInRoot(*state);
+        }
+        return lineGridBorderBoxOffsetAndBorderAndPaddingBefore(lineGrid).first;
+    };
     for (auto index = innerStateCount; index--;) {
         auto& lineGrid = *states[index]->lineGrid;
-        addLineGrid(lineGrid.blockContainer, inLayoutState(lineGridBorderBoxOffsetAndBorderAndPaddingBefore(lineGrid).first));
+        addLineGrid(lineGrid.blockContainer, inLayoutState(gridContainerOffset(lineGrid)));
     }
     return LineGridInLayoutState { WTF::move(lineGrids), inLayoutState(borderBoxOffset) };
 }
@@ -1864,6 +1885,63 @@ RootLineGrid BlockFormattingContext::rootLineGridForNestedRoot(const ContainingB
         false,
         lineGridsAround ? WTF::move(lineGridsAround->lineGrids) : Vector<LineGridInLayoutState::LineGrid> { }
     };
+}
+
+// The line grid of the content of a block container that out-of-flow boxes in the content have as their containing block, which they are laid
+// out with once the content is.
+void BlockFormattingContext::addLineGridOfOutOfFlowContainingBlock(const RenderBox& blockContainer, const ContainingBlockState& blockContainerState, BlockLayoutResult& result)
+{
+    if (!blockContainerState.lineGrid || !blockContainer.canContainAbsolutelyPositionedObjects())
+        return;
+    if (auto lineGrid = lineGridInLayoutState(blockContainerState, borderBoxLogicalLeftAndTopInRoot(blockContainerState)))
+        result.outOfFlowContainingBlockLineGrids.append({ blockContainer, WTF::move(*lineGrid) });
+}
+
+// An out-of-flow box gets the line grid of the content of its containing block unless it cannot be split across pages, from where it goes in its
+// containing block, in the coordinates of the render tree layout state (RenderLayoutState::computeOffsets).
+std::optional<LineGridInLayoutState> BlockFormattingContext::lineGridForOutOfFlowBox(const RenderBox& box, const OutOfFlowContainingBlock& containingBlock, const std::optional<LineGridInLayoutState>& containingBlockLineGrid, LayoutUnit borderBoxInlineStart, LayoutUnit borderBoxBlockStart, LayoutUnit borderBoxInlineSize) const
+{
+    if (!containingBlockLineGrid || box.isUnsplittableForPagination())
+        return { };
+    // From the left of the border box of the containing block, which has its size.
+    CheckedRef containingBlockRenderer = *box.containingBlock();
+    auto logicalLeft = containingBlock.writingMode.isLogicalLeftInlineStart() ? borderBoxInlineStart : containingBlockRenderer->logicalWidth() - borderBoxInlineStart - borderBoxInlineSize;
+    auto offset = LayoutSize { logicalLeft, borderBoxBlockStart };
+    if (!containingBlock.writingMode.isHorizontal())
+        offset = offset.transposedSize();
+    return LineGridInLayoutState { containingBlockLineGrid->lineGrids, containingBlockLineGrid->boxBorderBoxOffset + offset };
+}
+
+// The line grid an out-of-flow box whose content the block formatting context lays out snaps its content to: the one around it, or the nearest
+// one around it with the name the box has, unless the box establishes that one (RenderLayoutState::establishLineGrid).
+RootLineGrid BlockFormattingContext::rootLineGridForOutOfFlowBox(const RenderBox& box, const std::optional<LineGridInLayoutState>& lineGrid) const
+{
+    CheckedRef blockFlow = downcast<RenderBlockFlow>(box);
+    CheckedRef style = box.style();
+    auto& name = style->lineGrid();
+    auto establishedLineGrid = name.isNone() ? std::nullopt : std::optional { ContainingBlockState::LineGrid { blockFlow, { } } };
+    if (!lineGrid || lineGrid->lineGrids.isEmpty())
+        return { establishedLineGrid, { }, false, { } };
+    auto isHorizontal = box.writingMode().isHorizontal();
+    auto logicalOffset = [&](LayoutSize offset) {
+        return isHorizontal ? offset : offset.transposedSize();
+    };
+    auto borderBoxOffset = logicalOffset(lineGrid->boxBorderBoxOffset);
+    auto lineGridsAround = lineGrid->lineGrids;
+    auto index = lineGridsAround.size() - 1;
+    if (!name.isNone() && lineGridsAround[index].blockContainer->style().lineGrid() != name) {
+        index = lineGridsAround.reverseFindIf([&](auto& lineGridAround) {
+            return lineGridAround.blockContainer->style().lineGrid() == name;
+        });
+        if (index == notFound)
+            return { establishedLineGrid, borderBoxOffset, false, WTF::move(lineGridsAround) };
+        auto namedLineGrid = lineGridsAround[index];
+        lineGridsAround.append(WTF::move(namedLineGrid));
+        index = lineGridsAround.size() - 1;
+    }
+    CheckedRef gridContainer = lineGridsAround[index].blockContainer;
+    auto outsideRoot = ContainingBlockState::LineGrid::OutsideRoot { logicalOffset(lineGridsAround[index].borderBoxOffset) - borderBoxOffset, gridContainer->borderAndPaddingBefore() };
+    return { ContainingBlockState::LineGrid { gridContainer, outsideRoot }, borderBoxOffset, false, WTF::move(lineGridsAround) };
 }
 
 // What the inline formatting context snaps the lines of a block container to (RenderBlockFlow's lineGrid): the line grid in the same writing

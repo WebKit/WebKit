@@ -157,7 +157,7 @@ public:
     // block has its size, at the border box size the block formatting context gives it: none for a replaced element, which sizes itself, and
     // no block size when it comes from the content. The border box size it gets; its position and margins are the block formatting context's,
     // except for a box that moves itself during its layout, which starts from the inline position of its border box in its containing block.
-    LayoutSize layoutOutOfFlowIndependentFormattingContext(const RenderBox&, std::optional<LayoutUnit> borderBoxInlineSize = { }, std::optional<LayoutUnit> borderBoxBlockSize = { }, std::optional<LayoutUnit> borderBoxInlinePosition = { });
+    LayoutSize layoutOutOfFlowIndependentFormattingContext(const RenderBox&, std::optional<LayoutUnit> borderBoxInlineSize = { }, std::optional<LayoutUnit> borderBoxBlockSize = { }, std::optional<LayoutUnit> borderBoxInlinePosition = { }, const std::optional<Layout::LineGridInLayoutState>& = { });
     // Where its own layout left a box laid out through the render tree: the location of its border box in the logical coordinates of its
     // containing block, from the inline start (the other way BlockLayout::updateRenderers maps them).
     static LayoutPoint borderBoxLogicalLocation(const RenderBox&);

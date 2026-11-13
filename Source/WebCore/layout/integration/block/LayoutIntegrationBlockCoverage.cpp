@@ -114,11 +114,14 @@ static bool isInLineGridAround(const RenderBox& box)
     return hasLineGridName(*box.parent()) || (containingBlock && hasLineGridName(*containingBlock));
 }
 
-// FIXME: The render tree lays out the out-of-flow boxes in the layout state of the root, which has no entry for the boxes in between, at the
-// offset the line grid around them comes from.
-static std::optional<BlockAvoidanceReason> lineGridAvoidanceReason(const RenderBox& box)
+// FIXME: An out-of-flow box in a line grid that is fixed positioned, whose layout state is in the coordinates of the view, or whose containing
+// block is an inline box, which moves its layout state by the start of the inline box (RenderLayoutState::computeOffsets).
+static std::optional<BlockAvoidanceReason> outOfFlowBoxLineGridAvoidanceReason(const RenderBox& outOfFlowBox)
 {
-    if (isInLineGridAround(box))
+    if (!isInLineGridAround(outOfFlowBox))
+        return { };
+    CheckedPtr container = outOfFlowBox.container();
+    if (outOfFlowBox.isFixedPositioned() || (container && container->isInlineBox()))
         return BlockAvoidanceReason::ContentHasLineGrid;
     return { };
 }
@@ -500,7 +503,7 @@ static std::optional<BlockAvoidanceReason> outOfFlowBoxesInLeafAvoidanceReason(c
             continue;
         if (auto reason = outOfFlowBoxAvoidanceReason(descendant))
             return reason;
-        if (auto reason = lineGridAvoidanceReason(descendant))
+        if (auto reason = outOfFlowBoxLineGridAvoidanceReason(descendant))
             return reason;
         // Its static position comes from its block container, or from a grid container, which puts it at the start of its content box
         // (RenderGrid::prepareGridItemForPositionedLayout), or a flex container, which aligns it in its content box, or a -webkit-box, which
@@ -645,7 +648,7 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
             return { };
         if (auto reason = outOfFlowBoxAvoidanceReason(downcast<RenderBox>(renderer)))
             return reason;
-        if (auto reason = lineGridAvoidanceReason(downcast<RenderBox>(renderer)))
+        if (auto reason = outOfFlowBoxLineGridAvoidanceReason(downcast<RenderBox>(renderer)))
             return reason;
         // A replaced element has no block container checks to pass.
         if (renderer.isRenderReplaced() || renderer.isRenderOrLegacyRenderSVGRoot())

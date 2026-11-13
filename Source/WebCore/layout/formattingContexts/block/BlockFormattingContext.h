@@ -85,6 +85,9 @@ struct BlockLayoutResult {
     Vector<CheckedRef<const RenderBox>> invisibleBoxes;
     // The content box block size of the root from its content (CSS 2.2 §10.6.7).
     LayoutUnit intrinsicContentBlockSize;
+    // The line grids of the content of the containing blocks of out-of-flow boxes in the content, from their border boxes, which the out-of-flow
+    // boxes, laid out once the content is (BlockLayout::layoutOutOfFlowBoxes), snap their content to.
+    Vector<std::pair<CheckedRef<const RenderBox>, LineGridInLayoutState>> outOfFlowContainingBlockLineGrids;
 };
 
 // The containing block of an out-of-flow box (CSS 2.2 §10.1, css-position-3 §2.1): the padding box of a block, or the rectangle a positioned
@@ -136,7 +139,7 @@ public:
     IntrinsicWidthConstraints computeIntrinsicInlineSizes(const RenderBlockFlow& blockContainer, std::optional<LayoutUnit> contentBoxBlockSize) const;
     // An out-of-flow box and its content, in its containing block that has its size (css-position-3 §4), and against its default anchor
     // (css-anchor-position-1 §3). The box establishes an independent formatting context for its content.
-    BlockLayoutResult layoutOutOfFlowBox(const RenderBox&, const OutOfFlowContainingBlock&, const OutOfFlowGeometry::StaticPosition&, const std::optional<OutOfFlowGeometry::DefaultAnchor>&);
+    BlockLayoutResult layoutOutOfFlowBox(const RenderBox&, const OutOfFlowContainingBlock&, const OutOfFlowGeometry::StaticPosition&, const std::optional<OutOfFlowGeometry::DefaultAnchor>&, const std::optional<LineGridInLayoutState>& containingBlockLineGrid);
 
 private:
     IntrinsicWidthConstraints computeContentIntrinsicInlineSizes(const RenderBlockFlow&, std::optional<LayoutUnit> contentBoxBlockSize) const;
@@ -157,7 +160,10 @@ private:
     void handleInlineContent(const RenderBox& blockContainer, BlockLayoutResult&);
     void handleIndependentFormattingContextRoot(const RenderBox&, BlockLayoutResult&);
     LayoutUnit layoutIndependentFormattingContextThroughRenderTree(const RenderBox&, ContainingBlockState& boxState, std::optional<LayoutUnit> borderBoxInlineSize = { }, std::optional<LayoutSize> placedBorderBoxLogicalLeftAndTopInRoot = { });
-    BlockLayoutResult layoutOutOfFlowIndependentFormattingContext(const RenderBox&, const OutOfFlowContainingBlock&, const OutOfFlowGeometry::StaticPosition&, const std::optional<OutOfFlowGeometry::DefaultAnchor>&);
+    BlockLayoutResult layoutOutOfFlowIndependentFormattingContext(const RenderBox&, const OutOfFlowContainingBlock&, const OutOfFlowGeometry::StaticPosition&, const std::optional<OutOfFlowGeometry::DefaultAnchor>&, const std::optional<LineGridInLayoutState>& containingBlockLineGrid);
+    std::optional<LineGridInLayoutState> lineGridForOutOfFlowBox(const RenderBox&, const OutOfFlowContainingBlock&, const std::optional<LineGridInLayoutState>& containingBlockLineGrid, LayoutUnit borderBoxInlineStart, LayoutUnit borderBoxBlockStart, LayoutUnit borderBoxInlineSize) const;
+    RootLineGrid rootLineGridForOutOfFlowBox(const RenderBox&, const std::optional<LineGridInLayoutState>&) const;
+    void addLineGridOfOutOfFlowContainingBlock(const RenderBox& blockContainer, const ContainingBlockState&, BlockLayoutResult&);
     void handleFloat(const RenderBox&, BlockLayoutResult&);
     template<typename LayoutContent> std::optional<LayoutUnit> placeBesideFloats(const RenderBox&, ContainingBlockState& boxState, LayoutUnit marginsBeforeLogicalBottom, const LayoutContent&);
     void handleOutOfFlowBox(const RenderBox&, BlockLayoutResult&);

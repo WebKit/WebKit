@@ -572,6 +572,27 @@ static LayoutRect fixedPositionOverflowArea(const RenderView& renderView, const 
     return area;
 }
 
+// The line grid of the content of the containing block, which the root's layout state has for the root (RenderLayoutState::lineGrid).
+std::optional<Layout::LineGridInLayoutState> BlockLayout::lineGridOfOutOfFlowContainingBlock(const RenderBlock& containingBlock) const
+{
+    auto index = m_outOfFlowContainingBlockLineGrids.findIf([&](auto& entry) {
+        return entry.first.ptr() == &containingBlock;
+    });
+    if (index != notFound)
+        return m_outOfFlowContainingBlockLineGrids[index].second;
+    if (&containingBlock != &rootRenderer())
+        return { };
+    auto rootLineGrid = BlockIntegrationUtils::lineGridForRoot(rootRenderer());
+    if (!rootLineGrid.lineGrid)
+        return { };
+    auto inLayoutState = [&](LayoutSize offset) {
+        return rootRenderer().writingMode().isHorizontal() ? offset : offset.transposedSize();
+    };
+    auto& [gridContainer, outsideRoot] = *rootLineGrid.lineGrid;
+    auto gridOffset = rootLineGrid.borderBoxOffsetInLayoutState + (outsideRoot ? outsideRoot->borderBoxOffset : LayoutSize { });
+    return Layout::LineGridInLayoutState { { { gridContainer, inLayoutState(gridOffset) } }, inLayoutState(rootLineGrid.borderBoxOffsetInLayoutState) };
+}
+
 // Like RenderBlock::layoutOutOfFlowBoxes once the containing block has its size: the out-of-flow boxes BlockLayout::updateRenderers registered
 // on it (RenderBlock::outOfFlowBoxes()).
 void BlockLayout::layoutOutOfFlowBoxes(const RenderBlock& containingBlock, PaintInvalidation& paintInvalidation)
@@ -613,6 +634,7 @@ void BlockLayout::layoutOutOfFlowBoxes(const RenderBlock& containingBlock, Paint
     };
     auto integrationUtils = BlockIntegrationUtils { paintInvalidation };
     auto blockLayoutState = Layout::BlockLayoutState { { } };
+    auto containingBlockLineGrid = lineGridOfOutOfFlowContainingBlock(containingBlock);
     // Laying out a box registers the out-of-flow boxes in it, which can make the list grow while it is iterated (like in RenderBlock::layoutOutOfFlowBoxes).
     for (CheckedRef outOfFlowBox : *outOfFlowBoxes) {
         // Like RenderElement::layoutIfNeeded, which captures how far scrolling between an anchor-positioned box and its default anchor moves
@@ -664,7 +686,7 @@ void BlockLayout::layoutOutOfFlowBoxes(const RenderBlock& containingBlock, Paint
             auto legacyLineClamp = renderTreeLayoutState && is<RenderBlockFlow>(outOfFlowBox) ? renderTreeLayoutState->legacyLineClamp() : std::nullopt;
             if (legacyLineClamp)
                 renderTreeLayoutState->setLegacyLineClamp({ });
-            auto result = Layout::BlockFormattingContext { rootRenderer(), integrationUtils, blockLayoutState }.layoutOutOfFlowBox(outOfFlowBox, outOfFlowContainingBlock, boxStaticPosition, boxDefaultAnchor);
+            auto result = Layout::BlockFormattingContext { rootRenderer(), integrationUtils, blockLayoutState }.layoutOutOfFlowBox(outOfFlowBox, outOfFlowContainingBlock, boxStaticPosition, boxDefaultAnchor, containingBlockLineGrid);
             if (legacyLineClamp)
                 renderTreeLayoutState->setLegacyLineClamp(legacyLineClamp);
             LOG_WITH_STREAM(Layout, stream << "BlockLayout for out-of-flow box (" << outOfFlowBox.ptr() << "): " << result);
@@ -693,6 +715,7 @@ void BlockLayout::layoutOutOfFlowBoxes(const RenderBlock& containingBlock, Paint
 
 bool BlockLayout::updateRenderers(const Layout::BlockLayoutResult& result, PaintInvalidation& paintInvalidation)
 {
+    m_outOfFlowContainingBlockLineGrids.appendVector(result.outOfFlowContainingBlockLineGrids);
     auto hasAutoScrollbarChanges = false;
     // This is the only place where the block formatting context's renderers are written, and the only place where its logical
     // coordinates (from the inline start of each containing block) are mapped to the render tree's.
