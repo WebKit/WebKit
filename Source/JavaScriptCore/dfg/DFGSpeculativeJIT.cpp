@@ -8431,38 +8431,76 @@ EncodedJSValue* SpeculativeJIT::fillSpreadArgumentsBuffer(Node* node, unsigned b
 
 void SpeculativeJIT::compileVarargsLengthWithSpread(Node* node)
 {
+    BitVector* bitVector = node->bitVector();
     unsigned numArgs = node->numChildren();
-    EncodedJSValue* buffer = fillSpreadArgumentsBuffer(node, 0, numArgs);
 
-    flushRegisters();
+    GPRTemporary length(this);
+    GPRTemporary temp(this);
+    GPRReg lengthGPR = length.gpr();
+    GPRReg tempGPR = temp.gpr();
 
-    callOperation(operationSizeOfVarargsWithSpread, GPRInfo::returnValueGPR, LinkableConstant::globalObject(*this, node), TrustedImmPtr(buffer), TrustedImm32(numArgs));
+    // Accumulate in 64 bits, since the sum of the lengths of many spreads can exceed 32 bits.
+    move(TrustedImm32(numArgs - bitVector->bitCount()), lengthGPR);
+    for (unsigned e = 0; e < numArgs; ++e) {
+        if (!bitVector->get(e))
+            continue;
+        Edge use = m_graph.varArgChild(node, e);
+        ASSERT(!use->isPhantomAllocation());
+        SpeculateCellOperand spread(this, use);
+        load32(Address(spread.gpr(), JSCellButterfly::offsetOfPublicLength()), tempGPR);
+        add64(tempGPR, lengthGPR);
+    }
 
-    lock(GPRInfo::returnValueGPR);
-    GPRTemporary argCountIncludingThis(this);
-    GPRReg argCountIncludingThisGPR = argCountIncludingThis.gpr();
-    unlock(GPRInfo::returnValueGPR);
+    speculationCheck(VarargsOverflow, JSValueSource(), Edge(), branch64(Above, lengthGPR, TrustedImm32(maxArguments)));
+    add32(TrustedImm32(1), lengthGPR);
 
-    add32(TrustedImm32(1), GPRInfo::returnValueGPR, argCountIncludingThisGPR);
-    strictInt32Result(argCountIncludingThisGPR, node);
+    strictInt32Result(lengthGPR, node);
 }
 
 void SpeculativeJIT::compileLoadVarargsWithSpread(Node* node)
 {
     LoadVarargsData* data = node->loadVarargsData();
+    BitVector* bitVector = node->bitVector();
+    unsigned numArgs = node->numChildren() - 1;
 
     SpeculateStrictInt32Operand argumentCount(this, m_graph.varArgChild(node, 0));
+    GPRTemporary length(this);
+    GPRTemporary temp(this);
+    GPRTemporary target(this);
     GPRReg argumentCountIncludingThis = argumentCount.gpr();
-
-    unsigned numArgs = node->numChildren() - 1;
-    EncodedJSValue* buffer = fillSpreadArgumentsBuffer(node, 1, numArgs);
+    GPRReg lengthGPR = length.gpr();
+    GPRReg tempGPR = temp.gpr();
+    GPRReg targetGPR = target.gpr();
 
     speculationCheck(VarargsOverflow, JSValueSource(), Edge(), branchTest32(Zero, argumentCountIncludingThis));
     speculationCheck(VarargsOverflow, JSValueSource(), Edge(), branch32(Above, argumentCountIncludingThis, TrustedImm32(data->limit)));
 
-    flushRegisters();
     store32(argumentCountIncludingThis, lowWordFor(data->machineCount));
-    callOperation(operationLoadVarargsWithSpread, LinkableConstant::globalObject(*this, node), data->machineStart.offset(), TrustedImmPtr(buffer), TrustedImm32(numArgs), argumentCountIncludingThis, TrustedImm32(data->mandatoryMinimum));
+    sub32(argumentCountIncludingThis, TrustedImm32(1), lengthGPR);
+    emitFillMissingVarargsWithUndefined(data, lengthGPR, tempGPR);
+
+    Address targetAddress = addressFor(data->machineStart);
+    for (unsigned e = 0; e < numArgs; ++e) {
+        Edge use = m_graph.varArgChild(node, 1 + e);
+        ASSERT(!use->isPhantomAllocation());
+        if (!bitVector->get(e)) {
+            JSValueOperand literal(this, use);
+            storeValue(literal.gpr(), targetAddress);
+            targetAddress = targetAddress.withOffset(sizeof(EncodedJSValue));
+            continue;
+        }
+
+        SpeculateCellOperand spread(this, use);
+        GPRReg spreadGPR = spread.gpr();
+        load32(Address(spreadGPR, JSCellButterfly::offsetOfPublicLength()), lengthGPR);
+        emitCopyVarargs(Address(spreadGPR, JSCellButterfly::offsetOfData()), targetAddress, lengthGPR, tempGPR);
+        if (e + 1 < numArgs) {
+            load32(Address(spreadGPR, JSCellButterfly::offsetOfPublicLength()), lengthGPR);
+            getEffectiveAddress(BaseIndex(targetAddress.base, lengthGPR, TimesEight, targetAddress.offset), targetGPR);
+            targetAddress = Address(targetGPR);
+        }
+    }
+
     noResult(node);
 }
 
@@ -8503,35 +8541,38 @@ void SpeculativeJIT::compileForwardVarargs(Node* node)
 
 void SpeculativeJIT::emitLoadVarargsFromContiguousStorage(LoadVarargsData* data, Address sourceStart, GPRReg lengthGPR, GPRReg tempGPR)
 {
-    VirtualRegister targetStart = data->machineStart;
-
     // First have a loop that fills in the undefined slots in case of an arity check failure.
+    emitFillMissingVarargsWithUndefined(data, lengthGPR, tempGPR);
+
+    // And then fill in the actual argument values.
+    emitCopyVarargs(sourceStart, addressFor(data->machineStart), lengthGPR, tempGPR);
+}
+
+void SpeculativeJIT::emitFillMissingVarargsWithUndefined(LoadVarargsData* data, GPRReg lengthGPR, GPRReg tempGPR)
+{
+    Address targetStart = addressFor(data->machineStart);
+
     move(TrustedImm32(data->mandatoryMinimum), tempGPR);
     Jump done = branch32(BelowOrEqual, tempGPR, lengthGPR);
-        
+
     Label loop = label();
     sub32(TrustedImm32(1), tempGPR);
-    storeTrustedValue(
-        jsUndefined(),
-        BaseIndex(
-            GPRInfo::callFrameRegister, tempGPR, TimesEight,
-            targetStart.offset() * sizeof(EncodedJSValue)));
+    storeTrustedValue(jsUndefined(), BaseIndex(targetStart.base, tempGPR, TimesEight, targetStart.offset));
     branch32(Above, tempGPR, lengthGPR).linkTo(loop, this);
     done.link(this);
-        
-    // And then fill in the actual argument values.
-    done = branchTest32(Zero, lengthGPR);
-        
-    loop = label();
+}
+
+// Clobbers lengthGPR.
+void SpeculativeJIT::emitCopyVarargs(Address sourceStart, Address targetStart, GPRReg lengthGPR, GPRReg tempGPR)
+{
+    Jump done = branchTest32(Zero, lengthGPR);
+
+    Label loop = label();
     sub32(TrustedImm32(1), lengthGPR);
     loadValue(BaseIndex(sourceStart.base, lengthGPR, TimesEight, sourceStart.offset), tempGPR);
-    storeValue(
-        tempGPR,
-        BaseIndex(
-            GPRInfo::callFrameRegister, lengthGPR, TimesEight,
-            targetStart.offset() * sizeof(EncodedJSValue)));
+    storeValue(tempGPR, BaseIndex(targetStart.base, lengthGPR, TimesEight, targetStart.offset));
     branchTest32(NonZero, lengthGPR).linkTo(loop, this);
-        
+
     done.link(this);
 }
 

@@ -5644,54 +5644,6 @@ JSC_DEFINE_JIT_OPERATION(operationLoadVarargs, void, (JSGlobalObject* globalObje
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-JSC_DEFINE_JIT_OPERATION(operationSizeOfVarargsWithSpread, UCPUStrictInt32, (JSGlobalObject* globalObject, EncodedJSValue* buffer, uint32_t argc))
-{
-    VM& vm = globalObject->vm();
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    ActiveScratchBufferScope activeScratchBufferScope(ScratchBuffer::fromData(buffer), argc);
-
-    CheckedUint32 length = 0;
-    for (uint32_t i = 0; i < argc; ++i) {
-        if (JSCellButterfly* array = dynamicDowncast<JSCellButterfly>(JSValue::decode(buffer[i])))
-            length += array->publicLength();
-        else
-            length += 1U;
-    }
-
-    if (length.hasOverflowed() || length > maxArguments) [[unlikely]] {
-        throwStackOverflowError(globalObject, scope);
-        OPERATION_RETURN(scope, toUCPUStrictInt32(0));
-    }
-    OPERATION_RETURN(scope, toUCPUStrictInt32(length.value()));
-}
-
-JSC_DEFINE_JIT_OPERATION(operationLoadVarargsWithSpread, void, (JSGlobalObject* globalObject, int32_t firstElementDest, EncodedJSValue* buffer, uint32_t argc, uint32_t lengthIncludingThis, uint32_t mandatoryMinimum))
-{
-    VirtualRegister firstElement { firstElementDest };
-    VM& vm = globalObject->vm();
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    ActiveScratchBufferScope activeScratchBufferScope(ScratchBuffer::fromData(buffer), argc);
-
-    JSValue* dest = std::bit_cast<JSValue*>(&callFrame->r(firstElement));
-    for (uint32_t i = 0; i < argc; ++i) {
-        JSValue value = JSValue::decode(buffer[i]);
-        if (JSCellButterfly* array = dynamicDowncast<JSCellButterfly>(value)) {
-            unsigned n = array->publicLength();
-            array->copyToArguments(globalObject, dest, 0, n);
-            dest += n;
-        } else
-            *dest++ = value;
-    }
-
-    for (uint32_t i = lengthIncludingThis - 1; i < mandatoryMinimum; ++i)
-        callFrame->r(firstElement + i) = jsUndefined();
-    OPERATION_RETURN(scope);
-}
-
 static ALWAYS_INLINE unsigned forwardedRestLengthForDescriptor(CallFrame* callFrame, const VarargsSpreadForwardDescriptor& descriptor)
 {
     InlineCallFrame* inlineCallFrame = descriptor.inlineCallFrame;
@@ -5719,61 +5671,6 @@ static ALWAYS_INLINE void copyForwardedRestForDescriptor(CallFrame* callFrame, c
     JSValue* source = std::bit_cast<JSValue*>(&callFrame->r(start));
     for (unsigned i = 0; i < count; ++i)
         dest[i] = source[i];
-}
-
-JSC_DEFINE_JIT_OPERATION(operationSizeOfVarargsWithSpreadForward, UCPUStrictInt32, (JSGlobalObject* globalObject, EncodedJSValue* buffer, uint32_t argc, const VarargsSpreadForwardDescriptor* descriptors))
-{
-    VM& vm = globalObject->vm();
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    ActiveScratchBufferScope activeScratchBufferScope(ScratchBuffer::fromData(buffer), argc);
-
-    CheckedUint32 length = 0;
-    for (uint32_t i = 0; i < argc; ++i) {
-        JSValue value = JSValue::decode(buffer[i]);
-        if (!value)
-            length += forwardedRestLengthForDescriptor(callFrame, descriptors[i]);
-        else if (JSCellButterfly* array = dynamicDowncast<JSCellButterfly>(value))
-            length += array->publicLength();
-        else
-            length += 1U;
-    }
-
-    if (length.hasOverflowed() || length > maxArguments) [[unlikely]] {
-        throwStackOverflowError(globalObject, scope);
-        OPERATION_RETURN(scope, toUCPUStrictInt32(0));
-    }
-    OPERATION_RETURN(scope, toUCPUStrictInt32(length.value()));
-}
-
-JSC_DEFINE_JIT_OPERATION(operationLoadVarargsWithSpreadForward, void, (JSGlobalObject* globalObject, int32_t firstElementDest, EncodedJSValue* buffer, uint32_t argc, const VarargsSpreadForwardDescriptor* descriptors, uint32_t lengthIncludingThis, uint32_t mandatoryMinimum))
-{
-    VirtualRegister firstElement { firstElementDest };
-    VM& vm = globalObject->vm();
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    ActiveScratchBufferScope activeScratchBufferScope(ScratchBuffer::fromData(buffer), argc);
-
-    JSValue* dest = std::bit_cast<JSValue*>(&callFrame->r(firstElement));
-    for (uint32_t i = 0; i < argc; ++i) {
-        JSValue value = JSValue::decode(buffer[i]);
-        if (!value) {
-            unsigned n = forwardedRestLengthForDescriptor(callFrame, descriptors[i]);
-            copyForwardedRestForDescriptor(callFrame, descriptors[i], dest, n);
-            dest += n;
-        } else if (JSCellButterfly* array = dynamicDowncast<JSCellButterfly>(value)) {
-            unsigned n = array->publicLength();
-            array->copyToArguments(globalObject, dest, 0, n);
-            dest += n;
-        } else
-            *dest++ = value;
-    }
-
-    for (uint32_t i = lengthIncludingThis - 1; i < mandatoryMinimum; ++i)
-        callFrame->r(firstElement + i) = jsUndefined();
-    OPERATION_RETURN(scope);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationSizeFrameForVarargsWithSpreadForwardBuffer, size_t, (JSGlobalObject* globalObject, EncodedJSValue* buffer, int32_t argc, const VarargsSpreadForwardDescriptor* descriptors, int32_t numUsedStackSlots))

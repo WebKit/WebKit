@@ -15582,76 +15582,69 @@ IGNORE_CLANG_WARNINGS_END
         }
     }
 
-    EncodedJSValue* fillSpreadArgumentsBuffer(Node* node, unsigned base, unsigned numArgs, VarargsSpreadForwardDescriptor*& descriptors, bool& hasForward)
+    void compileVarargsLengthWithSpread()
     {
+        Node* node = m_node;
         BitVector* bitVector = node->bitVector();
-        ScratchBuffer* scratchBuffer = vm().scratchBufferForSize(varargsSpreadScratchBufferSize(numArgs));
-        EncodedJSValue* buffer = static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer());
-        descriptors = varargsSpreadForwardDescriptors(buffer, numArgs);
-        hasForward = false;
+        unsigned numArgs = node->numChildren();
+
+        uint64_t knownLength = 0;
+        LValue length = m_out.int64Zero;
         for (unsigned e = 0; e < numArgs; ++e) {
-            Edge edge = m_graph.varArgChild(node, base + e);
             if (!bitVector->get(e)) {
-                ASSERT(!edge->isPhantomAllocation());
-                m_out.store64(lowJSValue(edge), m_out.absolute(buffer + e));
+                ++knownLength;
                 continue;
             }
             // See the operand shapes documented next to eliminatedSpreadForwardedRest().
+            Edge edge = m_graph.varArgChild(node, e);
             if (Node* rest = eliminatedSpreadForwardedRest(edge.node())) {
-                VarargsSpreadForwardDescriptor* d = &descriptors[e];
-                m_out.store64(m_out.constInt64(JSValue::encode(JSValue())), m_out.absolute(buffer + e));
-                m_out.store64(m_out.constInt64(std::bit_cast<int64_t>(rest->origin.semantic.inlineCallFrame())), m_out.absolute(&d->inlineCallFrame));
-                m_out.store32(m_out.constInt32(rest->numberOfArgumentsToSkip()), m_out.absolute(&d->numberOfArgumentsToSkip));
-                hasForward = true;
+                length = m_out.add(length, m_out.zeroExt(getSpreadLengthFromInlineCallFrame(rest->origin.semantic.inlineCallFrame(), rest->numberOfArgumentsToSkip()), Int64));
                 continue;
             }
             if (Node* constantButterfly = eliminatedSpreadConstantButterfly(edge.node())) {
-                m_out.store64(weakPointer(constantButterfly->castOperand<JSCellButterfly*>()), m_out.absolute(buffer + e));
+                knownLength += constantButterfly->castOperand<JSCellButterfly*>()->length();
                 continue;
             }
             ASSERT(!edge->isPhantomAllocation());
-            m_out.store64(lowCell(edge), m_out.absolute(buffer + e));
+            length = m_out.add(length, m_out.zeroExt(m_out.load32NonNegative(toButterfly(lowCell(edge)), m_heaps.Butterfly_publicLength), Int64));
         }
-        return buffer;
-    }
+        length = m_out.add(length, m_out.constInt64(knownLength));
 
-    void compileVarargsLengthWithSpread()
-    {
-        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
-        Node* node = m_node;
-        unsigned numArgs = node->numChildren();
-
-        VarargsSpreadForwardDescriptor* descriptors = nullptr;
-        bool hasForward = false;
-        EncodedJSValue* buffer = fillSpreadArgumentsBuffer(node, 0, numArgs, descriptors, hasForward);
-
-        LValue length;
-        if (hasForward)
-            length = vmCall(Int32, operationSizeOfVarargsWithSpreadForward, weakPointer(globalObject), m_out.constIntPtr(buffer), m_out.constInt32(numArgs), m_out.constIntPtr(descriptors));
-        else
-            length = vmCall(Int32, operationSizeOfVarargsWithSpread, weakPointer(globalObject), m_out.constIntPtr(buffer), m_out.constInt32(numArgs));
-        setInt32(m_out.add(length, m_out.int32One));
+        speculate(VarargsOverflow, noValue(), nullptr, m_out.above(length, m_out.constInt64(maxArguments)));
+        setInt32(m_out.add(m_out.castToInt32(length), m_out.int32One));
     }
 
     void compileLoadVarargsWithSpread()
     {
-        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
         Node* node = m_node;
         LoadVarargsData* data = node->loadVarargsData();
-        LValue lengthIncludingThis = lowInt32(m_graph.varArgChild(node, 0));
-
+        BitVector* bitVector = node->bitVector();
         unsigned numArgs = node->numChildren() - 1;
-        VarargsSpreadForwardDescriptor* descriptors = nullptr;
-        bool hasForward = false;
-        EncodedJSValue* buffer = fillSpreadArgumentsBuffer(node, 1, numArgs, descriptors, hasForward);
+        LValue lengthIncludingThis = lowInt32(m_graph.varArgChild(node, 0));
 
         speculate(VarargsOverflow, noValue(), nullptr, m_out.bitOr(m_out.isZero32(lengthIncludingThis), m_out.above(lengthIncludingThis, m_out.constInt32(data->limit))));
         m_out.store32(lengthIncludingThis, lowWordFor(data->machineCount));
-        LValue machineStart = m_out.lShr(m_out.sub(addressFor(data->machineStart).value(), m_callFrame), m_out.constIntPtr(3));
-        if (hasForward)
-            vmCall(Void, operationLoadVarargsWithSpreadForward, weakPointer(globalObject), m_out.castToInt32(machineStart), m_out.constIntPtr(buffer), m_out.constInt32(numArgs), m_out.constIntPtr(descriptors), lengthIncludingThis, m_out.constInt32(data->mandatoryMinimum));
-        else
-            vmCall(Void, operationLoadVarargsWithSpread, weakPointer(globalObject), m_out.castToInt32(machineStart), m_out.constIntPtr(buffer), m_out.constInt32(numArgs), lengthIncludingThis, m_out.constInt32(data->mandatoryMinimum));
+
+        LValue targetStart = addressFor(data->machineStart).value();
+        LValue storeIndex = m_out.intPtrZero;
+        for (unsigned e = 0; e < numArgs; ++e) {
+            Edge edge = m_graph.varArgChild(node, 1 + e);
+            if (!bitVector->get(e)) {
+                ASSERT(!edge->isPhantomAllocation());
+                m_out.store64(lowJSValue(edge), m_out.baseIndex(m_heaps.variables, targetStart, storeIndex));
+                storeIndex = m_out.add(m_out.intPtrOne, storeIndex);
+                continue;
+            }
+            if (edge->op() == PhantomSpread) {
+                storeIndex = forwardSpread(edge.node(), targetStart, storeIndex);
+                continue;
+            }
+            ASSERT(!edge->isPhantomAllocation());
+            LValue butterfly = toButterfly(lowCell(edge));
+            LValue spreadLength = m_out.zeroExtPtr(m_out.load32NonNegative(butterfly, m_heaps.Butterfly_publicLength));
+            storeIndex = copyVarargs(m_heaps.indexedContiguousProperties, butterfly, spreadLength, targetStart, storeIndex);
+        }
+        fillMissingVarargsWithUndefined(targetStart, storeIndex);
     }
 
     void compileForwardVarargs()
@@ -15768,69 +15761,81 @@ IGNORE_CLANG_WARNINGS_END
 
         LValue targetStart = addressFor(data->machineStart).value();
 
-        auto forwardSpread = recursableLambda([this, &targetStart](auto self, Node* target, LValue storeIndex) -> LValue {
-            if (target->op() == PhantomSpread)
-                return self(target->child1().node(), storeIndex);
+        LValue storeIndex = forwardSpread(arguments, targetStart, m_out.intPtrZero);
+        fillMissingVarargsWithUndefined(targetStart, storeIndex);
+    }
 
-            if (target->op() == PhantomNewArrayWithSpread) {
-                BitVector* bitVector = target->bitVector();
-                for (unsigned i = 0; i < target->numChildren(); i++) {
-                    if (bitVector->get(i))
-                        storeIndex = self(m_graph.varArgChild(target, i).node(), storeIndex);
-                    else {
-                        LValue value = this->lowJSValue(m_graph.varArgChild(target, i));
-                        m_out.store64(value, m_out.baseIndex(m_heaps.variables, targetStart, storeIndex));
-                        storeIndex = m_out.add(m_out.constIntPtr(1), storeIndex);
-                    }
+    LValue forwardSpread(Node* target, LValue targetStart, LValue storeIndex)
+    {
+        if (target->op() == PhantomSpread)
+            return forwardSpread(target->child1().node(), targetStart, storeIndex);
+
+        if (target->op() == PhantomNewArrayWithSpread) {
+            BitVector* bitVector = target->bitVector();
+            for (unsigned i = 0; i < target->numChildren(); i++) {
+                if (bitVector->get(i))
+                    storeIndex = forwardSpread(m_graph.varArgChild(target, i).node(), targetStart, storeIndex);
+                else {
+                    LValue value = lowJSValue(m_graph.varArgChild(target, i));
+                    m_out.store64(value, m_out.baseIndex(m_heaps.variables, targetStart, storeIndex));
+                    storeIndex = m_out.add(m_out.constIntPtr(1), storeIndex);
                 }
-                return storeIndex;
             }
+            return storeIndex;
+        }
 
-            if (target->op() == PhantomNewArrayBuffer) {
-                auto* array = target->castOperand<JSCellButterfly*>();
-                for (unsigned i = 0; i < array->length(); i++) {
-                    // Because forwarded values are drained as JSValue, we should not generate value
-                    // in Double form even if PhantomNewArrayBuffer's indexingType is ArrayWithDouble.
-                    int64_t value = JSValue::encode(array->get(i));
-                    m_out.store64(m_out.constInt64(value), m_out.baseIndex(m_heaps.variables, targetStart, storeIndex, JSValue(), Checked<int32_t>(sizeof(Register)) * i));
-                }
-                return m_out.add(m_out.constIntPtr(array->length()), storeIndex);
+        if (target->op() == PhantomNewArrayBuffer) {
+            auto* array = target->castOperand<JSCellButterfly*>();
+            // We already exited if the array is longer than the limit.
+            unsigned numStores = std::min(array->length(), m_node->loadVarargsData()->limit - 1);
+            for (unsigned i = 0; i < numStores; i++) {
+                // Because forwarded values are drained as JSValue, we should not generate value
+                // in Double form even if PhantomNewArrayBuffer's indexingType is ArrayWithDouble.
+                int64_t value = JSValue::encode(array->get(i));
+                m_out.store64(m_out.constInt64(value), m_out.baseIndex(m_heaps.variables, targetStart, storeIndex, JSValue(), Checked<int32_t>(sizeof(Register)) * i));
             }
+            return m_out.add(m_out.constIntPtr(array->length()), storeIndex);
+        }
 
-            RELEASE_ASSERT(target->op() == PhantomCreateRest);
-            InlineCallFrame* inlineCallFrame = target->origin.semantic.inlineCallFrame();
+        RELEASE_ASSERT(target->op() == PhantomCreateRest);
+        InlineCallFrame* inlineCallFrame = target->origin.semantic.inlineCallFrame();
 
-            auto numberOfArgumentsToSkip = target->numberOfArgumentsToSkip();
-            LValue sourceStart = this->getArgumentsStart(inlineCallFrame, numberOfArgumentsToSkip);
-            LValue spreadLength = m_out.zeroExtPtr(getSpreadLengthFromInlineCallFrame(inlineCallFrame, numberOfArgumentsToSkip));
+        auto numberOfArgumentsToSkip = target->numberOfArgumentsToSkip();
+        LValue sourceStart = getArgumentsStart(inlineCallFrame, numberOfArgumentsToSkip);
+        LValue spreadLength = m_out.zeroExtPtr(getSpreadLengthFromInlineCallFrame(inlineCallFrame, numberOfArgumentsToSkip));
+        return copyVarargs(m_heaps.variables, sourceStart, spreadLength, targetStart, storeIndex);
+    }
 
-            LBasicBlock loop = m_out.newBlock();
-            LBasicBlock continuation = m_out.newBlock();
-            ValueFromBlock startLoadIndex = m_out.anchor(m_out.constIntPtr(0));
-            ValueFromBlock startStoreIndex = m_out.anchor(storeIndex);
-            ValueFromBlock startStoreIndexForEnd = m_out.anchor(storeIndex);
+    LValue copyVarargs(IndexedAbstractHeap& sourceHeap, LValue sourceStart, LValue length, LValue targetStart, LValue storeIndex)
+    {
+        LBasicBlock loop = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+        ValueFromBlock startLoadIndex = m_out.anchor(m_out.constIntPtr(0));
+        ValueFromBlock startStoreIndex = m_out.anchor(storeIndex);
+        ValueFromBlock startStoreIndexForEnd = m_out.anchor(storeIndex);
 
-            m_out.branch(m_out.isZero64(spreadLength), unsure(continuation), unsure(loop));
+        m_out.branch(m_out.isZero64(length), unsure(continuation), unsure(loop));
 
-            LBasicBlock lastNext = m_out.appendTo(loop, continuation);
-            LValue loopStoreIndex = m_out.phi(Int64, startStoreIndex);
-            LValue loadIndex = m_out.phi(Int64, startLoadIndex);
-            LValue value = m_out.load64(
-                m_out.baseIndex(m_heaps.variables, sourceStart, loadIndex));
-            m_out.store64(value, m_out.baseIndex(m_heaps.variables, targetStart, loopStoreIndex));
-            LValue nextLoadIndex = m_out.add(m_out.constIntPtr(1), loadIndex);
-            m_out.addIncomingToPhi(loadIndex, m_out.anchor(nextLoadIndex));
-            LValue nextStoreIndex = m_out.add(m_out.constIntPtr(1), loopStoreIndex);
-            m_out.addIncomingToPhi(loopStoreIndex, m_out.anchor(nextStoreIndex));
-            ValueFromBlock loopStoreIndexForEnd = m_out.anchor(nextStoreIndex);
-            m_out.branch(m_out.below(nextLoadIndex, spreadLength), unsure(loop), unsure(continuation));
+        LBasicBlock lastNext = m_out.appendTo(loop, continuation);
+        LValue loopStoreIndex = m_out.phi(Int64, startStoreIndex);
+        LValue loadIndex = m_out.phi(Int64, startLoadIndex);
+        LValue value = m_out.load64(
+            m_out.baseIndex(sourceHeap, sourceStart, loadIndex));
+        m_out.store64(value, m_out.baseIndex(m_heaps.variables, targetStart, loopStoreIndex));
+        LValue nextLoadIndex = m_out.add(m_out.constIntPtr(1), loadIndex);
+        m_out.addIncomingToPhi(loadIndex, m_out.anchor(nextLoadIndex));
+        LValue nextStoreIndex = m_out.add(m_out.constIntPtr(1), loopStoreIndex);
+        m_out.addIncomingToPhi(loopStoreIndex, m_out.anchor(nextStoreIndex));
+        ValueFromBlock loopStoreIndexForEnd = m_out.anchor(nextStoreIndex);
+        m_out.branch(m_out.below(nextLoadIndex, length), unsure(loop), unsure(continuation));
 
-            m_out.appendTo(continuation, lastNext);
-            return m_out.phi(Int64, startStoreIndexForEnd, loopStoreIndexForEnd);
-        });
+        m_out.appendTo(continuation, lastNext);
+        return m_out.phi(Int64, startStoreIndexForEnd, loopStoreIndexForEnd);
+    }
 
-        LValue storeIndex = forwardSpread(arguments, m_out.constIntPtr(0));
-
+    void fillMissingVarargsWithUndefined(LValue targetStart, LValue storeIndex)
+    {
+        LoadVarargsData* data = m_node->loadVarargsData();
         LBasicBlock undefinedLoop = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
 

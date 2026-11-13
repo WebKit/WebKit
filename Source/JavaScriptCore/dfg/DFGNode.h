@@ -4132,8 +4132,8 @@ public:
 // The spread operands of CallVarargsWithSpread / VarargsLengthWithSpread / LoadVarargsWithSpread (the ones
 // bitVector() marks) reach the FTL in one of three shapes. An eliminated spread survived arguments
 // elimination as a PhantomSpread over either a PhantomCreateRest (a forwarded segment: it has no value of
-// its own, so it is passed to the frame-setup operations as an empty-JSValue sentinel plus a
-// VarargsSpreadForwardDescriptor) or a PhantomNewArrayBuffer (a constant butterfly cell). Any other operand
+// its own, so CallVarargsWithSpread passes it to the frame-setup operations as an empty-JSValue sentinel plus
+// a VarargsSpreadForwardDescriptor) or a PhantomNewArrayBuffer (a constant butterfly cell). Any other operand
 // has a value: a materialized spread butterfly cell, or, at a position bitVector() does not mark, a plain
 // argument. Only the FTL sees the phantom shapes, since arguments elimination requires SSA form; in the DFG
 // every operand has a value.
