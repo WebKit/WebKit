@@ -2681,6 +2681,64 @@ void testClearBitField64()
     }
 }
 
+void testBitfieldWrappersAtFullWidth()
+{
+    // lsb + width == datasize is the widest field the bfi, bfxil, sbfiz and ubfiz aliases accept.
+    // The generic bitfield tests cannot reach it: their C reference masks would shift by the
+    // full width, so these check the results directly.
+    auto insert32 = compile([](CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+        jit.insertBitField32(GPRInfo::argumentGPR0, CCallHelpers::TrustedImm32(0), CCallHelpers::TrustedImm32(32), GPRInfo::argumentGPR1);
+        jit.move(GPRInfo::argumentGPR1, GPRInfo::returnValueGPR);
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+    CHECK_EQ(invoke<uint32_t>(insert32, 0x12345678U, 0xfedcba98U), 0x12345678U);
+
+    auto insert64 = compile([](CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+        jit.insertBitField64(GPRInfo::argumentGPR0, CCallHelpers::TrustedImm32(0), CCallHelpers::TrustedImm32(64), GPRInfo::argumentGPR1);
+        jit.move(GPRInfo::argumentGPR1, GPRInfo::returnValueGPR);
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+    CHECK_EQ(invoke<uint64_t>(insert64, 0x123456789abcdef0ULL, 0xfedcba9876543210ULL), 0x123456789abcdef0ULL);
+
+    auto extract32 = compile([](CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+        jit.extractInsertBitfieldAtLowEnd32(GPRInfo::argumentGPR0, CCallHelpers::TrustedImm32(0), CCallHelpers::TrustedImm32(32), GPRInfo::argumentGPR1);
+        jit.move(GPRInfo::argumentGPR1, GPRInfo::returnValueGPR);
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+    CHECK_EQ(invoke<uint32_t>(extract32, 0x12345678U, 0xfedcba98U), 0x12345678U);
+
+    auto clear32 = compile([](CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+        jit.clearBitField32(CCallHelpers::TrustedImm32(0), CCallHelpers::TrustedImm32(32), GPRInfo::argumentGPR0);
+        jit.move(GPRInfo::argumentGPR0, GPRInfo::returnValueGPR);
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+    CHECK_EQ(invoke<uint32_t>(clear32, 0xdeadbeefU), 0);
+
+    auto insertUnsignedInZero32 = compile([](CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+        jit.insertUnsignedBitfieldInZero32(GPRInfo::argumentGPR0, CCallHelpers::TrustedImm32(0), CCallHelpers::TrustedImm32(32), GPRInfo::returnValueGPR);
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+    CHECK_EQ(invoke<uint32_t>(insertUnsignedInZero32, 0x89abcdefU), 0x89abcdefU);
+
+    auto insertSignedInZero32 = compile([](CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+        jit.insertSignedBitfieldInZero32(GPRInfo::argumentGPR0, CCallHelpers::TrustedImm32(0), CCallHelpers::TrustedImm32(32), GPRInfo::returnValueGPR);
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+    CHECK_EQ(invoke<uint32_t>(insertSignedInZero32, 0x89abcdefU), 0x89abcdefU);
+}
+
 void testClearBitsWithMask32()
 {
     auto test = compile([] (CCallHelpers& jit) {
@@ -10610,6 +10668,7 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     RUN(testExtractInsertBitfieldAtLowEnd64());
     RUN(testClearBitField32());
     RUN(testClearBitField64());
+    RUN(testBitfieldWrappersAtFullWidth());
     RUN(testClearBitsWithMask32());
     RUN(testClearBitsWithMask64());
 

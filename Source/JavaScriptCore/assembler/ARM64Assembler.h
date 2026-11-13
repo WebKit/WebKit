@@ -806,12 +806,15 @@ public:
     {
         CHECK_DATASIZE();
         ASSERT(!shift || shift == 12);
+        ASSERT_WITH_MESSAGE(!isSp(rd) || setFlags == DontSetFlags, "ADDS with immediate does not support SP for Xd, register 31 is Xd.");
         insn(addSubtractImmediate(DATASIZE, AddOp_ADD, setFlags, shift == 12, imm12, rn, rd));
     }
 
     template<int datasize, SetFlags setFlags = DontSetFlags>
     ALWAYS_INLINE void add(RegisterID rd, RegisterID rn, RegisterID rm)
     {
+        ASSERT_WITH_MESSAGE(!isSp(rd) || setFlags == DontSetFlags, "ADDS with shifted register does not support SP for Xd, it uses XZR for the register 31. ADDS with extended register support SP for Xd, but only if SetFlag is not used, otherwise register 31 is Xd.");
+        ASSERT_WITH_MESSAGE(!isSp(rm), "No encoding of ADDS supports SP for the third operand.");
         add<datasize, setFlags>(rd, rn, rm, LSL, 0);
     }
 
@@ -819,6 +822,7 @@ public:
     ALWAYS_INLINE void add(RegisterID rd, RegisterID rn, RegisterID rm, ExtendType extend, int amount)
     {
         CHECK_DATASIZE_SIMD();
+        ASSERT_WITH_MESSAGE(!isSp(rd) || setFlags == DontSetFlags, "ADDS with extended register does not support SP for Xd, register 31 is Xd.");
         insn(addSubtractExtendedRegister(DATASIZE, AddOp_ADD, setFlags, rm, extend, amount, rn, rd));
     }
 
@@ -912,6 +916,7 @@ public:
     template<int datasize>
     ALWAYS_INLINE void bfi(RegisterID rd, RegisterID rn, int lsb, int width)
     {
+        ASSERT(0 <= lsb && lsb < datasize && width >= 1 && lsb + width <= datasize);
         bfm<datasize>(rd, rn, (datasize - lsb) & (datasize - 1), width - 1);
     }
 
@@ -925,6 +930,7 @@ public:
     template<int datasize>
     ALWAYS_INLINE void bfxil(RegisterID rd, RegisterID rn, int lsb, int width)
     {
+        ASSERT(0 <= lsb && lsb < datasize && width >= 1 && lsb + width <= datasize);
         bfm<datasize>(rd, rn, lsb, lsb + width - 1);
     }
 
@@ -2797,6 +2803,7 @@ public:
     template<int datasize>
     ALWAYS_INLINE void sbfiz(RegisterID rd, RegisterID rn, int lsb, int width)
     {
+        ASSERT(0 <= lsb && lsb < datasize && width >= 1 && lsb + width <= datasize);
         sbfm<datasize>(rd, rn, (datasize - lsb) & (datasize - 1), width - 1);
     }
 
@@ -3022,6 +3029,7 @@ public:
     {
         CHECK_DATASIZE();
         ASSERT(!shift || shift == 12);
+        ASSERT_WITH_MESSAGE(!isSp(rd) || setFlags == DontSetFlags, "SUBS with immediate does not support SP for Xd, register 31 is Xd.");
         insn(addSubtractImmediate(DATASIZE, AddOp_SUB, setFlags, shift == 12, imm12, rn, rd));
     }
 
@@ -3041,6 +3049,7 @@ public:
     ALWAYS_INLINE void sub(RegisterID rd, RegisterID rn, RegisterID rm, ExtendType extend, int amount)
     {
         CHECK_DATASIZE();
+        ASSERT_WITH_MESSAGE(!isSp(rd) || setFlags == DontSetFlags, "SUBS with extended register does not support SP for Xd, register 31 is Xd.");
         insn(addSubtractExtendedRegister(DATASIZE, AddOp_SUB, setFlags, rm, extend, amount, rn, rd));
     }
 
@@ -3109,6 +3118,7 @@ public:
     template<int datasize>
     ALWAYS_INLINE void ubfiz(RegisterID rd, RegisterID rn, int lsb, int width)
     {
+        ASSERT(0 <= lsb && lsb < datasize && width >= 1 && lsb + width <= datasize);
         ubfm<datasize>(rd, rn, (datasize - lsb) & (datasize - 1), width - 1);
     }
 
@@ -4543,8 +4553,8 @@ protected:
 
     ALWAYS_INLINE static int bitfield(Datasize sf, BitfieldOp opc, int immr, int imms, RegisterID rn, RegisterID rd)
     {
-        ASSERT(immr < (sf ? 64 : 32));
-        ASSERT(imms < (sf ? 64 : 32));
+        ASSERT(0 <= immr && immr < (sf ? 64 : 32));
+        ASSERT(0 <= imms && imms < (sf ? 64 : 32));
         const int N = sf;
         return (0x13000000 | sf << 31 | opc << 29 | N << 22 | immr << 16 | imms << 10 | xOrZr(rn) << 5 | xOrZr(rd));
     }
@@ -4570,6 +4580,7 @@ protected:
     {
         ASSERT(!(imm5 & ~0x1f));
         ASSERT(nzcv < 16);
+        ASSERT(cond < ConditionAL);
         const int S = 1;
         const int o2 = 0;
         const int o3 = 0;
@@ -4579,6 +4590,7 @@ protected:
     ALWAYS_INLINE static int conditionalCompareRegister(Datasize sf, AddOp op, RegisterID rm, Condition cond, RegisterID rn, int nzcv)
     {
         ASSERT(nzcv < 16);
+        ASSERT(cond < ConditionAL);
         const int S = 1;
         const int o2 = 0;
         const int o3 = 0;
@@ -4590,6 +4602,7 @@ protected:
     ALWAYS_INLINE static int conditionalSelect(Datasize sf, bool op, RegisterID rm, Condition cond, bool op2, RegisterID rn, RegisterID rd)
     {
         const int S = 0;
+        ASSERT(cond < ConditionAL);
         return (0x1a800000 | sf << 31 | op << 30 | S << 29 | xOrZr(rm) << 16 | cond << 12 | op2 << 10 | xOrZr(rn) << 5 | xOrZr(rd));
     }
 
@@ -4628,7 +4641,7 @@ protected:
 
     ALWAYS_INLINE static int extract(Datasize sf, RegisterID rm, int imms, RegisterID rn, RegisterID rd)
     {
-        ASSERT(imms < (sf ? 64 : 32));
+        ASSERT(0 <= imms && imms < (sf ? 64 : 32));
         const int op21 = 0;
         const int N = sf;
         const int o0 = 0;
