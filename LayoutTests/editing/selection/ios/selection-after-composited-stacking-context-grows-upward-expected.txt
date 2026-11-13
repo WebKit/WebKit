@@ -1,0 +1,12 @@
+Verifies that the caret stays in place when content is inserted above an editable field, inside a bottom-anchored stacking context that has a composited negative z-index child. To test manually, focus the field and press Escape; the caret should not move.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS caretRectBeforeInsertion.top is caretRectAfterInsertion.top
+PASS caretRectBeforeInsertion.left is caretRectAfterInsertion.left
+PASS caretRectBeforeInsertion.width is caretRectAfterInsertion.width
+PASS caretRectBeforeInsertion.height is caretRectAfterInsertion.height
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
