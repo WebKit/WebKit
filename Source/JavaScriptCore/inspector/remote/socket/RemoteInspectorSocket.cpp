@@ -363,6 +363,9 @@ void RemoteInspector::startAutomationSession(const Event& event)
         return;
 
     auto parsedMessageObject = parsedMessageValue->asObject();
+    if (!parsedMessageObject)
+        return;
+
     auto sessionID = parsedMessageObject->getString("sessionID"_s);
     if (!sessionID)
         return;
