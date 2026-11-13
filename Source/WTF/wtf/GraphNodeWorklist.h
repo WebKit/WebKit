@@ -29,7 +29,7 @@
 
 namespace WTF {
 
-template<typename Node, typename Set = UncheckedKeyHashSet<Node>>
+template<typename Node, typename Set = HashSet<Node>>
 class GraphNodeWorklist {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(GraphNodeWorklist);
 public:
@@ -93,7 +93,7 @@ struct GraphNodeWith {
     T data;
 };
 
-template<typename Node, typename T, typename Set = UncheckedKeyHashSet<Node>>
+template<typename Node, typename T, typename Set = HashSet<Node>>
 class ExtendedGraphNodeWorklist {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ExtendedGraphNodeWorklist);
 public:
@@ -165,7 +165,7 @@ struct GraphNodeWithOrder {
     GraphVisitOrder order;
 };
 
-template<typename Node, typename Set = UncheckedKeyHashSet<Node>>
+template<typename Node, typename Set = HashSet<Node>>
 class PostOrderGraphNodeWorklist {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(PostOrderGraphNodeWorklist);
 public:

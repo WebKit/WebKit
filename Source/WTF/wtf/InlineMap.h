@@ -49,7 +49,7 @@ template<typename IteratorType> struct InlineMapAddResult {
 // happens when the map size exceeds the InlineCapacity template parameter. InlineCapacity
 // does not need to be any special value such as a power of 2.
 //
-// InlineMap is to a large extent compatible with UncheckedKeyHashMap. Inserted keys are
+// InlineMap is to a large extent compatible with HashMap. Inserted keys are
 // only checked for not being empty or deleted values in debug builds. In release builds
 // such insertions would corrupt the map.
 

@@ -59,7 +59,7 @@ private:
         size_t totalBytes { 0 };
     };
 
-    UncheckedKeyHashMap<String, Entry> m_data;
+    HashMap<String, Entry> m_data;
 };
 
 } // namespace JSC

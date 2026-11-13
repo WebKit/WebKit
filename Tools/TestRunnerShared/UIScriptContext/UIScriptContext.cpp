@@ -91,8 +91,6 @@ unsigned UIScriptContext::prepareForAsyncTask(JSValueRef callback, CallbackType 
 
 void UIScriptContext::asyncTaskComplete(unsigned callbackID, std::initializer_list<JSValueRef> arguments)
 {
-    if (!decltype(m_callbacks)::isValidKey(callbackID))
-        return;
     Task task = m_callbacks.take(callbackID);
     if (!task.callback)
         return;

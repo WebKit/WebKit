@@ -93,8 +93,8 @@ public:
     JS_EXPORT_PRIVATE size_t basicBlockExecutionCountAtTextOffset(int, SourceID, VM&); // This function exists for testing.
 
 private:
-    typedef UncheckedKeyHashMap<BasicBlockKey, BasicBlockLocation*> BlockLocationCache;
-    typedef UncheckedKeyHashMap<SourceID, BlockLocationCache> SourceIDBuckets;
+    typedef HashMap<BasicBlockKey, BasicBlockLocation*> BlockLocationCache;
+    typedef HashMap<SourceID, BlockLocationCache> SourceIDBuckets;
 
     SourceIDBuckets m_sourceIDBuckets;
     BasicBlockLocation m_dummyBasicBlock;

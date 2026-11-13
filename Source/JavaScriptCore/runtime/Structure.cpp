@@ -79,7 +79,7 @@ void Structure::checkOffsetConsistency(PropertyTable* propertyTable, NOESCAPE co
 }
 
 #if DUMP_STRUCTURE_ID_STATISTICS
-static UncheckedKeyHashSet<Structure*>& liveStructureSet = *(new UncheckedKeyHashSet<Structure*>);
+static HashSet<Structure*>& liveStructureSet = *(new HashSet<Structure*>);
 #endif
 
 inline void StructureTransitionTable::setSingleTransition(VM& vm, JSCell* owner, Structure* structure)

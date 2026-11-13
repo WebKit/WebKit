@@ -261,7 +261,7 @@ private:
     // compact pointers that strip the objects' MTE tags
     SegmentedVector<Projection, 64, 0, SegmentedVectorGrowthPolicy::Constant, FastCompactMalloc> m_projectionStorage;
     SegmentedVector<RecursionGroup, 16> m_recursionGroupStorage;
-    UncheckedKeyHashSet<const Projection*, ProjectionHash> m_projectionDedup;
+    HashSet<const Projection*, ProjectionHash> m_projectionDedup;
 };
 
 // The low bits of Subtype*/Projection* pointers are reused as discriminator

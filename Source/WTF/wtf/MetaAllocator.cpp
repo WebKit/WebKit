@@ -446,7 +446,7 @@ void MetaAllocator::decrementPageOccupancy(void* address, size_t sizeInBytes)
     };
     
     for (uintptr_t page = firstPage; page <= lastPage; ++page) {
-        UncheckedKeyHashMap<uintptr_t, size_t>::iterator iter = m_pageOccupancyMap.find(page);
+        HashMap<uintptr_t, size_t>::iterator iter = m_pageOccupancyMap.find(page);
         ASSERT(iter != m_pageOccupancyMap.end());
         if (!--(iter->value)) {
             m_pageOccupancyMap.remove(iter);

@@ -154,15 +154,14 @@ NODELETE static HashMap<FrameIdentifier, WeakRef<WebFrameProxy>>& allFrames()
 
 WebFrameProxy* WebFrameProxy::webFrame(std::optional<FrameIdentifier> identifier)
 {
-    if (!identifier || !std::remove_reference_t<decltype(allFrames())>::isValidKey(*identifier))
+    if (!identifier)
         return nullptr;
     return allFrames().get(*identifier);
 }
 
 bool WebFrameProxy::canCreateFrame(FrameIdentifier frameID)
 {
-    return std::remove_reference_t<decltype(allFrames())>::isValidKey(frameID)
-        && !allFrames().contains(frameID);
+    return !allFrames().contains(frameID);
 }
 
 WebFrameProxy::WebFrameProxy(WebPageProxy& page, FrameProcess& process, FrameIdentifier frameID, SandboxFlags effectiveSandboxFlags, ReferrerPolicy effectiveReferrerPolicy, WebCore::ScrollbarMode scrollingMode, WebFrameProxy* opener, WebFrameProxy* parent, IsMainFrame isMainFrame, std::optional<URL>&& previousURL)
@@ -1373,7 +1372,7 @@ void WebFrameProxy::updateDocumentSecurityOrigin(WebCore::SandboxFlags responseS
 WebCore::CertificateInfo WebFrameProxy::provisionalCertificateInfoFromNetworkProcess(const URL& url) const
 {
     String hostAndPort = url.hostAndPort();
-    if (!decltype(m_hostAndPortToCertificateInfo)::isValidKey(hostAndPort))
+    if (hostAndPort.isNull())
         return { };
 
     if (!url.protocolIsSecure())
@@ -1410,7 +1409,7 @@ void WebFrameProxy::receivedMainResourceResponseWithCertificateInfo(String&& hos
     // FIXME: This has no corresponding remove call. If we know a host is not being used by the back/forward
     // cache and is not being navigated to, we could clean up this map. Since we don't re-use main frames for
     // multiple hosts, this would only affect iframes that navigate to many hosts.
-    if (decltype(m_hostAndPortToCertificateInfo)::isValidKey(hostAndPort))
+    if (!hostAndPort.isNull())
         m_hostAndPortToCertificateInfo.set(WTF::move(hostAndPort), WTF::move(certificateInfo));
 }
 

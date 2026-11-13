@@ -116,10 +116,10 @@ public:
     void dumpTypeProfilerData(VM&);
     
 private:
-    typedef UncheckedKeyHashMap<SourceID, Vector<TypeLocation*>> SourceIDToLocationBucketMap;
+    typedef HashMap<SourceID, Vector<TypeLocation*>> SourceIDToLocationBucketMap;
     SourceIDToLocationBucketMap m_bucketMap;
     TypeLocationCache m_typeLocationCache;
-    typedef UncheckedKeyHashMap<QueryKey, TypeLocation*> TypeLocationQueryCache;
+    typedef HashMap<QueryKey, TypeLocation*> TypeLocationQueryCache;
     TypeLocationQueryCache m_queryCache;
     GlobalVariableID m_nextUniqueVariableID;
     Bag<TypeLocation> m_typeLocationInfo;

@@ -119,8 +119,8 @@ private:
 
     std::unique_ptr<UDateTimePatternGenerator, ICUDeleter<udatpg_close>> m_cachedDateTimePatternGenerator;
     ASCIICString m_cachedDateTimePatternGeneratorLocale;
-    UncheckedKeyHashMap<String, String> m_cachedCanonicalizedLocaleIDs;
-    UncheckedKeyHashMap<String, LocaleWithoutOptions> m_cachedLocalesWithoutOptions;
+    HashMap<String, String> m_cachedCanonicalizedLocaleIDs;
+    HashMap<String, LocaleWithoutOptions> m_cachedLocalesWithoutOptions;
 
     static std::atomic<uint64_t> s_languagesEpoch;
 

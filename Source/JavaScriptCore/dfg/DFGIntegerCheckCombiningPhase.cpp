@@ -370,7 +370,7 @@ private:
                 nodeIndex, origin, jsNumber(addend), source.useKind()));
     }
     
-    using RangeMap = UncheckedKeyHashMap<GenericHashKey<RangeKey>, Range>;
+    using RangeMap = HashMap<RangeKey, Range>;
     RangeMap m_map;
     
     InsertionSet m_insertionSet;

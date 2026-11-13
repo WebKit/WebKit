@@ -48,7 +48,7 @@ public:
     void remove(RegisteredSymbolImpl&);
 
 private:
-    UncheckedKeyHashSet<RefPtr<StringImpl>> m_table;
+    HashSet<RefPtr<StringImpl>> m_table;
     Type m_symbolType;
 };
 

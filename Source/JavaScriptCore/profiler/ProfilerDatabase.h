@@ -79,9 +79,9 @@ private:
     DatabaseID m_databaseID;
     VM& m_vm;
     SegmentedVector<Bytecodes> m_bytecodes;
-    UncheckedKeyHashMap<CodeBlock*, Bytecodes*> m_bytecodesMap WTF_GUARDED_BY_LOCK(m_lock);
+    HashMap<CodeBlock*, Bytecodes*> m_bytecodesMap WTF_GUARDED_BY_LOCK(m_lock);
     Vector<Ref<Compilation>> m_compilations;
-    UncheckedKeyHashMap<CodeBlock*, Ref<Compilation>> m_compilationMap WTF_GUARDED_BY_LOCK(m_lock);
+    HashMap<CodeBlock*, Ref<Compilation>> m_compilationMap WTF_GUARDED_BY_LOCK(m_lock);
     Vector<Event> m_events;
     bool m_shouldSaveAtExit;
     UTF8CString m_atExitSaveFilename;

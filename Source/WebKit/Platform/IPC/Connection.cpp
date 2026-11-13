@@ -1859,15 +1859,13 @@ void Connection::cancelAsyncReplyHandlers()
 CompletionHandler<void(Connection*, Decoder*)> Connection::takeAsyncReplyHandler(AsyncReplyID replyID)
 {
     Locker locker { m_incomingMessagesLock };
-    if (!m_asyncReplyHandlers.isValidKey(replyID))
-        return nullptr;
     return m_asyncReplyHandlers.take(replyID);
 }
 
 bool Connection::isAsyncReplyHandlerWithDispatcher(AsyncReplyID replyID)
 {
     Locker locker { m_incomingMessagesLock };
-    return m_asyncReplyHandlerWithDispatchers.isValidKey(replyID) && m_asyncReplyHandlerWithDispatchers.contains(replyID);
+    return m_asyncReplyHandlerWithDispatchers.contains(replyID);
 }
 
 CompletionHandler<void(Connection*, std::unique_ptr<Decoder>&&)> Connection::takeAsyncReplyHandlerWithDispatcher(AsyncReplyID replyID)
@@ -1879,8 +1877,6 @@ CompletionHandler<void(Connection*, std::unique_ptr<Decoder>&&)> Connection::tak
 CompletionHandler<void(Connection*, std::unique_ptr<Decoder>&&)> Connection::takeAsyncReplyHandlerWithDispatcherWithLockHeld(AsyncReplyID replyID)
 {
     assertIsHeld(m_incomingMessagesLock);
-    if (!m_asyncReplyHandlerWithDispatchers.isValidKey(replyID))
-        return { };
     return m_asyncReplyHandlerWithDispatchers.take(replyID);
 }
 

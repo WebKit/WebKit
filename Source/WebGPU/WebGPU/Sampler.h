@@ -27,7 +27,6 @@
 
 #import <WebGPU/WebGPUCpp.h>
 #import <wtf/FastMalloc.h>
-#import <wtf/GenericHashKey.h>
 #import <wtf/Hasher.h>
 #import <wtf/ListHashSet.h>
 #import <wtf/Lock.h>

@@ -1037,10 +1037,10 @@ public:
         profiler.vm().heap.collectNow(Sync, CollectionScope::Full);
         profiler.setActiveHeapAnalyzer(nullptr);
 
-        UncheckedKeyHashSet<JSCell*> queue;
+        HashSet<JSCell*> queue;
 
         // Filter `m_holders` based on whether they're reachable from a non-Debugger root.
-        UncheckedKeyHashSet<JSCell*> visited;
+        HashSet<JSCell*> visited;
         for (auto* root : m_rootsToInclude)
             queue.add(root);
         while (auto* from = queue.takeAny()) {
@@ -1072,7 +1072,7 @@ public:
         });
     }
 
-    NODELETE UncheckedKeyHashSet<JSCell*>& holders() { return m_holders; }
+    NODELETE HashSet<JSCell*>& holders() { return m_holders; }
 
     void analyzeEdge(JSCell* from, JSCell* to, RootMarkReason reason) final
     {
@@ -1083,11 +1083,11 @@ public:
 
         if (from && from != to) {
             m_successors.ensure(from, [] {
-                return UncheckedKeyHashSet<JSCell*>();
+                return HashSet<JSCell*>();
             }).iterator->value.add(to);
 
             m_predecessors.ensure(to, [] {
-                return UncheckedKeyHashSet<JSCell*>();
+                return HashSet<JSCell*>();
             }).iterator->value.add(from);
 
             if (to == m_target)
@@ -1113,7 +1113,7 @@ public:
     {
         Indentation<4> indent;
 
-        UncheckedKeyHashSet<JSCell*> visited;
+        HashSet<JSCell*> visited;
 
         Function<void(JSCell*)> visit = [&] (auto* from) {
             auto isFirstVisit = visited.add(from).isNewEntry;
@@ -1151,11 +1151,11 @@ public:
 
 private:
     Lock m_mutex;
-    UncheckedKeyHashMap<JSCell*, UncheckedKeyHashSet<JSCell*>> m_predecessors;
-    UncheckedKeyHashMap<JSCell*, UncheckedKeyHashSet<JSCell*>> m_successors;
-    UncheckedKeyHashSet<JSCell*> m_rootsToInclude;
-    UncheckedKeyHashSet<JSCell*> m_rootsToIgnore;
-    UncheckedKeyHashSet<JSCell*> m_holders;
+    HashMap<JSCell*, HashSet<JSCell*>> m_predecessors;
+    HashMap<JSCell*, HashSet<JSCell*>> m_successors;
+    HashSet<JSCell*> m_rootsToInclude;
+    HashSet<JSCell*> m_rootsToIgnore;
+    HashSet<JSCell*> m_holders;
     const JSCell* m_target;
 };
 

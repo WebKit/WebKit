@@ -345,20 +345,20 @@ void HeapSnapshotBuilder::dumpToStream(PrintStream& out)
     DeferGCForAWhile deferGC(vm);
 
     // Build a node to identifier map of allowed nodes to use when serializing edges.
-    UncheckedKeyHashMap<JSCell*, NodeIdentifier> allowedNodeIdentifiers;
+    HashMap<JSCell*, NodeIdentifier> allowedNodeIdentifiers;
 
     // Build a list of used class names.
-    UncheckedKeyHashMap<String, unsigned> classNameIndexes;
+    HashMap<String, unsigned> classNameIndexes;
     classNameIndexes.set("<root>"_s, 0);
     unsigned nextClassNameIndex = 1;
 
     // Build a list of labels (this is just a string table).
-    UncheckedKeyHashMap<String, unsigned> labelIndexes;
+    HashMap<String, unsigned> labelIndexes;
     labelIndexes.set(emptyString(), 0);
     unsigned nextLabelIndex = 1;
 
     // Build a list of used edge names.
-    UncheckedKeyHashMap<UniquedStringImpl*, unsigned> edgeNameIndexes;
+    HashMap<UniquedStringImpl*, unsigned> edgeNameIndexes;
     unsigned nextEdgeNameIndex = 0;
 
     auto printJSONString = [&](const auto& value) {

@@ -70,7 +70,7 @@ private:
     void hoistConstants(NOESCAPE const Filter& filter)
     {
         Dominators& dominators = m_proc.dominators();
-        UncheckedKeyHashMap<ValueKey, Value*> valueForConstant;
+        HashMap<ValueKey, Value*> valueForConstant;
         IndexMap<BasicBlock*, Vector<Value*>> materializations(m_proc.size());
 
         // We determine where things get materialized based on where they are used.
@@ -265,7 +265,7 @@ private:
     {
         unsigned doubleSize = 0;
         unsigned v128Size = 0;
-        UncheckedKeyHashMap<ValueKey, unsigned> constTable;
+        HashMap<ValueKey, unsigned> constTable;
         for (Value* value : m_proc.values()) {
             if (!goesInTable(value))
                 continue;

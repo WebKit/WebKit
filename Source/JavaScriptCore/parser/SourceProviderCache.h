@@ -53,7 +53,7 @@ public:
 private:
     explicit SourceProviderCache(unsigned sourceLength);
 
-    UncheckedKeyHashMap<int, std::unique_ptr<SourceProviderCacheItem>, WTF::IntHash<int>, WTF::UnsignedWithZeroKeyHashTraits<int>> m_map;
+    HashMap<int, std::unique_ptr<SourceProviderCacheItem>, WTF::IntHash<int>, WTF::UnsignedWithZeroKeyHashTraits<int>> m_map;
     bool m_usedSinceLastPrune { false };
 };
 

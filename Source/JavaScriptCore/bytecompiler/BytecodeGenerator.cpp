@@ -3376,7 +3376,7 @@ Vector<Identifier> BytecodeGenerator::getParameterNames() const
 std::optional<PrivateNameEnvironment> BytecodeGenerator::getAvailablePrivateAccessNames()
 {
     PrivateNameEnvironment result;
-    UncheckedKeyHashSet<UniquedStringImpl*> excludedNames;
+    HashSet<UniquedStringImpl*> excludedNames;
     for (unsigned i = m_privateNamesStack.size(); i--; ) {
         auto& map = m_privateNamesStack[i];
         for (auto& entry : map)  {
@@ -4623,7 +4623,7 @@ void BytecodeGenerator::endSwitch(const Vector<Ref<Label>, 8>& labels, Expressio
         jumpTable.m_isList = true;
 
         Vector<int32_t> branchOffsets(ReserveCapacityTag { }, labels.size() * 2);
-        UncheckedKeyHashSet<GenericHashKey<int32_t>> alreadyHandled;
+        HashSet<int32_t> alreadyHandled;
 
         for (uint32_t i = 0; i < labels.size(); ++i) {
             // We're emitting this after the clause labels should have been fixed, so

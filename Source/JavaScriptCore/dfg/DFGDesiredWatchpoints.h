@@ -192,7 +192,7 @@ struct AdaptiveStructureWatchpointAdaptor {
 template<typename WatchpointSetType, typename Adaptor = SetPointerAdaptor<WatchpointSetType>>
 class GenericDesiredWatchpoints {
 #if ASSERT_ENABLED
-    typedef UncheckedKeyHashMap<WatchpointSetType, bool> StateMap;
+    typedef HashMap<WatchpointSetType, bool> StateMap;
 #endif
 public:
     GenericDesiredWatchpoints()
@@ -236,7 +236,7 @@ public:
     }
 
 private:
-    UncheckedKeyHashSet<WatchpointSetType> m_sets;
+    HashSet<WatchpointSetType> m_sets;
     bool m_reallyAdded;
 };
 
@@ -311,7 +311,7 @@ private:
     GenericDesiredWatchpoints<JSArrayBufferView*, ArrayBufferViewWatchpointAdaptor> m_bufferViews;
     GenericDesiredWatchpoints<ObjectPropertyCondition, AdaptiveStructureWatchpointAdaptor> m_adaptiveStructureSets;
     DesiredGlobalProperties m_globalProperties;
-    UncheckedKeyHashSet<Structure*> m_registeredNotWatchedStructures;
+    HashSet<Structure*> m_registeredNotWatchedStructures;
 };
 
 } } // namespace JSC::DFG

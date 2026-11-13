@@ -450,7 +450,7 @@ public:
             unsigned m_startDivot;
             unsigned m_endDivot;
         };
-        UncheckedKeyHashMap<unsigned, TypeProfilerExpressionRange> m_typeProfilerInfoMap;
+        HashMap<unsigned, TypeProfilerExpressionRange> m_typeProfilerInfoMap;
         FixedVector<JSInstructionStream::Offset> m_opProfileControlFlowBytecodeOffsets;
         FixedVector<BitVector> m_bitVectors;
         FixedVector<IdentifierSet> m_constantIdentifierSets;
@@ -476,7 +476,7 @@ public:
     BaselineExecutionCounter& llintExecuteCounter() LIFETIME_BOUND { return m_llintExecuteCounter; }
 
 private:
-    using OutOfLineJumpTargets = UncheckedKeyHashMap<JSInstructionStream::Offset, int>;
+    using OutOfLineJumpTargets = HashMap<JSInstructionStream::Offset, int>;
 
     OutOfLineJumpTargets m_outOfLineJumpTargets;
     std::unique_ptr<RareData> m_rareData;
@@ -488,7 +488,7 @@ private:
 
 #if ASSERT_ENABLED
     Lock m_cachedIdentifierUidsLock;
-    UncheckedKeyHashSet<UniquedStringImpl*> m_cachedIdentifierUids;
+    HashSet<UniquedStringImpl*> m_cachedIdentifierUids;
 #endif
 
 protected:

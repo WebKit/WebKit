@@ -400,10 +400,10 @@ static Vector<InvalidationRuleSet> buildInvalidationRuleSets(const RuleFeatureVe
         }
     };
 
-    HashMap<GenericHashKey<RuleSetKey>, RefPtr<RuleSet>> ruleSetMap;
+    HashMap<RuleSetKey, RefPtr<RuleSet>> ruleSetMap;
 
     for (auto& feature : features) {
-        auto key = GenericHashKey<RuleSetKey> { { feature.matchElement, feature.isNegation, feature.invalidationSelector(), feature.scopeSelector() } };
+        auto key = RuleSetKey { feature.matchElement, feature.isNegation, feature.invalidationSelector(), feature.scopeSelector() };
 
         auto& ruleSet = ruleSetMap.ensure(key, [] {
             return RuleSet::create();
@@ -413,7 +413,7 @@ static Vector<InvalidationRuleSet> buildInvalidationRuleSets(const RuleFeatureVe
     }
 
     return WTF::map(ruleSetMap, [](auto& entry) {
-        auto& key = entry.key.key();
+        auto& key = entry.key;
         entry.value->shrinkToFit();
         auto invalidationSelector = [&] {
             if (key.invalidationSelector && key.scopeSelector)

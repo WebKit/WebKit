@@ -492,7 +492,7 @@ public:
     JS_EXPORT_PRIVATE TypeCountSet protectedObjectTypeCounts();
     JS_EXPORT_PRIVATE TypeCountSet objectTypeCounts();
 
-    UncheckedKeyHashSet<MarkedVectorBase*>& markListSet() { return m_markListSet; }
+    HashSet<MarkedVectorBase*>& markListSet() { return m_markListSet; }
 
     template<typename Functor> inline void forEachProtectedCell(NOESCAPE const Functor&);
     template<typename Functor> inline void forEachCodeBlock(NOESCAPE const Functor&);
@@ -862,7 +862,7 @@ private:
     size_t m_deprecatedExtraMemorySize { 0 };
 
     ProtectCountSet m_protectedValues;
-    UncheckedKeyHashSet<MarkedVectorBase*> m_markListSet;
+    HashSet<MarkedVectorBase*> m_markListSet;
 
     std::unique_ptr<MachineThreads> m_machineThreads;
     
@@ -912,7 +912,7 @@ private:
     // Since this list is walked once to deref all the strings
     // We don't need fast access.
     SegmentedVector<std::pair<const JSString*, String>, 256, 10, SegmentedVectorGrowthPolicy::Doubling> m_possiblyAccessedStringsFromConcurrentThreadsOrGCOwnedDataScope;
-    UncheckedKeyHashSet<const JSString*> m_stringsFoundOnStack;
+    HashSet<const JSString*> m_stringsFoundOnStack;
     
     RefPtr<GCActivityCallback> m_fullActivityCallback;
     RefPtr<GCActivityCallback> m_edenActivityCallback;
@@ -935,17 +935,17 @@ private:
 #endif
     unsigned m_deferralDepth { 0 };
 
-    UncheckedKeyHashSet<WeakGCHashTable*> m_weakGCHashTables;
+    HashSet<WeakGCHashTable*> m_weakGCHashTables;
     SentinelLinkedList<WeakGCHashTable, BasicRawSentinelNode<WeakGCHashTable>> m_dirtyWeakGCHashTables;
     
 #if ENABLE(WEBASSEMBLY)
-    UncheckedKeyHashSet<Ref<Wasm::Callee>> m_wasmCalleesPendingDestruction WTF_GUARDED_BY_LOCK(m_wasmCalleesPendingDestructionLock);
+    HashSet<Ref<Wasm::Callee>> m_wasmCalleesPendingDestruction WTF_GUARDED_BY_LOCK(m_wasmCalleesPendingDestructionLock);
     // We snapshot m_wasmCalleesPendingDestruction at the start of GC rather than consulting it
     // directly during scanning because new callees can be registered while we scan. Without the
     // snapshot, a callee could be added after we already passed its frame, never be recorded
     // as found on a stack, and be incorrectly destroyed.
-    UncheckedKeyHashSet<const Wasm::Callee*> m_wasmCalleesPendingDestructionSnapshot;
-    UncheckedKeyHashSet<const Wasm::Callee*> m_wasmCalleesFoundOnStacks;
+    HashSet<const Wasm::Callee*> m_wasmCalleesPendingDestructionSnapshot;
+    HashSet<const Wasm::Callee*> m_wasmCalleesFoundOnStacks;
     TinyBloomFilter<uintptr_t> m_boxedWasmCalleeFilter;
 #endif
 

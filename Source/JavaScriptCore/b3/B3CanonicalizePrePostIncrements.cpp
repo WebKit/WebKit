@@ -56,15 +56,15 @@ bool canonicalizePrePostIncrements(Procedure& proc)
     Dominators& dominators = proc.dominators();
     BackwardsDominators& backwardsDominators = proc.backwardsDominators();
 
-    UncheckedKeyHashMap<Value*, Vector<MemoryValue*>> baseToMemories;
-    UncheckedKeyHashMap<MemoryValue*, Vector<Value*>> postIndexCandidates;
+    HashMap<Value*, Vector<MemoryValue*>> baseToMemories;
+    HashMap<MemoryValue*, Vector<Value*>> postIndexCandidates;
 
-    UncheckedKeyHashMap<Value*, Vector<Value*>> addressUses;
-    UncheckedKeyHashMap<std::tuple<Value*, MemoryValue::OffsetType>, Vector<Value*>> baseOffsetToAddresses;
-    UncheckedKeyHashMap<MemoryValue*, Vector<Value*>> preIndexCandidates;
+    HashMap<Value*, Vector<Value*>> addressUses;
+    HashMap<std::tuple<Value*, MemoryValue::OffsetType>, Vector<Value*>> baseOffsetToAddresses;
+    HashMap<MemoryValue*, Vector<Value*>> preIndexCandidates;
 
-    UncheckedKeyHashMap<Value*, unsigned> memoryToIndex;
-    UncheckedKeyHashMap<BasicBlock*, UncheckedKeyHashSet<MemoryValue*>> blockToPrePostIndexCandidates;
+    HashMap<Value*, unsigned> memoryToIndex;
+    HashMap<BasicBlock*, HashSet<MemoryValue*>> blockToPrePostIndexCandidates;
 
     auto tryFindCandidates = [&](Value* value, unsigned index) ALWAYS_INLINE_LAMBDA {
         switch (value->opcode()) {
@@ -97,7 +97,7 @@ bool canonicalizePrePostIncrements(Procedure& proc)
                     if (uses != addressUses.end() && uses->value.size() > 0)
                         continue;
                     preIndexCandidates.add(memory, Vector<Value*>()).iterator->value.append(address);
-                    blockToPrePostIndexCandidates.add(memory->owner, UncheckedKeyHashSet<MemoryValue*>()).iterator->value.add(memory);
+                    blockToPrePostIndexCandidates.add(memory->owner, HashSet<MemoryValue*>()).iterator->value.add(memory);
                 }
             } else
                 baseToMemories.add(base, Vector<MemoryValue*>()).iterator->value.append(memory);
@@ -130,7 +130,7 @@ bool canonicalizePrePostIncrements(Procedure& proc)
                 break;
             for (MemoryValue* memory : memories->value) {
                 postIndexCandidates.add(memory, Vector<Value*>()).iterator->value.append(address);
-                blockToPrePostIndexCandidates.add(memory->owner, UncheckedKeyHashSet<MemoryValue*>()).iterator->value.add(memory);
+                blockToPrePostIndexCandidates.add(memory->owner, HashSet<MemoryValue*>()).iterator->value.add(memory);
             }
             break;
         }

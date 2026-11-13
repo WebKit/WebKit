@@ -82,7 +82,7 @@ public:
     const uint8_t* getBytecode() const LIFETIME_BOUND { return m_bytecode.data(); }
     const uint8_t* getMetadata() const LIFETIME_BOUND { return m_metadata.span().data(); }
 
-    UncheckedKeyHashMap<IPIntPC, IPIntTierUpCounter::OSREntryData>& tierUpCounter() LIFETIME_BOUND { return m_tierUpCounter; }
+    HashMap<IPIntPC, IPIntTierUpCounter::OSREntryData>& tierUpCounter() LIFETIME_BOUND { return m_tierUpCounter; }
 
     void addCallTarget(unsigned callProfileIndex, FunctionSpaceIndex target)
     {
@@ -168,7 +168,7 @@ private:
     Vector<int32_t, 8> m_localScores { };
     unsigned m_loopDepth { 0 };
 
-    UncheckedKeyHashMap<IPIntPC, IPIntTierUpCounter::OSREntryData> m_tierUpCounter;
+    HashMap<IPIntPC, IPIntTierUpCounter::OSREntryData> m_tierUpCounter;
     Vector<UnlinkedHandlerInfo> m_exceptionHandlers;
 };
 

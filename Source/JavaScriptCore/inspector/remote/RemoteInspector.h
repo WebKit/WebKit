@@ -278,9 +278,9 @@ private:
     // from any thread.
     Lock m_mutex;
 
-    UncheckedKeyHashMap<TargetID, RemoteControllableTarget*> m_targetMap;
-    UncheckedKeyHashMap<TargetID, RefPtr<RemoteConnectionToTarget>> m_targetConnectionMap;
-    UncheckedKeyHashMap<TargetID, TargetListing> m_targetListingMap;
+    HashMap<TargetID, RemoteControllableTarget*> m_targetMap;
+    HashMap<TargetID, RefPtr<RemoteConnectionToTarget>> m_targetConnectionMap;
+    HashMap<TargetID, TargetListing> m_targetListingMap;
 
 #if PLATFORM(COCOA)
     RefPtr<RemoteInspectorXPCConnection> m_relayConnection;
@@ -321,7 +321,7 @@ private:
 #endif
     bool m_shouldSendParentProcessInformation { false };
     bool m_automaticInspectionEnabled WTF_GUARDED_BY_LOCK(m_mutex) { false };
-    UncheckedKeyHashSet<TargetID, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> m_automaticInspectionCandidates WTF_GUARDED_BY_LOCK(m_mutex);
+    HashSet<TargetID, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> m_automaticInspectionCandidates WTF_GUARDED_BY_LOCK(m_mutex);
 };
 
 } // namespace Inspector

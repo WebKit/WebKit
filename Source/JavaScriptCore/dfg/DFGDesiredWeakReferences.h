@@ -59,8 +59,8 @@ public:
     template<typename Visitor> void visitChildren(Visitor&);
 
 private:
-    UncheckedKeyHashSet<JSCell*> m_cells;
-    UncheckedKeyHashSet<StructureID> m_structures;
+    HashSet<JSCell*> m_cells;
+    HashSet<StructureID> m_structures;
     FixedVector<WriteBarrier<JSCell>> m_finalizedCells;
     FixedVector<StructureID> m_finalizedStructures;
 };

@@ -174,10 +174,10 @@ private:
     std::unique_ptr<HeapSnapshot> m_snapshot;
     Lock m_buildingEdgeMutex;
     Vector<HeapSnapshotEdge> m_edges;
-    UncheckedKeyHashMap<JSCell*, RootData> m_rootData;
-    UncheckedKeyHashMap<JSCell*, void*> m_wrappedObjectPointers;
-    UncheckedKeyHashMap<JSCell*, String> m_cellLabels;
-    UncheckedKeyHashSet<JSCell*> m_appendedCells WTF_GUARDED_BY_LOCK(m_buildingNodeMutex);
+    HashMap<JSCell*, RootData> m_rootData;
+    HashMap<JSCell*, void*> m_wrappedObjectPointers;
+    HashMap<JSCell*, String> m_cellLabels;
+    HashSet<JSCell*> m_appendedCells WTF_GUARDED_BY_LOCK(m_buildingNodeMutex);
     SnapshotType m_snapshotType;
 };
 

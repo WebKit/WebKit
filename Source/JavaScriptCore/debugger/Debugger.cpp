@@ -181,7 +181,7 @@ void Debugger::attach(JSGlobalObject* globalObject)
     m_vm.setShouldBuildPCToCodeOriginMapping();
 
     // Call `sourceParsed` after iterating because it will execute JavaScript in Web Inspector.
-    UncheckedKeyHashSet<RefPtr<SourceProvider>> sourceProviders;
+    HashSet<RefPtr<SourceProvider>> sourceProviders;
 #if ENABLE(WEBASSEMBLY)
     MarkedVector<JSWebAssemblyModule*> wasmModules;
 #endif

@@ -49,7 +49,7 @@ namespace Wasm {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ModuleDebugInfo);
 
-UncheckedKeyHashSet<uint32_t>* FunctionDebugInfo::findNextInstructions(uint32_t offset)
+HashSet<uint32_t>* FunctionDebugInfo::findNextInstructions(uint32_t offset)
 {
     auto itr = offsetToNextInstructions.find(offset);
     return itr == offsetToNextInstructions.end() ? nullptr : &itr->value;
@@ -58,7 +58,7 @@ UncheckedKeyHashSet<uint32_t>* FunctionDebugInfo::findNextInstructions(uint32_t 
 void FunctionDebugInfo::addNextInstruction(uint32_t offset, uint32_t nextInstruction)
 {
     dataLogLnIf(Options::verboseWasmDebugger(), "[ModuleDebugInfo] addNextInstruction offset:", RawHex(offset), " nextInstruction:", RawHex(nextInstruction));
-    offsetToNextInstructions.add(offset, UncheckedKeyHashSet<uint32_t>()).iterator->value.add(nextInstruction);
+    offsetToNextInstructions.add(offset, HashSet<uint32_t>()).iterator->value.add(nextInstruction);
 }
 
 void FunctionDebugInfo::addLocalType(Type type)

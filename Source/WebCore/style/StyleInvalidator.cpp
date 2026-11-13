@@ -646,7 +646,7 @@ void Invalidator::invalidateWithMatchElementRuleSets(Element& element, const Mat
 
     for (auto& matchElementAndRuleSet : matchElementRuleSets) {
         Invalidator invalidator(matchElementAndRuleSet.value);
-        invalidator.invalidateStyleWithMatchElement(element, matchElementAndRuleSet.key.key());
+        invalidator.invalidateStyleWithMatchElement(element, matchElementAndRuleSet.key);
         element.document().incrementStyleInvalidationTraversalCountForTesting(invalidator.m_elementTraversalCount);
     }
 }

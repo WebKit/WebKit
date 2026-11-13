@@ -58,11 +58,6 @@ void RemoteGraphicsContextGL::copyTextureFromVideoFrame(WebKit::SharedVideoFrame
         completionHandler(false);
         return;
     }
-    if (!m_objectNames.isValidKey(texture)) {
-        ASSERT_IS_TESTING_IPC();
-        completionHandler(false);
-        return;
-    }
     texture = m_objectNames.get(texture);
     bool result = protect(m_context)->copyTextureFromVideoFrame(*videoFrame, texture, target, level, internalFormat, type, unpackFlipY, unpackPremultiplyAlpha);
     completionHandler(result);

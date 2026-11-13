@@ -207,7 +207,7 @@ std::optional<std::pair<double, double>> ViewGestureGeometryCollector::computeTe
             continue;
 
         unsigned fontSizeBin = fontSizeBinningInterval * round(renderer->style().fontDescription().usedSize() / fontSizeBinningInterval);
-        if (!FontSizeCounter::isValidValue(fontSizeBin))
+        if (!fontSizeBin)
             continue;
 
         allTextNodes.add(*textNode);

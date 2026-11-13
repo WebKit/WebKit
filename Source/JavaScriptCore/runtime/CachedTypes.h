@@ -105,9 +105,9 @@ private:
 
     VM& m_vm;
     const Ref<CachedBytecode> m_cachedBytecode;
-    UncheckedKeyHashMap<ptrdiff_t, void*> m_offsetToPtrMap;
+    HashMap<ptrdiff_t, void*> m_offsetToPtrMap;
     Vector<std::function<void()>> m_finalizers;
-    UncheckedKeyHashMap<CompactTDZEnvironment*, CompactTDZEnvironmentMap::Handle> m_environmentToHandleMap;
+    HashMap<CompactTDZEnvironment*, CompactTDZEnvironmentMap::Handle> m_environmentToHandleMap;
     RefPtr<SourceProvider> m_provider;
 };
 

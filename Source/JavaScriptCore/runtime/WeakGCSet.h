@@ -40,7 +40,7 @@ class WeakGCSet final : public WeakGCHashTable {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WeakGCSet);
     WTF_MAKE_NONCOPYABLE(WeakGCSet);
     using ValueType = ValueArg*;
-    using HashSetType = UncheckedKeyHashSet<ValueType, HashArg, TraitsArg>;
+    using HashSetType = HashSet<ValueType, HashArg, TraitsArg>;
 
 public:
     using AddResult = typename HashSetType::AddResult;

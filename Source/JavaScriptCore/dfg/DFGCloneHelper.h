@@ -41,12 +41,12 @@ public:
         ASSERT(graph.m_form == ThreadedCPS || graph.m_form == LoadStore);
     }
 
-    static bool isNodeCloneable(Graph&, UncheckedKeyHashSet<Node*>&, Node*);
+    static bool isNodeCloneable(Graph&, HashSet<Node*>&, Node*);
 
 #if ASSERT_ENABLED
-    static UncheckedKeyHashSet<Node*>& debugVisitingSet()
+    static HashSet<Node*>& debugVisitingSet()
     {
-        static LazyNeverDestroyed<ThreadSpecific<UncheckedKeyHashSet<Node*>, WTF::CanBeGCThread::True>> s_visitingSet;
+        static LazyNeverDestroyed<ThreadSpecific<HashSet<Node*>, WTF::CanBeGCThread::True>> s_visitingSet;
         static std::once_flag onceFlag;
         std::call_once(onceFlag, [] {
             s_visitingSet.construct();
@@ -68,8 +68,8 @@ private:
 
     Graph& m_graph;
     BlockInsertionSet m_blockInsertionSet;
-    UncheckedKeyHashMap<Node*, Node*> m_nodeClones;
-    UncheckedKeyHashMap<BasicBlock*, BasicBlock*> m_blockClones;
+    HashMap<Node*, Node*> m_nodeClones;
+    HashMap<BasicBlock*, BasicBlock*> m_blockClones;
 };
 
 template<typename CustomizeSuccessors>

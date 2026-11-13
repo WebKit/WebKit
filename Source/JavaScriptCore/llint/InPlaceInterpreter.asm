@@ -645,7 +645,7 @@ macro ipintLoopOSRTierUp()
 if WEBASSEMBLY_BBQJIT
     move cfr, a1
     move PC, a2
-    # Add 1 to the index due to WTF::UncheckedKeyHashMap not supporting 0 as a key
+    # Add 1 to the index due to WTF::HashMap not supporting 0 as a key
     addq 1, a2
     move sp, a3
     operationCall(macro() cCall4(_ipint_extern_loop_osr) end)

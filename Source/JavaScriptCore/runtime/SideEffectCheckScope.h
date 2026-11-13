@@ -77,8 +77,8 @@ public:
 private:
     void add(JSValue, Guard);
 
-    UncheckedKeyHashMap<const void*, Guard> m_hostFunctions;
-    UncheckedKeyHashMap<unsigned, Guard, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> m_builtins;
+    HashMap<const void*, Guard> m_hostFunctions;
+    HashMap<unsigned, Guard, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> m_builtins;
     RefPtr<SourceProvider> m_builtinSourceProvider;
     bool m_didAddBuiltins { false };
 };

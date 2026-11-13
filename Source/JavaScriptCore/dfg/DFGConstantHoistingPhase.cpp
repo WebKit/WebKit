@@ -50,15 +50,15 @@ public:
         
         m_graph.clearReplacements();
         
-        UncheckedKeyHashMap<FrozenValue*, Node*> jsValues;
-        UncheckedKeyHashMap<FrozenValue*, Node*> doubleValues;
-        UncheckedKeyHashMap<FrozenValue*, Node*> int52Values;
-        UncheckedKeyHashMap<void*, Node*> storagePointerValues;
+        HashMap<FrozenValue*, Node*> jsValues;
+        HashMap<FrozenValue*, Node*> doubleValues;
+        HashMap<FrozenValue*, Node*> int52Values;
+        HashMap<void*, Node*> storagePointerValues;
         
-        auto valuesFor = [&] (NodeType op) -> UncheckedKeyHashMap<FrozenValue*, Node*>& {
+        auto valuesFor = [&](NodeType op) -> HashMap<FrozenValue*, Node*>& {
             // Use a roundabout approach because clang thinks that this closure returning a
             // reference to a stack-allocated value in outer scope is a bug. It's not.
-            UncheckedKeyHashMap<FrozenValue*, Node*>* result;
+            HashMap<FrozenValue*, Node*>* result;
             
             switch (op) {
             case JSConstant:
@@ -90,7 +90,7 @@ public:
                 case JSConstant:
                 case DoubleConstant:
                 case Int52Constant: {
-                    UncheckedKeyHashMap<FrozenValue*, Node*>& values = valuesFor(node->op());
+                    HashMap<FrozenValue*, Node*>& values = valuesFor(node->op());
                     auto result = values.add(node->constant(), node);
                     if (result.isNewEntry)
                         node->origin = m_graph.block(0)->at(0)->origin;

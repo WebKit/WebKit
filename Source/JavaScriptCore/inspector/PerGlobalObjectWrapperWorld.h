@@ -38,7 +38,7 @@ public:
     JS_EXPORT_PRIVATE void clearAllWrappers();
 
 private:
-    UncheckedKeyHashMap<JSC::JSGlobalObject*, JSC::Strong<JSC::JSObject>> m_wrappers;
+    HashMap<JSC::JSGlobalObject*, JSC::Strong<JSC::JSObject>> m_wrappers;
 };
 
 } // namespace Inspector

@@ -494,7 +494,7 @@ void NetworkProcess::addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier p
     // registrable domain, which RegistrableDomain sets to "nullOrigin" for any empty host, so it is true for a
     // file: or custom-scheme first party as well as for an opaque one. Site::protocol() is empty only for the
     // invalidProtocol sentinel an opaque origin collapses to, which is the one case worth dropping.
-    if (!firstPartyForCookies.protocol().isEmpty() && HashSet<WebCore::Site>::isValidValue(firstPartyForCookies)) {
+    if (!firstPartyForCookies.protocol().isEmpty()) {
         m_allowedFirstPartiesForCookies.ensure(processIdentifier, [] {
             return AllowedFirstParties { };
         }).iterator->value.sites.add(firstPartyForCookies);
@@ -505,7 +505,7 @@ void NetworkProcess::addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier p
 
 void NetworkProcess::addAllowedFirstPartyDomainForCookies(WebCore::ProcessIdentifier processIdentifier, WebCore::RegistrableDomain&& firstPartyForCookies, LoadedWebArchive loadedWebArchive, CompletionHandler<void()>&& completionHandler)
 {
-    if (!HashSet<WebCore::RegistrableDomain>::isValidValue(firstPartyForCookies))
+    if (firstPartyForCookies.string().isNull())
         return completionHandler();
 
     auto& allowedFirstParties = m_allowedFirstPartiesForCookies.ensure(processIdentifier, [] {
@@ -545,11 +545,6 @@ bool NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier proce
     if (firstPartyDomain.isEmpty())
         return true;
 
-    if (!decltype(m_allowedFirstPartiesForCookies)::isValidKey(processIdentifier)) {
-        ASSERT_NOT_REACHED();
-        return false;
-    }
-
     auto iterator = m_allowedFirstPartiesForCookies.find(processIdentifier);
     if (iterator == m_allowedFirstPartiesForCookies.end()) {
         ASSERT_NOT_REACHED();
@@ -560,11 +555,6 @@ bool NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier proce
         return true;
 
     auto& set = iterator->value.domains;
-    if (!std::remove_reference_t<decltype(set)>::isValidValue(firstPartyDomain)) {
-        ASSERT_NOT_REACHED();
-        return false;
-    }
-
     return set.contains(firstPartyDomain);
 }
 
@@ -577,11 +567,6 @@ void NetworkProcess::setHostedDomains(WebCore::ProcessIdentifier processIdentifi
 
 bool NetworkProcess::allowsFirstPartySite(WebCore::ProcessIdentifier processIdentifier, const WebCore::Site& site) const
 {
-    if (!decltype(m_allowedFirstPartiesForCookies)::isValidKey(processIdentifier)) {
-        ASSERT_NOT_REACHED();
-        return false;
-    }
-
     auto iterator = m_allowedFirstPartiesForCookies.find(processIdentifier);
     if (iterator == m_allowedFirstPartiesForCookies.end())
         return false;
@@ -589,18 +574,11 @@ bool NetworkProcess::allowsFirstPartySite(WebCore::ProcessIdentifier processIden
     if (iterator->value.loadedWebArchive == LoadedWebArchive::Yes)
         return true;
 
-    if (!HashSet<WebCore::Site>::isValidValue(site))
-        return false;
-
     return iterator->value.sites.contains(site);
 }
 
 void NetworkProcess::addAllowedWebPageProxyIdentifier(WebCore::ProcessIdentifier processIdentifier, WebPageProxyIdentifier pageID)
 {
-    if (!HashSet<WebPageProxyIdentifier>::isValidValue(pageID)) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
     m_allowedWebPageProxyIdentifiers.ensure(processIdentifier, [] {
         return HashSet<WebPageProxyIdentifier> { };
     }).iterator->value.add(pageID);
@@ -612,8 +590,6 @@ bool NetworkProcess::allowsWebPageProxyIdentifier(WebCore::ProcessIdentifier pro
     // there is nothing to validate; let it through and let the endpoint handle the absent page itself.
     if (!pageID)
         return true;
-    if (!decltype(m_allowedWebPageProxyIdentifiers)::isValidKey(processIdentifier) || !HashSet<WebPageProxyIdentifier>::isValidValue(*pageID))
-        return false;
     auto iterator = m_allowedWebPageProxyIdentifiers.find(processIdentifier);
     if (iterator == m_allowedWebPageProxyIdentifiers.end())
         return false;

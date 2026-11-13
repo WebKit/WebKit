@@ -615,7 +615,7 @@ public:
         return m_unlinkedCode->llintExecuteCounter();
     }
 
-    typedef UncheckedKeyHashMap<std::tuple<StructureID, BytecodeIndex>, FixedVector<LLIntPrototypeLoadAdaptiveStructureWatchpoint>> StructureWatchpointMap;
+    typedef HashMap<std::tuple<StructureID, BytecodeIndex>, FixedVector<LLIntPrototypeLoadAdaptiveStructureWatchpoint>> StructureWatchpointMap;
     StructureWatchpointMap& llintGetByIdWatchpointMap() LIFETIME_BOUND { return m_llintGetByIdWatchpointMap; }
 
     // Functions for controlling when tiered compilation kicks in. This
@@ -1014,7 +1014,7 @@ private:
 
 #if ASSERT_ENABLED
     Lock m_cachedIdentifierUidsLock;
-    UncheckedKeyHashSet<UniquedStringImpl*> m_cachedIdentifierUids;
+    HashSet<UniquedStringImpl*> m_cachedIdentifierUids;
     uint32_t m_magic;
 #endif
 };

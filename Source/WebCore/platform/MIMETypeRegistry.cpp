@@ -906,6 +906,6 @@ bool MIMETypeRegistry::isWebArchiveMIMEType(const String& mimeType)
         }
     };
 
-    return webArchiveMIMETypes.get().isValidValue(mimeType) ? webArchiveMIMETypes.get().contains(mimeType) : false;
+    return !mimeType.isNull() && webArchiveMIMETypes.get().contains(mimeType);
 }
 } // namespace WebCore

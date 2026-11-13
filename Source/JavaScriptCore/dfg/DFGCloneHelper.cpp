@@ -56,13 +56,13 @@ NODELETE NodeCloneStatus nodeCloneStatusFor(NodeType op)
 
 } // anonymous namespace
 
-bool CloneHelper::isNodeCloneable(Graph& graph, UncheckedKeyHashSet<Node*>& cloneableCache, Node* node)
+bool CloneHelper::isNodeCloneable(Graph& graph, HashSet<Node*>& cloneableCache, Node* node)
 {
     if (cloneableCache.contains(node))
         return true;
 
 #if ASSERT_ENABLED
-    UncheckedKeyHashSet<Node*>& visiting = CloneHelper::debugVisitingSet();
+    HashSet<Node*>& visiting = CloneHelper::debugVisitingSet();
     ASSERT(visiting.add(node).isNewEntry);
     auto exitScope = makeScopeExit([&] {
         visiting.remove(node);

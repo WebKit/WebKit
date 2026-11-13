@@ -95,8 +95,8 @@ void State::dumpDisassembly(PrintStream& out, LinkBuffer& linkBuffer, NOESCAPE c
         B3::Value* currentB3Value = nullptr;
         DFG::Node* currentDFGNode = nullptr;
 
-        UncheckedKeyHashSet<B3::Value*> printedValues;
-        UncheckedKeyHashSet<DFG::Node*> printedNodes;
+        HashSet<B3::Value*> printedValues;
+        HashSet<DFG::Node*> printedNodes;
         const char* dfgPrefix = "DFG " "    ";
         const char* b3Prefix  = "b3  " "          ";
         const char* airPrefix = "Air " "              ";
@@ -112,7 +112,7 @@ void State::dumpDisassembly(PrintStream& out, LinkBuffer& linkBuffer, NOESCAPE c
 
             perDFGNodeCallback(node);
 
-            UncheckedKeyHashSet<DFG::Node*> localPrintedNodes;
+            HashSet<DFG::Node*> localPrintedNodes;
             WTF::Function<void(DFG::Node*)> printNodeRecursive = [&] (DFG::Node* node) {
                 if (printedNodes.contains(node) || localPrintedNodes.contains(node))
                     return;
@@ -137,7 +137,7 @@ void State::dumpDisassembly(PrintStream& out, LinkBuffer& linkBuffer, NOESCAPE c
 
             printDFGNode(value->origin().dfgOrigin());
 
-            UncheckedKeyHashSet<B3::Value*> localPrintedValues;
+            HashSet<B3::Value*> localPrintedValues;
             auto printValueRecursive = recursableLambda([&] (auto self, B3::Value* value) -> void {
                 if (printedValues.contains(value) || localPrintedValues.contains(value))
                     return;

@@ -365,7 +365,7 @@ static void testContinueRunsOnlyContinueThread()
     CHECK(executionHandler->debuggeeVM() == runner, "A refused Hc must not change the debuggee");
 
     // A VM that stays stopped keeps the very stop record it has now; one that ran gets a new one.
-    UncheckedKeyHashMap<VM*, const void*> stopRecords;
+    HashMap<VM*, const void*> stopRecords;
     VMManager::forEachVM([&](VM& vm) {
         if (&vm != runner)
             stopRecords.add(&vm, vm.debugState()->stopData.get());
@@ -416,7 +416,7 @@ static void testContinueRunsOnlyContinueThread()
 }
 
 // Collects the live instances of each module, keyed by the module they were instantiated from.
-using ModuleToInstanceIds = UncheckedKeyHashMap<JSC::Wasm::Module*, Vector<uint32_t>>;
+using ModuleToInstanceIds = HashMap<JSC::Wasm::Module*, Vector<uint32_t>>;
 static ModuleToInstanceIds liveInstancesByModule()
 {
     ModuleManager& moduleManager = debugServer->moduleManager();
@@ -444,7 +444,7 @@ static void testInstanceScopedAddressing()
 
     unsigned liveInstances = 0;
     unsigned sharedModules = 0;
-    UncheckedKeyHashSet<uint64_t> codeBaseAddresses;
+    HashSet<uint64_t> codeBaseAddresses;
     for (const auto& pair : instancesByModule) {
         if (pair.value.size() > 1)
             sharedModules++;

@@ -54,24 +54,17 @@ public:
         if (pointer->isPreciseAllocation()) {
             auto& set = heap.objectSpace().preciseAllocationSet();
             ASSERT(set);
-#if !CPU(ADDRESS64)
-            // On 32-bit a cell pointer can be 0xFFFFFFFF (an entry in the call frame), and this
-            // value clashes with the deletedValue in a set<JSCell*>.
-            // FIXME: In this case, the ASSERT(set) above could fail too so this check is too late.
-            if (!set->isValidValue(pointer))
-                return false;
-#endif
             return set->contains(pointer);
         }
     
-        const UncheckedKeyHashSet<MarkedBlock*>& set = heap.objectSpace().blocks().set();
+        const HashSet<MarkedBlock*>& set = heap.objectSpace().blocks().set();
         
         MarkedBlock* candidate = MarkedBlock::blockFor(pointer);
         if (filter.ruleOut(std::bit_cast<uintptr_t>(candidate))) {
             ASSERT(!candidate || !set.contains(candidate));
             return false;
         }
-        
+
         if (!MarkedBlock::isAtomAligned(pointer))
             return false;
         

@@ -215,7 +215,7 @@ JSObject* IntlPluralRules::resolvedOptions(JSGlobalObject* globalObject) const
     int32_t resultLength;
 
     // Category names are always ASCII, so use char[].
-    UncheckedKeyHashSet<String> categoriesSet;
+    HashSet<String> categoriesSet;
     unsigned index = 0;
     while (const char* result = uenum_next(keywords.get(), &resultLength, &status)) {
         ASSERT(U_SUCCESS(status));

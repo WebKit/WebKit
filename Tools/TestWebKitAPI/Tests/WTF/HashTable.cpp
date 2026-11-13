@@ -28,10 +28,17 @@
 
 #include <random>
 #include <unordered_set>
+#include <wtf/HashCountedSet.h>
 #include <wtf/HashFunctions.h>
+#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/HashTraits.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/RobinHoodHashMap.h>
+#include <wtf/RobinHoodHashSet.h>
 #include <wtf/RobinHoodHashTable.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace TestWebKitAPI {
 
@@ -39,7 +46,6 @@ using WTF::DefaultHash;
 using WTF::GenericHashTraits;
 using WTF::HashTable;
 using WTF::HashTraits;
-using WTF::ShouldValidateKey;
 using WTF::StatusByte;
 
 struct TestIdentityExtractor {
@@ -251,13 +257,13 @@ TEST(WTF_HashTable, AddFindRemoveAtManySizes)
         EXPECT_FALSE(table.lookup(1));
 
         for (unsigned i = 1; i <= count; i += 2)
-            table.remove<ShouldValidateKey::Yes>(static_cast<int>(i * 3));
+            table.remove(static_cast<int>(i * 3));
         table.checkTableConsistency();
         EXPECT_EQ(table.size(), count / 2);
         for (unsigned i = 1; i <= count; ++i)
             EXPECT_EQ(table.contains(static_cast<int>(i * 3)), !(i % 2));
 
-        table.remove<ShouldValidateKey::Yes>(1);
+        table.remove(1);
         EXPECT_EQ(table.size(), count / 2);
         table.clear();
         EXPECT_TRUE(table.isEmpty());
@@ -274,7 +280,7 @@ TEST(WTF_HashTable, EmptyTable)
     EXPECT_FALSE(table.contains(1));
     EXPECT_TRUE(table.find(1) == table.end());
     EXPECT_EQ(table.byteSize(), 0u);
-    table.remove<ShouldValidateKey::Yes>(1);
+    table.remove(1);
     table.checkTableConsistency();
 }
 
@@ -304,7 +310,7 @@ TEST(WTF_HashTable, LifetimesBalance)
         EXPECT_EQ(Tracked::liveCount, 1000);
 
         for (int i = 1; i <= 1000; i += 3)
-            table.remove<ShouldValidateKey::Yes>(i);
+            table.remove(i);
         EXPECT_EQ(Tracked::liveCount, static_cast<int>(table.size()));
 
         table.removeIf([](Tracked& value) {
@@ -313,7 +319,7 @@ TEST(WTF_HashTable, LifetimesBalance)
         EXPECT_EQ(Tracked::liveCount, static_cast<int>(table.size()));
 
         for (int i = 1; i <= 990; ++i)
-            table.remove<ShouldValidateKey::Yes>(i);
+            table.remove(i);
         EXPECT_EQ(Tracked::liveCount, static_cast<int>(table.size()));
         table.checkTableConsistency();
 
@@ -356,7 +362,7 @@ TEST(WTF_HashTable, MoveOnlyValues)
     }
 
     for (int i = 1; i <= 400; ++i)
-        table.remove<ShouldValidateKey::Yes>(MoveOnlyKey { i });
+        table.remove(MoveOnlyKey { i });
     EXPECT_EQ(table.size(), 100u);
 
     auto taken = table.takeIf<0>([](const MoveOnlyKey& key) {
@@ -384,7 +390,7 @@ TEST(WTF_HashTable, RemoveWritesDeleted)
     Layout layout(table);
     for (int i = 1; i <= 8; ++i) {
         unsigned index = layout.indexOf(table.find(i).get());
-        table.remove<ShouldValidateKey::Yes>(i);
+        table.remove(i);
         ASSERT_EQ(table.capacity(), 16u);
         EXPECT_TRUE(layout.statusByte(index).isDeleted());
         EXPECT_EQ(layout.deletedCount(), static_cast<unsigned>(i));
@@ -410,7 +416,7 @@ TEST(WTF_HashTable, AddReusesDeletedSlotInProbeSequence)
     EXPECT_EQ(layout.indexOf(table.find(keys[1]).get()), 1u);
     EXPECT_EQ(layout.indexOf(table.find(keys[2]).get()), 3u);
 
-    table.remove<ShouldValidateKey::Yes>(keys[0]);
+    table.remove(keys[0]);
     EXPECT_TRUE(layout.statusByte(0).isDeleted());
     EXPECT_EQ(layout.deletedCount(), 1u);
     EXPECT_FALSE(table.contains(keys[0]));
@@ -444,19 +450,19 @@ TEST(WTF_HashTable, ExpandAndShrink)
     EXPECT_EQ(capacities[23], 64u);
 
     for (int i = 24; i > 11; --i)
-        table.remove<ShouldValidateKey::Yes>(i);
+        table.remove(i);
     EXPECT_EQ(table.capacity(), 64u);
-    table.remove<ShouldValidateKey::Yes>(11);
+    table.remove(11);
     EXPECT_EQ(table.capacity(), 32u);
     for (int i = 10; i > 6; --i)
-        table.remove<ShouldValidateKey::Yes>(i);
+        table.remove(i);
     EXPECT_EQ(table.capacity(), 32u);
-    table.remove<ShouldValidateKey::Yes>(6);
+    table.remove(6);
     EXPECT_EQ(table.capacity(), 16u);
     for (int i = 5; i > 3; --i)
-        table.remove<ShouldValidateKey::Yes>(i);
+        table.remove(i);
     EXPECT_EQ(table.capacity(), 16u);
-    table.remove<ShouldValidateKey::Yes>(3);
+    table.remove(3);
     EXPECT_EQ(table.capacity(), 8u);
     EXPECT_TRUE(table.contains(1));
     EXPECT_TRUE(table.contains(2));
@@ -486,7 +492,7 @@ TEST(WTF_HashTable, SameSizeRehashClearsTombstones)
     Layout layout(table);
     std::unordered_set<int> removed;
     for (unsigned i = 0; i < 30; ++i) {
-        table.remove<ShouldValidateKey::Yes>(keys[i]);
+        table.remove(keys[i]);
         removed.insert(keys[i]);
     }
     EXPECT_EQ(layout.deletedCount(), 30u);
@@ -601,7 +607,7 @@ TEST(WTF_HashTable, WeakNullKeys)
         EXPECT_EQ(table.capacity(), 32u);
         fakeWeakTargetIsAlive[20] = false;
         for (int id = 1; id <= 15; ++id)
-            table.remove<ShouldValidateKey::Yes>(FakeWeakKey { id });
+            table.remove(FakeWeakKey { id });
         EXPECT_LT(table.capacity(), 32u);
         EXPECT_EQ(table.size(), 4u);
         EXPECT_EQ(FakeWeakKey::liveCount, 4);
@@ -623,7 +629,7 @@ TEST(WTF_HashTable, IteratorSkipsEmptyAndDeletedSlots)
 
     std::unordered_set<int> expected(keys.begin(), keys.end());
     for (unsigned i = 0; i < keys.size(); i += 3) {
-        table.remove<ShouldValidateKey::Yes>(keys[i]);
+        table.remove(keys[i]);
         expected.erase(keys[i]);
     }
     EXPECT_GT(Layout(table).deletedCount(), 0u);
@@ -645,7 +651,7 @@ TEST(WTF_HashTable, IteratorSkipsEmptyAndDeletedSlots)
         EXPECT_TRUE(expected.contains(*table.random()));
 
     for (int key : expected)
-        table.remove<ShouldValidateKey::Yes>(key);
+        table.remove(key);
     EXPECT_TRUE(table.begin() == table.end());
 }
 
@@ -656,7 +662,7 @@ TEST(WTF_HashTable, IterationOrderIsDeterministic)
         for (int i = 1; i <= 300; ++i)
             table.add(i * 7);
         for (int i = 1; i <= 300; i += 5)
-            table.remove<ShouldValidateKey::Yes>(i * 7);
+            table.remove(i * 7);
         for (int i = 301; i <= 350; ++i)
             table.add(i * 7);
         return table;
@@ -722,7 +728,7 @@ TEST(WTF_HashTable, IterationOverSparseTables)
             table.add(static_cast<int>(i));
         for (unsigned i = 1; i <= count; ++i) {
             if (i % 5)
-                table.remove<ShouldValidateKey::Yes>(static_cast<int>(i));
+                table.remove(static_cast<int>(i));
         }
         expectIterationMatchesStatusByteScan(table);
     }
@@ -736,7 +742,7 @@ TEST(WTF_HashTable, IterationOverSparseTables)
             table.add(key);
         ASSERT_EQ(table.capacity(), capacity);
         for (int key = 100000; table.size() > keys.size(); ++key)
-            table.remove<ShouldValidateKey::Yes>(key);
+            table.remove(key);
         ASSERT_EQ(table.capacity(), capacity);
 
         Layout layout(table);
@@ -809,7 +815,7 @@ TEST(WTF_HashTable, IterationOverEmptyTables)
     for (int i = 1; i <= 100; ++i)
         table.add(i);
     for (int i = 1; i <= 100; ++i)
-        table.remove<ShouldValidateKey::Yes>(i);
+        table.remove(i);
     EXPECT_TRUE(table.isEmpty());
     EXPECT_TRUE(table.begin() == table.end());
     unsigned count = 0;
@@ -833,7 +839,7 @@ TEST(WTF_HashTable, CopyMoveAndSwap)
         for (int i = 1; i <= 100; ++i)
             original.add(Tracked { i });
         for (int i = 1; i <= 100; i += 2)
-            original.remove<ShouldValidateKey::Yes>(i);
+            original.remove(i);
 
         TrackedTable copy(original);
         EXPECT_EQ(copy.size(), 50u);
@@ -880,28 +886,28 @@ TEST(WTF_HashTable, CustomTranslatorConstructsInPlace)
 {
     IntTable table;
     for (int half = 1; half <= 50; ++half) {
-        auto result = table.add<DoublingTranslator, ShouldValidateKey::Yes>(half, [&] {
+        auto result = table.add<DoublingTranslator>(half, [&] {
             return half * 2;
         });
         EXPECT_TRUE(result.isNewEntry);
         EXPECT_EQ(*result.iterator, half * 2);
     }
     for (int half = 51; half <= 100; ++half) {
-        auto result = table.addPassingHashCode<DoublingTranslator, ShouldValidateKey::Yes>(half, [&] {
+        auto result = table.addPassingHashCode<DoublingTranslator>(half, [&] {
             return half * 2;
         });
         EXPECT_TRUE(result.isNewEntry);
     }
-    EXPECT_FALSE((table.add<DoublingTranslator, ShouldValidateKey::Yes>(10, [] {
+    EXPECT_FALSE((table.add<DoublingTranslator>(10, [] {
         return 20;
     }).isNewEntry));
-    EXPECT_FALSE((table.addPassingHashCode<DoublingTranslator, ShouldValidateKey::Yes>(60, [] {
+    EXPECT_FALSE((table.addPassingHashCode<DoublingTranslator>(60, [] {
         return 120;
     }).isNewEntry));
     EXPECT_EQ(table.size(), 100u);
     for (int half = 1; half <= 100; ++half) {
         EXPECT_TRUE(table.contains(half * 2));
-        EXPECT_TRUE((table.contains<DoublingTranslator, ShouldValidateKey::Yes>(half)));
+        EXPECT_TRUE((table.contains<DoublingTranslator>(half)));
     }
     table.checkTableConsistency();
 }
@@ -920,7 +926,7 @@ TEST(WTF_HashTable, RandomOperationsStayConsistent)
             if (operation < 50)
                 EXPECT_EQ(table.add(key).isNewEntry, reference.insert(key).second);
             else if (operation < 90) {
-                table.remove<ShouldValidateKey::Yes>(key);
+                table.remove(key);
                 reference.erase(key);
             } else if (operation < 99)
                 EXPECT_EQ(table.contains(key), reference.contains(key));
@@ -954,9 +960,9 @@ TEST(WTF_HashTable, RobinHoodTableBasicOperations)
     using RobinHoodIntTable = WTF::MemoryCompactRobinHoodHashTableTraits::TableType<int, int, TestIdentityExtractor, IntHashWithHashInValue, HashTraits<int>, HashTraits<int>, WTF::HashTableMalloc>;
     RobinHoodIntTable table;
     for (int i = 1; i <= 100; ++i)
-        EXPECT_TRUE(table.add<ShouldValidateKey::Yes>(i).isNewEntry);
-    EXPECT_FALSE(table.add<ShouldValidateKey::Yes>(50).isNewEntry);
-    table.remove(table.find<ShouldValidateKey::Yes>(50));
+        EXPECT_TRUE(table.add(i).isNewEntry);
+    EXPECT_FALSE(table.add(50).isNewEntry);
+    table.remove(table.find(50));
 
     int sum = 0;
     unsigned count = 0;
@@ -966,8 +972,8 @@ TEST(WTF_HashTable, RobinHoodTableBasicOperations)
     }
     EXPECT_EQ(count, 99u);
     EXPECT_EQ(sum, 5050 - 50);
-    EXPECT_TRUE(table.contains<ShouldValidateKey::Yes>(99));
-    EXPECT_FALSE(table.contains<ShouldValidateKey::Yes>(50));
+    EXPECT_TRUE(table.contains(99));
+    EXPECT_FALSE(table.contains(50));
 }
 
 TEST(WTF_HashTable, SentinelValuesAreOrdinaryKeys)
@@ -979,7 +985,7 @@ TEST(WTF_HashTable, SentinelValuesAreOrdinaryKeys)
     EXPECT_EQ(table.size(), 2u);
     EXPECT_TRUE(table.contains(0));
     EXPECT_TRUE(table.contains(-1));
-    table.remove<ShouldValidateKey::Yes>(0);
+    table.remove(0);
     EXPECT_FALSE(table.contains(0));
     EXPECT_TRUE(table.contains(-1));
     for (int i = 1; i < 100; ++i)
@@ -1000,9 +1006,29 @@ TEST(WTF_HashTable, SentinelValuesAreOrdinaryKeys)
         pointers.add(&target);
     EXPECT_EQ(pointers.size(), targets.size() + 1);
     EXPECT_TRUE(pointers.contains(null));
-    pointers.remove<ShouldValidateKey::Yes>(null);
+    pointers.remove(null);
     EXPECT_FALSE(pointers.contains(null));
     EXPECT_EQ(pointers.size(), targets.size());
+}
+
+TEST(WTF_HashTable, ContainerKeyValidityFollowsTableType)
+{
+    EXPECT_TRUE((HashMap<int, int>::isValidKey(0)));
+    EXPECT_TRUE((HashMap<int, int>::isValidKey(-1)));
+    EXPECT_TRUE(HashSet<String>::isValidValue("key"_s));
+    EXPECT_FALSE(HashSet<String>::isValidValue(String()));
+    // Destroying a String holding the deleted-value sentinel would deref an invalid pointer.
+    static NeverDestroyed<String> deletedString(WTF::HashTableDeletedValue);
+    EXPECT_FALSE(HashSet<String>::isValidValue(deletedString.get()));
+    EXPECT_FALSE((HashSet<String, ASCIICaseInsensitiveHash>::isValidValue(String())));
+    EXPECT_FALSE((HashMap<String, int>::isValidKey(String())));
+    EXPECT_FALSE(HashCountedSet<String>::isValidValue(String()));
+    EXPECT_TRUE(HashCountedSet<unsigned>::isValidValue(0));
+    EXPECT_TRUE(HashCountedSet<unsigned>::isValidValue(std::numeric_limits<unsigned>::max()));
+
+    EXPECT_TRUE((MemoryCompactRobinHoodHashMap<String, int>::isValidKey("key"_s)));
+    EXPECT_FALSE((MemoryCompactRobinHoodHashMap<String, int>::isValidKey(String())));
+    EXPECT_FALSE(MemoryCompactRobinHoodHashSet<String>::isValidValue(String()));
 }
 
 } // namespace TestWebKitAPI

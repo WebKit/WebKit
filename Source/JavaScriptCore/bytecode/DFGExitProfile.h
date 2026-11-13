@@ -232,7 +232,7 @@ private:
         return m_frequentExitSites.find(site) != m_frequentExitSites.end();
     }
     
-    UncheckedKeyHashSet<FrequentExitSite> m_frequentExitSites;
+    HashSet<FrequentExitSite> m_frequentExitSites;
 };
 
 } } // namespace JSC::DFG

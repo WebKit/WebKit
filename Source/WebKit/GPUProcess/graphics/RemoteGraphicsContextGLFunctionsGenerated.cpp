@@ -46,10 +46,8 @@ void RemoteGraphicsContextGL::activeTexture(uint32_t texture)
 void RemoteGraphicsContextGL::attachShader(uint32_t program, uint32_t shader)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(program));
     if (program)
         program = m_objectNames.get(program);
-    MESSAGE_CHECK(m_objectNames.isValidKey(shader));
     if (shader)
         shader = m_objectNames.get(shader);
     protect(m_context)->attachShader(program, shader);
@@ -58,7 +56,6 @@ void RemoteGraphicsContextGL::attachShader(uint32_t program, uint32_t shader)
 void RemoteGraphicsContextGL::bindAttribLocation(uint32_t arg0, uint32_t index, UTF8CString&& name)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (arg0)
         arg0 = m_objectNames.get(arg0);
     protect(m_context)->bindAttribLocation(arg0, index, name);
@@ -67,7 +64,6 @@ void RemoteGraphicsContextGL::bindAttribLocation(uint32_t arg0, uint32_t index, 
 void RemoteGraphicsContextGL::bindBuffer(uint32_t target, uint32_t arg1)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(arg1));
     if (arg1)
         arg1 = m_objectNames.get(arg1);
     protect(m_context)->bindBuffer(target, arg1);
@@ -76,7 +72,6 @@ void RemoteGraphicsContextGL::bindBuffer(uint32_t target, uint32_t arg1)
 void RemoteGraphicsContextGL::bindFramebuffer(uint32_t target, uint32_t arg1)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(arg1));
     if (arg1)
         arg1 = m_objectNames.get(arg1);
     protect(m_context)->bindFramebuffer(target, arg1);
@@ -85,7 +80,6 @@ void RemoteGraphicsContextGL::bindFramebuffer(uint32_t target, uint32_t arg1)
 void RemoteGraphicsContextGL::bindRenderbuffer(uint32_t target, uint32_t arg1)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(arg1));
     if (arg1)
         arg1 = m_objectNames.get(arg1);
     protect(m_context)->bindRenderbuffer(target, arg1);
@@ -94,7 +88,6 @@ void RemoteGraphicsContextGL::bindRenderbuffer(uint32_t target, uint32_t arg1)
 void RemoteGraphicsContextGL::bindTexture(uint32_t target, uint32_t arg1)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(arg1));
     if (arg1)
         arg1 = m_objectNames.get(arg1);
     protect(m_context)->bindTexture(target, arg1);
@@ -171,7 +164,6 @@ void RemoteGraphicsContextGL::colorMask(bool red, bool green, bool blue, bool al
 void RemoteGraphicsContextGL::compileShader(uint32_t arg0)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (arg0)
         arg0 = m_objectNames.get(arg0);
     protect(m_context)->compileShader(arg0);
@@ -192,7 +184,6 @@ void RemoteGraphicsContextGL::copyTexSubImage2D(uint32_t target, int32_t level, 
 void RemoteGraphicsContextGL::createBuffer(uint32_t name)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(name));
     auto result = protect(m_context)->createBuffer();
     if (result)
         m_objectNames.add(name, result);
@@ -201,7 +192,6 @@ void RemoteGraphicsContextGL::createBuffer(uint32_t name)
 void RemoteGraphicsContextGL::createFramebuffer(uint32_t name)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(name));
     auto result = protect(m_context)->createFramebuffer();
     if (result)
         m_objectNames.add(name, result);
@@ -210,7 +200,6 @@ void RemoteGraphicsContextGL::createFramebuffer(uint32_t name)
 void RemoteGraphicsContextGL::createProgram(uint32_t name)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(name));
     auto result = protect(m_context)->createProgram();
     if (result)
         m_objectNames.add(name, result);
@@ -219,7 +208,6 @@ void RemoteGraphicsContextGL::createProgram(uint32_t name)
 void RemoteGraphicsContextGL::createRenderbuffer(uint32_t name)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(name));
     auto result = protect(m_context)->createRenderbuffer();
     if (result)
         m_objectNames.add(name, result);
@@ -228,7 +216,6 @@ void RemoteGraphicsContextGL::createRenderbuffer(uint32_t name)
 void RemoteGraphicsContextGL::createShader(uint32_t name, uint32_t arg0)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(name));
     auto result = protect(m_context)->createShader(arg0);
     if (result)
         m_objectNames.add(name, result);
@@ -237,7 +224,6 @@ void RemoteGraphicsContextGL::createShader(uint32_t name, uint32_t arg0)
 void RemoteGraphicsContextGL::createTexture(uint32_t name)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(name));
     auto result = protect(m_context)->createTexture();
     if (result)
         m_objectNames.add(name, result);
@@ -252,7 +238,6 @@ void RemoteGraphicsContextGL::cullFace(uint32_t mode)
 void RemoteGraphicsContextGL::deleteBuffer(uint32_t arg0)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (!arg0) [[unlikely]]
         return;
     arg0 = m_objectNames.take(arg0);
@@ -262,7 +247,6 @@ void RemoteGraphicsContextGL::deleteBuffer(uint32_t arg0)
 void RemoteGraphicsContextGL::deleteFramebuffer(uint32_t arg0)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (!arg0) [[unlikely]]
         return;
     arg0 = m_objectNames.take(arg0);
@@ -272,7 +256,6 @@ void RemoteGraphicsContextGL::deleteFramebuffer(uint32_t arg0)
 void RemoteGraphicsContextGL::deleteProgram(uint32_t arg0)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (!arg0) [[unlikely]]
         return;
     arg0 = m_objectNames.take(arg0);
@@ -282,7 +265,6 @@ void RemoteGraphicsContextGL::deleteProgram(uint32_t arg0)
 void RemoteGraphicsContextGL::deleteRenderbuffer(uint32_t arg0)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (!arg0) [[unlikely]]
         return;
     arg0 = m_objectNames.take(arg0);
@@ -292,7 +274,6 @@ void RemoteGraphicsContextGL::deleteRenderbuffer(uint32_t arg0)
 void RemoteGraphicsContextGL::deleteShader(uint32_t arg0)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (!arg0) [[unlikely]]
         return;
     arg0 = m_objectNames.take(arg0);
@@ -302,7 +283,6 @@ void RemoteGraphicsContextGL::deleteShader(uint32_t arg0)
 void RemoteGraphicsContextGL::deleteTexture(uint32_t arg0)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (!arg0) [[unlikely]]
         return;
     arg0 = m_objectNames.take(arg0);
@@ -330,10 +310,8 @@ void RemoteGraphicsContextGL::depthRange(float zNear, float zFar)
 void RemoteGraphicsContextGL::detachShader(uint32_t arg0, uint32_t arg1)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (arg0)
         arg0 = m_objectNames.get(arg0);
-    MESSAGE_CHECK(m_objectNames.isValidKey(arg1));
     if (arg1)
         arg1 = m_objectNames.get(arg1);
     protect(m_context)->detachShader(arg0, arg1);
@@ -390,7 +368,6 @@ void RemoteGraphicsContextGL::flush()
 void RemoteGraphicsContextGL::framebufferRenderbuffer(uint32_t target, uint32_t attachment, uint32_t renderbuffertarget, uint32_t arg3)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(arg3));
     if (arg3)
         arg3 = m_objectNames.get(arg3);
     protect(m_context)->framebufferRenderbuffer(target, attachment, renderbuffertarget, arg3);
@@ -399,7 +376,6 @@ void RemoteGraphicsContextGL::framebufferRenderbuffer(uint32_t target, uint32_t 
 void RemoteGraphicsContextGL::framebufferTexture2D(uint32_t target, uint32_t attachment, uint32_t textarget, uint32_t arg3, int32_t level)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(arg3));
     if (arg3)
         arg3 = m_objectNames.get(arg3);
     protect(m_context)->framebufferTexture2D(target, attachment, textarget, arg3, level);
@@ -421,7 +397,6 @@ void RemoteGraphicsContextGL::activeAttribs(uint32_t program, CompletionHandler<
 {
     assertIsCurrent(workQueue());
     Vector<WebCore::GCGLAttribActiveInfo> returnValue = { };
-    MESSAGE_CHECK(m_objectNames.isValidKey(program));
     if (program)
         program = m_objectNames.get(program);
     returnValue = protect(m_context)->activeAttribs(program);
@@ -432,7 +407,6 @@ void RemoteGraphicsContextGL::activeUniforms(uint32_t program, CompletionHandler
 {
     assertIsCurrent(workQueue());
     Vector<WebCore::GCGLUniformActiveInfo> returnValue = { };
-    MESSAGE_CHECK(m_objectNames.isValidKey(program));
     if (program)
         program = m_objectNames.get(program);
     returnValue = protect(m_context)->activeUniforms(program);
@@ -505,7 +479,6 @@ void RemoteGraphicsContextGL::getProgrami(uint32_t program, uint32_t pname, Comp
 {
     assertIsCurrent(workQueue());
     GCGLint returnValue = { };
-    MESSAGE_CHECK(m_objectNames.isValidKey(program));
     if (program)
         program = m_objectNames.get(program);
     returnValue = protect(m_context)->getProgrami(program, pname);
@@ -535,7 +508,6 @@ void RemoteGraphicsContextGL::getProgramInfoLog(uint32_t arg0, CompletionHandler
 {
     assertIsCurrent(workQueue());
     UTF8CString returnValue = { };
-    MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (arg0)
         arg0 = m_objectNames.get(arg0);
     returnValue = protect(m_context)->getProgramInfoLog(arg0);
@@ -554,7 +526,6 @@ void RemoteGraphicsContextGL::getShaderi(uint32_t arg0, uint32_t pname, Completi
 {
     assertIsCurrent(workQueue());
     GCGLint returnValue = { };
-    MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (arg0)
         arg0 = m_objectNames.get(arg0);
     returnValue = protect(m_context)->getShaderi(arg0, pname);
@@ -565,7 +536,6 @@ void RemoteGraphicsContextGL::getShaderInfoLog(uint32_t arg0, CompletionHandler<
 {
     assertIsCurrent(workQueue());
     UTF8CString returnValue = { };
-    MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (arg0)
         arg0 = m_objectNames.get(arg0);
     returnValue = protect(m_context)->getShaderInfoLog(arg0);
@@ -600,7 +570,6 @@ void RemoteGraphicsContextGL::getTexParameteri(uint32_t target, uint32_t pname, 
 void RemoteGraphicsContextGL::getUniformfv(uint32_t program, int32_t location, uint64_t valueSize, CompletionHandler<void(std::span<const float>)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(program));
     if (program)
         program = m_objectNames.get(program);
     if (!WTF::isValidCapacityForVector<GCGLfloat>(valueSize))
@@ -614,7 +583,6 @@ void RemoteGraphicsContextGL::getUniformfv(uint32_t program, int32_t location, u
 void RemoteGraphicsContextGL::getUniformiv(uint32_t program, int32_t location, uint64_t valueSize, CompletionHandler<void(std::span<const int32_t>)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(program));
     if (program)
         program = m_objectNames.get(program);
     if (!WTF::isValidCapacityForVector<GCGLint>(valueSize))
@@ -628,7 +596,6 @@ void RemoteGraphicsContextGL::getUniformiv(uint32_t program, int32_t location, u
 void RemoteGraphicsContextGL::getUniformuiv(uint32_t program, int32_t location, uint64_t valueSize, CompletionHandler<void(std::span<const uint32_t>)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(program));
     if (program)
         program = m_objectNames.get(program);
     if (!WTF::isValidCapacityForVector<GCGLuint>(valueSize))
@@ -657,7 +624,6 @@ void RemoteGraphicsContextGL::isBuffer(uint32_t arg0, CompletionHandler<void(boo
 {
     assertIsCurrent(workQueue());
     GCGLboolean returnValue = { };
-    MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (arg0)
         arg0 = m_objectNames.get(arg0);
     returnValue = protect(m_context)->isBuffer(arg0);
@@ -676,7 +642,6 @@ void RemoteGraphicsContextGL::isFramebuffer(uint32_t arg0, CompletionHandler<voi
 {
     assertIsCurrent(workQueue());
     GCGLboolean returnValue = { };
-    MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (arg0)
         arg0 = m_objectNames.get(arg0);
     returnValue = protect(m_context)->isFramebuffer(arg0);
@@ -687,7 +652,6 @@ void RemoteGraphicsContextGL::isProgram(uint32_t arg0, CompletionHandler<void(bo
 {
     assertIsCurrent(workQueue());
     GCGLboolean returnValue = { };
-    MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (arg0)
         arg0 = m_objectNames.get(arg0);
     returnValue = protect(m_context)->isProgram(arg0);
@@ -698,7 +662,6 @@ void RemoteGraphicsContextGL::isRenderbuffer(uint32_t arg0, CompletionHandler<vo
 {
     assertIsCurrent(workQueue());
     GCGLboolean returnValue = { };
-    MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (arg0)
         arg0 = m_objectNames.get(arg0);
     returnValue = protect(m_context)->isRenderbuffer(arg0);
@@ -709,7 +672,6 @@ void RemoteGraphicsContextGL::isShader(uint32_t arg0, CompletionHandler<void(boo
 {
     assertIsCurrent(workQueue());
     GCGLboolean returnValue = { };
-    MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (arg0)
         arg0 = m_objectNames.get(arg0);
     returnValue = protect(m_context)->isShader(arg0);
@@ -720,7 +682,6 @@ void RemoteGraphicsContextGL::isTexture(uint32_t arg0, CompletionHandler<void(bo
 {
     assertIsCurrent(workQueue());
     GCGLboolean returnValue = { };
-    MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (arg0)
         arg0 = m_objectNames.get(arg0);
     returnValue = protect(m_context)->isTexture(arg0);
@@ -736,7 +697,6 @@ void RemoteGraphicsContextGL::lineWidth(float arg0)
 void RemoteGraphicsContextGL::linkProgram(uint32_t arg0)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (arg0)
         arg0 = m_objectNames.get(arg0);
     protect(m_context)->linkProgram(arg0);
@@ -775,7 +735,6 @@ void RemoteGraphicsContextGL::scissor(int32_t x, int32_t y, int32_t width, int32
 void RemoteGraphicsContextGL::shaderSource(uint32_t arg0, UTF8CString&& arg1)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (arg0)
         arg0 = m_objectNames.get(arg0);
     protect(m_context)->shaderSource(arg0, arg1);
@@ -946,7 +905,6 @@ void RemoteGraphicsContextGL::uniformMatrix4fv(int32_t location, bool transpose,
 void RemoteGraphicsContextGL::useProgram(uint32_t arg0)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (arg0)
         arg0 = m_objectNames.get(arg0);
     protect(m_context)->useProgram(arg0);
@@ -955,7 +913,6 @@ void RemoteGraphicsContextGL::useProgram(uint32_t arg0)
 void RemoteGraphicsContextGL::validateProgram(uint32_t arg0)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (arg0)
         arg0 = m_objectNames.get(arg0);
     protect(m_context)->validateProgram(arg0);
@@ -1114,7 +1071,6 @@ void RemoteGraphicsContextGL::vertexAttribDivisor(uint32_t index, uint32_t divis
 void RemoteGraphicsContextGL::createVertexArray(uint32_t name)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(name));
     auto result = protect(m_context)->createVertexArray();
     if (result)
         m_objectNames.add(name, result);
@@ -1123,7 +1079,6 @@ void RemoteGraphicsContextGL::createVertexArray(uint32_t name)
 void RemoteGraphicsContextGL::deleteVertexArray(uint32_t arg0)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (!arg0) [[unlikely]]
         return;
     arg0 = m_objectNames.take(arg0);
@@ -1134,7 +1089,6 @@ void RemoteGraphicsContextGL::isVertexArray(uint32_t arg0, CompletionHandler<voi
 {
     assertIsCurrent(workQueue());
     GCGLboolean returnValue = { };
-    MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (arg0)
         arg0 = m_objectNames.get(arg0);
     returnValue = protect(m_context)->isVertexArray(arg0);
@@ -1144,7 +1098,6 @@ void RemoteGraphicsContextGL::isVertexArray(uint32_t arg0, CompletionHandler<voi
 void RemoteGraphicsContextGL::bindVertexArray(uint32_t arg0)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (arg0)
         arg0 = m_objectNames.get(arg0);
     protect(m_context)->bindVertexArray(arg0);
@@ -1165,7 +1118,6 @@ void RemoteGraphicsContextGL::blitFramebuffer(int32_t srcX0, int32_t srcY0, int3
 void RemoteGraphicsContextGL::framebufferTextureLayer(uint32_t target, uint32_t attachment, uint32_t texture, int32_t level, int32_t layer)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(texture));
     if (texture)
         texture = m_objectNames.get(texture);
     protect(m_context)->framebufferTextureLayer(target, attachment, texture, level, layer);
@@ -1253,7 +1205,6 @@ void RemoteGraphicsContextGL::getFragDataLocation(uint32_t program, UTF8CString&
 {
     assertIsCurrent(workQueue());
     GCGLint returnValue = { };
-    MESSAGE_CHECK(m_objectNames.isValidKey(program));
     if (program)
         program = m_objectNames.get(program);
     returnValue = protect(m_context)->getFragDataLocation(program, name);
@@ -1407,7 +1358,6 @@ void RemoteGraphicsContextGL::clearBufferfi(uint32_t buffer, int32_t drawbuffer,
 void RemoteGraphicsContextGL::createQuery(uint32_t name)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(name));
     auto result = protect(m_context)->createQuery();
     if (result)
         m_objectNames.add(name, result);
@@ -1416,7 +1366,6 @@ void RemoteGraphicsContextGL::createQuery(uint32_t name)
 void RemoteGraphicsContextGL::deleteQuery(uint32_t query)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(query));
     if (!query) [[unlikely]]
         return;
     query = m_objectNames.take(query);
@@ -1427,7 +1376,6 @@ void RemoteGraphicsContextGL::isQuery(uint32_t query, CompletionHandler<void(boo
 {
     assertIsCurrent(workQueue());
     GCGLboolean returnValue = { };
-    MESSAGE_CHECK(m_objectNames.isValidKey(query));
     if (query)
         query = m_objectNames.get(query);
     returnValue = protect(m_context)->isQuery(query);
@@ -1437,7 +1385,6 @@ void RemoteGraphicsContextGL::isQuery(uint32_t query, CompletionHandler<void(boo
 void RemoteGraphicsContextGL::beginQuery(uint32_t target, uint32_t query)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(query));
     if (query)
         query = m_objectNames.get(query);
     protect(m_context)->beginQuery(target, query);
@@ -1461,7 +1408,6 @@ void RemoteGraphicsContextGL::getQueryObjectui(uint32_t query, uint32_t pname, C
 {
     assertIsCurrent(workQueue());
     GCGLuint returnValue = { };
-    MESSAGE_CHECK(m_objectNames.isValidKey(query));
     if (query)
         query = m_objectNames.get(query);
     returnValue = protect(m_context)->getQueryObjectui(query, pname);
@@ -1471,7 +1417,6 @@ void RemoteGraphicsContextGL::getQueryObjectui(uint32_t query, uint32_t pname, C
 void RemoteGraphicsContextGL::createSampler(uint32_t name)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(name));
     auto result = protect(m_context)->createSampler();
     if (result)
         m_objectNames.add(name, result);
@@ -1480,7 +1425,6 @@ void RemoteGraphicsContextGL::createSampler(uint32_t name)
 void RemoteGraphicsContextGL::deleteSampler(uint32_t sampler)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(sampler));
     if (!sampler) [[unlikely]]
         return;
     sampler = m_objectNames.take(sampler);
@@ -1491,7 +1435,6 @@ void RemoteGraphicsContextGL::isSampler(uint32_t sampler, CompletionHandler<void
 {
     assertIsCurrent(workQueue());
     GCGLboolean returnValue = { };
-    MESSAGE_CHECK(m_objectNames.isValidKey(sampler));
     if (sampler)
         sampler = m_objectNames.get(sampler);
     returnValue = protect(m_context)->isSampler(sampler);
@@ -1501,7 +1444,6 @@ void RemoteGraphicsContextGL::isSampler(uint32_t sampler, CompletionHandler<void
 void RemoteGraphicsContextGL::bindSampler(uint32_t unit, uint32_t sampler)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(sampler));
     if (sampler)
         sampler = m_objectNames.get(sampler);
     protect(m_context)->bindSampler(unit, sampler);
@@ -1510,7 +1452,6 @@ void RemoteGraphicsContextGL::bindSampler(uint32_t unit, uint32_t sampler)
 void RemoteGraphicsContextGL::samplerParameteri(uint32_t sampler, uint32_t pname, int32_t param)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(sampler));
     if (sampler)
         sampler = m_objectNames.get(sampler);
     protect(m_context)->samplerParameteri(sampler, pname, param);
@@ -1519,7 +1460,6 @@ void RemoteGraphicsContextGL::samplerParameteri(uint32_t sampler, uint32_t pname
 void RemoteGraphicsContextGL::samplerParameterf(uint32_t sampler, uint32_t pname, float param)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(sampler));
     if (sampler)
         sampler = m_objectNames.get(sampler);
     protect(m_context)->samplerParameterf(sampler, pname, param);
@@ -1529,7 +1469,6 @@ void RemoteGraphicsContextGL::getSamplerParameterf(uint32_t sampler, uint32_t pn
 {
     assertIsCurrent(workQueue());
     GCGLfloat returnValue = { };
-    MESSAGE_CHECK(m_objectNames.isValidKey(sampler));
     if (sampler)
         sampler = m_objectNames.get(sampler);
     returnValue = protect(m_context)->getSamplerParameterf(sampler, pname);
@@ -1540,7 +1479,6 @@ void RemoteGraphicsContextGL::getSamplerParameteri(uint32_t sampler, uint32_t pn
 {
     assertIsCurrent(workQueue());
     GCGLint returnValue = { };
-    MESSAGE_CHECK(m_objectNames.isValidKey(sampler));
     if (sampler)
         sampler = m_objectNames.get(sampler);
     returnValue = protect(m_context)->getSamplerParameteri(sampler, pname);
@@ -1594,7 +1532,6 @@ void RemoteGraphicsContextGL::getSynci(uint64_t arg0, uint32_t pname, Completion
 void RemoteGraphicsContextGL::createTransformFeedback(uint32_t name)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(name));
     auto result = protect(m_context)->createTransformFeedback();
     if (result)
         m_objectNames.add(name, result);
@@ -1603,7 +1540,6 @@ void RemoteGraphicsContextGL::createTransformFeedback(uint32_t name)
 void RemoteGraphicsContextGL::deleteTransformFeedback(uint32_t id)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(id));
     if (!id) [[unlikely]]
         return;
     id = m_objectNames.take(id);
@@ -1614,7 +1550,6 @@ void RemoteGraphicsContextGL::isTransformFeedback(uint32_t id, CompletionHandler
 {
     assertIsCurrent(workQueue());
     GCGLboolean returnValue = { };
-    MESSAGE_CHECK(m_objectNames.isValidKey(id));
     if (id)
         id = m_objectNames.get(id);
     returnValue = protect(m_context)->isTransformFeedback(id);
@@ -1624,7 +1559,6 @@ void RemoteGraphicsContextGL::isTransformFeedback(uint32_t id, CompletionHandler
 void RemoteGraphicsContextGL::bindTransformFeedback(uint32_t target, uint32_t id)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(id));
     if (id)
         id = m_objectNames.get(id);
     protect(m_context)->bindTransformFeedback(target, id);
@@ -1645,7 +1579,6 @@ void RemoteGraphicsContextGL::endTransformFeedback()
 void RemoteGraphicsContextGL::transformFeedbackVaryings(uint32_t program, Vector<UTF8CString>&& varyings, uint32_t bufferMode)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(program));
     if (program)
         program = m_objectNames.get(program);
     protect(m_context)->transformFeedbackVaryings(program, varyings, bufferMode);
@@ -1655,7 +1588,6 @@ void RemoteGraphicsContextGL::getTransformFeedbackVarying(uint32_t program, uint
 {
     assertIsCurrent(workQueue());
     std::optional<WebCore::GCGLTransformFeedbackActiveInfo> returnValue = { };
-    MESSAGE_CHECK(m_objectNames.isValidKey(program));
     if (program)
         program = m_objectNames.get(program);
     returnValue = protect(m_context)->getTransformFeedbackVarying(program, index);
@@ -1677,7 +1609,6 @@ void RemoteGraphicsContextGL::resumeTransformFeedback()
 void RemoteGraphicsContextGL::bindBufferBase(uint32_t target, uint32_t index, uint32_t buffer)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(buffer));
     if (buffer)
         buffer = m_objectNames.get(buffer);
     protect(m_context)->bindBufferBase(target, index, buffer);
@@ -1686,7 +1617,6 @@ void RemoteGraphicsContextGL::bindBufferBase(uint32_t target, uint32_t index, ui
 void RemoteGraphicsContextGL::bindBufferRange(uint32_t target, uint32_t index, uint32_t buffer, uint64_t offset, uint64_t arg4)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(buffer));
     if (buffer)
         buffer = m_objectNames.get(buffer);
     protect(m_context)->bindBufferRange(target, index, buffer, static_cast<GCGLintptr>(offset), static_cast<GCGLsizeiptr>(arg4));
@@ -1696,7 +1626,6 @@ void RemoteGraphicsContextGL::getUniformBlockIndex(uint32_t program, UTF8CString
 {
     assertIsCurrent(workQueue());
     GCGLuint returnValue = { };
-    MESSAGE_CHECK(m_objectNames.isValidKey(program));
     if (program)
         program = m_objectNames.get(program);
     returnValue = protect(m_context)->getUniformBlockIndex(program, uniformBlockName);
@@ -1707,7 +1636,6 @@ void RemoteGraphicsContextGL::getActiveUniformBlockName(uint32_t program, uint32
 {
     assertIsCurrent(workQueue());
     UTF8CString returnValue = { };
-    MESSAGE_CHECK(m_objectNames.isValidKey(program));
     if (program)
         program = m_objectNames.get(program);
     returnValue = protect(m_context)->getActiveUniformBlockName(program, uniformBlockIndex);
@@ -1717,7 +1645,6 @@ void RemoteGraphicsContextGL::getActiveUniformBlockName(uint32_t program, uint32
 void RemoteGraphicsContextGL::uniformBlockBinding(uint32_t program, uint32_t uniformBlockIndex, uint32_t uniformBlockBinding)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(program));
     if (program)
         program = m_objectNames.get(program);
     protect(m_context)->uniformBlockBinding(program, uniformBlockIndex, uniformBlockBinding);
@@ -1726,7 +1653,6 @@ void RemoteGraphicsContextGL::uniformBlockBinding(uint32_t program, uint32_t uni
 void RemoteGraphicsContextGL::getActiveUniformBlockiv(uint32_t program, uint32_t uniformBlockIndex, uint32_t pname, uint64_t paramsSize, CompletionHandler<void(std::span<const int32_t>)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(program));
     if (program)
         program = m_objectNames.get(program);
     if (!WTF::isValidCapacityForVector<GCGLint>(paramsSize))
@@ -1741,7 +1667,6 @@ void RemoteGraphicsContextGL::getTranslatedShaderSourceANGLE(uint32_t arg0, Comp
 {
     assertIsCurrent(workQueue());
     UTF8CString returnValue = { };
-    MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (arg0)
         arg0 = m_objectNames.get(arg0);
     returnValue = protect(m_context)->getTranslatedShaderSourceANGLE(arg0);
@@ -1751,7 +1676,6 @@ void RemoteGraphicsContextGL::getTranslatedShaderSourceANGLE(uint32_t arg0, Comp
 void RemoteGraphicsContextGL::createQueryEXT(uint32_t name)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(name));
     auto result = protect(m_context)->createQueryEXT();
     if (result)
         m_objectNames.add(name, result);
@@ -1760,7 +1684,6 @@ void RemoteGraphicsContextGL::createQueryEXT(uint32_t name)
 void RemoteGraphicsContextGL::deleteQueryEXT(uint32_t query)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(query));
     if (!query) [[unlikely]]
         return;
     query = m_objectNames.take(query);
@@ -1771,7 +1694,6 @@ void RemoteGraphicsContextGL::isQueryEXT(uint32_t query, CompletionHandler<void(
 {
     assertIsCurrent(workQueue());
     GCGLboolean returnValue = { };
-    MESSAGE_CHECK(m_objectNames.isValidKey(query));
     if (query)
         query = m_objectNames.get(query);
     returnValue = protect(m_context)->isQueryEXT(query);
@@ -1781,7 +1703,6 @@ void RemoteGraphicsContextGL::isQueryEXT(uint32_t query, CompletionHandler<void(
 void RemoteGraphicsContextGL::beginQueryEXT(uint32_t target, uint32_t query)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(query));
     if (query)
         query = m_objectNames.get(query);
     protect(m_context)->beginQueryEXT(target, query);
@@ -1796,7 +1717,6 @@ void RemoteGraphicsContextGL::endQueryEXT(uint32_t target)
 void RemoteGraphicsContextGL::queryCounterEXT(uint32_t query, uint32_t target)
 {
     assertIsCurrent(workQueue());
-    MESSAGE_CHECK(m_objectNames.isValidKey(query));
     if (query)
         query = m_objectNames.get(query);
     protect(m_context)->queryCounterEXT(query, target);
@@ -1814,7 +1734,6 @@ void RemoteGraphicsContextGL::getQueryObjectiEXT(uint32_t query, uint32_t pname,
 {
     assertIsCurrent(workQueue());
     GCGLint returnValue = { };
-    MESSAGE_CHECK(m_objectNames.isValidKey(query));
     if (query)
         query = m_objectNames.get(query);
     returnValue = protect(m_context)->getQueryObjectiEXT(query, pname);
@@ -1825,7 +1744,6 @@ void RemoteGraphicsContextGL::getQueryObjectui64EXT(uint32_t query, uint32_t pna
 {
     assertIsCurrent(workQueue());
     GCGLuint64 returnValue = { };
-    MESSAGE_CHECK(m_objectNames.isValidKey(query));
     if (query)
         query = m_objectNames.get(query);
     returnValue = protect(m_context)->getQueryObjectui64EXT(query, pname);
@@ -1940,7 +1858,6 @@ void RemoteGraphicsContextGL::createExternalImage(uint32_t name, WebCore::Graphi
 {
     assertIsCurrent(workQueue());
     MESSAGE_CHECK(webXRPromptAccepted());
-    MESSAGE_CHECK(m_objectNames.isValidKey(name));
     auto result = protect(m_context)->createExternalImage(WTF::move(arg0), internalFormat, layer);
     if (result)
         m_objectNames.add(name, result);
@@ -1950,7 +1867,6 @@ void RemoteGraphicsContextGL::deleteExternalImage(uint32_t handle)
 {
     assertIsCurrent(workQueue());
     MESSAGE_CHECK(webXRPromptAccepted());
-    MESSAGE_CHECK(m_objectNames.isValidKey(handle));
     if (!handle) [[unlikely]]
         return;
     handle = m_objectNames.take(handle);
@@ -1961,7 +1877,6 @@ void RemoteGraphicsContextGL::bindExternalImage(uint32_t target, uint32_t arg1)
 {
     assertIsCurrent(workQueue());
     MESSAGE_CHECK(webXRPromptAccepted());
-    MESSAGE_CHECK(m_objectNames.isValidKey(arg1));
     if (arg1)
         arg1 = m_objectNames.get(arg1);
     protect(m_context)->bindExternalImage(target, arg1);
@@ -1971,7 +1886,6 @@ void RemoteGraphicsContextGL::createExternalSync(uint32_t name, WebCore::Graphic
 {
     assertIsCurrent(workQueue());
     MESSAGE_CHECK(webXRPromptAccepted());
-    MESSAGE_CHECK(m_objectNames.isValidKey(name));
     auto result = protect(m_context)->createExternalSync(WTF::move(arg0));
     if (result)
         m_objectNames.add(name, result);
@@ -1981,7 +1895,6 @@ void RemoteGraphicsContextGL::deleteExternalSync(uint32_t arg0)
 {
     assertIsCurrent(workQueue());
     MESSAGE_CHECK(webXRPromptAccepted());
-    MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (!arg0) [[unlikely]]
         return;
     arg0 = m_objectNames.take(arg0);
@@ -2010,7 +1923,6 @@ void RemoteGraphicsContextGL::enableFoveation(uint32_t arg0)
 {
     assertIsCurrent(workQueue());
     MESSAGE_CHECK(webXRPromptAccepted());
-    MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
     if (arg0)
         arg0 = m_objectNames.get(arg0);
     protect(m_context)->enableFoveation(arg0);
@@ -2027,7 +1939,6 @@ void RemoteGraphicsContextGL::framebufferResolveRenderbuffer(uint32_t target, ui
 {
     assertIsCurrent(workQueue());
     MESSAGE_CHECK(webXRPromptAccepted());
-    MESSAGE_CHECK(m_objectNames.isValidKey(arg3));
     if (arg3)
         arg3 = m_objectNames.get(arg3);
     protect(m_context)->framebufferResolveRenderbuffer(target, attachment, renderbuffertarget, arg3);

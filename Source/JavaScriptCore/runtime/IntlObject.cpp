@@ -778,7 +778,7 @@ Vector<String> canonicalizeLocaleList(JSGlobalObject* globalObject, JSValue loca
     uint64_t length = lengthProperty.toLength(globalObject);
     RETURN_IF_EXCEPTION(scope, Vector<String>());
 
-    UncheckedKeyHashSet<String> seenSet;
+    HashSet<String> seenSet;
     for (uint64_t k = 0; k < length; ++k) {
         bool kPresent = localesObject->hasProperty(globalObject, k);
         RETURN_IF_EXCEPTION(scope, Vector<String>());
@@ -1395,7 +1395,7 @@ bool LanguageTagParser::parseUnicodeLanguageId()
             return true;
     }
 
-    UncheckedKeyHashSet<VariantCode> variantCodes;
+    HashSet<VariantCode> variantCodes;
     while (true) {
         if (!isUnicodeVariantSubtag(m_current))
             return true;
@@ -1742,13 +1742,13 @@ const Vector<String>& intlAvailableCalendars()
     return availableCalendars;
 }
 
-const UncheckedKeyHashMap<String, CalendarID, ASCIICaseInsensitiveHash>& intlAvailableCalendarIndex()
+const HashMap<String, CalendarID, ASCIICaseInsensitiveHash>& intlAvailableCalendarIndex()
 {
-    static LazyNeverDestroyed<UncheckedKeyHashMap<String, CalendarID, ASCIICaseInsensitiveHash>> index;
+    static LazyNeverDestroyed<HashMap<String, CalendarID, ASCIICaseInsensitiveHash>> index;
     static std::once_flag onceKey;
     std::call_once(onceKey, [&] {
         const auto& calendars = intlAvailableCalendars();
-        UncheckedKeyHashMap<String, CalendarID, ASCIICaseInsensitiveHash> table;
+        HashMap<String, CalendarID, ASCIICaseInsensitiveHash> table;
         for (CalendarID i = 0; i < calendars.size(); ++i)
             table.add(calendars[i], i);
 
@@ -2074,7 +2074,7 @@ static const Vector<TimeZoneEntry>& intlAvailableTimeZoneEntries()
             String primaryName;
         };
         Vector<AliasRecord> aliases;
-        UncheckedKeyHashSet<String> primaryNameSet;
+        HashSet<String> primaryNameSet;
         for (auto& name : primaryNames)
             primaryNameSet.add(name);
 
@@ -2082,7 +2082,7 @@ static const Vector<TimeZoneEntry>& intlAvailableTimeZoneEntries()
             UErrorCode status = U_ZERO_ERROR;
             auto enumeration = std::unique_ptr<UEnumeration, ICUDeleter<uenum_close>>(ucal_openTimeZones(&status));
             ASSERT(U_SUCCESS(status));
-            UncheckedKeyHashSet<String> seenAliases;
+            HashSet<String> seenAliases;
             while (true) {
                 status = U_ZERO_ERROR;
                 int32_t length = 0;
@@ -2114,7 +2114,7 @@ static const Vector<TimeZoneEntry>& intlAvailableTimeZoneEntries()
         // each region sorted. Build a name→index map so we can resolve each alias's
         // primary-name reference into a TimeZoneID.
         Vector<TimeZoneEntry> combined(ReserveCapacityTag { }, primaryNames.size() + aliases.size());
-        UncheckedKeyHashMap<String, TimeZoneID> nameToIndex;
+        HashMap<String, TimeZoneID> nameToIndex;
         for (auto& name : primaryNames) {
             String identifier = reuseOrCreateImmortal(WTF::move(name));
             TimeZoneID id = static_cast<TimeZoneID>(combined.size());
@@ -2150,13 +2150,13 @@ TimeZoneID intlPrimaryTimeZoneID(TimeZoneID id)
 // fixed by the linked ICU/CLDR version, so a fixed map is safe. Stored keys are the
 // immortal static strings owned by intlAvailableTimeZoneEntries, so the read-only map
 // can be shared across VM threads.
-static const UncheckedKeyHashMap<String, TimeZoneID, ASCIICaseInsensitiveHash>& intlAvailableTimeZoneIndex()
+static const HashMap<String, TimeZoneID, ASCIICaseInsensitiveHash>& intlAvailableTimeZoneIndex()
 {
-    static LazyNeverDestroyed<UncheckedKeyHashMap<String, TimeZoneID, ASCIICaseInsensitiveHash>> index;
+    static LazyNeverDestroyed<HashMap<String, TimeZoneID, ASCIICaseInsensitiveHash>> index;
     static std::once_flag onceKey;
     std::call_once(onceKey, [&] {
         const auto& entries = intlAvailableTimeZoneEntries();
-        UncheckedKeyHashMap<String, TimeZoneID, ASCIICaseInsensitiveHash> table;
+        HashMap<String, TimeZoneID, ASCIICaseInsensitiveHash> table;
         for (TimeZoneID i = 0; i < entries.size(); ++i)
             table.add(entries[i].identifier, i);
         index.construct(WTF::move(table));

@@ -40,7 +40,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteProgressBasedTimelineRegistry);
 void RemoteProgressBasedTimelineRegistry::update(const RemoteScrollingTree& scrollingTree, WebCore::ProcessIdentifier processIdentifier, const WebCore::AcceleratedTimelinesUpdate& timelinesUpdate)
 {
     auto& processTimelines = m_timelines.ensure(processIdentifier, [] {
-        return UncheckedKeyHashMap<WebCore::ScrollingNodeID, HashSet<Ref<RemoteProgressBasedTimeline>>>();
+        return HashMap<WebCore::ScrollingNodeID, HashSet<Ref<RemoteProgressBasedTimeline>>>();
     }).iterator->value;
 
     using IterationCallback = const Function<void(const TimelineID&, WebCore::ProgressResolutionData)>;

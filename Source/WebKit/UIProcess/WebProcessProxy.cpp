@@ -2172,7 +2172,7 @@ bool WebProcessProxy::hasGrantedSandboxExtensionForFile(const URL& url) const
 
 void WebProcessProxy::recordUserGestureAuthorizationToken(PageIdentifier pageID, WTF::UUID authorizationToken)
 {
-    if (!UserInitiatedActionByAuthorizationTokenMap::isValidKey(authorizationToken) || !authorizationToken)
+    if (!authorizationToken)
         return;
 
     m_userInitiatedActionByAuthorizationTokenMap.ensure(pageID, [] {

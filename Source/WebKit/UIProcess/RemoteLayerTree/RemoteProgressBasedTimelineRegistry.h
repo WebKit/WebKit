@@ -48,7 +48,7 @@ public:
     HashSet<Ref<RemoteProgressBasedTimeline>> timelinesForScrollingNodeIDForTesting(WebCore::ScrollingNodeID) const;
 
 private:
-    UncheckedKeyHashMap<WebCore::ProcessIdentifier, UncheckedKeyHashMap<WebCore::ScrollingNodeID, HashSet<Ref<RemoteProgressBasedTimeline>>>> m_timelines;
+    HashMap<WebCore::ProcessIdentifier, HashMap<WebCore::ScrollingNodeID, HashSet<Ref<RemoteProgressBasedTimeline>>>> m_timelines;
 };
 
 } // namespace WebKit

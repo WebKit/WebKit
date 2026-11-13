@@ -103,9 +103,9 @@ private:
     void addInverseMap(void* validationEntry, void* pointer);
 #endif
 
-    UncheckedKeyHashMap<void*, void*> m_validatedOperations;
+    HashMap<void*, void*> m_validatedOperations;
 #if ENABLE(JIT_OPERATION_VALIDATION_ASSERT)
-    UncheckedKeyHashMap<void*, void*> m_validatedOperationsInverseMap;
+    HashMap<void*, void*> m_validatedOperationsInverseMap;
 #endif
 #endif // ENABLE(JIT_OPERATION_VALIDATION)
 };

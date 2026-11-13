@@ -288,8 +288,6 @@ Vector<Ref<Node>> FrameDOMAgent::boundNodes() const
 
 Node* FrameDOMAgent::nodeForId(Inspector::Protocol::DOM::NodeId id)
 {
-    if (!m_idToNode.isValidKey(id))
-        return nullptr;
     return m_idToNode.get(id);
 }
 

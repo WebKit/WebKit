@@ -298,7 +298,6 @@ void runAllOps(const char* container, const char* keyType)
 }
 
 template<typename T> using HashSetT = WTF::HashSet<T>;
-template<typename T> using UncheckedKeyHashSetT = WTF::UncheckedKeyHashSet<T>;
 template<typename T> using OrderedHashSetT = WTF::OrderedHashSet<T>;
 template<typename T> using ListHashSetT = WTF::ListHashSet<T>;
 
@@ -342,7 +341,7 @@ const Row* findRow(const char* container, const char* op, const char* keyType, u
 void printMatrix()
 {
     static const char* kOps[] = { "Insert", "ContainsHit", "Iterate", "Churn" };
-    static const char* kContainers[] = { "HashSet", "UncheckedHashSet", "OrderedHashSet", "ListHashSet" };
+    static const char* kContainers[] = { "HashSet", "OrderedHashSet", "ListHashSet" };
     static const char* kKeyTypes[] = { "uint32_t", "void*", "String" };
 
     for (const char* op : kOps) {
@@ -408,17 +407,14 @@ int main(int argc, char** argv)
     auto wallStart = WTF::MonotonicTime::now();
 
     runAllOps<HashSetT, uint32_t>("HashSet", "uint32_t");
-    runAllOps<UncheckedKeyHashSetT, uint32_t>("UncheckedHashSet", "uint32_t");
     runAllOps<OrderedHashSetT, uint32_t>("OrderedHashSet", "uint32_t");
     runAllOps<ListHashSetT, uint32_t>("ListHashSet", "uint32_t");
 
     runAllOps<HashSetT, void*>("HashSet", "void*");
-    runAllOps<UncheckedKeyHashSetT, void*>("UncheckedHashSet", "void*");
     runAllOps<OrderedHashSetT, void*>("OrderedHashSet", "void*");
     runAllOps<ListHashSetT, void*>("ListHashSet", "void*");
 
     runAllOps<HashSetT, WTF::String>("HashSet", "String");
-    runAllOps<UncheckedKeyHashSetT, WTF::String>("UncheckedHashSet", "String");
     runAllOps<OrderedHashSetT, WTF::String>("OrderedHashSet", "String");
     runAllOps<ListHashSetT, WTF::String>("ListHashSet", "String");
 

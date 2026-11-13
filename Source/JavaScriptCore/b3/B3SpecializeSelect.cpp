@@ -222,7 +222,7 @@ private:
         for (unsigned i = 0; i < numCases; ++i)
             cases[i] = m_blockInsertionSet.insertBefore(m_block);
 
-        std::array<UncheckedKeyHashMap<Value*, Value*>, numCases> mappings { };
+        std::array<HashMap<Value*, Value*>, numCases> mappings { };
 
         // Save things we want to know about the source.
         Value* predicate = source->child(0);

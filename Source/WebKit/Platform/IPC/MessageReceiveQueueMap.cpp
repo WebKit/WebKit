@@ -72,7 +72,7 @@ MessageReceiveQueue* MessageReceiveQueueMap::get(const Decoder& message) const
         [](MessageReceiveQueue* queue) { return queue; }
     );
 
-    if (message.isValid() && QueueMap::isValidKey(std::make_pair(static_cast<uint8_t>(message.messageReceiverName()), message.destinationID()))) {
+    if (message.isValid()) {
         uint8_t receiverName = static_cast<uint8_t>(message.messageReceiverName());
         {
             auto it = m_anyIDQueues.find(receiverName);

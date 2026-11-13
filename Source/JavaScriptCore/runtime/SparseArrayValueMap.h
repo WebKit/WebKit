@@ -118,7 +118,7 @@ public:
     static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
 private:
-    using Set = UncheckedKeyHashSet<SparseArrayEntry, SparseArrayEntryHash, SparseArrayEntryHashTraits>;
+    using Set = HashSet<SparseArrayEntry, SparseArrayEntryHash, SparseArrayEntryHashTraits>;
 
     enum Flags {
         Normal                             = 0,

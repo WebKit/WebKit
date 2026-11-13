@@ -57,8 +57,7 @@ auto BranchHintsSectionParser::parse() -> PartialResult
         for (uint32_t j = 0; j < hintCount; ++j) {
             uint32_t branchOffset;
             WASM_PARSER_FAIL_IF(!parseVarUInt32(branchOffset), "can't get branch offset for hint "_s, j);
-            WASM_PARSER_FAIL_IF(static_cast<int64_t>(branchOffset) < previousBranchOffset
-                || !m_info->branchHints.isValidKey(branchOffset), "invalid branch offset "_s, branchOffset, " for hint "_s, j);
+            WASM_PARSER_FAIL_IF(static_cast<int64_t>(branchOffset) < previousBranchOffset, "invalid branch offset "_s, branchOffset, " for hint "_s, j);
 
             previousBranchOffset = branchOffset;
 

@@ -106,7 +106,7 @@ static void compileRecovery(
     CCallHelpers& jit, const ExitValue& value,
     const FixedVector<B3::ValueRep>& valueReps,
     char* registerScratch,
-    const UncheckedKeyHashMap<ExitTimeObjectMaterialization*, EncodedJSValue*>& materializationToPointer)
+    const HashMap<ExitTimeObjectMaterialization*, EncodedJSValue*>& materializationToPointer)
 {
     switch (value.kind()) {
     case ExitValueDead: {
@@ -197,7 +197,7 @@ static MacroAssemblerCodeRef<OSRExitPtrTag> compileStub(VM& vm, unsigned exitID,
     char* registerScratch = std::bit_cast<char*>(materializationArguments + maxMaterializationNumArguments);
     uint64_t* unwindScratch = std::bit_cast<uint64_t*>(registerScratch + requiredScratchMemorySizeInBytes());
     
-    UncheckedKeyHashMap<ExitTimeObjectMaterialization*, EncodedJSValue*> materializationToPointer;
+    HashMap<ExitTimeObjectMaterialization*, EncodedJSValue*> materializationToPointer;
     unsigned materializationCount = 0;
     for (ExitTimeObjectMaterialization* materialization : exit.m_descriptor->m_materializations) {
         materializationToPointer.add(
@@ -289,7 +289,7 @@ static MacroAssemblerCodeRef<OSRExitPtrTag> compileStub(VM& vm, unsigned exitID,
     // needing another object if the later is needed for the
     // allocation of the former.
 
-    UncheckedKeyHashSet<ExitTimeObjectMaterialization*> toMaterialize;
+    HashSet<ExitTimeObjectMaterialization*> toMaterialize;
     for (ExitTimeObjectMaterialization* materialization : exit.m_descriptor->m_materializations)
         toMaterialize.add(materialization);
 

@@ -53,7 +53,7 @@ private:
     // The registry of the function this one was invoked from, so a typed parameter keeps its type across
     // frames. https://github.com/w3c/csswg-drafts/issues/12315
     const LocalPropertyRegistry* m_enclosing { nullptr };
-    UncheckedKeyHashMap<AtomString, UniqueRef<CSSRegisteredCustomProperty>> m_properties;
+    HashMap<AtomString, UniqueRef<CSSRegisteredCustomProperty>> m_properties;
 };
 
 } // namespace Style

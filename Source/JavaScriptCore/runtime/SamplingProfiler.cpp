@@ -1092,7 +1092,7 @@ Ref<JSON::Value> SamplingProfiler::stackTracesAsJSON()
         processUnverifiedStackTraces();
     }
 
-    UncheckedKeyHashMap<SourceID, Ref<SourceProvider>> sources;
+    HashMap<SourceID, Ref<SourceProvider>> sources;
 
     auto stackFrameAsJSON = [&](StackFrame& stackFrame) {
         auto [provider, sourceID] = stackFrame.sourceProviderAndID();
@@ -1169,12 +1169,12 @@ Ref<JSON::Value> SamplingProfiler::stackTracesAsJSON()
 void SamplingProfiler::registerForReportAtExit()
 {
     static Lock registrationLock;
-    static UncheckedKeyHashSet<RefPtr<SamplingProfiler>>* profilesToReport;
+    static HashSet<RefPtr<SamplingProfiler>>* profilesToReport;
 
     Locker locker { registrationLock };
 
     if (!profilesToReport) {
-        profilesToReport = new UncheckedKeyHashSet<RefPtr<SamplingProfiler>>();
+        profilesToReport = new HashSet<RefPtr<SamplingProfiler>>();
         atexit([]() {
             for (const auto& profile : *profilesToReport)
                 profile->reportDataToOptionFile();
@@ -1216,7 +1216,7 @@ void SamplingProfiler::reportTopFunctions(PrintStream& out)
     }
 
     size_t totalSamples = 0;
-    UncheckedKeyHashMap<String, size_t> functionCounts;
+    HashMap<String, size_t> functionCounts;
     for (StackTrace& stackTrace : m_stackTraces) {
         if (!stackTrace.frames.size())
             continue;
@@ -1282,8 +1282,8 @@ void SamplingProfiler::reportTopBytecodes(PrintStream& out)
     }
 
     size_t totalSamples = 0;
-    UncheckedKeyHashMap<String, size_t> bytecodeCounts;
-    UncheckedKeyHashMap<String, size_t> tierCounts;
+    HashMap<String, size_t> bytecodeCounts;
+    HashMap<String, size_t> tierCounts;
 
     auto forEachTier = [&] (auto func) {
         func(Tiers::llint);

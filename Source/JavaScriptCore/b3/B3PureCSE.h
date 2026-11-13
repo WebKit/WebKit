@@ -56,7 +56,7 @@ public:
     bool process(Value*, Dominators&);
     
 private:
-    UncheckedKeyHashMap<ValueKey, Matches> m_map;
+    HashMap<ValueKey, Matches> m_map;
 };
 
 bool pureCSE(Procedure&);

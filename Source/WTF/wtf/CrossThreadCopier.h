@@ -232,8 +232,8 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
 };
 
 // Default specialization for HashSets of CrossThreadCopyable classes
-template<typename T, typename HashFunctions, typename Traits, typename TableTraits, ShouldValidateKey shouldValidateKey> struct CrossThreadCopierBase<false, false, HashSet<T, HashFunctions, Traits, TableTraits, shouldValidateKey>> {
-    using Type = HashSet<T, HashFunctions, Traits, TableTraits, shouldValidateKey>;
+template<typename T, typename HashFunctions, typename Traits, typename TableTraits> struct CrossThreadCopierBase<false, false, HashSet<T, HashFunctions, Traits, TableTraits>> {
+    using Type = HashSet<T, HashFunctions, Traits, TableTraits>;
     static constexpr bool IsNeeded = CrossThreadCopier<T>::IsNeeded;
     static Type copy(const Type& source)
     {
@@ -261,9 +261,9 @@ struct CrossThreadCopierBase<false, false, HashSet<ObjectIdentifierGeneric<T, U>
 };
 
 // Default specialization for HashMaps of CrossThreadCopyable classes
-template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg, typename TableTraitsArg, ShouldValidateKey shouldValidateKey>
-struct CrossThreadCopierBase<false, false, HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, TableTraitsArg, shouldValidateKey>> {
-    using Type = HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, TableTraitsArg, shouldValidateKey>;
+template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg, typename TableTraitsArg>
+struct CrossThreadCopierBase<false, false, HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, TableTraitsArg>> {
+    using Type = HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, TableTraitsArg>;
     static constexpr bool IsNeeded = CrossThreadCopier<KeyArg>::IsNeeded || CrossThreadCopier<MappedArg>::IsNeeded;
     static Type copy(const Type& source)
     {

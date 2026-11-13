@@ -76,7 +76,7 @@ template<typename ValueType> unsigned ValueHandleMap<ValueType>::insert(Ref<Valu
 
     // FIXME: This monotonically increasing handle generation scheme is potentially wasteful
     // of the handle space. Consider reusing empty handles. https://bugs.webkit.org/show_bug.cgi?id=80489
-    while (!m_map.isValidKey(m_nextAvailableHandle) || !m_map.add(m_nextAvailableHandle, entry).isNewEntry)
+    while (!m_nextAvailableHandle || !m_map.add(m_nextAvailableHandle, entry).isNewEntry)
         ++m_nextAvailableHandle;
 
     return m_nextAvailableHandle++;

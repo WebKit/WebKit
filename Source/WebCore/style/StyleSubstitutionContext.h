@@ -26,7 +26,6 @@
 #pragma once
 
 #include "StyleScopeOrdinal.h"
-#include <wtf/GenericHashKey.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/AtomString.h>
 
@@ -101,14 +100,14 @@ public:
     void addFunctionContextsFrom(const GuardedSubstitutionContexts& other)
     {
         for (auto& context : other.m_guarded) {
-            if (context.key().type == SubstitutionContext::Type::Function)
+            if (context.type == SubstitutionContext::Type::Function)
                 m_guarded.add(context);
         }
         m_top = other.m_top;
     }
 
 private:
-    HashSet<GenericHashKey<SubstitutionContext>> m_guarded;
+    HashSet<SubstitutionContext> m_guarded;
     Guard* m_top { nullptr };
 };
 

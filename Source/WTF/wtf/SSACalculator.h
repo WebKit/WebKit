@@ -296,7 +296,7 @@ public:
                     // original Def in the m_defs table would have been at the bottom, and we want
                     // m_defs to tell us about defs at tail.
                     //
-                    // So, we rely on the fact that UncheckedKeyHashMap::add() does nothing if the
+                    // So, we rely on the fact that HashMap::add() does nothing if the
                     // key was already present.
                     data.m_defs.add(&variable, phiDef);
                     worklist.append(to);
@@ -378,7 +378,7 @@ public:
 
 private:
     struct BlockData {
-        UncheckedKeyHashMap<Variable*, Def*> m_defs;
+        HashMap<Variable*, Def*> m_defs;
         Vector<Def*> m_phis;
     };
 

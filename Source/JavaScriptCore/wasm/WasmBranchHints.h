@@ -53,14 +53,9 @@ public:
         return it->value;
     }
 
-    bool isValidKey(uint32_t branchOffset) const
-    {
-        return m_map.isValidKey(branchOffset);
-    }
-
 private:
 
-    UncheckedKeyHashMap<uint32_t, BranchHint, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_map;
+    HashMap<uint32_t, BranchHint, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_map;
 
 };
 

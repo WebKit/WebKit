@@ -26,7 +26,6 @@
 #pragma once
 
 #include <JavaScriptCore/SourceID.h>
-#include <wtf/GenericHashKey.h>
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 
@@ -52,8 +51,8 @@ public:
     Vector<std::tuple<bool, unsigned, unsigned>> getFunctionRanges(SourceID);
 
 private:
-    using RangeMap = UncheckedKeyHashMap<GenericHashKey<FunctionRange>, bool>;
-    using SourceIDToRangeMap = UncheckedKeyHashMap<GenericHashKey<intptr_t>, RangeMap>;
+    using RangeMap = HashMap<FunctionRange, bool>;
+    using SourceIDToRangeMap = HashMap<intptr_t, RangeMap>;
     SourceIDToRangeMap m_rangeMap;
 };
 

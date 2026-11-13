@@ -247,7 +247,7 @@ private:
         dataLogLnIf(verbose, "Selected lastUserIndex = ", lastUserIndex, ", ", block->at(lastUserIndex));
 
         InlineCallFrame* startingInlineCallFrame = block->at(candidateNodeIndex)->origin.forExit.inlineCallFrame();
-        UncheckedKeyHashSet<InlineCallFrame*, WTF::DefaultHash<InlineCallFrame*>, WTF::NullableHashTraits<InlineCallFrame*>> seenInlineCallFrames;
+        HashSet<InlineCallFrame*, WTF::DefaultHash<InlineCallFrame*>, WTF::NullableHashTraits<InlineCallFrame*>> seenInlineCallFrames;
         
         // We're still in business. Determine if between the candidate and the last user there is any
         // effect that could interfere with sinking.

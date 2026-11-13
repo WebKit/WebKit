@@ -196,8 +196,8 @@ bool OptimizeAssociativeExpressionTrees::optimizeRootedTree(Value* root, Inserti
         unsigned width = root->type() == Int32 ? 32 : 64;
 
         // In the leaf elements of BitOr / BitXor tree, we collect Shl and ZShr.
-        UncheckedKeyHashMap<Value*, Vector<unsigned, 4>> shlIndicesByBase;
-        UncheckedKeyHashMap<Value*, Vector<unsigned, 4>> zshrIndicesByBase;
+        HashMap<Value*, Vector<unsigned, 4>> shlIndicesByBase;
+        HashMap<Value*, Vector<unsigned, 4>> zshrIndicesByBase;
         for (unsigned i = 0; i < leaves.size(); ++i) {
             Value* leaf = leaves[i];
             if (leaf->opcode() == Shl && leaf->child(1)->hasInt32())
@@ -323,8 +323,8 @@ bool OptimizeAssociativeExpressionTrees::run()
     m_proc.resetValueOwners();
 
     Vector<unsigned> useCounts(FillWith { }, m_proc.values().size(), 0); // Mapping from Value::m_index to use counts.
-    UncheckedKeyHashSet<Value*> expressionTreeRoots;
-    UncheckedKeyHashSet<BasicBlock*> rootOwners;
+    HashSet<Value*> expressionTreeRoots;
+    HashSet<BasicBlock*> rootOwners;
 
     for (BasicBlock* block : m_proc) {
         for (Value* value : *block) {

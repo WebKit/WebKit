@@ -92,9 +92,9 @@ private:
     bool removeSiteImpl(VirtualAddress) WTF_REQUIRES_LOCK(m_lock);
 
     mutable Lock m_lock;
-    UncheckedKeyHashMap<uint8_t*, Ref<Breakpoint>> m_breakpoints WTF_GUARDED_BY_LOCK(m_lock);
+    HashMap<uint8_t*, Ref<Breakpoint>> m_breakpoints WTF_GUARDED_BY_LOCK(m_lock);
     Vector<Ref<Breakpoint>> m_oneTimeBreakpoints WTF_GUARDED_BY_LOCK(m_lock);
-    UncheckedKeyHashMap<VirtualAddress, Ref<Breakpoint>> m_addressToBreakpoint WTF_GUARDED_BY_LOCK(m_lock);
+    HashMap<VirtualAddress, Ref<Breakpoint>> m_addressToBreakpoint WTF_GUARDED_BY_LOCK(m_lock);
 };
 
 template<DebugStopReason reason>

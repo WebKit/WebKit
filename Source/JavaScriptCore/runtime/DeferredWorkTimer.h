@@ -121,7 +121,7 @@ private:
     bool m_shouldStopRunLoopWhenAllTicketsFinish { false };
     bool m_currentlyRunningTask { false };
     Deque<std::tuple<Ref<Ticket>, Task>> m_tasks WTF_GUARDED_BY_LOCK(m_taskLock);
-    UncheckedKeyHashSet<Ref<Ticket>> m_pendingTickets;
+    HashSet<Ref<Ticket>> m_pendingTickets;
 };
 
 // target() reads m_dependencies, which cancelAndClear() can free concurrently.

@@ -74,8 +74,6 @@ void WebURLSchemeHandler::stopAllTasksForPage(WebPageProxy& page, WebProcessProx
 void WebURLSchemeHandler::stopTask(WebPageProxy& page, WebCore::ScopedResourceLoaderIdentifier taskIdentifier)
 {
     auto key = std::make_pair(taskIdentifier, page.identifier());
-    if (!decltype(m_tasks)::isValidKey(key))
-        return;
     auto iterator = m_tasks.find(key);
     if (iterator == m_tasks.end())
         return;
@@ -103,8 +101,6 @@ void WebURLSchemeHandler::removeTaskFromPageMap(WebPageProxyIdentifier pageID, W
     auto iterator = m_tasksByPageIdentifier.find(pageID);
     ASSERT_WITH_SECURITY_IMPLICATION(iterator != m_tasksByPageIdentifier.end());
     ASSERT(iterator->value.contains(taskID));
-    if (!decltype(iterator->value)::isValidValue(taskID))
-        return;
     iterator->value.remove(taskID);
     if (iterator->value.isEmpty())
         m_tasksByPageIdentifier.remove(iterator);

@@ -80,7 +80,6 @@ auto MemoryCache::sessionResourceMap(PAL::SessionID sessionID) const -> CachedRe
 {
     RELEASE_ASSERT(sessionID.isValid());
     RELEASE_ASSERT(isMainThread());
-    RELEASE_ASSERT(m_sessionResources.isValidKey(sessionID));
     return m_sessionResources.get(sessionID);
 }
 
@@ -88,7 +87,6 @@ auto MemoryCache::ensureSessionResourceMap(PAL::SessionID sessionID) -> CachedRe
 {
     RELEASE_ASSERT(sessionID.isValid());
     RELEASE_ASSERT(isMainThread());
-    RELEASE_ASSERT(m_sessionResources.isValidKey(sessionID));
     auto& map = m_sessionResources.add(sessionID, nullptr).iterator->value;
     if (!map)
         map = makeUnique<CachedResourceMap>();
@@ -250,7 +248,7 @@ void MemoryCache::forEachResource(NOESCAPE const Function<void(CachedResource&)>
 void MemoryCache::forEachSessionResource(PAL::SessionID sessionID, NOESCAPE const Function<void(CachedResource&)>& function)
 {
     RELEASE_ASSERT(isMainThread());
-    RELEASE_ASSERT(m_sessionResources.isValidKey(sessionID));
+    RELEASE_ASSERT(sessionID.isValid());
     auto it = m_sessionResources.find(sessionID);
     if (it == m_sessionResources.end())
         return;
@@ -445,7 +443,7 @@ void MemoryCache::remove(CachedResource& resource)
 
             // If the resource map is now empty, remove it from m_sessionResources.
             if (resources->isEmpty()) {
-                RELEASE_ASSERT(m_sessionResources.isValidKey(resource.sessionID()));
+                RELEASE_ASSERT(resource.sessionID().isValid());
                 m_sessionResources.remove(resource.sessionID());
             }
 

@@ -351,7 +351,7 @@ public:
             indexToOperand.append(operand);
         }
         
-        UncheckedKeyHashSet<Node*> putStacksToSink;
+        HashSet<Node*> putStacksToSink;
         IndexMap<BasicBlock*, Vector<std::pair<size_t, Node*>>> defsInBlock(m_graph.numBlocks());
 
         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {

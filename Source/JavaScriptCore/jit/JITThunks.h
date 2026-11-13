@@ -254,7 +254,7 @@ private:
         PackedRefPtr<ExecutableMemoryHandle> handle;
         bool needsCrossModifyingCodeFence;
     };
-    using CTIStubMap = UncheckedKeyHashMap<ThunkGenerator, Entry>;
+    using CTIStubMap = HashMap<ThunkGenerator, Entry>;
 
     using HostFunctionKey = std::tuple<TaggedNativeFunction, TaggedNativeFunction, ImplementationVisibility, unsigned, String>;
 
@@ -288,7 +288,7 @@ private:
     struct HostKeySearcher;
     struct NativeExecutableTranslator;
 
-    using WeakNativeExecutableSet = UncheckedKeyHashSet<Weak<NativeExecutable>, WeakNativeExecutableHash>;
+    using WeakNativeExecutableSet = HashSet<Weak<NativeExecutable>, WeakNativeExecutableHash>;
 
     // A lazy thunk is published with a release store to its state, so a request that finds it
     // generated reads its code with an acquire load and no lock, and each thunk's own lock keeps

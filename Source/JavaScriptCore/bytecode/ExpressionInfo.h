@@ -307,7 +307,7 @@ private:
 
     static constexpr unsigned numberOfWordsBetweenChapters = 10000;
 
-    UncheckedKeyHashMap<InstPC, Entry, WTF::IntHash<InstPC>, WTF::UnsignedWithZeroKeyHashTraits<InstPC>> m_cachedEntries;
+    HashMap<InstPC, Entry, WTF::IntHash<InstPC>, WTF::UnsignedWithZeroKeyHashTraits<InstPC>> m_cachedEntries;
 
     unsigned m_numberOfChapters;
     unsigned m_numberOfEncodedInfo;

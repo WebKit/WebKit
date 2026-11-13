@@ -199,7 +199,7 @@ ConnectionID RemoteInspectorSocketEndpoint::generateConnectionID()
     ConnectionID id;
     do {
         id = cryptographicallyRandomNumber<ConnectionID>();
-    } while (!m_clients.isValidKey(id) || m_clients.contains(id) || m_listeners.contains(id));
+    } while (!id || m_clients.contains(id) || m_listeners.contains(id));
     return id;
 }
 

@@ -64,7 +64,7 @@ public:
             functor(node);
             return;
         }
-        UncheckedKeyHashSet<Node*> seen;
+        HashSet<Node*> seen;
         Vector<Node*> worklist;
         seen.add(node);
         worklist.append(node);
@@ -83,7 +83,7 @@ public:
     }
     
 private:
-    UncheckedKeyHashMap<Node*, List> m_children;
+    HashMap<Node*, List> m_children;
 };
 
 } } // namespace JSC::DFG

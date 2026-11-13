@@ -126,4 +126,13 @@ TEST(MIMETypeRegistry, CorrectExtensionForMIMEType)
 #endif
 }
 
+TEST(MIMETypeRegistry, IsWebArchiveMIMEType)
+{
+    EXPECT_TRUE(MIMETypeRegistry::isWebArchiveMIMEType("application/x-webarchive"_s));
+    EXPECT_TRUE(MIMETypeRegistry::isWebArchiveMIMEType("Multipart/Related"_s));
+    EXPECT_FALSE(MIMETypeRegistry::isWebArchiveMIMEType("text/html"_s));
+    EXPECT_FALSE(MIMETypeRegistry::isWebArchiveMIMEType(emptyString()));
+    EXPECT_FALSE(MIMETypeRegistry::isWebArchiveMIMEType(String()));
+}
+
 } // namespace TestWebKitAPI

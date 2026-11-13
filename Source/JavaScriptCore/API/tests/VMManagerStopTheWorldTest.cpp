@@ -952,7 +952,7 @@ static int test()
         return ret;
     };
 
-    UncheckedKeyHashSet<VM*> preexistingVMs;
+    HashSet<VM*> preexistingVMs;
     Vector<VM*> testVMs;
     VM* inactiveVM = nullptr;
 

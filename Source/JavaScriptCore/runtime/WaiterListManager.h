@@ -248,7 +248,7 @@ private:
     RefPtr<WaiterList> findList(void* ptr);
 
     Lock m_waiterListsLock;
-    UncheckedKeyHashMap<void*, Ref<WaiterList>> m_waiterLists;
+    HashMap<void*, Ref<WaiterList>> m_waiterLists;
 };
 
 } // namespace JSC

@@ -650,7 +650,7 @@ template<typename MatchFunction>
 void JITWorklist::removeMatchingPlansForVM(VM& vm, NOESCAPE const MatchFunction& matches)
 {
     Locker locker { *m_lock };
-    UncheckedKeyHashSet<JITCompilationKey> deadPlanKeys;
+    HashSet<JITCompilationKey> deadPlanKeys;
     for (auto& entry : m_plans) {
         JITPlan* plan = entry.value.get();
         if (plan->vm() != &vm)

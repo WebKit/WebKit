@@ -257,7 +257,7 @@ void ICStats::dumpChains()
     }
 
     auto dumpHistogram = [&](const char* title, auto keyFn) {
-        UncheckedKeyHashMap<unsigned, uint64_t, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> histogram;
+        HashMap<unsigned, uint64_t, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> histogram;
         uint64_t total = 0;
         for (unsigned i = 0; i < list.size(); i++) {
             histogram.add(keyFn(i), 0).iterator->value += list[i].count;

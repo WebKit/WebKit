@@ -89,7 +89,7 @@ public:
 private:
     CodeBlock* m_owner { nullptr };
     std::array<CacheEntry, 2> m_quickCache { };
-    UncheckedKeyHashMap<Ref<AtomStringImpl>, JSString*> m_cache;
+    HashMap<Ref<AtomStringImpl>, JSString*> m_cache;
     Mode m_mode { Mode::Megamorphic };
     Lock m_lock;
 };

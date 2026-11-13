@@ -1275,8 +1275,8 @@ private:
     static bool isRefWithRecursiveReference(Type);
     static bool isRefWithRecursiveReference(StorageType);
 
-    UncheckedKeyHashSet<CanonicalRecursionGroupEntry, CanonicalRecursionGroupEntryHash> m_canonicalRecursionGroups;
-    UncheckedKeyHashSet<CanonicalSingletonEntry> m_canonicalSingletonGroups;
+    HashSet<CanonicalRecursionGroupEntry, CanonicalRecursionGroupEntryHash> m_canonicalRecursionGroups;
+    HashSet<CanonicalSingletonEntry> m_canonicalSingletonGroups;
     RefPtr<const RTT> m_Void_Externref;
     Lock m_lock;
 };

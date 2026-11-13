@@ -43,8 +43,6 @@ bool CodeBlockSet::contains(const AbstractLocker&, void* candidateCodeBlock)
 {
     RELEASE_ASSERT(m_lock.isLocked());
     CodeBlock* codeBlock = static_cast<CodeBlock*>(candidateCodeBlock);
-    if (!UncheckedKeyHashSet<CodeBlock*>::isValidValue(codeBlock))
-        return false;
     return m_codeBlocks.contains(codeBlock);
 }
 

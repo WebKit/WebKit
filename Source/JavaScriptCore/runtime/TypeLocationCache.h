@@ -28,7 +28,7 @@
 #include <JavaScriptCore/SourceID.h>
 #include <JavaScriptCore/TypeLocation.h>
 #include <wtf/FastMalloc.h>
-#include <wtf/GenericHashKey.h>
+#include <wtf/HashMap.h>
 
 namespace JSC {
 
@@ -53,7 +53,7 @@ public:
 
     std::pair<TypeLocation*, bool> getTypeLocation(GlobalVariableID, SourceID, unsigned start, unsigned end, RefPtr<TypeSet>&&, VM*);
 private:
-    using LocationMap = UncheckedKeyHashMap<GenericHashKey<LocationKey>, TypeLocation*>;
+    using LocationMap = HashMap<LocationKey, TypeLocation*>;
     LocationMap m_locationMap;
 };
 

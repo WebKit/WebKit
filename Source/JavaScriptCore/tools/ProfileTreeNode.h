@@ -34,7 +34,7 @@
 namespace JSC {
 
 class ProfileTreeNode {
-    typedef UncheckedKeyHashMap<String, ProfileTreeNode> Map;
+    typedef HashMap<String, ProfileTreeNode> Map;
     typedef Map::KeyValuePairType MapEntry;
 
 public:

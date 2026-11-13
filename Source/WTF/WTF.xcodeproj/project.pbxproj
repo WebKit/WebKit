@@ -635,7 +635,6 @@
 		DD5697C72DC0511900050321 /* generate-platform-args in Headers */ = {isa = PBXBuildFile; fileRef = DD9C67FB2D70243000D4BEC7 /* generate-platform-args */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD725ECA2D8A443E00E72544 /* audit-spi-if-needed.sh in Headers */ = {isa = PBXBuildFile; fileRef = DD725EC92D8A442900E72544 /* audit-spi-if-needed.sh */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDA35E4A29CA9B68006C1018 /* PlatformEnablePlayStation.h in Headers */ = {isa = PBXBuildFile; fileRef = DD4901E127B4748A00D7E50D /* PlatformEnablePlayStation.h */; };
-		DDCAF31D27B1E7C500C45308 /* GenericHashKey.h in Headers */ = {isa = PBXBuildFile; fileRef = E3FD6D6627A1F6AD00935000 /* GenericHashKey.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDE7455F2F731DBA008013AB /* generate-unified-source-bundles.py in Headers */ = {isa = PBXBuildFile; fileRef = DDE7455D2F731D80008013AB /* generate-unified-source-bundles.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF306D827C08654006A526F /* CFStringSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF306C127C08654006A526F /* CFStringSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF306D927C08654006A526F /* CFRunLoopSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF306C227C08654006A526F /* CFRunLoopSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2110,7 +2109,6 @@
 		E3EE4E8D2E8A34BC00398282 /* ulocbuilder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ulocbuilder.h; sourceTree = "<group>"; };
 		E3EE4E8E2E8A34BC00398282 /* unumberoptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = unumberoptions.h; sourceTree = "<group>"; };
 		E3EE4E8F2E8A34BC00398282 /* usimplenumberformatter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = usimplenumberformatter.h; sourceTree = "<group>"; };
-		E3FD6D6627A1F6AD00935000 /* GenericHashKey.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GenericHashKey.h; sourceTree = "<group>"; };
 		E42785642E9BC0F200A0DEF4 /* EnumSet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EnumSet.h; sourceTree = "<group>"; };
 		E4A0AD371A96245500536DF6 /* WorkQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkQueue.cpp; sourceTree = "<group>"; };
 		E4A0AD381A96245500536DF6 /* WorkQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkQueue.h; sourceTree = "<group>"; };
@@ -2540,7 +2538,6 @@
 				FEC26BF2289DBBD300639A59 /* FunctionPtr.h */,
 				53F1D98620477B9800EBC6BF /* FunctionTraits.h */,
 				A400B8FA2F3AB62E009E21AF /* GenerationalSet.h */,
-				E3FD6D6627A1F6AD00935000 /* GenericHashKey.h */,
 				E3831F922703101A00EF5EB3 /* GenericTimeMixin.h */,
 				A8A472A8151A825A004123FF /* GetPtr.h */,
 				0F30BA8A1E78708E002CA847 /* GlobalVersion.cpp */,
@@ -3691,7 +3688,6 @@
 				DDF3080327C08A77006A526F /* GeneratePreferences.rb in Headers */,
 				DDF3080427C08A77006A526F /* GenerateSecurityFlags.rb in Headers */,
 				A400B8FB2F3AB62E009E21AF /* GenerationalSet.h in Headers */,
-				DDCAF31D27B1E7C500C45308 /* GenericHashKey.h in Headers */,
 				DD3DC93127A4BF8E007E5B61 /* GenericTimeMixin.h in Headers */,
 				DD3DC94727A4BF8E007E5B61 /* GetPtr.h in Headers */,
 				DD3DC96B27A4BF8E007E5B61 /* GlobalVersion.h in Headers */,

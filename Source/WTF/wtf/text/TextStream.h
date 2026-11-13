@@ -288,8 +288,8 @@ TextStream& operator<<(TextStream& ts, const FixedVector<ItemType>& vector)
     return streamSizedContainer(ts, vector);
 }
 
-template<typename ValueArg, typename HashArg, typename TraitsArg, typename TableTraitsArg, ShouldValidateKey shouldValidateKey>
-TextStream& operator<<(TextStream& ts, const HashSet<ValueArg, HashArg, TraitsArg, TableTraitsArg, shouldValidateKey>& set)
+template<typename ValueArg, typename HashArg, typename TraitsArg, typename TableTraitsArg>
+TextStream& operator<<(TextStream& ts, const HashSet<ValueArg, HashArg, TraitsArg, TableTraitsArg>& set)
 {
     return streamSizedContainer(ts, set);
 }
@@ -354,8 +354,8 @@ TextStream& operator<<(TextStream& ts, const CheckedPtr<T>& item)
     return ts << "null"_s;
 }
 
-template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg, typename TableTraitsArg, ShouldValidateKey shouldValidateKey, typename Malloc>
-TextStream& operator<<(TextStream& ts, const HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, TableTraitsArg, shouldValidateKey, Malloc>& map)
+template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg, typename TableTraitsArg, typename Malloc>
+TextStream& operator<<(TextStream& ts, const HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, TableTraitsArg, Malloc>& map)
 {
     ts << '{';
 
@@ -437,8 +437,8 @@ struct supports_text_stream_insertion<FixedVector<ItemType>> : supports_text_str
 template<typename ValueArg, typename HashArg, typename TraitsArg>
 struct supports_text_stream_insertion<HashSet<ValueArg, HashArg, TraitsArg>> : supports_text_stream_insertion<ValueArg> { };
 
-template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg, typename TableTraitsArg, ShouldValidateKey shouldValidateKey, typename Malloc>
-struct supports_text_stream_insertion<HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, TableTraitsArg, shouldValidateKey, Malloc>> : std::conjunction<supports_text_stream_insertion<KeyArg>, supports_text_stream_insertion<MappedArg>> { };
+template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg, typename TableTraitsArg, typename Malloc>
+struct supports_text_stream_insertion<HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, TableTraitsArg, Malloc>> : std::conjunction<supports_text_stream_insertion<KeyArg>, supports_text_stream_insertion<MappedArg>> { };
 
 template<typename T, typename Traits>
 struct supports_text_stream_insertion<Markable<T, Traits>> : supports_text_stream_insertion<T> { };

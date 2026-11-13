@@ -61,7 +61,6 @@
 #endif
 #include "ViewTransition.h"
 #include "ViewTransitionTypeSet.h"
-#include <wtf/GenericHashKey.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -1548,9 +1547,9 @@ bool SelectorChecker::matchSelectorList(CheckingContext& checkingContext, const 
 #if ENABLE(CSS_SELECTOR_JIT)
 static constexpr auto maximumCompiledHasArgumentSelectorsSize = 1024u;
 
-NODELETE static HashMap<GenericHashKey<CSSSelectorList>, FixedVector<CompiledSelector>>& compiledHasArgumentSelectorsMap()
+NODELETE static HashMap<CSSSelectorList, FixedVector<CompiledSelector>>& compiledHasArgumentSelectorsMap()
 {
-    static NeverDestroyed<HashMap<GenericHashKey<CSSSelectorList>, FixedVector<CompiledSelector>>> map;
+    static NeverDestroyed<HashMap<CSSSelectorList, FixedVector<CompiledSelector>>> map;
     return map;
 }
 #endif
@@ -1609,7 +1608,7 @@ bool SelectorChecker::matchHasPseudoClass(CheckingContext& checkingContext, cons
         auto& [hashKey, compiledSelectors] = *result.iterator;
         // Iterate the cached copy: the JIT bakes pointers to selector data into compiled
         // code, and the cache outlives the originating CSSSelectorList.
-        auto& cachedSelectorList = hashKey.key();
+        auto& cachedSelectorList = hashKey;
 
         unsigned argIndex = 0;
         for (auto& hasSelector : cachedSelectorList) {

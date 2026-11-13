@@ -1706,7 +1706,7 @@ void WebProcessPool::updateRemoteWorkerUserAgent(const String& userAgent)
 void WebProcessPool::pageBeginUsingWebsiteDataStore(WebPageProxy& page, WebsiteDataStore& dataStore)
 {
     RELEASE_ASSERT(RunLoop::isMain());
-    RELEASE_ASSERT(m_sessionToPageIDsMap.isValidKey(dataStore.sessionID()));
+    RELEASE_ASSERT(dataStore.sessionID().isValid());
     auto result = m_sessionToPageIDsMap.add(dataStore.sessionID(), HashSet<WebPageProxyIdentifier>()).iterator->value.add(page.identifier());
     ASSERT_UNUSED(result, result.isNewEntry);
     dataStore.addPage(page);
@@ -1721,7 +1721,7 @@ void WebProcessPool::pageEndUsingWebsiteDataStore(WebPageProxy& page, WebsiteDat
 {
     RELEASE_ASSERT(RunLoop::isMain());
     auto sessionID = dataStore.sessionID();
-    RELEASE_ASSERT(m_sessionToPageIDsMap.isValidKey(dataStore.sessionID()));
+    RELEASE_ASSERT(dataStore.sessionID().isValid());
     auto iterator = m_sessionToPageIDsMap.find(sessionID);
     RELEASE_ASSERT(iterator != m_sessionToPageIDsMap.end());
 
@@ -1755,7 +1755,7 @@ void WebProcessPool::shutDownPrewarmedProcessesForWebsiteDataStore(WebsiteDataSt
 bool WebProcessPool::hasPagesUsingWebsiteDataStore(WebsiteDataStore& dataStore) const
 {
     RELEASE_ASSERT(RunLoop::isMain());
-    RELEASE_ASSERT(m_sessionToPageIDsMap.isValidKey(dataStore.sessionID()));
+    RELEASE_ASSERT(dataStore.sessionID().isValid());
     return m_sessionToPageIDsMap.contains(dataStore.sessionID());
 }
 

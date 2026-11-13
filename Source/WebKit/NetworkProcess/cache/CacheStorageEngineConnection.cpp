@@ -144,10 +144,6 @@ void CacheStorageEngineConnection::reference(WebCore::DOMCacheIdentifier cacheId
     if (!session)
         return;
 
-    ASSERT(m_cachesLocks.isValidKey(cacheIdentifier));
-    if (!m_cachesLocks.isValidKey(cacheIdentifier))
-        return;
-
     auto& counter = m_cachesLocks.ensure(cacheIdentifier, []() {
         return 0;
     }).iterator->value;
@@ -160,10 +156,6 @@ void CacheStorageEngineConnection::dereference(WebCore::DOMCacheIdentifier cache
     CACHE_STORAGE_RELEASE_LOG("dereference cache %" PRIu64, cacheIdentifier.object().toUInt64());
     auto* session = m_connection.networkSession();
     if (!session)
-        return;
-
-    ASSERT(m_cachesLocks.isValidKey(cacheIdentifier));
-    if (!m_cachesLocks.isValidKey(cacheIdentifier))
         return;
 
     auto referenceResult = m_cachesLocks.find(cacheIdentifier);

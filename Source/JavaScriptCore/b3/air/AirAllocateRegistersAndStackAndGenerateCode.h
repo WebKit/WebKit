@@ -84,7 +84,7 @@ private:
     size_t m_globalInstIndex;
     IndexMap<Reg, Tmp>* m_currentAllocation { nullptr };
     TmpMap<size_t> m_liveRangeEnd;
-    UncheckedKeyHashMap<size_t, Vector<Tmp, 2>> m_tmpsToRelease;
+    HashMap<size_t, Vector<Tmp, 2>> m_tmpsToRelease;
     RegisterSet m_namedUsedRegs;
     RegisterSet m_namedDefdRegs;
     RegisterSet m_earlyClobber;
@@ -96,10 +96,10 @@ private:
     struct PatchSpillData {
         MacroAssembler::Jump jump;
         MacroAssembler::Label continueLabel;
-        UncheckedKeyHashMap<Tmp, Arg*> defdTmps;
+        HashMap<Tmp, Arg*> defdTmps;
     };
 
-    UncheckedKeyHashMap<BasicBlock*, PatchSpillData> m_blocksAfterTerminalPatchForSpilling;
+    HashMap<BasicBlock*, PatchSpillData> m_blocksAfterTerminalPatchForSpilling;
 };
 
 } } } // namespace JSC::B3::Air

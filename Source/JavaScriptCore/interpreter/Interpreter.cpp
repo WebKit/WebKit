@@ -557,9 +557,9 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 #if ENABLE(COMPUTED_GOTO_OPCODES)
 #if !ENABLE(LLINT_EMBEDDED_OPCODE_ID) || ASSERT_ENABLED
-UncheckedKeyHashMap<Opcode, OpcodeID>& Interpreter::opcodeIDTable()
+HashMap<Opcode, OpcodeID>& Interpreter::opcodeIDTable()
 {
-    static LazyNeverDestroyed<UncheckedKeyHashMap<Opcode, OpcodeID>> opcodeIDTable;
+    static LazyNeverDestroyed<HashMap<Opcode, OpcodeID>> opcodeIDTable;
 
     static std::once_flag initializeKey;
     std::call_once(initializeKey, [&] {

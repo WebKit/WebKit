@@ -39,7 +39,7 @@ ClobberSet::~ClobberSet() = default;
 
 void ClobberSet::add(AbstractHeap heap)
 {
-    UncheckedKeyHashMap<AbstractHeap, bool>::AddResult result = m_clobbers.add(heap, true);
+    HashMap<AbstractHeap, bool>::AddResult result = m_clobbers.add(heap, true);
     if (!result.isNewEntry) {
         if (result.iterator->value)
             return;
@@ -63,15 +63,15 @@ void ClobberSet::addAll(const ClobberSet& other)
     if (this == &other)
         return;
     
-    UncheckedKeyHashMap<AbstractHeap, bool>::const_iterator iter = other.m_clobbers.begin();
-    UncheckedKeyHashMap<AbstractHeap, bool>::const_iterator end = other.m_clobbers.end();
+    HashMap<AbstractHeap, bool>::const_iterator iter = other.m_clobbers.begin();
+    HashMap<AbstractHeap, bool>::const_iterator end = other.m_clobbers.end();
     for (; iter != end; ++iter)
         m_clobbers.add(iter->key, iter->value).iterator->value |= iter->value;
 }
 
 bool ClobberSet::contains(AbstractHeap heap) const
 {
-    UncheckedKeyHashMap<AbstractHeap, bool>::const_iterator iter = m_clobbers.find(heap);
+    HashMap<AbstractHeap, bool>::const_iterator iter = m_clobbers.find(heap);
     if (iter == m_clobbers.end())
         return false;
     return iter->value;
@@ -111,12 +111,12 @@ void ClobberSet::clear()
     m_clobbers.clear();
 }
 
-UncheckedKeyHashSet<AbstractHeap> ClobberSet::direct() const
+HashSet<AbstractHeap> ClobberSet::direct() const
 {
     return setOf(true);
 }
 
-UncheckedKeyHashSet<AbstractHeap> ClobberSet::super() const
+HashSet<AbstractHeap> ClobberSet::super() const
 {
     return setOf(false);
 }
@@ -126,9 +126,9 @@ void ClobberSet::dump(PrintStream& out) const
     out.print("(Direct:[", sortedListDump(direct()), "], Super:[", sortedListDump(super()), "])");
 }
 
-UncheckedKeyHashSet<AbstractHeap> ClobberSet::setOf(bool direct) const
+HashSet<AbstractHeap> ClobberSet::setOf(bool direct) const
 {
-    UncheckedKeyHashSet<AbstractHeap> result;
+    HashSet<AbstractHeap> result;
     for (auto& clobber : m_clobbers) {
         if (clobber.value == direct)
             result.add(clobber.key);

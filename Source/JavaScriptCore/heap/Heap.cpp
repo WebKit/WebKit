@@ -221,14 +221,14 @@ NODELETE constexpr bool measurePhaseTiming()
     return false;
 }
 
-UncheckedKeyHashMap<const char*, GCTypeMap<SimpleStats>>& timingStats()
+HashMap<const char*, GCTypeMap<SimpleStats>>& timingStats()
 {
-    static UncheckedKeyHashMap<const char*, GCTypeMap<SimpleStats>>* result;
+    static HashMap<const char*, GCTypeMap<SimpleStats>>* result;
     static std::once_flag once;
     std::call_once(
         once,
         [] {
-            result = new UncheckedKeyHashMap<const char*, GCTypeMap<SimpleStats>>();
+            result = new HashMap<const char*, GCTypeMap<SimpleStats>>();
         });
     return *result;
 }

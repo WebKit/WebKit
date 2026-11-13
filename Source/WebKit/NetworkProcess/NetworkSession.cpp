@@ -552,7 +552,7 @@ void NetworkSession::setFirstPartyHostCNAMEDomain(String&& firstPartyHost, WebCo
 
 std::optional<WebCore::RegistrableDomain> NetworkSession::firstPartyHostCNAMEDomain(const String& firstPartyHost)
 {
-    if (!decltype(m_firstPartyHostCNAMEDomains)::isValidKey(firstPartyHost))
+    if (firstPartyHost.isNull())
         return std::nullopt;
 
     auto iterator = m_firstPartyHostCNAMEDomains.find(firstPartyHost);

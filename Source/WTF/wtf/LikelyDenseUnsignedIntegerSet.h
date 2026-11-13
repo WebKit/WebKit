@@ -48,7 +48,7 @@ class LikelyDenseUnsignedIntegerSet {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(LikelyDenseUnsignedIntegerSet);
     WTF_MAKE_NONCOPYABLE(LikelyDenseUnsignedIntegerSet);
     static_assert(std::is_unsigned<IndexType>::value);
-    using Set = UncheckedKeyHashSet<IndexType, WTF::IntHash<IndexType>, WTF::UnsignedWithZeroKeyHashTraits<IndexType> >;
+    using Set = HashSet<IndexType, WTF::IntHash<IndexType>, WTF::UnsignedWithZeroKeyHashTraits<IndexType> >;
 public:
     LikelyDenseUnsignedIntegerSet()
         : m_size(0)
@@ -91,8 +91,6 @@ public:
 
     bool contains(IndexType value) const
     {
-        ASSERT(isValidValue(value));
-
         if (isBitVector()) {
             if (m_min > value)
                 return false;
@@ -109,8 +107,6 @@ public:
 
     AddResult add(IndexType value)
     {
-        ASSERT(isValidValue(value));
-
         if (!m_size) {
             ASSERT_WITH_SECURITY_IMPLICATION(isBitVector());
             m_min = value & ~63;
@@ -268,12 +264,6 @@ public:
 
 private:
     bool isBitVector() const { return m_size != std::numeric_limits<unsigned>::max(); }
-
-    bool isValidValue(IndexType value) const
-    {
-        return value != UnsignedWithZeroKeyHashTraits<IndexType>::emptyValue()
-            && !UnsignedWithZeroKeyHashTraits<IndexType>::isDeletedValue(value);
-    }
 
     unsigned estimateHashSetSize(unsigned n)
     {

@@ -81,7 +81,7 @@ struct JSONPData {
 class JSONRanges {
 public:
     struct Entry;
-    using Object = UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, Entry, IdentifierRepHash>;
+    using Object = HashMap<RefPtr<UniquedStringImpl>, Entry, IdentifierRepHash>;
     using Array = Vector<Entry>;
     struct Entry {
         JSValue value;
@@ -333,7 +333,7 @@ private:
     Lexer m_lexer;
     const ParserMode m_mode;
     String m_parseErrorMessage;
-    UncheckedKeyHashSet<JSObject*> m_visitedUnderscoreProto;
+    HashSet<JSObject*> m_visitedUnderscoreProto;
     MarkedArgumentBuffer m_objectStack;
     MarkedArgumentBuffer m_elementStack;
     Vector<ParserState, 16, UnsafeVectorOverflow> m_stateStack;

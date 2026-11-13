@@ -617,24 +617,24 @@ static_assert(std::is_trivial_v<StatusBytes>);
             setKeyCount(0);
         }
 
-        template<ShouldValidateKey shouldValidateKey = ShouldValidateKey::Yes> AddResult add(const ValueType& value) LIFETIME_BOUND { return add<IdentityTranslatorType, shouldValidateKey>(Extractor::extract(value), [&]() ALWAYS_INLINE_LAMBDA { return value; }); }
-        template<ShouldValidateKey shouldValidateKey = ShouldValidateKey::Yes> AddResult add(ValueType&& value) LIFETIME_BOUND { return add<IdentityTranslatorType, shouldValidateKey>(Extractor::extract(value), [&]() ALWAYS_INLINE_LAMBDA { return WTF::move(value); }); }
+        AddResult add(const ValueType& value) LIFETIME_BOUND { return add<IdentityTranslatorType>(Extractor::extract(value), [&] ALWAYS_INLINE_LAMBDA { return value; }); }
+        AddResult add(ValueType&& value) LIFETIME_BOUND { return add<IdentityTranslatorType>(Extractor::extract(value), [&] ALWAYS_INLINE_LAMBDA { return WTF::move(value); }); }
 
         // A special version of add() that finds the object by hashing and comparing
         // with some other type, to avoid the cost of type conversion if the object is already
         // in the table.
-        template<typename HashTranslator, ShouldValidateKey> AddResult add(auto&& key, NOESCAPE const std::invocable<> auto& functor) LIFETIME_BOUND;
-        template<typename HashTranslator, ShouldValidateKey> AddResult addPassingHashCode(auto&& key, NOESCAPE const std::invocable<> auto& functor) LIFETIME_BOUND;
+        template<typename HashTranslator> AddResult add(auto&& key, NOESCAPE const std::invocable<> auto& functor) LIFETIME_BOUND;
+        template<typename HashTranslator> AddResult addPassingHashCode(auto&& key, NOESCAPE const std::invocable<> auto& functor) LIFETIME_BOUND;
 
-        template<ShouldValidateKey shouldValidateKey = ShouldValidateKey::Yes> iterator find(const KeyType& key) LIFETIME_BOUND { return find<IdentityTranslatorType, shouldValidateKey>(key); }
-        template<ShouldValidateKey shouldValidateKey = ShouldValidateKey::Yes> const_iterator find(const KeyType& key) const LIFETIME_BOUND { return find<IdentityTranslatorType, shouldValidateKey>(key); }
-        template<ShouldValidateKey shouldValidateKey = ShouldValidateKey::Yes> bool contains(const KeyType& key) const { return contains<IdentityTranslatorType, shouldValidateKey>(key); }
+        iterator find(const KeyType& key) LIFETIME_BOUND { return find<IdentityTranslatorType>(key); }
+        const_iterator find(const KeyType& key) const LIFETIME_BOUND { return find<IdentityTranslatorType>(key); }
+        bool contains(const KeyType& key) const { return contains<IdentityTranslatorType>(key); }
 
-        template<typename HashTranslator, ShouldValidateKey, typename T> iterator find(const T&) LIFETIME_BOUND;
-        template<typename HashTranslator, ShouldValidateKey, typename T> const_iterator find(const T&) const LIFETIME_BOUND;
-        template<typename HashTranslator, ShouldValidateKey, typename T> bool contains(const T&) const;
+        template<typename HashTranslator, typename T> iterator find(const T&) LIFETIME_BOUND;
+        template<typename HashTranslator, typename T> const_iterator find(const T&) const LIFETIME_BOUND;
+        template<typename HashTranslator, typename T> bool contains(const T&) const;
 
-        template<ShouldValidateKey> void remove(const KeyType&);
+        void remove(const KeyType&);
         void remove(iterator);
         void removeWithoutEntryConsistencyCheck(iterator);
         void removeWithoutEntryConsistencyCheck(const_iterator);
@@ -652,9 +652,19 @@ static_assert(std::is_trivial_v<StatusBytes>);
 
         static bool isWeakNullBucket(const ValueType& value) { return isHashTraitsWeakNullValue<KeyTraits>(Extractor::extract(value)); }
 
-        template<ShouldValidateKey shouldValidateKey = ShouldValidateKey::Yes> ValueType* lookup(const Key& key) { return lookup<IdentityTranslatorType, shouldValidateKey>(key); }
-        template<typename HashTranslator, ShouldValidateKey = ShouldValidateKey::Yes, typename T> ValueType* lookup(const T&);
-        template<typename HashTranslator, ShouldValidateKey, typename T> ValueType* inlineLookup(const T&);
+        static bool isValidKey(const Key& key)
+        {
+            if constexpr (HashFunctions::safeToCompareToEmptyOrDeleted)
+                return true;
+            else {
+                // Any key can be stored, but some hash functions cannot hash their traits' empty or deleted value (StringHash on a null String).
+                return !KeyTraits::isDeletedValue(key) && !isHashTraitsEmptyValue<KeyTraits>(key);
+            }
+        }
+
+        ValueType* lookup(const Key& key) { return lookup<IdentityTranslatorType>(key); }
+        template<typename HashTranslator, typename T> ValueType* lookup(const T&);
+        template<typename HashTranslator, typename T> ValueType* inlineLookup(const T&);
 
         ALWAYS_INLINE bool isNullStorage() const { return !m_table; }
 
@@ -808,14 +818,14 @@ static_assert(std::is_trivial_v<StatusBytes>);
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, typename Malloc>
-    template<typename HashTranslator, ShouldValidateKey shouldValidateKey, typename T>
+    template<typename HashTranslator, typename T>
     inline auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, Malloc>::lookup(const T& key) -> ValueType*
     {
-        return inlineLookup<HashTranslator, shouldValidateKey>(key);
+        return inlineLookup<HashTranslator>(key);
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, typename Malloc>
-    template<typename HashTranslator, ShouldValidateKey shouldValidateKey, typename T>
+    template<typename HashTranslator, typename T>
     ALWAYS_INLINE auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, Malloc>::inlineLookup(const T& key) -> ValueType*
     {
         static_assert(sizeof(Value) <= 150, "Your HashTable types are too big to efficiently move when rehashing.  Consider using UniqueRef instead");
@@ -969,7 +979,7 @@ static_assert(std::is_trivial_v<StatusBytes>);
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, typename Malloc>
-    template<typename HashTranslator, ShouldValidateKey shouldValidateKey, typename T>
+    template<typename HashTranslator, typename T>
     ALWAYS_INLINE auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, Malloc>::add(T&& key, NOESCAPE const std::invocable<> auto& functor) LIFETIME_BOUND -> AddResult
     {
         invalidateIterators(this);
@@ -1001,7 +1011,7 @@ static_assert(std::is_trivial_v<StatusBytes>);
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, typename Malloc>
-    template<typename HashTranslator, ShouldValidateKey shouldValidateKey, typename T>
+    template<typename HashTranslator, typename T>
     inline auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, Malloc>::addPassingHashCode(T&& key, NOESCAPE const std::invocable<> auto& functor) LIFETIME_BOUND -> AddResult
     {
         invalidateIterators(this);
@@ -1048,13 +1058,13 @@ static_assert(std::is_trivial_v<StatusBytes>);
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, typename Malloc>
-    template <typename HashTranslator, ShouldValidateKey shouldValidateKey, typename T>
+    template <typename HashTranslator, typename T>
     auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, Malloc>::find(const T& key) LIFETIME_BOUND -> iterator
     {
         if (!m_table)
             return end();
 
-        ValueType* entry = lookup<HashTranslator, shouldValidateKey>(key);
+        ValueType* entry = lookup<HashTranslator>(key);
         if (!entry)
             return end();
 
@@ -1062,13 +1072,13 @@ static_assert(std::is_trivial_v<StatusBytes>);
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, typename Malloc>
-    template <typename HashTranslator, ShouldValidateKey shouldValidateKey, typename T>
+    template <typename HashTranslator, typename T>
     auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, Malloc>::find(const T& key) const LIFETIME_BOUND -> const_iterator
     {
         if (!m_table)
             return end();
 
-        ValueType* entry = const_cast<HashTable*>(this)->lookup<HashTranslator, shouldValidateKey>(key);
+        ValueType* entry = const_cast<HashTable*>(this)->lookup<HashTranslator>(key);
         if (!entry)
             return end();
 
@@ -1076,13 +1086,13 @@ static_assert(std::is_trivial_v<StatusBytes>);
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, typename Malloc>
-    template <typename HashTranslator, ShouldValidateKey shouldValidateKey, typename T>
+    template <typename HashTranslator, typename T>
     bool HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, Malloc>::contains(const T& key) const
     {
         if (!m_table)
             return false;
 
-        return const_cast<HashTable*>(this)->lookup<HashTranslator, shouldValidateKey>(key);
+        return const_cast<HashTable*>(this)->lookup<HashTranslator>(key);
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, typename Malloc>
@@ -1161,10 +1171,9 @@ static_assert(std::is_trivial_v<StatusBytes>);
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, typename Malloc>
-    template<ShouldValidateKey shouldValidateKey>
     inline void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, Malloc>::remove(const KeyType& key)
     {
-        remove(find<shouldValidateKey>(key));
+        remove(find(key));
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, typename Malloc>
@@ -1515,7 +1524,7 @@ static_assert(std::is_trivial_v<StatusBytes>);
 
             auto& key = Extractor::extract(*entry);
             ASSERT(statusBytes[j] == StatusByte::forHash(IdentityTranslatorType::hash(key), hashShiftForSize(tableSize)));
-            const_iterator it = find<ShouldValidateKey::No>(key);
+            const_iterator it = find(key);
             ASSERT(entry == it.get());
 
             ValueCheck<Key>::checkConsistency(key);

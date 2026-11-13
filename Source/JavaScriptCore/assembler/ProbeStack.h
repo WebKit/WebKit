@@ -209,7 +209,7 @@ private:
     Page* m_lastAccessedPage { nullptr };
 
     StackBounds m_stackBounds;
-    UncheckedKeyHashMap<void*, std::unique_ptr<Page>> m_pages;
+    HashMap<void*, std::unique_ptr<Page>> m_pages;
 
 #if ASSERT_ENABLED
     bool m_isValid { true };

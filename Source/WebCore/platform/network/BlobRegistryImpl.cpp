@@ -197,7 +197,7 @@ void BlobRegistryImpl::registerInternalBlobURL(const URL& url, Vector<BlobPart>&
         }
         case BlobPart::Type::Blob: {
             auto& partURLKey = part.url().string();
-            if (!m_blobs.isValidKey(partURLKey))
+            if (partURLKey.isNull())
                 break;
             if (RefPtr blob = m_blobs.get(partURLKey))
                 blobData->m_items.appendVector(blob->items());
@@ -288,7 +288,7 @@ void BlobRegistryImpl::unregisterBlobURL(const URL& url, const std::optional<Web
 {
     ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     auto& urlKey = url.string();
-    if (!m_blobs.isValidKey(urlKey))
+    if (urlKey.isNull())
         return;
     ASSERT(BlobURL::isInternalURL(url) || topOrigin);
     if (topOrigin && topOrigin != m_allowedBlobURLTopOrigins.get(urlKey)) {
@@ -305,7 +305,7 @@ BlobData* BlobRegistryImpl::blobDataFromURL(const URL& url, const std::optional<
 {
     ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     auto urlKey = url.stringWithoutFragmentIdentifier();
-    if (!m_blobs.isValidKey(urlKey))
+    if (urlKey.isNull())
         return nullptr;
     if (topOrigin && topOrigin != m_allowedBlobURLTopOrigins.get(urlKey)) {
         RELEASE_LOG_ERROR(Network, "BlobRegistryImpl::blobDataFromURL: (%p) Requested blob URL with incorrect top origin.", this);
@@ -442,7 +442,7 @@ Vector<Ref<BlobDataFileReference>> BlobRegistryImpl::filesInBlob(const URL& url,
 
 void BlobRegistryImpl::addBlobData(const String& url, Ref<BlobData>&& blobData, const std::optional<WebCore::SecurityOriginData>& topOrigin)
 {
-    if (!m_blobs.isValidKey(url))
+    if (url.isNull())
         return;
     ASSERT(BlobURL::isInternalURL(URL { { }, url }) || topOrigin);
     auto addResult = m_blobs.set(url, WTF::move(blobData));
@@ -456,7 +456,7 @@ void BlobRegistryImpl::addBlobData(const String& url, Ref<BlobData>&& blobData, 
 void BlobRegistryImpl::registerBlobURLHandle(const URL& url, const std::optional<WebCore::SecurityOriginData>& topOrigin)
 {
     auto urlKey = url.stringWithoutFragmentIdentifier();
-    if (!m_blobs.isValidKey(urlKey))
+    if (urlKey.isNull())
         return;
     ASSERT(BlobURL::isInternalURL(url) || topOrigin);
     if (!m_blobs.contains(urlKey))
@@ -471,7 +471,7 @@ void BlobRegistryImpl::registerBlobURLHandle(const URL& url, const std::optional
 void BlobRegistryImpl::unregisterBlobURLHandle(const URL& url, const std::optional<WebCore::SecurityOriginData>& topOrigin)
 {
     auto urlKey = url.stringWithoutFragmentIdentifier();
-    if (!m_blobs.isValidKey(urlKey))
+    if (urlKey.isNull())
         return;
     ASSERT(BlobURL::isInternalURL(url) || topOrigin);
     if (topOrigin && topOrigin != m_allowedBlobURLTopOrigins.get(urlKey)) {

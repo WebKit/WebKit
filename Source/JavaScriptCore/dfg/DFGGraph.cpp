@@ -1161,7 +1161,7 @@ bool Graph::watchGlobalProperty(JSGlobalObject* globalObject, unsigned identifie
 
 FullBytecodeLiveness& Graph::livenessFor(CodeBlock* codeBlock)
 {
-    UncheckedKeyHashMap<CodeBlock*, std::unique_ptr<FullBytecodeLiveness>>::iterator iter = m_bytecodeLiveness.find(codeBlock);
+    HashMap<CodeBlock*, std::unique_ptr<FullBytecodeLiveness>>::iterator iter = m_bytecodeLiveness.find(codeBlock);
     if (iter != m_bytecodeLiveness.end())
         return *iter->value;
     
@@ -2407,9 +2407,9 @@ void Graph::appendIonGraphPass(const String& passName)
     m_ionGraphPasses->pushObject(pass);
 }
 
-UncheckedKeyHashMap<Node*, uint32_t> Graph::collectIRDumpDebugInfo(IRDumpDebugInfo& debugInfo)
+HashMap<Node*, uint32_t> Graph::collectIRDumpDebugInfo(IRDumpDebugInfo& debugInfo)
 {
-    UncheckedKeyHashMap<Node*, uint32_t> nodeToLineIndex;
+    HashMap<Node*, uint32_t> nodeToLineIndex;
     for (BlockIndex blockIndex = 0; blockIndex < numBlocks(); ++blockIndex) {
         auto* block = this->block(blockIndex);
         if (!block)

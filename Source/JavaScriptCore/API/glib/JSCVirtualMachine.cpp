@@ -44,16 +44,16 @@
 
 struct _JSCVirtualMachinePrivate {
     JSContextGroupRef jsContextGroup;
-    UncheckedKeyHashMap<JSGlobalContextRef, JSCContext*> contextCache;
+    HashMap<JSGlobalContextRef, JSCContext*> contextCache;
 };
 
 WEBKIT_DEFINE_FINAL_TYPE(JSCVirtualMachine, jsc_virtual_machine, G_TYPE_OBJECT, GObject)
 
 static Lock wrapperCacheMutex;
 
-static UncheckedKeyHashMap<JSContextGroupRef, JSCVirtualMachine*>& wrapperMap() WTF_REQUIRES_LOCK(wrapperCacheMutex)
+static HashMap<JSContextGroupRef, JSCVirtualMachine*>& wrapperMap() WTF_REQUIRES_LOCK(wrapperCacheMutex)
 {
-    static LazyNeverDestroyed<UncheckedKeyHashMap<JSContextGroupRef, JSCVirtualMachine*>> shared;
+    static LazyNeverDestroyed<HashMap<JSContextGroupRef, JSCVirtualMachine*>> shared;
     static std::once_flag onceKey;
     std::call_once(onceKey, [&] {
         shared.construct();

@@ -116,7 +116,7 @@ Vector<Disassembler::DumpedOp> Disassembler::createDumpList(LinkBuffer& linkBuff
         Node* lastNodeForDisassembly = block->at(0);
         for (size_t i = 0; i < block->size(); ++i) {
             MacroAssembler::Label currentLabel;
-            UncheckedKeyHashMap<Node*, MacroAssembler::Label>::iterator iter = m_labelForNode.find(block->at(i));
+            HashMap<Node*, MacroAssembler::Label>::iterator iter = m_labelForNode.find(block->at(i));
             if (iter != m_labelForNode.end())
                 currentLabel = iter->value;
             else {

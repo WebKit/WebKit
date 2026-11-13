@@ -58,7 +58,7 @@ public:
     Ref<NativeImage> nativeImage(CGImageRef glyphImage)
     {
         auto identifier = CGImageGetIdentifier(glyphImage);
-        if (!isMainThread() || !decltype(m_images)::isValidKey(identifier))
+        if (!isMainThread() || !identifier)
             return NativeImage::create(glyphImage).releaseNonNull();
 
         // Use CGImageCreateCopy (which wraps the same underlying data) to avoid keeping the CoreText CGImage alive, but register the

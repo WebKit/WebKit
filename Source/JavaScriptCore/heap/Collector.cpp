@@ -1101,7 +1101,7 @@ size_t Collector::bytesMarked()
 UTF8CString Collector::bytesMarkedPerVisitorDump()
 {
     // Every heap's mutator visitor has the same name, so their counts are summed.
-    UncheckedKeyHashMap<ASCIICString, size_t> visitMap;
+    HashMap<ASCIICString, size_t> visitMap;
     forEachSlotVisitor(
         [&](SlotVisitor& visitor) {
             visitMap.add(visitor.codeName(), 0).iterator->value += visitor.bytesMarked() / 1024;

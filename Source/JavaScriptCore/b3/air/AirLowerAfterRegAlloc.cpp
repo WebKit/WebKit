@@ -68,7 +68,7 @@ void lowerAfterRegAlloc(Code& code)
 
     padInterference(code);
 
-    UncheckedKeyHashMap<Inst*, RegisterSet> usedRegisters;
+    HashMap<Inst*, RegisterSet> usedRegisters;
     
     RegLiveness liveness(code);
     for (BasicBlock* block : code) {

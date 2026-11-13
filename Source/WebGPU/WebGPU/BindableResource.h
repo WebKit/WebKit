@@ -29,7 +29,6 @@
 #import <limits>
 #import <type_traits>
 #import <utility>
-#import <wtf/GenericHashKey.h>
 #import <wtf/HashFunctions.h>
 #import <wtf/HashMap.h>
 #import <wtf/HashSet.h>
@@ -185,7 +184,7 @@ struct DrawIndexValidationCacheEntry {
     uint64_t indexContentsGeneration { 0 };
 };
 
-using DrawIndexCacheContainer = HashMap<GenericHashKey<DrawIndexCacheContainerKey>, DrawIndexValidationCacheEntry>;
+using DrawIndexCacheContainer = HashMap<DrawIndexCacheContainerKey, DrawIndexValidationCacheEntry>;
 using DrawIndexCacheContainerIterator = DrawIndexCacheContainer::const_iterator;
 
 using TrackedResourceContainer = HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;

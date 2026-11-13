@@ -257,7 +257,7 @@ private:
 
     JSC::Debugger& m_debugger;
     const CheckedRef<InjectedScriptManager> m_injectedScriptManager;
-    UncheckedKeyHashMap<JSC::SourceID, JSC::Debugger::Script> m_scripts;
+    HashMap<JSC::SourceID, JSC::Debugger::Script> m_scripts;
 
     struct BlackboxedScript {
         String url;
@@ -266,7 +266,7 @@ private:
 
         // This is only used to restrict where within the script to ignore pausing.
         // Put another way, it doesn't change whether the script is blackboxed.
-        UncheckedKeyHashSet<JSC::Debugger::BlackboxRange> ranges;
+        HashSet<JSC::Debugger::BlackboxRange> ranges;
 
         NODELETE inline bool operator==(const BlackboxedScript& other) const
         {
@@ -282,13 +282,13 @@ private:
     };
     Vector<BlackboxedScript> m_blackboxedScripts;
 
-    UncheckedKeyHashSet<Listener*> m_listeners;
+    HashSet<Listener*> m_listeners;
 
     JSC::JSGlobalObject* m_pausedGlobalObject { nullptr };
     JSC::Strong<JSC::Unknown> m_currentCallStack;
 
-    UncheckedKeyHashMap<Protocol::Debugger::BreakpointId, ProtocolBreakpoint> m_protocolBreakpointForProtocolBreakpointID;
-    UncheckedKeyHashMap<Protocol::Debugger::BreakpointId, JSC::BreakpointsVector> m_debuggerBreakpointsForProtocolBreakpointID;
+    HashMap<Protocol::Debugger::BreakpointId, ProtocolBreakpoint> m_protocolBreakpointForProtocolBreakpointID;
+    HashMap<Protocol::Debugger::BreakpointId, JSC::BreakpointsVector> m_debuggerBreakpointsForProtocolBreakpointID;
     JSC::BreakpointID m_nextDebuggerBreakpointID { JSC::noBreakpointID + 1 };
 
     RefPtr<JSC::Breakpoint> m_continueToLocationDebuggerBreakpoint;
@@ -301,7 +301,7 @@ private:
     DebuggerFrontendDispatcher::Reason m_lastPauseReason;
     RefPtr<JSON::Object> m_lastPauseData;
 
-    UncheckedKeyHashMap<AsyncCallIdentifier, RefPtr<AsyncStackTrace>> m_pendingAsyncCalls;
+    HashMap<AsyncCallIdentifier, RefPtr<AsyncStackTrace>> m_pendingAsyncCalls;
     Vector<AsyncCallIdentifier> m_currentAsyncCallIdentifierStack;
     int m_asyncStackTraceDepth { 0 };
 
@@ -317,7 +317,7 @@ private:
         RefPtr<JSC::Breakpoint> specialBreakpoint;
 
         // Avoid having to (re)match the searcher each time a function as called.
-        UncheckedKeyHashSet<String> knownMatchingSymbols;
+        HashSet<String> knownMatchingSymbols;
 
         inline bool operator==(const SymbolicBreakpoint& other) const
         {

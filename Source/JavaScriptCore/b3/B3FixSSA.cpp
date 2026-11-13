@@ -268,8 +268,8 @@ void fixSSAGlobally(Procedure& proc, IndexSet<Value*>& valuesToDelete)
 
 void demoteValues(Procedure& proc, const IndexSet<Value*>& values)
 {
-    UncheckedKeyHashMap<Value*, Variable*> map;
-    UncheckedKeyHashMap<Value*, Variable*> phiMap;
+    HashMap<Value*, Variable*> map;
+    HashMap<Value*, Variable*> phiMap;
 
     // Create stack slots.
     for (Value* value : values.values(proc.values())) {

@@ -73,8 +73,8 @@ private:
 
     bool m_final;
     bool m_isInDictionaryMode;
-    UncheckedKeyHashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash> m_fields;
-    UncheckedKeyHashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash> m_optionalFields;
+    HashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash> m_fields;
+    HashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash> m_optionalFields;
     RefPtr<StructureShape> m_proto;
     std::unique_ptr<String> m_propertyHash;
     String m_constructorName;

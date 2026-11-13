@@ -602,7 +602,7 @@ inline void ListHashSet<T, U>::removeFirst()
 template<typename T, typename U>
 inline T ListHashSet<T, U>::takeFirst()
 {
-    auto it = m_impl.template find<BaseTranslator, ShouldValidateKey::Yes>(first());
+    auto it = m_impl.template find<BaseTranslator>(first());
 
     T result = WTF::move((*it)->m_value);
     m_impl.remove(it);
@@ -636,7 +636,7 @@ template<typename T, typename U>
 inline T ListHashSet<T, U>::takeLast()
 {
     ASSERT(!isEmpty());
-    auto it = m_impl.template find<BaseTranslator, ShouldValidateKey::Yes>(last());
+    auto it = m_impl.template find<BaseTranslator>(last());
 
     T result = WTF::move((*it)->m_value);
     m_impl.remove(it);
@@ -647,7 +647,7 @@ inline T ListHashSet<T, U>::takeLast()
 template<typename T, typename U>
 inline auto ListHashSet<T, U>::find(const ValueType& value) LIFETIME_BOUND -> iterator
 {
-    auto it = m_impl.template find<BaseTranslator, ShouldValidateKey::Yes>(value);
+    auto it = m_impl.template find<BaseTranslator>(value);
     if (it == m_impl.end())
         return end();
     return makeIterator(it->get());
@@ -656,7 +656,7 @@ inline auto ListHashSet<T, U>::find(const ValueType& value) LIFETIME_BOUND -> it
 template<typename T, typename U>
 inline auto ListHashSet<T, U>::find(const ValueType& value) const LIFETIME_BOUND -> const_iterator
 {
-    auto it = m_impl.template find<BaseTranslator, ShouldValidateKey::Yes>(value);
+    auto it = m_impl.template find<BaseTranslator>(value);
     if (it == m_impl.end())
         return end();
     return makeConstIterator(it->get());
@@ -672,7 +672,7 @@ template<typename ValueType, typename U>
 template<typename HashTranslator, typename T>
 inline auto ListHashSet<ValueType, U>::find(const T& value) LIFETIME_BOUND -> iterator
 {
-    auto it = m_impl.template find<ListHashSetTranslatorAdapter<HashTranslator>, ShouldValidateKey::Yes>(value);
+    auto it = m_impl.template find<ListHashSetTranslatorAdapter<HashTranslator>>(value);
     if (it == m_impl.end())
         return end();
     return makeIterator(it->get());
@@ -682,7 +682,7 @@ template<typename ValueType, typename U>
 template<typename HashTranslator, typename T>
 inline auto ListHashSet<ValueType, U>::find(const T& value) const LIFETIME_BOUND -> const_iterator
 {
-    auto it = m_impl.template find<ListHashSetTranslatorAdapter<HashTranslator>, ShouldValidateKey::Yes>(value);
+    auto it = m_impl.template find<ListHashSetTranslatorAdapter<HashTranslator>>(value);
     if (it == m_impl.end())
         return end();
     return makeConstIterator(it->get());
@@ -692,19 +692,19 @@ template<typename ValueType, typename U>
 template<typename HashTranslator, typename T>
 inline bool ListHashSet<ValueType, U>::contains(const T& value) const
 {
-    return m_impl.template contains<ListHashSetTranslatorAdapter<HashTranslator>, ShouldValidateKey::Yes>(value);
+    return m_impl.template contains<ListHashSetTranslatorAdapter<HashTranslator>>(value);
 }
 
 template<typename T, typename U>
 inline bool ListHashSet<T, U>::contains(const ValueType& value) const
 {
-    return m_impl.template contains<BaseTranslator, ShouldValidateKey::Yes>(value);
+    return m_impl.template contains<BaseTranslator>(value);
 }
 
 template<typename T, typename U>
 auto ListHashSet<T, U>::add(const ValueType& value) LIFETIME_BOUND -> AddResult
 {
-    auto result = m_impl.template add<BaseTranslator, ShouldValidateKey::Yes>(value, [] { return nullptr; });
+    auto result = m_impl.template add<BaseTranslator>(value, [] { return nullptr; });
     if (result.isNewEntry)
         appendNode(result.iterator->get());
     return AddResult(makeIterator(result.iterator->get()), result.isNewEntry);
@@ -713,7 +713,7 @@ auto ListHashSet<T, U>::add(const ValueType& value) LIFETIME_BOUND -> AddResult
 template<typename T, typename U>
 auto ListHashSet<T, U>::add(ValueType&& value) LIFETIME_BOUND -> AddResult
 {
-    auto result = m_impl.template add<BaseTranslator, ShouldValidateKey::Yes>(WTF::move(value), [] { return nullptr; });
+    auto result = m_impl.template add<BaseTranslator>(WTF::move(value), [] { return nullptr; });
     if (result.isNewEntry)
         appendNode(result.iterator->get());
     return AddResult(makeIterator(result.iterator->get()), result.isNewEntry);
@@ -722,7 +722,7 @@ auto ListHashSet<T, U>::add(ValueType&& value) LIFETIME_BOUND -> AddResult
 template<typename T, typename U>
 auto ListHashSet<T, U>::appendOrMoveToLast(const ValueType& value) LIFETIME_BOUND -> AddResult
 {
-    auto result = m_impl.template add<BaseTranslator, ShouldValidateKey::Yes>(value, [] { return nullptr; });
+    auto result = m_impl.template add<BaseTranslator>(value, [] { return nullptr; });
     Node* node = result.iterator->get();
     if (!result.isNewEntry)
         unlink(node);
@@ -734,7 +734,7 @@ auto ListHashSet<T, U>::appendOrMoveToLast(const ValueType& value) LIFETIME_BOUN
 template<typename T, typename U>
 auto ListHashSet<T, U>::appendOrMoveToLast(ValueType&& value) LIFETIME_BOUND -> AddResult
 {
-    auto result = m_impl.template add<BaseTranslator, ShouldValidateKey::Yes>(WTF::move(value), [] { return nullptr; });
+    auto result = m_impl.template add<BaseTranslator>(WTF::move(value), [] { return nullptr; });
     Node* node = result.iterator->get();
     if (!result.isNewEntry)
         unlink(node);
@@ -746,7 +746,7 @@ auto ListHashSet<T, U>::appendOrMoveToLast(ValueType&& value) LIFETIME_BOUND -> 
 template<typename T, typename U>
 bool ListHashSet<T, U>::moveToLastIfPresent(const ValueType& value)
 {
-    auto iterator = m_impl.template find<BaseTranslator, ShouldValidateKey::Yes>(value);
+    auto iterator = m_impl.template find<BaseTranslator>(value);
     if (iterator == m_impl.end())
         return false;
     Node* node = iterator->get();
@@ -758,7 +758,7 @@ bool ListHashSet<T, U>::moveToLastIfPresent(const ValueType& value)
 template<typename T, typename U>
 auto ListHashSet<T, U>::prependOrMoveToFirst(const ValueType& value) LIFETIME_BOUND -> AddResult
 {
-    auto result = m_impl.template add<BaseTranslator, ShouldValidateKey::Yes>(value, [] { return nullptr; });
+    auto result = m_impl.template add<BaseTranslator>(value, [] { return nullptr; });
     Node* node = result.iterator->get();
     if (!result.isNewEntry)
         unlink(node);
@@ -770,7 +770,7 @@ auto ListHashSet<T, U>::prependOrMoveToFirst(const ValueType& value) LIFETIME_BO
 template<typename T, typename U>
 auto ListHashSet<T, U>::prependOrMoveToFirst(ValueType&& value) LIFETIME_BOUND -> AddResult
 {
-    auto result = m_impl.template add<BaseTranslator, ShouldValidateKey::Yes>(WTF::move(value), [] { return nullptr; });
+    auto result = m_impl.template add<BaseTranslator>(WTF::move(value), [] { return nullptr; });
     Node* node = result.iterator->get();
     if (!result.isNewEntry)
         unlink(node);
@@ -794,7 +794,7 @@ auto ListHashSet<T, U>::insertBefore(const ValueType& beforeValue, ValueType&& n
 template<typename T, typename U>
 auto ListHashSet<T, U>::insertBefore(iterator it, const ValueType& newValue) LIFETIME_BOUND -> AddResult
 {
-    auto result = m_impl.template add<BaseTranslator, ShouldValidateKey::Yes>(newValue, [] { return nullptr; });
+    auto result = m_impl.template add<BaseTranslator>(newValue, [] { return nullptr; });
     if (result.isNewEntry)
         insertNodeBefore(it.link(), result.iterator->get());
     return AddResult(makeIterator(result.iterator->get()), result.isNewEntry);
@@ -803,7 +803,7 @@ auto ListHashSet<T, U>::insertBefore(iterator it, const ValueType& newValue) LIF
 template<typename T, typename U>
 auto ListHashSet<T, U>::insertBefore(iterator it, ValueType&& newValue) LIFETIME_BOUND -> AddResult
 {
-    auto result = m_impl.template add<BaseTranslator, ShouldValidateKey::Yes>(WTF::move(newValue), [] { return nullptr; });
+    auto result = m_impl.template add<BaseTranslator>(WTF::move(newValue), [] { return nullptr; });
     if (result.isNewEntry)
         insertNodeBefore(it.link(), result.iterator->get());
     return AddResult(makeIterator(result.iterator->get()), result.isNewEntry);
@@ -829,7 +829,7 @@ inline bool ListHashSet<T, U>::removeIf(NOESCAPE const Invocable<bool(ValueType&
 template<typename T, typename U>
 inline bool ListHashSet<T, U>::remove(const ValueType& value)
 {
-    auto it = m_impl.template find<BaseTranslator, ShouldValidateKey::Yes>(value);
+    auto it = m_impl.template find<BaseTranslator>(value);
     if (it == m_impl.end())
         return false;
     m_impl.remove(it);
@@ -864,7 +864,7 @@ template<typename T, typename U>
 template<SmartPtr V>
 inline auto ListHashSet<T, U>::find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>* value) LIFETIME_BOUND -> iterator
 {
-    auto it = m_impl.template find<BaseTranslator, ShouldValidateKey::Yes>(value);
+    auto it = m_impl.template find<BaseTranslator>(value);
     if (it == m_impl.end())
         return end();
     return makeIterator(it->get());
@@ -874,7 +874,7 @@ template<typename T, typename U>
 template<SmartPtr V>
 inline auto ListHashSet<T, U>::find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>* value) const LIFETIME_BOUND -> const_iterator
 {
-    auto it = m_impl.template find<BaseTranslator, ShouldValidateKey::Yes>(value);
+    auto it = m_impl.template find<BaseTranslator>(value);
     if (it == m_impl.end())
         return end();
     return makeConstIterator(it->get());
@@ -884,7 +884,7 @@ template<typename T, typename U>
 template<SmartPtr V>
 inline auto ListHashSet<T, U>::contains(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>* value) const -> bool
 {
-    return m_impl.template contains<BaseTranslator, ShouldValidateKey::Yes>(value);
+    return m_impl.template contains<BaseTranslator>(value);
 }
 
 template<typename T, typename U>
@@ -905,7 +905,7 @@ template<typename T, typename U>
 template<SmartPtr V>
 inline auto ListHashSet<T, U>::remove(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>* value) -> bool
 {
-    auto it = m_impl.template find<BaseTranslator, ShouldValidateKey::Yes>(value);
+    auto it = m_impl.template find<BaseTranslator>(value);
     if (it == m_impl.end())
         return false;
     m_impl.remove(it);

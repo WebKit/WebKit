@@ -59,7 +59,7 @@ public:
     void dump(Code&, PrintStream&, LinkBuffer&, const char* airPrefix, const char* asmPrefix, NOESCAPE const WTF::ScopedLambda<void(Inst&)>& doToEachInst);
 
 private:
-    UncheckedKeyHashMap<Inst*, std::pair<MacroAssembler::Label, MacroAssembler::Label>> m_instToRange;
+    HashMap<Inst*, std::pair<MacroAssembler::Label, MacroAssembler::Label>> m_instToRange;
     Vector<BasicBlock*> m_blocks;
     MacroAssembler::Label m_entrypointStart;
     MacroAssembler::Label m_entrypointEnd;

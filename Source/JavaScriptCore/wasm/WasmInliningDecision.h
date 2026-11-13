@@ -96,7 +96,7 @@ private:
 
     SUPPRESS_UNCOUNTED_MEMBER Module& m_module;
     SegmentedVector<InliningNode, 16> m_arena;
-    UncheckedKeyHashMap<const IPIntCallee*, std::unique_ptr<MergedProfile>> m_profiles;
+    HashMap<const IPIntCallee*, std::unique_ptr<MergedProfile>> m_profiles;
     InliningNode& m_root;
     uint32_t m_inlinedCount { 0 };
     double m_maxGrowthFactor { 0 };

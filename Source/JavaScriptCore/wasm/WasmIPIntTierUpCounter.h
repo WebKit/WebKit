@@ -62,7 +62,7 @@ public:
         uint32_t tryDepth;
     };
 
-    IPIntTierUpCounter(UncheckedKeyHashMap<IPIntPC, OSREntryData>&& osrEntryData)
+    IPIntTierUpCounter(HashMap<IPIntPC, OSREntryData>&& osrEntryData)
         : m_osrEntryData(WTF::move(osrEntryData))
     {
         optimizeAfterWarmUp();
@@ -119,7 +119,7 @@ private:
     std::array<CompilationStatus, numberOfMemoryModes> m_compilationStatus WTF_GUARDED_BY_LOCK(m_lock);
     std::array<CompilationStatus, numberOfMemoryModes> m_loopCompilationStatus WTF_GUARDED_BY_LOCK(m_lock);
     std::array<CompilationError, numberOfMemoryModes> m_compilationErrors WTF_GUARDED_BY_LOCK(m_lock);
-    const UncheckedKeyHashMap<IPIntPC, OSREntryData> m_osrEntryData;
+    const HashMap<IPIntPC, OSREntryData> m_osrEntryData;
 };
 
 } } // namespace JSC::Wasm

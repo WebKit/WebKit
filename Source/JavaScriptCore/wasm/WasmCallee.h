@@ -507,7 +507,7 @@ public:
 
     const RTT& signatureRTT() const LIFETIME_BOUND { return *m_signatureRTT; }
 
-    using OutOfLineJumpTargets = UncheckedKeyHashMap<unsigned, int>;
+    using OutOfLineJumpTargets = HashMap<unsigned, int>;
 
     unsigned computeCodeHashImpl() const;
 

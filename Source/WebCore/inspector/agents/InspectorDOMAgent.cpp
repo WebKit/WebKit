@@ -642,9 +642,6 @@ Inspector::Protocol::DOM::NodeId InspectorDOMAgent::pushNodeToFrontend(Inspector
 
 Node* InspectorDOMAgent::nodeForId(Inspector::Protocol::DOM::NodeId id)
 {
-    if (!m_idToNode.isValidKey(id))
-        return nullptr;
-
     return m_idToNode.get(id);
 }
 

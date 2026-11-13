@@ -60,7 +60,7 @@ private:
 
     CodeBlock* m_codeBlock;
     Vector<UniquedStringImpl*> m_addedIdentifiers;
-    UncheckedKeyHashMap<UniquedStringImpl*, unsigned> m_identifierNumberForName;
+    HashMap<UniquedStringImpl*, unsigned> m_identifierNumberForName;
     bool m_didProcessIdentifiers;
 };
 

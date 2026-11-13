@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-// A UncheckedKeyHashMap holding JSCell values weakly. A value is dropped once a collection proves it
+// A HashMap holding JSCell values weakly. A value is dropped once a collection proves it
 // unreachable: eden collections null the entry out, leaving it behind for find() and ensureValue()
 // to treat as absent, and full collections remove it outright.
 
@@ -40,7 +40,7 @@ class WeakGCMap final : public WeakGCHashTable {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WeakGCMap);
     WTF_MAKE_NONCOPYABLE(WeakGCMap);
     typedef ValueArg* ValueType;
-    typedef UncheckedKeyHashMap<KeyArg, ValueType, HashArg, KeyTraitsArg> HashMapType;
+    typedef HashMap<KeyArg, ValueType, HashArg, KeyTraitsArg> HashMapType;
 
 public:
     typedef typename HashMapType::KeyType KeyType;
@@ -66,7 +66,7 @@ public:
     template<typename Functor>
     ValueArg* ensureValue(const KeyType& key, NOESCAPE const Functor& functor)
     {
-        // If functor invokes GC, GC can prune WeakGCMap, and manipulate UncheckedKeyHashMap while we are touching it in ensure function.
+        // If functor invokes GC, GC can prune WeakGCMap, and manipulate HashMap while we are touching it in ensure function.
         // The functor must not invoke GC.
         AssertNoGC assertNoGC;
         AddResult result = m_map.ensure(key, functor);

@@ -596,8 +596,8 @@ private:
             return IterationStatus::Continue;
         });
 
-        using InlineCallFrames = UncheckedKeyHashSet<InlineCallFrame*, WTF::DefaultHash<InlineCallFrame*>, WTF::NullableHashTraits<InlineCallFrame*>>;
-        using InlineCallFramesForCanditates = UncheckedKeyHashMap<Node*, InlineCallFrames>;
+        using InlineCallFrames = HashSet<InlineCallFrame*, WTF::DefaultHash<InlineCallFrame*>, WTF::NullableHashTraits<InlineCallFrame*>>;
+        using InlineCallFramesForCanditates = HashMap<Node*, InlineCallFrames>;
         InlineCallFramesForCanditates inlineCallFramesForCandidate;
         for (auto& [candidate, availability] : m_candidates) {
             auto& set = inlineCallFramesForCandidate.add(candidate, InlineCallFrames()).iterator->value;
@@ -1507,7 +1507,7 @@ private:
         }
     }
     
-    UncheckedKeyHashMap<Node*, AvailabilityMap> m_candidates;
+    HashMap<Node*, AvailabilityMap> m_candidates;
 };
 
 } // anonymous namespace

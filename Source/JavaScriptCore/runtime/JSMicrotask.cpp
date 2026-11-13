@@ -1520,7 +1520,7 @@ static void dynamicImportLoadSettled(JSGlobalObject* globalObject, VM& vm, JSVal
     //
     // Let evaluationList be GatherAsynchronousTransitiveDependencies(module).
     OrderedHashSet<AbstractModuleRecord*> evaluationList;
-    UncheckedKeyHashSet<AbstractModuleRecord*> seen;
+    HashSet<AbstractModuleRecord*> seen;
     module->gatherAsynchronousTransitiveDependencies(evaluationList, seen);
 
     // If evaluationList is empty, perform fulfilledClosure() and return.

@@ -48,7 +48,7 @@ String CacheStorageCache::computeKeyURL(const URL& url)
     RELEASE_ASSERT(url.isValid());
     RELEASE_ASSERT(!url.isEmpty());
     auto keyURLString = url.string().left(url.pathEnd());
-    RELEASE_ASSERT(RecordsMap::isValidKey(keyURLString));
+    RELEASE_ASSERT(!keyURLString.isNull());
     return keyURLString;
 }
 

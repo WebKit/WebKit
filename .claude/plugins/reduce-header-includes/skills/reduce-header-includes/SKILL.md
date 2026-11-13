@@ -119,7 +119,7 @@ If a header still won't parse standalone (heavy template/macro context, or it *i
 - JSC split-inlines without the suffix: `JSCJSValueCell.h`, `JSCJSValueStructure.h`, `JSCJSValueBigInt.h`, `JSCellButterfly.h`. Same failure mode as `*Inlines.h` (out-of-class inline method *definitions*, not declarations) — removal links fine in the edited header but drops `JSValue::inherits()`/`structureOrNull()` defs from downstream TUs → undefined-symbol at link. Filter regex: `Inlines.*\.h|JSCJSValue(Cell|Structure|BigInt)\.h|JSCellButterfly\.h`.
 - `wtf/text/StringHash.h` / `*Hash.h` when the target header defines a type used as a `HashMap`/`HashSet` key. The trait specialization (`DefaultHash<K>`) is needed at container *instantiation* in a downstream TU, not in the key header itself, so the tool reports it unused. (Observed: `RegExpKey.h` → `PackedRefPtr<StringImpl>` static_assert + `GenericHashTraits` undefined.)
 
-**Verify by exported symbol, not header basename.** Before applying a removal of `Foo.h`, grep the target file for the names `Foo.h` *declares*, not just the string "Foo" — header name and type name often differ (`ArgList.h` → `MarkedArgumentBuffer`, `HashSet.h` → `UncheckedKeyHashSet`). Quick extractor:
+**Verify by exported symbol, not header basename.** Before applying a removal of `Foo.h`, grep the target file for the names `Foo.h` *declares*, not just the string "Foo" — header name and type name often differ (`ArgList.h` → `MarkedArgumentBuffer`). Quick extractor:
 
 ```sh
 grep -hoE '^\s*(class|struct|enum class|using|typedef|#define)\s+\w+' <Foo.h> | awk '{print $NF}' | sort -u

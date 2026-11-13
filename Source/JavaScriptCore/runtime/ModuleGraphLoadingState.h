@@ -92,7 +92,7 @@ private:
     // [[Visited]]
     Vector<WriteBarrier<CyclicModuleRecord>, 8> m_visited;
     // Contains the same contents as m_visited, so no write barriers needed.
-    UncheckedKeyHashSet<CyclicModuleRecord*> m_visitedSet;
+    HashSet<CyclicModuleRecord*> m_visitedSet;
     // Slot used only at top-level loadModule to AND-join loadPromise and statePromise into combinedPromise.
     WriteBarrier<Unknown> m_fulfillment;
     // [[PendingModulesCount]]

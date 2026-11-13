@@ -192,9 +192,8 @@ public:
 template<typename Validator, typename T>
 struct IsValidationProcedureFor<Validator, std::optional<T>> : IsValidationProcedureFor<Validator, T> { };
 
-// HashSet's last template parameter is a non-type parameter, so it must be spelled out.
-template<typename Validator, typename T, typename HashArg, typename TraitsArg, typename TableTraitsArg, WTF::ShouldValidateKey shouldValidateKey>
-struct IsValidationProcedureFor<Validator, HashSet<T, HashArg, TraitsArg, TableTraitsArg, shouldValidateKey>> : IsValidationProcedureFor<Validator, T> { };
+template<typename Validator, typename T, typename HashArg, typename TraitsArg, typename TableTraitsArg>
+struct IsValidationProcedureFor<Validator, HashSet<T, HashArg, TraitsArg, TableTraitsArg>> : IsValidationProcedureFor<Validator, T> { };
 
 } // namespace IPC
 

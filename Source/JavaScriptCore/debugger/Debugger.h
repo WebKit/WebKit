@@ -139,7 +139,7 @@ public:
         Defer = 1 << 1,
     };
     using BlackboxFlags = OptionSet<BlackboxFlag>;
-    using BlackboxConfiguration = UncheckedKeyHashMap<BlackboxRange, BlackboxFlags>;
+    using BlackboxConfiguration = HashMap<BlackboxRange, BlackboxFlags>;
     void setBlackboxConfiguration(SourceID, BlackboxConfiguration&&);
     NODELETE void setBlackboxBreakpointEvaluations(bool);
     void clearBlackbox();
@@ -346,10 +346,10 @@ private:
     void dispatchFunctionToObservers(Function<void(Observer&)>);
 
     VM& m_vm;
-    UncheckedKeyHashSet<JSGlobalObject*> m_globalObjects;
-    UncheckedKeyHashMap<SourceID, DebuggerParseData, WTF::IntHash<SourceID>, WTF::UnsignedWithZeroKeyHashTraits<SourceID>> m_parseDataMap;
-    UncheckedKeyHashSet<SourceID, WTF::IntHash<SourceID>, WTF::UnsignedWithZeroKeyHashTraits<SourceID>> m_reportedSourceIDs;
-    UncheckedKeyHashMap<SourceID, BlackboxConfiguration, WTF::IntHash<SourceID>, WTF::UnsignedWithZeroKeyHashTraits<SourceID>> m_blackboxConfigurations;
+    HashSet<JSGlobalObject*> m_globalObjects;
+    HashMap<SourceID, DebuggerParseData, WTF::IntHash<SourceID>, WTF::UnsignedWithZeroKeyHashTraits<SourceID>> m_parseDataMap;
+    HashSet<SourceID, WTF::IntHash<SourceID>, WTF::UnsignedWithZeroKeyHashTraits<SourceID>> m_reportedSourceIDs;
+    HashMap<SourceID, BlackboxConfiguration, WTF::IntHash<SourceID>, WTF::UnsignedWithZeroKeyHashTraits<SourceID>> m_blackboxConfigurations;
     bool m_blackboxBreakpointEvaluations : 1;
 
     bool m_pauseAtNextOpportunity : 1;
@@ -381,9 +381,9 @@ private:
     };
     RefPtr<AbandonPauseInAwaitTimer> m_abandonPauseInAwaitTimer;
 
-    using LineToBreakpointsMap = UncheckedKeyHashMap<unsigned, BreakpointsVector, WTF::IntHash<int>, WTF::UnsignedWithZeroKeyHashTraits<int>>;
-    UncheckedKeyHashMap<SourceID, LineToBreakpointsMap, WTF::IntHash<SourceID>, WTF::UnsignedWithZeroKeyHashTraits<SourceID>> m_breakpointsForSourceID;
-    UncheckedKeyHashSet<Ref<Breakpoint>> m_breakpoints;
+    using LineToBreakpointsMap = HashMap<unsigned, BreakpointsVector, WTF::IntHash<int>, WTF::UnsignedWithZeroKeyHashTraits<int>>;
+    HashMap<SourceID, LineToBreakpointsMap, WTF::IntHash<SourceID>, WTF::UnsignedWithZeroKeyHashTraits<SourceID>> m_breakpointsForSourceID;
+    HashSet<Ref<Breakpoint>> m_breakpoints;
     RefPtr<Breakpoint> m_specialBreakpoint;
     ListHashSet<Ref<Breakpoint>> m_deferredBreakpoints;
     BreakpointID m_pausingBreakpointID;
@@ -397,7 +397,7 @@ private:
 
     RefPtr<JSC::DebuggerCallFrame> m_currentDebuggerCallFrame;
 
-    UncheckedKeyHashSet<Observer*> m_observers;
+    HashSet<Observer*> m_observers;
 
     Client* m_client { nullptr };
     ProfilingClient* m_profilingClient { nullptr };

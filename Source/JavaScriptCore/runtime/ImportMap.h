@@ -39,10 +39,10 @@ class SourceCode;
 
 class ImportMap final : public RefCounted<ImportMap> {
 public:
-    using SpecifierMap = UncheckedKeyHashMap<AtomString, URL>;
-    using ScopesMap = UncheckedKeyHashMap<URL, SpecifierMap>;
+    using SpecifierMap = HashMap<AtomString, URL>;
+    using ScopesMap = HashMap<URL, SpecifierMap>;
     using ScopesVector = Vector<URL>;
-    using IntegrityMap = UncheckedKeyHashMap<URL, String>;
+    using IntegrityMap = HashMap<URL, String>;
 
     class Reporter {
     public:
@@ -84,8 +84,8 @@ private:
     // of prefixes resolved in them. That permits us to reduce the cost of merging
     // a new map, by performing more work at addModuleToResolvedModuleSet time,
     // and by keeping more prefixes in memory.
-    UncheckedKeyHashSet<AtomString> m_toplevelResolvedModuleSet;
-    UncheckedKeyHashMap<AtomString, UncheckedKeyHashSet<AtomString>> m_scopedResolvedModuleMap;
+    HashSet<AtomString> m_toplevelResolvedModuleSet;
+    HashMap<AtomString, HashSet<AtomString>> m_scopedResolvedModuleMap;
 };
 
 } // namespace JSC

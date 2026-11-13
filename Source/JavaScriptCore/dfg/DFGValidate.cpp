@@ -513,7 +513,7 @@ public:
 
         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
             // We expect the predecessor list to be de-duplicated.
-            UncheckedKeyHashSet<BasicBlock*> predecessors;
+            HashSet<BasicBlock*> predecessors;
             for (BasicBlock* predecessor : block->predecessors)
                 predecessors.add(predecessor);
             VALIDATE((block), predecessors.size() == block->predecessors.size());
@@ -533,8 +533,8 @@ private:
             if (!block)
                 continue;
             
-            UncheckedKeyHashSet<Node*> phisInThisBlock;
-            UncheckedKeyHashSet<Node*> nodesInThisBlock;
+            HashSet<Node*> phisInThisBlock;
+            HashSet<Node*> nodesInThisBlock;
             
             for (size_t i = 0; i < block->numNodes(); ++i) {
                 Node* node = block->node(i);
@@ -550,7 +550,7 @@ private:
             }
 
             {
-                UncheckedKeyHashSet<Node*> seenNodes;
+                HashSet<Node*> seenNodes;
                 for (size_t i = 0; i < block->size(); ++i) {
                     Node* node = block->at(i);
                     m_graph.doToChildren(node, [&] (const Edge& edge) {
@@ -817,7 +817,7 @@ private:
 
         if (m_graph.m_form == ThreadedCPS) {
             Vector<Node*> worklist;
-            UncheckedKeyHashSet<Node*> seen;
+            HashSet<Node*> seen;
             for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
                 for (Node* node : *block) {
                     if (node->op() == GetLocal || node->op() == PhantomLocal) {
@@ -887,7 +887,7 @@ private:
 
             bool isOSRExited = false;
             
-            UncheckedKeyHashSet<Node*> nodesInThisBlock;
+            HashSet<Node*> nodesInThisBlock;
 
             for (auto* node : *block) {
                 switch (node->op()) {
@@ -1182,9 +1182,9 @@ private:
     GraphDumpMode m_graphDumpMode;
     UTF8CString m_graphDumpBeforePhase;
 
-    UncheckedKeyHashMap<Node*, unsigned> m_myRefCounts;
+    HashMap<Node*, unsigned> m_myRefCounts;
     Vector<uint32_t> m_myTupleRefCounts;
-    UncheckedKeyHashSet<Node*> m_acceptableNodes;
+    HashSet<Node*> m_acceptableNodes;
 };
 
 } // End anonymous namespace.

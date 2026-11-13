@@ -4162,7 +4162,7 @@ inline Node* eliminatedSpreadConstantButterfly(Node* spreadOperand)
 
 // Uncomment this to log NodeSet operations.
 // typedef LoggingHashSet<Node::HashSetTemplateInstantiationString, Node*> NodeSet;
-typedef UncheckedKeyHashSet<Node*> NodeSet;
+typedef HashSet<Node*> NodeSet;
 
 struct NodeComparator {
     template<typename NodePtrType>

@@ -50,7 +50,7 @@ struct ModuleMapHash {
 };
 
 template <typename T>
-using ModuleMap = UncheckedKeyHashMap<ModuleMapKey, T, ModuleMapHash>;
+using ModuleMap = HashMap<ModuleMapKey, T, ModuleMapHash>;
 
 using ResolutionMapKey = std::pair<UniquedStringImpl*, UniquedStringImpl*>;
 
@@ -71,6 +71,6 @@ struct ResolutionMapHash {
 };
 
 template <typename T>
-using ResolutionMap = UncheckedKeyHashMap<ResolutionMapKey, T, ResolutionMapHash>;
+using ResolutionMap = HashMap<ResolutionMapKey, T, ResolutionMapHash>;
 
 } // namespace JSC

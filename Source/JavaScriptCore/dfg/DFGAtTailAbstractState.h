@@ -275,7 +275,7 @@ private:
     AbstractValue& forNodeImpl(NodeFlowProjection);
 
     Graph& m_graph;
-    IndexMap<BasicBlock*, UncheckedKeyHashMap<NodeFlowProjection, AbstractValue>> m_valuesAtTailMap;
+    IndexMap<BasicBlock*, HashMap<NodeFlowProjection, AbstractValue>> m_valuesAtTailMap;
     IndexMap<BasicBlock*, Vector<AbstractValue>> m_tupleAbstractValues;
     BasicBlock* m_block { nullptr };
     bool m_trustEdgeProofs { false };

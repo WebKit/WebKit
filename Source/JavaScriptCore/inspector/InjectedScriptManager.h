@@ -75,8 +75,8 @@ public:
 protected:
     virtual void didCreateInjectedScript(const InjectedScript&);
 
-    UncheckedKeyHashMap<int, InjectedScript> m_idToInjectedScript;
-    UncheckedKeyHashMap<JSC::JSGlobalObject*, int> m_scriptStateToId;
+    HashMap<int, InjectedScript> m_idToInjectedScript;
+    HashMap<JSC::JSGlobalObject*, int> m_scriptStateToId;
 
 private:
     std::expected<JSC::JSObject*, NakedPtr<JSC::Exception>> createInjectedScript(JSC::JSGlobalObject*, int id);

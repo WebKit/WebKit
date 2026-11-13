@@ -5401,7 +5401,7 @@ private:
     Procedure& m_proc;
     ReduceStrengthPass m_pass;
     InsertionSet m_insertionSet;
-    UncheckedKeyHashMap<ValueKey, Value*> m_valueForConstant;
+    HashMap<ValueKey, Value*> m_valueForConstant;
     BasicBlock* m_root { nullptr };
     BasicBlock* m_block { nullptr };
     unsigned m_index { 0 };

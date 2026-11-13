@@ -199,9 +199,9 @@ struct SamplerState {
     size_t useCount { 0 };
 };
 
-NODELETE static HashMap<GenericHashKey<Sampler::UniqueSamplerIdentifier>, SamplerState>& samplerStates() WTF_REQUIRES_LOCK(samplerStatesLock)
+NODELETE static HashMap<Sampler::UniqueSamplerIdentifier, SamplerState>& samplerStates() WTF_REQUIRES_LOCK(samplerStatesLock)
 {
-    static NeverDestroyed<HashMap<GenericHashKey<Sampler::UniqueSamplerIdentifier>, SamplerState>> samplerStates WTF_GUARDED_BY_LOCK(samplerStatesLock);
+    static NeverDestroyed<HashMap<Sampler::UniqueSamplerIdentifier, SamplerState>> samplerStates WTF_GUARDED_BY_LOCK(samplerStatesLock);
     return samplerStates.get();
 }
 

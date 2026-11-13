@@ -430,7 +430,7 @@ static JSC::JSObject* allocateConstructorForCustomClass(JSContext *context, cons
         return constructorWithCustomBrand(context, [NSString stringWithFormat:@"%sConstructor", className], cls);
 
     // For each protocol that the class implements, gather all of the init family methods into a hash table.
-    __block UncheckedKeyHashMap<String, CFTypeRef> initTable;
+    __block HashMap<String, CFTypeRef> initTable;
     RetainPtr exportProtocol = getJSExportProtocol();
     for (RetainPtr currentClass = cls; currentClass; currentClass = class_getSuperclass(currentClass.get())) {
         forEachProtocolImplementingProtocol(currentClass.get(), exportProtocol.get(), ^(Protocol *protocol, bool&) {

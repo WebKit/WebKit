@@ -62,7 +62,7 @@ public:
         // Find all of the values that are the subject of a branch or switch. For any successor
         // that we dominate, install a value override at that block.
 
-        UncheckedKeyHashMap<Value*, Vector<Override>> overrides;
+        HashMap<Value*, Vector<Override>> overrides;
 
         Dominators& dominators = m_proc.dominators();
         
@@ -105,7 +105,7 @@ public:
             case Switch: {
                 SwitchValue* switchValue = branch->as<SwitchValue>();
 
-                UncheckedKeyHashMap<BasicBlock*, unsigned> targetUses;
+                HashMap<BasicBlock*, unsigned> targetUses;
                 for (SwitchCase switchCase : switchValue->cases(block))
                     targetUses.add(switchCase.targetBlock(), 0).iterator->value++;
                 targetUses.add(switchValue->fallThrough(block), 0).iterator->value++;

@@ -57,7 +57,7 @@ static WebPageGroupData pageGroupData(const String& identifier)
 {
     static NeverDestroyed<HashMap<String, PageGroupIdentifier>> map;
     auto pageGroupID = [&] {
-        if (HashMap<String, PageGroupIdentifier>::isValidKey(identifier)) {
+        if (!identifier.isNull()) {
             return map.get().ensure(identifier, [] {
                 return PageGroupIdentifier::generate();
             }).iterator->value;

@@ -502,7 +502,7 @@ auto SectionParser::parseExport() -> PartialResult
     RELEASE_ASSERT(!m_info->exports.capacity());
     WASM_ALLOCATOR_FAIL_IF(!m_info->exports.tryReserveInitialCapacity(exportCount), "can't allocate enough memory for "_s, exportCount, " exports"_s);
 
-    UncheckedKeyHashSet<String> exportNames;
+    HashSet<String> exportNames;
     for (uint32_t exportNumber = 0; exportNumber < exportCount; ++exportNumber) {
         uint32_t fieldLen;
         Name fieldString;

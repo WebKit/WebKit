@@ -97,7 +97,7 @@ public:
     bool willTryToTierUp() const { return m_willTryToTierUp; }
     void setWillTryToTierUp(bool willTryToTierUp) { m_willTryToTierUp = willTryToTierUp; }
 
-    UncheckedKeyHashMap<BytecodeIndex, FixedVector<BytecodeIndex>>& tierUpInLoopHierarchy() LIFETIME_BOUND { return m_tierUpInLoopHierarchy; }
+    HashMap<BytecodeIndex, FixedVector<BytecodeIndex>>& tierUpInLoopHierarchy() LIFETIME_BOUND { return m_tierUpInLoopHierarchy; }
     Vector<BytecodeIndex>& tierUpAndOSREnterBytecodes() LIFETIME_BOUND { return m_tierUpAndOSREnterBytecodes; }
 
     DeferredCompilationCallback* callback() const { return m_callback.get(); }
@@ -134,7 +134,7 @@ private:
     DesiredTransitions m_transitions;
     std::unique_ptr<RecordedStatuses> m_recordedStatuses;
 
-    UncheckedKeyHashMap<BytecodeIndex, FixedVector<BytecodeIndex>> m_tierUpInLoopHierarchy;
+    HashMap<BytecodeIndex, FixedVector<BytecodeIndex>> m_tierUpInLoopHierarchy;
     Vector<BytecodeIndex> m_tierUpAndOSREnterBytecodes;
 
     RefPtr<DeferredCompilationCallback> m_callback;

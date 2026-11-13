@@ -490,7 +490,7 @@ private:
     }
 
     template<typename Key>
-    static void push(UncheckedKeyHashMap<Key, OngoingMarks>& ongoingMarks, const Key& key, OngoingMark&& begin)
+    static void push(HashMap<Key, OngoingMarks>& ongoingMarks, const Key& key, OngoingMark&& begin)
     {
         auto& begins = ongoingMarks.add(key, OngoingMarks { }).iterator->value;
         if (begins.size() == maxOngoingMarksPerKey)
@@ -502,7 +502,7 @@ private:
     // and keeps the same mark running on two threads at once apart. If that thread has no begin, the mark began on
     // another thread, so take the latest begin from any thread.
     template<typename Key>
-    static std::optional<OngoingMark> takeInnermost(UncheckedKeyHashMap<Key, OngoingMarks>& ongoingMarks, const Key& key, uint32_t threadUID)
+    static std::optional<OngoingMark> takeInnermost(HashMap<Key, OngoingMarks>& ongoingMarks, const Key& key, uint32_t threadUID)
     {
         auto iterator = ongoingMarks.find(key);
         if (iterator == ongoingMarks.end())
@@ -764,11 +764,11 @@ private:
 
     ASCIILiteral m_processName;
     Lock m_lock;
-    UncheckedKeyHashMap<NameAndPointer, OngoingMarks> m_ongoingMarks WTF_GUARDED_BY_LOCK(m_lock);
-    UncheckedKeyHashMap<NameAndThread, OngoingMarks> m_ongoingScopes WTF_GUARDED_BY_LOCK(m_lock);
-    UncheckedKeyHashMap<NameAndData, int64_t> m_ongoingTracePoints WTF_GUARDED_BY_LOCK(m_lock);
+    HashMap<NameAndPointer, OngoingMarks> m_ongoingMarks WTF_GUARDED_BY_LOCK(m_lock);
+    HashMap<NameAndThread, OngoingMarks> m_ongoingScopes WTF_GUARDED_BY_LOCK(m_lock);
+    HashMap<NameAndData, int64_t> m_ongoingTracePoints WTF_GUARDED_BY_LOCK(m_lock);
     Lock m_countersLock;
-    UncheckedKeyHashMap<const void*, unsigned> m_counters WTF_GUARDED_BY_LOCK(m_countersLock);
+    HashMap<const void*, unsigned> m_counters WTF_GUARDED_BY_LOCK(m_countersLock);
     static SysprofAnnotator* s_annotator;
     static std::atomic<MarkWriterForTesting> s_markWriterForTesting;
 };

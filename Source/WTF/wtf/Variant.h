@@ -1512,8 +1512,8 @@ namespace mpark {
       }
 
 // GCC 14 through 16 emit a bogus -Wuninitialized for index_ when these
-// accessors are inlined into HashTable bucket teardown (e.g.
-// HashMap<GenericHashKey<...>, ...>::remove()), even though index_ is set by
+// accessors are inlined into HashTable bucket teardown (e.g. HashMap::remove()
+// on a Variant-holding entry), even though index_ is set by
 // every base constructor. Clang and GCC <= 13 are unaffected.
 IGNORE_GCC_WARNINGS_BEGIN("uninitialized")
       inline constexpr bool valueless_by_exception() const noexcept {

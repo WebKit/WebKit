@@ -399,7 +399,7 @@ void IntlLocale::initializeLocale(JSGlobalObject* globalObject, const String& ta
                 return;
             }
         } else {
-            UncheckedKeyHashSet<String> seenVariants;
+            HashSet<String> seenVariants;
             for (auto variant : variantList) {
                 if (!isUnicodeVariantSubtag(variant)) [[unlikely]] {
                     throwRangeError(globalObject, scope, variantsErrorMessage);

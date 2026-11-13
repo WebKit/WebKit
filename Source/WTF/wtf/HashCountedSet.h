@@ -129,7 +129,7 @@ public:
     template<NonNullableSmartPtr V = ValueType>
     bool remove(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>&);
 
-    static bool isValidValue(const ValueType&);
+    static bool isValidValue(const ValueType& value) { return ImplType::isValidKey(value); }
 
 private:
     ImplType m_impl;
@@ -302,23 +302,6 @@ template<typename Value, typename HashFunctions, typename Traits>
 inline void HashCountedSet<Value, HashFunctions, Traits>::clear()
 {
     m_impl.clear();
-}
-
-template<typename Value, typename HashFunctions, typename Traits>
-inline bool HashCountedSet<Value, HashFunctions, Traits>::isValidValue(const ValueType& value)
-{
-    if (Traits::isDeletedValue(value))
-        return false;
-
-    if (HashFunctions::safeToCompareToEmptyOrDeleted) {
-        if (value == Traits::emptyValue())
-            return false;
-    } else {
-        if (isHashTraitsEmptyValue<Traits>(value))
-            return false;
-    }
-
-    return true;
 }
 
 template<typename Value, typename HashFunctions, typename Traits>

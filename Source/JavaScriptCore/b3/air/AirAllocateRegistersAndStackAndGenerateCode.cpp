@@ -119,7 +119,7 @@ void GenerateAndAllocateRegisters::insertBlocksForFlushAfterTerminalPatchpoints(
         if (inst.kind.opcode != Patch)
             continue;
 
-        UncheckedKeyHashMap<Tmp, Arg*> needToDef;
+        HashMap<Tmp, Arg*> needToDef;
 
         inst.forEachArg([&] (Arg& arg, Arg::Role role, Bank, Width) {
             if (!arg.isTmp())
@@ -508,8 +508,8 @@ void GenerateAndAllocateRegisters::prepareForGeneration()
         UnifiedTmpLiveness liveness(m_code);
         for (BasicBlock* block : m_code) {
             auto assertLivenessAreEqual = [&] (auto a, auto b) {
-                UncheckedKeyHashSet<Tmp> livenessA;
-                UncheckedKeyHashSet<Tmp> livenessB;
+                HashSet<Tmp> livenessA;
+                HashSet<Tmp> livenessB;
                 for (Tmp tmp : a) {
                     if (tmp.isReg() && isDisallowedRegister(tmp.reg()))
                         continue;
@@ -1012,7 +1012,7 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
 
     for (auto& entry : m_blocksAfterTerminalPatchForSpilling) {
         entry.value.jump.linkTo(m_jit->label(), m_jit);
-        const UncheckedKeyHashMap<Tmp, Arg*>& spills = entry.value.defdTmps;
+        const HashMap<Tmp, Arg*>& spills = entry.value.defdTmps;
         for (auto& entry : spills) {
             Arg* arg = entry.value;
             if (!arg->isTmp())

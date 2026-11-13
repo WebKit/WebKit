@@ -217,7 +217,7 @@ private:
 
     ASCIILiteral m_qualifiedName;
     Vector<WebAssemblyBuiltin> m_builtins;
-    UncheckedKeyHashMap<String, WebAssemblyBuiltin*> m_builtinsByName;
+    HashMap<String, WebAssemblyBuiltin*> m_builtinsByName;
     // Simulates a name section of a module so builtin callees have a name to report in a stack dump.
     Ref<Wasm::NameSection> m_nameSection;
 };

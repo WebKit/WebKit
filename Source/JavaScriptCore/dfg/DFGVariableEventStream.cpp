@@ -281,7 +281,7 @@ unsigned VariableEventStream::reconstruct(
     Operands<ValueSource> operandSources(codeBlock->numParameters(), numVariables, numTmps);
     for (unsigned i = operandSources.size(); i--;)
         operandSources[i] = ValueSource(SourceIsDead);
-    UncheckedKeyHashMap<MinifiedID, MinifiedGenerationInfo> generationInfos;
+    HashMap<MinifiedID, MinifiedGenerationInfo> generationInfos;
     std::span<const uint8_t> bytes = m_bytes.span();
     while (offset < index) {
         VariableEvent event = decode(bytes, offset);
@@ -301,7 +301,7 @@ unsigned VariableEventStream::reconstruct(
         case Fill:
         case Spill:
         case Death: {
-            UncheckedKeyHashMap<MinifiedID, MinifiedGenerationInfo>::iterator iter = generationInfos.find(event.id());
+            HashMap<MinifiedID, MinifiedGenerationInfo>::iterator iter = generationInfos.find(event.id());
             ASSERT(iter != generationInfos.end());
             iter->value.update(event);
             break;

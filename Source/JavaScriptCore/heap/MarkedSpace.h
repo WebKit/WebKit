@@ -126,7 +126,7 @@ public:
     
     void prepareForConservativeScan();
 
-    typedef UncheckedKeyHashSet<MarkedBlock*>::iterator BlockIterator;
+    typedef HashSet<MarkedBlock*>::iterator BlockIterator;
 
     template<typename Functor> void forEachLiveCell(HeapIterationScope&, NOESCAPE const Functor&);
     template<typename Functor> void forEachDeadCell(HeapIterationScope&, NOESCAPE const Functor&);
@@ -163,7 +163,7 @@ public:
     const Vector<PreciseAllocation*>& preciseAllocations() const LIFETIME_BOUND { return m_preciseAllocations; }
     unsigned preciseAllocationsNurseryOffset() const { return m_preciseAllocationsNurseryOffset; }
     unsigned preciseAllocationsOffsetForThisCollection() const { return m_preciseAllocationsOffsetForThisCollection; }
-    std::optional<UncheckedKeyHashSet<HeapCell*>>& preciseAllocationSet() LIFETIME_BOUND { return m_preciseAllocationSet; }
+    std::optional<HashSet<HeapCell*>>& preciseAllocationSet() LIFETIME_BOUND { return m_preciseAllocationSet; }
 
     void enablePreciseAllocationTracking();
     
@@ -207,7 +207,7 @@ private:
 
     Vector<Subspace*> m_subspaces;
 
-    std::optional<UncheckedKeyHashSet<HeapCell*>> m_preciseAllocationSet;
+    std::optional<HashSet<HeapCell*>> m_preciseAllocationSet;
     Vector<PreciseAllocation*> m_preciseAllocations;
     unsigned m_preciseAllocationsNurseryOffset { 0 };
     unsigned m_preciseAllocationsOffsetForThisCollection { 0 };

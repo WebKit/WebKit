@@ -70,12 +70,12 @@ public:
     //    Air didn't duplicate code or that such duplication didn't cause any interesting changes to
     //    register assignment.
     //
-    // 2) Have the Special maintain a UncheckedKeyHashMap<Inst*, RegisterSet>. This works because the analysis
+    // 2) Have the Special maintain a HashMap<Inst*, RegisterSet>. This works because the analysis
     //    that feeds into this call is performed just before code generation and there is no way
     //    for the Vector<>'s that contain the Insts to be reallocated. This allows generate() to
-    //    consult the UncheckedKeyHashMap.
+    //    consult the HashMap.
     //
-    // 3) Hybrid: you could use (1) and fire up a UncheckedKeyHashMap if you see multiple calls.
+    // 3) Hybrid: you could use (1) and fire up a HashMap if you see multiple calls.
     //
     // Note that it's not possible to rely on reportUsedRegisters() being called in the same order
     // as generate(). If we could rely on that, then we could just have each Special instance

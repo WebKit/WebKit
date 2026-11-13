@@ -345,7 +345,7 @@ public:
     bool usesEval() const { return m_usesEval; }
     bool usesImportMeta() const { return m_usesImportMeta; }
 
-    const UncheckedKeyHashSet<UniquedStringImpl*>& closedVariableCandidates() const LIFETIME_BOUND { return m_closedVariableCandidates; }
+    const HashSet<UniquedStringImpl*>& closedVariableCandidates() const LIFETIME_BOUND { return m_closedVariableCandidates; }
     VariableEnvironment& declaredVariables() LIFETIME_BOUND { return m_declaredVariables; }
     VariableEnvironment& lexicalVariables() LIFETIME_BOUND { return m_lexicalVariables; }
     void finalizeLexicalEnvironment()
@@ -1077,8 +1077,8 @@ private:
     LexicallyScopedFeatures m_lexicallyScopedFeatures;
     ConstructorKind m_constructorKind { ConstructorKind::None };
     InnerArrowFunctionCodeFeatures m_innerArrowFunctionFeatures { 0 };
-    UncheckedKeyHashMap<FunctionMetadataNode*, NeedsDuplicateDeclarationCheck> m_sloppyModeFunctionHoistingCandidates;
-    UncheckedKeyHashSet<UniquedStringImpl*> m_closedVariableCandidates;
+    HashMap<FunctionMetadataNode*, NeedsDuplicateDeclarationCheck> m_sloppyModeFunctionHoistingCandidates;
+    HashSet<UniquedStringImpl*> m_closedVariableCandidates;
 
     // offset 64 in release mode
     VariableEnvironment m_lexicalVariables;

@@ -198,9 +198,9 @@ private:
     unsigned m_logPageSize;
     
     Tree m_freeSpaceSizeMap;
-    UncheckedKeyHashMap<FreeSpacePtr, CheckedPtr<FreeSpaceNode>> m_freeSpaceStartAddressMap;
-    UncheckedKeyHashMap<FreeSpacePtr, CheckedPtr<FreeSpaceNode>> m_freeSpaceEndAddressMap;
-    UncheckedKeyHashMap<uintptr_t, size_t> m_pageOccupancyMap;
+    HashMap<FreeSpacePtr, CheckedPtr<FreeSpaceNode>> m_freeSpaceStartAddressMap;
+    HashMap<FreeSpacePtr, CheckedPtr<FreeSpaceNode>> m_freeSpaceEndAddressMap;
+    HashMap<uintptr_t, size_t> m_pageOccupancyMap;
     
     size_t m_bytesAllocated;
     size_t m_bytesReserved;

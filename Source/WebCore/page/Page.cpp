@@ -4363,7 +4363,7 @@ void Page::setVisitedLinkStore(Ref<VisitedLinkStore>&& visitedLinkStore)
 
 std::optional<uint64_t> Page::noiseInjectionHashSaltForDomain(const RegistrableDomain& domain)
 {
-    if (!m_noiseInjectionHashSalts.isValidKey(domain))
+    if (domain.string().isNull())
         return std::nullopt;
 
     return m_noiseInjectionHashSalts.ensure(domain, [] {

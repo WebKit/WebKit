@@ -166,7 +166,7 @@ public:
             break;
         }
 #if !defined(NDEBUG)
-        m_debugImpureData.removeIf([heap, clobberConservatively, this](const UncheckedKeyHashMap<HeapLocation, LazyNode>::KeyValuePairType& pair) -> bool {
+        m_debugImpureData.removeIf([heap, clobberConservatively, this](const HashMap<HeapLocation, LazyNode>::KeyValuePairType& pair) -> bool {
             switch (heap.kind()) {
             case World:
             case SideState:
@@ -219,7 +219,7 @@ public:
     }
 
 private:
-    typedef UncheckedKeyHashSet<std::unique_ptr<ImpureDataSlot>, ImpureDataSlotHash> Map;
+    typedef HashSet<std::unique_ptr<ImpureDataSlot>, ImpureDataSlotHash> Map;
 
     const ImpureDataSlot* addImpl(const HeapLocation& location, const LazyNode& node)
     {
@@ -301,13 +301,13 @@ private:
     // a duplicate in the past and now only live in m_fallbackStackMap.
     //
     // Obviously, TOP always goes into m_fallbackStackMap since it does not have a unique value.
-    UncheckedKeyHashMap<int64_t, std::unique_ptr<ImpureDataSlot>, DefaultHash<int64_t>, WTF::SignedWithZeroKeyHashTraits<int64_t>> m_abstractHeapStackMap;
+    HashMap<int64_t, std::unique_ptr<ImpureDataSlot>, DefaultHash<int64_t>, WTF::SignedWithZeroKeyHashTraits<int64_t>> m_abstractHeapStackMap;
     Map m_fallbackStackMap;
 
     Map m_heapMap;
 
 #if !defined(NDEBUG)
-    UncheckedKeyHashMap<HeapLocation, LazyNode> m_debugImpureData;
+    HashMap<HeapLocation, LazyNode> m_debugImpureData;
 #endif
 };
 
@@ -465,7 +465,7 @@ private:
         }
 
     private:
-        UncheckedKeyHashMap<PureValue, Node*> m_pureMap;
+        HashMap<PureValue, Node*> m_pureMap;
         ImpureMap m_impureMap;
     };
 
@@ -511,7 +511,7 @@ private:
         }
 
     private:
-        UncheckedKeyHashMap<PureValue, Node*> m_pureMap;
+        HashMap<PureValue, Node*> m_pureMap;
         ImpureMap m_impureMap;
     };
 

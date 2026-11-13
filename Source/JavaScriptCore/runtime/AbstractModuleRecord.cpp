@@ -550,7 +550,7 @@ auto AbstractModuleRecord::resolveExportImpl(JSGlobalObject* globalObject, const
     //  4. Once we follow star links, we should not retrieve the result from the cache and should not cache the result.
     //  5. Once we see star links, even if we have not yet traversed that star link path, we should disable caching.
 
-    using ResolveSet = WTF::UncheckedKeyHashSet<ResolveQuery, ResolveQuery::Hash, ResolveQuery::HashTraits>;
+    using ResolveSet = WTF::HashSet<ResolveQuery, ResolveQuery::Hash, ResolveQuery::HashTraits>;
     enum class Type { Query, IndirectFallback, GatherStars };
     struct Task {
         ResolveQuery query;
@@ -821,7 +821,7 @@ JSModuleNamespaceObject* AbstractModuleRecord::getModuleNamespace(JSGlobalObject
     IdentifierSet slowPathNames;
     Vector<std::pair<Identifier, Resolution>> resolutions;
 
-    UncheckedKeyHashSet<AbstractModuleRecord*> exportStarSet;
+    HashSet<AbstractModuleRecord*> exportStarSet;
     Vector<AbstractModuleRecord*, 8> pendingModules;
     pendingModules.append(this);
 
@@ -941,7 +941,7 @@ JSModuleNamespaceObject* AbstractModuleRecord::getModuleNamespace(JSGlobalObject
 }
 
 // https://tc39.es/proposal-defer-import-eval/#sec-GatherAsynchronousTransitiveDependencies
-void AbstractModuleRecord::gatherAsynchronousTransitiveDependencies(OrderedHashSet<AbstractModuleRecord*>& result, UncheckedKeyHashSet<AbstractModuleRecord*>& seen)
+void AbstractModuleRecord::gatherAsynchronousTransitiveDependencies(OrderedHashSet<AbstractModuleRecord*>& result, HashSet<AbstractModuleRecord*>& seen)
 {
     // The spec text is recursive; we use an explicit work list to avoid native stack overflow on
     // deep graphs. Children are pushed in reverse to preserve the spec's pre-order discovery order.
@@ -982,7 +982,7 @@ void AbstractModuleRecord::gatherAsynchronousTransitiveDependencies(OrderedHashS
 bool AbstractModuleRecord::readyForSyncExecution()
 {
     // The spec text is recursive; we use an explicit work list to avoid native stack overflow on deep graphs.
-    UncheckedKeyHashSet<AbstractModuleRecord*> seen;
+    HashSet<AbstractModuleRecord*> seen;
     Vector<AbstractModuleRecord*, 8> stack;
     stack.append(this);
     while (!stack.isEmpty()) {
@@ -1209,7 +1209,7 @@ unsigned AbstractModuleRecord::innerModuleEvaluation(JSGlobalObject* globalObjec
             // 11.b.i. Let additionalModules be GatherAsynchronousTransitiveDependencies(requiredModule).
             // 11.b.ii. For each Module Record additionalModule of additionalModules, do
             //   11.b.ii.1. If evaluationList does not contain additionalModule, then append additionalModule to evaluationList.
-            UncheckedKeyHashSet<AbstractModuleRecord*> seen;
+            HashSet<AbstractModuleRecord*> seen;
             requiredModule->gatherAsynchronousTransitiveDependencies(evaluationList, seen);
         } else {
             // 11.c. Else if evaluationList does not contain requiredModule, then

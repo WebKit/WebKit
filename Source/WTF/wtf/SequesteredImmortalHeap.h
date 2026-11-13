@@ -96,7 +96,7 @@ private:
 
     void insertSorted(GranuleHeader*);
 
-    UncheckedKeyHashMap<uintptr_t, GranuleHeader*> m_liveMap;
+    HashMap<uintptr_t, GranuleHeader*> m_liveMap;
     GranuleList m_decommittedList;
     GranuleList m_emptyHeaders;
     Lock m_lock;

@@ -321,7 +321,7 @@ static OffsetToNextInstructions convertMappingsToAbsolute(uint32_t bytecodeStart
 {
     OffsetToNextInstructions expectedMappings;
     for (const auto& [from, tos] : mappings) {
-        UncheckedKeyHashSet<uint32_t> targets;
+        HashSet<uint32_t> targets;
         for (uint32_t to : tos)
             targets.add(bytecodeStart + to);
         expectedMappings.add(bytecodeStart + from, WTF::move(targets));
@@ -372,7 +372,7 @@ static bool parseAndVerifyDebugInfoImpl(JSC::VM* vm, const SourceModule& sourceM
         return absOffset - sourceModule.bytecodeStart;
     };
 
-    auto toRelativeSet = [&](const UncheckedKeyHashSet<uint32_t>& absSet) {
+    auto toRelativeSet = [&](const HashSet<uint32_t>& absSet) {
         Vector<uint32_t> relative;
         for (uint32_t abs : absSet)
             relative.append(abs - sourceModule.bytecodeStart);
@@ -400,9 +400,9 @@ static bool parseAndVerifyDebugInfoImpl(JSC::VM* vm, const SourceModule& sourceM
     // Verify each expected entry exists and matches exactly
     for (const auto& expectedEntry : expectedMappings) {
         uint32_t expectedOffset = expectedEntry.key;
-        const UncheckedKeyHashSet<uint32_t>& expectedNextOffsets = expectedEntry.value;
+        const HashSet<uint32_t>& expectedNextOffsets = expectedEntry.value;
 
-        UncheckedKeyHashSet<uint32_t>* actualNextOffsets = debugInfo.findNextInstructions(expectedOffset);
+        HashSet<uint32_t>* actualNextOffsets = debugInfo.findNextInstructions(expectedOffset);
         if (!actualNextOffsets) {
             dataLogLn("ERROR: Expected mapping at offset ", toRelative(expectedOffset), " is missing from actual mappings");
             dataLogLn("Opcode: ", expectedOpcode);

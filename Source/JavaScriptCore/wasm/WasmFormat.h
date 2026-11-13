@@ -958,7 +958,7 @@ struct Entrypoint {
 
 class OSREntryValue;
 using StackMap = FixedVector<OSREntryValue>;
-using StackMaps = UncheckedKeyHashMap<CallSiteIndex, StackMap>;
+using StackMaps = HashMap<CallSiteIndex, StackMap>;
 
 struct InternalFunction {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(InternalFunction);

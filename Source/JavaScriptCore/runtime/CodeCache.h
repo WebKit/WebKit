@@ -54,7 +54,7 @@ class ProgramExecutable;
 class SourceCode;
 class VM;
 
-using TDZEnvironment = UncheckedKeyHashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash>;
+using TDZEnvironment = HashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash>;
 
 namespace CodeCacheInternal {
 static constexpr bool verbose = false;
@@ -77,7 +77,7 @@ struct SourceCodeValue {
 
 class CodeCacheMap {
 public:
-    typedef UncheckedKeyHashMap<SourceCodeKey, SourceCodeValue, DefaultHash<SourceCodeKey>, SourceCodeKey::HashTraits> MapType;
+    typedef HashMap<SourceCodeKey, SourceCodeValue, DefaultHash<SourceCodeKey>, SourceCodeKey::HashTraits> MapType;
     typedef MapType::iterator iterator;
     typedef MapType::AddResult AddResult;
 

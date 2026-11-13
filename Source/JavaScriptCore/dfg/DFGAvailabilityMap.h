@@ -84,7 +84,7 @@ struct AvailabilityMap {
     void validateAvailability(Graph& graph, Node* where) const;
 
     Operands<Availability> m_locals;
-    UncheckedKeyHashMap<PromotedHeapLocation, Availability> m_heap;
+    HashMap<PromotedHeapLocation, Availability> m_heap;
 };
 
 } } // namespace JSC::DFG

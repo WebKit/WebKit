@@ -116,7 +116,6 @@ set(WTF_PUBLIC_HEADERS
     FunctionPtr.h
     FunctionTraits.h
     GenerationalSet.h
-    GenericHashKey.h
     GenericTimeMixin.h
     GetPtr.h
     GlobalVersion.h

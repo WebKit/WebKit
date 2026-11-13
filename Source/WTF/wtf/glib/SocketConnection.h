@@ -35,7 +35,7 @@ namespace WTF {
 class SocketConnection : public RefCounted<SocketConnection> {
 public:
     typedef void (* MessageCallback)(SocketConnection&, GVariant*, gpointer);
-    using MessageHandlers = UncheckedKeyHashMap<UTF8CString, std::pair<ASCIICString, MessageCallback>>;
+    using MessageHandlers = HashMap<UTF8CString, std::pair<ASCIICString, MessageCallback>>;
     static Ref<SocketConnection> create(GRefPtr<GSocketConnection>&& connection, const MessageHandlers& messageHandlers, gpointer userData)
     {
         return adoptRef(*new SocketConnection(WTF::move(connection), messageHandlers, userData));

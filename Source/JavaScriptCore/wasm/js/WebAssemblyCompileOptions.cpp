@@ -182,7 +182,7 @@ std::optional<String> WebAssemblyCompileOptions::validateBuiltinsAndImportedStri
  */
 bool WebAssemblyCompileOptions::validateBuiltinSetNames() const
 {
-    UncheckedKeyHashSet<String> seen;
+    HashSet<String> seen;
     for (const auto& name : m_qualifiedBuiltinSetNames) {
         if (seen.contains(name))
             return false;

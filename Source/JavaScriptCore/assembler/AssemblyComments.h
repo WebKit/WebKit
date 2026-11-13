@@ -45,7 +45,7 @@ public:
 
     Lock& getLock() LIFETIME_BOUND WTF_RETURNS_LOCK(m_lock) { return m_lock; }
 
-    using CommentMap = UncheckedKeyHashMap<uintptr_t, String>;
+    using CommentMap = HashMap<uintptr_t, String>;
 
     void registerCodeRange(void* start, void* end, CommentMap&& map)
     {
