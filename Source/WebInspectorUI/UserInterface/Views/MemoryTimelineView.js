@@ -446,7 +446,7 @@ WI.MemoryTimelineView = class MemoryTimelineView extends WI.TimelineView
 
         // Max comparison legend rows.
         this._maxComparisonCircleChart.segments = ["current", "remainder"];
-        this._maxComparisonMaximumSizeElement = appendLegendRow.call(this, this._maxComparisonLegendElement, "remainder", WI.UIString("Maximum"), WI.UIString("Maximum maximum memory size in this recording"));
+        this._maxComparisonMaximumSizeElement = appendLegendRow.call(this, this._maxComparisonLegendElement, "remainder", WI.UIString("Maximum"), WI.UIString("Maximum memory size in this recording"));
         this._maxComparisonCurrentSizeElement = appendLegendRow.call(this, this._maxComparisonLegendElement, "current", WI.UIString("Current"), WI.UIString("Total memory size at the end of the selected time range"));
     }
 
