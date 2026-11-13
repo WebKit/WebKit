@@ -333,7 +333,11 @@ public:
 
 #if ENABLE(SPATIAL_PORTAL)
     static bool isSpatialPortal(const RenderObject&);
+    static bool isPromotedSpatialPortalChild(const RenderLayer&);
+    static RenderLayer* promotedSpatialPortalChildForLayer(RenderLayer&);
 #endif
+
+    bool isRunningTransformAnimation(RenderLayerModelObject&) const;
 
     static RenderLayerCompositor* frameContentsCompositor(RenderWidget&);
 
@@ -516,7 +520,6 @@ private:
     void adjustOverflowScrollbarContainerLayers(RenderLayer& stackingContextLayer, const Vector<RenderLayer*>& overflowScrollLayers, const Vector<RenderLayer*>& layersClippedByScrollers, Vector<Ref<GraphicsLayer>>&);
 
     bool layerHas3DContent(const RenderLayer&) const;
-    bool isRunningTransformAnimation(RenderLayerModelObject&) const;
 
     bool allowBackingStoreDetachingForFixedPosition(RenderLayer&, const LayoutRect& absoluteBounds);
 

@@ -59,6 +59,15 @@ header: <WebKit/ModelTypes.h>
     int64_t hashValue;
 };
 
+#if ENABLE(SPATIAL_PORTAL)
+header: <WebKit/ModelTypes.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::PortalContentSource {
+    WebKit::ImageBufferSetIdentifier bufferSet;
+    WebModel::TypedResourceId textureIdentifier;
+    bool isOpaque;
+};
+#endif
+
 header: <WebKit/ModelTypes.h>
 [AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::TextureLevelInfo {
     long dataOffset;
@@ -78,6 +87,9 @@ header: <WebKit/ModelTypes.h>
 [AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::UpdateMaterialDescriptor {
     WebModel::MaterialGraph materialGraph;
     WebModel::TypedResourceId identifier;
+#if ENABLE(SPATIAL_PORTAL)
+    std::optional<WebModel::TypedResourceId> portalContentTextureIdentifier;
+#endif
 };
 
 header: <WebKit/ModelTypes.h>

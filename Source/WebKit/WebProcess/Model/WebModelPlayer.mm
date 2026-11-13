@@ -38,6 +38,7 @@
 #import "RemoteMeshProxy.h"
 #import "WKStageModeOrbitSimulator.h"
 #import <WebCore/Chrome.h>
+#import <WebCore/ContentsFormat.h>
 #import <WebCore/Document.h>
 #import <WebCore/DocumentEventLoop.h>
 #import <WebCore/FloatPoint3D.h>
@@ -67,6 +68,9 @@
 #endif
 
 #if ENABLE(SPATIAL_PORTAL)
+#import "GraphicsLayerCARemote.h"
+#import "PlatformCALayerRemote.h"
+#import "RemoteLayerBackingStore.h"
 #import <WebCore/CSSUnits.h>
 #endif
 
@@ -77,6 +81,11 @@ namespace WebKit {
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(WebModelPlayer::HostedModel);
 
 WebModelPlayer::HostedModel::~HostedModel() = default;
+
+#if ENABLE(SPATIAL_PORTAL)
+static constexpr unsigned portalContentBufferFrameCount = 3;
+static constexpr unsigned portalRenderRetryLimit = 30;
+#endif
 
 class ModelDisplayBufferDisplayDelegate final : public WebCore::GraphicsLayerContentsDisplayDelegate {
 public:
@@ -277,6 +286,9 @@ bool WebModelPlayer::ensureModelBacking(WebCore::LayoutSize size)
             protectedThis->m_renderTextureIndex = 0;
             protectedThis->m_displayTextureIndex = 0;
             protectedThis->m_hasRenderedFrame = false;
+#if ENABLE(SPATIAL_PORTAL)
+            protectedThis->setDisplayedPortalChildren({ });
+#endif
 #if HAVE(SUPPORT_HDR_DISPLAY) && ENABLE(PIXEL_FORMAT_RGBA16F)
             protectedThis->updateScreenHeadroomFromPage();
 #endif
@@ -287,8 +299,12 @@ bool WebModelPlayer::ensureModelBacking(WebCore::LayoutSize size)
     m_currentModel->setViewportSize(cssSize.width().toFloat(), cssSize.height().toFloat());
 
 #if ENABLE(SPATIAL_PORTAL)
-    if (m_portalTransform)
-        protect(m_currentModel)->setPortalTransform(*m_portalTransform);
+    if (m_portalTransform) {
+        Ref currentModel = *m_currentModel;
+        currentModel->setPortalTransform(*m_portalTransform);
+        if (!m_portalChildQuads.isEmpty())
+            currentModel->setPortalChildQuads(Vector<PortalChildQuad> { m_portalChildQuads });
+    }
 #endif
 
     m_environmentMapPushedToCurrentModel = false;
@@ -474,7 +490,7 @@ void WebModelPlayer::unload(WebCore::NodeIdentifier nodeID)
 
     removeHostedModelResources(nodeID, *hosted);
 
-    if (m_hostedModels.isEmpty()) {
+    if (m_hostedModels.isEmpty() && !hasPromotedDOMContent()) {
         releaseModelResources();
         return;
     }
@@ -510,6 +526,16 @@ void WebModelPlayer::notifyEntityTransformUpdated()
 
 void WebModelPlayer::sizeDidChange(WebCore::LayoutSize size)
 {
+#if ENABLE(SPATIAL_PORTAL)
+    if (isSpatialPortal()) {
+        m_portalLayoutSize = size;
+        if (!m_currentModel) {
+            ensurePortalContentBacking();
+            return;
+        }
+    }
+#endif
+
     RefPtr currentModel = m_currentModel;
     if (!currentModel)
         return;
@@ -540,6 +566,9 @@ void WebModelPlayer::sizeDidChange(WebCore::LayoutSize size)
         protectedThis->m_renderTextureIndex = 0;
         protectedThis->m_displayTextureIndex = 0;
         protectedThis->m_hasRenderedFrame = false;
+#if ENABLE(SPATIAL_PORTAL)
+        protectedThis->setDisplayedPortalChildren({ });
+#endif
         if (protectedThis->m_contentsDisplayDelegate)
             protect(protectedThis->m_contentsDisplayDelegate)->setDisplayBuffer(*protectedThis->displayBuffer());
         protectedThis->startUpdateLoopIfNeeded();
@@ -796,7 +825,7 @@ void WebModelPlayer::scheduleUpdateIfNeeded()
 
 void WebModelPlayer::update()
 {
-    if (m_hostedModels.isEmpty())
+    if (m_hostedModels.isEmpty() && !hasPromotedDOMContent())
         return;
 
     if (!m_isUpdateLoopRunning || m_isUpdating)
@@ -850,11 +879,30 @@ void WebModelPlayer::update()
     if (didReachEnd)
         updateMeshPlayState();
 
+#if ENABLE(SPATIAL_PORTAL)
+    if (m_portalPromotedChildrenNeedResolution)
+        resolvePortalPromotedChildren();
+
+    bool promotedChildrenAreAnimating = false;
+    if (hasPromotedDOMContent()) {
+        if (RefPtr client = m_client)
+            promotedChildrenAreAnimating = client->willRenderPortalFrame(*this);
+    }
+#endif
+
     if (!render())
         m_isUpdating = false;
 
+#if ENABLE(SPATIAL_PORTAL)
+    if (m_portalContentBufferFrames)
+        --m_portalContentBufferFrames;
+
+    if (everyChildIsAtRest && !stageModeActive && !m_portalContentBufferFrames && !m_portalPromotedChildrenNeedResolution && !promotedChildrenAreAnimating)
+        m_isUpdateLoopRunning = false;
+#else
     if (everyChildIsAtRest && !stageModeActive)
         m_isUpdateLoopRunning = false;
+#endif
 
     if (m_needsEntityTransformNotification)
         notifyEntityTransformUpdated();
@@ -869,7 +917,7 @@ bool WebModelPlayer::hasAnyLoadedChild() const
 
 bool WebModelPlayer::render()
 {
-    if (!hasAnyLoadedChild())
+    if (!hasAnyLoadedChild() && !hasPromotedDOMContent())
         return false;
 
     RefPtr currentModel = m_currentModel;
@@ -880,12 +928,28 @@ bool WebModelPlayer::render()
     if (++m_renderTextureIndex >= m_displayBuffers.size())
         m_renderTextureIndex = 0;
 
+#if ENABLE(SPATIAL_PORTAL)
+    m_inFlightPortalChildren.clear();
+    for (auto& quad : m_portalChildQuads) {
+        if (!m_inFlightPortalChildren.contains(quad.rootNodeID))
+            m_inFlightPortalChildren.append(quad.rootNodeID);
+    }
+#endif
+
     currentModel->render(textureIndex, [protectedThis = protect(*this), textureIndex](bool result) mutable {
         protectedThis->ensureOnMainThreadWithProtectedThis([result, textureIndex](Ref<WebModelPlayer> protectedThis) {
             protectedThis->m_isUpdating = false;
-            if (!result)
+            if (!result) {
+#if ENABLE(SPATIAL_PORTAL)
+                protectedThis->retryRenderForPortalContent();
+#endif
                 return;
+            }
 
+#if ENABLE(SPATIAL_PORTAL)
+            protectedThis->m_portalRenderRetries = 0;
+            bool isFirstFrame = !protectedThis->m_hasRenderedFrame;
+#endif
             protectedThis->m_displayTextureIndex = textureIndex;
             protectedThis->m_hasRenderedFrame = true;
             if (auto* machSendRight = protectedThis->displayBuffer(); machSendRight && protectedThis->contentsDisplayDelegate()) {
@@ -905,6 +969,14 @@ bool WebModelPlayer::render()
 
             protectedThis->notifyClientDidFinishLoading();
             protectedThis->scheduleDisplayUpdate();
+
+#if ENABLE(SPATIAL_PORTAL)
+            protectedThis->setDisplayedPortalChildren(WTF::move(protectedThis->m_inFlightPortalChildren));
+            if (isFirstFrame && protectedThis->hasPromotedDOMContent()) {
+                if (RefPtr client = protectedThis->m_client)
+                    client->didUpdate(protectedThis.get());
+            }
+#endif
         });
     });
 
@@ -1132,6 +1204,143 @@ void WebModelPlayer::setPortalAction(WebCore::PortalActionKind kind)
         notifyPortalTransformUpdated();
         startUpdateLoopIfNeeded();
     }
+}
+
+bool WebModelPlayer::hasPromotedDOMContent() const
+{
+    return isSpatialPortal() && !m_portalPromotedChildren.isEmpty();
+}
+
+bool WebModelPlayer::hostsPortalPromotedChild(WebCore::NodeIdentifier nodeID) const
+{
+    return m_displayedPortalChildren.contains(nodeID);
+}
+
+void WebModelPlayer::setDisplayedPortalChildren(Vector<WebCore::NodeIdentifier>&& nodeIDs)
+{
+    if (m_displayedPortalChildren == nodeIDs)
+        return;
+
+    m_displayedPortalChildren = WTF::move(nodeIDs);
+
+    if (RefPtr client = m_client)
+        client->didUpdateHostedPortalChildren(*this);
+}
+
+void WebModelPlayer::setPortalPromotedChildren(const Vector<WebCore::PortalPromotedChild>& children)
+{
+    m_portalPromotedChildren = children;
+    resolvePortalPromotedChildren();
+}
+
+void WebModelPlayer::portalPromotedChildDidPaint()
+{
+    m_portalContentBufferFrames = portalContentBufferFrameCount;
+    m_portalRenderRetries = 0;
+    startUpdateLoopIfNeeded();
+}
+
+void WebModelPlayer::retryRenderForPortalContent()
+{
+    if (!hasPromotedDOMContent())
+        return;
+
+    if (m_portalRenderRetries++ >= portalRenderRetryLimit) {
+        m_isUpdateLoopRunning = false;
+        return;
+    }
+
+    m_isUpdateLoopRunning = true;
+    scheduleUpdateIfNeeded();
+}
+
+std::optional<WebModelPlayer::PortalLayerBacking> WebModelPlayer::portalLayerBacking(WebCore::GraphicsLayer* layer)
+{
+    RefPtr graphicsLayer = dynamicDowncast<GraphicsLayerCARemote>(layer);
+    if (!graphicsLayer)
+        return std::nullopt;
+
+    RefPtr platformLayer = dynamicDowncast<PlatformCALayerRemote>(graphicsLayer->platformCALayerIgnoringStructuralLayer());
+    if (!platformLayer)
+        return std::nullopt;
+
+    CheckedPtr backingStore = platformLayer->properties().backingStoreOrProperties.store.get();
+    if (!backingStore || backingStore->type() != RemoteLayerBackingStore::Type::IOSurface)
+        return std::nullopt;
+
+    if (platformLayer->contentsFormat() != WebCore::ContentsFormat::RGBA8) {
+        platformLayer->setContentsFormat(WebCore::ContentsFormat::RGBA8);
+        platformLayer->setNeedsDisplay();
+        return std::nullopt;
+    }
+
+    auto bufferSet = backingStore->bufferSetIdentifier();
+    if (!bufferSet)
+        return std::nullopt;
+
+    return PortalLayerBacking { *bufferSet, backingStore->isOpaque() };
+}
+
+void WebModelPlayer::resolvePortalPromotedChildren()
+{
+    ensurePortalContentBacking();
+
+    Vector<PortalChildQuad> quads;
+    quads.reserveInitialCapacity(m_portalPromotedChildren.size());
+    Vector<WebCore::NodeIdentifier> unresolvedRoots;
+    for (auto& child : m_portalPromotedChildren) {
+        auto backing = portalLayerBacking(child.layer.get());
+        if (!backing) {
+            if (!unresolvedRoots.contains(child.rootNodeID))
+                unresolvedRoots.append(child.rootNodeID);
+            continue;
+        }
+
+        quads.append(PortalChildQuad {
+            .nodeID = child.nodeID,
+            .rootNodeID = child.rootNodeID,
+            .bufferSet = backing->bufferSet,
+            .isOpaque = backing->isOpaque,
+            .quadRectInChildSpace = child.quadRectInChildSpace,
+            .childOriginInPortal = child.childOriginInPortal,
+            .transform = child.transform,
+        });
+    }
+
+    quads.removeAllMatching([&](auto& quad) {
+        return unresolvedRoots.contains(quad.rootNodeID);
+    });
+
+    m_portalPromotedChildrenNeedResolution = !unresolvedRoots.isEmpty();
+
+    if (quads == m_portalChildQuads) {
+        if (m_portalPromotedChildrenNeedResolution)
+            startUpdateLoopIfNeeded();
+        return;
+    }
+
+    m_portalChildQuads = quads;
+    m_portalContentBufferFrames = portalContentBufferFrameCount;
+
+    if (RefPtr model = m_currentModel)
+        model->setPortalChildQuads(WTF::move(quads));
+
+    startUpdateLoopIfNeeded();
+}
+
+bool WebModelPlayer::ensurePortalContentBacking()
+{
+    if (m_currentModel)
+        return true;
+
+    if (!hasPromotedDOMContent() || !m_portalLayoutSize || m_portalLayoutSize->isEmpty())
+        return false;
+
+    if (!ensureModelBacking(*m_portalLayoutSize))
+        return false;
+
+    startUpdateLoopIfNeeded();
+    return true;
 }
 
 void WebModelPlayer::notifyPortalTransformUpdated()
@@ -1407,6 +1616,9 @@ void WebModelPlayer::releaseModelResources()
     m_isUpdating = false;
     m_displayTextureIndex = 0;
     m_hasRenderedFrame = false;
+#if ENABLE(SPATIAL_PORTAL)
+    setDisplayedPortalChildren({ });
+#endif
 }
 
 void WebModelPlayer::visibilityStateDidChange()

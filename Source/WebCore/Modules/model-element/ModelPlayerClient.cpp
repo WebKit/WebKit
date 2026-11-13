@@ -32,4 +32,15 @@ namespace WebCore {
 
 ModelPlayerClient::~ModelPlayerClient() = default;
 
+#if ENABLE(SPATIAL_PORTAL)
+bool ModelPlayerClient::willRenderPortalFrame(ModelPlayer&)
+{
+    return false;
+}
+
+void ModelPlayerClient::didUpdateHostedPortalChildren(ModelPlayer&)
+{
+}
+#endif
+
 }

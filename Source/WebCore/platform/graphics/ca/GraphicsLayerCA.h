@@ -76,6 +76,7 @@ public:
 
     WEBCORE_EXPORT PlatformLayer* platformLayer() const override;
     PlatformCALayer* platformCALayer() const { return primaryLayer(); }
+    PlatformCALayer* platformCALayerIgnoringStructuralLayer() const { return m_layer.get(); }
 
     WEBCORE_EXPORT bool setChildren(Vector<Ref<GraphicsLayer>>&&) override;
     WEBCORE_EXPORT void addChild(Ref<GraphicsLayer>&&) override;
@@ -253,6 +254,10 @@ public:
     WEBCORE_EXPORT void setShadowPath(const Path&) override;
 
     WEBCORE_EXPORT void setHidesFromScreenCapture(bool) override;
+
+#if ENABLE(SPATIAL_PORTAL)
+    WEBCORE_EXPORT void setIsHostedInSpatialPortalScene(bool) override;
+#endif
 
 private:
     friend class FrameProcessIndicators;
@@ -517,6 +522,7 @@ private:
     void updateChildrenTransform();
     void updateMasksToBounds();
     void updateContentsVisibility();
+    void updatePrimaryLayerHidden();
     void updateContentsOpaque(float pageScaleFactor);
     void updateBackfaceVisibility();
     bool updateStructuralLayer();
@@ -700,6 +706,9 @@ private:
 #endif
         ShadowPathChanged                       = 1LLU << 49,
         HidesFromScreenCaptureChanged           = 1LLU << 50,
+#if ENABLE(SPATIAL_PORTAL)
+        HostedInSpatialPortalSceneChanged       = 1LLU << 51,
+#endif
     };
     typedef uint64_t LayerChangeFlags;
     static ASCIILiteral layerChangeAsString(LayerChange);

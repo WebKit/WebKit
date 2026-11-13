@@ -33,7 +33,11 @@
 #include <WebCore/CSSUnits.h>
 #include <WebCore/StageModeOperations.h>
 #include <WebCore/TransformationMatrix.h>
+#include <array>
+#include <wtf/HexNumber.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/MakeString.h>
 
 #if ENABLE(GPU_PROCESS_MODEL)
 #include "Float3.h"
@@ -163,6 +167,86 @@ static void transformBoundingBox(simd_float3 extents, simd_float3 center, const 
         minimum = corner ? simd_min(minimum, point) : point;
         maximum = corner ? simd_max(maximum, point) : point;
     }
+}
+
+static constexpr auto portalChildQuadGraphName = WKBridgePortalChildQuadGraphName ""_s;
+
+enum class PortalChildQuadResource : uint8_t {
+    Mesh = 1,
+    Material = 2,
+    Texture = 3,
+};
+
+static WebModel::TypedResourceId portalChildQuadResourceID(WebCore::NodeIdentifier nodeID, PortalChildQuadResource resource)
+{
+    uint64_t raw = nodeID.toUInt64();
+    auto resourceValue = static_cast<uint64_t>(resource);
+
+    return WebModel::TypedResourceId {
+        makeString("50524C51-"_s, hex(resourceValue, 4), "-4000-"_s, hex(raw >> 48, 4), '-', hex(raw & 0xFFFFFFFFFFFF, 12)),
+        makeString('/', portalChildQuadGraphName, '/', raw, '/', resourceValue),
+        static_cast<int64_t>(0x50524C5100000000ULL ^ (raw * 4 + resourceValue))
+    };
+}
+
+static Vector<uint8_t> portalChildQuadVertexData()
+{
+    static constexpr std::array<float, 32> vertices {
+        -0.5f, -0.5f, 0.f, 0.f, 0.f, 1.f, 0.f, 1.f,
+        0.5f, -0.5f, 0.f, 0.f, 0.f, 1.f, 1.f, 1.f,
+        0.5f, 0.5f, 0.f, 0.f, 0.f, 1.f, 1.f, 0.f,
+        -0.5f, 0.5f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f,
+    };
+    return Vector<uint8_t> { asByteSpan(vertices) };
+}
+
+static Vector<uint8_t> portalChildQuadIndexData()
+{
+    static constexpr std::array<uint16_t, 12> indices { 0, 1, 2, 0, 2, 3, 0, 2, 1, 0, 3, 2 };
+    return Vector<uint8_t> { asByteSpan(indices) };
+}
+
+static WebModel::MeshDescriptor portalChildQuadMeshDescriptor()
+{
+    return WebModel::MeshDescriptor {
+        .vertexBufferCount = 1,
+        .vertexCapacity = 4,
+        .vertexAttributes = {
+            WebModel::VertexAttributeFormat { WebModel::VertexSemantic::Position, ::WebGPU::VertexFormat::Float32x3, 0, 0 },
+            WebModel::VertexAttributeFormat { WebModel::VertexSemantic::Normal, ::WebGPU::VertexFormat::Float32x3, 0, 12 },
+            WebModel::VertexAttributeFormat { WebModel::VertexSemantic::UV0, ::WebGPU::VertexFormat::Float32x2, 0, 24 },
+        },
+        .vertexLayouts = {
+            WebModel::VertexLayout { 0, 0, 32, WebModel::VertexStepFunction::PerVertex, 1 },
+        },
+        .indexCapacity = 12,
+        .indexType = WebModel::IndexType::UInt16,
+    };
+}
+
+static WebModel::UpdateMeshDescriptor portalChildQuadMeshUpdate(WebCore::NodeIdentifier nodeID)
+{
+    return WebModel::UpdateMeshDescriptor {
+        .identifier = portalChildQuadResourceID(nodeID, PortalChildQuadResource::Mesh),
+        .updateType = 0,
+        .descriptor = portalChildQuadMeshDescriptor(),
+        .parts = {
+            WebModel::MeshPart {
+                .indexOffset = 0,
+                .indexCount = 12,
+                .topology = ::WebGPU::PrimitiveTopology::TriangleList,
+                .materialIndex = 0,
+                .boundsMin = WebModel::Float3(-0.5f, -0.5f, -0.01f, 0.f),
+                .boundsMax = WebModel::Float3(0.5f, 0.5f, 0.01f, 0.f),
+            },
+        },
+        .indexData = portalChildQuadIndexData(),
+        .vertexData = { portalChildQuadVertexData() },
+        .transform = matrix_identity_float4x4,
+        .instanceTransforms = { matrix_identity_float4x4 },
+        .assignedMaterials = { portalChildQuadResourceID(nodeID, PortalChildQuadResource::Material) },
+        .deformationData = std::nullopt,
+    };
 }
 #endif
 #endif
@@ -312,6 +396,9 @@ void RemoteMeshProxy::setEntityTransform(const WebModel::Float4x4& transform)
 void RemoteMeshProxy::setEntityTransformInternal(const WebModel::Float4x4& transform)
 {
 #if ENABLE(GPU_PROCESS_MODEL)
+#if ENABLE(SPATIAL_PORTAL)
+    m_sentEntityTransform = transform;
+#endif
     auto sendResult = send(Messages::RemoteMesh::UpdateTransform(transform));
     UNUSED_PARAM(sendResult);
 #else
@@ -510,7 +597,8 @@ void RemoteMeshProxy::computeTransform()
 
 #if ENABLE(SPATIAL_PORTAL)
     auto [center, extents] = m_portalTransform ? portalContentCenterAndExtents(static_cast<simd_float4x4>(m_portalTransform->transformBeforeAuto)) : mergedCenterAndExtents();
-    bool fitsContent = !m_portalTransform || m_portalTransform->fitsContent;
+    bool hasModelGeometry = simd_length(simd_make_float3(extents.x, extents.y, extents.z)) > FLT_EPSILON;
+    bool fitsContent = !m_portalTransform || (m_portalTransform->fitsContent && hasModelGeometry);
 #else
     auto [center, extents] = mergedCenterAndExtents();
     constexpr bool fitsContent = true;
@@ -561,6 +649,10 @@ void RemoteMeshProxy::computeTransform()
 #endif
 
     setEntityTransformInternal(result);
+
+#if ENABLE(SPATIAL_PORTAL)
+    updatePortalChildQuads();
+#endif
 }
 #endif
 
@@ -592,6 +684,142 @@ void RemoteMeshProxy::setPortalChildTransform(WebCore::NodeIdentifier nodeID, co
     UNUSED_PARAM(transform);
 #endif
 }
+
+void RemoteMeshProxy::setPortalChildQuads(Vector<PortalChildQuad>&& quads)
+{
+#if ENABLE(GPU_PROCESS_MODEL)
+    m_portalChildQuads = WTF::move(quads);
+    updatePortalChildQuads();
+#else
+    UNUSED_PARAM(quads);
+#endif
+}
+
+#if ENABLE(GPU_PROCESS_MODEL)
+std::optional<WebModel::Float4x4> RemoteMeshProxy::portalChildQuadTransform(const PortalChildQuad& quad) const
+{
+    if (!m_portalTransform || !m_sentEntityTransform || quad.quadRectInChildSpace.isEmpty() || m_viewportWidth <= 0 || m_viewportHeight <= 0)
+        return std::nullopt;
+
+    simd_float4x4 entityTransform = *m_sentEntityTransform;
+    float determinant = simd_determinant(entityTransform);
+    if (!std::isfinite(determinant) || std::abs(determinant) <= FLT_EPSILON * FLT_EPSILON * FLT_EPSILON)
+        return std::nullopt;
+
+    auto quadCenter = quad.quadRectInChildSpace.center();
+    simd_float4x4 quadToChild = simd_matrix(
+        simd_make_float4(quad.quadRectInChildSpace.width(), 0.f, 0.f, 0.f),
+        simd_make_float4(0.f, -quad.quadRectInChildSpace.height(), 0.f, 0.f),
+        simd_make_float4(0.f, 0.f, 1.f, 0.f),
+        simd_make_float4(quadCenter.x(), quadCenter.y(), 0.f, 1.f));
+
+    simd_float4x4 childTransform = static_cast<simd_float4x4>(quad.transform);
+
+    simd_float4x4 childToPortalContent = matrix_identity_float4x4;
+    childToPortalContent.columns[3] = simd_make_float4(quad.childOriginInPortal.x(), quad.childOriginInPortal.y(), 0.f, 1.f);
+
+    constexpr float metersPerPixel = 1.f / kCSSPixelsPerMeter;
+    simd_float4x4 portalContentToWorld = simd_matrix(
+        simd_make_float4(metersPerPixel, 0.f, 0.f, 0.f),
+        simd_make_float4(0.f, -metersPerPixel, 0.f, 0.f),
+        simd_make_float4(0.f, 0.f, metersPerPixel, 0.f),
+        simd_make_float4(-m_viewportWidth * metersPerPixel / 2.f, m_viewportHeight * metersPerPixel / 2.f, 0.f, 1.f));
+
+    simd_float4x4 orbitRotation = matrix_identity_float4x4;
+    if (m_transform) {
+        simd_float4x4 orbit = *m_transform;
+        orbitRotation = simd_matrix(
+            simd_make_float4(simd_normalize(simd_make_float3(orbit.columns[0])), 0.f),
+            simd_make_float4(simd_normalize(simd_make_float3(orbit.columns[1])), 0.f),
+            simd_make_float4(simd_normalize(simd_make_float3(orbit.columns[2])), 0.f),
+            simd_make_float4(0.f, 0.f, 0.f, 1.f));
+    }
+
+    simd_float4x4 afterAuto = static_cast<simd_float4x4>(m_portalTransform->transformAfterAuto);
+    afterAuto.columns[3] = simd_make_float4(simd_make_float3(afterAuto.columns[3]) * metersPerPixel, afterAuto.columns[3].w);
+
+    simd_float4x4 boxSpace = simd_mul(orbitRotation, afterAuto);
+    simd_float4x4 quadToWorld = simd_mul(boxSpace, simd_mul(portalContentToWorld, simd_mul(childToPortalContent, simd_mul(childTransform, quadToChild))));
+
+    return WebModel::Float4x4 { simd_mul(simd_inverse(entityTransform), quadToWorld) };
+}
+
+void RemoteMeshProxy::updatePortalChildQuads()
+{
+    Vector<WebModel::PortalContentSource> sources;
+    Vector<WebModel::UpdateMaterialDescriptor> newMaterials;
+    Vector<std::pair<WebCore::NodeIdentifier, WebModel::UpdateMeshDescriptor>> newMeshes;
+    Vector<std::pair<WebCore::NodeIdentifier, WebModel::Float4x4>> changedTransforms;
+    HashMap<WebCore::NodeIdentifier, WebModel::Float4x4> transforms;
+
+    for (auto& quad : m_portalChildQuads) {
+        auto transform = portalChildQuadTransform(quad);
+        if (!transform)
+            continue;
+
+        auto textureID = portalChildQuadResourceID(quad.nodeID, PortalChildQuadResource::Texture);
+        sources.append(WebModel::PortalContentSource { quad.bufferSet, textureID, quad.isOpaque });
+        transforms.set(quad.nodeID, *transform);
+
+        auto previous = m_sentPortalChildTransforms.find(quad.nodeID);
+        bool isNew = previous == m_sentPortalChildTransforms.end();
+        if (isNew) {
+            newMaterials.append(WebModel::UpdateMaterialDescriptor {
+                .materialGraph = WebModel::MaterialGraph { .graphName = portalChildQuadGraphName },
+                .identifier = portalChildQuadResourceID(quad.nodeID, PortalChildQuadResource::Material),
+                .portalContentTextureIdentifier = textureID,
+            });
+            newMeshes.append({ quad.nodeID, portalChildQuadMeshUpdate(quad.nodeID) });
+        }
+
+        if (isNew || !(previous->value == *transform))
+            changedTransforms.append({ quad.nodeID, *transform });
+    }
+
+    Vector<WebCore::NodeIdentifier> removedNodes;
+    Vector<WebModel::TypedResourceId> meshRemovals;
+    Vector<WebModel::TypedResourceId> materialRemovals;
+    Vector<WebModel::TypedResourceId> textureRemovals;
+    for (auto nodeID : m_sentPortalChildTransforms.keys()) {
+        if (transforms.contains(nodeID))
+            continue;
+
+        removedNodes.append(nodeID);
+        meshRemovals.append(portalChildQuadResourceID(nodeID, PortalChildQuadResource::Mesh));
+        materialRemovals.append(portalChildQuadResourceID(nodeID, PortalChildQuadResource::Material));
+        textureRemovals.append(portalChildQuadResourceID(nodeID, PortalChildQuadResource::Texture));
+    }
+
+    m_sentPortalChildTransforms = WTF::move(transforms);
+
+    if (!newMaterials.isEmpty())
+        updateMaterial(WTF::move(newMaterials));
+
+    for (auto& [nodeID, descriptor] : newMeshes) {
+        auto sendResult = send(Messages::RemoteMesh::UpdateModel(nodeID, { WTF::move(descriptor) }));
+        UNUSED_VARIABLE(sendResult);
+    }
+
+    for (auto& [nodeID, transform] : changedTransforms) {
+        auto sendResult = send(Messages::RemoteMesh::UpdatePortalChildTransform(nodeID, transform));
+        UNUSED_VARIABLE(sendResult);
+    }
+
+    if (sources != m_sentPortalContentSources) {
+        m_sentPortalContentSources = sources;
+        auto sendResult = sendWithAsyncReply(Messages::RemoteMesh::SetPortalContentSources(WTF::move(sources)), [](bool) { });
+        UNUSED_VARIABLE(sendResult);
+    }
+
+    for (auto nodeID : removedNodes) {
+        auto sendResult = send(Messages::RemoteMesh::RemoveModel(nodeID));
+        UNUSED_VARIABLE(sendResult);
+    }
+
+    if (!meshRemovals.isEmpty())
+        processRemovals(WTF::move(meshRemovals), WTF::move(materialRemovals), WTF::move(textureRemovals), [](bool) { });
+}
+#endif
 
 std::optional<WebModel::Float4x4> RemoteMeshProxy::resolvedPortalTransform() const
 {

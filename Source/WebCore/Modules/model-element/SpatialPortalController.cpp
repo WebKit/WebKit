@@ -29,6 +29,7 @@
 #if ENABLE(SPATIAL_PORTAL)
 
 #include "AbortSignal.h"
+#include "CSSPropertyNames.h"
 #include "ContainerNodeInlines.h"
 #include "Document.h"
 #include "DocumentEventLoop.h"
@@ -36,6 +37,7 @@
 #include "Element.h"
 #include "ElementInlines.h"
 #include "EnvironmentMapLoader.h"
+#include "Event.h"
 #include "EventListener.h"
 #include "EventLoop.h"
 #include "EventNames.h"
@@ -44,6 +46,7 @@
 #include "IntersectionObserver.h"
 #include "IntersectionObserverCallback.h"
 #include "IntersectionObserverEntry.h"
+#include "KeyframeEffectStack.h"
 #include "Logging.h"
 #include "Model.h"
 #include "ModelPlayer.h"
@@ -56,6 +59,7 @@
 #include "PlaceholderModelPlayer.h"
 #include "RenderBox.h"
 #include "RenderBoxInlines.h"
+#include "RenderElementStyleInlines.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderLayerModelObject.h"
@@ -65,9 +69,12 @@
 #include "StyleEnvironmentMap.h"
 #include "StylePortalTransform.h"
 #include "StylePositionAnchor.h"
+#include "StyleTransformResolver.h"
+#include "Styleable.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include "VisibilityChangeClient.h"
 #include <JavaScriptCore/ConsoleTypes.h>
+#include <array>
 #include <ranges>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -163,6 +170,18 @@ private:
     {
         if (CheckedPtr controller = m_controller.get())
             controller->modelDidUpdatePortalTransform(player, transform);
+    }
+
+    bool willRenderPortalFrame(ModelPlayer& player) final
+    {
+        CheckedPtr controller = m_controller;
+        return controller && controller->m_modelPlayer == &player && controller->refreshPromotedChildTransforms();
+    }
+
+    void didUpdateHostedPortalChildren(ModelPlayer& player) final
+    {
+        if (CheckedPtr controller = m_controller; controller && controller->m_modelPlayer == &player)
+            controller->hostedPromotedChildrenDidChange();
     }
 #endif
 #if ENABLE(MODEL_ELEMENT_BOUNDING_BOX)
@@ -278,6 +297,8 @@ void SpatialPortalController::prepareForRemoval()
     m_portalAction = PortalActionKind::None;
     updateGestureHandling();
 
+    hostedPromotedChildrenDidChange();
+    m_promotedChildren.clear();
 #if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
     if (m_environmentMapLoader)
         m_environmentMapLoader->cancel();
@@ -327,8 +348,10 @@ void SpatialPortalController::unregisterChildModel(HTMLModelElement& model)
         if (RefPtr element = m_portalElement.get())
             ElementVolumetricScene::exitVolumetricScene(*element);
 #endif
-        deleteModelPlayer();
-        stopObservingPortalVisibility();
+        if (!hasPortalContent()) {
+            deleteModelPlayer();
+            stopObservingPortalVisibility();
+        }
         reconfigurePortalLayer();
     }
 }
@@ -473,6 +496,8 @@ void SpatialPortalController::portalVisibilityChanged()
         if (RefPtr element = hostedModel.element.get())
             element->visibilityStateChanged();
     }
+
+    pushPromotedChildrenToPlayer();
 }
 
 void SpatialPortalController::documentVisibilityChanged()
@@ -484,6 +509,8 @@ void SpatialPortalController::documentVisibilityChanged()
 
     if (RefPtr player = m_modelPlayer)
         player->visibilityStateDidChange();
+
+    pushPromotedChildrenToPlayer();
 }
 
 void SpatialPortalController::childVisibilityStateChanged(HTMLModelElement& child)
@@ -588,6 +615,255 @@ void SpatialPortalController::setPortalAction(PortalActionKind kind)
 
     if (RefPtr player = m_modelPlayer)
         player->setPortalAction(m_portalAction);
+}
+
+void SpatialPortalController::updatePromotedChildren(Vector<PortalPromotedChild>&& children)
+{
+    bool isUnchanged = std::ranges::equal(m_promotedChildren, children, [](auto& a, auto& b) {
+        return a.nodeID == b.nodeID && a.rootNodeID == b.rootNodeID && a.layer.get() == b.layer.get() && a.quadRectInChildSpace == b.quadRectInChildSpace && a.childOriginInPortal == b.childOriginInPortal && a.transform == b.transform;
+    });
+    if (isUnchanged)
+        return;
+
+    bool hadPromotedChildren = !m_promotedChildren.isEmpty();
+    m_promotedChildren = WTF::move(children);
+
+    if (!m_promotedChildren.isEmpty()) {
+        if (!hadPromotedChildren)
+            observePortalVisibility();
+        pushPromotedChildrenToPlayer();
+        return;
+    }
+
+    if (!hadPromotedChildren)
+        return;
+
+    hostedPromotedChildrenDidChange();
+
+    if (m_hostedModels.isEmpty()) {
+        deleteModelPlayer();
+        stopObservingPortalVisibility();
+        return;
+    }
+
+    pushPromotedChildrenToPlayer();
+}
+
+bool SpatialPortalController::hostsPromotedChild(NodeIdentifier rootNodeID) const
+{
+    RefPtr player = m_modelPlayer;
+    return player && player->hostsPortalPromotedChild(rootNodeID);
+}
+
+Vector<NodeIdentifier> SpatialPortalController::promotedChildRoots() const
+{
+    Vector<NodeIdentifier> roots;
+    for (auto& child : m_promotedChildren) {
+        if (!roots.contains(child.rootNodeID))
+            roots.append(child.rootNodeID);
+    }
+    return roots;
+}
+
+unsigned SpatialPortalController::numberOfHostedPromotedChildren() const
+{
+    return std::ranges::count_if(promotedChildRoots(), [&](auto rootNodeID) {
+        return hostsPromotedChild(rootNodeID);
+    });
+}
+
+static RenderLayer* layerForNode(NodeIdentifier nodeID)
+{
+    RefPtr element = dynamicDowncast<Element>(Node::fromIdentifier(nodeID));
+    if (!element)
+        return nullptr;
+
+    auto* renderer = dynamicDowncast<RenderLayerModelObject>(element->renderer());
+    return renderer ? renderer->layer() : nullptr;
+}
+
+void SpatialPortalController::hostedPromotedChildrenDidChange()
+{
+#if !HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+    RefPtr element = m_portalElement;
+    CheckedPtr renderer = element ? dynamicDowncast<RenderLayerModelObject>(element->renderer()) : nullptr;
+    if (!renderer || renderer->renderTreeBeingDestroyed() || !renderer->isComposited())
+        return;
+
+    if (auto* backing = renderer->layer()->backing())
+        backing->updateHostedPromotedChildren();
+#endif
+}
+
+void SpatialPortalController::promotedChildDidPaint()
+{
+    if (RefPtr player = m_modelPlayer)
+        player->portalPromotedChildDidPaint();
+}
+
+bool SpatialPortalController::canHostPromotedChild(RenderLayerModelObject& renderer)
+{
+    if (renderer.isTransparent() || renderer.hasMask() || renderer.hasClip() || renderer.hasClipPath() || renderer.hasFilter() || renderer.hasBackdropFilter() || renderer.hasBlendMode() || renderer.hasReflection())
+        return false;
+
+    if (renderer.style().backfaceVisibility() == BackfaceVisibility::Hidden)
+        return false;
+
+    auto styleable = Styleable::fromRenderer(renderer);
+    auto* effectStack = styleable ? styleable->keyframeEffectStack() : nullptr;
+    if (!effectStack)
+        return true;
+
+    constexpr std::array layerEffectProperties { CSSPropertyID::Opacity, CSSPropertyID::Filter, CSSPropertyID::BackdropFilter, CSSPropertyID::WebkitBackdropFilter, CSSPropertyID::ClipPath, CSSPropertyID::MixBlendMode };
+    return !std::ranges::any_of(layerEffectProperties, [&](auto property) {
+        return effectStack->isCurrentlyAffectingProperty(property);
+    });
+}
+
+static bool canFlattenThroughGraphicsLayer(const GraphicsLayer& layer)
+{
+    return !layer.masksToBounds() && !layer.maskLayer() && layer.opacity() == 1 && layer.filters().isEmpty() && layer.backdropFilters().isEmpty() && layer.boundsOrigin().isZero();
+}
+
+static TransformationMatrix transformInParentGraphicsLayer(const GraphicsLayer& layer, const TransformationMatrix* customTransform)
+{
+    TransformationMatrix transform { layer.position().x(), layer.position().y() };
+
+    auto& currentTransform = customTransform ? *customTransform : layer.transform();
+    if (!currentTransform.isIdentity()) {
+        FloatPoint3D anchorPoint = layer.anchorPoint();
+        anchorPoint.scale(layer.size().width(), layer.size().height(), 1);
+        transform.translate3d(anchorPoint.x(), anchorPoint.y(), anchorPoint.z());
+        transform.multiply(currentTransform);
+        transform.translate3d(-anchorPoint.x(), -anchorPoint.y(), -anchorPoint.z());
+    }
+
+    if (RefPtr parent = layer.parent(); parent && parent->hasNonIdentityChildrenTransform()) {
+        FloatPoint3D parentAnchorPoint = parent->anchorPoint();
+        parentAnchorPoint.scale(parent->size().width(), parent->size().height(), 1);
+        transform.translateRight3d(-parentAnchorPoint.x(), -parentAnchorPoint.y(), -parentAnchorPoint.z());
+        transform = parent->childrenTransform() * transform;
+        transform.translateRight3d(parentAnchorPoint.x(), parentAnchorPoint.y(), parentAnchorPoint.z());
+    }
+
+    return transform;
+}
+
+std::optional<TransformationMatrix> SpatialPortalController::transformForHostedLayer(RenderLayer& layer, RenderLayer& promotedChild, bool* isAnimating)
+{
+    auto promotedChildTransform = transformForPromotedChild(promotedChild.renderer(), isAnimating);
+    if (&layer == &promotedChild)
+        return promotedChildTransform;
+
+    auto* backing = layer.backing();
+    auto* promotedChildBacking = promotedChild.backing();
+    if (!backing || !promotedChildBacking)
+        return std::nullopt;
+
+    RefPtr promotedChildGraphicsLayer = promotedChildBacking->graphicsLayer();
+    RefPtr graphicsLayer = backing->graphicsLayer();
+    CheckedPtr<RenderLayer> owner = &layer;
+    CheckedPtr nextCompositedAncestor = layer.ancestorCompositingLayer();
+    TransformationMatrix layerToPromotedChild;
+
+    while (graphicsLayer != promotedChildGraphicsLayer) {
+        RefPtr parent = graphicsLayer->parent();
+        if (!parent)
+            return std::nullopt;
+
+        std::optional<TransformationMatrix> animatedTransform;
+        if (owner && owner->transform() && owner->compositor().isRunningTransformAnimation(owner->renderer())) {
+            animatedTransform = owner->currentTransform(Style::TransformResolver::individualTransformOperations);
+            if (isAnimating)
+                *isAnimating = true;
+        }
+
+        layerToPromotedChild = transformInParentGraphicsLayer(*graphicsLayer, animatedTransform ? &*animatedTransform : nullptr) * layerToPromotedChild;
+        if (!parent->preserves3D())
+            layerToPromotedChild.flatten();
+
+        owner = nullptr;
+        if (nextCompositedAncestor && nextCompositedAncestor->backing() && parent == nextCompositedAncestor->backing()->graphicsLayer()) {
+            owner = nextCompositedAncestor;
+            nextCompositedAncestor = owner == &promotedChild ? nullptr : owner->ancestorCompositingLayer();
+        }
+
+        if (parent != promotedChildGraphicsLayer && !canFlattenThroughGraphicsLayer(*parent))
+            return std::nullopt;
+
+        graphicsLayer = WTF::move(parent);
+    }
+
+    auto offsetFromRenderer = promotedChildGraphicsLayer->offsetFromRenderer() + promotedChildBacking->subpixelOffsetFromRenderer();
+    promotedChildTransform.translate(offsetFromRenderer.width(), offsetFromRenderer.height());
+    promotedChildTransform.multiply(layerToPromotedChild);
+    return promotedChildTransform;
+}
+
+TransformationMatrix SpatialPortalController::transformForPromotedChild(RenderLayerModelObject& renderer, bool* isAnimating)
+{
+    CheckedPtr layer = renderer.layer();
+    if (!layer || !layer->transform())
+        return { };
+
+    if (!layer->compositor().isRunningTransformAnimation(renderer))
+        return *layer->transform();
+
+    auto animatedStyle = renderer.animatedStyle();
+    if (!animatedStyle)
+        return *layer->transform();
+
+    if (isAnimating)
+        *isAnimating = true;
+
+    TransformationMatrix transform;
+    layer->updateTransformFromStyle(transform, *animatedStyle, Style::TransformResolver::allTransformOperations);
+    return transform;
+}
+
+void SpatialPortalController::pushPromotedChildrenToPlayer()
+{
+    if (m_promotedChildren.isEmpty()) {
+        if (RefPtr player = m_modelPlayer)
+            player->setPortalPromotedChildren({ });
+        return;
+    }
+
+    if (!isPortalVisible())
+        return;
+
+    RefPtr player = ensureModelPlayer();
+    if (!player)
+        return;
+
+    sizeMayHaveChanged();
+    player->setPortalPromotedChildren(m_promotedChildren);
+}
+
+bool SpatialPortalController::refreshPromotedChildTransforms()
+{
+    bool didChange = false;
+    bool isAnimating = false;
+    for (auto& child : m_promotedChildren) {
+        CheckedPtr layer = layerForNode(child.nodeID);
+        CheckedPtr promotedChild = layerForNode(child.rootNodeID);
+        if (!layer || !promotedChild)
+            continue;
+
+        auto transform = transformForHostedLayer(*layer, *promotedChild, &isAnimating);
+        if (!transform || *transform == child.transform)
+            continue;
+
+        child.transform = *transform;
+        didChange = true;
+    }
+
+    if (didChange) {
+        if (RefPtr player = m_modelPlayer)
+            player->setPortalPromotedChildren(m_promotedChildren);
+    }
+
+    return isAnimating;
 }
 
 #if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
@@ -783,7 +1059,14 @@ void SpatialPortalController::handleGestureEvent(Event& event)
     if (!element || !player || !player->supportsMouseInteraction())
         return;
 
-    m_interactionGesture.handleEvent(*element, *player, event);
+    m_interactionGesture.handleEvent(*element, *player, event, [&](FloatPoint) {
+        RefPtr target = dynamicDowncast<Element>(event.target());
+        if (target == element)
+            return true;
+
+        RefPtr model = dynamicDowncast<HTMLModelElement>(target);
+        return model && model->lastRegisteredPortalController() == this;
+    });
 }
 
 void SpatialPortalController::cancelGesture()
@@ -843,6 +1126,7 @@ void SpatialPortalController::endStageModeInteraction()
 
 void SpatialPortalController::deleteModelPlayer()
 {
+    bool hadModelPlayer = !!m_modelPlayer;
     if (m_modelPlayer) {
         cancelGesture();
         if (RefPtr provider = m_modelPlayerProvider.get())
@@ -862,6 +1146,9 @@ void SpatialPortalController::deleteModelPlayer()
 #if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
     m_needsVolumetricSceneReconnection = false;
 #endif
+
+    if (hadModelPlayer)
+        hostedPromotedChildrenDidChange();
 }
 
 void SpatialPortalController::unloadChildModel(NodeIdentifier nodeID)
@@ -928,7 +1215,8 @@ void SpatialPortalController::childWasSuspended(HTMLModelElement& child)
             return;
     }
 
-    deleteModelPlayer();
+    if (m_promotedChildren.isEmpty())
+        deleteModelPlayer();
 }
 
 LayoutSize SpatialPortalController::portalContentSize() const
@@ -943,7 +1231,7 @@ LayoutSize SpatialPortalController::portalContentSize() const
 
 void SpatialPortalController::configureGraphicsLayer(GraphicsLayer& graphicsLayer, const Color& backgroundColor)
 {
-    if (m_hostedModels.isEmpty()) {
+    if (!hasPortalContent()) {
         graphicsLayer.removeModelContents();
         return;
     }
@@ -1212,6 +1500,7 @@ void SpatialPortalController::modelDidUnload(ModelPlayer& player)
     unloadAllChildModels();
     // FIXME: rdar://148027600 Prevent infinite reloading of model.
     loadChildModelsIfReady();
+    pushPromotedChildrenToPlayer();
 }
 
 void SpatialPortalController::modelDidUpdate(ModelPlayer&)
