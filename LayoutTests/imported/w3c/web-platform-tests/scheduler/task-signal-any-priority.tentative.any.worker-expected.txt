@@ -1,0 +1,13 @@
+
+FAIL TaskSignal.any() returns a user-visible TaskSignal when no priority is specified Can't find variable: TaskSignal
+FAIL TaskSignal.any() returns a signal with the correct priority when intialized with a string Can't find variable: TaskSignal
+FAIL TaskSignal.any() returns a signal with the correct priority when intialized with a TaskSignal Can't find variable: TaskController
+FAIL TaskSignal.any() returns a signal with dynamic priority Can't find variable: TaskController
+FAIL Priority change events fire for composite signals Can't find variable: TaskController
+FAIL Priority change events fire for composite signals with intermediate sources Can't find variable: TaskController
+FAIL Priority change propagates to multiple dependent signals in the right order Can't find variable: TaskController
+FAIL TaskSignal.any() does not propagate abort when not given dependent abort signals Can't find variable: TaskController
+FAIL TaskSignal.any() propagates abort and priority Can't find variable: TaskController
+FAIL TaskSignal.any() propagates priority after returning an aborted signal Can't find variable: TaskController
+FAIL TaskSignal.any() does not fire prioritychange for dependents added during prioritychange Can't find variable: TaskController
+

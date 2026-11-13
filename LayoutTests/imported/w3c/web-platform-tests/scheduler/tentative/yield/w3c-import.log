@@ -1,0 +1,26 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/scheduler/tentative/yield/yield-abort.any.js
+/LayoutTests/imported/w3c/web-platform-tests/scheduler/tentative/yield/yield-cross-origin-propagation.html
+/LayoutTests/imported/w3c/web-platform-tests/scheduler/tentative/yield/yield-inherit-abort-across-settled-promises.any.js
+/LayoutTests/imported/w3c/web-platform-tests/scheduler/tentative/yield/yield-inherit-across-promises.any.js
+/LayoutTests/imported/w3c/web-platform-tests/scheduler/tentative/yield/yield-inherit-across-settled-promises.any.js
+/LayoutTests/imported/w3c/web-platform-tests/scheduler/tentative/yield/yield-priority-idle-callbacks.html
+/LayoutTests/imported/w3c/web-platform-tests/scheduler/tentative/yield/yield-priority-posttask.any.js
+/LayoutTests/imported/w3c/web-platform-tests/scheduler/tentative/yield/yield-priority-timers.any.js
+/LayoutTests/imported/w3c/web-platform-tests/scheduler/tentative/yield/yield-same-origin-propagation.html
+/LayoutTests/imported/w3c/web-platform-tests/scheduler/tentative/yield/yield-scheduling-state-cleared.any.js
+/LayoutTests/imported/w3c/web-platform-tests/scheduler/tentative/yield/yield-scripted-subframe-propagation.html
+/LayoutTests/imported/w3c/web-platform-tests/scheduler/tentative/yield/yield-then-detach.html

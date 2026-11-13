@@ -1,0 +1,5 @@
+
+FAIL scheduler.postTask() tasks run in priority order with a fixed priority composite signal promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TaskSignal"
+FAIL scheduler.postTask() tasks run in priority order with a dynamic priority composite signal promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TaskController"
+FAIL scheduler.postTask() tasks run in priority order with a composite signal whose source has fixed priority promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TaskSignal"
+

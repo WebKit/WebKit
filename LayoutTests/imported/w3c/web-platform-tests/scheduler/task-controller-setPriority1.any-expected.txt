@@ -1,0 +1,3 @@
+
+FAIL Test that TaskController.setPriority() changes the priority of all associated tasks promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TaskController"
+

@@ -606,6 +606,14 @@ imported/w3c/web-platform-tests/mediasession/setactionhandler.html [ Pass ]
 imported/w3c/web-platform-tests/mediasession/setcameraactive.html [ Pass Failure ]
 imported/w3c/web-platform-tests/mediasession/setmicrophoneactive.html [ Pass Failure ]
 
+# Prioritized Task Scheduling API: rdar://184372918
+imported/w3c/web-platform-tests/scheduler/post-task-multiple-scheduler-order.window.html [ Pass Failure ]
+# These time out:
+imported/w3c/web-platform-tests/scheduler/post-task-then-detach.html [ Skip ]
+imported/w3c/web-platform-tests/scheduler/tentative/yield/yield-priority-idle-callbacks.html [ Skip ]
+imported/w3c/web-platform-tests/scheduler/tentative/yield/yield-priority-timers.any.html [ Skip ]
+imported/w3c/web-platform-tests/scheduler/tentative/yield/yield-priority-timers.any.worker.html [ Skip ]
+
 # Requires additional test infrastructure.
 imported/w3c/web-platform-tests/service-workers/service-worker/update-after-oneday.https.html [ Skip ]
 

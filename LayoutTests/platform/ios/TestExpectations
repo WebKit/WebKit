@@ -8130,6 +8130,8 @@ imported/w3c/web-platform-tests/html/interaction/focus/sequential-focus-navigati
 imported/w3c/web-platform-tests/html/interaction/focus/sequential-focus-navigation-and-the-tabindex-attribute/focus-tabindex-order.html [ Skip ]
 imported/w3c/web-platform-tests/html/interaction/focus/sequential-focus-navigation-and-the-tabindex-attribute/focus-tabindex-positive.html [ Skip ]
 imported/w3c/web-platform-tests/html/interaction/focus/sequential-focus-navigation-and-the-tabindex-attribute/focus-tabindex-zero.html [ Skip ]
+webkit.org/b/316782 imported/w3c/web-platform-tests/scheduler/tentative/yield/yield-cross-origin-propagation.html [ Skip ]
+webkit.org/b/316782 imported/w3c/web-platform-tests/scheduler/tentative/yield/yield-same-origin-propagation.html [ Skip ]
 
 # webkit.org/b/284886 [iOS] 2 tests in fast/writing-mode are constantly failing (flaky in EWS)
 fast/writing-mode/vertical-subst-font-vert-no-dflt.html [ ImageOnlyFailure ]
