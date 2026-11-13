@@ -1187,6 +1187,8 @@ void RenderBlockFlow::adjustBlockEndChildrenForMarginTrim()
     // The trimmed margins themselves are discarded by marginValuesForChild, but any self collapsing child
     // at the block-end edge still needs its position adjusted to below the last non self-collapsing child in
     // its containing block, so walk back up the container to find them.
+    // The children it positions are in flow, so their containing block is the block whose children it walks.
+    CheckedPtr<RenderBlockFlow> containingBlock = this;
     auto* child = lastChildBox();
     while (child) {
         if (child->isExcludedFromNormalLayout() || !child->isInFlow()) {
@@ -1195,14 +1197,14 @@ void RenderBlockFlow::adjustBlockEndChildrenForMarginTrim()
         }
 
         if (child->isSelfCollapsingBlock()) {
-            auto* childContainingBlock = child->containingBlock();
-            childContainingBlock->setLogicalTopForChild(*child, childContainingBlock->logicalHeight());
+            containingBlock->setLogicalTopForChild(*child, containingBlock->logicalHeight());
             child = child->previousSiblingBox();
         }  else if (auto* nestedBlock = dynamicDowncast<RenderBlockFlow>(child); nestedBlock && nestedBlock->isBlockContainer() && !nestedBlock->childrenInline() && !nestedBlock->style().marginTrim().contains(Style::MarginTrimSide::BlockEnd)) {
             // The margins *inside* this nested block are protected so we should not introspect and try to trim any of them.
             if (!MarginInfo { *nestedBlock }.canCollapseMarginAfterWithChildren())
                 break;
 
+            containingBlock = nestedBlock;
             child = child->lastChildBox();
         } else
             // We hit another type of block child that doesn't apply to our search. We can just

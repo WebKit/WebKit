@@ -2712,12 +2712,12 @@ LayoutSize RenderBox::offsetFromContainer(const RenderElement& container, const 
 
     if (isOutOfFlowPositioned() && container.isInlineBox()) {
         // An out-of-flow box is only mapped to an inline box when the inline box is its containing block. The box is positioned relative
-        // to the border box of the inline box's first fragment, which is in the coordinate space of the inline box's own containing block.
+        // to the border box of the inline box's first fragment, which is in the coordinate space of the inline box's block container.
         auto& inlineBox = downcast<RenderBoxModelObject>(container);
         auto borderBoxRect = LayoutRect { location() + toLayoutSize(inlineBox.blockStartRelativeFirstFragmentBorderBoxRect().location()), borderBoxSize() };
         if (inlineBox.writingMode().isBlockFlipped()) {
-            if (CheckedPtr containingBlock = inlineBox.containingBlock())
-                containingBlock->blockStartRelativeToPhysical(borderBoxRect);
+            if (CheckedPtr blockContainer = LayoutIntegration::LineLayout::blockContainer(inlineBox))
+                blockContainer->blockStartRelativeToPhysical(borderBoxRect);
         }
         return offset + toLayoutSize(borderBoxRect.location());
     }
