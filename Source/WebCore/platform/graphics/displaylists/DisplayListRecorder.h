@@ -80,11 +80,6 @@ protected:
 protected:
     WEBCORE_EXPORT void updateStateForSave(GraphicsContextState::Purpose);
     [[nodiscard]] WEBCORE_EXPORT bool updateStateForRestore(GraphicsContextState::Purpose);
-    NODELETE [[nodiscard]] WEBCORE_EXPORT bool updateStateForTranslate(float x, float y);
-    [[nodiscard]] WEBCORE_EXPORT bool updateStateForRotate(float angleInRadians);
-    NODELETE [[nodiscard]] WEBCORE_EXPORT bool updateStateForScale(const FloatSize&);
-    NODELETE [[nodiscard]] WEBCORE_EXPORT bool updateStateForConcatCTM(const AffineTransform&);
-    NODELETE WEBCORE_EXPORT void updateStateForSetCTM(const AffineTransform&);
     WEBCORE_EXPORT void updateStateForSaveTransform();
     [[nodiscard]] WEBCORE_EXPORT bool updateStateForRestoreTransform();
     WEBCORE_EXPORT void updateStateForBeginTransparencyLayer(float opacity);
@@ -99,7 +94,7 @@ protected:
     WEBCORE_EXPORT void updateStateForClipOut(const Path&);
     WEBCORE_EXPORT void updateStateForClipOutRoundedRect(const FloatRoundedRect&);
     WEBCORE_EXPORT void updateStateForClipToImage(const FloatRect&);
-    NODELETE WEBCORE_EXPORT void updateStateForApplyDeviceScaleFactor(float);
+    WEBCORE_EXPORT void updateStateForApplyDeviceScaleFactor(float);
     WEBCORE_EXPORT void updateStateForBeginPage();
     WEBCORE_EXPORT bool decomposeDrawGlyphsIfNeeded(const Font&, std::span<const GlyphBufferGlyph>, std::span<const GlyphBufferAdvance>, const FloatPoint& anchorPoint, FontSmoothingMode);
     DrawGlyphsMode drawGlyphsMode() const { return m_drawGlyphsMode; }
@@ -127,14 +122,11 @@ private:
 #endif
 
     WEBCORE_EXPORT void drawConsumingImageBuffer(RefPtr<ImageBuffer>, const FloatRect& destination, const FloatRect& source, RasterDrawingOptions) final;
-    WEBCORE_EXPORT AffineTransform getCTM(GraphicsContext::IncludeDeviceScale = PossiblyIncludeDeviceScale) const final;
     WEBCORE_EXPORT IntRect clipBounds() const final;
 
     virtual void appendStateChangeItemIfNecessary() = 0;
 
     void pushStateForTransparencyLayer();
-
-    NODELETE const AffineTransform& ctm() const;
 
     // The state the committed to the recording.
     GraphicsContextState m_committedState;

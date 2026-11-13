@@ -35,8 +35,6 @@
 #include "Logging.h"
 #include "MediaPlayer.h"
 #include "NotImplemented.h"
-#include <numbers>
-#include <wtf/MathExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
@@ -46,7 +44,7 @@ namespace DisplayList {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Recorder);
 
 Recorder::Recorder(IsDeferred isDeferred, const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM, const ColorSpace& colorSpace, DrawGlyphsMode drawGlyphsMode)
-    : GraphicsContext(isDeferred, state)
+    : GraphicsContext(isDeferred, state, initialCTM)
     , m_committedState(state)
     , m_initialState(state)
     , m_colorSpace(colorSpace)
@@ -58,8 +56,6 @@ Recorder::Recorder(IsDeferred isDeferred, const GraphicsContextState& state, con
 #endif
 {
     ASSERT(!state.changes());
-    // The state may be a clone of another context's state, which does not have the CTM of this one.
-    m_state.setCTM(initialCTM);
     // The state may be a clone of another context's state, which does not have the clip bounds of this one.
     m_state.setDeviceClipBounds(m_initialClip);
     m_state.setCommittedChanges({ });
@@ -133,6 +129,8 @@ bool Recorder::updateStateForRestore(GraphicsContextState::Purpose purpose)
 
 GraphicsContextState::ChangeFlags Recorder::computeStateChanges()
 {
+    // Transforms are recorded as their own items, not as state changes.
+    m_state.didApplyChanges(GraphicsContextState::Change::CTM);
     m_state.filterLastChangesForMatching(m_committedState);
     return m_state.changes();
 }
@@ -147,44 +145,6 @@ void Recorder::commitStateChanges(GraphicsContextState::ChangeFlags changes)
     m_state.didApplyChanges();
 }
 
-bool Recorder::updateStateForTranslate(float x, float y)
-{
-    if (!x && !y)
-        return false;
-    m_state.setCTM(AffineTransform { ctm() }.translate(x, y));
-    return true;
-}
-
-bool Recorder::updateStateForRotate(float angleInRadians)
-{
-    if (WTF::areEssentiallyEqual(0.f, fmodf(angleInRadians, std::numbers::pi_v<float> * 2.f)))
-        return false;
-    m_state.setCTM(AffineTransform { ctm() }.rotate(rad2deg(static_cast<double>(angleInRadians))));
-    return true;
-}
-
-bool Recorder::updateStateForScale(const FloatSize& size)
-{
-    if (areEssentiallyEqual(size, FloatSize { 1.f, 1.f }))
-        return false;
-    m_state.setCTM(AffineTransform { ctm() }.scale(size));
-    return true;
-}
-
-bool Recorder::updateStateForConcatCTM(const AffineTransform& transform)
-{
-    if (transform.isIdentity())
-        return false;
-
-    m_state.setCTM(ctm() * transform);
-    return true;
-}
-
-void Recorder::updateStateForSetCTM(const AffineTransform& transform)
-{
-    m_state.setCTM(transform);
-}
-
 void Recorder::updateStateForSaveTransform()
 {
     // restoreTransform() keeps the clip bounds and the committed changes, so the changes committed until then
@@ -196,15 +156,8 @@ bool Recorder::updateStateForRestoreTransform()
 {
     if (!canRestore(GraphicsContextState::Purpose::Transform))
         return false;
-    // Restoring the state restores the CTM. Do not call GraphicsContext::restoreTransform(), which calls the
-    // virtual setCTM() that would record the CTM as an absolute value.
-    GraphicsContext::restore(GraphicsContextState::Purpose::Transform);
+    GraphicsContext::restoreTransform();
     return true;
-}
-
-AffineTransform Recorder::getCTM(GraphicsContext::IncludeDeviceScale) const
-{
-    return ctm();
 }
 
 void Recorder::updateStateForBeginTransparencyLayer(float opacity)
@@ -321,7 +274,7 @@ void Recorder::updateStateForApplyDeviceScaleFactor(float deviceScaleFactor)
 {
     // We modify the state directly here instead of calling GraphicsContext::scale()
     // because the recorded item will scale() when replayed.
-    m_state.setCTM(AffineTransform { ctm() }.scale({ deviceScaleFactor, deviceScaleFactor }));
+    GraphicsContext::scale({ deviceScaleFactor, deviceScaleFactor });
 
     // FIXME: this changes the baseCTM, which will invalidate all of our cached extents.
     // Assert that it's only called early on?
@@ -330,17 +283,12 @@ void Recorder::updateStateForApplyDeviceScaleFactor(float deviceScaleFactor)
 void Recorder::updateStateForBeginPage()
 {
     ASSERT(!stackSize());
-    ASSERT(!m_state.changes());
+    ASSERT(!(m_state.changes() - GraphicsContextState::Change::CTM));
     m_state = m_initialState;
-    m_state.setCTM(m_initialCTM);
+    m_committedState = m_initialState;
+    GraphicsContext::setCTM(m_initialCTM);
     m_state.setDeviceClipBounds(m_initialClip);
     m_state.setCommittedChanges({ });
-    m_committedState = m_initialState;
-}
-
-const AffineTransform& Recorder::ctm() const
-{
-    return m_state.ctm();
 }
 
 } // namespace DisplayList

@@ -93,6 +93,7 @@ public:
 
     void save(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore) final;
     bool restore(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore) final;
+    bool restoreTransform() final;
 
     void translate(float, float) final;
     void rotate(float) final;
@@ -100,7 +101,6 @@ public:
     void scale(const FloatSize&) final;
     void concatCTM(const AffineTransform&) final;
     void setCTM(const AffineTransform&) final;
-    AffineTransform getCTM(GraphicsContext::IncludeDeviceScale) const final;
 
     void beginTransparencyLayer(float) final;
     void beginTransparencyLayer(CompositeOperator, BlendMode) final;
@@ -138,6 +138,7 @@ private:
 
     void saveLayer(float, CompositeMode);
     void restoreLayer();
+    void didChangeCanvasMatrix();
 
     enum class ShadowStyle : uint8_t { Outset, Inset };
     sk_sp<SkImageFilter> createDropShadowFilterIfNeeded(ShadowStyle) const;
@@ -179,6 +180,7 @@ private:
         bool isLayer { false };
         std::optional<CompositeMode> compositeMode;
         float alpha { 1.0f };
+        AffineTransform ctm;
 
         // State replay (only populated when m_enableStateReplayTracking).
         SkMatrix matrix;

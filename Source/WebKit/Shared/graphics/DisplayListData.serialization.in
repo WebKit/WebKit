@@ -308,6 +308,7 @@ header: <WebCore/GraphicsContextState.h>
     ShouldSmoothFonts,
     ShouldSubpixelQuantizeFonts,
     ShadowsIgnoreTransforms,
+    CTM,
 }
 
 header: <WebCore/SourceBrush.h>

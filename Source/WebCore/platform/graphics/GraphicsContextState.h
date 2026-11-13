@@ -59,6 +59,10 @@ public:
         ShouldSmoothFonts           = 1 << 12,
         ShouldSubpixelQuantizeFonts = 1 << 13,
         ShadowsIgnoreTransforms     = 1 << 14,
+
+        // Not a property: ctm() is not copied, compared or serialized with the properties. The change is
+        // applied to the platform context like the property changes.
+        CTM                         = 1 << 15,
     };
     using ChangeFlags = OptionSet<Change>;
 
@@ -91,6 +95,7 @@ public:
 
     ChangeFlags changes() const { return m_changeFlags; }
     void didApplyChanges() { m_changeFlags = { }; }
+    void didApplyChanges(ChangeFlags changes) { m_changeFlags.remove(changes); }
 
     void markChanged(ChangeFlags properties) { m_changeFlags.add(properties); }
 
@@ -168,7 +173,19 @@ public:
     Purpose purpose() const { return m_purpose; }
 
     const AffineTransform& ctm() const LIFETIME_BOUND { return m_ctm; }
-    void setCTM(const AffineTransform& ctm) { m_ctm = ctm; }
+    // These mark Change::CTM. The ones that return a bool return false, leaving the CTM as it is, for
+    // an operation that does not change the CTM.
+    bool scaleCTM(const FloatSize&);
+    bool rotateCTM(float angleInRadians);
+    bool translateCTM(float x, float y);
+    bool concatCTM(const AffineTransform&);
+    void setCTM(const AffineTransform& ctm)
+    {
+        m_ctm = ctm;
+        m_changeFlags.add(Change::CTM);
+    }
+    // Sets the CTM the platform context already has, without marking it changed.
+    void setAppliedCTM(const AffineTransform& ctm) { m_ctm = ctm; }
 
     // The bounds of the clip in device space, for the contexts that track them, such as DisplayList::Recorder.
     const FloatRect& deviceClipBounds() const LIFETIME_BOUND { return m_deviceClipBounds; }
@@ -188,6 +205,7 @@ public:
         ASSERT(m_purpose == Purpose::Transform);
         m_ctm = saved.m_ctm;
         m_purpose = saved.m_purpose;
+        m_changeFlags.add(Change::CTM);
     }
 
     WTF::TextStream& dump(WTF::TextStream&) const;
@@ -219,13 +237,9 @@ private:
         m_changeFlags.add(change);
     }
 
-    // The CTM. DisplayList::Recorder keeps its CTM here. The platform contexts keep the CTM in the platform
-    // context: for them this is set only in the state saved by GraphicsContext::saveTransform(), for
-    // GraphicsContext::restoreTransform(), and does not follow the CTM otherwise. Not one of the properties
-    // copied, compared or serialized with the state.
-    AffineTransform m_ctm;
-    // The clip bounds and the committed changes are not properties either: they are not copied, compared or
+    // The CTM, the clip bounds and the committed changes are not properties: they are not copied, compared or
     // serialized with the properties. They are saved and restored with the state.
+    AffineTransform m_ctm;
     FloatRect m_deviceClipBounds;
     ChangeFlags m_committedChanges;
     SourceBrush m_fillBrush { Color::black };
