@@ -1,0 +1,175 @@
+#!/usr/bin/env python3
+# Copyright (C) 2026 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+# THE POSSIBILITY OF SUCH DAMAGE.
+
+"""Runs the WebGL benchmarks in PerformanceTests/WebGL with one or two builds and prints a CSV
+table of the results.
+
+    run-webgl-benchmarks [--suite SUITE | --tests-directory DIRECTORY] [--only TEST...] BUILD_A [BUILD_B]
+
+A suite is a directory of PerformanceTests/WebGL, for example TextureUpload, and the benchmarks are
+its .html files. --tests-directory gives a directory of benchmarks instead. --only runs only the
+named benchmarks of it, for example rgba8-unsigned_byte-64x64.
+
+BUILD_A is the baseline. With one build, the table has its results. With two, all benchmarks run
+with BUILD_A first, then with BUILD_B, and the table has both results and how much faster BUILD_B
+is than BUILD_A. A build directory must contain WebKitTestRunner, for example
+WebKitBuild/Release or WebKitBuild/cmake-mac/Release.
+
+Each benchmark runs once in WebKitTestRunner, which is what run-perf-tests does with
+--test-runner-count=1: one warm-up iteration and 10 measured iterations of at least 100 ms each,
+see PerformanceTests/WebGL/resources/webgl-bench.js. The value is the mean runs/s of the 10. A
+benchmark whose result checks fail still reports its performance; the result checks column says
+what was wrong. run-perf-tests is not used because it rebuilds WebKitTestRunner into the build
+directory.
+
+The table goes to stdout and to results.csv in the results directory, together with each
+benchmark's WebKitTestRunner output. Progress goes to stderr.
+
+The PerformanceTests/WebGL/run-*-sweep.sh scripts run sets of benchmarks of several suites with
+this script.
+"""
+
+import argparse
+import csv
+import os
+import re
+import subprocess
+import sys
+import time
+
+SUITES_DIRECTORY = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "PerformanceTests", "WebGL"))
+RESULTS_DIRECTORY = "/tmp/webgl-benchmarks"
+TIMEOUT_SECONDS = 120
+
+
+def run_benchmark(build, test_path, output_path):
+    environment = dict(os.environ)
+    for variable in ("DYLD_FRAMEWORK_PATH", "DYLD_LIBRARY_PATH", "__XPC_DYLD_FRAMEWORK_PATH", "__XPC_DYLD_LIBRARY_PATH"):
+        environment[variable] = build
+    command = [os.path.join(build, "WebKitTestRunner"), "--no-enable-all-experimental-features", f"{test_path}'--timeout'{TIMEOUT_SECONDS * 1000}"]
+    with open(output_path, "w") as output:
+        try:
+            subprocess.run(command, stdout=output, stderr=subprocess.STDOUT, env=environment, timeout=TIMEOUT_SECONDS + 30)
+        except subprocess.TimeoutExpired:
+            output.write("\nFAIL: WebKitTestRunner did not finish\n")
+
+
+def parse(output_path):
+    """Returns (mean runs/s or None, description, problems)."""
+    text = open(output_path, errors="replace").read()
+    description = re.search(r"^Description: (.*)$", text, re.M)
+    runs = re.search(r"^:Runs -> \[([^\]]*)\] runs/s", text, re.M)
+    problems = [line[len("FAIL: "):] for line in text.splitlines() if line.startswith("FAIL: ")]
+    problems += [line for line in text.splitlines() if line.startswith("Got an exception")]
+    if not runs:
+        problems.append("no result")
+    values = [float(value) for value in runs.group(1).split(",")] if runs else []
+    mean = sum(values) / len(values) if values else None
+    return mean, description.group(1) if description else "", problems
+
+
+def format_number(value):
+    return f"{value:.6g}" if value is not None else ""
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("build_a", help="baseline build directory")
+    parser.add_argument("build_b", nargs="?", help="build directory to compare with the baseline")
+    tests_source = parser.add_mutually_exclusive_group(required=True)
+    tests_source.add_argument("--suite", help="a suite of PerformanceTests/WebGL, for example TextureUpload")
+    tests_source.add_argument("--tests-directory", help="a directory of benchmarks")
+    parser.add_argument("--results-directory", default=RESULTS_DIRECTORY)
+    parser.add_argument("--only", nargs="+", metavar="TEST", help="run only these benchmarks, for example rgba8-unsigned_byte-64x64")
+    arguments = parser.parse_args()
+    tests_directory = arguments.tests_directory or os.path.join(SUITES_DIRECTORY, arguments.suite)
+    if not os.path.isdir(tests_directory):
+        sys.exit(f"No such directory: {tests_directory}")
+
+    builds = [("A", os.path.abspath(os.path.expanduser(arguments.build_a)))]
+    if arguments.build_b:
+        builds.append(("B", os.path.abspath(os.path.expanduser(arguments.build_b))))
+    for label, build in builds:
+        if not os.path.exists(os.path.join(build, "WebKitTestRunner")):
+            sys.exit(f"Build {label}: no WebKitTestRunner in {build}")
+
+    tests = sorted(name[:-len(".html")] for name in os.listdir(tests_directory) if name.endswith(".html"))
+    if arguments.only:
+        only = {name.removesuffix(".html") for name in arguments.only}
+        missing = sorted(only - set(tests))
+        if missing:
+            sys.exit(f"No such benchmarks in {tests_directory}: {', '.join(missing)}")
+        tests = [test for test in tests if test in only]
+
+    results = {}
+    for label, build in builds:
+        directory = os.path.join(arguments.results_directory, label)
+        os.makedirs(directory, exist_ok=True)
+        for index, test in enumerate(tests, 1):
+            output_path = os.path.join(directory, test + ".txt")
+            start = time.monotonic()
+            run_benchmark(build, os.path.join(tests_directory, test + ".html"), output_path)
+            seconds = time.monotonic() - start
+            mean, description, problems = parse(output_path)
+            results[label, test] = (mean, description, problems)
+            status = f"{mean:.4g} runs/s" if mean is not None else "no result"
+            print(f"[{label} {index}/{len(tests)}] {test}: {status}{' (incorrect)' if problems and mean is not None else ''}, {seconds:.1f} s", file=sys.stderr)
+
+    if len(builds) == 1:
+        header = ["Test", "A (runs/s)", "A result checks", "Description"]
+    else:
+        header = ["Test", "A (runs/s)", "B (runs/s)", "B / A", "B faster than A (%)", "A result checks", "B result checks", "Description"]
+    rows = []
+    for test in tests:
+        mean_a, description_a, problems_a = results["A", test]
+        checks_a = "; ".join(problems_a) or "pass"
+        if len(builds) == 1:
+            rows.append([test, format_number(mean_a), checks_a, description_a])
+            continue
+        mean_b, description_b, problems_b = results["B", test]
+        ratio = mean_b / mean_a if mean_a and mean_b else None
+        rows.append([
+            test,
+            format_number(mean_a),
+            format_number(mean_b),
+            f"{ratio:.4g}" if ratio else "",
+            f"{(ratio - 1) * 100:.1f}" if ratio else "",
+            checks_a,
+            "; ".join(problems_b) or "pass",
+            description_a or description_b,
+        ])
+
+    os.makedirs(arguments.results_directory, exist_ok=True)
+    csv_path = os.path.join(arguments.results_directory, "results.csv")
+    with open(csv_path, "w", newline="") as csv_file:
+        for writer in (csv.writer(sys.stdout), csv.writer(csv_file)):
+            writer.writerow(header)
+            writer.writerows(rows)
+    for label, build in builds:
+        print(f"{label}: {build}", file=sys.stderr)
+    print(f"Saved {csv_path}", file=sys.stderr)
+
+
+if __name__ == "__main__":
+    main()
