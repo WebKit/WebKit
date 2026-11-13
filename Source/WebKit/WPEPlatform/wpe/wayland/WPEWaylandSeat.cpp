@@ -41,19 +41,47 @@ namespace WPE {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WaylandSeat);
 
-WaylandSeat::WaylandSeat(struct wl_seat* seat)
+static void releasePointer(struct wl_pointer* pointer)
+{
+    if (wl_pointer_get_version(pointer) >= WL_POINTER_RELEASE_SINCE_VERSION)
+        wl_pointer_release(pointer);
+    else
+        wl_pointer_destroy(pointer);
+}
+
+static void releaseKeyboard(struct wl_keyboard* keyboard)
+{
+    if (wl_keyboard_get_version(keyboard) >= WL_KEYBOARD_RELEASE_SINCE_VERSION)
+        wl_keyboard_release(keyboard);
+    else
+        wl_keyboard_destroy(keyboard);
+}
+
+static void releaseTouch(struct wl_touch* touch)
+{
+    if (wl_touch_get_version(touch) >= WL_TOUCH_RELEASE_SINCE_VERSION)
+        wl_touch_release(touch);
+    else
+        wl_touch_destroy(touch);
+}
+
+WaylandSeat::WaylandSeat(struct wl_seat* seat, WPEKeymap* keymap)
     : m_seat(seat)
-    , m_keymap(adoptGRef(wpe_keymap_xkb_new()))
+    , m_keymap(keymap)
 {
 }
 
 WaylandSeat::~WaylandSeat()
 {
-    g_clear_pointer(&m_pointer.object, wl_pointer_destroy);
-    g_clear_pointer(&m_keyboard.object, wl_keyboard_destroy);
+    g_clear_pointer(&m_pointer.object, releasePointer);
+    g_clear_pointer(&m_keyboard.object, releaseKeyboard);
+    g_clear_pointer(&m_touch.object, releaseTouch);
     if (m_keyboard.repeat.source)
         g_source_destroy(m_keyboard.repeat.source.get());
-    wl_seat_destroy(m_seat);
+    if (wl_seat_get_version(m_seat) >= WL_SEAT_RELEASE_SINCE_VERSION)
+        wl_seat_release(m_seat);
+    else
+        wl_seat_destroy(m_seat);
 }
 
 const struct wl_pointer_listener WaylandSeat::s_pointerListener = {
@@ -503,7 +531,7 @@ const struct wl_seat_listener WaylandSeat::s_listener = {
             seat.m_pointer.source = WPE_INPUT_SOURCE_MOUSE;
             wl_pointer_add_listener(seat.m_pointer.object, &s_pointerListener, data);
         } else if (!hasPointer && seat.m_pointer.object) {
-            wl_pointer_release(seat.m_pointer.object);
+            releasePointer(seat.m_pointer.object);
             seat.m_pointer = { };
         }
 
@@ -514,7 +542,7 @@ const struct wl_seat_listener WaylandSeat::s_listener = {
             seat.m_keyboard.source = WPE_INPUT_SOURCE_KEYBOARD;
             wl_keyboard_add_listener(seat.m_keyboard.object, &s_keyboardListener, data);
         } else if (!hasKeyboard && seat.m_keyboard.object) {
-            wl_keyboard_release(seat.m_keyboard.object);
+            releaseKeyboard(seat.m_keyboard.object);
             seat.m_keyboard = { };
         }
 
@@ -525,17 +553,8 @@ const struct wl_seat_listener WaylandSeat::s_listener = {
             seat.m_touch.source = WPE_INPUT_SOURCE_TOUCHSCREEN;
             wl_touch_add_listener(seat.m_touch.object, &s_touchListener, data);
         } else if (!hasTouch && seat.m_touch.object) {
-            if (seat.m_touch.toplevel) {
-                if (GRefPtr<WPEView> view = wpeToplevelWaylandGetVisibleViewUnderTouch(seat.m_touch.toplevel.get())) {
-                    for (const auto& iter : seat.m_touch.points) {
-                        GRefPtr<WPEEvent> event = adoptGRef(wpe_event_touch_new(WPE_EVENT_TOUCH_CANCEL, view.get(), seat.m_touch.source, 0, seat.modifiers(),
-                            iter.key, iter.value.first, iter.value.second));
-                        wpe_view_event(view.get(), event.get());
-                    }
-                }
-            }
-
-            wl_touch_release(seat.m_touch.object);
+            seat.cancelTouchPoints();
+            releaseTouch(seat.m_touch.object);
             seat.m_touch = { };
         }
 
@@ -549,6 +568,23 @@ const struct wl_seat_listener WaylandSeat::s_listener = {
 void WaylandSeat::startListening()
 {
     wl_seat_add_listener(m_seat, &s_listener, this);
+}
+
+void WaylandSeat::cancelTouchPoints()
+{
+    if (!m_touch.toplevel)
+        return;
+
+    GRefPtr<WPEView> view = wpeToplevelWaylandGetVisibleViewUnderTouch(m_touch.toplevel.get());
+    if (!view)
+        return;
+
+    for (const auto& iter : m_touch.points) {
+        GRefPtr<WPEEvent> event = adoptGRef(wpe_event_touch_new(WPE_EVENT_TOUCH_CANCEL, view.get(), m_touch.source, 0, modifiers(),
+            iter.key, iter.value.first, iter.value.second));
+        wpe_view_event(view.get(), event.get());
+    }
+    m_touch.points.clear();
 }
 
 void WaylandSeat::setCursor(struct wl_surface* surface, int32_t hotspotX, int32_t hotspotY)

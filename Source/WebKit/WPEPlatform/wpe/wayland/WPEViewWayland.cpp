@@ -660,6 +660,9 @@ static gboolean wpeViewWaylandLockPointer(WPEView* view)
         return FALSE;
 
     WPE::WaylandSeat* seat = wpeDisplayWaylandGetSeat(display);
+    if (!seat)
+        return FALSE;
+
     priv->savedPointerModifiers = seat->pointerModifiers();
     priv->savedPointerCoords = seat->pointerCoords();
     struct wl_pointer* wlPointer = wl_seat_get_pointer(seat->seat());
