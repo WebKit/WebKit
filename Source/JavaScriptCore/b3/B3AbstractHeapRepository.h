@@ -191,6 +191,7 @@ namespace JSC::B3 {
     macro(WasmRTT_displaySizeExcludingThis, Wasm::RTT::offsetOfDisplaySizeExcludingThis(), Mutability::Immutable) \
     macro(WasmRTT_kind, Wasm::RTT::offsetOfKind(), Mutability::Immutable) \
     macro(WasmTable_length, Wasm::Table::offsetOfLength(), Mutability::Mutable) \
+    macro(WasmTable_owner, Wasm::Table::offsetOfOwner(), Mutability::Immutable) \
     macro(WasmExternOrAnyRefTable_jsValues, Wasm::ExternOrAnyRefTable::offsetOfJSValues(), Mutability::Mutable) \
     macro(WeakImpl_jsValue, WeakImpl::offsetOfJSValue(), Mutability::Mutable) \
     macro(WeakImpl_weakHandleOwner, WeakImpl::offsetOfWeakHandleOwner(), Mutability::Mutable) \
