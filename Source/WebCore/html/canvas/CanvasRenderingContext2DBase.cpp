@@ -1087,6 +1087,11 @@ void CanvasRenderingContext2DBase::applyLineDash() const
     c->setLineDash(convertedLineDash, state.lineDashOffset);
 }
 
+void CanvasRenderingContext2DBase::setTargetSwitcherForDraw(RefPtr<CanvasLayerContextSwitcher>&& targetSwitcher)
+{
+    m_stateStack.last().targetSwitcher = WTF::move(targetSwitcher);
+}
+
 void CanvasRenderingContext2DBase::setGlobalAlpha(double alpha)
 {
     if (!(alpha >= 0 && alpha <= 1))

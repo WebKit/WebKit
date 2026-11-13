@@ -1,0 +1,51 @@
+Tests drawing with a filter after save(), with no state change between save() and the draw.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS fillRect() after 1 save(), before restore(): 0,255,255,255
+PASS fillRect() after 1 save(), after restore(): 0,255,255,255
+PASS fillRect() after 1 save(), after restore(), without the filter: 255,0,0,255
+PASS fillRect() after 3 save(), before restore(): 0,255,255,255
+PASS fillRect() after 3 save(), after restore(): 0,255,255,255
+PASS fillRect() after 3 save(), after restore(), without the filter: 255,0,0,255
+PASS strokeRect() after 1 save(), before restore(): 0,255,255,255
+PASS strokeRect() after 1 save(), after restore(): 0,255,255,255
+PASS strokeRect() after 1 save(), after restore(), without the filter: 255,0,0,255
+PASS strokeRect() after 3 save(), before restore(): 0,255,255,255
+PASS strokeRect() after 3 save(), after restore(): 0,255,255,255
+PASS strokeRect() after 3 save(), after restore(), without the filter: 255,0,0,255
+PASS fill() after 1 save(), before restore(): 0,255,255,255
+PASS fill() after 1 save(), after restore(): 0,255,255,255
+PASS fill() after 1 save(), after restore(), without the filter: 255,0,0,255
+PASS fill() after 3 save(), before restore(): 0,255,255,255
+PASS fill() after 3 save(), after restore(): 0,255,255,255
+PASS fill() after 3 save(), after restore(), without the filter: 255,0,0,255
+PASS stroke() after 1 save(), before restore(): 0,255,255,255
+PASS stroke() after 1 save(), after restore(): 0,255,255,255
+PASS stroke() after 1 save(), after restore(), without the filter: 255,0,0,255
+PASS stroke() after 3 save(), before restore(): 0,255,255,255
+PASS stroke() after 3 save(), after restore(): 0,255,255,255
+PASS stroke() after 3 save(), after restore(), without the filter: 255,0,0,255
+PASS fillText() after 1 save(), before restore(): 0,255,255,255
+PASS fillText() after 1 save(), after restore(): 0,255,255,255
+PASS fillText() after 1 save(), after restore(), without the filter: 255,0,0,255
+PASS fillText() after 3 save(), before restore(): 0,255,255,255
+PASS fillText() after 3 save(), after restore(): 0,255,255,255
+PASS fillText() after 3 save(), after restore(), without the filter: 255,0,0,255
+PASS strokeText() after 1 save(), before restore(): 0,255,255,255
+PASS strokeText() after 1 save(), after restore(): 0,255,255,255
+PASS strokeText() after 1 save(), after restore(), without the filter: 255,0,0,255
+PASS strokeText() after 3 save(), before restore(): 0,255,255,255
+PASS strokeText() after 3 save(), after restore(): 0,255,255,255
+PASS strokeText() after 3 save(), after restore(), without the filter: 255,0,0,255
+PASS drawImage() after 1 save(), before restore(): 0,255,255,255
+PASS drawImage() after 1 save(), after restore(): 0,255,255,255
+PASS drawImage() after 1 save(), after restore(), without the filter: 255,0,0,255
+PASS drawImage() after 3 save(), before restore(): 0,255,255,255
+PASS drawImage() after 3 save(), after restore(): 0,255,255,255
+PASS drawImage() after 3 save(), after restore(), without the filter: 255,0,0,255
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
