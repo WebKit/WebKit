@@ -1,0 +1,62 @@
+This test ensures that a display:contents listbox has the union of its options' frames as its frame, that hit testing its options returns them, and that both stay right when its options change, when they wrap onto multiple lines, and when the listbox switches to and from display:contents. It also ensures an option can be scrolled into view.
+
+The options are on one line.
+PASS: optionFramesMatch() === true
+PASS: listboxFrameMatchesOptions() === true
+PASS: listboxFrameIsUnionOfOptionFrames() === true
+PASS: listbox.height < 2 * accessibilityController.accessibleElementById('english').height === true
+Hit test at the center of #english: #english (AXRole: AXStaticText)
+Hit test at the center of #french: #french (AXRole: AXStaticText)
+Hit test at the center of #portuguese: #portuguese (AXRole: AXStaticText)
+
+Adding options and narrowing the container so the options wrap onto multiple lines.
+PASS: listbox.childrenCount === 6
+PASS: optionFramesMatch() === true
+PASS: listboxFrameMatchesOptions() === true
+PASS: listboxFrameIsUnionOfOptionFrames() === true
+PASS: listbox.height > 2 * accessibilityController.accessibleElementById('english').height === true
+Hit test at the center of #english: #english (AXRole: AXStaticText)
+Hit test at the center of #french: #french (AXRole: AXStaticText)
+Hit test at the center of #portuguese: #portuguese (AXRole: AXStaticText)
+Hit test at the center of #spanish: #spanish (AXRole: AXStaticText)
+Hit test at the center of #italian: #italian (AXRole: AXStaticText)
+Hit test at the center of #japanese: #japanese (AXRole: AXStaticText)
+
+Removing the first option.
+PASS: listbox.childrenCount === 5
+PASS: optionFramesMatch() === true
+PASS: listboxFrameMatchesOptions() === true
+PASS: listboxFrameIsUnionOfOptionFrames() === true
+
+Giving the listbox a box with padding, so it is larger than the union of its options.
+PASS: frameMatches(listbox, listboxElement.getBoundingClientRect()) === true
+PASS: optionFramesMatch() === true
+PASS: listboxFrameMatchesOptions() === false
+PASS: listbox.role === 'AXRole: AXList'
+PASS: listbox.childrenCount === 5
+Hit test at the center of #french: #french (AXRole: AXStaticText)
+Hit test at the center of #portuguese: #portuguese (AXRole: AXStaticText)
+Hit test at the center of #spanish: #spanish (AXRole: AXStaticText)
+Hit test at the center of #italian: #italian (AXRole: AXStaticText)
+Hit test at the center of #japanese: #japanese (AXRole: AXStaticText)
+
+Making the listbox display:contents again.
+PASS: optionFramesMatch() === true
+PASS: listboxFrameMatchesOptions() === true
+PASS: listboxFrameIsUnionOfOptionFrames() === true
+PASS: listbox.role === 'AXRole: AXList'
+PASS: listbox.childrenCount === 5
+Hit test at the center of #french: #french (AXRole: AXStaticText)
+Hit test at the center of #portuguese: #portuguese (AXRole: AXStaticText)
+Hit test at the center of #spanish: #spanish (AXRole: AXStaticText)
+Hit test at the center of #italian: #italian (AXRole: AXStaticText)
+Hit test at the center of #japanese: #japanese (AXRole: AXStaticText)
+
+Scrolling the options out of view, then scrolling #french into view with an AX request.
+PASS: isInViewport(document.getElementById('french')) === false
+PASS: isInViewport(document.getElementById('french')) === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

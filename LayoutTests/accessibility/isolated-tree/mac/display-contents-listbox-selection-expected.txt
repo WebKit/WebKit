@@ -1,0 +1,49 @@
+This test ensures that the selected options of a display:contents listbox are exposed through AXSelectedChildren and AXSelected, and that AXSelectedChildrenChanged is posted on the listbox when they change.
+
+PASS: listbox.selectedChildrenCount === 0
+PASS: optionIsSelected('english') === false
+PASS: optionIsSelected('french') === false
+PASS: optionIsSelected('portuguese') === false
+
+Selecting #french.
+PASS: notifications.includes('listbox') === true
+PASS: [...new Set(notifications)].join() === 'listbox'
+PASS: domIdentifiers(listbox.selectedChildren()) === 'french'
+PASS: listbox.selectedChildAtIndex(0).domIdentifier === 'french'
+PASS: optionIsSelected('english') === false
+PASS: optionIsSelected('french') === true
+
+Moving the selection to #english.
+PASS: notifications.includes('listbox') === true
+PASS: [...new Set(notifications)].join() === 'listbox'
+PASS: domIdentifiers(listbox.selectedChildren()) === 'english'
+PASS: optionIsSelected('english') === true
+PASS: optionIsSelected('french') === false
+
+Selecting every option. Unless it is aria-multiselectable, a listbox only reports its first selected option as a selected child.
+PASS: notifications.includes('listbox') === true
+PASS: [...new Set(notifications)].join() === 'listbox'
+PASS: optionIsSelected('portuguese') === true
+PASS: optionIsSelected('french') === true
+PASS: domIdentifiers(listbox.selectedChildren()) === 'english'
+
+Making the listbox aria-multiselectable.
+PASS: domIdentifiers(listbox.selectedChildren()) === 'english, french, portuguese'
+PASS: listbox.selectedChildrenCount === 3
+
+Clearing the selection.
+PASS: notifications.includes('listbox') === true
+PASS: [...new Set(notifications)].join() === 'listbox'
+PASS: listbox.selectedChildrenCount === 0
+PASS: optionIsSelected('english') === false
+
+Rebuilding the options with #french and #german selected.
+PASS: domIdentifiers(listbox.selectedChildren()) === 'french, german'
+PASS: optionIsSelected('english') === false
+PASS: optionIsSelected('french') === true
+PASS: optionIsSelected('german') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

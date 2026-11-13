@@ -1,0 +1,54 @@
+This test ensures that focus is exposed correctly when it moves between the options of a display:contents listbox with a roving tabindex, including when the focused option is removed.
+
+Focusing the listbox, which generates no box, does nothing.
+PASS: document.activeElement.id === 'combobox'
+PASS: listbox.isFocused === false
+
+Pressing left arrow in the combobox to focus the last option.
+PASS: accessibilityController.focusedElement?.domIdentifier === 'portuguese'
+PASS: focusNotificationCount > previousFocusNotificationCount === true
+PASS: focusedOption.role === 'AXRole: AXStaticText'
+PASS: focusedOption.isFocused === true
+PASS: focusedOption.parentElement().isEqual(listbox) === true
+PASS: listbox.selectedChildren()[0]?.domIdentifier === 'portuguese'
+
+Pressing left arrow to move focus to #french.
+PASS: accessibilityController.focusedElement?.domIdentifier === 'french'
+PASS: focusNotificationCount > previousFocusNotificationCount === true
+PASS: accessibilityController.accessibleElementById('portuguese').isFocused === false
+PASS: accessibilityController.accessibleElementById('french').isFocused === true
+PASS: listbox.selectedChildren()[0]?.domIdentifier === 'french'
+PASS: selectedChildrenNotificationCount > 0 === true
+
+Pressing home to move focus to #english.
+PASS: accessibilityController.focusedElement?.domIdentifier === 'english'
+PASS: focusNotificationCount > previousFocusNotificationCount === true
+PASS: listbox.selectedChildren()[0]?.domIdentifier === 'english'
+
+Pressing end to move focus to #portuguese.
+PASS: accessibilityController.focusedElement?.domIdentifier === 'portuguese'
+PASS: focusNotificationCount > previousFocusNotificationCount === true
+
+Pressing delete to remove the focused option, which rebuilds the options and focuses the new #french.
+PASS: accessibilityController.focusedElement?.domIdentifier === 'french'
+PASS: focusNotificationCount > previousFocusNotificationCount === true
+PASS: listbox.childrenCount === 2
+PASS: childDOMIdentifiers(listbox) === 'english, french'
+PASS: accessibilityController.focusedElement.isEqual(frenchBeforeRemoval) === false
+PASS: accessibilityController.focusedElement.isFocused === true
+PASS: accessibilityController.focusedElement.parentElement().isEqual(listbox) === true
+PASS: listbox.selectedChildren()[0]?.domIdentifier === 'french'
+
+Pressing right arrow on the last option to move focus back to the combobox.
+PASS: accessibilityController.focusedElement?.domIdentifier === 'combobox'
+PASS: focusNotificationCount > previousFocusNotificationCount === true
+PASS: accessibilityController.accessibleElementById('french').isFocused === false
+
+Moving focus to #english with an AX focus request.
+PASS: document.activeElement.id === 'english'
+PASS: accessibilityController.focusedElement?.domIdentifier === 'english'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

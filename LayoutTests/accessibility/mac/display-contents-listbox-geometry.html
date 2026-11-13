@@ -1,0 +1,187 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+body {
+    margin: 0;
+}
+.input-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+    padding: 4px;
+    width: 400px;
+    font-size: 18px;
+}
+/* The listbox generates no box, so its options are flex items of .input-container. */
+.tokens-listbox {
+    display: contents;
+}
+.token {
+    display: flex;
+    align-items: center;
+    min-height: 32px;
+}
+.input-wrapper {
+    flex: auto;
+}
+</style>
+</head>
+<body>
+
+<div id="content">
+<div id="container" role="none" class="input-container">
+    <div id="listbox" role="listbox" aria-label="Items" tabindex="-1" class="tokens-listbox">
+        <div id="english" role="option" aria-selected="false" tabindex="-1"><span class="token" contenteditable="false"><span>English</span></span></div>
+        <div id="french" role="option" aria-selected="false" tabindex="-1"><span class="token" contenteditable="false"><span>French</span></span></div>
+        <div id="portuguese" role="option" aria-selected="false" tabindex="0"><span class="token" contenteditable="false"><span>Portuguese</span></span></div>
+    </div>
+    <div class="input-wrapper">
+        <div id="combobox" role="combobox" tabindex="0" contenteditable="plaintext-only" aria-autocomplete="list" aria-expanded="false" aria-label="Translation languages"></div>
+    </div>
+</div>
+<div style="height: 3000px"></div>
+</div>
+
+<script>
+var output = "This test ensures that a display:contents listbox has the union of its options' frames as its frame, that hit testing its options returns them, and that both stay right when its options change, when they wrap onto multiple lines, and when the listbox switches to and from display:contents. It also ensures an option can be scrolled into view.\n\n";
+
+var listboxElement = document.getElementById("listbox");
+
+function optionElements() {
+    return Array.from(listboxElement.querySelectorAll("[role='option']"));
+}
+
+function unionOfOptionRects() {
+    let left = Infinity, top = Infinity, right = -Infinity, bottom = -Infinity;
+    for (const option of optionElements()) {
+        const rect = option.getBoundingClientRect();
+        left = Math.min(left, rect.left);
+        top = Math.min(top, rect.top);
+        right = Math.max(right, rect.right);
+        bottom = Math.max(bottom, rect.bottom);
+    }
+    return { x: left, y: top, width: right - left, height: bottom - top };
+}
+
+// Allow for AX frames being snapped to integers.
+function frameMatches(axElement, rect, allowedVariance = 2) {
+    return Math.abs(axElement.pageX - rect.x) <= allowedVariance
+        && Math.abs(axElement.pageY - rect.y) <= allowedVariance
+        && Math.abs(axElement.width - rect.width) <= allowedVariance
+        && Math.abs(axElement.height - rect.height) <= allowedVariance;
+}
+
+function listboxFrameMatchesOptions() {
+    return frameMatches(listbox, unionOfOptionRects());
+}
+
+function listboxFrameIsUnionOfOptionFrames() {
+    let left = Infinity, top = Infinity, right = -Infinity, bottom = -Infinity;
+    for (let i = 0; i < listbox.childrenCount; i++) {
+        const option = listbox.childAtIndex(i);
+        left = Math.min(left, option.pageX);
+        top = Math.min(top, option.pageY);
+        right = Math.max(right, option.pageX + option.width);
+        bottom = Math.max(bottom, option.pageY + option.height);
+    }
+    return frameMatches(listbox, { x: left, y: top, width: right - left, height: bottom - top }, 1);
+}
+
+function optionFramesMatch() {
+    return optionElements().every(option => frameMatches(accessibilityController.accessibleElementById(option.id), option.getBoundingClientRect()));
+}
+
+function isInViewport(element) {
+    const rect = element.getBoundingClientRect();
+    return rect.top >= 0 && rect.bottom <= window.innerHeight;
+}
+
+function hitTestOptions() {
+    let result = "";
+    for (const option of optionElements()) {
+        const rect = option.getBoundingClientRect();
+        const hit = accessibilityController.elementAtPoint(rect.x + rect.width / 2, rect.y + rect.height / 2);
+        result += `Hit test at the center of #${option.id}: ${hit ? `#${hit.domIdentifier} (${hit.role})` : "null"}\n`;
+    }
+    return result;
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var listbox;
+    setTimeout(async function() {
+        listbox = await waitForElementById("listbox");
+        await waitForFrameGeometryReady();
+
+        output += "The options are on one line.\n";
+        output += await expectAsync("optionFramesMatch()", "true");
+        output += await expectAsync("listboxFrameMatchesOptions()", "true");
+        output += expect("listboxFrameIsUnionOfOptionFrames()", "true");
+        output += expect("listbox.height < 2 * accessibilityController.accessibleElementById('english').height", "true");
+        output += hitTestOptions();
+
+        output += "\nAdding options and narrowing the container so the options wrap onto multiple lines.\n";
+        for (const label of ["Spanish", "Italian", "Japanese"]) {
+            const option = document.createElement("div");
+            option.id = label.toLowerCase();
+            option.setAttribute("role", "option");
+            option.setAttribute("aria-selected", "false");
+            option.tabIndex = -1;
+            option.innerHTML = `<span class="token" contenteditable="false"><span>${label}</span></span>`;
+            listboxElement.appendChild(option);
+        }
+        document.getElementById("container").style.width = "200px";
+        output += await expectAsync("listbox.childrenCount", "6");
+        output += await expectAsync("optionFramesMatch()", "true");
+        output += await expectAsync("listboxFrameMatchesOptions()", "true");
+        output += expect("listboxFrameIsUnionOfOptionFrames()", "true");
+        output += expect("listbox.height > 2 * accessibilityController.accessibleElementById('english').height", "true");
+        output += hitTestOptions();
+
+        output += "\nRemoving the first option.\n";
+        document.getElementById("english").remove();
+        output += await expectAsync("listbox.childrenCount", "5");
+        output += await expectAsync("optionFramesMatch()", "true");
+        output += await expectAsync("listboxFrameMatchesOptions()", "true");
+        output += expect("listboxFrameIsUnionOfOptionFrames()", "true");
+
+        output += "\nGiving the listbox a box with padding, so it is larger than the union of its options.\n";
+        listboxElement.style.display = "flex";
+        listboxElement.style.flexWrap = "wrap";
+        listboxElement.style.gap = "4px";
+        listboxElement.style.padding = "10px";
+        output += await expectAsync("frameMatches(listbox, listboxElement.getBoundingClientRect())", "true");
+        output += await expectAsync("optionFramesMatch()", "true");
+        output += expect("listboxFrameMatchesOptions()", "false");
+        output += expect("listbox.role", "'AXRole: AXList'");
+        output += expect("listbox.childrenCount", "5");
+        output += hitTestOptions();
+
+        output += "\nMaking the listbox display:contents again.\n";
+        listboxElement.removeAttribute("style");
+        output += await expectAsync("optionFramesMatch()", "true");
+        output += await expectAsync("listboxFrameMatchesOptions()", "true");
+        output += expect("listboxFrameIsUnionOfOptionFrames()", "true");
+        output += expect("listbox.role", "'AXRole: AXList'");
+        output += expect("listbox.childrenCount", "5");
+        output += hitTestOptions();
+
+        output += "\nScrolling the options out of view, then scrolling #french into view with an AX request.\n";
+        window.scrollTo(0, 2000);
+        output += expect("isInViewport(document.getElementById('french'))", "false");
+        accessibilityController.accessibleElementById("french").scrollToMakeVisible();
+        output += await expectAsync("isInViewport(document.getElementById('french'))", "true");
+
+        document.getElementById("content").style.display = "none";
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
