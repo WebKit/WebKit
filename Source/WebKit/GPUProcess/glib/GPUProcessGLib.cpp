@@ -30,6 +30,7 @@
 
 #include "GPUConnectionToWebProcess.h"
 #include "GPUProcessCreationParameters.h"
+#include <WebCore/GLDisplay.h>
 #include <glib.h>
 #if ENABLE(WEBGL)
 #include "RemoteGraphicsContextGL.h"
@@ -49,6 +50,10 @@ namespace WebKit {
 
 void GPUProcess::platformInitializeGPUProcess(GPUProcessCreationParameters& parameters)
 {
+#if !OS(ANDROID)
+    WebCore::GLDisplay::setShouldUseInMemoryShaderCache(true);
+#endif
+
 #if USE(GBM)
     WebCore::DRMDeviceManager::singleton().initializeMainDevice(WTF::move(parameters.drmDevice));
 
