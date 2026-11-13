@@ -172,7 +172,7 @@ public:
 
     bool remove(const ValueType& value)
     {
-        return remove(find(value));
+        return m_impl.remove(value);
     }
 
     bool remove(iterator it)
@@ -199,9 +199,7 @@ public:
     {
         if (it == end())
             return ValueTraits::take(ValueTraits::emptyValue());
-        auto result = ValueTraits::take(WTF::move(const_cast<ValueType&>(*it)));
-        remove(it);
-        return result;
+        return ValueTraits::take(m_impl.take(it));
     }
 
     TakeType takeAny() { return take(begin()); }
@@ -209,19 +207,7 @@ public:
     const ValueType& first() const { ASSERT(!isEmpty()); return *begin(); }
     const ValueType& last() const { ASSERT(!isEmpty()); return *rbegin(); }
 
-    static bool isValidValue(const ValueType& value)
-    {
-        if (ValueTraits::isDeletedValue(value))
-            return false;
-        if constexpr (HashFunctions::safeToCompareToEmptyOrDeleted) {
-            if (value == ValueTraits::emptyValue())
-                return false;
-        } else {
-            if (isHashTraitsEmptyValue<ValueTraits>(value))
-                return false;
-        }
-        return true;
-    }
+    static bool isValidValue(const ValueType& value) { return HashTableType::isValidKey(value); }
 
 private:
     HashTableType m_impl;

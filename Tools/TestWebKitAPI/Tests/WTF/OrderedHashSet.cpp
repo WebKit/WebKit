@@ -28,6 +28,8 @@
 
 #include "Helpers/Test.h"
 #include "MoveOnly.h"
+#include <wtf/NeverDestroyed.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
@@ -653,152 +655,151 @@ TEST(WTF_OrderedHashSet, HashTranslatorFindContains)
 
 namespace {
 
-// Mirrors the signature OrderedHashTable::add<HashTranslator> expects:
-//   translate(location, key, valueFunctor).
-// Uses plain assignment into `location` — the canonical WTF translator convention.
-// This is the shape that will silently corrupt raw storage if the entries array
-// isn't pre-initialized to an empty value before translate() runs.
-struct AssigningStringViewTranslator {
+struct ConstructingStringViewTranslator {
     static unsigned hash(StringView view) { return StringHash::hash(view.toString()); }
     static bool equal(const String& a, StringView b) { return a == b; }
-    static void translate(String& location, StringView view, NOESCAPE const auto&)
+    static void translate(String* location, StringView view, NOESCAPE const auto&)
     {
-        location = view.toString();
+        std::construct_at(location, view.toString());
     }
 };
 
 using StringOrderedHashTable = WTF::OrderedHashTable<String, String, WTF::IdentityExtractor, DefaultHash<String>, HashTraits<String>, HashTraits<String>, WTF::HashTableMalloc>;
 
-// A value type whose operator= asserts the LHS is in a constructed state
-// (one of the known sentinels). Without a pre-translate constructEmptyValue,
-// the translator's `location = ...` assigns into raw malloc storage and the
-// m_state field will be random bits, nearly always tripping the assert.
-// liveCount tracks Live-state instances only; Empty/Deleted sentinels are
-// not counted, mirroring WTF's convention that sentinels hold no resources.
-class TrackedValue {
+// Counts every construction and destruction, and has neither a default constructor nor a
+// deleted-value constructor, so the table cannot be relying on any reserved value of its own.
+class CountedValue {
 public:
-    enum State : uint32_t { Garbage = 0xDEADBEEF, Empty = 0xE11E, Deleted = 0xDEAD, Live = 0xA11E };
-
     static int liveCount;
+    static int constructionCount;
 
-    TrackedValue() : m_state(Empty), m_value(0) { }
-    explicit TrackedValue(int v) : m_state(Live), m_value(v) { ++liveCount; }
-    TrackedValue(const TrackedValue& other) : m_state(other.m_state), m_value(other.m_value)
+    explicit CountedValue(int value)
+        : m_value(value)
     {
-        if (m_state == Live)
-            ++liveCount;
+        ++liveCount;
+        ++constructionCount;
     }
-    TrackedValue(TrackedValue&& other) noexcept : m_state(other.m_state), m_value(other.m_value)
+    CountedValue(const CountedValue& other)
+        : m_value(other.m_value)
     {
-        // Move: dst increments, src keeps its state so its destructor balances.
-        if (m_state == Live)
-            ++liveCount;
+        ++liveCount;
+        ++constructionCount;
     }
-    TrackedValue(WTF::HashTableDeletedValueType) : m_state(Deleted), m_value(0) { }
-
-    ~TrackedValue()
+    CountedValue(CountedValue&& other)
+        : m_value(other.m_value)
     {
-        if (m_state == Live)
-            --liveCount;
-        m_state = Garbage;
+        ++liveCount;
+        ++constructionCount;
     }
-
-    TrackedValue& operator=(const TrackedValue& other)
+    ~CountedValue()
     {
-        // LHS must be a constructed object (Empty/Live/Deleted). Raw malloc
-        // storage will have random bits, which almost never match a sentinel.
-        EXPECT_TRUE(m_state == Empty || m_state == Live || m_state == Deleted);
-        if (m_state == Live)
-            --liveCount;
-        m_state = other.m_state;
-        m_value = other.m_value;
-        if (m_state == Live)
-            ++liveCount;
-        return *this;
+        EXPECT_NE(m_value, destroyedMarker);
+        m_value = destroyedMarker;
+        --liveCount;
     }
-
-    bool isHashTableDeletedValue() const { return m_state == Deleted; }
-    bool operator==(const TrackedValue& other) const { return m_state == other.m_state && m_value == other.m_value; }
+    CountedValue& operator=(const CountedValue&) = delete;
 
     int value() const { return m_value; }
+    friend bool operator==(const CountedValue& a, const CountedValue& b) { return a.m_value == b.m_value; }
 
 private:
-    uint32_t m_state;
+    static constexpr int destroyedMarker = 0x5ead5ead;
     int m_value;
 };
 
-int TrackedValue::liveCount = 0;
+int CountedValue::liveCount = 0;
+int CountedValue::constructionCount = 0;
 
-struct TrackedValueHash {
-    static unsigned hash(const TrackedValue& v) { return IntHash<int>::hash(v.value()); }
-    static bool equal(const TrackedValue& a, const TrackedValue& b) { return a == b; }
+struct CountedValueHash {
+    static unsigned hash(const CountedValue& value) { return IntHash<int>::hash(value.value()); }
+    static bool equal(const CountedValue& a, const CountedValue& b) { return a == b; }
 };
 
-struct TrackedValueTraits : WTF::SimpleClassHashTraits<TrackedValue> {
-    // Force emptyValueIsZero=false so constructEmptyValue runs (not zeroBytes).
-    static constexpr bool emptyValueIsZero = false;
-};
-
-struct TrackedValueTranslator {
-    static unsigned hash(int v) { return IntHash<int>::hash(v); }
-    static bool equal(const TrackedValue& a, int b) { return a.value() == b; }
-    static void translate(TrackedValue& location, int v, NOESCAPE const auto&)
+struct CountedValueTranslator {
+    static unsigned hash(int value) { return IntHash<int>::hash(value); }
+    static bool equal(const CountedValue& a, int b) { return a.value() == b; }
+    static void translate(CountedValue* location, int value, NOESCAPE const auto&)
     {
-        // Standard WTF translator convention: assign. LHS must be constructed.
-        location = TrackedValue(v);
+        std::construct_at(location, value);
     }
 };
 
-using TrackedOrderedHashTable = WTF::OrderedHashTable<TrackedValue, TrackedValue, WTF::IdentityExtractor, TrackedValueHash, TrackedValueTraits, TrackedValueTraits, WTF::HashTableMalloc>;
+// emptyValue() is only what OrderedHashSet::take() returns when nothing is found.
+struct CountedValueTraits : WTF::GenericHashTraits<CountedValue> {
+    static CountedValue emptyValue() { return CountedValue(INT_MIN); }
+};
 
+using CountedOrderedHashSet = OrderedHashSet<CountedValue, CountedValueHash, CountedValueTraits>;
+using CountedOrderedHashTable = WTF::OrderedHashTable<CountedValue, CountedValue, WTF::IdentityExtractor, CountedValueHash, CountedValueTraits, CountedValueTraits, WTF::HashTableMalloc>;
+
+// Every value lands in one bucket chain, so removals leave deleted buckets in the middle of the
+// probe sequence that later lookups and adds have to step over.
+struct CollidingIntHash {
+    static unsigned hash(int) { return 7; }
+    static bool equal(int a, int b) { return a == b; }
+};
+
+template<typename Set>
+Vector<int> contentsOf(const Set& set)
+{
+    Vector<int> result;
+    for (auto& value : set)
+        result.append(value);
+    return result;
 }
 
-TEST(WTF_OrderedHashSet, HashTranslatorAddConstructsEmptyBeforeAssign)
+template<typename Set>
+Vector<int> reverseContentsOf(const Set& set)
 {
-    // Without the pre-translate constructEmptyValue, `location = ...` inside the
-    // translator would be invoked on raw malloc storage. TrackedValue::operator=
-    // asserts its LHS is a real constructed object, so the bug would EXPECT fail.
-    TrackedValue::liveCount = 0;
-    auto noFunctor = []() ALWAYS_INLINE_LAMBDA -> TrackedValue { return TrackedValue(); };
-    {
-        TrackedOrderedHashTable table;
-        for (int i = 0; i < 32; ++i) {
-            auto r = table.add<TrackedValueTranslator>(i, noFunctor);
-            EXPECT_TRUE(r.isNewEntry);
-        }
-        EXPECT_EQ(32u, table.size());
+    Vector<int> result;
+    for (auto it = set.rbegin(); it != set.rend(); ++it)
+        result.append(*it);
+    return result;
+}
 
-        // Force deletions then re-add; after internal compact/rehash the translator
-        // path writes into slots whose prior occupants were destructed/moved-from —
-        // each such slot must again be re-constructed-empty before translate.
-        for (int i = 0; i < 32; i += 2)
-            table.remove(TrackedValue(i));
-        EXPECT_EQ(16u, table.size());
-        for (int i = 0; i < 32; i += 2) {
-            auto r = table.add<TrackedValueTranslator>(i, noFunctor);
-            EXPECT_TRUE(r.isNewEntry);
-        }
+} // anonymous namespace
+
+TEST(WTF_OrderedHashSet, HashTranslatorAddConstructsIntoRawStorage)
+{
+    CountedValue::liveCount = 0;
+    auto noFunctor = [] {
+        return CountedValue(-1);
+    };
+    {
+        CountedOrderedHashTable table;
+        for (int i = 0; i < 32; ++i)
+            EXPECT_TRUE(table.add<CountedValueTranslator>(i, noFunctor).isNewEntry);
         EXPECT_EQ(32u, table.size());
+        EXPECT_EQ(32, CountedValue::liveCount);
+
+        // Re-adding through the translator after removals lands in storage whose previous
+        // occupant was destroyed, so translate() must construct rather than assign.
+        for (int i = 0; i < 32; i += 2)
+            table.remove(CountedValue(i));
+        EXPECT_EQ(16u, table.size());
+        EXPECT_EQ(16, CountedValue::liveCount);
+        for (int i = 0; i < 32; i += 2)
+            EXPECT_TRUE(table.add<CountedValueTranslator>(i, noFunctor).isNewEntry);
+        for (int i = 0; i < 32; ++i)
+            EXPECT_FALSE(table.add<CountedValueTranslator>(i, noFunctor).isNewEntry);
+        EXPECT_EQ(32u, table.size());
+        EXPECT_EQ(32, CountedValue::liveCount);
     }
-    // Every constructed instance must have been destructed.
-    EXPECT_EQ(0, TrackedValue::liveCount);
+    EXPECT_EQ(0, CountedValue::liveCount);
 }
 
 TEST(WTF_OrderedHashSet, HashTranslatorAddIntoRawStorage)
 {
-    // Exercises OrderedHashTable::add<HashTranslator>. A correctly-implemented WTF
-    // translator assigns into `location`; our entries array is raw malloc storage,
-    // so without an in-place empty-value construction before translate, String's
-    // assignment operator would deref garbage from the freshly malloc'd slot.
     StringOrderedHashTable table;
     auto noFunctor = []() ALWAYS_INLINE_LAMBDA -> String { return String(); };
 
-    auto a = table.add<AssigningStringViewTranslator>(StringView { "alpha"_s }, noFunctor);
+    auto a = table.add<ConstructingStringViewTranslator>(StringView { "alpha"_s }, noFunctor);
     EXPECT_TRUE(a.isNewEntry);
-    auto b = table.add<AssigningStringViewTranslator>(StringView { "beta"_s }, noFunctor);
+    auto b = table.add<ConstructingStringViewTranslator>(StringView { "beta"_s }, noFunctor);
     EXPECT_TRUE(b.isNewEntry);
-    auto aAgain = table.add<AssigningStringViewTranslator>(StringView { "alpha"_s }, noFunctor);
+    auto aAgain = table.add<ConstructingStringViewTranslator>(StringView { "alpha"_s }, noFunctor);
     EXPECT_FALSE(aAgain.isNewEntry);
+    EXPECT_TRUE(aAgain.iterator == a.iterator);
 
     EXPECT_EQ(2u, table.size());
     auto it = table.begin();
@@ -811,9 +812,6 @@ TEST(WTF_OrderedHashSet, HashTranslatorAddIntoRawStorage)
 
 TEST(WTF_OrderedHashSet, HashTranslatorAddTriggersRehashAndCompact)
 {
-    // Adding through the translator path past initial capacity must rehash (growing
-    // the entries array and re-placement-newing into it) without disturbing any
-    // in-flight empty-value state for the slot still being populated.
     StringOrderedHashTable table;
     auto noFunctor = []() ALWAYS_INLINE_LAMBDA -> String { return String(); };
 
@@ -822,29 +820,379 @@ TEST(WTF_OrderedHashSet, HashTranslatorAddTriggersRehashAndCompact)
         keys.append(String::number(i));
 
     for (const auto& k : keys)
-        table.add<AssigningStringViewTranslator>(StringView { k }, noFunctor);
+        table.add<ConstructingStringViewTranslator>(StringView { k }, noFunctor);
     EXPECT_EQ(64u, table.size());
 
-    // Delete half, then add again via the translator — forces compactInPlace to
-    // run, after which the next translator add lands in a slot that was previously
-    // a deleted entry. The fix must still apply in that path.
+    // Removing half and adding them back fills the entries array, which compacts it in place.
     for (unsigned i = 0; i < 64; i += 2)
         table.remove(keys[i]);
     EXPECT_EQ(32u, table.size());
 
     for (unsigned i = 0; i < 64; i += 2) {
-        auto result = table.add<AssigningStringViewTranslator>(StringView { keys[i] }, noFunctor);
+        auto result = table.add<ConstructingStringViewTranslator>(StringView { keys[i] }, noFunctor);
         EXPECT_TRUE(result.isNewEntry);
     }
     EXPECT_EQ(64u, table.size());
 
-    // Verify all keys are present and iterable.
     unsigned count = 0;
     for (auto it = table.begin(); it != table.end(); ++it) {
         EXPECT_TRUE(table.contains(*it));
         ++count;
     }
     EXPECT_EQ(64u, count);
+    for (const auto& k : keys)
+        EXPECT_TRUE(table.contains<ConstructingStringViewTranslator>(StringView { k }));
+}
+
+TEST(WTF_OrderedHashSet, HashTraitsEmptyAndDeletedValuesAreOrdinaryKeys)
+{
+    // HashTraits<int> reserves 0 as empty and -1 as deleted for WTF::HashTable. This table must
+    // treat them like any other value.
+    OrderedHashSet<int> set;
+    EXPECT_FALSE(set.contains(0));
+    EXPECT_FALSE(set.contains(-1));
+    EXPECT_TRUE(set.add(0).isNewEntry);
+    EXPECT_TRUE(set.add(-1).isNewEntry);
+    EXPECT_TRUE(set.add(1).isNewEntry);
+    EXPECT_FALSE(set.add(0).isNewEntry);
+    EXPECT_FALSE(set.add(-1).isNewEntry);
+    EXPECT_EQ(3u, set.size());
+    EXPECT_EQ(Vector<int>({ 0, -1, 1 }), contentsOf(set));
+
+    EXPECT_TRUE(set.remove(-1));
+    EXPECT_FALSE(set.remove(-1));
+    EXPECT_FALSE(set.contains(-1));
+    EXPECT_TRUE(set.contains(0));
+    EXPECT_EQ(Vector<int>({ 0, 1 }), contentsOf(set));
+
+    EXPECT_EQ(0, set.take(0));
+    EXPECT_FALSE(set.contains(0));
+    EXPECT_TRUE(set.add(-1).isNewEntry);
+    EXPECT_TRUE(set.add(0).isNewEntry);
+    EXPECT_EQ(Vector<int>({ 1, -1, 0 }), contentsOf(set));
+
+    for (int i = -100; i <= 100; ++i)
+        set.add(i);
+    EXPECT_EQ(201u, set.size());
+    for (int i = -100; i <= 100; ++i)
+        EXPECT_TRUE(set.contains(i));
+
+    OrderedHashSet<int*> pointers;
+    int* deletedPointer = reinterpret_cast<int*>(-1);
+    EXPECT_TRUE(pointers.add(nullptr).isNewEntry);
+    EXPECT_TRUE(pointers.add(deletedPointer).isNewEntry);
+    EXPECT_TRUE(pointers.contains(nullptr));
+    EXPECT_TRUE(pointers.contains(deletedPointer));
+    EXPECT_TRUE(pointers.remove(nullptr));
+    EXPECT_FALSE(pointers.contains(nullptr));
+    EXPECT_TRUE(pointers.contains(deletedPointer));
+}
+
+TEST(WTF_OrderedHashSet, IsValidValue)
+{
+    EXPECT_TRUE(OrderedHashSet<int>::isValidValue(0));
+    EXPECT_TRUE(OrderedHashSet<int>::isValidValue(-1));
+    EXPECT_TRUE(OrderedHashSet<int*>::isValidValue(nullptr));
+    EXPECT_TRUE(OrderedHashSet<unsigned>::isValidValue(std::numeric_limits<unsigned>::max()));
+
+    // StringHash cannot hash a null String or the deleted-value sentinel.
+    EXPECT_TRUE(OrderedHashSet<String>::isValidValue("key"_s));
+    EXPECT_TRUE(OrderedHashSet<String>::isValidValue(emptyString()));
+    EXPECT_FALSE(OrderedHashSet<String>::isValidValue(String()));
+    // Destroying a String holding the deleted-value sentinel would deref an invalid pointer.
+    static NeverDestroyed<String> deletedString(WTF::HashTableDeletedValue);
+    EXPECT_FALSE(OrderedHashSet<String>::isValidValue(deletedString.get()));
+    EXPECT_FALSE((OrderedHashSet<String, ASCIICaseInsensitiveHash>::isValidValue(String())));
+}
+
+TEST(WTF_OrderedHashSet, ValueWithoutReservedValues)
+{
+    CountedValue::liveCount = 0;
+    {
+        CountedOrderedHashSet set;
+        for (int i = 0; i < 100; ++i)
+            EXPECT_TRUE(set.add(CountedValue(i)).isNewEntry);
+        EXPECT_FALSE(set.add(CountedValue(50)).isNewEntry);
+        EXPECT_EQ(100, CountedValue::liveCount);
+
+        for (int i = 0; i < 100; i += 3)
+            EXPECT_TRUE(set.remove(CountedValue(i)));
+        EXPECT_EQ(66u, set.size());
+        EXPECT_EQ(66, CountedValue::liveCount);
+
+        CountedOrderedHashSet copy = set;
+        EXPECT_EQ(132, CountedValue::liveCount);
+        int expected = 0;
+        for (auto& value : copy) {
+            if (!(expected % 3))
+                ++expected;
+            EXPECT_EQ(expected, value.value());
+            ++expected;
+        }
+
+        EXPECT_EQ(1, set.take(CountedValue(1)).value());
+        EXPECT_TRUE(set.removeIf([](const CountedValue& value) {
+            return value.value() > 50;
+        }));
+        EXPECT_EQ(33u, set.size());
+        EXPECT_EQ(33 + 66, CountedValue::liveCount);
+        EXPECT_EQ(INT_MIN, set.take(CountedValue(1)).value());
+
+        set.clear();
+        EXPECT_EQ(66, CountedValue::liveCount);
+    }
+    EXPECT_EQ(0, CountedValue::liveCount);
+}
+
+TEST(WTF_OrderedHashSet, EveryValueDestroyedExactlyOnce)
+{
+    // CountedValue's destructor flags a second destruction of the same storage; the counts flag a
+    // leak. Cycle through every path that moves or destroys entries.
+    CountedValue::liveCount = 0;
+    {
+        CountedOrderedHashSet set;
+        for (int round = 0; round < 8; ++round) {
+            for (int i = 0; i < 300; ++i)
+                set.add(CountedValue(round * 1000 + i));
+            set.removeIf([&](const CountedValue& value) {
+                return value.value() % 4 != round % 4;
+            });
+            for (int i = 0; i < 300; i += 2)
+                set.remove(CountedValue(round * 1000 + i));
+            EXPECT_EQ(static_cast<int>(set.size()), CountedValue::liveCount);
+        }
+
+        CountedOrderedHashSet moved = WTF::move(set);
+        EXPECT_EQ(static_cast<int>(moved.size()), CountedValue::liveCount);
+        CountedOrderedHashSet assigned;
+        assigned.add(CountedValue(-5));
+        assigned = moved;
+        EXPECT_EQ(static_cast<int>(moved.size() * 2), CountedValue::liveCount);
+        while (!assigned.isEmpty())
+            assigned.takeAny();
+        EXPECT_EQ(static_cast<int>(moved.size()), CountedValue::liveCount);
+    }
+    EXPECT_EQ(0, CountedValue::liveCount);
+}
+
+TEST(WTF_OrderedHashSet, ProbeSequenceCrossesDeletedBuckets)
+{
+    // Five entries in an eight-bucket table leave room for one more before any rehash, so the
+    // deleted buckets below stay in place for the lookups and the add that follow.
+    OrderedHashSet<int, CollidingIntHash> set;
+    for (int i = 0; i < 5; ++i)
+        set.add(i);
+
+    // Values added after the removed ones sit further along the same probe sequence.
+    set.remove(1);
+    set.remove(3);
+    for (int i = 0; i < 5; ++i)
+        EXPECT_EQ(i != 1 && i != 3, set.contains(i));
+    EXPECT_EQ(Vector<int>({ 0, 2, 4 }), contentsOf(set));
+
+    // Adding a present value must keep probing past a deleted bucket rather than reuse it.
+    EXPECT_FALSE(set.add(4).isNewEntry);
+    EXPECT_EQ(3u, set.size());
+
+    // A new value reuses a deleted bucket, and the values beyond it stay reachable.
+    EXPECT_TRUE(set.add(10).isNewEntry);
+    for (int value : { 0, 2, 4, 10 })
+        EXPECT_TRUE(set.contains(value));
+    EXPECT_FALSE(set.contains(1));
+    EXPECT_FALSE(set.contains(3));
+    EXPECT_EQ(Vector<int>({ 0, 2, 4, 10 }), contentsOf(set));
+
+    // The entries array is full now, so this add rebuilds the table.
+    EXPECT_TRUE(set.add(11).isNewEntry);
+    EXPECT_TRUE(set.add(12).isNewEntry);
+    EXPECT_EQ(Vector<int>({ 0, 2, 4, 10, 11, 12 }), contentsOf(set));
+
+    for (int value : { 0, 2, 4, 10, 11, 12 })
+        EXPECT_TRUE(set.remove(value));
+    EXPECT_TRUE(set.isEmpty());
+    EXPECT_TRUE(set.begin() == set.end());
+    EXPECT_TRUE(set.add(1).isNewEntry);
+    EXPECT_EQ(Vector<int>({ 1 }), contentsOf(set));
+}
+
+TEST(WTF_OrderedHashSet, IterationSkipsDeletedEntries)
+{
+    // Covers deleted entries at the front, back, and in runs, including runs that span more than
+    // one word of deleted-entry bits.
+    OrderedHashSet<int> set;
+    set.reserveInitialCapacity(200);
+    for (int i = 0; i < 150; ++i)
+        set.add(i);
+    for (int i = 0; i < 5; ++i)
+        set.remove(i);
+    for (int i = 20; i < 90; ++i)
+        set.remove(i);
+    for (int i = 140; i < 150; ++i)
+        set.remove(i);
+
+    Vector<int> expected;
+    for (int i = 5; i < 20; ++i)
+        expected.append(i);
+    for (int i = 90; i < 140; ++i)
+        expected.append(i);
+    EXPECT_EQ(expected, contentsOf(set));
+
+    expected.reverse();
+    EXPECT_EQ(expected, reverseContentsOf(set));
+
+    EXPECT_EQ(5, set.first());
+    EXPECT_EQ(139, set.last());
+}
+
+TEST(WTF_OrderedHashSet, ReverseIterationAfterAllRemoved)
+{
+    OrderedHashSet<int> set;
+    for (int i = 0; i < 4; ++i)
+        set.add(i);
+    for (int i = 0; i < 4; ++i)
+        set.remove(i);
+    EXPECT_TRUE(set.rbegin() == set.rend());
+    EXPECT_TRUE(set.begin() == set.end());
+}
+
+TEST(WTF_OrderedHashSet, TakeMovesOutValue)
+{
+    // take() moves the value out of the table; the table must still find the entry's bucket, which
+    // it does by hashing the key before the move.
+    OrderedHashSet<String> set;
+    for (unsigned i = 0; i < 100; ++i)
+        set.add(makeString("key"_s, i));
+
+    for (unsigned i = 0; i < 100; i += 2) {
+        String taken = set.take(makeString("key"_s, i));
+        EXPECT_EQ(makeString("key"_s, i), taken);
+    }
+    EXPECT_EQ(50u, set.size());
+    for (unsigned i = 0; i < 100; ++i)
+        EXPECT_EQ(!!(i % 2), set.contains(makeString("key"_s, i)));
+
+    while (set.size() > 1) {
+        String first = set.first();
+        EXPECT_EQ(first, set.takeAny());
+        EXPECT_FALSE(set.contains(first));
+    }
+    EXPECT_EQ("key99"_s, set.first());
+
+    // Taking a value that is not present returns the empty value.
+    EXPECT_TRUE(set.take("missing"_s).isNull());
+
+    // A moved-from RefPtr is null, which the string hash cannot be applied to.
+    OrderedHashSet<RefPtr<StringImpl>> impls;
+    StringImpl* raw = nullptr;
+    for (int i = 0; i < 20; ++i) {
+        RefPtr<StringImpl> impl = String::number(i).releaseImpl();
+        if (i == 7)
+            raw = impl.get();
+        impls.add(WTF::move(impl));
+    }
+    RefPtr<StringImpl> taken = impls.take(raw);
+    EXPECT_EQ(raw, taken.get());
+    EXPECT_FALSE(impls.contains(raw));
+    EXPECT_EQ(19u, impls.size());
+    for (int i = 0; i < 20; ++i)
+        EXPECT_EQ(i != 7, impls.contains(String::number(i).impl()));
+}
+
+TEST(WTF_OrderedHashSet, RemoveIfThenReinsert)
+{
+    // removeIf() leaves deleted buckets behind when it does not shrink; adds and lookups that
+    // follow have to cope with them.
+    OrderedHashSet<int, CollidingIntHash> set;
+    for (int i = 0; i < 5; ++i)
+        set.add(i);
+    EXPECT_TRUE(set.removeIf([](int value) {
+        return value == 1 || value == 4;
+    }));
+    EXPECT_FALSE(set.removeIf([](int) {
+        return false;
+    }));
+    EXPECT_EQ(Vector<int>({ 0, 2, 3 }), contentsOf(set));
+    for (int i = 0; i < 5; ++i)
+        EXPECT_EQ(i != 1 && i != 4, set.contains(i));
+    EXPECT_FALSE(set.add(3).isNewEntry);
+    EXPECT_TRUE(set.add(4).isNewEntry);
+    EXPECT_TRUE(set.add(1).isNewEntry);
+    EXPECT_EQ(Vector<int>({ 0, 2, 3, 4, 1 }), contentsOf(set));
+    for (int i = 0; i < 5; ++i)
+        EXPECT_TRUE(set.contains(i));
+}
+
+TEST(WTF_OrderedHashSet, LargeTableAcrossLoadFactorChange)
+{
+    // Tables above 1024 buckets switch to a lower load factor.
+    OrderedHashSet<unsigned> set;
+    for (unsigned i = 0; i < 5000; ++i)
+        EXPECT_TRUE(set.add(i * 7919).isNewEntry);
+    EXPECT_EQ(5000u, set.size());
+    for (unsigned i = 0; i < 5000; ++i)
+        EXPECT_TRUE(set.contains(i * 7919));
+    for (unsigned i = 0; i < 5000; ++i) {
+        if (i % 10)
+            EXPECT_TRUE(set.remove(i * 7919));
+    }
+    EXPECT_EQ(500u, set.size());
+    unsigned expected = 0;
+    for (unsigned value : set) {
+        EXPECT_EQ(expected * 7919, value);
+        expected += 10;
+    }
+    for (unsigned i = 0; i < 5000; ++i)
+        EXPECT_EQ(!(i % 10), set.contains(i * 7919));
+}
+
+TEST(WTF_OrderedHashSet, RandomizedAgainstModel)
+{
+    // A shuffled mix of adds, removes, takes and removeIfs over a small key space, checked against
+    // a plain vector after each step. Small keys keep the table cycling through compaction, growth
+    // and shrinking while deleted buckets build up.
+    constexpr int keyCount = 97;
+    OrderedHashSet<int> set;
+    Vector<int> model;
+    uint32_t randomState = 20261112;
+    auto nextRandom = [&] {
+        randomState = randomState * 1664525 + 1013904223;
+        return randomState >> 8;
+    };
+
+    for (unsigned step = 0; step < 6000; ++step) {
+        int key = static_cast<int>(nextRandom() % keyCount) - 1;
+        unsigned action = nextRandom() % 10;
+        bool present = model.contains(key);
+        if (action < 5) {
+            EXPECT_EQ(!present, set.add(key).isNewEntry);
+            if (!present)
+                model.append(key);
+        } else if (action < 8) {
+            EXPECT_EQ(present, set.remove(key));
+            model.removeFirst(key);
+        } else if (action == 8) {
+            if (present) {
+                EXPECT_EQ(key, set.take(key));
+                model.removeFirst(key);
+            }
+        } else if (!(nextRandom() % 8)) {
+            int modulus = 2 + nextRandom() % 5;
+            auto isMultiple = [&](int value) {
+                return !(value % modulus);
+            };
+            bool expectChange = model.containsIf(isMultiple);
+            EXPECT_EQ(expectChange, set.removeIf(isMultiple));
+            model.removeAllMatching(isMultiple);
+        }
+
+        EXPECT_EQ(model.size(), set.size());
+        if (!(step % 16)) {
+            EXPECT_EQ(model, contentsOf(set));
+            for (int k = -1; k < keyCount - 1; ++k)
+                EXPECT_EQ(model.contains(k), set.contains(k));
+        }
+    }
+    EXPECT_EQ(model, contentsOf(set));
 }
 
 TEST(WTF_OrderedHashSet, EqualIgnoringOrder)
@@ -906,6 +1254,324 @@ TEST(WTF_OrderedHashSet, EqualIgnoringOrderEmpty)
 
     a.add("key"_s);
     EXPECT_FALSE(equalIgnoringOrder(a, b));
+}
+
+TEST(WTF_OrderedHashSet, EmptyTableOperations)
+{
+    OrderedHashSet<int> set;
+    EXPECT_FALSE(set.contains(0));
+    EXPECT_TRUE(set.find(0) == set.end());
+    EXPECT_FALSE(set.remove(0));
+    EXPECT_FALSE(set.removeIf([](int) { return true; }));
+    EXPECT_EQ(0, set.take(0));
+    EXPECT_TRUE(set.begin() == set.end());
+    EXPECT_TRUE(set.rbegin() == set.rend());
+    EXPECT_EQ(0u, set.capacity());
+
+    OrderedHashSet<int> copy = set;
+    EXPECT_TRUE(copy.isEmpty());
+    OrderedHashSet<int> moved = WTF::move(copy);
+    EXPECT_TRUE(moved.isEmpty());
+
+    EXPECT_TRUE(set.add(3).isNewEntry);
+    EXPECT_TRUE(set.contains(3));
+    set.clear();
+    EXPECT_FALSE(set.contains(3));
+    EXPECT_TRUE(set.add(4).isNewEntry);
+
+    // A moved-from set is empty and usable.
+    OrderedHashSet<int> other = WTF::move(set);
+    EXPECT_FALSE(set.contains(4));
+    EXPECT_TRUE(set.add(5).isNewEntry);
+    EXPECT_EQ(Vector<int>({ 5 }), contentsOf(set));
+    EXPECT_EQ(Vector<int>({ 4 }), contentsOf(other));
+}
+
+TEST(WTF_OrderedHashSet, RemoveByIteratorFromFindAddAndIncrement)
+{
+    auto run = [](auto& set) {
+        for (int i = 0; i < 20; ++i)
+            set.add(i);
+
+        auto it = set.find(5);
+        EXPECT_TRUE(set.remove(8));
+        EXPECT_TRUE(set.remove(it));
+
+        // The iterator was made for 10 and then moved to 11.
+        it = set.find(10);
+        ++it;
+        EXPECT_TRUE(set.remove(it));
+
+        auto result = set.add(100);
+        EXPECT_TRUE(result.isNewEntry);
+        EXPECT_TRUE(set.remove(result.iterator));
+
+        result = set.add(3);
+        EXPECT_FALSE(result.isNewEntry);
+        EXPECT_TRUE(set.remove(result.iterator));
+
+        EXPECT_EQ(15, set.take(15));
+
+        Vector<int> expected;
+        for (int i = 0; i < 20; ++i) {
+            if (i != 3 && i != 5 && i != 8 && i != 11 && i != 15)
+                expected.append(i);
+        }
+        EXPECT_EQ(expected, contentsOf(set));
+        for (int i = 0; i < 20; ++i)
+            EXPECT_EQ(expected.contains(i), set.contains(i));
+        EXPECT_FALSE(set.contains(100));
+    };
+    OrderedHashSet<int> set;
+    run(set);
+    OrderedHashSet<int, CollidingIntHash> collidingSet;
+    run(collidingSet);
+}
+
+TEST(WTF_OrderedHashSet, DecrementAndReverseIterationAcrossBitWords)
+{
+    OrderedHashSet<int> set;
+    for (int i = 0; i < 300; ++i)
+        set.add(i);
+    Vector<int> expected;
+    for (int i = 0; i < 300; ++i) {
+        bool removed = (i >= 60 && i < 130) || i == 191 || i == 192 || i == 255 || i == 256 || !i || i == 299;
+        if (removed)
+            EXPECT_TRUE(set.remove(i));
+        else
+            expected.append(i);
+    }
+    EXPECT_EQ(expected, contentsOf(set));
+
+    Vector<int> reversed;
+    for (auto it = set.end(); it != set.begin();) {
+        --it;
+        reversed.append(*it);
+    }
+    auto expectedReversed = expected;
+    expectedReversed.reverse();
+    EXPECT_EQ(expectedReversed, reversed);
+    EXPECT_EQ(expectedReversed, reverseContentsOf(set));
+    EXPECT_EQ(1, set.first());
+    EXPECT_EQ(298, set.last());
+}
+
+TEST(WTF_OrderedHashSet, CopyWithAndWithoutDeletedEntries)
+{
+    OrderedHashSet<int> ints;
+    OrderedHashSet<String> strings;
+    for (int i = 0; i < 40; ++i) {
+        ints.add(i);
+        strings.add(String::number(i));
+    }
+
+    auto checkCopies = [&](const Vector<int>& expected) {
+        OrderedHashSet<int> intCopy = ints;
+        OrderedHashSet<String> stringCopy = strings;
+        EXPECT_EQ(expected, contentsOf(intCopy));
+        EXPECT_EQ(expected.size(), stringCopy.size());
+        unsigned index = 0;
+        for (auto& string : stringCopy)
+            EXPECT_EQ(String::number(expected[index++]), string);
+        for (int i = -1; i <= 41; ++i) {
+            EXPECT_EQ(expected.contains(i), intCopy.contains(i));
+            EXPECT_EQ(expected.contains(i), stringCopy.contains(String::number(i)));
+        }
+
+        intCopy.add(1000);
+        stringCopy.add("1000"_s);
+        EXPECT_TRUE(intCopy.remove(expected.first()));
+        EXPECT_TRUE(stringCopy.remove(String::number(expected.first())));
+        EXPECT_FALSE(ints.contains(1000));
+        EXPECT_FALSE(strings.contains("1000"_s));
+        EXPECT_TRUE(ints.contains(expected.first()));
+        EXPECT_TRUE(strings.contains(String::number(expected.first())));
+    };
+
+    Vector<int> expected;
+    for (int i = 0; i < 40; ++i)
+        expected.append(i);
+    checkCopies(expected);
+
+    for (int i = 0; i < 40; i += 3) {
+        ints.remove(i);
+        strings.remove(String::number(i));
+        expected.removeFirst(i);
+    }
+    checkCopies(expected);
+
+    OrderedHashSet<int> reserved;
+    reserved.reserveInitialCapacity(1000);
+    for (int i = 0; i < 10; ++i)
+        reserved.add(i);
+    OrderedHashSet<int> reservedCopy = reserved;
+    EXPECT_EQ(contentsOf(reserved), contentsOf(reservedCopy));
+    for (int i = 0; i < 10; ++i)
+        EXPECT_TRUE(reservedCopy.contains(i));
+}
+
+TEST(WTF_OrderedHashSet, RemoveIfRemovingFewOrMost)
+{
+    // removeIf() either deletes each removed entry's bucket or rebuilds the bucket array, depending
+    // on how many entries go, and falls back to one at a time when deleted entries already exist.
+    for (bool removeMost : { false, true }) {
+        for (bool hadDeletedEntries : { false, true }) {
+            CountedValue::liveCount = 0;
+            {
+                CountedOrderedHashSet set;
+                for (int i = 0; i < 500; ++i)
+                    set.add(CountedValue(i));
+                if (hadDeletedEntries)
+                    set.remove(CountedValue(499));
+                auto isRemoved = [&](int value) {
+                    return removeMost ? !!(value % 10) : !(value % 10);
+                };
+                EXPECT_TRUE(set.removeIf([&](const CountedValue& value) {
+                    return isRemoved(value.value());
+                }));
+                EXPECT_EQ(static_cast<int>(set.size()), CountedValue::liveCount);
+
+                Vector<int> expected;
+                for (int i = 0; i < 499 + !hadDeletedEntries; ++i) {
+                    if (!isRemoved(i))
+                        expected.append(i);
+                }
+                Vector<int> actual;
+                for (auto& value : set)
+                    actual.append(value.value());
+                EXPECT_EQ(expected, actual);
+                for (int i = 0; i < 500; ++i)
+                    EXPECT_EQ(expected.contains(i), set.contains<CountedValueTranslator>(i));
+
+                for (int i = 1000; i < 1100; ++i)
+                    EXPECT_TRUE(set.add(CountedValue(i)).isNewEntry);
+                EXPECT_EQ(static_cast<int>(set.size()), CountedValue::liveCount);
+            }
+            EXPECT_EQ(0, CountedValue::liveCount);
+        }
+    }
+
+    OrderedHashSet<int, CollidingIntHash> colliding;
+    for (int i = 0; i < 6; ++i)
+        colliding.add(i);
+    EXPECT_TRUE(colliding.removeIf([](int value) { return value != 4; }));
+    EXPECT_EQ(Vector<int>({ 4 }), contentsOf(colliding));
+    EXPECT_TRUE(colliding.contains(4));
+    EXPECT_TRUE(colliding.add(1).isNewEntry);
+    EXPECT_EQ(Vector<int>({ 4, 1 }), contentsOf(colliding));
+}
+
+namespace {
+
+struct ObservingValue;
+struct ObservingValueHash;
+using ObservingSet = OrderedHashSet<ObservingValue, ObservingValueHash>;
+
+struct ObservingValue {
+    static ObservingSet* observedSet;
+    static unsigned observedDestructionCount;
+
+    explicit ObservingValue(int value)
+        : value(value)
+    {
+    }
+    ObservingValue(ObservingValue&& other)
+        : value(std::exchange(other.value, -1))
+    {
+    }
+    ObservingValue(const ObservingValue&) = default;
+    ~ObservingValue();
+
+    int value;
+    bool alive { true };
+};
+
+ObservingSet* ObservingValue::observedSet = nullptr;
+unsigned ObservingValue::observedDestructionCount = 0;
+
+struct ObservingValueHash {
+    static unsigned hash(const ObservingValue& value) { return IntHash<int>::hash(value.value); }
+    static bool equal(const ObservingValue& a, const ObservingValue& b) { return a.value == b.value; }
+};
+
+struct ObservingValueTranslator {
+    static unsigned hash(int value) { return IntHash<int>::hash(value); }
+    static bool equal(const ObservingValue& a, int b) { return a.value == b; }
+};
+
+ObservingValue::~ObservingValue()
+{
+    // Destruction of an entry may run arbitrary code; whatever it finds in the table must still be
+    // alive, and the entry being destroyed must no longer be found.
+    if (value >= 0 && observedSet) {
+        ++observedDestructionCount;
+        for (auto& other : *observedSet)
+            EXPECT_TRUE(other.alive);
+        EXPECT_FALSE(observedSet->contains<ObservingValueTranslator>(value));
+    }
+    alive = false;
+}
+
+} // anonymous namespace
+
+TEST(WTF_OrderedHashSet, DestructorSeesConsistentTable)
+{
+    for (unsigned variant = 0; variant < 3; ++variant) {
+        ObservingSet set;
+        for (int i = 0; i < 200; ++i)
+            set.add(ObservingValue(i));
+        ObservingValue::observedSet = &set;
+        ObservingValue::observedDestructionCount = 0;
+
+        // Variant 0 removes few entries, 1 removes most, and 2 has a deleted entry beforehand.
+        if (variant == 2)
+            EXPECT_TRUE(set.remove(ObservingValue(199)));
+        auto isRemoved = [&](int value) {
+            return variant == 1 ? !!(value % 10) : !(value % 10);
+        };
+        EXPECT_TRUE(set.removeIf([&](const ObservingValue& value) {
+            return isRemoved(value.value);
+        }));
+        int removedByKey = variant == 1 ? 20 : 5;
+        EXPECT_TRUE(set.remove(ObservingValue(removedByKey)));
+        ObservingValue::observedSet = nullptr;
+
+        unsigned expectedCount = 0;
+        for (int i = 0; i < 200; ++i) {
+            bool present = !isRemoved(i) && i != removedByKey && !(variant == 2 && i == 199);
+            EXPECT_EQ(present, set.contains<ObservingValueTranslator>(i));
+            expectedCount += present;
+        }
+        EXPECT_EQ(expectedCount, set.size());
+        EXPECT_GE(ObservingValue::observedDestructionCount, 200 - expectedCount);
+    }
+}
+
+TEST(WTF_OrderedHashSet, RelocationKeepsReferenceCounts)
+{
+    Vector<String> strings;
+    for (int i = 0; i < 300; ++i)
+        strings.append(makeString("value"_s, i));
+    {
+        OrderedHashSet<String> set;
+        for (unsigned round = 0; round < 4; ++round) {
+            for (auto& string : strings)
+                set.add(string);
+            for (unsigned i = round; i < strings.size(); i += 3)
+                set.remove(strings[i]);
+            set.removeIf([&](const String& string) {
+                return string.length() == 6 + round % 2;
+            });
+        }
+        OrderedHashSet<String> copy = set;
+        for (auto& string : strings) {
+            EXPECT_EQ(set.contains(string), copy.contains(string));
+            unsigned expectedRefCount = 1 + 2 * set.contains(string);
+            EXPECT_EQ(expectedRefCount, string.impl()->refCount());
+        }
+    }
+    for (auto& string : strings)
+        EXPECT_EQ(1u, string.impl()->refCount());
 }
 
 } // namespace TestWebKitAPI
