@@ -33,6 +33,7 @@
 #include <WebCore/IntPoint.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/ListHashSet.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Seconds.h>
@@ -215,8 +216,8 @@ private:
         WebCore::IntPoint end;
         MouseButton button;
         String pointerType;
-        unsigned stepCount { 1 };
-        unsigned stepIndex { 0 };
+        MonotonicTime startTime;
+        Seconds duration;
         Seconds stepInterval;
         WebCore::IntPoint lastDispatchedLocation;
         AutomationCompletionHandler completionHandler;
