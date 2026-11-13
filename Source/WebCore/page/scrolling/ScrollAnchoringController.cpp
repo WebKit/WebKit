@@ -119,6 +119,12 @@ void ScrollAnchoringController::scrollPositionDidChange()
     if (m_isUpdatingScrollPositionForAnchoring)
         return;
 
+    // When we're between updateBeforeLayout() and adjustScrollPositionForAnchoring(),
+    // the scroll position may change due to clamping when the scrollable range shrinks.
+    // Preserve the anchor so the pending adjustment can still run.
+    if (m_isQueuedForScrollPositionUpdate)
+        return;
+
     LOG_WITH_STREAM(ScrollAnchoring, stream << "ScrollAnchoringController::scrollPositionChanged() to " << m_owningScrollableArea->scrollPosition() << " - clearing scroll anchor");
 
     if (m_owningScrollableArea->currentScrollType() == ScrollType::User)
