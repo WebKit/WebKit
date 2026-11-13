@@ -74,7 +74,14 @@ usage() if $showHelp;
 
 setConfiguration();
 
-my @privateFrameworks = qw(WebCore WebGPU WebKitLegacy);
+my $platform = xcodeSDKPlatformName();
+
+my @privateFrameworks;
+if ($platform eq 'macosx') {
+    @privateFrameworks = qw(WebGPU);
+} else {
+    @privateFrameworks = qw(WebCore WebGPU WebKitLegacy);
+}
 my @publicFrameworks = qw(JavaScriptCore WebKit);
 my @extensions = qw(GPUExtension NetworkingExtension WebContentCaptivePortalExtension WebContentEnhancedSecurityExtension WebContentExtension);
 my $packagedRootBasePath = usesCryptexPath() ? "/System/Cryptexes/OS/" : "/";
@@ -84,7 +91,6 @@ my $publicInstallPath = "$packagedRootBasePath" . "System/Library/Frameworks";
 my $extensionsInstallPath = "/System/Library/ExtensionKit/Extensions";
 
 my $configuration = configuration();
-my $platform = xcodeSDKPlatformName();
 my $productDir = productDir();
 my $stagingRoot = tempdir(CLEANUP => 1);
 my $stagingPrivatePath = "$stagingRoot$privateInstallPath";
