@@ -77,7 +77,14 @@ bool JSModuleEnvironment::getOwnPropertySlot(JSObject* cell, JSGlobalObject* glo
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSModuleEnvironment* thisObject = uncheckedDowncast<JSModuleEnvironment>(cell);
-    AbstractModuleRecord::Resolution resolution = thisObject->moduleRecord()->resolveImport(globalObject, Identifier::fromUid(vm, propertyName.uid()));
+    AbstractModuleRecord& record = *thisObject->moduleRecord();
+    JSValue source = record.getSourcePhaseBinding(globalObject, propertyName);
+    RETURN_IF_EXCEPTION(scope, false);
+    if (source) {
+        slot.setValue(thisObject, PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly, source);
+        return true;
+    }
+    AbstractModuleRecord::Resolution resolution = record.resolveImport(globalObject, Identifier::fromUid(vm, propertyName.uid()));
     RETURN_IF_EXCEPTION(scope, false);
     if (resolution.type == AbstractModuleRecord::Resolution::Type::Resolved) {
         // When resolveImport resolves the resolution, the imported module environment must have the binding.
@@ -112,10 +119,9 @@ bool JSModuleEnvironment::put(JSCell* cell, JSGlobalObject* globalObject, Proper
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSModuleEnvironment* thisObject = uncheckedDowncast<JSModuleEnvironment>(cell);
+    AbstractModuleRecord& record = *thisObject->moduleRecord();
     // All imported bindings are immutable.
-    AbstractModuleRecord::Resolution resolution = thisObject->moduleRecord()->resolveImport(globalObject, Identifier::fromUid(vm, propertyName.uid()));
-    RETURN_IF_EXCEPTION(scope, false);
-    if (resolution.type == AbstractModuleRecord::Resolution::Type::Resolved) {
+    if (record.hasImportBinding(propertyName)) {
         throwTypeError(globalObject, scope, ReadonlyPropertyWriteError);
         return false;
     }
@@ -124,14 +130,10 @@ bool JSModuleEnvironment::put(JSCell* cell, JSGlobalObject* globalObject, Proper
 
 bool JSModuleEnvironment::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, DeletePropertySlot& slot)
 {
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
     JSModuleEnvironment* thisObject = uncheckedDowncast<JSModuleEnvironment>(cell);
+    AbstractModuleRecord& record = *thisObject->moduleRecord();
     // All imported bindings are immutable.
-    AbstractModuleRecord::Resolution resolution = thisObject->moduleRecord()->resolveImport(globalObject, Identifier::fromUid(vm, propertyName.uid()));
-    RETURN_IF_EXCEPTION(scope, false);
-    if (resolution.type == AbstractModuleRecord::Resolution::Type::Resolved)
+    if (record.hasImportBinding(propertyName))
         return false;
     return Base::deleteProperty(thisObject, globalObject, propertyName, slot);
 }
