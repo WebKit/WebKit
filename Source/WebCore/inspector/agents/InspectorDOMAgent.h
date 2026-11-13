@@ -30,6 +30,7 @@
 #pragma once
 
 #include "EventTarget.h"
+#include "InspectorMediaEventTracker.h"
 #include "InspectorOverlay.h"
 #include "InspectorWebAgentBase.h"
 #include "Timer.h"
@@ -45,6 +46,7 @@
 #include <wtf/JSONValues.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakHashMap.h>
 #include <wtf/text/AtomString.h>
@@ -87,7 +89,11 @@ enum class PlatformEventModifier : uint8_t;
 
 struct Styleable;
 
-class InspectorDOMAgent final : public InspectorAgentBase, public Inspector::DOMBackendDispatcherHandler, public CanMakeWeakPtr<InspectorDOMAgent>, public CanMakeCheckedPtr<InspectorDOMAgent> {
+class InspectorDOMAgent final : public InspectorAgentBase, public Inspector::DOMBackendDispatcherHandler
+#if ENABLE(VIDEO)
+    , public InspectorMediaEventTracker::Client
+#endif
+    , public CanMakeWeakPtr<InspectorDOMAgent>, public CanMakeCheckedPtr<InspectorDOMAgent> {
     WTF_MAKE_NONCOPYABLE(InspectorDOMAgent);
     WTF_MAKE_TZONE_ALLOCATED(InspectorDOMAgent);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorDOMAgent);
@@ -252,7 +258,10 @@ public:
 
 private:
 #if ENABLE(VIDEO)
-    void mediaMetricsTimerFired();
+    // InspectorMediaEventTracker::Client
+    Inspector::Protocol::DOM::NodeId pushNodePathForMediaEvent(Node&) final;
+    void mediaEventDidFire(Inspector::Protocol::DOM::NodeId, const String& eventName, RefPtr<JSON::Object>&& data) final;
+    void powerEfficientPlaybackStateDidChange(Inspector::Protocol::DOM::NodeId, bool isPowerEfficient) final;
 #endif
 
     void highlightMousedOverNode();
@@ -317,23 +326,7 @@ private:
     Timer m_destroyedNodesTimer;
 
 #if ENABLE(VIDEO)
-    Timer m_mediaMetricsTimer;
-    struct MediaMetrics {
-        unsigned displayCompositedFrames { 0 };
-        bool isPowerEfficient { false };
-
-        MediaMetrics() { }
-
-        MediaMetrics(unsigned displayCompositedFrames)
-            : displayCompositedFrames(displayCompositedFrames)
-        {
-        }
-    };
-
-    // The pointer key for this map should not be used for anything other than matching.
-    WeakHashMap<HTMLMediaElement, MediaMetrics> m_mediaMetrics;
-
-    RefPtr<EventListener> m_eventFiredCallback;
+    const UniqueRef<InspectorMediaEventTracker> m_mediaEventTracker;
 #endif
 
     struct InspectorEventListener {
@@ -370,9 +363,6 @@ private:
         }
     };
 
-    friend class EventFiredCallback;
-
-    HashSet<const Event*> m_dispatchedEvents;
     HashMap<Inspector::Protocol::DOM::EventListenerId, InspectorEventListener> m_eventListenerEntries;
     Inspector::Protocol::DOM::EventListenerId m_lastEventListenerId { 1 };
 

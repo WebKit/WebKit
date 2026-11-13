@@ -2024,6 +2024,7 @@ inspector/agents/InspectorDOMDebuggerAgent.cpp
 inspector/agents/InspectorDOMStorageAgent.cpp
 inspector/agents/InspectorIndexedDBAgent.cpp
 inspector/agents/InspectorLayerTreeAgent.cpp @header:RenderStyleGetters
+inspector/agents/InspectorMediaEventTracker.cpp
 inspector/agents/InspectorMemoryAgent.cpp
 inspector/agents/InspectorNetworkAgent.cpp @header:RenderStyleGetters
 inspector/agents/InspectorPageAgent.cpp @header:RenderStyleGetters
