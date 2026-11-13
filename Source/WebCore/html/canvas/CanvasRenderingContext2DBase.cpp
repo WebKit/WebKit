@@ -2018,6 +2018,8 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(WebCodecsVideoFrame& f
     auto* context = effectiveDrawingContext();
     if (!context)
         return { };
+    if (!hasInvertibleTransform()) [[unlikely]]
+        return { };
 
     RefPtr scriptContext = protect(canvasBase())->scriptExecutionContext();
     if (!scriptContext)
