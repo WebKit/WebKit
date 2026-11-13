@@ -1588,6 +1588,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
 
     WKHTTPCookieStoreDeleteAllCookies(WKWebsiteDataStoreGetHTTPCookieStore(websiteDataStore()), nullptr, nullptr);
 
+    clearMemoryCache();
     clearStorage();
     resetQuota();
     resetStoragePersistedState();
