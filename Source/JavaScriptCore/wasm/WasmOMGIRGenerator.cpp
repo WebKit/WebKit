@@ -2739,7 +2739,10 @@ inline uint32_t sizeOfLoadOp(LoadOpType op)
 
 inline B3::Kind OMGIRGenerator::memoryKind(B3::Opcode memoryOp, uint8_t memoryIndex)
 {
-    if (memoryIndex || useSignalingMemory0() || m_info.memory(0).isShared())
+    // A BoundsChecking memory 0 may be a VA reservation even when this module did not declare a maximum:
+    // an import with no maximum can be linked to a JS memory that has one. The bounds check uses
+    // mappedCapacity, so an access in the PROT_NONE tail must stay trapping or OMG deletes it.
+    if (memoryIndex || useSignalingMemory0() || m_info.memory(0).isShared() || Options::useWasmFaultSignalHandler())
         return trapping(memoryOp);
     return memoryOp;
 }
