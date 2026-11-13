@@ -206,7 +206,7 @@ private:
     }
 
     InsertionSet m_insertionSet;
-    HashMap<std::underlying_type_t<UseKind>, Node*, WTF::IntHash<std::underlying_type_t<UseKind>>, WTF::UnsignedWithZeroKeyHashTraits<std::underlying_type_t<UseKind>>> m_constants;
+    HashMap<std::underlying_type_t<UseKind>, Node*> m_constants;
     bool m_changed;
 };
 

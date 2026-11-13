@@ -47,7 +47,7 @@
 
 namespace WasmDebugInfoTest {
 
-using OffsetToNextInstructions = HashMap<uint32_t, HashSet<uint32_t>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
+using OffsetToNextInstructions = HashMap<uint32_t, HashSet<uint32_t>>;
 
 class SourceModule {
 public:

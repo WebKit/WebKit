@@ -106,7 +106,7 @@ private:
         WPEInputSource source { WPE_INPUT_SOURCE_TOUCHSCREEN };
         uint32_t time { 0 };
         unsigned deviceCount { 0 };
-        HashMap<int32_t, std::pair<double, double>, IntHash<int32_t>, WTF::SignedWithZeroKeyHashTraits<int32_t>> points;
+        HashMap<int32_t, std::pair<double, double>> points;
     } m_touch;
 };
 

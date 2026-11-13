@@ -481,7 +481,7 @@ private:
         PerformanceEventTimingCandidate keyDown;
         std::optional<PerformanceEventTimingCandidate> keyPress { std::nullopt };
     };
-    HashMap<int64_t, PendingKeyDownState, IntHash<int64_t>, WTF::SignedWithZeroKeyHashTraits<int64_t>> m_pendingKeyDowns;
+    HashMap<int64_t, PendingKeyDownState> m_pendingKeyDowns;
 
     EventTimingInteractionID m_userInteractionValue;
     uint64_t m_interactionCount { 0 };

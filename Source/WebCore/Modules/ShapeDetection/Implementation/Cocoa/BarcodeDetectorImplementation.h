@@ -49,7 +49,7 @@ public:
 
     WEBCORE_EXPORT static void getSupportedFormats(CompletionHandler<void(Vector<BarcodeFormat>&&)>&&);
 
-    using BarcodeFormatSet = HashSet<BarcodeFormat, WTF::IntHash<BarcodeFormat>, WTF::StrongEnumHashTraits<BarcodeFormat>>;
+    using BarcodeFormatSet = HashSet<BarcodeFormat, WTF::IntHash<BarcodeFormat>>;
 
 private:
     WEBCORE_EXPORT BarcodeDetectorImpl(const BarcodeDetectorOptions&);

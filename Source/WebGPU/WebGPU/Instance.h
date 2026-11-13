@@ -103,7 +103,7 @@ private:
     // This can be used on a background thread.
     Deque<WorkItem> m_pendingWork WTF_GUARDED_BY_LOCK(m_lock);
     uint64_t m_nextFuture WTF_GUARDED_BY_LOCK(m_lock) { 1 };
-    HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_completedFutures WTF_GUARDED_BY_LOCK(m_lock);
+    HashSet<uint64_t> m_completedFutures WTF_GUARDED_BY_LOCK(m_lock);
     // Signalled when work is appended to m_pendingWork or a future completes.
     Condition m_condition;
     using CommandBufferContainer = Vector<WeakObjCPtr<id<MTLCommandBuffer>>>;

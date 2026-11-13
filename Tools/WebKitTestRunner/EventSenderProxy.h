@@ -183,7 +183,7 @@ private:
     WKEventMouseButton m_clickButton { kWKEventMouseButtonNoButton };
 #if PLATFORM(COCOA)
     int m_eventNumber { 0 };
-    WTF::HashMap<WebCore::MouseButton, bool, WTF::IntHash<WebCore::MouseButton>, WTF::StrongEnumHashTraits<WebCore::MouseButton>> m_mouseButtonsCurrentlyDown;
+    WTF::HashMap<WebCore::MouseButton, bool, WTF::IntHash<WebCore::MouseButton>> m_mouseButtonsCurrentlyDown;
     unsigned m_lastButtonDown { 0 };
 #else
     unsigned m_mouseButtonsCurrentlyDown { 0 };

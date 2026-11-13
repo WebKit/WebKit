@@ -76,7 +76,7 @@ private:
 
     Vector<Ref<ReportingObserver>> m_reportingObservers;
     Deque<Ref<Report>> m_queuedReports;
-    HashCountedSet<ViolationReportType, IntHash<ViolationReportType>, WTF::StrongEnumHashTraits<ViolationReportType>> m_queuedReportTypeCounts;
+    HashCountedSet<ViolationReportType, IntHash<ViolationReportType>> m_queuedReportTypeCounts;
 
     MemoryCompactRobinHoodHashMap<String, String> m_reportingEndpoints;
 };

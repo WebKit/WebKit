@@ -167,7 +167,7 @@ protected:
 
         NODELETE friend bool operator==(const VideoTextureContent&, const VideoTextureContent&) = default;
     };
-    HashMap<GCGLuint, VideoTextureContent, IntHash<GCGLuint>, WTF::UnsignedWithZeroKeyHashTraits<GCGLuint>> m_knownVideoTextureContent;
+    HashMap<GCGLuint, VideoTextureContent> m_knownVideoTextureContent;
 #endif
     const RetainPtr<MTLSharedEventListener> m_finishedMetalSharedEventListener;
     const RetainPtr<id> m_finishedMetalSharedEvent; // FIXME: Remove all C++ includees and use id<MTLSharedEvent>.

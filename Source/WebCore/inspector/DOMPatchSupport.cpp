@@ -303,7 +303,7 @@ ExceptionOr<void> DOMPatchSupport::innerPatchChildren(ContainerNode& parentNode,
 
     // 1. First strip everything except for the nodes that retain. Collect pending merges.
     HashMap<Digest*, Digest*> merges;
-    HashSet<size_t, IntHash<size_t>, WTF::UnsignedWithZeroKeyHashTraits<size_t>> usedNewOrdinals;
+    HashSet<size_t> usedNewOrdinals;
     for (size_t i = 0; i < oldList.size(); ++i) {
         if (oldMap[i].first) {
             if (!usedNewOrdinals.contains(oldMap[i].second)) {
@@ -344,7 +344,7 @@ ExceptionOr<void> DOMPatchSupport::innerPatchChildren(ContainerNode& parentNode,
     }
 
     // Mark retained nodes as used, do not reuse node more than once.
-    HashSet<size_t, IntHash<size_t>, WTF::UnsignedWithZeroKeyHashTraits<size_t>> usedOldOrdinals;
+    HashSet<size_t> usedOldOrdinals;
     for (size_t i = 0; i < newList.size(); ++i) {
         if (!newMap[i].first)
             continue;

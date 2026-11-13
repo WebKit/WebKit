@@ -63,8 +63,8 @@ public:
     void visit(AST::CallExpression&) override;
 
 private:
-    using Builtins = HashSet<Builtin, WTF::IntHash<Builtin>, WTF::StrongEnumHashTraits<Builtin>>;
-    using Locations = HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
+    using Builtins = HashSet<Builtin, WTF::IntHash<Builtin>>;
+    using Locations = HashSet<uint64_t>;
 
     void collectGlobals();
     void validateResources(const CallGraph::EntryPoint&);

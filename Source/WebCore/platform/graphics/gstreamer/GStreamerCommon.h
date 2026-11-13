@@ -80,7 +80,7 @@ struct PlatformVideoColorSpace;
 using TrackID = uint64_t;
 
 template<typename MappedArg>
-using TrackIDHashMap = HashMap<TrackID, MappedArg, WTF::IntHash<TrackID>, WTF::UnsignedWithZeroKeyHashTraits<TrackID>>;
+using TrackIDHashMap = HashMap<TrackID, MappedArg>;
 
 #if !GST_CHECK_VERSION(1, 27, 90)
 inline bool gst_check_version(guint major, guint minor, guint micro)

@@ -106,7 +106,7 @@ private:
         RefPtr<VideoFrame> colorFrame { };
         RefPtr<VideoFrame> alphaFrame { };
     };
-    HashMap<int64_t, UniqueRef<InFlightFrame>, DefaultHash<int64_t>, WTF::SignedWithZeroKeyHashTraits<int64_t>> m_inFlight WTF_GUARDED_BY_CAPABILITY(m_queue.get());
+    HashMap<int64_t, UniqueRef<InFlightFrame>> m_inFlight WTF_GUARDED_BY_CAPABILITY(m_queue.get());
     int64_t m_nextSequence WTF_GUARDED_BY_CAPABILITY(m_queue.get()) { 0 };
     Vector<MediaSamplesBlock> m_completedOutput WTF_GUARDED_BY_CAPABILITY(m_queue.get());
     MediaSamplesBlock::SamplesVector m_pendingOutput WTF_GUARDED_BY_CAPABILITY(m_queue.get());

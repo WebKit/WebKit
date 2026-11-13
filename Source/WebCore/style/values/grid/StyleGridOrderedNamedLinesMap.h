@@ -33,7 +33,7 @@ namespace WebCore {
 namespace Style {
 
 struct GridOrderedNamedLinesMap {
-    HashMap<unsigned, GridLineNames, IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> map;
+    HashMap<unsigned, GridLineNames> map;
 
     bool operator==(const GridOrderedNamedLinesMap&) const = default;
 };

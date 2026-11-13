@@ -191,7 +191,7 @@ protected:
 #endif
     ScopedWebGLRenderingResourcesRequest m_renderingResourcesRequest;
     SharedPreferencesForWebProcess m_sharedPreferencesForWebProcess;
-    HashMap<uint32_t, PlatformGLObject, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_objectNames;
+    HashMap<uint32_t, PlatformGLObject> m_objectNames;
     std::optional<uint64_t> m_estimatedMemoryCost WTF_GUARDED_BY_CAPABILITY(workQueue());
     bool m_memoryCostUpdateScheduled WTF_GUARDED_BY_CAPABILITY(workQueue()) { false };
 };

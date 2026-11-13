@@ -70,7 +70,7 @@ private:
 
     const UniqueRef<OfflineAudioDestinationNode> m_destinationNode;
     RefPtr<DeferredPromise> m_pendingRenderingPromise;
-    HashMap<unsigned /* frame */, Ref<DeferredPromise>, IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> m_suspendRequests;
+    HashMap<unsigned /* frame */, Ref<DeferredPromise>> m_suspendRequests;
     unsigned m_length;
     bool m_didStartRendering { false };
 };

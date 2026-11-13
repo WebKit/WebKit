@@ -68,7 +68,7 @@ public:
     void setClient(Ref<WebAuthenticationPanelClient>&&);
 
     // FIXME: <rdar://problem/71509848> Remove the following deprecated methods.
-    using TransportSet = HashSet<WebCore::AuthenticatorTransport, WTF::IntHash<WebCore::AuthenticatorTransport>, WTF::StrongEnumHashTraits<WebCore::AuthenticatorTransport>>;
+    using TransportSet = HashSet<WebCore::AuthenticatorTransport, WTF::IntHash<WebCore::AuthenticatorTransport>>;
     static Ref<WebAuthenticationPanel> create(const WebKit::AuthenticatorManager&, const WTF::String& rpId, const TransportSet&, WebCore::ClientDataType, const WTF::String& userName);
     WTF::String rpId() const { return m_rpId; }
     const Vector<WebCore::AuthenticatorTransport>& transports() const LIFETIME_BOUND { return m_transports; }

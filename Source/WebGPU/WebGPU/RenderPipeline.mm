@@ -1456,7 +1456,7 @@ static NSString* errorValidatingVertexStageIn(const ShaderModule::VertexStageIn*
         return nil;
 
     auto maxVertexAttributeLocation = device.limits().maxVertexAttributes;
-    HashSet<uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> shaderLocations;
+    HashSet<uint32_t> shaderLocations;
     for (auto shaderLocation : stageIn->keys()) {
         if (shaderLocation >= maxVertexAttributeLocation)
             return [NSString stringWithFormat:@"Shader location %u exceeds the maximum allowed value of %u", shaderLocation, maxVertexAttributeLocation];

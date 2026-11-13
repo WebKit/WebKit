@@ -1554,7 +1554,7 @@ private:
     FrozenValue* const m_constantOne;
     Vector<Node*, 16> m_constants;
 
-    HashMap<InlineCallFrame*, Vector<ArgumentPosition*>, WTF::DefaultHash<InlineCallFrame*>, WTF::NullableHashTraits<InlineCallFrame*>> m_inlineCallFrameToArgumentPositions;
+    HashMap<InlineCallFrame*, Vector<ArgumentPosition*>> m_inlineCallFrameToArgumentPositions;
 
     InliningPlan m_inliningPlan;
 
@@ -10294,7 +10294,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
             Vector<SpeculatedType> argumentPredictions(m_numArguments);
             Vector<SpeculatedType> localPredictions;
-            HashSet<unsigned, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> seenArguments;
+            HashSet<unsigned> seenArguments;
 
             {
                 buffer->forEach([&](ValueProfileAndVirtualRegister& profile) {

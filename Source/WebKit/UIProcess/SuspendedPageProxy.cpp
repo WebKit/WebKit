@@ -104,7 +104,7 @@ RefPtr<WebProcessProxy> SuspendedPageProxy::findReusableSuspendedPageProcess(Web
 }
 
 #if !LOG_DISABLED
-using MessageNameSet = HashSet<IPC::MessageName, WTF::IntHash<IPC::MessageName>, WTF::StrongEnumHashTraits<IPC::MessageName>>;
+using MessageNameSet = HashSet<IPC::MessageName, WTF::IntHash<IPC::MessageName>>;
 static const MessageNameSet& messageNamesToIgnoreWhileSuspended()
 {
     static NeverDestroyed<MessageNameSet> messageNames = [] {

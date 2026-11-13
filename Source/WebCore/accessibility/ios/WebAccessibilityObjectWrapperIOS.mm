@@ -677,7 +677,7 @@ struct AccessibilityElementsResult {
     return roleValue == AccessibilityRole::ApplicationDialog || roleValue == AccessibilityRole::ApplicationAlertDialog;
 }
 
-using AccessibilityRoleSet = HashSet<AccessibilityRole, IntHash<AccessibilityRole>, WTF::StrongEnumHashTraits<AccessibilityRole>>;
+using AccessibilityRoleSet = HashSet<AccessibilityRole, IntHash<AccessibilityRole>>;
 static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descendant, const AccessibilityRoleSet& roles)
 {
     RefPtr ancestor = Accessibility::findAncestor(descendant, false, [&roles] (const auto& object) {

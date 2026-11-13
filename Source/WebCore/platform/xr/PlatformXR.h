@@ -654,7 +654,7 @@ protected:
     // https://immersive-web.github.io/webxr/#xr-device-concept
     // Each XR device has a list of enabled features for each XRSessionMode in its list of supported modes,
     // which is a list of feature descriptors which MUST be initially an empty list.
-    using FeaturesPerModeMap = HashMap<SessionMode, FeatureList, IntHash<SessionMode>, WTF::StrongEnumHashTraits<SessionMode>>;
+    using FeaturesPerModeMap = HashMap<SessionMode, FeatureList, IntHash<SessionMode>>;
     FeaturesPerModeMap m_enabledFeaturesMap;
     FeaturesPerModeMap m_supportedFeaturesMap;
 

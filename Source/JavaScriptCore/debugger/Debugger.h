@@ -347,9 +347,9 @@ private:
 
     VM& m_vm;
     HashSet<JSGlobalObject*> m_globalObjects;
-    HashMap<SourceID, DebuggerParseData, WTF::IntHash<SourceID>, WTF::UnsignedWithZeroKeyHashTraits<SourceID>> m_parseDataMap;
-    HashSet<SourceID, WTF::IntHash<SourceID>, WTF::UnsignedWithZeroKeyHashTraits<SourceID>> m_reportedSourceIDs;
-    HashMap<SourceID, BlackboxConfiguration, WTF::IntHash<SourceID>, WTF::UnsignedWithZeroKeyHashTraits<SourceID>> m_blackboxConfigurations;
+    HashMap<SourceID, DebuggerParseData> m_parseDataMap;
+    HashSet<SourceID> m_reportedSourceIDs;
+    HashMap<SourceID, BlackboxConfiguration> m_blackboxConfigurations;
     bool m_blackboxBreakpointEvaluations : 1;
 
     bool m_pauseAtNextOpportunity : 1;
@@ -381,8 +381,8 @@ private:
     };
     RefPtr<AbandonPauseInAwaitTimer> m_abandonPauseInAwaitTimer;
 
-    using LineToBreakpointsMap = HashMap<unsigned, BreakpointsVector, WTF::IntHash<int>, WTF::UnsignedWithZeroKeyHashTraits<int>>;
-    HashMap<SourceID, LineToBreakpointsMap, WTF::IntHash<SourceID>, WTF::UnsignedWithZeroKeyHashTraits<SourceID>> m_breakpointsForSourceID;
+    using LineToBreakpointsMap = HashMap<unsigned, BreakpointsVector>;
+    HashMap<SourceID, LineToBreakpointsMap> m_breakpointsForSourceID;
     HashSet<Ref<Breakpoint>> m_breakpoints;
     RefPtr<Breakpoint> m_specialBreakpoint;
     ListHashSet<Ref<Breakpoint>> m_deferredBreakpoints;

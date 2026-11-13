@@ -245,7 +245,7 @@ private:
     void computeGridContainerIntrinsicSizes();
 
     // Helper methods for step 4. Stretch flexible tracks.
-    typedef HashSet<unsigned, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> TrackIndexSet;
+    using TrackIndexSet = HashSet<unsigned>;
     double computeFlexFactorUnitSize(const Vector<UniqueRef<GridTrack>>& tracks, double flexFactorSum, LayoutUnit& leftOverSpace, const Vector<unsigned, 8>& flexibleTracksIndexes, std::unique_ptr<TrackIndexSet> tracksToTreatAsInflexible = nullptr) const;
     NODELETE void computeFlexSizedTracksGrowth(double flexFraction, Vector<LayoutUnit>& increments, LayoutUnit& totalGrowth) const;
     double findFrUnitSize(const GridSpan& tracksSpan, LayoutUnit leftOverSpace) const;

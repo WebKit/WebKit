@@ -128,7 +128,7 @@ struct PlatformMediaSessionRemoteCommandArgument {
     std::optional<bool> fastSeek;
 };
 
-using PlatformMediaSessionRemoteCommandsSet = HashSet<PlatformMediaSessionRemoteControlCommandType, IntHash<PlatformMediaSessionRemoteControlCommandType>, WTF::StrongEnumHashTraits<PlatformMediaSessionRemoteControlCommandType>>;
+using PlatformMediaSessionRemoteCommandsSet = HashSet<PlatformMediaSessionRemoteControlCommandType, IntHash<PlatformMediaSessionRemoteControlCommandType>>;
 
 enum class MediaSessionRestriction : uint8_t {
     NoRestrictions = 0,

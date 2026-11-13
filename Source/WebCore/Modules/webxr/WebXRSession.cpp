@@ -735,7 +735,7 @@ void WebXRSession::updateDetectedPlanes(DOMHighResTimeStamp time)
     if (!m_frameData.detectedPlanes)
         return;
 
-    HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> currentIds;
+    HashSet<uint64_t> currentIds;
     for (auto& platformPlane : *m_frameData.detectedPlanes) {
         currentIds.add(platformPlane.id);
         auto it = m_detectedPlanes.find(platformPlane.id);

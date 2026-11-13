@@ -418,7 +418,7 @@ enum class AXRelation : uint8_t {
     OwnedBy,
     OwnerFor,
 };
-using AXRelations = HashMap<AXRelation, ListHashSet<AXID>, DefaultHash<uint8_t>, WTF::UnsignedWithZeroKeyHashTraits<uint8_t>>;
+using AXRelations = HashMap<uint8_t, ListHashSet<AXID>>;
 
 enum class SpinButtonType : bool {
     // The spin button is standalone. It has no separate controls, and should receive and perform actions itself.
@@ -2065,7 +2065,7 @@ template<typename T, typename U> inline T retrieveAutoreleasedValueFromMainThrea
 
 NODELETE bool inRenderTreeOrStyleUpdate(const Document&);
 
-using PlatformRoleMap = HashMap<AccessibilityRole, String, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>;
+using PlatformRoleMap = HashMap<unsigned, String>;
 
 void initializeRoleMap();
 PlatformRoleMap createPlatformRoleMap();

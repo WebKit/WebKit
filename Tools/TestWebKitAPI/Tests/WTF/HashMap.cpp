@@ -1106,7 +1106,7 @@ TEST(WTF_HashMap, Random_WrapAround)
 
 TEST(WTF_HashMap, Random_IsEvenlyDistributed)
 {
-    HashMap<unsigned, unsigned, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> map;
+    HashMap<unsigned, unsigned> map;
     map.add(0, 0);
     map.add(1, 1);
 
@@ -1179,7 +1179,7 @@ TEST(WTF_HashMap, ReserveInitialCapacity)
 TEST(WTF_HashMap, Random_IsEvenlyDistributedAfterRemove)
 {
     for (size_t tableSize = 2; tableSize <= 2 * 6; ++tableSize) { // Our hash tables shrink at a load factor of 1 / 6.
-        HashMap<unsigned, unsigned, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> map;
+        HashMap<unsigned, unsigned> map;
         for (size_t i = 0; i < tableSize; ++i)
             map.add(i, i);
         for (size_t i = 2; i < tableSize; ++i)

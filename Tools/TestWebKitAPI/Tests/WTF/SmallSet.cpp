@@ -69,7 +69,7 @@ void testSmallSetOfUnsigned(unsigned n)
     }
 
     unsigned count = 0;
-    HashSet<T, IntHash<T>, WTF::UnsignedWithZeroKeyHashTraits<T>> referenceSet;
+    HashSet<T> referenceSet;
     for (unsigned i : set) {
         referenceSet.add(i);
         ++count;

@@ -54,7 +54,7 @@ class AuthenticatorManager : public RefCounted<AuthenticatorManager>, public Aut
 public:
     using Respond = Variant<Ref<WebCore::AuthenticatorResponse>, WebCore::ExceptionData>;
     using Callback = CompletionHandler<void(Respond&&)>;
-    using TransportSet = HashSet<WebCore::AuthenticatorTransport, WTF::IntHash<WebCore::AuthenticatorTransport>, WTF::StrongEnumHashTraits<WebCore::AuthenticatorTransport>>;
+    using TransportSet = HashSet<WebCore::AuthenticatorTransport, WTF::IntHash<WebCore::AuthenticatorTransport>>;
 
     USING_CAN_MAKE_WEAKPTR(AuthenticatorTransportServiceObserver);
 

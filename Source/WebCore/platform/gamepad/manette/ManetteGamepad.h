@@ -107,7 +107,7 @@ private:
     RunLoop::Timer m_effectDurationTimer;
     CompletionHandler<void(bool)> m_effectCompletionHandler;
     GamepadEffectParameters m_pendingEffectParameters;
-    HashMap<uint16_t, Vector<AnalogButton, 2>, IntHash<uint16_t>, WTF::UnsignedWithZeroKeyHashTraits<uint16_t>> m_analogButtons; // hardware index -> buttons
+    HashMap<uint16_t, Vector<AnalogButton, 2>> m_analogButtons; // hardware index -> buttons
 };
 
 } // namespace WebCore

@@ -61,7 +61,7 @@ public:
         m_graph.clearReplacements();
         m_graph.clearCPSCFGData();
 
-        HashMap<unsigned, BasicBlock*, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> entrypointIndexToArgumentsBlock;
+        HashMap<unsigned, BasicBlock*> entrypointIndexToArgumentsBlock;
 
         m_graph.m_numberOfEntrypoints = m_graph.m_roots.size();
         m_graph.m_argumentFormats.resize(m_graph.m_numberOfEntrypoints);

@@ -84,7 +84,7 @@ struct EntryUsageData {
     EntryUsage usage;
     uint32_t bindGroup;
 };
-using EntryMap = HashMap<uint64_t, EntryUsageData, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
+using EntryMap = HashMap<uint64_t, EntryUsageData>;
 using TextureEntryMapContainer = HashMap<const void*, EntryMap>;
 using EntryMapContainer = HashMap<const void*, EntryUsage>;
 struct BindGroupId {

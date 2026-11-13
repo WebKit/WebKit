@@ -73,7 +73,7 @@ private:
     uint32_t m_buttonState { 0 };
 #if ENABLE(TOUCH_EVENTS)
     Vector<struct wpe_input_touch_event_raw> m_touchEvents;
-    HashSet<unsigned, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> m_updatedTouchEvents;
+    HashSet<unsigned> m_updatedTouchEvents;
 #endif
 };
 

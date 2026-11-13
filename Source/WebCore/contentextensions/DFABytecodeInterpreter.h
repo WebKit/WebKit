@@ -41,7 +41,7 @@ public:
     enum class EnableResumeCache : bool { No, Yes };
     WEBCORE_EXPORT DFABytecodeInterpreter(std::span<const uint8_t> bytecode, EnableResumeCache = EnableResumeCache::No);
 
-    using Actions = HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
+    using Actions = HashSet<uint64_t>;
 
     struct DFACheckpoint {
         static constexpr uint32_t terminatedBeforeCheckpoint = std::numeric_limits<uint32_t>::max();

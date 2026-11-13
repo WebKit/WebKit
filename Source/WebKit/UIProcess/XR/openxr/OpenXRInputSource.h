@@ -95,9 +95,9 @@ private:
     XrAction m_pokePoseAction { XR_NULL_HANDLE };
     XrSpace m_pokeSpace { XR_NULL_HANDLE };
 #endif
-    using OpenXRButtonActionsMap = HashMap<OpenXRButtonType, OpenXRButtonActions, IntHash<OpenXRButtonType>, WTF::StrongEnumHashTraits<OpenXRButtonType>>;
+    using OpenXRButtonActionsMap = HashMap<OpenXRButtonType, OpenXRButtonActions, IntHash<OpenXRButtonType>>;
     OpenXRButtonActionsMap m_buttonActions;
-    using OpenXRAxesMap = HashMap<OpenXRAxisType, XrAction, IntHash<OpenXRAxisType>, WTF::StrongEnumHashTraits<OpenXRAxisType>>;
+    using OpenXRAxesMap = HashMap<OpenXRAxisType, XrAction, IntHash<OpenXRAxisType>>;
     OpenXRAxesMap m_axisActions;
     Vector<String> m_profiles;
 #if defined(XR_EXT_hand_tracking)

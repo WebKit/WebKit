@@ -143,7 +143,7 @@ private:
     GLuint getLocation(VariableID, ASCIILiteral, VariableType);
 
     GLuint m_id;
-    HashMap<VariableID, GLuint, IntHash<VariableID>, WTF::StrongEnumHashTraits<VariableID>> m_variables;
+    HashMap<VariableID, GLuint, IntHash<VariableID>> m_variables;
 };
 
 } // namespace WebCore

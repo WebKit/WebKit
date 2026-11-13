@@ -596,7 +596,7 @@ private:
             return IterationStatus::Continue;
         });
 
-        using InlineCallFrames = HashSet<InlineCallFrame*, WTF::DefaultHash<InlineCallFrame*>, WTF::NullableHashTraits<InlineCallFrame*>>;
+        using InlineCallFrames = HashSet<InlineCallFrame*>;
         using InlineCallFramesForCanditates = HashMap<Node*, InlineCallFrames>;
         InlineCallFramesForCanditates inlineCallFramesForCandidate;
         for (auto& [candidate, availability] : m_candidates) {

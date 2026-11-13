@@ -376,7 +376,7 @@ void AsyncPDFRenderer::removePagePreviewsOutsideCoverageRect(const FloatRect& co
     const Vector pageCoverage = presentationController->pageCoverageForContentsRect(coverageRect, layoutRow);
 
     using PDFPageIndex = PDFDocumentLayout::PageIndex;
-    HashSet<PDFPageIndex, IntHash<PDFPageIndex>, WTF::UnsignedWithZeroKeyHashTraits<PDFPageIndex>> unwantedPageIndices;
+    HashSet<PDFPageIndex> unwantedPageIndices;
     for (auto key : m_pagePreviews.keys())
         unwantedPageIndices.add(key.pageIndex);
 

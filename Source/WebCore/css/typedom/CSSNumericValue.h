@@ -77,7 +77,7 @@ public:
     static ExceptionOr<Ref<CSSNumericValue>> reifyValue(Document&, const CSSPrimitiveValue&);
 
     // https://drafts.css-houdini.org/css-typed-om/#sum-value-value
-    using UnitMap = HashMap<CSSUnitType, int, WTF::IntHash<CSSUnitType>, WTF::StrongEnumHashTraits<CSSUnitType>>;
+    using UnitMap = HashMap<CSSUnitType, int, WTF::IntHash<CSSUnitType>>;
     struct Addend {
         double value;
         UnitMap units;

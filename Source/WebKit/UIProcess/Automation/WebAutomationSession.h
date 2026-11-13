@@ -615,7 +615,7 @@ private:
 #endif
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
     MonotonicTime m_lastClickTime;
-    HashMap<MouseButton, bool, WTF::IntHash<MouseButton>, WTF::StrongEnumHashTraits<MouseButton>> m_mouseButtonsCurrentlyDown;
+    HashMap<MouseButton, bool, WTF::IntHash<MouseButton>> m_mouseButtonsCurrentlyDown;
     std::optional<WebCore::IntPoint> m_lastPosition;
     std::optional<WebCore::IntPoint> m_lastClickPosition;
     unsigned m_clickCount { 1 };

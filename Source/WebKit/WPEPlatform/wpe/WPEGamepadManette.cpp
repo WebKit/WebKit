@@ -55,7 +55,7 @@ struct AnalogButton {
 
 struct _WPEGamepadManettePrivate {
     GRefPtr<ManetteDevice> device;
-    HashMap<uint16_t, Vector<AnalogButton, 2>, IntHash<uint16_t>, WTF::UnsignedWithZeroKeyHashTraits<uint16_t>> analogButtons; // hardware index -> buttons
+    HashMap<uint16_t, Vector<AnalogButton, 2>> analogButtons; // hardware index -> buttons
 };
 
 WEBKIT_DEFINE_FINAL_TYPE(WPEGamepadManette, wpe_gamepad_manette, WPE_TYPE_GAMEPAD, WPEGamepad)

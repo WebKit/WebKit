@@ -317,7 +317,7 @@ enum class AXProperty : uint16_t {
 };
 WTF::TextStream& operator<<(WTF::TextStream&, AXProperty);
 
-using AXPropertySet = HashSet<AXProperty, IntHash<AXProperty>, WTF::StrongEnumHashTraits<AXProperty>>;
+using AXPropertySet = HashSet<AXProperty, IntHash<AXProperty>>;
 
 struct AXIDAndCharacterRange {
     WTF_MAKE_TZONE_ALLOCATED(AXIDAndCharacterRange);

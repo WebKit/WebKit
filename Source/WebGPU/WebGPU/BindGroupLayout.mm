@@ -259,9 +259,9 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const String& label, Vector<R
     std::array<size_t, stageCount> sizeOfDynamicOffsets { };
     std::array<uint32_t, stageCount> bindingOffset { };
     std::array<uint32_t, stageCount> bufferCounts { };
-    std::array<HashMap<uint32_t, std::pair<std::array<uint32_t, stageCount>, OptionSet<WebGPU::ShaderStage>>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>, stageCount> slotForEntry;
+    std::array<HashMap<uint32_t, std::pair<std::array<uint32_t, stageCount>, OptionSet<WebGPU::ShaderStage>>>, stageCount> slotForEntry;
     const auto maxBindingIndex = limits().maxBindingsPerBindGroup;
-    HashSet<uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> usedBindingSlots;
+    HashSet<uint32_t> usedBindingSlots;
     uint32_t dynamicUniformBuffers = 0;
     uint32_t dynamicStorageBuffers = 0;
     auto& deviceLimits = limits();

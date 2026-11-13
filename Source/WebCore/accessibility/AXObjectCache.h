@@ -1196,7 +1196,7 @@ private:
     std::optional<WeakPtr<Element, WeakPtrImplWithEventTargetData>> m_suppressedFocusChange;
     WeakHashSet<AccessibilityObject> m_deferredUnconnectedObjects;
 #if PLATFORM(MAC)
-    HashMap<PreSortedObjectType, Vector<Ref<AccessibilityObject>>, IntHash<PreSortedObjectType>, WTF::StrongEnumHashTraits<PreSortedObjectType>> m_deferredUnsortedObjects;
+    HashMap<PreSortedObjectType, Vector<Ref<AccessibilityObject>>, IntHash<PreSortedObjectType>> m_deferredUnsortedObjects;
     Vector<WeakPtr<Document, WeakPtrImplWithEventTargetData>> m_deferredDocumentsWithNewRenderTrees;
 #endif
     Vector<DeferredNotificationData> m_deferredNotifications;

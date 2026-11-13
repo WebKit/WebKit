@@ -365,7 +365,7 @@ private:
     AST::Builder m_astBuilder;
     std::optional<CallGraph> m_callGraph;
     Vector<std::function<void()>> m_replacements;
-    HashSet<uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_pipelineOverrideIds;
+    HashSet<uint32_t> m_pipelineOverrideIds;
     Vector<OverrideValidator> m_overrideValidations;
     HashMap<String, OverloadedDeclaration> m_overloadedOperations;
     Vector<AST::Variable*> m_overrides;

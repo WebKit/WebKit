@@ -201,7 +201,7 @@ TEST(WTF_InlineMap, Iteration)
     for (unsigned i = 1; i <= 10; ++i)
         map.add(i, i * 10);
 
-    HashSet<unsigned, IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> seenKeys;
+    HashSet<unsigned> seenKeys;
     unsigned count = 0;
 
     for (auto& entry : map) {
@@ -225,7 +225,7 @@ TEST(WTF_InlineMap, IterationAfterGrowth)
     for (unsigned i = 1; i <= 100; ++i)
         map.add(i, i * 10);
 
-    HashSet<unsigned, IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> seenKeys;
+    HashSet<unsigned> seenKeys;
     unsigned count = 0;
 
     for (auto& entry : map) {
@@ -578,7 +578,7 @@ TEST(WTF_InlineMap, IterationAfterRemove)
     map.remove(8);
 
     // Iteration should only visit non-removed entries
-    HashSet<unsigned, IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> seenKeys;
+    HashSet<unsigned> seenKeys;
     unsigned count = 0;
 
     for (auto& entry : map) {
@@ -1679,7 +1679,7 @@ TEST(WTF_InlineMap, IterationInlineMode)
 
     EXPECT_TRUE(WTF::InlineMapAccessForTesting::isInline(map));
 
-    HashSet<unsigned, IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> seenKeys;
+    HashSet<unsigned> seenKeys;
     unsigned count = 0;
 
     for (auto& entry : map) {

@@ -83,7 +83,7 @@ private:
         std::unique_ptr<BaselineAlignmentState> sharedGroups;
         Vector<SharedGroupAlignment> alignments;
     };
-    using AlignmentContextMap = HashMap<unsigned, AlignmentContext, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>;
+    using AlignmentContextMap = HashMap<unsigned, AlignmentContext>;
 
     // Grid Container's writing mode, used to determine grid item's orthogonality.
     WritingMode m_writingMode;

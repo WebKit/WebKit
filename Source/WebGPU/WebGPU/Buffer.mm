@@ -736,7 +736,7 @@ void Buffer::indirectBufferInvalidated(CommandEncoder& commandEncoder)
     });
 }
 
-static size_t computeSize(HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>& encoders, Device& device)
+static size_t computeSize(HashSet<uint64_t>& encoders, Device& device)
 {
     encoders.removeIf([&](uint64_t encoderId) {
         return !device.commandEncoderFromIdentifier(encoderId);

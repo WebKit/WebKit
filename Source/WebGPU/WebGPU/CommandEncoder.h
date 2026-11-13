@@ -173,7 +173,7 @@ public:
     void trackEncoderForTextureView(const TextureView&, TrackedResourceContainer&);
     void trackEncoderForExternalTexture(const ExternalTexture&, TrackedResourceContainer&);
     void trackEncoderForQuerySet(const QuerySet&, TrackedResourceContainer&);
-    static void trackEncoder(CommandEncoder&, HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>&);
+    static void trackEncoder(CommandEncoder&, HashSet<uint64_t>&);
     static size_t computeSize(TrackedResourceContainer&, const Device&);
     uint64_t uniqueId() const { return m_uniqueId; }
     NSMutableSet<id<MTLCounterSampleBuffer>> * _Nullable timestampBuffers() const { return m_retainedTimestampBuffers; };
@@ -223,8 +223,8 @@ private:
     HashSet<RefPtr<const Sampler>> m_retainedSamplers;
     NSMutableSet<id<MTLCounterSampleBuffer>> * _Nullable m_retainedTimestampBuffers { nil };
     Vector<Function<bool(CommandBuffer&, CommandEncoder&)>> m_onCommitHandlers;
-    HashMap<uint64_t, Vector<std::pair<DrawIndexCacheContainerValue, uint32_t>>, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_skippedDrawIndexedValidationKeys;
-    HashMap<uint64_t, Vector<ReusedIndirectIndexedDraw>, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_reusedIndirectIndexedDraws;
+    HashMap<uint64_t, Vector<std::pair<DrawIndexCacheContainerValue, uint32_t>>> m_skippedDrawIndexedValidationKeys;
+    HashMap<uint64_t, Vector<ReusedIndirectIndexedDraw>> m_reusedIndirectIndexedDraws;
     Vector<Ref<const BindGroup>> m_bindGroups;
     Vector<Ref<const Buffer>> m_trackedBuffers;
     Vector<Ref<const Texture>> m_trackedTextures;

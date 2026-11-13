@@ -74,7 +74,7 @@ struct EventTrackingRegions {
 
     // Regions for which events must be sent before performing the default behavior.
     // The key is the EventType with an active handler.
-    using EventSpecificSynchronousDispatchRegions = HashMap<EventType, Region, WTF::IntHash<EventType>, WTF::StrongEnumHashTraits<EventType>>;
+    using EventSpecificSynchronousDispatchRegions = HashMap<EventType, Region, WTF::IntHash<EventType>>;
     EventSpecificSynchronousDispatchRegions eventSpecificSynchronousDispatchRegions;
 
     NODELETE bool isEmpty() const;

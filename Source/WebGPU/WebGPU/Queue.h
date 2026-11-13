@@ -185,9 +185,9 @@ private:
     uint64_t m_completedCommandBufferCount { 0 };
     uint64_t m_scheduledCommandBufferCount { 0 };
     using OnSubmittedWorkScheduledCallbacks = Vector<WTF::Function<void()>>;
-    HashMap<uint64_t, OnSubmittedWorkScheduledCallbacks, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_onSubmittedWorkScheduledCallbacks;
+    HashMap<uint64_t, OnSubmittedWorkScheduledCallbacks> m_onSubmittedWorkScheduledCallbacks;
     using OnSubmittedWorkDoneCallbacks = Vector<WTF::Function<void(bool)>>;
-    HashMap<uint64_t, OnSubmittedWorkDoneCallbacks, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_onSubmittedWorkDoneCallbacks;
+    HashMap<uint64_t, OnSubmittedWorkDoneCallbacks> m_onSubmittedWorkDoneCallbacks;
     NSMutableDictionary<NSNumber*, NSMutableSet<id<MTLCounterSampleBuffer>>*> * _Nullable m_retainedCounterSampleBuffers;
     NSMutableOrderedSet<id<MTLCommandBuffer>> * _Nullable m_createdNotCommittedBuffers { nil };
     NSMutableOrderedSet<id<MTLCommandBuffer>> * _Nullable m_committedNotCompletedBuffers WTF_GUARDED_BY_LOCK(m_committedNotCompletedBuffersLock) { nil };

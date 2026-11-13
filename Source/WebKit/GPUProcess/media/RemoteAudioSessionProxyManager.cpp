@@ -88,9 +88,9 @@ void RemoteAudioSessionProxyManager::removeProxy(RemoteAudioSessionProxy& proxy)
 
 void RemoteAudioSessionProxyManager::updateCategory()
 {
-    HashCountedSet<AudioSession::CategoryType, WTF::IntHash<AudioSession::CategoryType>, WTF::StrongEnumHashTraits<AudioSession::CategoryType>> categoryCounts;
-    HashCountedSet<AudioSession::Mode, WTF::IntHash<AudioSession::Mode>, WTF::StrongEnumHashTraits<AudioSession::Mode>> modeCounts;
-    HashCountedSet<RouteSharingPolicy, WTF::IntHash<RouteSharingPolicy>, WTF::StrongEnumHashTraits<RouteSharingPolicy>> policyCounts;
+    HashCountedSet<AudioSession::CategoryType, WTF::IntHash<AudioSession::CategoryType>> categoryCounts;
+    HashCountedSet<AudioSession::Mode, WTF::IntHash<AudioSession::Mode>> modeCounts;
+    HashCountedSet<RouteSharingPolicy, WTF::IntHash<RouteSharingPolicy>> policyCounts;
 
     // A preview has no web process proxy, so count it here. Without it the session
     // stays in playback and on iOS BaseAudioCaptureUnit won't start.

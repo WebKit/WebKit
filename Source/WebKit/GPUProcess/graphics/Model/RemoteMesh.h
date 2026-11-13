@@ -123,7 +123,7 @@ private:
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     WeakRef<RemoteGPU> m_gpu;
     const bool m_standardDynamicRange { false };
-    HashMap<int64_t, WebModel::MeshDescriptor, IntHash<int64_t>, WTF::SignedWithZeroKeyHashTraits<int64_t>> m_meshDescriptors;
+    HashMap<int64_t, WebModel::MeshDescriptor> m_meshDescriptors;
 };
 
 } // namespace WebKit

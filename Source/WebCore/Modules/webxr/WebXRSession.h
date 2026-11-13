@@ -248,7 +248,7 @@ private:
 #endif
 
 #if ENABLE(WEBXR_PLANE_DETECTION)
-    HashMap<uint64_t, Ref<WebXRPlane>, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_detectedPlanes;
+    HashMap<uint64_t, Ref<WebXRPlane>> m_detectedPlanes;
     bool m_roomCaptureCompleted { false };
 #endif
 };

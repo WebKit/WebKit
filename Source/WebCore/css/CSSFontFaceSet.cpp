@@ -389,7 +389,7 @@ static FontSelectionRequest computeFontSelectionRequest(CSSPropertyParserHelpers
     return { weightSelectionValue, widthSelectionValue, styleSelectionValue };
 }
 
-using CodePointsMap = HashSet<uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
+using CodePointsMap = HashSet<uint32_t>;
 static CodePointsMap codePointsFromString(StringView stringView)
 {
     CodePointsMap result;

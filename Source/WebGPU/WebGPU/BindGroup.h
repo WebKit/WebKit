@@ -129,8 +129,8 @@ private:
     Vector<BindableResources> m_resources;
     RefPtr<const BindGroupLayout> m_bindGroupLayout;
     DynamicBuffersContainer m_dynamicBuffers;
-    HashMap<uint32_t, uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_dynamicOffsetsIndices;
-    mutable HashMap<uint64_t, uint32_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_validatedBindGroup;
+    HashMap<uint32_t, uint32_t> m_dynamicOffsetsIndices;
+    mutable HashMap<uint64_t, uint32_t> m_validatedBindGroup;
     SamplersContainer m_samplers;
     ShaderStageArray<ExternalTextureIndices> m_externalTextureIndices;
     uint32_t m_uniqueIdentifier { 0 };

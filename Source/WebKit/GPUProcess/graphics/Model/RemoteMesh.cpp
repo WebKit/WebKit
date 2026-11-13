@@ -273,7 +273,7 @@ void RemoteMesh::updateModel(WebCore::NodeIdentifier nodeIdentifier, Vector<WebM
     // WKBridgeDataUpdateTypeInitial, the enum is Objective-C only, see ModelTypes.h.
     constexpr uint8_t initialUpdateType = 0;
 
-    HashMap<int64_t, const WebModel::MeshDescriptor*, IntHash<int64_t>, WTF::SignedWithZeroKeyHashTraits<int64_t>> newDescriptors;
+    HashMap<int64_t, const WebModel::MeshDescriptor*> newDescriptors;
     for (auto& update : descriptor) {
         auto identifier = update.identifier.hashValue;
         MESSAGE_CHECK(identifier != std::numeric_limits<int64_t>::min() && identifier != std::numeric_limits<int64_t>::max());

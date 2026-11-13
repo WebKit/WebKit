@@ -97,7 +97,7 @@ private:
     bool m_isAllDataReceived { false };
     WTF::Function<void(WebCore::EncodedDataStatus)> m_encodedDataStatusChangedCallback;
     mutable Lock m_frameImagesLock;
-    HashMap<int, WebCore::PlatformImagePtr, WTF::IntHash<int>, WTF::UnsignedWithZeroKeyHashTraits<int>> m_frameImages WTF_GUARDED_BY_LOCK(m_frameImagesLock);
+    HashMap<int, WebCore::PlatformImagePtr> m_frameImages WTF_GUARDED_BY_LOCK(m_frameImagesLock);
     Vector<ImageDecoder::FrameInfo> m_frameInfos;
     size_t m_frameCount { 0 };
     std::optional<WebCore::IntSize> m_size;

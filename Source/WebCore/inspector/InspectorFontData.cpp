@@ -65,7 +65,7 @@ struct InspectorFontMetadata {
     friend bool operator==(const InspectorFontMetadata&, const InspectorFontMetadata&) = default;
 };
 
-using CharacterSet = HashSet<char32_t, DefaultHash<char32_t>, WTF::UnsignedWithZeroKeyHashTraits<char32_t>>;
+using CharacterSet = HashSet<char32_t>;
 
 class RenderedFont final : public RefCounted<RenderedFont> {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(RenderedFont);

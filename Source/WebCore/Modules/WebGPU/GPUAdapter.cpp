@@ -112,7 +112,7 @@ static GPUFeatureName convertFeatureNameToEnum(const String& stringValue)
 
 static bool isSubset(const Vector<GPUFeatureName>& expectedSubset, const Vector<String>& expectedSuperset)
 {
-    HashSet<uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> expectedSupersetHashSet;
+    HashSet<uint32_t> expectedSupersetHashSet;
     for (auto& featureName : expectedSuperset)
         expectedSupersetHashSet.add(static_cast<uint32_t>(convertFeatureNameToEnum(featureName)));
 

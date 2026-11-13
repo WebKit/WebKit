@@ -116,13 +116,13 @@ public:
     NODELETE const String& defaultFragmentEntryPoint() const;
     NODELETE const String& defaultComputeEntryPoint() const;
 
-    using VertexStageIn = HashMap<uint32_t, WebGPU::VertexFormat, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
-    using FragmentOutputs = HashMap<uint32_t, MTLDataType, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
+    using VertexStageIn = HashMap<uint32_t, WebGPU::VertexFormat>;
+    using FragmentOutputs = HashMap<uint32_t, MTLDataType>;
     struct VertexOutputFragmentInput {
         MTLDataType dataType { MTLDataTypeNone };
         std::optional<WGSL::AST::Interpolation> interpolation { std::nullopt };
     };
-    using VertexOutputs = HashMap<uint32_t, VertexOutputFragmentInput, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
+    using VertexOutputs = HashMap<uint32_t, VertexOutputFragmentInput>;
     using FragmentInputs = VertexOutputs;
     const FragmentOutputs* fragmentReturnTypeForEntryPoint(const String&) const;
     const FragmentInputs* fragmentInputsForEntryPoint(const String&) const;

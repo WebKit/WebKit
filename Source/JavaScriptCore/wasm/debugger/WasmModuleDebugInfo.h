@@ -52,9 +52,9 @@ struct FunctionDebugInfo {
     void addInstructionStart(uint32_t offset) { instructionStarts.add(offset); }
     void addLocalType(Type);
 
-    using OffsetToNextInstructions = HashMap<uint32_t, HashSet<uint32_t>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
+    using OffsetToNextInstructions = HashMap<uint32_t, HashSet<uint32_t>>;
     OffsetToNextInstructions offsetToNextInstructions;
-    HashSet<uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> instructionStarts;
+    HashSet<uint32_t> instructionStarts;
     Vector<Type> locals;
 };
 
@@ -67,7 +67,7 @@ public:
     void takeSource(Vector<uint8_t>&& source) { this->source = WTF::move(source); }
 
     Vector<uint8_t> source;
-    using FunctionIndexToData = HashMap<size_t, FunctionDebugInfo, DefaultHash<size_t>, WTF::UnsignedWithZeroKeyHashTraits<size_t>>;
+    using FunctionIndexToData = HashMap<size_t, FunctionDebugInfo>;
     FunctionIndexToData functionIndexToData;
 
     mutable std::optional<String> cachedDeclaredName;

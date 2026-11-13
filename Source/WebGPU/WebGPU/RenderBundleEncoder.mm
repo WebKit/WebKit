@@ -42,7 +42,7 @@
 
 @implementation RenderBundleICBWithResources {
     Vector<WebGPU::Metal::BindableResources> _resources;
-    HashMap<uint64_t, WebGPU::Metal::IndexBufferAndIndexData, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> _minVertexCountForDrawCommand;
+    HashMap<uint64_t, WebGPU::Metal::IndexBufferAndIndexData> _minVertexCountForDrawCommand;
     WebGPU::Metal::IndirectDrawForSlotContainer _indirectDrawsForSlot;
     Vector<uint64_t> _fragmentDynamicOffsetsHeaderOffsets;
 }

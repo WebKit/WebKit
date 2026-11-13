@@ -72,7 +72,7 @@ private:
     using Global = CallGraph::Global;
 
     template<typename Value>
-    using IndexMap = HashMap<uint64_t, Value, WTF::IntHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
+    using IndexMap = HashMap<uint64_t, Value>;
 
     using UsedResources = IndexMap<IndexMap<const Global*>>;
     using UsedPrivateGlobals = Vector<const Global*>;
@@ -159,7 +159,7 @@ private:
     HashMap<AST::Function*, ListHashSet<String>> m_lengthParameters;
     HashMap<AST::Function*, ListHashSet<String>> m_visitedFunctions;
     Reflection::EntryPointInformation* m_entryPointInformation { nullptr };
-    HashMap<uint32_t, uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_generateLayoutGroupMapping;
+    HashMap<uint32_t, uint32_t> m_generateLayoutGroupMapping;
     PipelineLayout* m_generatedLayout { nullptr };
     unsigned m_currentStatementIndex { 0 };
     unsigned m_entryPointID { 0 };

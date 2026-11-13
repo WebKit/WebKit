@@ -1425,7 +1425,7 @@ RefPtr<WebGPU::BindGroup> Device::createBindGroup(const WebGPU::BindGroupDescrip
     auto& bindGroupLayoutEntries = bindGroupLayout->entries();
     BindGroup::DynamicBuffersContainer dynamicBuffers;
     BindGroup::SamplersContainer samplersSet;
-    HashSet<uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> usedBindingSlots;
+    HashSet<uint32_t> usedBindingSlots;
 
     for (auto& entry : descriptor.entries) {
         auto* bufferBinding = std::get_if<WebGPU::BufferBinding>(&entry.resource);

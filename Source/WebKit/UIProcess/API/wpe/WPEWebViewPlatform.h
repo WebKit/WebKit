@@ -101,7 +101,7 @@ private:
     uint32_t m_displayID { 0 };
     unsigned long m_bufferRenderedID { 0 };
     Vector<CompletionHandler<void()>> m_nextPresentationUpdateCallbacks;
-    HashMap<uint32_t, GRefPtr<WPEEvent>, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_touchEvents;
+    HashMap<uint32_t, GRefPtr<WPEEvent>> m_touchEvents;
 #if ENABLE(FULLSCREEN_API)
     bool m_viewWasAlreadyInFullScreen { false };
 #endif

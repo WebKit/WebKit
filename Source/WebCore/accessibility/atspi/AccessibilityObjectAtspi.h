@@ -37,7 +37,7 @@ namespace WebCore {
 
 class AXCoreObject;
 
-using RelationMap = HashMap<Atspi::Relation, Vector<Ref<AccessibilityObjectAtspi>>, IntHash<Atspi::Relation>, WTF::StrongEnumHashTraits<Atspi::Relation>>;
+using RelationMap = HashMap<Atspi::Relation, Vector<Ref<AccessibilityObjectAtspi>>, IntHash<Atspi::Relation>>;
 
 class AccessibilityObjectAtspi final : public RefCounted<AccessibilityObjectAtspi> {
 public:

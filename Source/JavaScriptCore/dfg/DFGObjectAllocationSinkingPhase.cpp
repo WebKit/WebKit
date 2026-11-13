@@ -3135,7 +3135,7 @@ escapeChildren:
 
     HashMap<Node*, Vector<PromotedHeapLocation>> m_locationsForAllocation;
 
-    HashMap<unsigned, Node*, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> m_constants;
+    HashMap<unsigned, Node*> m_constants;
 
     IndexMap<BasicBlock*, LocalHeap> m_heapAtHead;
     IndexMap<BasicBlock*, LocalHeap> m_heapAtTail;

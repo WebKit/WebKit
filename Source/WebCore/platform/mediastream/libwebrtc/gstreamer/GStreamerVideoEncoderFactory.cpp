@@ -280,7 +280,7 @@ private:
     webrtc::EncodedImageCallback* m_encodedImageCallback;
     IntSize m_size;
     std::optional<double> m_frameRate;
-    HashMap<int64_t, uint32_t, WTF::IntHash<int64_t>, WTF::UnsignedWithZeroKeyHashTraits<int64_t>> m_rtpTimestamps;
+    HashMap<int64_t, uint32_t> m_rtpTimestamps;
 };
 
 std::unique_ptr<webrtc::VideoEncoder> GStreamerVideoEncoderFactory::Create(const webrtc::Environment& environment, const webrtc::SdpVideoFormat& format)

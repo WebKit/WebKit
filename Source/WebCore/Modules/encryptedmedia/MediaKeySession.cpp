@@ -749,7 +749,7 @@ void MediaKeySession::updateKeyStatuses(CDMInstanceSession::KeyStatusVector&& in
     };
 
 #if !RELEASE_LOG_DISABLED
-    using StatusMap = HashMap<MediaKeyStatus, CDMKeyIDs, IntHash<MediaKeyStatus>, WTF::StrongEnumHashTraits<MediaKeyStatus>>;
+    using StatusMap = HashMap<MediaKeyStatus, CDMKeyIDs, IntHash<MediaKeyStatus>>;
     StatusMap statusMap;
 #endif
 

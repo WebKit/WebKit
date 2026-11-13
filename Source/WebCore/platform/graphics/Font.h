@@ -178,7 +178,7 @@ private:
     float platformWidthForGlyph(Glyph) const;
     Path platformPathForGlyph(Glyph) const;
 
-    mutable HashMap<unsigned, RefPtr<GlyphPage>, IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> m_glyphPages;
+    mutable HashMap<unsigned, RefPtr<GlyphPage>> m_glyphPages;
     mutable GlyphMetricsMap<float> m_glyphToWidthMap;
     mutable std::unique_ptr<GlyphMetricsMap<FloatRect>> m_glyphToBoundsMap;
     // FIXME: Find a more efficient way to represent std::optional<Path>.

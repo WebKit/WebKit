@@ -376,10 +376,10 @@ private:
     NSMapTable<id<MTLCommandBuffer>, NSMutableArray<id<MTLCounterSampleBuffer>>*>* m_sampleCounterBuffers;
     NSMapTable<id<MTLCommandBuffer>, NSMutableArray<id<MTLBuffer>>*>* m_resolvedSampleCounterBuffers;
     id<MTLSharedEvent> _Nullable m_resolveTimestampsSharedEvent { nil };
-    HashMap<uint64_t, CommandEncoder*, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_commandEncoderMap;
-    HashMap<uint64_t, Buffer*, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_bufferMap;
+    HashMap<uint64_t, CommandEncoder*> m_commandEncoderMap;
+    HashMap<uint64_t, Buffer*> m_bufferMap;
     ThreadSafeWeakHashSet<Texture> m_textures;
-    mutable HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_bindGroupCompatibilityCache;
+    mutable HashSet<uint64_t> m_bindGroupCompatibilityCache;
     uint64_t m_commandEncoderId { 0 };
     uint64_t m_pipelineLayoutId { 0 };
     uint64_t m_pipelineId { 0 };

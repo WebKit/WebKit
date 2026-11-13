@@ -59,7 +59,7 @@ std::pair<Vector<LineAdjustment>, std::optional<LayoutRestartLine>> computeAdjus
     auto lineCount = inlineContent.displayContent().lines.size();
     Vector<LineAdjustment> adjustments { lineCount };
 
-    HashMap<size_t, LayoutUnit, DefaultHash<size_t>, WTF::UnsignedWithZeroKeyHashTraits<size_t>>  lineFloatBottomMap;
+    HashMap<size_t, LayoutUnit> lineFloatBottomMap;
     for (auto& floatBox : placedFloats.list()) {
         if (!floatBox.layoutBox())
             continue;

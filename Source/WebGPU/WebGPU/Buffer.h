@@ -190,9 +190,9 @@ private:
     const Ref<Device> m_device;
     mutable ThreadSafeWeakHashSet<BindGroup> m_bindGroups;
     mutable ThreadSafeWeakHashSet<RenderBundle> m_renderBundles;
-    mutable HashMap<uint64_t, uint32_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_gpuResourceMap;
-    HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_skippedValidationCommandEncoders;
-    mutable HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_pendingIndexWriteCommandEncoders; // NOLINT
+    mutable HashMap<uint64_t, uint32_t> m_gpuResourceMap;
+    HashSet<uint64_t> m_skippedValidationCommandEncoders;
+    mutable HashSet<uint64_t> m_pendingIndexWriteCommandEncoders; // NOLINT
     bool m_mustTakeSlowIndexValidationPath { false };
     // Identity of the command buffer this buffer was last cleared for, so that several failed validations
     // sharing one command buffer do not each capture a "prior" copy and queue a restore of it.
@@ -204,7 +204,7 @@ private:
 #if CPU(X86_64) && (PLATFORM(MAC) || PLATFORM(MACCATALYST))
     bool m_mappedAtCreation { false };
 #endif
-    HashMap<uint64_t, bool, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_didReadOOB;
+    HashMap<uint64_t, bool> m_didReadOOB;
 } SWIFT_SHARED_REFERENCE(refBuffer, derefBuffer) SWIFT_PRIVATE_FILEID("WebGPU/Buffer.swift") SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
 } // namespace WebGPU::Metal

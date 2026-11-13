@@ -53,7 +53,7 @@ class AuthenticatorPresenterCoordinator : public RefCountedAndCanMakeWeakPtr<Aut
     WTF_MAKE_TZONE_ALLOCATED(AuthenticatorPresenterCoordinator);
     WTF_MAKE_NONCOPYABLE(AuthenticatorPresenterCoordinator);
 public:
-    using TransportSet = HashSet<WebCore::AuthenticatorTransport, WTF::IntHash<WebCore::AuthenticatorTransport>, WTF::StrongEnumHashTraits<WebCore::AuthenticatorTransport>>;
+    using TransportSet = HashSet<WebCore::AuthenticatorTransport, WTF::IntHash<WebCore::AuthenticatorTransport>>;
     using CredentialRequestHandler = Function<void(ASCAppleIDCredential *, NSError *)>;
 
     static Ref<AuthenticatorPresenterCoordinator> create(const AuthenticatorManager&, const String& rpId, const TransportSet&, WebCore::ClientDataType, const String& username);

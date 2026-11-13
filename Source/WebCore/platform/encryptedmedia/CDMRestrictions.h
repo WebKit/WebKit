@@ -35,7 +35,7 @@ namespace WebCore {
 struct CDMRestrictions {
     bool distinctiveIdentifierDenied { false };
     bool persistentStateDenied { false };
-    HashSet<CDMSessionType, IntHash<CDMSessionType>, WTF::StrongEnumHashTraits<CDMSessionType>> deniedSessionTypes;
+    HashSet<CDMSessionType, IntHash<CDMSessionType>> deniedSessionTypes;
 };
 
 } // namespace WebCore

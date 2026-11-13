@@ -202,10 +202,10 @@ private:
     const Vector<WebGPU::TextureFormat> m_viewFormats;
 
     const Ref<Device> m_device;
-    using ClearedToZeroInnerContainer = HashSet<uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
-    using ClearedToZeroContainer = HashMap<uint32_t, ClearedToZeroInnerContainer, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
+    using ClearedToZeroInnerContainer = HashSet<uint32_t>;
+    using ClearedToZeroContainer = HashMap<uint32_t, ClearedToZeroInnerContainer>;
     ClearedToZeroContainer m_clearedToZero;
-    HashCountedSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_provisionalClears;
+    HashCountedSet<uint64_t> m_provisionalClears;
     ThreadSafeWeakHashSet<TextureView> m_textureViews;
     mutable ThreadSafeWeakHashSet<BindGroup> m_bindGroups;
     mutable ThreadSafeWeakHashSet<RenderBundle> m_renderBundles;

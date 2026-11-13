@@ -94,7 +94,7 @@ private:
     RetainPtr<WebAVStreamDataParserListener> m_delegate;
     const MediaSourceConfiguration m_configuration;
     const std::unique_ptr<ISOBMFFPreParser> m_preParser;
-    HashMap<uint64_t, MediaTime, WTF::IntHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_emptyEditOffsetForTrackID;
+    HashMap<uint64_t, MediaTime> m_emptyEditOffsetForTrackID;
     bool m_parserStateWasReset { false };
     std::optional<int> m_lastErrorCode;
 

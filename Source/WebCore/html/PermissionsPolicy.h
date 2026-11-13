@@ -81,7 +81,7 @@ public:
     NODELETE bool inheritedPolicyValueForFeature(Feature) const;
 
     // InheritedPolicy contains enabled features.
-    using InheritedPolicy = HashSet<Feature, IntHash<Feature>, WTF::StrongEnumHashTraits<Feature>>;
+    using InheritedPolicy = HashSet<Feature, IntHash<Feature>>;
     PermissionsPolicy(const InheritedPolicy& inheritedPolicy)
         : m_inheritedPolicy(inheritedPolicy)
     {
@@ -89,7 +89,7 @@ public:
     InheritedPolicy inheritedPolicy() const { return m_inheritedPolicy; }
 
     // https://w3c.github.io/webappsec-permissions-policy/#policy-directives
-    using PolicyDirective = HashMap<Feature, Allowlist, IntHash<Feature>, WTF::StrongEnumHashTraits<Feature>>;
+    using PolicyDirective = HashMap<Feature, Allowlist, IntHash<Feature>>;
     static PolicyDirective processPermissionsPolicyAttribute(const HTMLIFrameElement&);
 
 private:

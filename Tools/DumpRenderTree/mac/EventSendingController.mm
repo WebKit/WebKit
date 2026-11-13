@@ -88,7 +88,7 @@ int lastClickButton = std::to_underlying(WebCore::MouseButtonState::None);
 static RetainPtr<NSArray> webkitDomEventNames;
 BOOL replayingSavedEvents;
 auto mouseButtonsCurrentlyDown = [] {
-    WTF::HashMap<WebCore::MouseButton, bool, WTF::IntHash<WebCore::MouseButton>, WTF::StrongEnumHashTraits<WebCore::MouseButton>> map;
+    WTF::HashMap<WebCore::MouseButton, bool, WTF::IntHash<WebCore::MouseButton>> map;
     map.reserveInitialCapacity(5);
     return map;
 }();

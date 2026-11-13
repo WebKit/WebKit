@@ -71,8 +71,8 @@ public:
     Vector<uint32_t> takeCollectedInstanceIds();
 
 private:
-    using IdToInstance = HashMap<uint32_t, ThreadSafeWeakPtr<Wasm::InstanceAnchor>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
-    using InstanceIdSet = HashSet<uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
+    using IdToInstance = HashMap<uint32_t, ThreadSafeWeakPtr<Wasm::InstanceAnchor>>;
+    using InstanceIdSet = HashSet<uint32_t>;
 
     // Drops entries whose instance has been collected, flagging the library removal for LLDB.
     void sweepDeadInstances() WTF_REQUIRES_LOCK(m_lock);

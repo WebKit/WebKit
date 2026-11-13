@@ -104,7 +104,7 @@ private:
     WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData> m_device;
     using MappedRanges = WTF::RangeSet<WTF::Range<size_t>>;
     MappedRanges m_mappedRanges;
-    HashSet<size_t, DefaultHash<size_t>, WTF::UnsignedWithZeroKeyHashTraits<size_t>> m_mappedPoints;
+    HashSet<size_t> m_mappedPoints;
     bool m_destroyed { false };
     bool m_mappedAtCreation { false };
     std::atomic<size_t> m_memoryCost { 0 }; // Atomic, accessed from arbitrary thread by GC.
