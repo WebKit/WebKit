@@ -129,10 +129,7 @@ static WPEBufferFormats* wpeDisplayMockGetPreferredBufferFormats(WPEDisplay* dis
     wpe_buffer_formats_builder_append_format(builder, DRM_FORMAT_XRGB8888, DRM_FORMAT_MOD_LINEAR);
     wpe_buffer_formats_builder_append_format(builder, DRM_FORMAT_ARGB8888, DRM_FORMAT_MOD_LINEAR);
 #endif
-    auto* formats = wpe_buffer_formats_builder_end(builder);
-    wpe_buffer_formats_builder_unref(builder);
-
-    return formats;
+    return wpe_buffer_formats_builder_end(builder);
 }
 
 static guint wpeDisplayMockGetNScreens(WPEDisplay* display)
