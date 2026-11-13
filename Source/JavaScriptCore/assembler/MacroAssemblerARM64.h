@@ -5325,25 +5325,25 @@ public:
     Jump branchNeg32(ResultCondition cond, RegisterID dest)
     {
         m_assembler.neg<32, S>(dest, dest);
-        return Jump(makeBranch(cond));
+        return Jump(makeBranchAfterSubtract(cond));
     }
 
     Jump branchNeg64(ResultCondition cond, RegisterID srcDest)
     {
         m_assembler.neg<64, S>(srcDest, srcDest);
-        return Jump(makeBranch(cond));
+        return Jump(makeBranchAfterSubtract(cond));
     }
 
     Jump branchSub32(ResultCondition cond, RegisterID dest)
     {
         m_assembler.neg<32, S>(dest, dest);
-        return Jump(makeBranch(cond));
+        return Jump(makeBranchAfterSubtract(cond));
     }
 
     Jump branchSub32(ResultCondition cond, RegisterID op1, RegisterID op2, RegisterID dest)
     {
         m_assembler.sub<32, S>(dest, op1, op2);
-        return Jump(makeBranch(cond));
+        return Jump(makeBranchAfterSubtract(cond));
     }
 
     Jump branchSub32(ResultCondition cond, RegisterID op1, TrustedImm32 imm, RegisterID dest)
@@ -5355,7 +5355,7 @@ public:
                 m_assembler.sub<32, S>(dest, op1, u12, shift);
             else
                 m_assembler.add<32, S>(dest, op1, u12, shift);
-            return Jump(makeBranch(cond));
+            return Jump(makeBranchAfterSubtract(cond));
         }
 
         signExtend32ToPtr(imm, getCachedDataTempRegisterIDAndInvalidate());
@@ -5375,7 +5375,7 @@ public:
     Jump branchSub64(ResultCondition cond, RegisterID op1, RegisterID op2, RegisterID dest)
     {
         m_assembler.sub<64, S>(dest, op1, op2);
-        return Jump(makeBranch(cond));
+        return Jump(makeBranchAfterSubtract(cond));
     }
 
     Jump branchSub64(ResultCondition cond, RegisterID op1, TrustedImm32 imm, RegisterID dest)
@@ -5387,7 +5387,7 @@ public:
                 m_assembler.sub<64, S>(dest, op1, u12, shift);
             else
                 m_assembler.add<64, S>(dest, op1, u12, shift);
-            return Jump(makeBranch(cond));
+            return Jump(makeBranchAfterSubtract(cond));
         }
 
         signExtend32ToPtr(imm, getCachedDataTempRegisterIDAndInvalidate());
@@ -7591,6 +7591,14 @@ protected:
     ALWAYS_INLINE Jump makeBranch(RelationalCondition cond) { return makeBranch(ARM64Condition(cond)); }
     ALWAYS_INLINE Jump makeBranch(ResultCondition cond) { return makeBranch(ARM64Condition(cond)); }
     ALWAYS_INLINE Jump makeBranch(DoubleCondition cond) { return makeBranch(ARM64Condition(cond)); }
+
+    // AArch64 subtraction sets C when there is no borrow, whereas Carry means borrow on x86.
+    ALWAYS_INLINE Jump makeBranchAfterSubtract(ResultCondition cond)
+    {
+        if (cond == Carry)
+            return makeBranch(Assembler::ConditionCC);
+        return makeBranch(cond);
+    }
 
     template <int dataSize>
     ALWAYS_INLINE Jump makeCompareAndBranch(ZeroCondition cond, RegisterID reg)
