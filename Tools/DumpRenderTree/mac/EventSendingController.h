@@ -51,6 +51,7 @@
 + (void)saveEvent:(NSInvocation *)event;
 + (void)replaySavedEvents;
 + (void)clearSavedEvents;
++ (void)clearPressedMouseButtons;
 
 - (void)scheduleAsynchronousClick;
 

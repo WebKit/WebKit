@@ -1020,6 +1020,11 @@ static NSInteger swizzledEventButtonNumber()
     savedMouseEvents() = nil;
 }
 
++ (void)clearPressedMouseButtons
+{
+    mouseButtonsCurrentlyDown.clear();
+}
+
 - (void)keyDown:(NSString *)character withModifiers:(WebScriptObject *)modifiers withLocation:(unsigned long)location
 {
     RetainPtr<ModifierKeys> modifierKeys = [ModifierKeys modifierKeysWithKey:character modifiers:buildModifierFlags(modifiers) keyLocation:location];
