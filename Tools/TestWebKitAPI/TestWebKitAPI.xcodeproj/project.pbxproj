@@ -578,6 +578,7 @@
 		07AA27602F83C3A900FE10FC /* Exceptions for "Tests" folder in "TestWebKitAPI" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				"Testing+Extras.swift",
 				WebCore/cocoa/WebAVPlayerLayerTests.mm,
 				WebKit/WebPage/ControlledByExternalAgent.swift,
 				WebKit/WebPage/EditingFontSizeTests.swift,
@@ -664,7 +665,12 @@
 				WebKit/WKWebView/WKWebExtensionAPINamespace.swift,
 				WebKit/WKWebView/WKWebExtensionAPIOffscreen.swift,
 				WebKit/WKWebView/WKWebExtensionAPIPermissions.swift,
+				WebKit/WKWebView/WKWebExtensionAPITest.swift,
+				WebKit/WKWebView/WKWebExtensionAPIWebNavigation.swift,
+				WebKit/WKWebView/WKWebExtensionAPIWebRequest.swift,
 				WebKit/WKWebView/WKWebExtensionAPIWindows.swift,
+				WebKit/WKWebView/WKWebExtensionContext.swift,
+				WebKit/WKWebView/WKWebExtensionController.swift,
 				WebKit/WKWebView/WKWebExtensionControllerConfiguration.swift,
 				WebKit/WKWebView/WKWebExtensionDataRecord.swift,
 				WebKit/WKWebView/WKWebExtensionMatchPattern.swift,

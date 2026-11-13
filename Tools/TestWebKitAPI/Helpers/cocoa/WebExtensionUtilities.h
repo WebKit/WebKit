@@ -96,11 +96,12 @@ NS_SWIFT_UI_ACTOR
 - (void)run NS_SWIFT_UNAVAILABLE("Spins the run loop; use run() async instead.");
 - (void)runForTimeInterval:(NSTimeInterval)interval NS_SWIFT_UNAVAILABLE("Spins the run loop; add an async variant instead.");
 - (id)runUntilTestMessage:(NSString *)message NS_SWIFT_UNAVAILABLE("Spins the run loop; use waitForTestMessage(_:) async instead.");
-- (void)runUntilContextError NS_SWIFT_UNAVAILABLE("Spins the run loop; add an async variant instead.");
+- (void)runUntilContextError NS_SWIFT_UNAVAILABLE("Spins the run loop; use waitForContextError() async instead.");
 
 - (void)runWithCompletionHandler:(void (^)(NSError * _Nullable error))completionHandler;
-- (void)waitForTestMessage:(NSString *)message completionHandler:(void (^)(NSError * _Nullable error))completionHandler NS_SWIFT_NAME(waitForTestMessage(_:completionHandler:));
+- (void)waitForTestMessage:(NSString *)message completionHandler:(void (^)(id _Nullable argument, NSError * _Nullable error))completionHandler NS_SWIFT_NAME(waitForTestMessage(_:completionHandler:));
 - (void)loadAndRunWithCompletionHandler:(void (^)(NSError * _Nullable error))completionHandler;
+- (void)waitForContextErrorWithCompletionHandler:(void (^)(NSError * _Nullable error))completionHandler NS_SWIFT_NAME(waitForContextError(completionHandler:));
 
 - (void)done;
 
@@ -185,6 +186,18 @@ NS_SWIFT_UI_ACTOR
 + (nullable instancetype)testCachedPatternWithScheme:(NSString *)scheme host:(NSString *)host path:(NSString *)path NS_SWIFT_NAME(cachedPattern(scheme:host:path:));
 
 @end
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+// An Objective-C exception cannot unwind through a Swift frame, so a Swift test that expects a setter to raise one has
+// to call the setter from here.
+NSExceptionName _Nullable testExceptionRaisedBySettingValue(id, NSString *key, id _Nullable value) NS_SWIFT_NAME(exceptionRaised(setting:forKey:to:));
+
+#ifdef __cplusplus
+}
+#endif
 
 NS_HEADER_AUDIT_END(nullability, sendability)
 

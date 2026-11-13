@@ -58,7 +58,7 @@ final class HTTPServerCore {
 
     private let listener: NWListener
     private let `protocol`: `Protocol`
-    private let customHandler: ((NWConnection) -> Void)?
+    private let customHandler: ((HTTPServerCore, NWConnection) -> Void)?
 
     private var connections: [ManagedConnection] = []
     private var responses: [String: HTTPResponseData] = [:]
@@ -69,6 +69,9 @@ final class HTTPServerCore {
     private(set) var sawAuthorizationHeader = false
     private(set) var closedUnfinishedResponseCount = 0
 
+    /// The first error thrown by the connection handler of a server created with `HTTPServer(protocol:connectionHandler:)`.
+    var connectionHandlerError: (any Swift.Error)?
+
     var port: UInt16 { listener.port?.rawValue ?? 0 }
     var totalConnections: Int { connections.count }
     var totalRequests: Int { requestCount }
@@ -76,7 +79,7 @@ final class HTTPServerCore {
     init(
         protocol: `Protocol`,
         responses: [String: HTTPResponseData] = [:],
-        customHandler: ((NWConnection) -> Void)? = nil,
+        customHandler: ((HTTPServerCore, NWConnection) -> Void)? = nil,
         port: UInt16? = nil,
         identity: SecIdentity? = nil,
         verifier: sec_protocol_verify_t? = nil
@@ -161,7 +164,7 @@ final class HTTPServerCore {
         }
     }
 
-    private func terminateIfNeeded(_ connection: NWConnection) async {
+    func terminateIfNeeded(_ connection: NWConnection) async {
         let index = connections.firstIndex { $0.connection === connection }
         guard let index, !connections[index].isTerminated else {
             return
@@ -190,22 +193,32 @@ final class HTTPServerCore {
         connection.start(queue: .main)
 
         if let customHandler {
-            customHandler(connection)
+            customHandler(self, connection)
         } else if `protocol` == .http2 || `protocol` == .http3 || `protocol` == .http2Proxy {
             #if HAVE_NETWORK_FRAMEWORK_HTTP_MESSAGING
             Task {
-                // FIXME: Handle errors better.
-                // swift-format-ignore: NeverUseForceTry
-                try! await respondToHTTPMessagingRequests(on: connection)
+                do {
+                    try await respondToHTTPMessagingRequests(on: connection)
+                } catch NWError.posix(.ECANCELED) {
+                    // `cancel()` cancels every connection when the server shuts down, including any still sending a response.
+                } catch {
+                    // FIXME: Handle errors better.
+                    fatalError("\(error)")
+                }
             }
             #else
             fatalError("HTTP messaging is not available in this configuration")
             #endif // HAVE_NETWORK_FRAMEWORK_HTTP_MESSAGING
         } else {
             Task {
-                // FIXME: Handle errors better.
-                // swift-format-ignore: NeverUseForceTry
-                try! await respondToRequests(on: connection)
+                do {
+                    try await respondToRequests(on: connection)
+                } catch NWError.posix(.ECANCELED) {
+                    // `cancel()` cancels every connection when the server shuts down, including any still sending a response.
+                } catch {
+                    // FIXME: Handle errors better.
+                    fatalError("\(error)")
+                }
             }
         }
     }

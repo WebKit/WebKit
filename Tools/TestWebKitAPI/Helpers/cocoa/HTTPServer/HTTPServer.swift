@@ -54,6 +54,18 @@ public import Network_SPI
 /// }
 /// ```
 public struct Route: Sendable {
+    /// How a route responds to a request for its path.
+    public enum ResponseBehavior: Sendable {
+        /// Sends the route's response.
+        case sendResponseNormally
+
+        /// Closes the connection as soon as the request arrives, without sending anything.
+        case terminateConnectionAfterReceivingRequest
+
+        /// Leaves the request unanswered.
+        case neverSendResponse
+    }
+
     fileprivate struct Storage: Sendable {
         let pathComponents: [String]
         let statusCode: Int
@@ -132,14 +144,39 @@ public struct Route: Sendable {
     ///   - path: The path of this route. If this value is non-empty, it must start with `/`.
     ///   - statusCode: The status code of the response.
     ///   - headerFields: The header fields of the response.
-    ///   - response: The response to be used.
-    public init(_ path: String, statusCode: Int = 200, headerFields: [String: String] = [:], _ response: () -> String) {
+    ///   - response: The response to be used. Defaults to an empty body.
+    public init(_ path: String, statusCode: Int = 200, headerFields: [String: String] = [:], _ response: () -> String = { "" }) {
         self.init(path: path, statusCode: statusCode, headerFields: headerFields, response: Data(response().utf8))
     }
 
     /// Creates a Route whose response never finishes.
     public init(unfinished path: String, headerFields: [String: String] = [:], _ response: () -> String) {
         self.init(path: path, statusCode: 200, headerFields: headerFields, response: Data(response().utf8), behavior: .neverFinishResponse)
+    }
+
+    /// Changes how this route responds to requests for its path.
+    ///
+    /// For example, a route can close the connection instead of responding:
+    ///
+    /// ```swift
+    /// Route("/dropped")
+    ///     .responseBehavior(.terminateConnectionAfterReceivingRequest)
+    /// ```
+    ///
+    /// - Parameter behavior: How the route responds. For a group of routes, this applies to every route in the group.
+    /// - Returns: A copy of this route that responds with `behavior`.
+    public func responseBehavior(_ behavior: ResponseBehavior) -> Route {
+        Route(
+            children: children.map { child in
+                Storage(
+                    pathComponents: child.pathComponents,
+                    statusCode: child.statusCode,
+                    headerFields: child.headerFields,
+                    response: child.response,
+                    behavior: .init(behavior)
+                )
+            }
+        )
     }
 }
 
@@ -237,12 +274,49 @@ public struct HTTPServer: ~Copyable {
         self.storage = try HTTPServerCore(protocol: .init(`protocol`), responses: responses)
     }
 
+    /// Create a server that hands each connection it accepts to a closure instead of responding from routes.
+    ///
+    /// Use this when a test needs to control exactly what goes over the wire, such as a response that is cut off
+    /// partway through its body:
+    ///
+    /// ```swift
+    /// var server = try HTTPServer(protocol: .http) { connection in
+    ///     guard try await connection.receiveRequestPath() == "/truncated" else {
+    ///         return
+    ///     }
+    ///
+    ///     try await connection.send("HTTP/1.1 200 OK\r\nContent-Length: 100\r\n\r\nFewer than 100 bytes")
+    ///     await connection.terminate()
+    /// }
+    /// ```
+    ///
+    /// - Parameters:
+    ///   - protocol: The HTTP protocol to use for this server.
+    ///   - connectionHandler: A closure called once for each connection the server accepts. If it throws, ``run(_:)``
+    ///     rethrows the first such error once the server shuts down.
+    /// - Throws: Any error that happens during creation of the server.
+    public init(protocol: `Protocol`, connectionHandler: @escaping @MainActor (Connection) async throws -> Void) throws {
+        self.protocol = `protocol`
+        self.storage = try HTTPServerCore(protocol: .init(`protocol`)) { server, connection in
+            Task {
+                do {
+                    try await connectionHandler(Connection(server: server, connection: connection))
+                } catch NWError.posix(.ECANCELED) {
+                    // `run(_:)` cancels every connection when the server shuts down, including any still sending a response.
+                } catch {
+                    // Left for `run(_:)` to throw, so that only the test using this server fails.
+                    server.connectionHandlerError = server.connectionHandlerError ?? error
+                }
+            }
+        }
+    }
+
     /// Calls the given closure after starting the server, and then closes the server once finished, even if the closure
     /// throws.
     ///
     /// - Parameter body: A closure that will run while this server is active.
     /// - Returns: The return value, if any, of the `body` closure parameter.
-    /// - Throws: Any error thrown by `body`.
+    /// - Throws: Any error thrown by `body`, or otherwise the first error thrown by the server's connection handler.
     public mutating func run<Result: ~Copyable>(
         _ body: (Configuration) async throws -> sending Result
     ) async throws -> sending Result {
@@ -258,6 +332,11 @@ public struct HTTPServer: ~Copyable {
         }
 
         await storage.cancel()
+
+        if let error = storage.connectionHandlerError {
+            throw error
+        }
+
         return result
     }
 
@@ -296,6 +375,17 @@ extension HTTPServer.`Protocol` {
         case .http2, .http3, .http2Proxy: true
         case .http, .https, .httpsWithLegacyTLS, .http2Raw, .httpsProxy, .httpsProxyWithAuthentication: false
         }
+    }
+}
+
+extension HTTPResponseData.Behavior {
+    fileprivate init(_ behavior: Route.ResponseBehavior) {
+        self =
+            switch behavior {
+            case .sendResponseNormally: .sendResponseNormally
+            case .terminateConnectionAfterReceivingRequest: .terminateConnectionAfterReceivingRequest
+            case .neverSendResponse: .neverSendResponse
+            }
     }
 }
 
@@ -383,6 +473,43 @@ extension HTTPServer {
             for child in route().children {
                 storage.setResponse(child.responseData, for: child.path)
             }
+        }
+    }
+}
+
+extension HTTPServer {
+    /// A connection accepted by a server created with ``init(protocol:connectionHandler:)``.
+    @MainActor
+    public struct Connection {
+        fileprivate let server: HTTPServerCore
+        fileprivate let connection: NWConnection
+
+        /// Waits for the client to send a request.
+        ///
+        /// - Returns: The path of the request, or `nil` once the client has closed the connection.
+        /// - Throws: An error if the request cannot be parsed.
+        public func receiveRequestPath() async throws -> String? {
+            let request = await connection.receiveHTTPRequest()
+            guard !request.isEmpty else {
+                return nil
+            }
+
+            let parser = HTTPRequestComponentParser(request: request)
+            return try parser.path
+        }
+
+        /// Sends data to the client exactly as given, without adding any HTTP framing.
+        ///
+        /// - Parameter data: The data to send, usually a complete or deliberately incomplete HTTP response.
+        /// - Throws: An error if the data could not be sent.
+        public func send(_ data: String) async throws {
+            try await connection.send(Data(data.utf8))
+        }
+
+        /// Closes the connection.
+        public func terminate() async {
+            // Through the server, so that shutting it down does not also try to terminate this connection.
+            await server.terminateIfNeeded(connection)
         }
     }
 }

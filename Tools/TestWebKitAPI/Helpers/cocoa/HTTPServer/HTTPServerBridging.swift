@@ -94,7 +94,7 @@ extension HTTPServerBridge {
         withProtocol protocol: HTTPServerProtocolBridge,
         connectionHandler: @escaping (nw_connection_t) -> Void
     ) {
-        let core = try? HTTPServerCore(protocol: .init(`protocol`)) { connection in
+        let core = try? HTTPServerCore(protocol: .init(`protocol`)) { _, connection in
             connectionHandler(connection.nw)
         }
         guard let core else {

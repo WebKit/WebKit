@@ -695,16 +695,76 @@ TestWebKitAPI.WKWebExtensionAPITabs.CreateWithMailtoURL
 TestWebKitAPI.WKWebExtensionAPITabs.UpdatedEventOmitsUnchangedProperties
 TestWebKitAPI.WKWebExtensionAPITabs.UpdatedEventReportsRapidToggles
 TestWebKitAPI.WKWebExtensionAPITabs.WindowType
-TestWebKitAPI.WKWebExtensionAPITest
+TestWebKitAPI.WKWebExtensionAPITestTests/addAnonymousAsyncTest()
+TestWebKitAPI.WKWebExtensionAPITestTests/addAnonymousTest()
+TestWebKitAPI.WKWebExtensionAPITestTests/addAsyncTestThatFails()
+TestWebKitAPI.WKWebExtensionAPITestTests/addAsyncTestThatPasses()
+TestWebKitAPI.WKWebExtensionAPITestTests/addAsyncTestThatThrows()
+TestWebKitAPI.WKWebExtensionAPITestTests/addMultipleAsyncTestsThatPass()
+TestWebKitAPI.WKWebExtensionAPITestTests/addMultipleAsyncTestsWithFailure()
+TestWebKitAPI.WKWebExtensionAPITestTests/addMultipleTestsThatPass()
+TestWebKitAPI.WKWebExtensionAPITestTests/addMultipleTestsWithFailure()
+TestWebKitAPI.WKWebExtensionAPITestTests/addTestThatFails()
+TestWebKitAPI.WKWebExtensionAPITestTests/addTestThatPasses()
+TestWebKitAPI.WKWebExtensionAPITestTests/addTestThatThrows()
+TestWebKitAPI.WKWebExtensionAPITestTests/assertRejectsRejectsReturnedPromiseOnFailure()
+TestWebKitAPI.WKWebExtensionAPITestTests/assertResolvesRejectsReturnedPromiseOnFailure()
+TestWebKitAPI.WKWebExtensionAPITestTests/assertSafeStopsTestOnFailure()
+TestWebKitAPI.WKWebExtensionAPITestTests/assertionFailureOutsideTestFinishesRun()
+TestWebKitAPI.WKWebExtensionAPITestTests/assertionsThatFail()
+TestWebKitAPI.WKWebExtensionAPITestTests/assertionsThatPass()
+TestWebKitAPI.WKWebExtensionAPITestTests/awaitedAssertionFailureOutsideTestFinishesRun()
+TestWebKitAPI.WKWebExtensionAPITestTests/jsHandleCreationInBackgroundPage()
+TestWebKitAPI.WKWebExtensionAPITestTests/jsHandleCreationInContentScript()
+TestWebKitAPI.WKWebExtensionAPITestTests/jsHandleCreationInExtensionFrame()
+TestWebKitAPI.WKWebExtensionAPITestTests/jsHandleCreationUnavailableInWebPage()
+TestWebKitAPI.WKWebExtensionAPITestTests/jsHandleCreationUnavailableInWebPageFrameInExtensionPage()
+TestWebKitAPI.WKWebExtensionAPITestTests/messageEvent()
+TestWebKitAPI.WKWebExtensionAPITestTests/messageEventInContentScript()
+TestWebKitAPI.WKWebExtensionAPITestTests/messageEventInWebPage()
+TestWebKitAPI.WKWebExtensionAPITestTests/messageEventWithSendMessageReply()
+TestWebKitAPI.WKWebExtensionAPITestTests/runAnonymousTests()
+TestWebKitAPI.WKWebExtensionAPITestTests/runTestsThatPass()
+TestWebKitAPI.WKWebExtensionAPITestTests/runTestsVerifyFailedTestAborts()
+TestWebKitAPI.WKWebExtensionAPITestTests/runTestsWithAsyncTestThatFails()
+TestWebKitAPI.WKWebExtensionAPITestTests/runTestsWithTestThatFails()
+TestWebKitAPI.WKWebExtensionAPITestTests/sendMessage()
+TestWebKitAPI.WKWebExtensionAPITestTests/sendMessageBeforeListenerAdded()
+TestWebKitAPI.WKWebExtensionAPITestTests/sendMessageMultipleTimes()
+TestWebKitAPI.WKWebExtensionAPITestTests/sendMessageOutOfOrder()
+TestWebKitAPI.WKWebExtensionAPITestTests/testFinishedEvent()
+TestWebKitAPI.WKWebExtensionAPITestTests/testFinishedEventListenerAddedToPageBeforeExtensionLoads()
+TestWebKitAPI.WKWebExtensionAPITestTests/testStartedEvent()
+TestWebKitAPI.WKWebExtensionAPITestTests/testStartedEventListenerAddedToPageAfterExtensionLoads()
+TestWebKitAPI.WKWebExtensionAPITestTests/unawaitedAssertionFailsEvenWhenItPasses()
+TestWebKitAPI.WKWebExtensionAPITestTests/unawaitedAssertionFailsTheTestThatStartedIt()
 TestWebKitAPI.WKWebExtensionAPIWindowsTests/createTypeEnum()
 TestWebKitAPI.WKWebExtensionAPIWindowsTests/windowStateEnum()
 TestWebKitAPI.WKWebExtensionAPIWindowsTests/windowTypeEnum()
-TestWebKitAPI.WKWebExtensionController
 TestWebKitAPI.WKWebExtensionControllerConfigurationTests/copying()
 TestWebKitAPI.WKWebExtensionControllerConfigurationTests/defaultWebsiteDataStoreWithCopyAndCoding()
 TestWebKitAPI.WKWebExtensionControllerConfigurationTests/initialization()
 TestWebKitAPI.WKWebExtensionControllerConfigurationTests/secureCoding()
 TestWebKitAPI.WKWebExtensionControllerConfigurationTests/webViewConfigurationWithCopyAndCoding()
+TestWebKitAPI.WKWebExtensionControllerTests/backgroundPageLoading()
+TestWebKitAPI.WKWebExtensionControllerTests/backgroundPageWithModulesLoading()
+TestWebKitAPI.WKWebExtensionControllerTests/backgroundWithMultipleDocumentModuleScripts()
+TestWebKitAPI.WKWebExtensionControllerTests/backgroundWithMultipleServiceWorkerModuleScripts()
+TestWebKitAPI.WKWebExtensionControllerTests/backgroundWithMultipleServiceWorkerScripts()
+TestWebKitAPI.WKWebExtensionControllerTests/backgroundWithPageDocumentPreferredEnvironment()
+TestWebKitAPI.WKWebExtensionControllerTests/backgroundWithScriptsDocumentPreferredEnvironment()
+TestWebKitAPI.WKWebExtensionControllerTests/backgroundWithServiceWorkerPreferredEnvironment()
+TestWebKitAPI.WKWebExtensionControllerTests/configuration()
+TestWebKitAPI.WKWebExtensionControllerTests/contentScriptLoading()
+TestWebKitAPI.WKWebExtensionControllerTests/contentSecurityPolicyV2BlockingImageLoad()
+TestWebKitAPI.WKWebExtensionControllerTests/contentSecurityPolicyV3BlockingImageLoad()
+TestWebKitAPI.WKWebExtensionControllerTests/cssAuthorOrigin()
+TestWebKitAPI.WKWebExtensionControllerTests/cssUserOrigin()
+TestWebKitAPI.WKWebExtensionControllerTests/loadingAndUnloadingContexts()
+TestWebKitAPI.WKWebExtensionControllerTests/webAccessibleResourceInSubframeFromAboutBlank()
+TestWebKitAPI.WKWebExtensionControllerTests/webAccessibleResources()
+TestWebKitAPI.WKWebExtensionControllerTests/webAccessibleResourcesV2()
+TestWebKitAPI.WKWebExtensionControllerTests/webAccessibleResourcesWithLeadingSlash()
 TestWebKitAPI.WKWebExtensionDataRecordTests/getDataRecords()
 TestWebKitAPI.WKWebExtensionDataRecordTests/getDataRecordsForMultipleContexts()
 TestWebKitAPI.WKWebExtensionDataRecordTests/removeDataRecords()
@@ -4159,14 +4219,14 @@ TestWebKitAPI.WKWebExtensionAPITabs.MoveWithoutWindowIdGroupsTabsByWindow
 TestWebKitAPI.WKWebExtensionAPITabs.PortPostMessageWithUserGesture
 TestWebKitAPI.WKWebExtensionAPITabs.PortPostMessageWithoutUserGesture
 TestWebKitAPI.WKWebExtensionAPITabs.SendMessageWithoutUserGesture
-TestWebKitAPI.WKWebExtensionAPIWebNavigation.EmptyFilterMatchesEverything
-TestWebKitAPI.WKWebExtensionAPIWebNavigation.URLFilterMatchesOnePredicate
-TestWebKitAPI.WKWebExtensionAPIWebNavigation.URLFilterTestMatchAllPredicates
-TestWebKitAPI.WKWebExtensionAPIWebRequest.Initialization
-TestWebKitAPI.WKWebExtensionAPIWebRequest.ResourceTypesMatch
-TestWebKitAPI.WKWebExtensionAPIWebRequest.TabIDMatch
-TestWebKitAPI.WKWebExtensionAPIWebRequest.URLMatch
-TestWebKitAPI.WKWebExtensionAPIWebRequest.WindowIDMatch
+TestWebKitAPI.WKWebExtensionAPIWebNavigationTests/emptyFilterMatchesEverything()
+TestWebKitAPI.WKWebExtensionAPIWebNavigationTests/urlFilterMatchesOnePredicate()
+TestWebKitAPI.WKWebExtensionAPIWebNavigationTests/urlFilterTestMatchAllPredicates()
+TestWebKitAPI.WKWebExtensionAPIWebRequestTests/initialization()
+TestWebKitAPI.WKWebExtensionAPIWebRequestTests/resourceTypesMatch()
+TestWebKitAPI.WKWebExtensionAPIWebRequestTests/tabIDMatch()
+TestWebKitAPI.WKWebExtensionAPIWebRequestTests/urlMatch()
+TestWebKitAPI.WKWebExtensionAPIWebRequestTests/windowIDMatch()
 TestWebKitAPI.WKWebView.AttributedStringAccessibilityLabel
 TestWebKitAPI.WKWebView.AttributedStringAndCDATASection
 TestWebKitAPI.WKWebView.AttributedStringAttributeTypes
@@ -6638,57 +6698,69 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.WKWebExtensionAPITabs.UpdatedEventWithoutPrivateAccess
 [ ios ] TestWebKitAPI.WKWebExtensionAPITabs.UserGestureWithoutActiveTab
 [ ios ] TestWebKitAPI.WKWebExtensionAPITabs.Zoom
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.AllEventsFired
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.AllowedFilter
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.BeforeNavigateEvent
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.CommittedEvent
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.CompletedEvent
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.DOMContentLoadedEvent
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.DeniedFilter
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.DocumentIdAcrossEvents
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.ErrorOccurred
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.ErrorOccurredEventDuringProvisionalLoad
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.Errors
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.EventListenerRegistration
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.GetAllFrames
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.GetFrameWithMainFrame
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.GetFrameWithSubframe
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.RemoveListenerDuringEvent
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.URLKeyTypeChecking
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.UpdateTabDuringCommittedEvent
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequest
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequest.AllEventsFired
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequest.AllowedFilter
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequest.BeforeRequestEvent
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequest.BeforeRequestEventForSubresource
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequest.BeforeRequestEventWithRequestBodyAndBlob
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequest.BeforeRequestEventWithRequestBodyAndForm
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequest.BeforeRequestEventWithRequestBodyAndFormData
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequest.BeforeRequestEventWithRequestBodyAndJSON
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequest.BeforeSendHeadersEvent
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequest.BeforeSendHeadersEventForSubresource
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequest.BeforeSendHeadersEventWithRequestHeaders
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequest.CompletedEvent
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequest.CompletedEventForSubresource
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequest.CompletedEventWithResponseHeaders
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequest.DeniedFilter
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequest.DocumentIdAcrossEvents
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequest.ErrorOccurredEvent
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequest.EventListenerRegistration
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequest.HeadersReceivedEvent
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequest.HeadersReceivedEventForSubresource
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequest.HeadersReceivedEventWithResponseHeaders
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequest.ManifestV2NonPersistent
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequest.ManifestV2Persistent
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequest.RedirectOccurredEvent
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequest.RedirectOccurredEventForSubresource
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequest.RemoveListenerDuringEvent
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequest.ResponseStartedEvent
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequest.ResponseStartedEventForSubresource
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequest.ResponseStartedEventWithResponseHeaders
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequest.SendHeadersEvent
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequest.SendHeadersEventForSubresource
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequest.SendHeadersEventWithRequestHeaders
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigationTests/allEventsFired()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigationTests/allowedFilter()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigationTests/beforeNavigateEvent()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigationTests/committedEvent()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigationTests/completedEvent()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigationTests/deniedFilter()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigationTests/documentIdAcrossEvents()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigationTests/domContentLoadedEvent()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigationTests/errorOccurred()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigationTests/errorOccurredEventDuringProvisionalLoad()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigationTests/errors()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigationTests/eventListenerRegistration()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigationTests/getAllFrames()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigationTests/getFrameWithMainFrame()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigationTests/getFrameWithSubframe()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigationTests/removeListenerDuringEvent()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigationTests/updateTabDuringCommittedEvent()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigationTests/urlKeyTypeChecking()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/allEventsFired()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/allowedFilter()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/beforeRequestEvent()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/beforeRequestEventForActionPopupSubframe()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/beforeRequestEventForBackgroundPageRequest()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/beforeRequestEventForOffscreenDocumentSubframe()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/beforeRequestEventForSidebarSubframe()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/beforeRequestEventForSubframe()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/beforeRequestEventForSubresource()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/beforeRequestEventNestedSubframeParentFrameId()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/beforeRequestEventSubframeParentFrameIsMainFrame()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/beforeRequestEventSubframeTypeFilter()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/beforeRequestEventWithRequestBodyAndBlob()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/beforeRequestEventWithRequestBodyAndForm()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/beforeRequestEventWithRequestBodyAndFormData()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/beforeRequestEventWithRequestBodyAndJSON()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/beforeSendHeadersEvent()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/beforeSendHeadersEventForSubresource()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/beforeSendHeadersEventWithRequestHeaders()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/completedEvent()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/completedEventForSubresource()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/completedEventWithResponseHeaders()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/deniedFilter()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/documentIdAcrossEvents()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/errorOccurredEvent()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/eventListenerRegistration()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/headersReceivedEvent()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/headersReceivedEventForSubresource()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/headersReceivedEventWithResponseHeaders()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/manifestV2NonPersistent()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/manifestV2Persistent()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/redirectOccurredEvent()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/redirectOccurredEventForSubresource()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/removeListenerDuringEvent()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/resourceType()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/responseStartedEvent()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/responseStartedEventForSubresource()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/responseStartedEventWithResponseHeaders()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/sendHeadersEvent()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/sendHeadersEventForSubresource()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/sendHeadersEventWithRequestHeaders()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/webRequestFiresForDeclarativeNetRequestBlockedLoad()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/webRequestFiresForTabsCreate()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/webRequestFiresForWindowsCreate()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/webRequestParentFrameIdForDeclarativeNetRequestBlockedSubframe()
 [ ios ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/create()
 [ ios ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/createIncognitoWithPrivateAccess()
 [ ios ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/createIncognitoWithoutPrivateAccess()
@@ -6710,7 +6782,32 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/removeUnsupported()
 [ ios ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/removedEvent()
 [ ios ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/update()
-[ ios ] TestWebKitAPI.WKWebExtensionContext
+[ ios ] TestWebKitAPI.WKWebExtensionContextTests/callingMissingBrowserAPIInBackground()
+[ ios ] TestWebKitAPI.WKWebExtensionContextTests/cleanUpOldOriginDataAfterMigration()
+[ ios ] TestWebKitAPI.WKWebExtensionContextTests/commandsParsing()
+[ ios ] TestWebKitAPI.WKWebExtensionContextTests/consoleAssertWithMessage()
+[ ios ] TestWebKitAPI.WKWebExtensionContextTests/consoleAssertWithoutMessage()
+[ ios ] TestWebKitAPI.WKWebExtensionContextTests/consoleErrorDoesNotEvaluateArgumentsTwice()
+[ ios ] TestWebKitAPI.WKWebExtensionContextTests/consoleErrorReportedNotLogOrWarn()
+[ ios ] TestWebKitAPI.WKWebExtensionContextTests/contentScriptsParsing()
+[ ios ] TestWebKitAPI.WKWebExtensionContextTests/defaultPermissionChecks()
+[ ios ] TestWebKitAPI.WKWebExtensionContextTests/loadNonExistentImage()
+[ ios ] TestWebKitAPI.WKWebExtensionContextTests/noErrorForCaughtExceptionsInBackground()
+[ ios ] TestWebKitAPI.WKWebExtensionContextTests/optionsPageURLParsing()
+[ ios ] TestWebKitAPI.WKWebExtensionContextTests/pageScriptErrorNotReportedToExtension()
+[ ios ] TestWebKitAPI.WKWebExtensionContextTests/permissionGranting()
+[ ios ] TestWebKitAPI.WKWebExtensionContextTests/referenceErrorInBackground()
+[ ios ] TestWebKitAPI.WKWebExtensionContextTests/syntaxErrorInBackground()
+[ ios ] TestWebKitAPI.WKWebExtensionContextTests/topLevelThrowInModuleBackground()
+[ ios ] TestWebKitAPI.WKWebExtensionContextTests/topLevelThrowInPopup()
+[ ios ] TestWebKitAPI.WKWebExtensionContextTests/uncaughtScriptErrorInBackground()
+[ ios ] TestWebKitAPI.WKWebExtensionContextTests/uncaughtScriptErrorInContentScript()
+[ ios ] TestWebKitAPI.WKWebExtensionContextTests/uncaughtScriptErrorInEventListener()
+[ ios ] TestWebKitAPI.WKWebExtensionContextTests/uncaughtScriptErrorInMainWorldContentScript()
+[ ios ] TestWebKitAPI.WKWebExtensionContextTests/uncaughtScriptErrorInServiceWorkerBackground()
+[ ios ] TestWebKitAPI.WKWebExtensionContextTests/unhandledPromiseRejectionInBackground()
+[ ios ] TestWebKitAPI.WKWebExtensionContextTests/unhandledPromiseRejectionInServiceWorkerBackground()
+[ ios ] TestWebKitAPI.WKWebExtensionContextTests/urlOverridesParsing()
 [ ios ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.AboutBlankChildOfHostPermittedFrameSeesItsCookies
 [ ios ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.BroadcastChannelIsUnpartitionedInHostPermittedFrame
 [ ios ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.CacheStorageIsUnpartitionedInHostPermittedFrame
@@ -8192,13 +8289,13 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.WKWebExtensionAPITabs.UpdateWithoutTabId
 [ mac ] TestWebKitAPI.WKWebExtensionAPITabs.UpdatedEventWithoutPrivateAccess
 [ mac ] TestWebKitAPI.WKWebExtensionAPITabs.Zoom
-[ mac ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.EventListenerRegistration
-[ mac ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.URLKeyTypeChecking
-[ mac ] TestWebKitAPI.WKWebExtensionAPIWebRequest.BeforeRequestEventForSidebarSubframe
-[ mac ] TestWebKitAPI.WKWebExtensionAPIWebRequest.EventListenerRegistration
-[ mac ] TestWebKitAPI.WKWebExtensionAPIWebRequest.ManifestV2NonPersistent
-[ mac ] TestWebKitAPI.WKWebExtensionAPIWebRequest.ManifestV2Persistent
-[ mac ] TestWebKitAPI.WKWebExtensionAPIWebRequest.ResourceType
+[ mac ] TestWebKitAPI.WKWebExtensionAPIWebNavigationTests/eventListenerRegistration()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIWebNavigationTests/urlKeyTypeChecking()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/beforeRequestEventForSidebarSubframe()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/eventListenerRegistration()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/manifestV2NonPersistent()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/manifestV2Persistent()
+[ mac ] TestWebKitAPI.WKWebExtensionAPIWebRequestTests/resourceType()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/create()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/createIncognitoWithPrivateAccess()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/createIncognitoWithoutPrivateAccess()
@@ -8219,31 +8316,31 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/removeListenerDuringEvent()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/removeUnsupported()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/update()
-[ mac ] TestWebKitAPI.WKWebExtensionContext.CallingMissingBrowserAPIInBackground
-[ mac ] TestWebKitAPI.WKWebExtensionContext.CommandsParsing
-[ mac ] TestWebKitAPI.WKWebExtensionContext.ConsoleAssertWithMessage
-[ mac ] TestWebKitAPI.WKWebExtensionContext.ConsoleAssertWithoutMessage
-[ mac ] TestWebKitAPI.WKWebExtensionContext.ConsoleErrorDoesNotEvaluateArgumentsTwice
-[ mac ] TestWebKitAPI.WKWebExtensionContext.ConsoleErrorReportedNotLogOrWarn
-[ mac ] TestWebKitAPI.WKWebExtensionContext.ContentScriptsParsing
-[ mac ] TestWebKitAPI.WKWebExtensionContext.DefaultPermissionChecks
-[ mac ] TestWebKitAPI.WKWebExtensionContext.LoadNonExistentImage
-[ mac ] TestWebKitAPI.WKWebExtensionContext.NoErrorForCaughtExceptionsInBackground
-[ mac ] TestWebKitAPI.WKWebExtensionContext.OptionsPageURLParsing
-[ mac ] TestWebKitAPI.WKWebExtensionContext.PageScriptErrorNotReportedToExtension
-[ mac ] TestWebKitAPI.WKWebExtensionContext.PermissionGranting
-[ mac ] TestWebKitAPI.WKWebExtensionContext.ReferenceErrorInBackground
-[ mac ] TestWebKitAPI.WKWebExtensionContext.SyntaxErrorInBackground
-[ mac ] TestWebKitAPI.WKWebExtensionContext.TopLevelThrowInModuleBackground
-[ mac ] TestWebKitAPI.WKWebExtensionContext.TopLevelThrowInPopup
-[ mac ] TestWebKitAPI.WKWebExtensionContext.URLOverridesParsing
-[ mac ] TestWebKitAPI.WKWebExtensionContext.UncaughtScriptErrorInBackground
-[ mac ] TestWebKitAPI.WKWebExtensionContext.UncaughtScriptErrorInContentScript
-[ mac ] TestWebKitAPI.WKWebExtensionContext.UncaughtScriptErrorInEventListener
-[ mac ] TestWebKitAPI.WKWebExtensionContext.UncaughtScriptErrorInMainWorldContentScript
-[ mac ] TestWebKitAPI.WKWebExtensionContext.UncaughtScriptErrorInServiceWorkerBackground
-[ mac ] TestWebKitAPI.WKWebExtensionContext.UnhandledPromiseRejectionInBackground
-[ mac ] TestWebKitAPI.WKWebExtensionContext.UnhandledPromiseRejectionInServiceWorkerBackground
+[ mac ] TestWebKitAPI.WKWebExtensionContextTests/callingMissingBrowserAPIInBackground()
+[ mac ] TestWebKitAPI.WKWebExtensionContextTests/commandsParsing()
+[ mac ] TestWebKitAPI.WKWebExtensionContextTests/consoleAssertWithMessage()
+[ mac ] TestWebKitAPI.WKWebExtensionContextTests/consoleAssertWithoutMessage()
+[ mac ] TestWebKitAPI.WKWebExtensionContextTests/consoleErrorDoesNotEvaluateArgumentsTwice()
+[ mac ] TestWebKitAPI.WKWebExtensionContextTests/consoleErrorReportedNotLogOrWarn()
+[ mac ] TestWebKitAPI.WKWebExtensionContextTests/contentScriptsParsing()
+[ mac ] TestWebKitAPI.WKWebExtensionContextTests/defaultPermissionChecks()
+[ mac ] TestWebKitAPI.WKWebExtensionContextTests/loadNonExistentImage()
+[ mac ] TestWebKitAPI.WKWebExtensionContextTests/noErrorForCaughtExceptionsInBackground()
+[ mac ] TestWebKitAPI.WKWebExtensionContextTests/optionsPageURLParsing()
+[ mac ] TestWebKitAPI.WKWebExtensionContextTests/pageScriptErrorNotReportedToExtension()
+[ mac ] TestWebKitAPI.WKWebExtensionContextTests/permissionGranting()
+[ mac ] TestWebKitAPI.WKWebExtensionContextTests/referenceErrorInBackground()
+[ mac ] TestWebKitAPI.WKWebExtensionContextTests/syntaxErrorInBackground()
+[ mac ] TestWebKitAPI.WKWebExtensionContextTests/topLevelThrowInModuleBackground()
+[ mac ] TestWebKitAPI.WKWebExtensionContextTests/topLevelThrowInPopup()
+[ mac ] TestWebKitAPI.WKWebExtensionContextTests/uncaughtScriptErrorInBackground()
+[ mac ] TestWebKitAPI.WKWebExtensionContextTests/uncaughtScriptErrorInContentScript()
+[ mac ] TestWebKitAPI.WKWebExtensionContextTests/uncaughtScriptErrorInEventListener()
+[ mac ] TestWebKitAPI.WKWebExtensionContextTests/uncaughtScriptErrorInMainWorldContentScript()
+[ mac ] TestWebKitAPI.WKWebExtensionContextTests/uncaughtScriptErrorInServiceWorkerBackground()
+[ mac ] TestWebKitAPI.WKWebExtensionContextTests/unhandledPromiseRejectionInBackground()
+[ mac ] TestWebKitAPI.WKWebExtensionContextTests/unhandledPromiseRejectionInServiceWorkerBackground()
+[ mac ] TestWebKitAPI.WKWebExtensionContextTests/urlOverridesParsing()
 [ mac ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.NonExtensionPageDoesNotGiveSubframesUnpartitionedAccess
 [ mac ] TestWebKitAPI.WKWebView.AlwaysShowsScroller
 [ mac ] TestWebKitAPI.WKWebView.AuxiliaryWindowsShareLocalStorage
