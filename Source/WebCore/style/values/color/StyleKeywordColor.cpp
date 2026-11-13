@@ -32,12 +32,13 @@
 #include "Document.h"
 #include "PlatformRenderTheme.h"
 #include "RenderTheme.h"
+#include "StyleAccentColor.h"
 #include "StyleBuilderState.h"
 #include "StyleColor.h"
 #include "StyleColorResolutionState.h"
 #include "StyleComputedStyle.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleContrastColor.h"
-#include "StyleCurrentAccentColor.h"
 #include "StyleCurrentColor.h"
 #include "StyleResolvedColors.h"
 
@@ -45,6 +46,24 @@ namespace WebCore {
 namespace Style {
 
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(KeywordColor);
+
+static Color resolveAccentColorKeyword(const ColorResolutionState& state)
+{
+    if (state.propertyToResolve == CSSPropertyID::AccentColor && state.parentStyle) {
+        // accent-color: AccentColor should resolve to the _computed_ value of the parent's accent-color.
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+        auto computedStyleColor = state.parentStyle->accentColorResolvingCurrentColor();
+        auto renderingColor = state.parentStyle->accentColorResolvingCurrentColorApplyingColorFilter();
+        if (computedStyleColor != renderingColor)
+            return KeywordColor { WTF::move(computedStyleColor), WTF::move(renderingColor) };
+        return ResolvedColor { WTF::move(renderingColor) };
+#else
+        return ResolvedColor { state.parentStyle->accentColorResolvingCurrentColorApplyingColorFilter() };
+#endif
+    }
+
+    return state.style->accentColor().colorOrDefaultColor();
+}
 
 Color toStyleColor(const CSS::KeywordColor& unresolved, ColorResolutionState& state)
 {
@@ -54,9 +73,9 @@ Color toStyleColor(const CSS::KeywordColor& unresolved, ColorResolutionState& st
     case CSSValueID::Currentcolor:
         return { CurrentColor() };
     case CSSValueID::Accentcolor:
-        return { CurrentAccentColor() };
+        return resolveAccentColorKeyword(state);
     case CSSValueID::Accentcolortext:
-        return { ContrastColor { CurrentAccentColor() } };
+        return { ContrastColor { resolveAccentColorKeyword(state) } };
     default:
         break;
     }
