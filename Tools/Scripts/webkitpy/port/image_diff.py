@@ -135,6 +135,7 @@ class ImageDiffer(object):
             err_str += "ImageDiff timed out\n"
         if self._process.has_crashed():
             err_str += "ImageDiff crashed\n"
+            self.stop()
 
         if not diff_output or not fuzzy_data:
             return ImageDiffResult(passed=False, diff_image=None, difference=0, tolerance=self._tolerance, fuzzy_data=None, error_string=err_str or "Failed to read ImageDiff output")
