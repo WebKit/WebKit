@@ -266,11 +266,15 @@ class WebDriverTestsFactory(TestFactory):
 
 
 class iOSBuildFactory(BuildFactory):
-    pass
+    def __init__(self, *args, checkRelevance=True, **kwargs):
+        super().__init__(*args, checkRelevance=checkRelevance, **kwargs)
 
 
 class iOSEmbeddedBuildFactory(BuildFactory):
     skipUpload = True
+
+    def __init__(self, *args, checkRelevance=True, **kwargs):
+        super().__init__(*args, checkRelevance=checkRelevance, **kwargs)
 
 
 class iOSTestsFactory(TestFactory):
@@ -280,11 +284,15 @@ class iOSTestsFactory(TestFactory):
 
 
 class visionOSBuildFactory(BuildFactory):
-    pass
+    def __init__(self, *args, checkRelevance=True, **kwargs):
+        super().__init__(*args, checkRelevance=checkRelevance, **kwargs)
 
 
 class visionOSEmbeddedBuildFactory(BuildFactory):
     skipUpload = True
+
+    def __init__(self, *args, checkRelevance=True, **kwargs):
+        super().__init__(*args, checkRelevance=checkRelevance, **kwargs)
 
 
 class visionOSTestsFactory(TestFactory):
@@ -294,7 +302,8 @@ class visionOSTestsFactory(TestFactory):
 
 
 class macOSBuildFactory(BuildFactory):
-    pass
+    def __init__(self, *args, checkRelevance=True, **kwargs):
+        super().__init__(*args, checkRelevance=checkRelevance, **kwargs)
 
 
 class macOSBuildOnlyFactory(BuildFactory):
@@ -307,9 +316,15 @@ class macOSBuildOnlyFactory(BuildFactory):
 class watchOSBuildFactory(BuildFactory):
     skipUpload = True
 
+    def __init__(self, *args, checkRelevance=True, **kwargs):
+        super().__init__(*args, checkRelevance=checkRelevance, **kwargs)
+
 
 class tvOSBuildFactory(BuildFactory):
     skipUpload = True
+
+    def __init__(self, *args, checkRelevance=True, **kwargs):
+        super().__init__(*args, checkRelevance=checkRelevance, **kwargs)
 
 
 class macOSWK1Factory(TestFactory):
@@ -346,9 +361,15 @@ class PlayStationBuildFactory(BuildFactory):
     requiresUserValidation = True
     skipUpload = True
 
+    def __init__(self, *args, checkRelevance=True, **kwargs):
+        super().__init__(*args, checkRelevance=checkRelevance, **kwargs)
+
 
 class WinBuildFactory(BuildFactory):
     branches = [r'main']
+
+    def __init__(self, *args, checkRelevance=True, **kwargs):
+        super().__init__(*args, checkRelevance=checkRelevance, **kwargs)
 
 
 class WinTestsFactory(TestFactory):
@@ -357,6 +378,9 @@ class WinTestsFactory(TestFactory):
 
 class GTKBuildFactory(BuildFactory):
     branches = [r'main', r'webkit.+']
+
+    def __init__(self, *args, checkRelevance=True, **kwargs):
+        super().__init__(*args, checkRelevance=checkRelevance, **kwargs)
 
 
 class GTKTestsFactory(TestFactory):
@@ -367,9 +391,15 @@ class GTKTestsFactory(TestFactory):
 class WPEBuildFactory(BuildFactory):
     branches = [r'main', r'webkit.+']
 
+    def __init__(self, *args, checkRelevance=True, **kwargs):
+        super().__init__(*args, checkRelevance=checkRelevance, **kwargs)
+
 
 class GTK3GCCBuildFactory(GTKBuildFactory):
     skipUpload = True
+
+    def __init__(self, *args, checkRelevance=True, **kwargs):
+        super().__init__(*args, checkRelevance=checkRelevance, **kwargs)
 
 
 class WPETestsFactory(TestFactory):
