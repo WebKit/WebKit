@@ -29,15 +29,19 @@
 #import "Helpers/Test.h"
 #import "Helpers/Utilities.h"
 #import "Helpers/cocoa/HTTPServer.h"
+#import "Helpers/cocoa/SiteIsolationTestUtilities.h"
+#import "Helpers/cocoa/SiteIsolationUtilities.h"
 #import "Helpers/cocoa/TestNSBundleExtras.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
+#import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKFeature.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
+#import <utility>
 #import <wtf/RetainPtr.h>
 
 #if ENABLE(IPC_TESTING_API)
@@ -437,6 +441,127 @@ TEST(SharedWorkerProcessPlacement, CustomSchemeDocumentWithoutHostCanStartShared
     ASSERT_FALSE(webContentProcessTerminated);
     EXPECT_EQ(webProcessBeforeWorker, [webView _webProcessIdentifier]);
     EXPECT_WK_STREQ("connected", [webView stringByEvaluatingJavaScript:@"window.workerResult || ''"]);
+}
+
+static constexpr auto siteIsolationMismatchMainBytes = R"TESTRESOURCE(
+<!DOCTYPE html>
+<body>
+<script>
+function startWorker() {
+    return new Promise(resolve => {
+        window.worker = new SharedWorker('/shared-worker.js');
+        worker.port.onmessage = event => resolve(event.data);
+        worker.port.start();
+    });
+}
+
+function addCrossSiteFrame() {
+    return new Promise(resolve => {
+        const iframe = document.createElement('iframe');
+        iframe.onload = () => resolve('loaded');
+        iframe.src = 'https://webkit.org/frame';
+        document.body.appendChild(iframe);
+    });
+}
+</script>
+</body>
+)TESTRESOURCE"_s;
+
+static constexpr auto siteIsolationMismatchWorkerBytes = R"TESTRESOURCE(
+onconnect = event => event.ports[0].postMessage('connected');
+)TESTRESOURCE"_s;
+
+// The process pool is new, so the first web view created with either configuration is the pool's first page,
+// which supplies the preferences of the pool's remote workers.
+static std::pair<RetainPtr<WKWebViewConfiguration>, RetainPtr<WKWebViewConfiguration>> configurationsWithoutAndWithSiteIsolation(const HTTPServer& server)
+{
+    RetainPtr processPool = adoptNS([[WKProcessPool alloc] init]);
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    [configuration setProcessPool:processPool.get()];
+    setFeatureEnabled(configuration.get(), @"SiteIsolationEnabled", false);
+
+    RetainPtr siteIsolatedConfiguration = adoptNS([configuration copy]);
+    [siteIsolatedConfiguration setPreferences:adoptNS([[configuration preferences] copy]).get()];
+    enableSiteIsolation(siteIsolatedConfiguration.get());
+    return { WTF::move(configuration), WTF::move(siteIsolatedConfiguration) };
+}
+
+// Running a worker with Site Isolation in the process of a page without it would turn Site Isolation on there,
+// and the commit of a cross-site frame that reports an upgrade-insecure-requests origin would then fail the
+// first-party check.
+TEST(SharedWorkerProcessPlacement, SiteIsolatedWorkerDoesNotRunInPageProcessWithoutSiteIsolation)
+{
+    HTTPServer server({
+        { "/main"_s, { siteIsolationMismatchMainBytes } },
+        { "/shared-worker.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, siteIsolationMismatchWorkerBytes } },
+        { "/frame"_s, { { { "Content-Type"_s, "text/html"_s }, { "Content-Security-Policy"_s, "upgrade-insecure-requests"_s } }, "frame"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [configuration, siteIsolatedConfiguration] = configurationsWithoutAndWithSiteIsolation(server);
+    RetainPtr<WKProcessPool> processPool = [configuration processPool];
+
+    RetainPtr siteIsolatedWebView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:siteIsolatedConfiguration.get()]);
+    [siteIsolatedWebView synchronouslyLoadHTMLString:@"<p>Site Isolation on</p>"];
+    EXPECT_TRUE(isSiteIsolationEnabled(siteIsolatedWebView.get()));
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    EXPECT_FALSE(isSiteIsolationEnabled(webView.get()));
+
+    __block bool webContentProcessTerminated = false;
+    [navigationDelegate setWebContentProcessDidTerminate:^(WKWebView *, _WKProcessTerminationReason) {
+        webContentProcessTerminated = true;
+    }];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/main"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    auto webProcessBeforeWorker = [webView _webProcessIdentifier];
+    EXPECT_NE(0, webProcessBeforeWorker);
+    auto processCountBeforeWorker = [processPool _webProcessCountIgnoringPrewarmedAndCached];
+
+    EXPECT_WK_STREQ("connected", [webView objectByCallingAsyncFunction:@"return await startWorker()" withArguments:@{ }]);
+    EXPECT_EQ(processCountBeforeWorker + 1, [processPool _webProcessCountIgnoringPrewarmedAndCached]);
+
+    EXPECT_WK_STREQ("loaded", [webView objectByCallingAsyncFunction:@"return await addCrossSiteFrame()" withArguments:@{ }]);
+    ASSERT_FALSE(webContentProcessTerminated);
+    EXPECT_EQ(webProcessBeforeWorker, [webView _webProcessIdentifier]);
+}
+
+// The worker's preferences can turn Site Isolation on in a process but never off, so a worker without Site
+// Isolation can still share the process of a page that has it.
+TEST(SharedWorkerProcessPlacement, WorkerWithoutSiteIsolationRunsInSiteIsolatedPageProcess)
+{
+    HTTPServer server({
+        { "/main"_s, { siteIsolationMismatchMainBytes } },
+        { "/shared-worker.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, siteIsolationMismatchWorkerBytes } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [configuration, siteIsolatedConfiguration] = configurationsWithoutAndWithSiteIsolation(server);
+    RetainPtr<WKProcessPool> processPool = [configuration processPool];
+
+    RetainPtr firstWebView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    [firstWebView synchronouslyLoadHTMLString:@"<p>Site Isolation off</p>"];
+    EXPECT_FALSE(isSiteIsolationEnabled(firstWebView.get()));
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:siteIsolatedConfiguration.get()]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    EXPECT_TRUE(isSiteIsolationEnabled(webView.get()));
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/main"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    auto webProcessBeforeWorker = [webView _webProcessIdentifier];
+    EXPECT_NE(0, webProcessBeforeWorker);
+    auto processCountBeforeWorker = [processPool _webProcessCountIgnoringPrewarmedAndCached];
+
+    EXPECT_WK_STREQ("connected", [webView objectByCallingAsyncFunction:@"return await startWorker()" withArguments:@{ }]);
+    EXPECT_EQ(processCountBeforeWorker, [processPool _webProcessCountIgnoringPrewarmedAndCached]);
+    EXPECT_EQ(webProcessBeforeWorker, [webView _webProcessIdentifier]);
 }
 
 } // namespace TestWebKitAPI

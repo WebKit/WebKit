@@ -63,6 +63,7 @@
 #include "RemotePageProxy.h"
 #include "RemoteWorkerType.h"
 #include "SandboxExtension.h"
+#include "SharedPreferencesForWebProcess.h"
 #include "SuspendedPageProxy.h"
 #include "TextChecker.h"
 #include "UIGamepad.h"
@@ -734,6 +735,30 @@ void WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(Remo
     Ref processPool = requestingProcess ? requestingProcess->processPool() : processPools()[0].get();
     auto enhancedSecurity = requestingProcess ? requestingProcess->enhancedSecurity() : defaultEnhancedSecurity(processPool, lockdownMode, protect(processPool->defaultPageGroup().preferences()));
 
+    struct WebPreferencesStoreRef {
+        RefPtr<WebPreferences> webPreferences;
+        RefPtr<WebProcessPool> processPool;
+        RefPtr<WebPageGroup> webPageGroup;
+        const WebPreferencesStore& store;
+    } preferencesStore = [&] {
+        if (workerType == RemoteWorkerType::ServiceWorker && websiteDataStore->serviceWorkerOverridePreferences())
+            return WebPreferencesStoreRef { websiteDataStore->serviceWorkerOverridePreferences(), nullptr, nullptr, websiteDataStore->serviceWorkerOverridePreferences()->store() };
+
+        if (processPool->m_remoteWorkerPreferences)
+            return WebPreferencesStoreRef { nullptr, processPool.copyRef(), nullptr, *processPool->m_remoteWorkerPreferences };
+
+        Ref pageGroup = processPool->m_defaultPageGroup;
+        return WebPreferencesStoreRef { nullptr, nullptr, pageGroup.copyRef(), pageGroup->preferences().store() };
+    }();
+
+    // Starting a worker merges its preferences into the shared preferences of its process, which can turn Site
+    // Isolation on but never off. A process without Site Isolation can host a page's cross-site frames, which
+    // would then fail the first-party checks that Site Isolation enables.
+    bool workerUsesSiteIsolation = WebKit::sharedPreferencesForWebProcess(preferencesStore.store, lockdownMode == WebProcessProxy::LockdownMode::Enabled).siteIsolationEnabled;
+    auto canHostWorkerWithoutTurningOnSiteIsolation = [&](const WebProcessProxy& process) {
+        return !workerUsesSiteIsolation || process.sharedPreferencesForWebProcessValue().siteIsolationEnabled;
+    };
+
     RefPtr<WebProcessProxy> remoteWorkerProcessProxy;
 
     auto useProcessForRemoteWorkers = [&](WebProcessProxy& process) {
@@ -754,7 +779,7 @@ void WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(Remo
 
     // Prioritize the requesting WebProcess for running the service worker.
     if (!remoteWorkerProcessProxy && !s_useSeparateServiceWorkerProcess && requestingProcess && requestingProcess->state() != WebProcessProxy::State::Terminated) {
-        if (requestingProcess->websiteDataStore() == websiteDataStore && requestingProcess->site() == site && requestingProcess->crossOriginMode() == crossOriginMode && !requestingProcess->isInProcessCache())
+        if (requestingProcess->websiteDataStore() == websiteDataStore && requestingProcess->site() == site && requestingProcess->crossOriginMode() == crossOriginMode && canHostWorkerWithoutTurningOnSiteIsolation(*requestingProcess) && !requestingProcess->isInProcessCache())
             useProcessForRemoteWorkers(*requestingProcess);
     }
 
@@ -770,6 +795,8 @@ void WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(Remo
                 continue;
             if (process->crossOriginMode() != crossOriginMode)
                 continue;
+            if (!canHostWorkerWithoutTurningOnSiteIsolation(process))
+                continue;
             if (process->isInProcessCache())
                 continue;
 
@@ -779,22 +806,6 @@ void WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(Remo
             break;
         }
     }
-
-    struct WebPreferencesStoreRef {
-        RefPtr<WebPreferences> webPreferences;
-        RefPtr<WebProcessPool> processPool;
-        RefPtr<WebPageGroup> webPageGroup;
-        const WebPreferencesStore& store;
-    } preferencesStore = [&] {
-        if (workerType == RemoteWorkerType::ServiceWorker && websiteDataStore->serviceWorkerOverridePreferences())
-            return WebPreferencesStoreRef { websiteDataStore->serviceWorkerOverridePreferences(), nullptr, nullptr, websiteDataStore->serviceWorkerOverridePreferences()->store() };
-
-        if (processPool->m_remoteWorkerPreferences)
-            return WebPreferencesStoreRef { nullptr, processPool.copyRef(), nullptr, *processPool->m_remoteWorkerPreferences };
-
-        Ref pageGroup = processPool->m_defaultPageGroup;
-        return WebPreferencesStoreRef { nullptr, nullptr, pageGroup.copyRef(), pageGroup->preferences().store() };
-    }();
 
     if (!remoteWorkerProcessProxy) {
         Ref newProcessProxy = WebProcessProxy::createForRemoteWorkers(workerType, processPool, Site { site }, *websiteDataStore, crossOriginMode, lockdownMode, enhancedSecurity);
