@@ -2160,6 +2160,12 @@ void AXIsolatedTree::processQueuedNodeUpdates()
         // cache) processes the queued work instead of stranding it.
         return;
     }
+
+    if (RefPtr document = protect(cache)->document(); document && needsLayoutOrStyleRecalc(*document) && !Accessibility::inRenderTreeOrStyleUpdate(*document)) {
+        document->updateLayoutIgnorePendingStylesheets();
+        if (!cache)
+            return;
+    }
     m_hasQueuedNodeUpdates = false;
 
     SetForScope processingScope(m_isProcessingQueuedNodeUpdates, true);

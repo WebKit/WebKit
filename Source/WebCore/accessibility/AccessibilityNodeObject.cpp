@@ -83,6 +83,7 @@
 #include "HTMLParagraphElement.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLSelectElement.h"
+#include "HTMLSelectedContentElement.h"
 #include "HTMLSlotElement.h"
 #include "HTMLSummaryElement.h"
 #include "HTMLTableCaptionElement.h"
@@ -137,11 +138,13 @@
 #include "VisibleUnits.h"
 #include "XLinkNames.h"
 #include <numeric>
+#include <wtf/Language.h>
 #include <wtf/Scope.h>
 #include <wtf/SetForScope.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
+#include <wtf/unicode/ListFormatter.h>
 
 namespace WebCore {
 
@@ -3965,6 +3968,38 @@ static bool shouldPrependNewline(AccessibilityObject* previousObject)
     return node && WebCore::shouldEmitNewlinesBeforeAndAfterNode(*node);
 }
 
+static RefPtr<HTMLSelectElement> selectForSelectedContent(Node* node)
+{
+    RefPtr selectedContent = dynamicDowncast<HTMLSelectedContentElement>(node);
+    if (!selectedContent || selectedContent->isDisabled())
+        return nullptr;
+    RefPtr select = ancestorsOfType<HTMLSelectElement>(*selectedContent).first();
+    return select && select->updatesSelectedContent() ? select : nullptr;
+}
+
+// The <selectedcontent> of a multi-select holds a clone of every option, of which only the selected ones render.
+static String selectedOptionLabels(const AccessibilityObject& selectedContent, const HTMLSelectElement& select)
+{
+    Vector<String> labels;
+    for (Ref child : AXChildIterator(selectedContent)) {
+        RefPtr option = dynamicDowncast<HTMLOptionElement>(child->node());
+        if (!option)
+            continue;
+        auto label = option->attributeTrimmedWithDefaultARIA(aria_labelAttr);
+        if (label.isEmpty())
+            label = child->textUnderElement();
+        if (!label.isEmpty())
+            labels.append(WTF::move(label));
+    }
+    if (labels.size() < 2)
+        return labels.isEmpty() ? String() : WTF::move(labels[0]);
+
+    auto& language = select.effectiveLang();
+    ListFormatter formatter { (language.isEmpty() ? defaultLanguage() : language.string()).ascii(), ListFormatter::Type::Conjunction, ListFormatter::Style::Long };
+    auto list = formatter.format(labels.span());
+    return list ? WTF::move(*list) : makeStringByJoining(labels.span(), ", "_s);
+}
+
 String AccessibilityNodeObject::textUnderElement(TextUnderElementMode mode) const
 {
     RefPtr node = this->node();
@@ -3997,6 +4032,16 @@ String AccessibilityNodeObject::textUnderElement(TextUnderElementMode mode) cons
             // Unlike visibility:visible + visiblity:visible where the latter can override the former in a subtree,
             // display:none guarantees nothing within will be rendered, so we can exit early.
             return { };
+        }
+    }
+
+    // A <selectedcontent> shows the selected options, so their labels give its text.
+    if (RefPtr select = selectForSelectedContent(node.get()); select && !mode.isHidden()) {
+        if (select->multiple())
+            return selectedOptionLabels(*this, *select);
+        if (RefPtr option = select->selectedOptionForSelectedContent()) {
+            if (auto label = option->attributeTrimmedWithDefaultARIA(aria_labelAttr); !label.isEmpty())
+                return label;
         }
     }
 
