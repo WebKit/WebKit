@@ -62,9 +62,6 @@
         "subtests": {
             "test_dom_token_list": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/320453"}}
-            },
-            "test_file_list": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "MiniBrowser doesn't support file upload under automation"}}
             }
         }
     },
@@ -73,9 +70,6 @@
         "subtests": {
             "test_dom_token_list": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/320453"}}
-            },
-            "test_file_list": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "MiniBrowser doesn't support file upload under automation"}}
             }
         }
     },
@@ -1975,12 +1969,6 @@
             },
             "test_no_such_element_with_shadow_root": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/230612"}}
-            },
-            "test_input_file": {
-                "expected": {"mac@Debug": {"status": ["FAIL"], "note": "MiniBrowser doesn't support file upload under automation"}}
-            },
-            "test_input_file_multiple": {
-                "expected": {"mac": {"status": ["TIMEOUT"], "note": "MiniBrowser doesn't support file upload under automation"}}
             }
         }
     },
@@ -2138,17 +2126,11 @@
     },
     "imported/w3c/webdriver/tests/classic/element_send_keys/events.py": {
         "subtests": {
-            "test_form_control_send_text[input]": {
-                "expected": {"mac@Release": {"status": ["TIMEOUT"], "note": "Simulated input fails on Mac"}}
-            },
             "test_not_blurred[input]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188118"}}
             },
             "test_not_blurred[textarea]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188118"}}
-            },
-            "test_file_upload": {
-                "expected": {"mac@Debug": {"status": ["FAIL", "PASS"], "note": "MiniBrowser doesn't support file upload under automation"}}
             }
         }
     },
@@ -6525,50 +6507,6 @@
             },
             "test_ignore[beforeunload]": {
                 "expected": {"mac": {"status": ["FAIL", "PASS"], "note": "Simulated input fails on Mac"}}
-            }
-        }
-    },
-
-    "imported/w3c/webdriver/tests/classic/element_send_keys/file_upload.py": {
-        "subtests": {
-            "test_display_none": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "MiniBrowser doesn't support file upload under automation"}}
-            },
-            "test_focused": {
-                "expected": {"mac@Release": {"status": ["FAIL"], "note": "MiniBrowser doesn't support file upload under automation"}, "mac@Debug": {"status": ["TIMEOUT"], "note": "MiniBrowser doesn't support file upload under automation"}}
-            },
-            "test_hidden": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "MiniBrowser doesn't support file upload under automation"}}
-            },
-            "test_multiple_files": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "MiniBrowser doesn't support file upload under automation"}}
-            },
-            "test_multiple_files_reset_with_element_clear": {
-                "expected": {"mac@Release": {"status": ["FAIL"], "note": "MiniBrowser doesn't support file upload under automation"}, "mac@Debug": {"status": ["TIMEOUT"], "note": "MiniBrowser doesn't support file upload under automation"}}
-            },
-            "test_multiple_files_send_twice": {
-                "expected": {"mac@Release": {"status": ["FAIL"], "note": "MiniBrowser doesn't support file upload under automation"}, "mac@Debug": {"status": ["TIMEOUT"], "note": "MiniBrowser doesn't support file upload under automation"}}
-            },
-            "test_not_focused": {
-                "expected": {"mac@Release": {"status": ["FAIL"], "note": "MiniBrowser doesn't support file upload under automation"}, "mac@Debug": {"status": ["FAIL", "TIMEOUT"], "note": "MiniBrowser doesn't support file upload under automation"}}
-            },
-            "test_obscured": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "MiniBrowser doesn't support file upload under automation"}}
-            },
-            "test_outside_viewport": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "MiniBrowser doesn't support file upload under automation"}}
-            },
-            "test_single_file": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "MiniBrowser doesn't support file upload under automation"}}
-            },
-            "test_single_file_appends_with_multiple_attribute": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "MiniBrowser doesn't support file upload under automation"}}
-            },
-            "test_single_file_replaces_without_multiple_attribute": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "MiniBrowser doesn't support file upload under automation"}}
-            },
-            "test_transparent": {
-                "expected": {"mac@Release": {"status": ["FAIL"], "note": "MiniBrowser doesn't support file upload under automation"}, "mac@Debug": {"status": ["FAIL", "TIMEOUT"], "note": "MiniBrowser doesn't support file upload under automation"}}
             }
         }
     },

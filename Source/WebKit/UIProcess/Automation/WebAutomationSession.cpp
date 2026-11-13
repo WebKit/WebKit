@@ -37,8 +37,11 @@
 #include "ImageOptions.h"
 #include "InspectorPassthroughChannel.h"
 #include "Logging.h"
+#include "NetworkProcessMessages.h"
+#include "NetworkProcessProxy.h"
 #include "PageLoadState.h"
 #include "SameDocumentNavigationType.h"
+#include "SandboxExtension.h"
 #include "WebAutomationSessionMacros.h"
 #include "WebAutomationSessionMessages.h"
 #include "WebAutomationSessionProxyMessages.h"
@@ -50,10 +53,12 @@
 #include "WebNavigationState.h"
 #include "WebOpenPanelResultListenerProxy.h"
 #include "WebPageInspectorController.h"
+#include "WebPageMessages.h"
 #include "WebPageProxy.h"
 #include "WebPreferences.h"
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
+#include "WebsiteDataStore.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <JavaScriptCore/InspectorFrontendRouter.h>
@@ -2497,17 +2502,30 @@ void WebAutomationSession::setFilesForInputFileUpload(const Inspector::Protocol:
     for (size_t i = 0; i < filenames->length(); ++i) {
         auto filename = filenames->get(i)->asString();
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!filename, InternalError, "The parameter 'filenames' contains a non-string value."_s);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!FileSystem::fileExists(filename), InvalidParameter, "The parameter 'filenames' contains a file that doesn't exist."_s);
 
         newFileList.append(filename);
     }
 
-    CompletionHandler<void(std::optional<String>&&)> completionHandler = [callback = WTF::move(callback)](std::optional<String>&& optionalError) mutable {
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF_SET(optionalError);
+    Ref process = page->processContainingFrame(frameID);
+    auto pageID = page->webPageIDInProcess(process);
+    for (auto& filename : borrow(newFileList))
+        process->addPreviouslyApprovedFileURL(URL::fileURLWithFileSystemPath(filename));
+#if ENABLE(SANDBOX_EXTENSIONS)
+    auto sandboxExtensionHandles = SandboxExtension::createReadOnlyHandlesForFiles("WebAutomationSession::setFilesForInputFileUpload"_s, newFileList);
+    process->send(Messages::WebPage::ExtendSandboxForFilesFromOpenPanel(WTF::move(sandboxExtensionHandles)), pageID);
+#endif
 
-        callback({ });
+    auto setFiles = [process, pageID, frameID, nodeHandle, fileList = newFileList, callback = WTF::move(callback)] mutable {
+        CompletionHandler<void(std::optional<String>&&)> completionHandler = [callback = WTF::move(callback)](std::optional<String>&& optionalError) mutable {
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF_SET(optionalError);
+
+            callback({ });
+        };
+
+        process->sendWithAsyncReply(Messages::WebAutomationSessionProxy::SetFilesForInputFileUpload(pageID, frameID, nodeHandle, WTF::move(fileList)), WTF::move(completionHandler));
     };
-
-    page->sendWithAsyncReplyToProcessContainingFrameWithoutDestinationIdentifier(frameID, Messages::WebAutomationSessionProxy::SetFilesForInputFileUpload(page->webPageIDInProcessForFrame(frameID), frameID, nodeHandle, WTF::move(newFileList)), WTF::move(completionHandler));
+    protect(protect(page->websiteDataStore())->networkProcess())->sendWithAsyncReply(Messages::NetworkProcess::AllowFilesAccessFromWebProcess(process->coreProcessIdentifier(), WTF::move(newFileList)), WTF::move(setFiles));
 }
 
 NODELETE static inline Inspector::Protocol::Automation::CookieSameSitePolicy toProtocolSameSitePolicy(WebCore::Cookie::SameSitePolicy policy)
