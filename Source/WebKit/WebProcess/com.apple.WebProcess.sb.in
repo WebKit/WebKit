@@ -157,13 +157,6 @@
             (csr CSR_ALLOW_APPLE_INTERNAL)
             (csr CSR_ALLOW_UNRESTRICTED_DTRACE))))
 
-#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED <= 150400
-;;; Allow creation of core dumps.
-(allow file-write-create (with report) (with telemetry)
-    (require-all (prefix "/cores/")
-        (vnode-type REGULAR-FILE)))
-#endif
-
 #if !ENABLE(CFPREFS_DIRECT_MODE)
 (allow ipc-posix-shm-read*
     (ipc-posix-name-prefix "apple.cfprefs."))
