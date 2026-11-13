@@ -1,0 +1,20 @@
+
+PASS I420: tightly packed layout
+PASS I420: padded rows
+PASS I420: padded rows with gaps before and between planes
+PASS I420: planes in reverse order
+PASS I420A: tightly packed layout
+PASS I420A: padded rows
+PASS I420A: padded rows with gaps before and between planes
+PASS I420A: planes in reverse order
+PASS NV12: tightly packed layout
+PASS NV12: padded rows
+PASS NV12: padded rows with gaps before and between planes
+PASS NV12: planes in reverse order
+PASS RGBA: tightly packed layout
+PASS RGBA: padded rows
+PASS RGBA: padded rows with gaps before and between planes
+PASS BGRA: tightly packed layout
+PASS BGRA: padded rows
+PASS BGRA: padded rows with gaps before and between planes
+
