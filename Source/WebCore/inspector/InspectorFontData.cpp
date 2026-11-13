@@ -325,7 +325,9 @@ private:
 
     bool paintingDisabled() const final { return true; }
 
+#if !USE(CG) && !USE(SKIA)
     void didUpdateState(GraphicsContextState&) final { }
+#endif
 
     void drawNativeImage(const NativeImage&, const FloatRect&, const FloatRect&, RasterDrawingOptions) final { }
 
