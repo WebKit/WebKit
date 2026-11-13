@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+jsTestIsAsync = true;
+
+description("Tests that calling GPUDevice.importExternalTexture multiple times on the same video element within a render pass succeeds and renders all draws.");
+
+const veryBrightVideo = `data:video/mp4;base64,AAAAHGZ0eXBpc29tAAACAGlzb21pc28ybXA0MQAAAAhmcmVlAAAAvG1kYXQAAAAfTgEFGkdWStxcTEM/lO/FETzRQ6gD7gAA7gIAA3EYgAAAAEgoAa8iNjAkszOL+e58c//cEe//0TT//scp1n/381P/RWP/zOW4QtxorfVogeh8nQDbQAAAAwAQMCcWUTAAAAMAAAMAAAMA84AAAAAVAgHQAyu+KT35E7gAADFgAAADABLQAAAAEgIB4AiS76MTkNbgAAF3AAAPSAAAABICAeAEn8+hBOTXYAADUgAAHRAAAAPibW9vdgAAAGxtdmhkAAAAAAAAAAAAAAAAAAAD6AAAAKcAAQAAAQAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAw10cmFrAAAAXHRraGQAAAADAAAAAAAAAAAAAAABAAAAAAAAAKcAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAABAAAAAABAAAAAQAAAAAAAkZWR0cwAAABxlbHN0AAAAAAAAAAEAAACnAAAAAAABAAAAAAKFbWRpYQAAACBtZGhkAAAAAAAAAAAAAAAAAABdwAAAD6BVxAAAAAAAMWhkbHIAAAAAAAAAAHZpZGUAAAAAAAAAAAAAAABDb3JlIE1lZGlhIFZpZGVvAAAAAixtaW5mAAAAFHZtaGQAAAABAAAAAAAAAAAAAAAkZGluZgAAABxkcmVmAAAAAAAAAAEAAAAMdXJsIAAAAAEAAAHsc3RibAAAARxzdHNkAAAAAAAAAAEAAAEMaHZjMQAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAQABAASAAAAEgAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABj//wAAAHVodmNDAQIgAAAAsAAAAAAAPPAA/P36+gAACwOgAAEAGEABDAH//wIgAAADALAAAAMAAAMAPBXAkKEAAQAmQgEBAiAAAAMAsAAAAwAAAwA8oBQgQcCTDLYgV7kWVYC1CRAJAICiAAEACUQBwChkuNBTJAAAAApmaWVsAQAAAAATY29scm5jbHgACQAQAAkAAAAAEHBhc3AAAAABAAAAAQAAABRidHJ0AAAAAAAALPwAACz8AAAAKHN0dHMAAAAAAAAAAwAAAAIAAAPoAAAAAQAAAAEAAAABAAAD6AAAABRzdHNzAAAAAAAAAAEAAAABAAAAEHNkdHAAAAAAIBAQGAAAAChjdHRzAAAAAAAAAAMAAAABAAAAAAAAAAEAAAfQAAAAAgAAAAAAAAAcc3RzYwAAAAAAAAABAAAAAQAAAAQAAAABAAAAJHN0c3oAAAAAAAAAAAAAAAQAAABvAAAAGQAAABYAAAAWAAAAFHN0Y28AAAAAAAAAAQAAACwAAABhdWR0YQAAAFltZXRhAAAAAAAAACFoZGxyAAAAAAAAAABtZGlyYXBwbAAAAAAAAAAAAAAAACxpbHN0AAAAJKl0b28AAAAcZGF0YQAAAAEAAAAATGF2ZjYwLjMuMTAw`;
+
+function createVideo() {
+    const video = document.createElement('video');
+    video.src = veryBrightVideo;
+    video.muted = true;
+    video.loop = true;
+    return new Promise((resolve, reject) => {
+        video.onerror = () => reject(new Error('Failed to load video'));
+        video.requestVideoFrameCallback(() => resolve(video));
+        video.onloadeddata = () => video.play();
+    });
+}
+
+onload = async () => {
+    try {
+        const adapter = await navigator.gpu.requestAdapter();
+        const device = await adapter.requestDevice();
+        const video = await createVideo();
+
+        const module = device.createShaderModule({
+            code: `
+                struct VertexOutput {
+                    @builtin(position) position: vec4f,
+                    @location(0) texcoord: vec2f,
+                };
+
+                @group(0) @binding(0) var ourSampler: sampler;
+                @group(0) @binding(1) var ourTexture: texture_external;
+                @group(0) @binding(2) var<uniform> offsetScale: vec4f;
+
+                @vertex fn vs(@builtin(vertex_index) vertexIndex: u32) -> VertexOutput {
+                    let pos = array(
+                        vec2f(0.0, 0.0),
+                        vec2f(1.0, 0.0),
+                        vec2f(0.0, 1.0),
+                        vec2f(0.0, 1.0),
+                        vec2f(1.0, 0.0),
+                        vec2f(1.0, 1.0),
+                    );
+                    let xy = pos[vertexIndex];
+                    var out: VertexOutput;
+                    out.position = vec4f(xy * offsetScale.zw + offsetScale.xy, 0.0, 1.0);
+                    out.texcoord = xy;
+                    return out;
+                }
+
+                @fragment fn fs(in: VertexOutput) -> @location(0) vec4f {
+                    return textureSampleBaseClampToEdge(ourTexture, ourSampler, in.texcoord);
+                }
+            `,
+        });
+
+        const pipeline = device.createRenderPipeline({
+            layout: 'auto',
+            vertex: { module, entryPoint: 'vs' },
+            fragment: { module, entryPoint: 'fs', targets: [{ format: 'rgba8unorm' }] },
+        });
+
+        const sampler = device.createSampler({ magFilter: 'linear', minFilter: 'linear' });
+
+        // 4 quadrants in NDC: bottom-left, bottom-right, top-left, top-right.
+        const quadrants = [
+            new Float32Array([-1.0, -1.0, 1.0, 1.0]),
+            new Float32Array([ 0.0, -1.0, 1.0, 1.0]),
+            new Float32Array([-1.0,  0.0, 1.0, 1.0]),
+            new Float32Array([ 0.0,  0.0, 1.0, 1.0]),
+        ];
+        const uniformBuffers = quadrants.map(data => {
+            const buffer = device.createBuffer({
+                size: data.byteLength,
+                usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+            });
+            device.queue.writeBuffer(buffer, 0, data);
+            return buffer;
+        });
+
+        const width = 64;
+        const height = 4;
+        const bytesPerRow = 256;
+        const renderTarget = device.createTexture({
+            size: [width, height],
+            format: 'rgba8unorm',
+            usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC,
+        });
+
+        async function renderFourQuadsFrame(frameIndex) {
+            device.pushErrorScope('validation');
+            const encoder = device.createCommandEncoder();
+            const pass = encoder.beginRenderPass({
+                colorAttachments: [{
+                    view: renderTarget.createView(),
+                    clearValue: [0, 0, 0, 0],
+                    loadOp: 'clear',
+                    storeOp: 'store',
+                }],
+            });
+            pass.setPipeline(pipeline);
+
+            let lastBindGroup;
+            for (let i = 0; i < 4; ++i) {
+                const texture = device.importExternalTexture({ source: video });
+                const bindGroup = device.createBindGroup({
+                    layout: pipeline.getBindGroupLayout(0),
+                    entries: [
+                        { binding: 0, resource: sampler },
+                        { binding: 1, resource: texture },
+                        { binding: 2, resource: { buffer: uniformBuffers[i] } },
+                    ],
+                });
+                lastBindGroup = bindGroup;
+                pass.setBindGroup(0, bindGroup);
+                pass.draw(6);
+            }
+            pass.end();
+
+            const readback = device.createBuffer({
+                size: bytesPerRow * height,
+                usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
+            });
+            encoder.copyTextureToBuffer(
+                { texture: renderTarget },
+                { buffer: readback, bytesPerRow, rowsPerImage: height },
+                [width, height]
+            );
+            device.queue.submit([encoder.finish()]);
+
+            const error = await device.popErrorScope();
+            if (error)
+                testFailed(`Frame ${frameIndex}: unexpected validation error: ${error.message}`);
+            else
+                testPassed(`Frame ${frameIndex}: submitted 4 quads with repeated importExternalTexture without validation error`);
+
+            await readback.mapAsync(GPUMapMode.READ);
+            const pixels = new Uint8Array(readback.getMappedRange());
+            const samplePoints = [
+                { name: 'top-left', x: 16, y: 1 },
+                { name: 'top-right', x: 48, y: 1 },
+                { name: 'bottom-left', x: 16, y: 3 },
+                { name: 'bottom-right', x: 48, y: 3 },
+            ];
+            let allQuadsRendered = true;
+            for (const pt of samplePoints) {
+                const offset = pt.y * bytesPerRow + pt.x * 4;
+                const a = pixels[offset + 3];
+                if (a !== 255) {
+                    allQuadsRendered = false;
+                    testFailed(`Frame ${frameIndex}: quad ${pt.name} did not render (rgba = ${pixels[offset]}, ${pixels[offset + 1]}, ${pixels[offset + 2]}, ${a})`);
+                }
+            }
+            if (allQuadsRendered)
+                testPassed(`Frame ${frameIndex}: all 4 quads rendered video pixels`);
+            readback.unmap();
+            return lastBindGroup;
+        }
+
+        // Frame 1: initial import + 3 additional imports in the same render pass.
+        await renderFourQuadsFrame(1);
+
+        // Frame 2 (in a new task): refreshes the external texture + 3 additional imports in the same render pass.
+        const frame2BindGroup = await new Promise(resolve => setTimeout(() => resolve(renderFourQuadsFrame(2)), 0));
+
+        // Verify that after Frame 2's task finishes, the external texture still expires in a subsequent task.
+        await new Promise(resolve => setTimeout(resolve, 0));
+        device.pushErrorScope('validation');
+        {
+            const encoder = device.createCommandEncoder();
+            const pass = encoder.beginRenderPass({
+                colorAttachments: [{
+                    view: renderTarget.createView(),
+                    clearValue: [0, 0, 0, 0],
+                    loadOp: 'clear',
+                    storeOp: 'store',
+                }],
+            });
+            pass.setPipeline(pipeline);
+            pass.setBindGroup(0, frame2BindGroup);
+            pass.draw(6);
+            pass.end();
+            device.queue.submit([encoder.finish()]);
+        }
+        const expiredError = await device.popErrorScope();
+        if (expiredError)
+            testPassed("External texture expired as expected in a subsequent task without re-importing");
+        else
+            testFailed("External texture did not expire in a subsequent task");
+    } catch (e) {
+        testFailed(`Unexpected exception: ${e}`);
+    }
+    finishJSTest();
+};
+</script>
+</body>
+</html>

@@ -535,6 +535,7 @@ private:
 
     CallbackResult<void> invoke(double, const VideoFrameMetadata&) override
     {
+        m_externalTexture->setVideoFrameCallbackIdentifier(std::nullopt);
         RefPtr videoElement { m_videoElement };
         if (!videoElement)
             return { };
@@ -571,8 +572,9 @@ ExceptionOr<Ref<GPUExternalTexture>> GPUDevice::importExternalTexture(GPUExterna
     };
 #endif
 
+    RefPtr<GPUExternalTexture> externalTexture;
 #if ENABLE(VIDEO) && PLATFORM(COCOA)
-    if (RefPtr externalTexture = externalTextureForDescriptor(externalTextureDescriptor)) {
+    if ((externalTexture = externalTextureForDescriptor(externalTextureDescriptor))) {
 #if ENABLE(WEB_CODECS)
         Ref videoElementRef = std::get<Ref<HTMLVideoElement>>(externalTextureDescriptor.source);
 #else
@@ -581,27 +583,31 @@ ExceptionOr<Ref<GPUExternalTexture>> GPUDevice::importExternalTexture(GPUExterna
         if (auto exception = checkVideoElementOriginTaint(videoElementRef))
             return WTF::move(*exception);
 
+        if (!externalTexture->isDestroyed())
+            return externalTexture.releaseNonNull();
+
         if (auto optionalMediaIdentifier = externalTextureDescriptor.mediaIdentifier()) {
             externalTexture->undestroy();
-            m_videoElementToExternalTextureMap.remove(videoElementRef);
             m_gpu->updateExternalTexture(m_backing, externalTexture->backing(), *optionalMediaIdentifier);
-            return externalTexture.releaseNonNull();
-        }
+        } else
+            externalTexture = nullptr;
     }
 #endif
 
-    auto backingDescriptor = externalTextureDescriptor.convertToBacking();
-    RefPtr texture = m_gpu->importExternalTexture(m_backing, backingDescriptor);
-    if (!texture)
-        return Exception { ExceptionCode::InvalidStateError, "GPUDevice.importExternalTexture: Unable to import texture."_s };
+    if (!externalTexture) {
+        auto backingDescriptor = externalTextureDescriptor.convertToBacking();
+        RefPtr texture = m_gpu->importExternalTexture(m_backing, backingDescriptor);
+        if (!texture)
+            return Exception { ExceptionCode::InvalidStateError, "GPUDevice.importExternalTexture: Unable to import texture."_s };
 
-    auto externalTexture = GPUExternalTexture::create(texture.releaseNonNull(), WTF::move(backingDescriptor.label), *this);
+        externalTexture = GPUExternalTexture::create(texture.releaseNonNull(), WTF::move(backingDescriptor.label), *this);
+    }
 
 #if ENABLE(VIDEO)
 #if ENABLE(WEB_CODECS)
     auto* videoElement = std::get_if<Ref<HTMLVideoElement>>(&externalTextureDescriptor.source);
     if (!videoElement)
-        return externalTexture;
+        return externalTexture.releaseNonNull();
     Ref videoElementRef = *videoElement;
 #else
     Ref videoElementRef = externalTextureDescriptor.source;
@@ -609,13 +615,16 @@ ExceptionOr<Ref<GPUExternalTexture>> GPUDevice::importExternalTexture(GPUExterna
     if (auto exception = checkVideoElementOriginTaint(videoElementRef))
         return WTF::move(*exception);
 
+    Ref externalTextureRef = externalTexture.releaseNonNull();
     WeakPtr videoElementPtr = videoElementRef.ptr();
-    m_videoElementToExternalTextureMap.set(videoElementRef, externalTexture.get());
+    m_videoElementToExternalTextureMap.set(videoElementRef, externalTextureRef.get());
     m_previouslyImportedExternalTexture.first = videoElementRef.ptr();
-    m_previouslyImportedExternalTexture.second = externalTexture.ptr();
+    m_previouslyImportedExternalTexture.second = externalTextureRef.ptr();
 
-    videoElementRef->requestVideoFrameCallback(GPUDeviceVideoFrameRequestCallback::create(externalTexture.get(), videoElementRef, *this, protect(scriptExecutionContext())));
-    queueTaskKeepingObjectAlive(*this, TaskSource::WebGPU, [videoElementPtr, externalTextureRef = externalTexture](auto& gpuDevice) {
+    if (auto callbackIdentifier = externalTextureRef->videoFrameCallbackIdentifier())
+        videoElementRef->cancelVideoFrameCallback(*callbackIdentifier);
+    externalTextureRef->setVideoFrameCallbackIdentifier(videoElementRef->requestVideoFrameCallback(GPUDeviceVideoFrameRequestCallback::create(externalTextureRef.get(), videoElementRef, *this, protect(scriptExecutionContext()))));
+    queueTaskKeepingObjectAlive(*this, TaskSource::WebGPU, [videoElementPtr, externalTextureRef](auto& gpuDevice) {
         if (!videoElementPtr)
             return;
         auto it = gpuDevice.m_videoElementToExternalTextureMap.find(*videoElementPtr);
@@ -624,8 +633,10 @@ ExceptionOr<Ref<GPUExternalTexture>> GPUDevice::importExternalTexture(GPUExterna
 
         externalTextureRef->destroy();
     });
+    return externalTextureRef;
+#else
+    return externalTexture.releaseNonNull();
 #endif
-    return externalTexture;
 }
 
 ExceptionOr<Ref<GPUBindGroupLayout>> GPUDevice::createBindGroupLayout(GPUBindGroupLayoutDescriptor&& bindGroupLayoutDescriptor)

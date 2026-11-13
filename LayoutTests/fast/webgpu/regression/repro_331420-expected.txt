@@ -1,0 +1,14 @@
+Tests that calling GPUDevice.importExternalTexture multiple times on the same video element within a render pass succeeds and renders all draws.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Frame 1: submitted 4 quads with repeated importExternalTexture without validation error
+PASS Frame 1: all 4 quads rendered video pixels
+PASS Frame 2: submitted 4 quads with repeated importExternalTexture without validation error
+PASS Frame 2: all 4 quads rendered video pixels
+PASS External texture expired as expected in a subsequent task without re-importing
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
