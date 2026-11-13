@@ -1,0 +1,276 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>CSS Container Queries Test: query container for descendants of slotted elements</title>
+<link rel="help" href="https://drafts.csswg.org/css-conditional-5/#query-container">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="support/cq-testcommon.js"></script>
+
+<div id="light-descendant">
+  <template shadowrootmode="open">
+    <style>
+      div {
+        width: 300px;
+        container-type: inline-size;
+      }
+    </style>
+    <div><slot></slot></div>
+  </template>
+  <div>
+    <div id="t1"></div>
+  </div>
+  <style>
+    #t1 { color: red; }
+    @container (width = 300px) {
+      #t1 { color: green; }
+    }
+  </style>
+</div>
+
+<div id="shadow-descendant">
+  <template shadowrootmode="open">
+    <style>
+      div {
+        width: 300px;
+        container-type: inline-size;
+      }
+    </style>
+    <div><slot></slot></div>
+  </template>
+  <div>
+    <template shadowrootmode="open">
+      <style>
+        #t2 { color: red; }
+        @container (width = 300px) {
+          #t2 { color: green; }
+        }
+      </style>
+      <div id="t2"></div>
+    </template>
+  </div>
+</div>
+
+<div id="named-container">
+  <template shadowrootmode="open">
+    <style>
+      div {
+        width: 300px;
+        container: --shadow-container / inline-size;
+      }
+    </style>
+    <div><slot></slot></div>
+  </template>
+  <div>
+    <template shadowrootmode="open">
+      <style>
+        #t3 { color: red; }
+        @container --shadow-container (width = 300px) {
+          #t3 { color: green; }
+        }
+      </style>
+      <div id="t3"></div>
+    </template>
+  </div>
+</div>
+
+<div id="nearest-container" style="width: 400px; container-type: inline-size">
+  <div>
+    <template shadowrootmode="open">
+      <style>
+        div {
+          width: 300px;
+          container-type: inline-size;
+        }
+      </style>
+      <div><slot></slot></div>
+    </template>
+    <div>
+      <template shadowrootmode="open">
+        <style>
+          #t4 { color: red; }
+          @container (width = 300px) {
+            #t4 { color: green; }
+          }
+        </style>
+        <div id="t4"></div>
+      </template>
+    </div>
+  </div>
+</div>
+
+<div id="nested-slotting">
+  <template shadowrootmode="open">
+    <style>
+      div {
+        width: 300px;
+        container-type: inline-size;
+      }
+    </style>
+    <div><slot></slot></div>
+  </template>
+  <div>
+    <template shadowrootmode="open">
+      <slot></slot>
+    </template>
+    <div>
+      <template shadowrootmode="open">
+        <style>
+          #t5 { color: red; }
+          @container (width = 300px) {
+            #t5 { color: green; }
+          }
+        </style>
+        <div id="t5"></div>
+      </template>
+    </div>
+  </div>
+</div>
+
+<div id="slot-chain">
+  <template shadowrootmode="open">
+    <style>
+      #outer {
+        width: 300px;
+        container-type: inline-size;
+      }
+    </style>
+    <div id="outer">
+      <div>
+        <template shadowrootmode="open">
+          <style>
+            div {
+              width: 250px;
+              container-type: inline-size;
+            }
+          </style>
+          <div><slot></slot></div>
+        </template>
+        <slot></slot>
+      </div>
+    </div>
+  </template>
+  <div>
+    <template shadowrootmode="open">
+      <style>
+        #t6 { color: red; }
+        @container (width = 250px) {
+          #t6 { color: green; }
+        }
+      </style>
+      <div id="t6"></div>
+    </template>
+  </div>
+</div>
+
+<div id="sibling-slots">
+  <template shadowrootmode="open">
+    <style>
+      #a {
+        width: 300px;
+        container-type: inline-size;
+      }
+      #b {
+        width: 200px;
+        container-type: inline-size;
+      }
+    </style>
+    <div id="a"><slot name="a"></slot></div>
+    <div id="b"><slot name="b"></slot></div>
+  </template>
+  <div slot="b">
+    <template shadowrootmode="open">
+      <style>
+        #t7b { color: red; }
+        @container (width = 200px) {
+          #t7b { color: green; }
+        }
+      </style>
+      <div id="t7b"></div>
+    </template>
+  </div>
+  <div slot="a">
+    <template shadowrootmode="open">
+      <style>
+        #t7a { color: red; }
+        @container (width = 300px) {
+          #t7a { color: green; }
+        }
+      </style>
+      <div id="t7a"></div>
+    </template>
+  </div>
+</div>
+
+<div id="invalidation">
+  <template shadowrootmode="open">
+    <style>
+      div {
+        width: 100px;
+        container-type: inline-size;
+      }
+    </style>
+    <div id="container"><slot></slot></div>
+  </template>
+  <div>
+    <template shadowrootmode="open">
+      <style>
+        #t8 { color: red; }
+        @container (width = 200px) {
+          #t8 { color: green; }
+        }
+      </style>
+      <div id="t8"></div>
+    </template>
+  </div>
+</div>
+
+<script>
+  setup(() => {
+    assert_implements_size_container_queries();
+  });
+
+  const green = "rgb(0, 128, 0)";
+
+  test(() => {
+    assert_equals(getComputedStyle(t1).color, green);
+  }, "Match container in the parent shadow tree from a light tree descendant of a slotted element");
+
+  test(() => {
+    const t2 = document.querySelector("#shadow-descendant > div").shadowRoot.getElementById("t2");
+    assert_equals(getComputedStyle(t2).color, green);
+  }, "Match container in the parent shadow tree from the shadow tree of a slotted element");
+
+  test(() => {
+    const t3 = document.querySelector("#named-container > div").shadowRoot.getElementById("t3");
+    assert_equals(getComputedStyle(t3).color, green);
+  }, "Match named container in the parent shadow tree from the shadow tree of a slotted element");
+
+  test(() => {
+    const t4 = document.querySelector("#nearest-container > div > div").shadowRoot.getElementById("t4");
+    assert_equals(getComputedStyle(t4).color, green);
+  }, "Match the nearest flat tree ancestor container from the shadow tree of a slotted element");
+
+  test(() => {
+    const t5 = document.querySelector("#nested-slotting > div > div").shadowRoot.getElementById("t5");
+    assert_equals(getComputedStyle(t5).color, green);
+  }, "Match container across nested slots from the shadow tree of a slotted element");
+
+  test(() => {
+    const t6 = document.querySelector("#slot-chain > div").shadowRoot.getElementById("t6");
+    assert_equals(getComputedStyle(t6).color, green);
+  }, "Match container across a slot assigned to another slot");
+
+  test(() => {
+    const t7a = document.querySelector("#sibling-slots > [slot=a]").shadowRoot.getElementById("t7a");
+    const t7b = document.querySelector("#sibling-slots > [slot=b]").shadowRoot.getElementById("t7b");
+    assert_equals(getComputedStyle(t7a).color, green, "slot a");
+    assert_equals(getComputedStyle(t7b).color, green, "slot b");
+  }, "Match the container of each slot when the slotted elements are in reverse order");
+
+  test(() => {
+    const t8 = document.querySelector("#invalidation > div").shadowRoot.getElementById("t8");
+    assert_not_equals(getComputedStyle(t8).color, green);
+    document.getElementById("invalidation").shadowRoot.getElementById("container").style.width = "200px";
+    assert_equals(getComputedStyle(t8).color, green);
+  }, "Container size change in the parent shadow tree invalidates the shadow tree of a slotted element");
+</script>

@@ -1,0 +1,10 @@
+
+PASS Match container in the parent shadow tree from a light tree descendant of a slotted element
+PASS Match container in the parent shadow tree from the shadow tree of a slotted element
+PASS Match named container in the parent shadow tree from the shadow tree of a slotted element
+PASS Match the nearest flat tree ancestor container from the shadow tree of a slotted element
+PASS Match container across nested slots from the shadow tree of a slotted element
+PASS Match container across a slot assigned to another slot
+PASS Match the container of each slot when the slotted elements are in reverse order
+PASS Container size change in the parent shadow tree invalidates the shadow tree of a slotted element
+
