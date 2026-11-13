@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style>
+@font-face {
+    font-family: kana-test;
+    src: url(../../imported/w3c/web-platform-tests/css/css-fonts/resources/NotoSansJP-kana_test-subset.otf);
+}
+div {
+    font: 32px kana-test; /* this font kerns the pair "すペ" */
+    font-kerning: normal;
+    width: 400px;
+}
+</style>
+</head>
+<body>
+<div id="cached"></div>
+<div id="edited"></div>
+<div id="fresh"></div>
+<script>
+const text = "すペすすペすすペすすペす";
+
+function charLefts(element) {
+    const lefts = [];
+    const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+    const range = document.createRange();
+    let node;
+    while ((node = walker.nextNode())) {
+        for (let i = 0; i < node.length; i++) {
+            range.setStart(node, i);
+            range.setEnd(node, i + 1);
+            lefts.push(range.getBoundingClientRect().left);
+        }
+    }
+    return lefts;
+}
+
+promise_test(async () => {
+    await document.fonts.load("32px kana-test", text);
+    // Lay the text out once and tear it down, so its breaking positions and kerning are cached.
+    const cached = document.getElementById("cached");
+    cached.textContent = text;
+    document.body.offsetHeight;
+    cached.style.display = "none";
+    document.body.offsetHeight;
+
+    // Appending a text node to multi-line content rebuilds the inline items from the line before the end, and the new text
+    // node comes from the cache with its kerning.
+    // 12 characters fit on a line, so the kerned "ペ" after the leading text starts the fourth line.
+    const leadingText = "す".repeat(35);
+    const edited = document.getElementById("edited");
+    edited.append(leadingText);
+    document.body.offsetHeight;
+    edited.append(text);
+    document.body.offsetHeight;
+
+    const fresh = document.getElementById("fresh");
+    fresh.append(leadingText, text);
+    // Lay every line out again, not just the ones after the edit.
+    edited.style.width = fresh.style.width = "410px";
+
+    const actual = charLefts(edited);
+    const expected = charLefts(fresh);
+    assert_equals(actual.length, expected.length);
+    assert_greater_than(expected[39] - expected[38], 0, "the text is laid out");
+    assert_less_than(expected[39] - expected[38], 31.5, "kerning should move the character after the pair");
+    for (let i = 0; i < expected.length; i++)
+        assert_approx_equals(actual[i], expected[i], 0.01, `position of character ${i}`);
+}, "Kerning between text items is the same after a partial rebuild as when laying the content out from scratch");
+</script>
+</body>
+</html>
