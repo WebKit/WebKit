@@ -409,7 +409,7 @@ void BidiScriptAgent::evaluate(const String& expression, bool awaitPromise, Ref<
 
     auto pageAndFrameHandles = session->extractBrowsingContextHandles(*browsingContext);
     ASYNC_FAIL_IF_UNEXPECTED_RESULT(pageAndFrameHandles);
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session->webPageProxyForHandle(*browsingContext), FrameNotFound);
+    auto& [topLevelContextHandle, frameHandle] = pageAndFrameHandles.value();
 
     // SerializationOptions defaults: DOM depth 0, object depth unlimited, and
     // no shadow-tree children.
@@ -433,13 +433,12 @@ void BidiScriptAgent::evaluate(const String& expression, bool awaitPromise, Ref<
         }
     }
 
-    String realmID = generateRealmIdForBrowsingContext(*browsingContext);
-
-    session->evaluateBidiScript(*browsingContext, emptyString(), expression, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, std::nullopt,
-        [weakThis = WeakPtr { *this }, callback = WTF::move(callback), realmID = realmID.isolatedCopy(), expression = expression.isolatedCopy()](Inspector::CommandResult<String>&& result) mutable {
+    session->evaluateBidiScript(topLevelContextHandle, frameHandle, expression, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, std::nullopt,
+        [weakThis = WeakPtr { *this }, callback = WTF::move(callback), browsingContext = browsingContext->isolatedCopy(), expression = expression.isolatedCopy()](Inspector::CommandResult<String>&& result) mutable {
             CheckedPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;
+            String realmID = protectedThis->generateRealmIdForBrowsingContext(browsingContext);
             protectedThis->finishEvaluateBidiScriptResult(realmID, expression, WTF::move(result), WTF::move(callback));
         });
 }

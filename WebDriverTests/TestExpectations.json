@@ -3570,9 +3570,6 @@
             },
             "test_beforeunload[False]": {
                 "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288344"}}
-            },
-            "test_multiple_frames": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/330714", "note": "Also needs browsingContext.navigate for child frames (WebKit/WebKit#77624)"}}
             }
         }
     },
@@ -4124,10 +4121,7 @@
                 "expected": {"mac": {"status": ["FAIL"], "note": "Fails on Mac, not investigated yet"},  "all": { "status": ["PASS"]}}
             },
             "test_reload_resets_iframe_location[cross_origin]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Fails on Mac, not investigated yet"},  "all": { "status": ["FAIL"], "bug": "webkit.org/b/233391"}}
-            },
-            "test_reload_resets_iframe_location[same_origin]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Fails on Mac, not investigated yet"},  "all": { "status": ["FAIL"], "bug": "webkit.org/b/330714", "note": "script.evaluate rejects child frame contexts"}}
+                "expected": {"mac": {"status": ["PASS"]},  "all": { "status": ["FAIL"], "bug": "webkit.org/b/233391"}}
             }
         }
     },
@@ -4811,6 +4805,9 @@
             },
             "test_add_preload_script_with_error": {
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/288057"}}
+            },
+            "test_add_preload_script_in_iframe": {
+                "expected": {"mac": {"status": ["PASS"]}}
             }
         }
     },
@@ -4845,6 +4842,12 @@
             },
             "test_identical_contexts": {
                 "expected": { "all": { "status": ["PASS"]}}
+            },
+            "test_top_context_with_iframes[same_origin]": {
+                "expected": {"mac": {"status": ["PASS"]}}
+            },
+            "test_top_context_with_iframes[cross_origin]": {
+                "expected": {"mac": {"status": ["PASS"]}}
             }
         }
     },
