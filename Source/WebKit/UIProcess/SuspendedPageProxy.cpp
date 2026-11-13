@@ -82,10 +82,12 @@ unsigned SuspendedPageProxy::remotePagesWithNetworkActivityCountForTesting()
     return count;
 }
 
-RefPtr<WebProcessProxy> SuspendedPageProxy::findReusableSuspendedPageProcess(WebProcessPool& processPool, const Site& site, WebsiteDataStore& dataStore, WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, const API::PageConfiguration& pageConfiguration)
+RefPtr<WebProcessProxy> SuspendedPageProxy::findReusableSuspendedPageProcess(WebProcessPool& processPool, const Site& site, WebsiteDataStore& dataStore, WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, const API::PageConfiguration& pageConfiguration, const WebPageProxy* pageNavigatingSubframe)
 {
     for (Ref suspendedPage : allSuspendedPages()) {
         if (!suspendedPage->hasSuspensionStarted())
+            continue;
+        if (pageNavigatingSubframe && suspendedPage->page() == pageNavigatingSubframe)
             continue;
         Ref process = suspendedPage->process();
         bool siteMatches = process->site() && (process->sharedPreferencesForWebProcessValue().siteIsolationEnabled ? *process->site() == site : process->site()->domain() == site.domain());

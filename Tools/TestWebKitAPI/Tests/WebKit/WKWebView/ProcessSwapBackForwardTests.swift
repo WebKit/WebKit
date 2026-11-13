@@ -239,6 +239,82 @@ struct ProcessSwapBackForwardTests {
         }
     }
 
+    enum ReturnToFirstPage: CaseIterable {
+        case goBack
+        case loadSameSite
+    }
+
+    @Test(arguments: ReturnToFirstPage.allCases)
+    func evictingCachedPageDoesNotStopLoadsOfCurrentPage(returnToFirstPage: ReturnToFirstPage) async throws {
+        var server = try HTTPServer(protocol: .httpsProxy) {
+            Route("/first") {
+                "first"
+            }
+
+            Route("/next") {
+                "<iframe src='https://example.com/iframe'></iframe>"
+            }
+
+            Route("/iframe") {
+                "iframe"
+            }
+
+            Route("/same-site") {
+                "same site"
+            }
+        }
+
+        try await server.run { serverConfiguration in
+            let processPool = WKProcessPool.processSwapping()
+            processPool._registerURLScheme(asSecure: "held")
+            let schemeHandler = HoldingURLSchemeHandler()
+            let configuration = WKWebViewConfiguration(httpsProxyFor: serverConfiguration)
+            configuration.processPool = processPool
+            configuration.setURLSchemeHandler(schemeHandler, forURLScheme: "held")
+            configuration.setFeature("MultiProcessBackForwardCacheEnabled", enabled: true)
+            configuration.setFeature("SiteIsolationSharedProcessEnabled", enabled: false)
+            let (webView, navigationDelegate) = siteIsolatedWebViewAndDelegate(configuration: configuration)
+
+            webView.load(URLRequest(url: try #require(URL(string: "https://example.com/first"))))
+            try await navigationDelegate.waitForDidFinishNavigation()
+            let firstProcessIdentifier = webView._webProcessIdentifier
+
+            webView.load(URLRequest(url: try #require(URL(string: "https://webkit.org/next"))))
+            try await navigationDelegate.waitForDidFinishNavigation()
+            let iframeProcessIdentifier = await webView.frameTreesInProcesses().processIdentifier(hosting: "https://example.com")
+            #expect(iframeProcessIdentifier != firstProcessIdentifier)
+
+            switch returnToFirstPage {
+            case .goBack:
+                webView.goBack()
+            case .loadSameSite:
+                webView.load(URLRequest(url: try #require(URL(string: "https://example.com/same-site"))))
+            }
+            try await navigationDelegate.waitForDidFinishNavigation()
+            #expect(webView._webProcessIdentifier == firstProcessIdentifier)
+
+            try await webView.callJavaScript {
+                """
+                const image = new Image;
+                window.imageLoaded = new Promise(resolve => { image.onload = image.onerror = resolve });
+                image.src = 'held://example.com/image';
+                """
+            }
+            try await waitForCondition("the image load to start") {
+                schemeHandler.task != nil
+            }
+            let task = try #require(schemeHandler.task)
+
+            webView._clearBackForwardCache()
+            try #require(!schemeHandler.taskWasStopped)
+
+            let url = try #require(task.request.url)
+            task.didReceive(URLResponse(url: url, mimeType: "image/png", expectedContentLength: 0, textEncodingName: nil))
+            task.didFinish()
+            try await webView.callJavaScript { "await window.imageLoaded" }
+        }
+    }
+
     private static let crossOriginIsolation = [
         "Content-Type": "text/html",
         "Cross-Origin-Opener-Policy": "same-origin",
@@ -257,5 +333,21 @@ struct ProcessSwapBackForwardTests {
             frame: CGRect(x: 0, y: 0, width: 800, height: 600),
             siteIsolationEnabled: false
         )
+    }
+}
+
+@MainActor
+private final class HoldingURLSchemeHandler: NSObject, WKURLSchemeHandler {
+    private(set) var task: (any WKURLSchemeTask)?
+    private(set) var taskWasStopped = false
+
+    func webView(_ webView: WKWebView, start urlSchemeTask: any WKURLSchemeTask) {
+        task = urlSchemeTask
+    }
+
+    func webView(_ webView: WKWebView, stop urlSchemeTask: any WKURLSchemeTask) {
+        if urlSchemeTask === task {
+            taskWasStopped = true
+        }
     }
 }
