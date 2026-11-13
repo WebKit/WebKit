@@ -122,7 +122,7 @@ static PAS_ALWAYS_INLINE void* tagged_bmalloc_try_allocate_zeroed_inline(size_t 
 
     result = tagged_bmalloc_try_allocate_impl(size, 1);
     if (PAS_MAR_SHOULD_LOG((void*) result.begin))
-        return PAS_MAR_TRACK_ALLOCATION((void*)result.begin, size);
+        return PAS_MAR_TRACK_ALLOCATION_AND_ZERO(result, size, TAGGED_BMALLOC_HEAP_CONFIG.memory_flavor);
     return (void*)pas_allocation_result_zero(result, size, TAGGED_BMALLOC_HEAP_CONFIG.memory_flavor).begin;
 }
 

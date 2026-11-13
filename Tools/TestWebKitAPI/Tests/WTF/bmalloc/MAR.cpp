@@ -39,7 +39,20 @@ static unsigned pageIndexOf(void* p)
     return static_cast<unsigned>((reinterpret_cast<uintptr_t>(p) >> PAS_MAR_PAGE_SHIFT) % PAS_MAR_PROBABILITY);
 }
 
-static void testZeroedAllocationAfterPriming(bool marEnabled)
+using ZeroedAllocator = void* (*)(size_t);
+using Deallocator = void (*)(void*);
+
+static void* bmallocTryZeroedMalloc(size_t size)
+{
+    return bmalloc::api::tryZeroedMalloc(size, bmalloc::CompactAllocationMode::NonCompact);
+}
+
+static void bmallocFree(void* p)
+{
+    bmalloc::api::free(p);
+}
+
+static void testZeroedAllocationAfterPriming(bool marEnabled, ZeroedAllocator allocateZeroed, Deallocator deallocate)
 {
     pas_mar_initialize();
 
@@ -49,35 +62,35 @@ static void testZeroedAllocationAfterPriming(bool marEnabled)
 
     // Warm up: prime many equally sized slots with 0xAB, then free them all so
     // their bytes stay at 0xAB in the backing memory. Subsequent allocations
-    // at the same size will reuse these slots from bmalloc's free list.
+    // at the same size will reuse these slots from the heap's free list.
     std::vector<void*> primed;
     primed.reserve(warmup);
     for (int i = 0; i < warmup; ++i) {
-        void* p = bmalloc::api::tryZeroedMalloc(size, bmalloc::CompactAllocationMode::NonCompact);
+        void* p = allocateZeroed(size);
         ASSERT_TRUE(p);
         WTF::memsetSpan(std::span { reinterpret_cast<uint8_t*>(p), size }, 0xAB);
         primed.push_back(p);
     }
     for (void* p : primed)
-        bmalloc::api::free(p);
+        deallocate(p);
 
-    // Discover the page bmalloc will actually serve subsequent allocations
+    // Discover the page the heap will actually serve subsequent allocations
     // from: ask it for one and see where it lands, then free that slot so
     // it goes back on the free list.
-    void* probe = bmalloc::api::tryZeroedMalloc(size, bmalloc::CompactAllocationMode::NonCompact);
+    void* probe = allocateZeroed(size);
     ASSERT_TRUE(probe);
     const unsigned targetPage = pageIndexOf(probe);
-    bmalloc::api::free(probe);
+    deallocate(probe);
 
     pas_mar_enabled = marEnabled;
     pas_mar_qualifying_page_index = targetPage;
 
     // Reallocate and inspect. For every allocation that lands in the MAR qualifying page,
-    // the MAR branch of bmalloc_try_allocate_zeroed_inline runs (when enabled).
+    // the MAR branch of the heap's try_allocate_zeroed_inline runs (when enabled).
     // If that branch fails to zero, we'll see the 0xAB pattern from the previous occupant.
     int runsInTargetPage = 0;
     for (int i = 0; i < retries; ++i) {
-        void* buf = bmalloc::api::tryZeroedMalloc(size, bmalloc::CompactAllocationMode::NonCompact);
+        void* buf = allocateZeroed(size);
         std::span bufSpan { reinterpret_cast<uint8_t*>(buf), size };
         ASSERT_TRUE(buf);
 
@@ -90,7 +103,7 @@ static void testZeroedAllocationAfterPriming(bool marEnabled)
             ++runsInTargetPage;
         }
 
-        bmalloc::api::free(buf);
+        deallocate(buf);
     }
 
     // Fail loudly if we never exercised the target page. The test would be vacuous otherwise.
@@ -101,12 +114,24 @@ static void testZeroedAllocationAfterPriming(bool marEnabled)
 
 TEST(bmalloc, MARZeroedAllocationWithMARDisabled)
 {
-    testZeroedAllocationAfterPriming(false);
+    testZeroedAllocationAfterPriming(false, bmallocTryZeroedMalloc, bmallocFree);
 }
 
 TEST(bmalloc, MARZeroedAllocationWithMAREnabled)
 {
-    testZeroedAllocationAfterPriming(true);
+    testZeroedAllocationAfterPriming(true, bmallocTryZeroedMalloc, bmallocFree);
+}
+
+// The tagged heap works without MTE hardware (tagging is just disabled), so we can
+// exercise tagged_bmalloc_try_allocate_zeroed directly.
+TEST(bmalloc, MARZeroedTaggedAllocationWithMARDisabled)
+{
+    testZeroedAllocationAfterPriming(false, tagged_bmalloc_try_allocate_zeroed, tagged_bmalloc_deallocate);
+}
+
+TEST(bmalloc, MARZeroedTaggedAllocationWithMAREnabled)
+{
+    testZeroedAllocationAfterPriming(true, tagged_bmalloc_try_allocate_zeroed, tagged_bmalloc_deallocate);
 }
 
 } // namespace TestWebKitAPI
