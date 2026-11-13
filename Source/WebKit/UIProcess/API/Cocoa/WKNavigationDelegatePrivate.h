@@ -55,6 +55,7 @@ typedef NS_ENUM(NSInteger, _WKSOAuthorizationLoadPolicy) {
 
 static const WKNavigationActionPolicy _WKNavigationActionPolicyDownload WK_API_DEPRECATED_WITH_REPLACEMENT("WKNavigationActionPolicyDownload", macos(10.10, 12.0), ios(8.0, 15.0)) = (WKNavigationActionPolicy)(WKNavigationActionPolicyAllow + 1);
 static const WKNavigationActionPolicy WK_API_AVAILABLE(macos(10.11), ios(9.0)) _WKNavigationActionPolicyAllowWithoutTryingAppLink = (WKNavigationActionPolicy)(WKNavigationActionPolicyAllow + 2);
+// Like WKNavigationActionPolicyAllow, but asks for another web content process, except for a back/forward navigation.
 static const WKNavigationActionPolicy WK_API_AVAILABLE(macos(10.14.4), ios(12.2)) _WKNavigationActionPolicyAllowInNewProcess = (WKNavigationActionPolicy)(_WKNavigationActionPolicyAllowWithoutTryingAppLink + 1);
 
 static const WKNavigationResponsePolicy _WKNavigationResponsePolicyBecomeDownload WK_API_DEPRECATED_WITH_REPLACEMENT("WKNavigationResponsePolicyDownload", macos(10.10, 12.0), ios(8.0, 15.0)) = (WKNavigationResponsePolicy)(WKNavigationResponsePolicyAllow + 1);
