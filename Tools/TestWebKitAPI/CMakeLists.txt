@@ -336,6 +336,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/MediaQueryListCapacity.cpp
         Tests/WebCore/MediaReorderQueue.cpp
         Tests/WebCore/MeshGradientRendererTests.cpp
+        Tests/WebCore/MessagePortChannelRegistry.cpp
         Tests/WebCore/MixedContentChecker.cpp
         Tests/WebCore/MonospaceFontTests.cpp
         Tests/WebCore/NativeImageTests.cpp

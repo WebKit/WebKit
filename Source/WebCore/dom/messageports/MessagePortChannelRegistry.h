@@ -65,6 +65,8 @@ public:
     WEBCORE_EXPORT bool claimPendingTransferDestination(const MessagePortIdentifier&, ProcessIdentifier expected);
 
 private:
+    void closeTransferredPorts(Vector<TransferredMessagePort>&&);
+
     HashMap<MessagePortIdentifier, WeakRef<MessagePortChannel>> m_openChannels;
     HashMap<MessagePortIdentifier, ProcessIdentifier> m_pendingTransferOrigins;
     HashMap<MessagePortIdentifier, ProcessIdentifier> m_pendingTransferDestinations;

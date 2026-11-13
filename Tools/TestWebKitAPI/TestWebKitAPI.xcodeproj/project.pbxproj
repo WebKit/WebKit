@@ -927,6 +927,7 @@
 				WebCore/MediaQueryListCapacity.cpp,
 				WebCore/MediaReorderQueue.cpp,
 				WebCore/MeshGradientRendererTests.cpp,
+				WebCore/MessagePortChannelRegistry.cpp,
 				WebCore/MIMESniffer.cpp,
 				WebCore/MIMETypeRegistry.cpp,
 				WebCore/MixedContentChecker.cpp,
