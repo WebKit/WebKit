@@ -402,6 +402,7 @@ void HTMLTableElement::attributeChanged(const QualifiedName& name, const AtomStr
 
     CellBorders bordersBefore = cellBorders();
     unsigned short oldPadding = m_padding;
+    TableRules oldRules = m_rulesAttr;
 
     switch (name.nodeName()) {
     case AttributeNames::borderAttr:
@@ -440,12 +441,18 @@ void HTMLTableElement::attributeChanged(const QualifiedName& name, const AtomStr
         break;
     }
 
-    if (bordersBefore != cellBorders() || oldPadding != m_padding) {
+    // rules="rows" and rules="groups" style the rows and groups, not the cells.
+    auto ruleChanged = [&](TableRules rules) {
+        return (oldRules == rules) != (m_rulesAttr == rules);
+    };
+    bool rowOrGroupRuleChanged = ruleChanged(TableRules::Rows) || ruleChanged(TableRules::Groups);
+
+    if (bordersBefore != cellBorders() || oldPadding != m_padding || rowOrGroupRuleChanged) {
         m_sharedCellStyle = nullptr;
-        bool cellChanged = false;
+        bool changed = rowOrGroupRuleChanged;
         for (auto& child : childrenOfType<Element>(*this))
-            cellChanged |= setTableCellsChanged(child);
-        if (cellChanged)
+            changed |= setTableCellsChanged(child);
+        if (changed)
             invalidateStyleForSubtree();
     }
 }
@@ -515,8 +522,8 @@ Ref<MutableStyleProperties> HTMLTableElement::createSharedCellStyle() const
     case CellBorders::SolidRowsOnly:
         style->setProperty(CSSPropertyID::BorderTopWidth, CSSValueID::Thin);
         style->setProperty(CSSPropertyID::BorderBottomWidth, CSSValueID::Thin);
-        style->setProperty(CSSPropertyID::BorderTopStyle, CSSValueID::Solid);
-        style->setProperty(CSSPropertyID::BorderBottomStyle, CSSValueID::Solid);
+        style->setProperty(CSSPropertyID::BorderTopStyle, CSSValueID::None);
+        style->setProperty(CSSPropertyID::BorderBottomStyle, CSSValueID::None);
         style->setProperty(CSSPropertyID::BorderColor, CSSKeywordValue::create(CSSValueID::Inherit));
         break;
     case CellBorders::Solid:
@@ -574,6 +581,26 @@ const MutableStyleProperties* HTMLTableElement::additionalGroupStyle(bool rows) 
     }
     static NeverDestroyed<Ref<MutableStyleProperties>> columnBorderStyle = makeGroupBorderStyle(false);
     return columnBorderStyle->ptr();
+}
+
+static Ref<MutableStyleProperties> makeRowsRuleStyle()
+{
+    // https://html.spec.whatwg.org/multipage/rendering.html#tables-2
+    // table[rules=rows i] > tr { border-block-width: 1px; border-block-style: solid; }
+    auto style = MutableStyleProperties::create();
+    style->setProperty(CSSPropertyID::BorderBlockStartWidth, CSSValueID::Thin);
+    style->setProperty(CSSPropertyID::BorderBlockEndWidth, CSSValueID::Thin);
+    style->setProperty(CSSPropertyID::BorderBlockStartStyle, CSSValueID::Solid);
+    style->setProperty(CSSPropertyID::BorderBlockEndStyle, CSSValueID::Solid);
+    return style;
+}
+
+const MutableStyleProperties* HTMLTableElement::additionalRowStyle() const
+{
+    if (m_rulesAttr != TableRules::Rows)
+        return nullptr;
+    static NeverDestroyed<Ref<MutableStyleProperties>> rowsRuleStyle = makeRowsRuleStyle();
+    return rowsRuleStyle->ptr();
 }
 
 bool HTMLTableElement::isURLAttribute(const Attribute& attribute) const
