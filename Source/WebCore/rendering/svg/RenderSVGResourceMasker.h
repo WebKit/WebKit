@@ -20,10 +20,13 @@
 
 #pragma once
 
+#include "AffineTransform.h"
+#include "FloatRect.h"
 #include "ImageBuffer.h"
 #include "RenderSVGResourceContainer.h"
 #include "SVGUnitTypes.h"
-#include <wtf/HashMap.h>
+#include <wtf/Vector.h>
+#include <wtf/WeakHashMap.h>
 
 namespace WebCore {
 
@@ -67,7 +70,16 @@ private:
 
     bool requiresLayer() const final { return true; }
     ASCIILiteral renderName() const final { return "RenderSVGResourceMasker"_s; }
-    HashMap<SingleThreadWeakRef<const RenderLayerModelObject>, RefPtr<ImageBuffer>> m_masker;
+    struct CachedMask {
+        AffineTransform absoluteTransformWithoutTranslation;
+        Ref<ImageBuffer> image;
+    };
+    struct CachedMasks {
+        FloatRect objectBoundingBox;
+        FloatRect decoratedBounds;
+        Vector<CachedMask, 1> masks;
+    };
+    SingleThreadWeakHashMap<const RenderLayerModelObject, CachedMasks> m_masker;
 };
 
 }

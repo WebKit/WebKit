@@ -39,6 +39,8 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGResourcePattern);
 
+static constexpr size_t maximumCachedTilesPerClient = 4;
+
 RenderSVGResourcePattern::RenderSVGResourcePattern(SVGElement& element, Style::ComputedStyle&& style)
     : RenderSVGResourcePaintServer(Type::SVGResourcePattern, element, WTF::move(style))
 {
@@ -60,59 +62,77 @@ void RenderSVGResourcePattern::collectPatternAttributesIfNeeded()
 
 RefPtr<Pattern> RenderSVGResourcePattern::buildPattern(GraphicsContext& context, const RenderLayerModelObject& renderer, const std::optional<AffineTransform>& nonScalingStrokeTransform)
 {
-    RefPtr tileImage = m_imageMap.get(renderer);
-    if (!tileImage) {
-        collectPatternAttributesIfNeeded();
+    auto objectBoundingBox = renderer.objectBoundingBox();
 
-        if (!m_attributes)
-            return nullptr;
+    // Ignore 2D rotation, as it doesn't affect the size of the tile.
+    auto absoluteTransformIgnoringRotation = context.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
+    // The tile is cached for all paint operations of the renderer, so render it at the scale of the renderer's
+    // user space. A non-scaling stroke paints in a context without the transform to the SVG root.
+    if (nonScalingStrokeTransform)
+        absoluteTransformIgnoringRotation.multiply(*nonScalingStrokeTransform);
 
-        // Spec: When the geometry of the applicable element has no width or height and objectBoundingBox is specified,
-        // then the given effect (e.g. a gradient or a filter) will be ignored.
-        FloatRect objectBoundingBox = renderer.objectBoundingBox();
-        if (m_attributes->patternUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX && objectBoundingBox.isEmpty())
-            return nullptr;
+    FloatSize absoluteScale(absoluteTransformIgnoringRotation.xScale(), absoluteTransformIgnoringRotation.yScale());
 
-        // Compute all necessary transformations to build the tile image & the pattern.
-        FloatRect tileBoundaries;
-        AffineTransform tileImageTransform;
-        if (!buildTileImageTransform(renderer, *m_attributes, protect(patternElement()), tileBoundaries, tileImageTransform))
-            return nullptr;
-
-        // Ignore 2D rotation, as it doesn't affect the size of the tile.
-        auto absoluteTransformIgnoringRotation = context.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
-        // The tile is cached for all paint operations of the renderer, so render it at the scale of the renderer's
-        // user space. A non-scaling stroke paints in a context without the transform to the SVG root.
-        if (nonScalingStrokeTransform)
-            absoluteTransformIgnoringRotation.multiply(*nonScalingStrokeTransform);
-
-        FloatSize tileScale(absoluteTransformIgnoringRotation.xScale(), absoluteTransformIgnoringRotation.yScale());
-
-        // Scale the tile size to match the scale level of the patternTransform.
-        tileScale.scale(static_cast<float>(m_attributes->patternTransform().xScale()), static_cast<float>(m_attributes->patternTransform().yScale()));
-
-        // Build tile image.
-        tileImage = createTileImage(context, *m_attributes, tileBoundaries.size(), tileScale, tileImageTransform);
-        if (!tileImage)
-            return nullptr;
-
-        auto tileImageSize = tileImage->logicalSize();
-
-        // Compute pattern space transformation.
-        AffineTransform transform;
-        transform.translate(tileBoundaries.location());
-        transform.scale(tileBoundaries.size() / tileImageSize);
-
-        AffineTransform patternTransform = m_attributes->patternTransform();
-        if (!patternTransform.isIdentity())
-            transform = patternTransform * transform;
-
-        m_imageMap.set(renderer, *tileImage);
-        m_tileImageTransformMap.set(renderer, transform);
+    if (auto it = m_tiles.find(renderer); it != m_tiles.end()) {
+        const auto& cachedTiles = it->value;
+        auto matchesScale = [&](const auto& tile) {
+            return tile.absoluteScale == absoluteScale;
+        };
+        if (cachedTiles.objectBoundingBox != objectBoundingBox)
+            m_tiles.remove(it);
+        else if (auto index = cachedTiles.tiles.findIf(matchesScale); index != notFound) {
+            auto tile = cachedTiles.tiles[index];
+            return Pattern::create({ WTF::move(tile.image) }, { true, true, tile.patternSpaceTransform });
+        }
     }
 
-    // Build pattern.
-    return Pattern::create({ tileImage.releaseNonNull() }, { true, true, m_tileImageTransformMap.get(renderer) } );
+    collectPatternAttributesIfNeeded();
+
+    if (!m_attributes)
+        return nullptr;
+
+    // Spec: When the geometry of the applicable element has no width or height and objectBoundingBox is specified,
+    // then the given effect (e.g. a gradient or a filter) will be ignored.
+    if (m_attributes->patternUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX && objectBoundingBox.isEmpty())
+        return nullptr;
+
+    // Compute all necessary transformations to build the tile image & the pattern.
+    FloatRect tileBoundaries;
+    AffineTransform tileImageTransform;
+    if (!buildTileImageTransform(renderer, *m_attributes, protect(patternElement()), tileBoundaries, tileImageTransform))
+        return nullptr;
+
+    auto tileScale = absoluteScale;
+
+    // Scale the tile size to match the scale level of the patternTransform.
+    tileScale.scale(static_cast<float>(m_attributes->patternTransform().xScale()), static_cast<float>(m_attributes->patternTransform().yScale()));
+
+    // Build tile image.
+    RefPtr tileImage = createTileImage(context, *m_attributes, tileBoundaries.size(), tileScale, tileImageTransform);
+    if (!tileImage)
+        return nullptr;
+
+    auto tileImageSize = tileImage->logicalSize();
+
+    // Compute pattern space transformation.
+    AffineTransform transform;
+    transform.translate(tileBoundaries.location());
+    transform.scale(tileBoundaries.size() / tileImageSize);
+
+    AffineTransform patternTransform = m_attributes->patternTransform();
+    if (!patternTransform.isIdentity())
+        transform = patternTransform * transform;
+
+    Ref image = tileImage.releaseNonNull();
+    auto pattern = Pattern::create({ image.copyRef() }, { true, true, transform });
+
+    auto& cachedTiles = m_tiles.ensure(renderer, [&] {
+        return CachedTiles { objectBoundingBox, { } };
+    }).iterator->value;
+    if (cachedTiles.tiles.size() == maximumCachedTilesPerClient)
+        cachedTiles.tiles.removeAt(0);
+    cachedTiles.tiles.append({ absoluteScale, WTF::move(image), transform });
+    return pattern;
 }
 
 bool RenderSVGResourcePattern::prepareFillOperation(GraphicsContext& context, const RenderLayerModelObject& targetRenderer, const Style::ComputedStyle& style)
@@ -142,7 +162,7 @@ bool RenderSVGResourcePattern::prepareStrokeOperation(GraphicsContext& context, 
     context.setAlpha(Style::evaluate<float>(style.strokeOpacity()));
     SVGRenderSupport::applyStrokeStyleToContext(context, style, targetRenderer);
     if (nonScalingStrokeTransform)
-        pattern = pattern->withPatternSpaceTransform(*nonScalingStrokeTransform * m_tileImageTransformMap.get(targetRenderer));
+        pattern = pattern->withPatternSpaceTransform(*nonScalingStrokeTransform * pattern->patternSpaceTransform());
     context.setStrokePattern(*pattern);
     return true;
 }
@@ -201,10 +221,8 @@ RefPtr<ImageBuffer> RenderSVGResourcePattern::createTileImage(GraphicsContext& c
 
 void RenderSVGResourcePattern::removeReferencingCSSClient(const RenderElement& client)
 {
-    if (auto renderer = dynamicDowncast<RenderLayerModelObject>(client)) {
-        m_imageMap.remove(renderer);
-        m_tileImageTransformMap.remove(renderer);
-    }
+    if (auto renderer = dynamicDowncast<RenderLayerModelObject>(client))
+        m_tiles.remove(renderer);
 }
 
 }

@@ -50,6 +50,8 @@ RenderSVGResourceMasker::RenderSVGResourceMasker(SVGMaskElement& element, Style:
 
 RenderSVGResourceMasker::~RenderSVGResourceMasker() = default;
 
+static constexpr size_t maximumCachedMasksPerClient = 4;
+
 static RefPtr<ImageBuffer> createImageBuffer(const FloatRect& targetRect, const AffineTransform& absoluteTransform, const ColorSpace& colorSpace, const GraphicsContext& context)
 {
     IntRect paintRect = enclosingIntRect(absoluteTransform.mapRect(targetRect));
@@ -109,7 +111,22 @@ void RenderSVGResourceMasker::applyMask(PaintInfo& paintInfo, const RenderLayerM
 
     decoratedBounds.intersect(maskBoundsInLocalCoordinates(objectBoundingBox, RepaintRectCalculation::Accurate));
 
-    RefPtr<ImageBuffer> maskImage = m_masker.get(targetRenderer);
+    auto absoluteTransformWithoutTranslation = absoluteTransform;
+    absoluteTransformWithoutTranslation.setE(0);
+    absoluteTransformWithoutTranslation.setF(0);
+
+    RefPtr<ImageBuffer> maskImage;
+    if (auto it = m_masker.find(targetRenderer); it != m_masker.end()) {
+        const auto& cachedMasks = it->value;
+        auto matchesTransform = [&](const auto& mask) {
+            return mask.absoluteTransformWithoutTranslation == absoluteTransformWithoutTranslation;
+        };
+        if (cachedMasks.objectBoundingBox != objectBoundingBox || cachedMasks.decoratedBounds != decoratedBounds)
+            m_masker.remove(it);
+        else if (auto index = cachedMasks.masks.findIf(matchesTransform); index != notFound)
+            maskImage = cachedMasks.masks[index].image.ptr();
+    }
+
     bool missingMaskerData = !maskImage;
     if (missingMaskerData && !decoratedBounds.isEmpty())
         maskImage = createImageBuffer(decoratedBounds, absoluteTransform, maskColorSpace, context);
@@ -129,7 +146,12 @@ void RenderSVGResourceMasker::applyMask(PaintInfo& paintInfo, const RenderLayerM
 
             if (style().maskType() == MaskType::Luminance)
                 maskImage->convertToLuminanceMask();
-            m_masker.set(targetRenderer, maskImage);
+            auto& cachedMasks = m_masker.ensure(targetRenderer, [&] {
+                return CachedMasks { objectBoundingBox, decoratedBounds, { } };
+            }).iterator->value;
+            if (cachedMasks.masks.size() == maximumCachedMasksPerClient)
+                cachedMasks.masks.removeAt(0);
+            cachedMasks.masks.append({ absoluteTransformWithoutTranslation, *maskImage });
         }
         context.setCompositeOperation(CompositeOperator::SourceOver);
 

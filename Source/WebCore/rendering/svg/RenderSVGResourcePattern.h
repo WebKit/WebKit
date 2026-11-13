@@ -23,6 +23,7 @@
 #include "PatternAttributes.h"
 #include "RenderSVGResourcePaintServer.h"
 #include "SVGPatternElement.h"
+#include <wtf/Vector.h>
 #include <wtf/WeakHashMap.h>
 
 class Pattern;
@@ -45,8 +46,7 @@ public:
     void invalidatePattern(SuppressRepaint suppressRepaint = SuppressRepaint::No)
     {
         m_attributes = std::nullopt;
-        m_imageMap.clear();
-        m_tileImageTransformMap.clear();
+        m_tiles.clear();
         if (suppressRepaint == SuppressRepaint::No)
             repaintAllClients();
     }
@@ -67,8 +67,16 @@ protected:
 
     std::optional<PatternAttributes> m_attributes;
 
-    SingleThreadWeakHashMap<const RenderLayerModelObject, Ref<ImageBuffer>> m_imageMap;
-    SingleThreadWeakHashMap<const RenderLayerModelObject, AffineTransform> m_tileImageTransformMap;
+    struct CachedTile {
+        FloatSize absoluteScale;
+        Ref<ImageBuffer> image;
+        AffineTransform patternSpaceTransform;
+    };
+    struct CachedTiles {
+        FloatRect objectBoundingBox;
+        Vector<CachedTile, 1> tiles;
+    };
+    SingleThreadWeakHashMap<const RenderLayerModelObject, CachedTiles> m_tiles;
 };
 
 }
