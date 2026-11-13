@@ -3953,7 +3953,10 @@ static void checkPopupUsesWebsiteDataStoreOfOpener(bool siteIsolationEnabled)
     EXPECT_WK_STREQ([opened.uiDelegate waitForAlert], "true");
 
     [opened.webView objectByEvaluatingJavaScript:@"document.cookie = 'popup=1'"];
-    EXPECT_TRUE(dataStoreHasCookieNamed(dataStore.get(), @"popup"));
+    // The web process doesn't wait for the network process to store the cookie.
+    EXPECT_TRUE(Util::waitFor([&] {
+        return dataStoreHasCookieNamed(dataStore.get(), @"popup");
+    }));
     EXPECT_FALSE(dataStoreHasCookieNamed(opener.webView.get().configuration.websiteDataStore, @"popup"));
 }
 

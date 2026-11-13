@@ -313,8 +313,6 @@ webkit.org/b/330802 [ ios ] TestWebKitAPI.SiteIsolation.DOMPasteAccessGrantedInC
 webkit.org/b/328510 [ mac siteisolation ] TestWebKitAPI.SiteIsolation.DrawPagesToPDFKeepsGrayAndCMYKImagesInCrossSiteFrames8Bit [ Fail ]
 webkit.org/b/316819 [ mac debug ] TestWebKitAPI.SiteIsolation.MultiProcessBFCacheSameSiteWithCrossSiteIframe [ Pass Crash ]
 webkit.org/b/320768 [ mac debug ] TestWebKitAPI.SiteIsolation.MultiProcessBFCacheSameSiteWithCrossSiteIframeMultipleCycles [ Pass Crash ]
-webkit.org/b/331127 TestWebKitAPI.SiteIsolation.PopupUsesWebsiteDataStoreOfOpener [ Pass Failure ]
-webkit.org/b/331127 TestWebKitAPI.SiteIsolation.PopupUsesWebsiteDataStoreOfOpenerWithoutSiteIsolation [ Pass Failure ]
 webkit.org/b/310149 [ mac release ] TestWebKitAPI.SiteIsolation.PostMessageWithMessagePorts [ Skip ]
 webkit.org/b/325842 [ mac release ] TestWebKitAPI.SiteIsolation.ProcessReuse [ Pass Crash ]
 webkit.org/b/325842 [ mac release ] TestWebKitAPI.SiteIsolation.ProcessReuseWithBFCache [ Pass Crash ]
