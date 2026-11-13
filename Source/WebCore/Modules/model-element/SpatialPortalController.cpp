@@ -30,6 +30,7 @@
 
 #include "AbortSignal.h"
 #include "CSSPropertyNames.h"
+#include "CSSUnits.h"
 #include "ContainerNodeInlines.h"
 #include "Document.h"
 #include "DocumentEventLoop.h"
@@ -699,6 +700,42 @@ void SpatialPortalController::promotedChildDidPaint()
 {
     if (RefPtr player = m_modelPlayer)
         player->portalPromotedChildDidPaint();
+}
+
+static TransformationMatrix rotationOf(const TransformationMatrix& transform)
+{
+    TransformationMatrix::Decomposed4Type decomposition;
+    if (!transform.decompose4(decomposition))
+        return { };
+    return TransformationMatrix::fromQuaternion(decomposition.quaternion);
+}
+
+TransformationMatrix SpatialPortalController::hostedContentProjection() const
+{
+    static constexpr double viewerDistance = 0.5 * CSS::pixelsPerCm * 100;
+
+    RefPtr element = m_portalElement;
+    CheckedPtr portalBox = element ? dynamicDowncast<RenderBox>(element->renderer()) : nullptr;
+    if (!portalBox)
+        return { };
+
+    TransformationMatrix orbit;
+    if (m_resolvedPortalTransform) {
+        orbit = rotationOf(*m_resolvedPortalTransform);
+        if (auto contentRotation = rotationOf(m_portalTransform.contentTransform()).inverse())
+            orbit.multiply(*contentRotation);
+    }
+
+    auto center = FloatRect { portalBox->paddingBoxRect() }.center();
+    TransformationMatrix projection;
+    projection.translate(center.x(), center.y());
+    projection.applyPerspective(viewerDistance);
+    projection.scaleNonUniform(1, -1);
+    projection.multiply(orbit);
+    projection.multiply(m_portalTransform.transformAfterAuto);
+    projection.scaleNonUniform(1, -1);
+    projection.translate(-center.x(), -center.y());
+    return projection;
 }
 
 bool SpatialPortalController::canHostPromotedChild(RenderLayerModelObject& renderer)

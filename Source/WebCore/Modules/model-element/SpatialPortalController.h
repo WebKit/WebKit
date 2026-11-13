@@ -121,6 +121,7 @@ public:
     void updatePromotedChildren(Vector<PortalPromotedChild>&&);
     bool hostsPromotedChild(NodeIdentifier) const;
     void promotedChildDidPaint();
+    TransformationMatrix hostedContentProjection() const;
     static std::optional<TransformationMatrix> transformForHostedLayer(RenderLayer&, RenderLayer& promotedChild, bool* isAnimating = nullptr);
     static bool canHostPromotedChild(RenderLayerModelObject&);
 

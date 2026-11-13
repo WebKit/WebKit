@@ -228,6 +228,8 @@ private:
     bool isAnchoredTo(const HostedModel&, WebCore::NodeIdentifier ancestorNode) const;
     void pushPortalChildTransform(WebCore::NodeIdentifier);
     void pushAnchoredPortalChildTransforms(WebCore::NodeIdentifier anchorNode);
+#else
+    bool hasPromotedDOMContent() const { return false; }
 #endif
 
 #if HAVE(SUPPORT_HDR_DISPLAY) && ENABLE(PIXEL_FORMAT_RGBA16F)

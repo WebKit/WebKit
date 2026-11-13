@@ -300,6 +300,7 @@ public:
     LayoutSize subpixelOffsetFromRenderer() const { return m_subpixelOffsetFromRenderer; }
 
 #if ENABLE(SPATIAL_PORTAL) && !HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+    SpatialPortalController* hostingSpatialPortalController() const;
     void updateHostedPromotedChildren();
 #endif
 
@@ -446,7 +447,6 @@ private:
     void updatePortalPromotedChildren(SpatialPortalController&);
     void updateIsHostedInSpatialPortalScene();
     SpatialPortalController* promotedChildPortalController() const;
-    SpatialPortalController* hostingSpatialPortalController() const;
 #endif
     void updateTransform(const Style::ComputedStyle&);
     void updateChildrenTransformAndAnchorPoint(const LayoutRect& primaryGraphicsLayerRect, LayoutSize offsetFromParentGraphicsLayer);
