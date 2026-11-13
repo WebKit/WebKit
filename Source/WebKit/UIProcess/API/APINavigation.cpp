@@ -152,6 +152,13 @@ WebKit::WebBackForwardListItem* Navigation::targetItem() const
     return m_targetFrameItem ? m_targetFrameItem->backForwardListItem() : nullptr;
 }
 
+bool Navigation::changesMainFrameDocument() const
+{
+    RefPtr targetItem = this->targetItem();
+    RefPtr fromItem = m_fromItem;
+    return !targetItem || !fromItem || targetItem->mainFrameState().documentSequenceNumber != fromItem->mainFrameState().documentSequenceNumber;
+}
+
 bool Navigation::isRequestFromClientOrUserInput() const
 {
     if (m_requestIsFromClientInput)

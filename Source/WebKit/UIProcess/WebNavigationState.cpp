@@ -128,6 +128,23 @@ void WebNavigationState::clearAllNavigations()
     m_navigations.clear();
 }
 
+void WebNavigationState::markAllNavigationsAsStopped()
+{
+    for (Ref navigation : m_navigations.values())
+        navigation->setWasStopped();
+}
+
+void WebNavigationState::markNavigationsAsReplaced(const API::Navigation& newNavigation)
+{
+    if (!newNavigation.changesMainFrameDocument())
+        return;
+
+    for (Ref navigation : m_navigations.values()) {
+        if (navigation.ptr() != &newNavigation)
+            navigation->setWasReplaced();
+    }
+}
+
 void WebNavigationState::clearNavigationsFromProcess(WebCore::ProcessIdentifier processID)
 {
     m_navigations.removeIf([&](auto& entry) {
