@@ -311,6 +311,12 @@ void ProvisionalPageProxy::initializeWebPage(RefPtr<API::WebsitePolicies>&& webs
 
     RefPtr mainFrame = m_mainFrame;
     auto creationParameters = page->creationParametersForProvisionalPage(process, *drawingArea, mainFrame->frameID());
+    if (m_browsingContextGroup->identifier() != page->browsingContextGroup().identifier()) {
+        creationParameters.openedMainFrameName = { };
+        creationParameters.openedByScriptDomain = { };
+        creationParameters.mainFrameOpenerIdentifier = std::nullopt;
+        creationParameters.mainFrameOpenerURL = { };
+    }
     if (preferences->siteIsolationEnabled() && !isRestoringFromBFCache) {
         creationParameters.remotePageParameters = RemotePageParameters {
             m_request.url(),
@@ -587,13 +593,13 @@ void ProvisionalPageProxy::decidePolicyForNavigationActionAsync(IPC::Connection&
         completionHandler({ });
 }
 
-void ProvisionalPageProxy::decidePolicyForResponse(FrameInfoData&& frameInfo, std::optional<WebCore::NavigationIdentifier> navigationID, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& request, bool canShowMIMEType, String&& downloadAttribute, bool isShowingInitialAboutBlank, WebCore::CrossOriginOpenerPolicyValue activeDocumentCOOPValue, CompletionHandler<void(PolicyDecision&&)>&& completionHandler)
+void ProvisionalPageProxy::decidePolicyForResponse(FrameInfoData&& frameInfo, std::optional<WebCore::NavigationIdentifier> navigationID, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& request, bool canShowMIMEType, String&& downloadAttribute, CompletionHandler<void(PolicyDecision&&)>&& completionHandler)
 {
     if (!validateInput(frameInfo.frameID, navigationID))
         return completionHandler({ });
 
     if (RefPtr page = m_page.get())
-        page->decidePolicyForResponseShared(protect(process()), m_webPageID, WTF::move(frameInfo), navigationID, response, request, canShowMIMEType, WTF::move(downloadAttribute), isShowingInitialAboutBlank, activeDocumentCOOPValue, WTF::move(completionHandler));
+        page->decidePolicyForResponseShared(protect(process()), m_webPageID, WTF::move(frameInfo), navigationID, response, request, canShowMIMEType, WTF::move(downloadAttribute), WTF::move(completionHandler));
     else
         completionHandler({ });
 }
