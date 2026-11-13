@@ -334,6 +334,11 @@ function(GI_INTROSPECT namespace nsversion header)
     # Generate .gir
     set(target_def "$<TARGET_PROPERTY:${opt_TARGET},COMPILE_DEFINITIONS>")
     set(target_inc "$<TARGET_PROPERTY:${opt_TARGET},INTERFACE_INCLUDE_DIRECTORIES>")
+    set(scanner_env "CC=${CMAKE_C_COMPILER}" "CFLAGS=${CMAKE_C_FLAGS}")
+    if (ENABLED_COMPILER_SANITIZERS)
+        string(JOIN " " sanitizer_flags ${ENABLED_COMPILER_SANITIZERS})
+        set(scanner_env "CC=${CMAKE_C_COMPILER}" "CFLAGS=${CMAKE_C_FLAGS} ${sanitizer_flags}" "LDFLAGS=${sanitizer_flags}")
+    endif ()
     add_custom_command(
         OUTPUT "${gir_path}"
         COMMENT "Generating ${gir_name}.gir"
@@ -341,7 +346,7 @@ function(GI_INTROSPECT namespace nsversion header)
         DEPENDS ${gir_deps} ${gir_srcs}
         VERBATIM
         COMMAND_EXPAND_LISTS
-        COMMAND ${CMAKE_COMMAND} -E env "CC=${CMAKE_C_COMPILER}" "CFLAGS=${CMAKE_C_FLAGS}"
+        COMMAND ${CMAKE_COMMAND} -E env ${scanner_env}
             "${GI_SCANNER_EXE}" --quiet --warn-all --warn-error --no-libtool
             "--output=${gir_path}"
             "--library=$<TARGET_FILE_BASE_NAME:${opt_TARGET}>"
