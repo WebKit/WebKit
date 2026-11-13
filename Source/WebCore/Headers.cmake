@@ -2533,7 +2533,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/ImageBufferAllocator.h
     platform/graphics/ImageBufferBackend.h
     platform/graphics/ImageBufferParameters.h
-    platform/graphics/ImageBufferDisplayListBackend.h
     platform/graphics/ImageBufferFormat.h
     platform/graphics/ImageBufferResourceLimits.h
     platform/graphics/ImageBufferTransferIdentifier.h

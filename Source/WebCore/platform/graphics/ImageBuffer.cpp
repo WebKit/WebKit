@@ -34,10 +34,10 @@
 #include "GraphicsClient.h"
 #include "GraphicsContext.h"
 #include "HostWindow.h"
-#include "ImageBufferDisplayListBackend.h"
 #include "ImageBufferPlatformBackend.h"
 #include "ImageUtilities.h"
 #include "MIMETypeRegistry.h"
+#include "NativeImage.h"
 #include "NullImageBufferBackend.h"
 #include "ProcessCapabilities.h"
 #include <wtf/NeverDestroyed.h>
@@ -108,11 +108,9 @@ RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingMode ren
     case RenderingMode::Unaccelerated:
         return create<ImageBufferPlatformBitmapBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, { });
 
-    case RenderingMode::DisplayList:
-        return ImageBuffer::create<ImageBufferDisplayListBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, { });
-
     case RenderingMode::PDFDocument:
-        // FIXME: PDFDocument is only meaningful for a GraphicsContext. Add a type-specific rendering mode, such as ImageBufferRenderingMode, so that it cannot be passed here.
+    case RenderingMode::DisplayList:
+        // FIXME: PDFDocument and DisplayList are only meaningful for a GraphicsContext. Add a type-specific rendering mode, such as ImageBufferRenderingMode, so that they cannot be passed here.
         RELEASE_ASSERT_NOT_REACHED();
     }
 

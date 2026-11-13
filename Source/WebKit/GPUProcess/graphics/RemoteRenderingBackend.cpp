@@ -60,7 +60,6 @@
 #include <WebCore/FontCustomPlatformData.h>
 #include <WebCore/Gradient.h>
 #include <WebCore/HTMLCanvasElement.h>
-#include <WebCore/ImageBufferDisplayListBackend.h>
 #include <WebCore/MeshGradient.h>
 #include <WebCore/NullImageBufferBackend.h>
 #include <WebCore/RenderingResourceIdentifier.h>
@@ -316,13 +315,9 @@ static RefPtr<ImageBuffer> allocateImageBufferInternal(const FloatSize& logicalS
             imageBuffer = ImageBuffer::create<ImageBufferShareableBitmapBackend, ImageBufferType>(logicalSize, resolutionScale, colorSpace, bufferFormat, purpose, creationContext);
         break;
 
-    case RenderingMode::DisplayList:
-        if (auto backend = ImageBufferDisplayListBackend::create(logicalSize, resolutionScale, colorSpace, bufferFormat.pixelFormat, purpose, ControlFactory::create()))
-            imageBuffer = ImageBuffer::create<ImageBufferType>(ImageBuffer::Parameters { logicalSize, resolutionScale, colorSpace, bufferFormat, purpose }, creationContext, WTF::move(backend));
-        break;
-
     case RenderingMode::PDFDocument:
-        // FIXME: PDFDocument is only meaningful for a GraphicsContext. Add a type-specific rendering mode, such as ImageBufferRenderingMode, so that it cannot be passed here.
+    case RenderingMode::DisplayList:
+        // FIXME: PDFDocument and DisplayList are only meaningful for a GraphicsContext. Add a type-specific rendering mode, such as ImageBufferRenderingMode, so that they cannot be passed here.
         RELEASE_ASSERT_NOT_REACHED();
     }
 
@@ -338,16 +333,11 @@ NODELETE static void adjustImageBufferRenderingMode(const RemoteSharedResourceCa
 RefPtr<ImageBuffer> RemoteRenderingBackend::allocateImageBuffer(const FloatSize& logicalSize, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const ColorSpace& colorSpace, ImageBufferFormat bufferFormat, ImageBufferCreationContext creationContext, std::optional<ImageBufferBackendHandle>&& providedBackingStore)
 {
     assertIsCurrent(workQueue());
-    // PDF documents are drawn through contexts that are not ImageBuffers.
-    MESSAGE_CHECK_WITH_RETURN_VALUE(renderingMode != RenderingMode::PDFDocument, nullptr);
+    // PDF documents and display lists are drawn through contexts that are not ImageBuffers. This also covers
+    // the configurations of image buffer sets.
+    MESSAGE_CHECK_WITH_RETURN_VALUE(renderingMode != RenderingMode::PDFDocument && renderingMode != RenderingMode::DisplayList, nullptr);
     if (purpose == RenderingPurpose::Canvas && m_sharedResourceCache->reachedImageBufferForCanvasLimit())
         return nullptr;
-
-    // Verify DisplayList rendering mode is only used when RemoteSnapshotting is enabled
-    if (renderingMode == RenderingMode::DisplayList) {
-        auto prefs = sharedPreferencesForWebProcess();
-        MESSAGE_CHECK_WITH_RETURN_VALUE(prefs && prefs->remoteSnapshottingEnabled, nullptr);
-    }
 
     adjustImageBufferCreationContext(m_sharedResourceCache, creationContext);
 #if HAVE(IOSURFACE) && USE(APPLE_INTERNAL_SDK)
@@ -369,11 +359,11 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::allocateImageBuffer(const FloatSize&
                 return ImageBuffer::create(parameters, creationContext, WTF::move(backend));
             return nullptr;
         case RenderingMode::Accelerated:
-        case RenderingMode::DisplayList:
-            // These have no backing store the web process can hand over.
+            // This has no backing store the web process can hand over.
             return nullptr;
         case RenderingMode::PDFDocument:
-            // FIXME: PDFDocument is only meaningful for a GraphicsContext. Add a type-specific rendering mode, such as ImageBufferRenderingMode, so that it cannot be passed here.
+        case RenderingMode::DisplayList:
+            // FIXME: PDFDocument and DisplayList are only meaningful for a GraphicsContext. Add a type-specific rendering mode, such as ImageBufferRenderingMode, so that they cannot be passed here.
             RELEASE_ASSERT_NOT_REACHED();
         }
         return nullptr;

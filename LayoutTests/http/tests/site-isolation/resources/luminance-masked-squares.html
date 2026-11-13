@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body { margin: 0; }
+div { float: left; width: 50px; height: 50px; background-color: lime; }
+/* Black masks everything out as a luminance mask, and nothing as an alpha mask. */
+.mask { mask-mode: luminance; mask-size: 10px 10px; }
+.gradient { mask-image: linear-gradient(black, black); }
+.image { mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10'><rect width='10' height='10' fill='black'/></svg>"); }
+</style>
+</head>
+<body>
+<div class="mask gradient"></div><div class="mask image"></div><div></div>
+<script>
+onload = () => { window.parent.postMessage("onload", "*"); }
+</script>
+</body>
+</html>

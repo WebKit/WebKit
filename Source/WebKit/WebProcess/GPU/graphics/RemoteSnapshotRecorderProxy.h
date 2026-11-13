@@ -41,6 +41,8 @@ class RemoteSnapshotRecorderProxy : public RemoteGraphicsContextProxy {
 
 public:
     // renderingMode is RenderingMode::PDFDocument when the snapshot will be sunk into a PDF, and RenderingMode::DisplayList otherwise.
+    // The compatible image buffers of both are Unaccelerated. They hold pixels, so that they can be read back, masked and
+    // filtered.
     RemoteSnapshotRecorderProxy(const WebCore::FloatRect& initialClip, WebCore::RenderingMode, RemoteRenderingBackendProxy&);
     RemoteSnapshotRecorderIdentifier identifier() const { return RemoteSnapshotRecorderIdentifier { RemoteGraphicsContextProxy::identifier().toUInt64() }; }
 

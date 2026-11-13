@@ -4,12 +4,13 @@
     window.testRunner?.waitUntilDone();
     if (window.IPC) {
         import('./coreipc.js').then(({
-            CoreIPC, sRGBColorSpace
+            CoreIPC
         }) => {
             o10=CoreIPC.newStreamConnection();
             CoreIPC.GPU.GPUConnectionToWebProcess.CreateRenderingBackend(0,{renderingBackendIdentifier:393219,connectionHandle:o10});
             o12=o10.newInterface("RemoteRenderingBackend", 393219);
-            o12.CreateImageBuffer({logicalSize:{width:32,height:18},renderingMode:3,renderingPurpose:1,resolutionScale:489626271805,colorSpace:sRGBColorSpace(),pixelFormat:2,bufferFormat:{pixelFormat:2,useLosslessCompression:0},identifier:393225,contextIdentifier:393226});
+            // A display list recorder, whose context does not have a state to restore.
+            o12.CreateDisplayListRecorder({identifier:393226});
             o31=o10.newInterface("RemoteGraphicsContext", 393226);
             o31.Restore({});
             o31.Restore({});

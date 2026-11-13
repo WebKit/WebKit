@@ -28,7 +28,9 @@
 
 namespace WebCore {
 
-ISOOriginalFormatBox::ISOOriginalFormatBox()
+// FIXME: Remove SUPPRESS_NODELETE once NoDeleteChecker stops requiring the default constructors of the members of base classes to be trivial (rdar://192380708).
+// ISOBox constructs m_extendedType, and the default constructor of its std::optional is only seen to be trivial where it is instantiated, as in ISOBox.cpp.
+SUPPRESS_NODELETE ISOOriginalFormatBox::ISOOriginalFormatBox()
     : ISOBox(boxTypeName())
 {
 }

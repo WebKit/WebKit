@@ -3435,9 +3435,6 @@ ipc/send-message-with-many-attachments.html [ Skip ]
 # CertificateInfo serializes a GRefPtr<GTlsCertificate> that coreipc.js cannot construct.
 http/tests/ipc/createnewpage-file-body-sandbox-extension.html [ Skip ]
 
-# Hardcodes Cocoa's WebCore::FontPlatformDataAttributes in the IPC payload.
-ipc/move-to-image-buffer-cross-thread-font-crash.html [ Skip ]
-
 # Sends WebCore::PixelFormat index 3; the glib ports enable none of RGB10, RGB10A8
 # and RGBA16F, so the enum stops at BGRA8.
 ipc/convert-to-luminance-mask-float16.html [ Skip ]

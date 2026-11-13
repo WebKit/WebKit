@@ -3007,7 +3007,6 @@
 		72F667E1260C26AC00EE36AD /* DiagnosticLoggingDomain.h in Headers */ = {isa = PBXBuildFile; fileRef = 72F667DF260C264400EE36AD /* DiagnosticLoggingDomain.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		72F7E746279B8F7500D82D2D /* SourceImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 72F7E744279B8F7400D82D2D /* SourceImage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AA0CE5D02E6F00A100C0FFEE /* ViewCoordinateSpaceRect.h in Headers */ = {isa = PBXBuildFile; fileRef = AA0CE5D12E6F00A100C0FFEE /* ViewCoordinateSpaceRect.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		72F9A6CD2D30DE880019DE4B /* ImageBufferDisplayListBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 72F9A6C92D30BE6E0019DE4B /* ImageBufferDisplayListBackend.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		72FD30AC27E3217B0023CDAC /* SourceBrush.h in Headers */ = {isa = PBXBuildFile; fileRef = 72FD30AA27E3217B0023CDAC /* SourceBrush.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		72FD88D1295E3C40006FACDC /* MenuListPart.h in Headers */ = {isa = PBXBuildFile; fileRef = 72FD88D0295D56E2006FACDC /* MenuListPart.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		733212D86D36C78C04928DF8 /* UnifiedSource57-header-RenderStyleGetters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EAFEE1BA6EC72445F6539574 /* UnifiedSource57-header-RenderStyleGetters.cpp */; };
@@ -14672,8 +14671,6 @@
 		72F8898E29888AEF00A6E07A /* ControlFactoryCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ControlFactoryCocoa.mm; sourceTree = "<group>"; };
 		72F8899A29889E4300A6E07A /* ApplePayButtonCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ApplePayButtonCocoa.mm; sourceTree = "<group>"; };
 		72F8899B29889E4300A6E07A /* ApplePayButtonCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApplePayButtonCocoa.h; sourceTree = "<group>"; };
-		72F9A6C92D30BE6E0019DE4B /* ImageBufferDisplayListBackend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageBufferDisplayListBackend.h; sourceTree = "<group>"; };
-		72F9A6CA2D30BE6E0019DE4B /* ImageBufferDisplayListBackend.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageBufferDisplayListBackend.cpp; sourceTree = "<group>"; };
 		72FB238422497AD4007E5AC7 /* SVGValuePropertyAnimatorImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGValuePropertyAnimatorImpl.h; sourceTree = "<group>"; };
 		72FB238622497AD5007E5AC7 /* SVGValuePropertyAnimator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGValuePropertyAnimator.h; sourceTree = "<group>"; };
 		72FB238722497B15007E5AC7 /* SVGValuePropertyListAnimatorImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGValuePropertyListAnimatorImpl.h; sourceTree = "<group>"; };
@@ -36931,8 +36928,6 @@
 				72BAC3A523E17328008D741C /* ImageBufferBackend.h */,
 				72FE4047292F3D3B001D3855 /* ImageBufferContextSwitcher.cpp */,
 				72FE4046292F3D3A001D3855 /* ImageBufferContextSwitcher.h */,
-				72F9A6CA2D30BE6E0019DE4B /* ImageBufferDisplayListBackend.cpp */,
-				72F9A6C92D30BE6E0019DE4B /* ImageBufferDisplayListBackend.h */,
 				0FB266832E3304850071C4A5 /* ImageBufferFormat.h */,
 				86BBA9EF2987EBF100A78986 /* ImageBufferParameters.h */,
 				72BAC3A623E17328008D741C /* ImageBufferPlatformBackend.h */,
@@ -46436,7 +46431,6 @@
 				72BAC3AE23E1F0B0008D741C /* ImageBufferBackend.h in Headers */,
 				550640B02407587E00AAE045 /* ImageBufferCGBackend.h in Headers */,
 				2D7705C925528D34001D0C94 /* ImageBufferCGBitmapBackend.h in Headers */,
-				72F9A6CD2D30DE880019DE4B /* ImageBufferDisplayListBackend.h in Headers */,
 				0FB266842E3304850071C4A5 /* ImageBufferFormat.h in Headers */,
 				727A7F3A24078B84004D2931 /* ImageBufferIOSurfaceBackend.h in Headers */,
 				86BBA9F02987EBF300A78986 /* ImageBufferParameters.h in Headers */,
