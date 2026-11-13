@@ -1,0 +1,33 @@
+<style>
+     canvas {
+         width: 700px;
+         height: 400px;
+     }
+ </style>
+ <body>
+    <h3>This tests the layer with filter is drawn to the offscreen canvas.</h3>
+    <canvas id="canvas"></canvas>
+    <script>
+        const offscreenCanvas = new OffscreenCanvas(700, 400);
+        const offscreenContext = offscreenCanvas.getContext("2d");
+
+        offscreenContext.filter = 'drop-shadow(10px 10px 0 rgb(128, 128, 128))';
+
+        offscreenContext.beginLayer();
+            offscreenContext.fillStyle = 'Beige';
+            offscreenContext.fillRect(120, 120, 200, 200);
+            offscreenContext.fillRect(20, 20, 200, 200);
+
+            offscreenContext.fillStyle = 'Salmon';
+            offscreenContext.fillRect(480, 120, 200, 200);
+            offscreenContext.fillRect(360, 20, 200, 200);
+        offscreenContext.endLayer();
+
+        const canvas = document.getElementById('canvas');
+        const context = canvas.getContext('2d');
+        canvas.width = 700;
+        canvas.height = 400;
+
+        context.drawImage(offscreenCanvas, 0, 0);
+    </script>
+</body>

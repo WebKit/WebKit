@@ -1478,6 +1478,7 @@ dom/ScopedEventQueue.cpp
 dom/ScriptElement.cpp
 dom/ScriptElementCachedScriptFetcher.cpp
 dom/ScriptExecutionContext.cpp
+dom/ScriptExecutionContext+Color.cpp
 dom/ScriptRunner.cpp
 dom/ScriptableDocumentParser.cpp
 dom/ScriptedAnimationController.cpp
@@ -1644,6 +1645,7 @@ html/BaseDateAndTimeInputType.cpp
 html/BaseTextInputType.cpp
 html/ButtonInputType.cpp
 html/CanvasBase.cpp @header:RenderStyleGetters @cost:8
+html/CanvasBase+Color.cpp
 html/CanvasNoiseInjection.cpp
 html/CheckboxInputType.cpp @header:RenderStyleGetters @cost:6
 html/ColorInputType.cpp @header:RenderStyleGetters @cost:9

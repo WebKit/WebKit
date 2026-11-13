@@ -92,7 +92,6 @@
 #include "EventLoop.h"
 #include "EventNames.h"
 #include "ExtensionStyleSheets.h"
-#include "FilterRenderingMode.h"
 #include "FixedContainerEdges.h"
 #include "FocusController.h"
 #include "FontCache.h"
@@ -5254,36 +5253,6 @@ void Page::recomputeTextAutoSizingInAllFrames()
             }
         }
     });
-}
-
-OptionSet<FilterRenderingMode> Page::preferredFilterRenderingModes(const GraphicsContext& context) const
-{
-    OptionSet<FilterRenderingMode> modes = FilterRenderingMode::Software;
-#if USE(CORE_IMAGE)
-    if (settings().acceleratedFiltersEnabled())
-        modes.add(FilterRenderingMode::Accelerated);
-#endif
-
-#if USE(SKIA) && !PLATFORM(WIN) && (!PLATFORM(WPE) || ENABLE(WPE_PLATFORM))
-    if (settings().hardwareAccelerationEnabled())
-        modes.add(FilterRenderingMode::Accelerated);
-#endif
-
-    UNUSED_PARAM(context);
-
-#if USE(GRAPHICS_CONTEXT_FILTERS)
-#if !HAVE(FIX_FOR_RADAR_104392017)
-    if (context.renderingMode() == RenderingMode::Accelerated || !context.knownToHaveFloatBasedBacking()) {
-#endif
-        // FIXME: Remove the RenderingMode::PDFDocument check once CG applies filters correctly on PDF contexts (rdar://176473171).
-        if (!context.hasDropShadow() && context.renderingMode() != RenderingMode::PDFDocument && settings().graphicsContextFiltersEnabled())
-            modes.add(FilterRenderingMode::GraphicsContext);
-#if !HAVE(FIX_FOR_RADAR_104392017)
-    }
-#endif
-#endif
-
-    return modes;
 }
 
 bool Page::shouldDisableCorsForRequestTo(const URL& url) const

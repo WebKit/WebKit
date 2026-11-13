@@ -43,7 +43,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSFilterRenderer);
 
-RefPtr<CSSFilterRenderer> CSSFilterRenderer::create(RenderElement& renderer, const Style::Filter& filter, const FilterGeometry& geometry, OptionSet<FilterRenderingMode> preferredRenderingModes, OptionSet<FilterRenderingOption> renderingOptions, const GraphicsContext& destinationContext)
+RefPtr<CSSFilterRenderer> CSSFilterRenderer::create(RenderElement* renderer, const Style::Filter& filter, const FilterGeometry& geometry, OptionSet<FilterRenderingMode> preferredRenderingModes, OptionSet<FilterRenderingOption> renderingOptions, const GraphicsContext& destinationContext)
 {
     bool hasFilterThatMovesPixels = filter.hasFilterThatMovesPixels();
     bool hasFilterThatShouldBeRestrictedBySecurityOrigin = filter.hasFilterThatShouldBeRestrictedBySecurityOrigin();
@@ -125,13 +125,15 @@ static IntOutsets calculateReferenceFilterOutsets(const Style::FilterReference& 
     return SVGFilterRenderer::calculateOutsets(*filterElement, targetBoundingBox);
 }
 
-static RefPtr<SVGFilterRenderer> createReferenceFilter(const CSSFilterRenderer& filter, const Style::FilterReference& filterReference, RenderElement& renderer, OptionSet<FilterRenderingMode> preferredRenderingModes, OptionSet<FilterRenderingOption> renderingOptions, const GraphicsContext& destinationContext)
+static RefPtr<SVGFilterRenderer> createReferenceFilter(const CSSFilterRenderer& filter, const Style::FilterReference& filterReference, RenderElement* renderer, OptionSet<FilterRenderingMode> preferredRenderingModes, OptionSet<FilterRenderingOption> renderingOptions, const GraphicsContext& destinationContext)
 {
-    RefPtr filterElement = referenceFilterElement(filterReference, renderer);
+    if (!renderer)
+        break;
+    RefPtr filterElement = referenceFilterElement(filterReference, *renderer);
     if (!filterElement)
         return nullptr;
 
-    RefPtr contextElement = dynamicDowncast<SVGElement>(renderer.element());
+    RefPtr contextElement = dynamicDowncast<SVGElement>(renderer->element());
 
     auto geometry = filter.geometry();
     geometry.filterRegion = SVGLengthContext::resolveRectangle(contextElement.get(), *filterElement, filterElement->filterUnits(), filter.referenceBox());
@@ -144,17 +146,17 @@ static RefPtr<SVGFilterRenderer> createReferenceFilter(const CSSFilterRenderer& 
     return SVGFilterRenderer::create(contextElement.get(), *filterElement, geometry, preferredRenderingModes, renderingOptions, destinationContext);
 }
 
-RefPtr<FilterFunction> CSSFilterRenderer::buildFilterFunction(RenderElement& renderer, const Style::FilterValue& filterValue, OptionSet<FilterRenderingMode> preferredRenderingModes, OptionSet<FilterRenderingOption> renderingOptions, const GraphicsContext& destinationContext)
+RefPtr<FilterFunction> CSSFilterRenderer::buildFilterFunction(RenderElement* renderer, const Style::FilterValue& filterValue, OptionSet<FilterRenderingMode> preferredRenderingModes, OptionSet<FilterRenderingOption> renderingOptions, const GraphicsContext& destinationContext)
 {
     return WTF::switchOn(filterValue,
         [&](const Style::FilterReference& filterReference) -> RefPtr<FilterFunction> {
             return createReferenceFilter(*this, filterReference, renderer, preferredRenderingModes, renderingOptions, destinationContext);
         },
         [&](const Style::BlurFunction& blurFunction) -> RefPtr<FilterFunction> {
-            return Style::evaluate<Ref<FilterEffect>>(blurFunction, renderer.style());
+            return Style::evaluate<Ref<FilterEffect>>(blurFunction, renderer->style());
         },
         [&](const Style::DropShadowFunction& dropShadowFunction) -> RefPtr<FilterFunction> {
-            return Style::evaluate<Ref<FilterEffect>>(dropShadowFunction, renderer.style());
+            return Style::evaluate<Ref<FilterEffect>>(dropShadowFunction, renderer->style());
         },
         []<CSSValueID C, typename T>(const FunctionNotation<C, T>& filterFunction) -> RefPtr<FilterFunction> {
             return Style::evaluate<Ref<FilterEffect>>(filterFunction);
@@ -162,7 +164,7 @@ RefPtr<FilterFunction> CSSFilterRenderer::buildFilterFunction(RenderElement& ren
     );
 }
 
-bool CSSFilterRenderer::buildFilterFunctions(RenderElement& renderer, const Style::Filter& filter, OptionSet<FilterRenderingMode> preferredRenderingModes, OptionSet<FilterRenderingOption> renderingOptions, const GraphicsContext& destinationContext)
+bool CSSFilterRenderer::buildFilterFunctions(RenderElement* renderer, const Style::Filter& filter, OptionSet<FilterRenderingMode> preferredRenderingModes, OptionSet<FilterRenderingOption> renderingOptions, const GraphicsContext& destinationContext)
 {
     for (auto& value : filter) {
         auto function = buildFilterFunction(renderer, value, preferredRenderingModes, renderingOptions, destinationContext);
