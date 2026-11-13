@@ -99,6 +99,12 @@ class WebDriverW3CWebServer(object):
         self._wpt_certs_dir = os.path.join(self._runtime_path, '_wpt_certs')
         self._wpt_certs_cacert_pem = os.path.join(self._wpt_certs_dir, 'cacert.pem')
         config['ssl']['openssl']['base_path'] = self._wpt_certs_dir
+        # The print tests load pdf.js and the PDF runner page from routes that only wptrunner's
+        # test environment provides, so mount them here as well.
+        config['aliases'] = config.get('aliases', []) + [
+            {'url-path': '/_pdf_js/', 'local-dir': os.path.join(self._layout_doc_root, 'tools', 'third_party', 'pdf_js')},
+            {'url-path': '/print_pdf_runner.html', 'local-dir': os.path.join(doc_root, 'tools', 'wptrunner', 'wptrunner')},
+        ]
         self._port.host.filesystem.write_text_file(os.path.join(self._layout_doc_root, 'config.json'), json.dumps(config))
         self._server_host = config['browser_host']
         self._server_http_port = config['ports']['http'][0]
