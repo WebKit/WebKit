@@ -38,9 +38,10 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 NS_SWIFT_UI_ACTOR
 @protocol WKPointerTrackingGestureRecognizerDelegate <NSObject>
-- (void)pointerTrackingGestureRecognizer:(WKPointerTrackingGestureRecognizer *)gestureRecognizer didUpdatePressWithState:(NSGestureRecognizerState)state locationInWindow:(NSPoint)locationInWindow modifierFlags:(NSEventModifierFlags)modifierFlags;
+- (void)pointerTrackingGestureRecognizer:(WKPointerTrackingGestureRecognizer *)gestureRecognizer didUpdateTouchWithState:(NSGestureRecognizerState)state locationInWindow:(NSPoint)locationInWindow modifierFlags:(NSEventModifierFlags)modifierFlags;
 @end
 
+// Loosely inspired by WKTouchEventsGestureRecognizer.
 NS_SWIFT_UI_ACTOR
 @interface WKPointerTrackingGestureRecognizer : WKPressGestureRecognizer
 

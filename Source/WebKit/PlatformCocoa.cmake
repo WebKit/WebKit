@@ -596,12 +596,12 @@ list(APPEND WebKit_SOURCES
 
     ${WEBKIT_DIR}/UIProcess/mac/_WKCaptionStyleMenuControllerAVKitMac.mm
     ${WEBKIT_DIR}/UIProcess/mac/_WKCaptionStyleMenuControllerMac.mm
-    ${WEBKIT_DIR}/UIProcess/mac/AppKitGestures/AppKitGesturesExtras.swift
     ${WEBKIT_DIR}/UIProcess/mac/AppKitGestures/WKAppKitGestureController.swift
     ${WEBKIT_DIR}/UIProcess/mac/AppKitGestures/WKDOMDoubleClickGestureRecognizer.swift
     ${WEBKIT_DIR}/UIProcess/mac/AppKitGestures/WKDirectionalScrollLockTracker.swift
     ${WEBKIT_DIR}/UIProcess/mac/AppKitGestures/WKFastScrollTracker.swift
     ${WEBKIT_DIR}/UIProcess/mac/AppKitGestures/WKMouseTrackingGestureRecognizer.swift
+    ${WEBKIT_DIR}/UIProcess/mac/AppKitGestures/WKPanGestureRecognizer.swift
     ${WEBKIT_DIR}/UIProcess/mac/AppKitGestures/WKPointerTrackingGestureRecognizer.swift
     ${WEBKIT_DIR}/UIProcess/mac/AppKitGestures/WKPressGestureRecognizer.swift
     ${WEBKIT_DIR}/UIProcess/mac/SpatialShim.swift

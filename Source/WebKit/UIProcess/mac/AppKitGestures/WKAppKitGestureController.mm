@@ -1384,13 +1384,13 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     [self _dispatchTrackedPointerEventWithPhase:WebKit::WebEventPhase::Cancelled atLocationInWindow:_trackedPointerLastLocationInWindow modifierFlags:0];
 }
 
-- (void)pointerTrackingGestureRecognizer:(WKPointerTrackingGestureRecognizer *)gestureRecognizer didUpdatePressWithState:(NSGestureRecognizerState)state locationInWindow:(NSPoint)locationInWindow modifierFlags:(NSEventModifierFlags)modifierFlags
+- (void)pointerTrackingGestureRecognizer:(WKPointerTrackingGestureRecognizer *)gestureRecognizer didUpdateTouchWithState:(NSGestureRecognizerState)state locationInWindow:(NSPoint)locationInWindow modifierFlags:(NSEventModifierFlags)modifierFlags
 {
     RetainPtr webView = _view.get();
     if (!webView)
         return;
 
-    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "%@ press state %d at %@", gestureLogDescription(gestureRecognizer), static_cast<int>(state), NSStringFromPoint(locationInWindow));
+    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "%@ touch state %d at %@", gestureLogDescription(gestureRecognizer), static_cast<int>(state), NSStringFromPoint(locationInWindow));
 
     switch (state) {
     case NSGestureRecognizerStateBegan:
@@ -1400,7 +1400,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
             break;
 
         if (![self _pointerTrackingShouldBeginAtLocation:[webView convertPoint:locationInWindow fromView:nil] modifierFlags:modifierFlags]) {
-            // The page must not treat the click that follows as the release of the last tracked press.
+            // The page must not treat the click that follows as the release of the last tracked touch.
             if ([self _isHoverActivatedByClickAtLocation:[webView convertPoint:locationInWindow fromView:nil]])
                 [self _dispatchTrackedPointerEventWithPhase:WebKit::WebEventPhase::Cancelled atLocationInWindow:locationInWindow modifierFlags:modifierFlags];
             break;
@@ -1419,8 +1419,8 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
         _trackedPointerLastLocationInWindow = locationInWindow;
 
-        // Report no movement until the press has moved too far to be a click, so that a
-        // press that is held still reads as still.
+        // Report no movement until the touch has moved too far to be a tap, so that a
+        // touch that is held still reads as still.
         if (!_trackedPointerHasMoved) {
             auto movementInWindow = NSMakeSize(locationInWindow.x - _trackedPointerStartLocationInWindow.x, locationInWindow.y - _trackedPointerStartLocationInWindow.y);
             if (![self _movementExceedsClickAllowableMovement:movementInWindow])
@@ -1603,7 +1603,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     BOOL preventDragAndContextMenu = [self _outcome:outcome preventsGesturesDeferredBy:_imageAnalysisDragAndContextMenuDeferringGestureRecognizer.get()];
 
     // Only resolve a deferral that's still deferring. A deferral may already be resolved by the time the
-    // analysis token drops -- e.g. it failed on lift (immediatelyFailsAfterActionEnd) before slow
+    // analysis token drops -- e.g. it failed on lift (immediatelyFailsAfterTouchEnd) before slow
     // analysis finished -- and re-setting an already-terminal gesture state would be a no-op at best.
     if ([_imageAnalysisTextSelectionDeferringGestureRecognizer state] == NSGestureRecognizerStatePossible)
         [_imageAnalysisTextSelectionDeferringGestureRecognizer endDeferralShouldPreventGestures:preventTextSelection];
@@ -1653,7 +1653,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     return NO;
 }
 
-- (BOOL)deferringGestureRecognizer:(WKDeferringGestureRecognizer *)deferringGestureRecognizer shouldDeferGesturesForEventThatWillBeginAction:(NSEvent *)event
+- (BOOL)deferringGestureRecognizer:(WKDeferringGestureRecognizer *)deferringGestureRecognizer shouldDeferGesturesForEventThatWillBeginTouches:(NSEvent *)event
 {
     RetainPtr webView = _view.get();
     if (!webView)
@@ -1778,13 +1778,13 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     return YES;
 }
 
-- (void)deferringGestureRecognizer:(WKDeferringGestureRecognizer *)deferringGestureRecognizer didEndActionWithEvent:(NSEvent *)event
+- (void)deferringGestureRecognizer:(WKDeferringGestureRecognizer *)deferringGestureRecognizer didEndTouchesWithEvent:(NSEvent *)event
 {
     if (deferringGestureRecognizer.state != NSGestureRecognizerStatePossible)
         return;
 
     if (RetainPtr webView = _view.get())
-        WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG([webView _protectedPage]->logIdentifier(), "deferral: press ended before position info arrived; unblocking text selection");
+        WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG([webView _protectedPage]->logIdentifier(), "deferral: touch ended before position info arrived; unblocking text selection");
 
     if (deferringGestureRecognizer != _pointerDownDeferringGestureRecognizer)
         _positionInformationManager->abandonOutstandingRequest();

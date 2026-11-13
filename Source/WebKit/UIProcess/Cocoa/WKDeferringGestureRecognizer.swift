@@ -29,7 +29,7 @@ import WebKit_Internal
 extension WKDeferringGestureRecognizer {
     private weak var deferringGestureDelegate: (any WKDeferringGestureRecognizerDelegate)? = nil
 
-    var immediatelyFailsAfterActionEnd: Bool = false
+    var immediatelyFailsAfterTouchEnd: Bool = false
 
     init(deferringGestureDelegate: any WKDeferringGestureRecognizerDelegate) {
         self.deferringGestureDelegate = deferringGestureDelegate
@@ -37,13 +37,13 @@ extension WKDeferringGestureRecognizer {
     }
 
     // -initWithCoder: is only a designated initializer for NSGestureRecognizer
-#if WTF_PLATFORM_MAC
+    #if WTF_PLATFORM_MAC
     // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     @objc
     public required dynamic init?(coder: NSCoder) {
         super.init(coder: coder)
     }
-#endif
+    #endif
 
     @objc
     override init(target: Any?, action: Selector?) {
@@ -69,9 +69,9 @@ extension WKDeferringGestureRecognizer {
         }
     }
 
-    func internalActionBegan(with event: PlatformEvent, callSuper: () -> Void) {
+    func internalTouchesBegan(with event: PlatformEvent, callSuper: () -> Void) {
         let shouldDeferGestures =
-            deferringGestureDelegate?.deferringGestureRecognizer(self, shouldDeferGesturesForEventThatWillBeginAction: event) ?? false
+            deferringGestureDelegate?.deferringGestureRecognizer(self, shouldDeferGesturesForEventThatWillBeginTouches: event) ?? false
         callSuper()
 
         if !shouldDeferGestures {
@@ -79,17 +79,17 @@ extension WKDeferringGestureRecognizer {
         }
     }
 
-    func internalActionEnded(with event: PlatformEvent, callSuper: () -> Void) {
+    func internalTouchesEnded(with event: PlatformEvent, callSuper: () -> Void) {
         callSuper()
 
-        if immediatelyFailsAfterActionEnd {
+        if immediatelyFailsAfterTouchEnd {
             state = .failed
         }
 
-        deferringGestureDelegate?.deferringGestureRecognizer(self, didEndActionWith: event)
+        deferringGestureDelegate?.deferringGestureRecognizer(self, didEndTouchesWith: event)
     }
 
-    func internalActionCancelled(with event: PlatformEvent, callSuper: () -> Void) {
+    func internalTouchesCancelled(with event: PlatformEvent, callSuper: () -> Void) {
         callSuper()
         state = .failed
     }
@@ -117,21 +117,21 @@ extension WKDeferringGestureRecognizer {
 
     @_implementationOnly
     open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent) {
-        internalActionBegan(with: event) {
+        internalTouchesBegan(with: event) {
             super.touchesBegan(touches, with: event)
         }
     }
 
     @_implementationOnly
     open override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent) {
-        internalActionEnded(with: event) {
+        internalTouchesEnded(with: event) {
             super.touchesEnded(touches, with: event)
         }
     }
 
     @_implementationOnly
     open override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent) {
-        internalActionCancelled(with: event) {
+        internalTouchesCancelled(with: event) {
             super.touchesCancelled(touches, with: event)
         }
     }
@@ -142,4 +142,54 @@ extension WKDeferringGestureRecognizer {
     }
 }
 
-#endif // WTF_PLATFORM_IOS_FAMILY
+#elseif HAVE_APPKIT_GESTURES_SUPPORT
+
+extension WKDeferringGestureRecognizer {
+    @_implementationOnly
+    open override var state: NSGestureRecognizer.State {
+        get {
+            super.state
+        }
+        set {
+            let previousState = state
+            super.state = newValue
+
+            internalSetState(previousState: previousState, newValue: newValue)
+        }
+    }
+
+    @_implementationOnly
+    open override func touchesBegan(with event: NSEvent) {
+        internalTouchesBegan(with: event) {
+            super.touchesBegan(with: event)
+        }
+    }
+
+    @_implementationOnly
+    open override func touchesEnded(with event: NSEvent) {
+        internalTouchesEnded(with: event) {
+            super.touchesEnded(with: event)
+        }
+    }
+
+    @_implementationOnly
+    open override func touchesCancelled(with event: NSEvent) {
+        internalTouchesCancelled(with: event) {
+            super.touchesCancelled(with: event)
+        }
+    }
+
+    @_implementationOnly
+    open override func canBePrevented(by gestureRecognizer: NSGestureRecognizer) -> Bool {
+        internalCanBePrevented(by: gestureRecognizer)
+    }
+
+    // swift-format-ignore: NoLeadingUnderscores
+    @_implementationOnly
+    open override func _acceptedEventMask() -> NSEvent.EventTypeMask {
+        // Intentionally restricted to direct touches; expand if other event masks are ever needed.
+        .directTouch
+    }
+}
+
+#endif

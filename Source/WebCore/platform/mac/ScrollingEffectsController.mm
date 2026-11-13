@@ -150,11 +150,6 @@ static FloatSize hyperbolicReboundDeltaForElasticDelta(IntSize stretchAmount, fl
     const auto height = _NSHyperbolicReboundDeltaForElasticDelta(stretchAmount.height(), rubberbandHyperbolicCoefficient, viewportSize.height());
     return { static_cast<float>(width), static_cast<float>(height) };
 }
-
-static float rubberBandHyperbolicCoefficient(const PlatformWheelEvent& wheelEvent)
-{
-    return wheelEvent.inputSource() == MouseEventInputSource::Automation ? NSScrollingBehaviorHyperbolicCoefficientTouch : NSScrollingBehaviorHyperbolicCoefficientTrackpad;
-}
 #endif
 
 void ScrollingEffectsController::handleWheelEventDuringSpringAnimation(const PlatformWheelEvent& wheelEvent)
@@ -213,7 +208,7 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
 #if HAVE(APPKIT_GESTURES_SUPPORT)
         const auto viewportSize = m_client.scrollExtents().viewportSize;
         m_gestureBeganAtTop = m_client.edgePinnedState().top();
-        m_rubberbandHyperbolicCoefficient = rubberBandHyperbolicCoefficient(wheelEvent);
+        m_rubberbandHyperbolicCoefficient = wheelEvent.inputSource() == MouseEventInputSource::Automation ? NSScrollingBehaviorHyperbolicCoefficientTouch : NSScrollingBehaviorHyperbolicCoefficientTrackpad;
         m_stretchScrollForce = hyperbolicReboundDeltaForElasticDelta(stretchAmount, m_rubberbandHyperbolicCoefficient, viewportSize);
 #else
         m_stretchScrollForce.setWidth(reboundDeltaForElasticDelta(stretchAmount.width()));

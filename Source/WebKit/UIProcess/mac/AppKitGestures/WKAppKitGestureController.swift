@@ -26,116 +26,9 @@
 import Foundation
 import WebKit_Internal
 import AppKit
-import AppKit_Private.NSPanGestureRecognizer_Private
 private import CxxStdlib
 private import WebCore_Private
 import struct Swift.String
-
-final class WKPanGestureRecognizer: NSPanGestureRecognizer {
-    private static let stalenessWindow: TimeInterval = 0.2
-
-    private weak var webView: WKWebView?
-
-    var gestureStartTime: TimeInterval?
-    var gestureStartLocationInWindow: NSPoint = .zero
-
-    var lastMovementTime: TimeInterval?
-    var lastMovementLocationInWindow: NSPoint = .zero
-
-    var reachedChangedState = false
-
-    init(webView: WKWebView, target: Any?, action: Selector?) {
-        self.webView = webView
-        super.init(target: target, action: action)
-    }
-
-    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
-    @objc
-    public required dynamic init?(coder: NSCoder) {
-        super.init(coder: coder)
-    }
-
-    override func reset() {
-        gestureStartTime = nil
-        gestureStartLocationInWindow = .zero
-        lastMovementTime = nil
-        lastMovementLocationInWindow = .zero
-        reachedChangedState = false
-        super.reset()
-    }
-
-    // This selector is internal-only in AppKit.
-    // swift-format-ignore: AlwaysUseLowerCamelCase
-    @objc(_allowedDuringDnDRestrictions)
-    func wk_allowedDuringDnDRestrictions() -> Bool {
-        false
-    }
-
-    // swift-format-ignore: AlwaysUseLowerCamelCase
-    func wk_velocity(in view: NSView?) -> NSPoint {
-        if let lastMovementTime, timestamp - lastMovementTime >= Self.stalenessWindow {
-            return .zero
-        }
-
-        let appKitVelocity = velocity(in: view)
-
-        // Prefer AppKit's velocity if available.
-        // If we've seen "changed" events and AppKit gave us zero, then the velocity is legitimately zero.
-        if reachedChangedState || appKitVelocity != .zero {
-            return appKitVelocity
-        }
-
-        // If we have seen less than two events, we can't work out a velocity at all.
-        guard let gestureStartTime, let lastMovementTime, lastMovementTime > gestureStartTime
-        else {
-            return .zero
-        }
-
-        let start = view.map { $0.convert(gestureStartLocationInWindow, from: nil) } ?? gestureStartLocationInWindow
-        let end = view.map { $0.convert(lastMovementLocationInWindow, from: nil) } ?? lastMovementLocationInWindow
-
-        let duration = lastMovementTime - gestureStartTime
-        return NSPoint(x: (end.x - start.x) / duration, y: (end.y - start.y) / duration)
-    }
-
-    #if canImport(AppKit, _version: "2759")
-    // swift-format-ignore: NoLeadingUnderscores
-    override func _shouldRecognize(forDelta delta: NSPoint) -> NSPanShouldRecognizeResponse {
-        guard let webView, let page = webView._protectedPage().get() else {
-            return .fail
-        }
-
-        guard webView.enclosingScrollView != nil else {
-            return .recognize
-        }
-
-        let locationInView = location(in: webView)
-        let pinnedState = page.pinnedStateIncludingAncestorsAtPoint(.init(locationInView))
-
-        // Safety: Accessing these functions on `pinnedState` is safe because a copy is immediately made,
-        // and the functions's return value's lifetime is bound to `pinnedState` anyways.
-        // FIXME: (rdar://145054011) Remove `unsafe` when possible.
-
-        if abs(delta.x) > abs(delta.y) {
-            if unsafe delta.x < 0 && pinnedState.__rightUnsafe().pointee {
-                return .fail
-            }
-            if unsafe delta.x > 0 && pinnedState.__leftUnsafe().pointee {
-                return .fail
-            }
-        } else {
-            if unsafe delta.y < 0 && pinnedState.__topUnsafe().pointee {
-                return .fail
-            }
-            if unsafe delta.y > 0 && pinnedState.__bottomUnsafe().pointee {
-                return .fail
-            }
-        }
-
-        return .recognize
-    }
-    #endif // canImport(AppKit, _version: "2759")
-}
 
 @objc(Swift)
 @implementation
@@ -193,7 +86,7 @@ extension WKAppKitGestureController {
         configure(forImageAnalysisDeferral: deferringGestureRecognizer)
         deferringGestureRecognizer.name = name
         deferringGestureRecognizer.delegate = self
-        deferringGestureRecognizer.immediatelyFailsAfterActionEnd = true
+        deferringGestureRecognizer.immediatelyFailsAfterTouchEnd = true
         return deferringGestureRecognizer
     }
 

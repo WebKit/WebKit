@@ -61,10 +61,6 @@
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/Borrow.h>
 
-#if HAVE(APPKIT_GESTURES_SUPPORT)
-#import "AppKitUtilities.h"
-#endif
-
 static const double zoomOutBoost = 1.6;
 static const double zoomOutResistance = 0.10;
 
@@ -311,8 +307,12 @@ bool ViewGestureController::PendingSwipeTracker::scrollEventCanInfluenceSwipe(co
 {
     if (!event.hasPreciseScrollingDeltas())
         return false;
+
 #if HAVE(APPKIT_GESTURES_SUPPORT)
-    return isSwipeTrackingFromScrollEventsEnabled(event);
+    if (event.nativeEvent())
+        return NSEvent.isSwipeTrackingFromScrollEventsEnabled;
+
+    return NSEvent.isTouchSwipeNavigationEnabled;
 #else
     return NSEvent.isSwipeTrackingFromScrollEventsEnabled;
 #endif

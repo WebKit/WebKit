@@ -1388,7 +1388,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 #if ENABLE(IMAGE_ANALYSIS)
     _imageAnalysisDeferringGestureRecognizer = adoptNS([[WKDeferringGestureRecognizer alloc] initWithDeferringGestureDelegate:self]);
     [_imageAnalysisDeferringGestureRecognizer setName:@"Deferrer for image analysis"];
-    [_imageAnalysisDeferringGestureRecognizer setImmediatelyFailsAfterActionEnd:YES];
+    [_imageAnalysisDeferringGestureRecognizer setImmediatelyFailsAfterTouchEnd:YES];
     [_imageAnalysisDeferringGestureRecognizer setEnabled:WebKit::isLiveTextAvailableAndEnabled()];
 #endif
 
@@ -10517,7 +10517,7 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
 
 #pragma mark - WKDeferringGestureRecognizerDelegate
 
-- (BOOL)deferringGestureRecognizer:(WKDeferringGestureRecognizer *)deferringGestureRecognizer shouldDeferGesturesForEventThatWillBeginAction:(UIEvent *)event
+- (BOOL)deferringGestureRecognizer:(WKDeferringGestureRecognizer *)deferringGestureRecognizer shouldDeferGesturesForEventThatWillBeginTouches:(UIEvent *)event
 {
     protect(self.gestureRecognizerConsistencyEnforcer)->beginTracking(deferringGestureRecognizer);
 
@@ -10535,7 +10535,7 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
         protect(self.gestureRecognizerConsistencyEnforcer)->endTracking(deferringGestureRecognizer);
 }
 
-- (void)deferringGestureRecognizer:(WKDeferringGestureRecognizer *)deferringGestureRecognizer didEndActionWithEvent:(UIEvent *)event
+- (void)deferringGestureRecognizer:(WKDeferringGestureRecognizer *)deferringGestureRecognizer didEndTouchesWithEvent:(UIEvent *)event
 {
     protect(protect(self).get().gestureRecognizerConsistencyEnforcer).get().endTracking(deferringGestureRecognizer);
 

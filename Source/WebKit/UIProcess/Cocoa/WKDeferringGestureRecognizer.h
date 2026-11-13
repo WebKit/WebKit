@@ -51,8 +51,8 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 @protocol WKDeferringGestureRecognizerDelegate
 - (BOOL)deferringGestureRecognizer:(WKDeferringGestureRecognizer *)deferringGestureRecognizer shouldDeferOtherGestureRecognizer:(PlatformGestureRecognizer)gestureRecognizer;
-- (BOOL)deferringGestureRecognizer:(WKDeferringGestureRecognizer *)deferringGestureRecognizer shouldDeferGesturesForEventThatWillBeginAction:(PlatformEvent)event;
-- (void)deferringGestureRecognizer:(WKDeferringGestureRecognizer *)deferringGestureRecognizer didEndActionWithEvent:(PlatformEvent)event;
+- (BOOL)deferringGestureRecognizer:(WKDeferringGestureRecognizer *)deferringGestureRecognizer shouldDeferGesturesForEventThatWillBeginTouches:(PlatformEvent)event;
+- (void)deferringGestureRecognizer:(WKDeferringGestureRecognizer *)deferringGestureRecognizer didEndTouchesWithEvent:(PlatformEvent)event;
 - (void)deferringGestureRecognizer:(WKDeferringGestureRecognizer *)deferringGestureRecognizer didTransitionToState:(PlatformGestureRecognizerState)state;
 @end
 
@@ -63,7 +63,7 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 - (BOOL)shouldDeferGestureRecognizer:(PlatformGestureRecognizer)gestureRecognizer;
 - (void)endDeferralShouldPreventGestures:(BOOL)shouldPreventGestures;
 
-@property (nonatomic) BOOL immediatelyFailsAfterActionEnd;
+@property (nonatomic) BOOL immediatelyFailsAfterTouchEnd;
 
 @end
 

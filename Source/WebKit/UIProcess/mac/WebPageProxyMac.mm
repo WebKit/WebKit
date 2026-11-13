@@ -89,10 +89,6 @@
 #import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/text/cf/StringConcatenateCF.h>
 
-#if HAVE(APPKIT_GESTURES_SUPPORT)
-#import "AppKitUtilities.h"
-#endif
-
 #define MESSAGE_CHECK(assertion, connection) MESSAGE_CHECK_BASE(assertion, connection)
 #define MESSAGE_CHECK_COMPLETION(assertion, connection, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, connection, completion)
 #define MESSAGE_CHECK_URL(url) MESSAGE_CHECK_BASE(checkURLReceivedFromCurrentOrPreviousWebProcess(process, url), connection)
@@ -804,7 +800,7 @@ void WebPageProxy::showPDFContextMenu(const WebKit::PDFContextMenu& contextMenu,
     if (contextMenu.inputSource == WebEventInputSource::Automation) {
 #if HAVE(APPKIT_GESTURES_SUPPORT)
         NSPoint locationInScreenCoordinates = [window convertPointToScreen:locationInWindowCoordinates];
-        RetainPtr screenRelativeContext = [_NSViewMenuContext menuContextWithLocation:locationInScreenCoordinates source:ContextMenuRequestSourceForAutomation];
+        RetainPtr screenRelativeContext = [_NSViewMenuContext menuContextWithLocation:locationInScreenCoordinates source:_NSViewMenuRequestSourceTouch];
         [NSMenu _popUpContextMenu:nsMenu.get() withContext:screenRelativeContext.get() forView:view.get() completionBlock:makeBlockPtr(WTF::move(handleSelectedMenuItem)).get()];
 #else
         RELEASE_ASSERT_NOT_REACHED();

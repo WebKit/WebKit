@@ -33,24 +33,73 @@ extension WKPointerTrackingGestureRecognizer {
 }
 
 extension WKPointerTrackingGestureRecognizer {
-    func internalPressBegan(atLocationInWindow location: CGPoint, modifierFlags: NSEvent.ModifierFlags) {
-        pointerTrackingDelegate?
-            .pointerTrackingGestureRecognizer(self, didUpdatePressWith: .began, locationInWindow: location, modifierFlags: modifierFlags)
+    private func touchesOnView(of event: NSEvent) -> Set<NSTouch> {
+        event.touches(matching: .touching, in: view)
     }
 
-    func internalPressMoved(toLocationInWindow location: CGPoint, modifierFlags: NSEvent.ModifierFlags) {
+    func internalTouchBegan(atLocationInWindow location: CGPoint, modifierFlags: NSEvent.ModifierFlags) {
         pointerTrackingDelegate?
-            .pointerTrackingGestureRecognizer(self, didUpdatePressWith: .changed, locationInWindow: location, modifierFlags: modifierFlags)
+            .pointerTrackingGestureRecognizer(self, didUpdateTouchWith: .began, locationInWindow: location, modifierFlags: modifierFlags)
     }
 
-    func internalPressEnded(atLocationInWindow location: CGPoint, modifierFlags: NSEvent.ModifierFlags) {
+    func internalTouchMoved(toLocationInWindow location: CGPoint, modifierFlags: NSEvent.ModifierFlags) {
         pointerTrackingDelegate?
-            .pointerTrackingGestureRecognizer(self, didUpdatePressWith: .ended, locationInWindow: location, modifierFlags: modifierFlags)
+            .pointerTrackingGestureRecognizer(self, didUpdateTouchWith: .changed, locationInWindow: location, modifierFlags: modifierFlags)
     }
 
-    func internalPressCancelled() {
+    func internalTouchEnded(atLocationInWindow location: CGPoint, modifierFlags: NSEvent.ModifierFlags) {
         pointerTrackingDelegate?
-            .pointerTrackingGestureRecognizer(self, didUpdatePressWith: .cancelled, locationInWindow: .zero, modifierFlags: [])
+            .pointerTrackingGestureRecognizer(self, didUpdateTouchWith: .ended, locationInWindow: location, modifierFlags: modifierFlags)
+    }
+
+    func internalTouchCancelled() {
+        pointerTrackingDelegate?
+            .pointerTrackingGestureRecognizer(self, didUpdateTouchWith: .cancelled, locationInWindow: .zero, modifierFlags: [])
+    }
+}
+
+extension WKPointerTrackingGestureRecognizer {
+    @_implementationOnly
+    open override func touchesBegan(with event: NSEvent) {
+        super.touchesBegan(with: event)
+
+        // For now, the pointer follows a single touch.
+        let touches = touchesOnView(of: event)
+        guard touches.count == 1, let touch = touches.first else {
+            internalTouchCancelled()
+            return
+        }
+
+        internalTouchBegan(atLocationInWindow: touch.location(in: nil), modifierFlags: event.modifierFlags)
+    }
+
+    @_implementationOnly
+    open override func touchesMoved(with event: NSEvent) {
+        super.touchesMoved(with: event)
+
+        let touches = touchesOnView(of: event)
+        guard touches.count == 1, let touch = touches.first else {
+            return
+        }
+
+        internalTouchMoved(toLocationInWindow: touch.location(in: nil), modifierFlags: event.modifierFlags)
+    }
+
+    @_implementationOnly
+    open override func touchesEnded(with event: NSEvent) {
+        super.touchesEnded(with: event)
+
+        guard let touch = event.touches(matching: .ended, in: view).first else {
+            return
+        }
+
+        internalTouchEnded(atLocationInWindow: touch.location(in: nil), modifierFlags: event.modifierFlags)
+    }
+
+    @_implementationOnly
+    open override func touchesCancelled(with event: NSEvent) {
+        super.touchesCancelled(with: event)
+        internalTouchCancelled()
     }
 }
 
