@@ -1365,7 +1365,7 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidthUsing(const SizeType& logi
         // FIXME: Handle cases when containing block width is calculated or viewport percent.
         // https://bugs.webkit.org/show_bug.cgi?id=91071
         auto borderAndPadding = borderAndPaddingLogicalWidth();
-        if (logicalWidth.isCalcSize())
+        if (logicalWidth.isCalcSize() || logicalWidth.isFitContentFunction())
             return computeSizingKeywordLogicalWidthUsing(logicalWidth, availableLogicalWidth, borderAndPadding) - borderAndPadding;
         return computeSizingKeywordLogicalWidthUsing(keyword, availableLogicalWidth, borderAndPadding) - borderAndPadding;
     };

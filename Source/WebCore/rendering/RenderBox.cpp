@@ -3066,8 +3066,38 @@ LayoutUnit RenderBox::computeSizingKeywordLogicalWidthUsing(CSS::Keyword::FitCon
     return std::max(minLogicalWidth + borderAndPadding, std::min(maxLogicalWidth + borderAndPadding, fillAvailableMeasure(availableLogicalWidth)));
 }
 
+// fit-content(<length-percentage>) is "min(max-content, max(min-content, stretch(<length-percentage>)))".
+// https://drafts.csswg.org/css-sizing-4/#funcdef-width-fit-content
+LayoutUnit RenderBox::computeFitContentFunctionLogicalWidthUsing(const Style::LengthPercentage<CSS::NonnegativeLayoutUnitClamped, float>& argument, LayoutUnit availableLogicalWidth, LayoutUnit borderAndPadding) const
+{
+    auto stretch = Style::PreferredSize { Style::PreferredSize::StretchFunction { argument } };
+    auto stretchLogicalWidth = adjustBorderBoxLogicalWidthForBoxSizing(stretch, Style::evaluate<LayoutUnit>(argument, availableLogicalWidth, style().usedZoomForLength()), containingBlockLogicalWidthForBoxSizing(stretch));
+
+    auto [minLogicalWidth, maxLogicalWidth] = computeIntrinsicKeywordLogicalWidths(CSS::Keyword::FitContent { }, borderAndPadding);
+    return std::max(minLogicalWidth + borderAndPadding, std::min(maxLogicalWidth + borderAndPadding, stretchLogicalWidth));
+}
+
+// A fixed argument gives a size that doesn't depend on the available space, so it is also the box's min-content
+// and max-content contribution. A percentage one is left to the caller: "For fit-content(), if the
+// <length-percentage> expression on its own would resolve to the property's initial value, then instead [...]"
+// https://drafts.csswg.org/css-sizing-4/#cyclic-percentage-contribution
+std::optional<LayoutUnit> RenderBox::fitContentFunctionContentLogicalWidthContribution(const Style::LengthPercentage<CSS::NonnegativeLayoutUnitClamped, float>& argument, LayoutUnit minContentLogicalWidth, LayoutUnit maxContentLogicalWidth) const
+{
+    auto fixedArgument = argument.tryFixed();
+    if (!fixedArgument)
+        return { };
+
+    // Margins resolve against zero in the intrinsic size contributions.
+    auto stretch = Style::PreferredSize { Style::PreferredSize::StretchFunction { argument } };
+    auto stretchContentLogicalWidth = adjustContentBoxLogicalWidthForBoxSizing(stretch, Style::evaluate<LayoutUnit>(*fixedArgument, style().usedZoomForLength()), 0_lu);
+    return std::max(minContentLogicalWidth, std::min(maxContentLogicalWidth, stretchContentLogicalWidth));
+}
+
 template<typename SizeType> LayoutUnit RenderBox::computeSizingKeywordLogicalWidthUsingGeneric(const SizeType& logicalWidth, LayoutUnit availableLogicalWidth, LayoutUnit borderAndPadding) const
 {
+    if (logicalWidth.isFitContentFunction())
+        return computeFitContentFunctionLogicalWidthUsing(logicalWidth.fitContentArgument(), availableLogicalWidth, borderAndPadding);
+
     auto keywordLogicalWidth = logicalWidth.switchOnKeyword(
         [&](const Style::IsSizingKeyword auto& keyword) -> LayoutUnit {
             return computeSizingKeywordLogicalWidthUsing(keyword, availableLogicalWidth, borderAndPadding);
@@ -4195,10 +4225,14 @@ void RenderBox::constrainIntrinsicLogicalWidthContributionsByMinMax(LayoutUnit& 
 
     // A fixed inline width has already replaced the contributions with itself in
     // computeIntrinsicLogicalWidthContributions(), so a keyword minimum or maximum cannot read the
-    // content based size back out of them and has to measure it again.
+    // content based size back out of them and has to measure it again. So has a fit-content() with a
+    // fixed argument.
     // (A zero-width deprecated flex item still flexes, so its 0 is not a usable fixed width.)
     auto hasFixedLogicalWidth = [&] {
-        auto fixedLogicalWidth = overridingLogicalWidthForFlexBasisComputation().value_or(style().logicalWidth()).tryFixed();
+        auto logicalWidth = overridingLogicalWidthForFlexBasisComputation().value_or(style().logicalWidth());
+        if (logicalWidth.isFitContentFunction())
+            return !!logicalWidth.fitContentArgument().tryFixed();
+        auto fixedLogicalWidth = logicalWidth.tryFixed();
         return fixedLogicalWidth && fixedLogicalWidth->isPositiveOrZero() && !(isDeprecatedFlexItem() && !static_cast<int>(fixedLogicalWidth->resolveZoom(style().usedZoomForLength())));
     };
 
@@ -4213,6 +4247,17 @@ void RenderBox::constrainIntrinsicLogicalWidthContributionsByMinMax(LayoutUnit& 
         return computeSizingKeywordLogicalWidthUsing(CSS::Keyword::MinContent { }, contentBoxLogicalWidth(), { });
     };
 
+    // A fit-content() bound clamps its argument between the box's own min-content and max-content sizes. A percentage
+    // argument resolves to the initial value here, so "For a maximum size property, treat it as max-content. For a
+    // minimum size property, treat it as min-content." (https://drafts.csswg.org/css-sizing-4/#cyclic-percentage-contribution)
+    auto fitContentFunctionBound = [&](const auto& bound) {
+        auto [minContentLogicalWidth, maxContentLogicalWidth] = hasFixedLogicalWidth()
+            ? std::pair { measureKeywordLogicalWidth(false), measureKeywordLogicalWidth(true) }
+            : std::pair { minIntrinsicLogicalWidth, maxIntrinsicLogicalWidth };
+        auto initialValueFallback = std::same_as<std::decay_t<decltype(bound)>, Style::MaximumSize> ? maxContentLogicalWidth : minContentLogicalWidth;
+        return fitContentFunctionContentLogicalWidthContribution(bound.fitContentArgument(), minContentLogicalWidth, maxContentLogicalWidth).value_or(initialValueFallback);
+    };
+
     // Otherwise a keyword bound is the box's own min-content/max-content size, which includes the min/max sizes transferred
     // through the aspect ratio: an indefinite maximum doesn't cap those (CSS Sizing 4 section 5.3).
     // A stretch() bound takes its margins off, resolved against zero as the contributions resolve them.
@@ -4220,6 +4265,9 @@ void RenderBox::constrainIntrinsicLogicalWidthContributionsByMinMax(LayoutUnit& 
         // FIXME: We should be able to handle other values for the max logical width here.
         if (auto fixedMaxLogicalWidth = maxLogicalWidth.tryFixed())
             return adjustContentBoxLogicalWidthForBoxSizing(maxLogicalWidth, LayoutUnit { fixedMaxLogicalWidth->resolveZoom(style().usedZoomForLength()) }, 0_lu);
+
+        if (maxLogicalWidth.isFitContentFunction())
+            return fitContentFunctionBound(maxLogicalWidth);
 
         if (maxLogicalWidth.isMinContent() || maxLogicalWidth.isMaxContent()) {
             auto keywordLogicalWidth = [&] {
@@ -4240,6 +4288,9 @@ void RenderBox::constrainIntrinsicLogicalWidthContributionsByMinMax(LayoutUnit& 
         // FIXME: We should be able to handle other values for the min logical width here.
         if (auto fixedMinLogicalWidth = minLogicalWidth.tryFixed(); fixedMinLogicalWidth && fixedMinLogicalWidth->isPositive())
             return adjustContentBoxLogicalWidthForBoxSizing(minLogicalWidth, LayoutUnit { fixedMinLogicalWidth->resolveZoom(style().usedZoomForLength()) }, 0_lu);
+
+        if (minLogicalWidth.isFitContentFunction())
+            return fitContentFunctionBound(minLogicalWidth);
 
         // A min-content minimum floors the contribution at the box's own min-content size,
         // so a smaller max-width cannot clamp it below that (min wins over max).
@@ -4544,7 +4595,12 @@ template<typename SizeType> LayoutUnit RenderBox::computeOutOfFlowPositionedLogi
             return adjustContentBoxLogicalWidthForBoxSizing(Style::evaluate<LayoutUnit>(calcSizeLogicalWidth, inlineConstraints.containingSize(), style().usedZoomForLength()));
         },
         [&](const CSS::Keyword::FitContent& keyword) -> LayoutUnit {
-            return intrinsic(keyword);
+            if (!logicalWidth.isFitContentFunction())
+                return intrinsic(keyword);
+            // "The <length-percentage> argument is resolved exactly as for <length-percentage> values standing alone",
+            // so against the containing block rather than the space the insets leave.
+            auto intrinsicWidthComputationScope = IntrinsicLogicalWidthComputationScope { view().frameView().layoutContext(), *this };
+            return std::max(0_lu, computeFitContentFunctionLogicalWidthUsing(logicalWidth.fitContentArgument(), inlineConstraints.containingSize(), inlineConstraints.bordersPlusPadding()) - inlineConstraints.bordersPlusPadding());
         },
         [&](const CSS::Keyword::Stretch&) -> LayoutUnit {
             return inlineConstraints.availableContentSpace();

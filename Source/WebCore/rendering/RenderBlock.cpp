@@ -2233,6 +2233,11 @@ std::pair<LayoutUnit, LayoutUnit> RenderBlock::logicalWidthContributionsForSize(
         maxContentLogicalWidth = minContentLogicalWidth;
     else if (logicalWidth.isMaxContent())
         minContentLogicalWidth = maxContentLogicalWidth;
+    else if (logicalWidth.isFitContentFunction()) {
+        // For a percentage argument, "For a preferred size property, treat it as fit-content", which contributes the content sizes.
+        if (auto contribution = fitContentFunctionContentLogicalWidthContribution(logicalWidth.fitContentArgument(), minContentLogicalWidth, maxContentLogicalWidth))
+            return { *contribution, *contribution };
+    }
 
     if (!logicalWidth.isCalcSize())
         return { minContentLogicalWidth, maxContentLogicalWidth };
