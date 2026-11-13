@@ -26,6 +26,9 @@
 #pragma once
 
 #include <CoreVideo/CoreVideo.h>
+#include <expected>
+#include <optional>
+#include <span>
 #include <utility>
 #include <wtf/RetainPtr.h>
 
@@ -52,6 +55,14 @@ WEBCORE_EXPORT RetainPtr<CGColorSpaceRef> createCGColorSpaceForCVPixelBuffer(CVP
 
 WEBCORE_EXPORT CGImageAlphaInfo alphaInfoForCVPixelBuffer(CVPixelBufferRef);
 void setAlphaInfoForCVPixelBuffer(CVPixelBufferRef, CGImageAlphaInfo);
+
+std::span<const OSType> pixelFormatsWithAlphaPlane();
+bool isPixelFormatWithAlphaPlane(OSType);
+std::optional<OSType> pixelFormatWithAlpha(OSType colorFormat);
+std::expected<RetainPtr<CVPixelBufferRef>, CVReturn> createPixelBufferWithAlpha(CVPixelBufferRef colorBuffer, CVPixelBufferRef alphaBuffer, CVPixelBufferPoolRef);
+bool copyAlphaIntoAlphaPlane(CVPixelBufferRef destination, CVPixelBufferRef alphaBuffer);
+RetainPtr<CVPixelBufferRef> createBiPlanarPixelBufferFromColorPlanes(CVPixelBufferRef);
+bool copyAlphaPlaneToBGRAPixelBuffer(CVPixelBufferRef source, CVPixelBufferRef destination);
 
 // Should be called with non-empty ProcessIdentity.
 WEBCORE_EXPORT void setOwnershipIdentityForCVPixelBuffer(CVPixelBufferRef, const ProcessIdentity&);

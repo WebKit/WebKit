@@ -386,10 +386,9 @@ RefPtr<VideoFrame> ImageTransferSessionVT::createVideoFrame(CMSampleBufferRef bu
     return VideoFrameCV::create(sampleBuffer.get(), mirrored, rotation);
 }
 
-RetainPtr<CVPixelBufferRef> ImageTransferSessionVT::convertPixelBuffer(CVPixelBufferRef source, uint32_t targetPixelFormat, DestinationColorSpace colorSpace)
+static RetainPtr<CVPixelBufferRef> transferPixelBuffer(CVPixelBufferRef source, uint32_t targetPixelFormat, ImageTransferSessionVT::DestinationColorSpace colorSpace)
 {
-    if (!source)
-        return nullptr;
+    using DestinationColorSpace = ImageTransferSessionVT::DestinationColorSpace;
 
     NSDictionary *targetOptions = nullptr;
     const bool shouldUseIOSurface = CVPixelBufferGetIOSurface(source);
@@ -420,6 +419,25 @@ RetainPtr<CVPixelBufferRef> ImageTransferSessionVT::convertPixelBuffer(CVPixelBu
     if (status != kCVReturnSuccess)
         return nullptr;
     return target;
+}
+
+RetainPtr<CVPixelBufferRef> ImageTransferSessionVT::convertPixelBuffer(CVPixelBufferRef source, uint32_t targetPixelFormat, DestinationColorSpace colorSpace)
+{
+    if (!source)
+        return nullptr;
+
+    if (targetPixelFormat == kCVPixelFormatType_32BGRA && isPixelFormatWithAlphaPlane(CVPixelBufferGetPixelFormatType(source))) {
+        // VTPixelTransferSession miscolours 'x0a8'/'x2a8' and rounds alpha down (rdar://192100290).
+        RetainPtr colorSource = createBiPlanarPixelBufferFromColorPlanes(source);
+        if (!colorSource)
+            colorSource = source;
+        RetainPtr target = transferPixelBuffer(colorSource, targetPixelFormat, colorSpace);
+        if (!target || !copyAlphaPlaneToBGRAPixelBuffer(source, target))
+            return nullptr;
+        return target;
+    }
+
+    return transferPixelBuffer(source, targetPixelFormat, colorSpace);
 }
 
 } // namespace WebCore

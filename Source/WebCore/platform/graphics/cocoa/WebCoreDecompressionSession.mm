@@ -40,7 +40,6 @@
 #import "VideoDecoderVTBSession.h"
 #import "VideoFrame.h"
 #import <CoreFoundation/CoreFoundation.h>
-#import <CoreImage/CoreImage.h>
 #import <CoreMedia/CMBufferQueue.h>
 #import <CoreMedia/CMFormatDescription.h>
 #import <map>
@@ -56,6 +55,8 @@
 #import <wtf/WTFSemaphore.h>
 #import <wtf/cf/TypeCastsCF.h>
 #import <wtf/cf/VectorCF.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 #if ENABLE(VP9)
 #import <webm/common/vp9_header_parser.h>
@@ -152,95 +153,6 @@ static RetainPtr<CMSampleBufferRef> createAlphaSampleBuffer(CFArrayRef alphaData
     return sampleBuffer;
 }
 
-enum class AlphaPlaneRange : uint8_t { Video8Bit, Video10Bit, Full };
-
-static std::optional<AlphaPlaneRange> alphaPlaneRange(OSType format)
-{
-    switch (format) {
-    case kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange:
-    case kCVPixelFormatType_Lossless_420YpCbCr8BiPlanarVideoRange:
-        return AlphaPlaneRange::Video8Bit;
-    case kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange:
-    case kCVPixelFormatType_422YpCbCr10BiPlanarVideoRange:
-    case kCVPixelFormatType_Lossless_420YpCbCr10PackedBiPlanarVideoRange:
-    case kCVPixelFormatType_Lossless_422YpCbCr10PackedBiPlanarVideoRange:
-        return AlphaPlaneRange::Video10Bit;
-    case kCVPixelFormatType_420YpCbCr8BiPlanarFullRange:
-    case kCVPixelFormatType_420YpCbCr10BiPlanarFullRange:
-    case kCVPixelFormatType_422YpCbCr10BiPlanarFullRange:
-    case kCVPixelFormatType_Lossless_420YpCbCr8BiPlanarFullRange:
-    case kCVPixelFormatType_Lossless_420YpCbCr10PackedBiPlanarFullRange:
-        return AlphaPlaneRange::Full;
-    default:
-        return std::nullopt;
-    }
-}
-
-static RetainPtr<CIImage> createMaskImage(CVPixelBufferRef alphaBuffer)
-{
-    auto format = CVPixelBufferGetPixelFormatType(alphaBuffer);
-    auto range = alphaPlaneRange(format);
-    if (!range) {
-        RELEASE_LOG_ERROR(Media, "WebM alpha merge: alpha plane has unexpected format %" PUBLIC_LOG_STRING, FourCC(format).string().data());
-        return nullptr;
-    }
-
-    // CoreImage does not export kCIImageColorSpace on watchOS.
-    RetainPtr image = adoptNS([[CIImage alloc] initWithCVPixelBuffer:alphaBuffer options:@{ @"CIImageColorSpace": [NSNull null] }]);
-    if (!image)
-        return nullptr;
-
-    if (*range == AlphaPlaneRange::Full)
-        return image;
-
-    // The plane stores coverage over its whole code range, so undo the rescaling that reading it as video range applies.
-    double videoRangeBlack = *range == AlphaPlaneRange::Video8Bit ? 16.0 / 255.0 : 64.0 / 1023.0;
-    double videoRangeWhite = *range == AlphaPlaneRange::Video8Bit ? 235.0 / 255.0 : 940.0 / 1023.0;
-
-    return [image imageByApplyingFilter:@"CIColorMatrix" withInputParameters:@{
-        @"inputRVector": [CIVector vectorWithX:videoRangeWhite - videoRangeBlack Y:0 Z:0 W:0],
-        @"inputBiasVector": [CIVector vectorWithX:videoRangeBlack Y:0 Z:0 W:0],
-    }];
-}
-
-static RetainPtr<CVPixelBufferRef> mergeColorAndAlphaPixelBuffers(CVPixelBufferRef colorBuffer, CVPixelBufferRef alphaBuffer, CIContext *context, CVPixelBufferPoolRef pool)
-{
-    if (!colorBuffer || !alphaBuffer || !context || !pool)
-        return nullptr;
-
-    size_t width = CVPixelBufferGetWidth(colorBuffer);
-    size_t height = CVPixelBufferGetHeight(colorBuffer);
-    if (width != CVPixelBufferGetWidth(alphaBuffer) || height != CVPixelBufferGetHeight(alphaBuffer)) {
-        RELEASE_LOG_ERROR(Media, "WebM alpha merge: color (%zux%zu) and alpha (%zux%zu) dimensions differ", width, height, CVPixelBufferGetWidth(alphaBuffer), CVPixelBufferGetHeight(alphaBuffer));
-        return nullptr;
-    }
-
-    RetainPtr colorImage = adoptNS([[CIImage alloc] initWithCVPixelBuffer:colorBuffer]);
-    RetainPtr alphaImage = createMaskImage(alphaBuffer);
-    if (!colorImage || !alphaImage)
-        return nullptr;
-
-    RetainPtr output = [colorImage imageByApplyingFilter:@"CIBlendWithRedMask" withInputParameters:@{ @"inputMaskImage": alphaImage.get() }];
-    if (!output)
-        return nullptr;
-
-    auto outputBuffer = createCVPixelBufferFromPool(pool);
-    if (!outputBuffer) {
-        RELEASE_LOG_ERROR(Media, "WebM alpha merge: CVPixelBufferPool allocation failed (status=%d)", int(outputBuffer.error()));
-        return nullptr;
-    }
-    RetainPtr merged = *outputBuffer;
-
-    CVBufferPropagateAttachments(colorBuffer, merged);
-    // CoreImage renders premultiplied output, so the straight WebM alpha comes out premultiplied here.
-    CVBufferSetAttachment(merged, kCVImageBufferAlphaChannelModeKey, kCVImageBufferAlphaChannelMode_PremultipliedAlpha, kCVAttachmentMode_ShouldPropagate);
-
-    RetainPtr colorSpace = createCGColorSpaceForCVPixelBuffer(colorBuffer);
-    [context render:output toCVPixelBuffer:merged bounds:CGRectMake(0, 0, width, height) colorSpace:colorSpace];
-
-    return merged;
-}
-
 static RetainPtr<CMFormatDescriptionRef> createFormatDescriptionWithAlpha(CVPixelBufferRef pixelBuffer)
 {
     CMVideoFormatDescriptionRef rawDescription = nullptr;
@@ -253,7 +165,7 @@ static RetainPtr<CMFormatDescriptionRef> createFormatDescriptionWithAlpha(CVPixe
     if (!extensions)
         return description;
     CFDictionarySetValue(extensions, PAL::kCMFormatDescriptionExtension_ContainsAlphaChannel, kCFBooleanTrue);
-    CFDictionarySetValue(extensions, PAL::kCMFormatDescriptionExtension_AlphaChannelMode, PAL::kCMFormatDescriptionAlphaChannelMode_PremultipliedAlpha);
+    CFDictionarySetValue(extensions, PAL::kCMFormatDescriptionExtension_AlphaChannelMode, PAL::kCMFormatDescriptionAlphaChannelMode_StraightAlpha);
 
     rawDescription = nullptr;
     if (PAL::CMVideoFormatDescriptionCreate(kCFAllocatorDefault, CVPixelBufferGetPixelFormatType(pixelBuffer), CVPixelBufferGetWidth(pixelBuffer), CVPixelBufferGetHeight(pixelBuffer), extensions, &rawDescription) != noErr)
@@ -303,6 +215,108 @@ Ref<WebCoreDecompressionSession> WebCoreDecompressionSession::createRGB(Guarante
     }, dispatcher));
 }
 
+namespace {
+
+struct DecodedPixelFormat {
+    OSType format;
+    bool isFullRange;
+    bool isTenBit;
+};
+
+}
+
+static RetainPtr<CFDataRef> vpcCFromFormatDescription(CMFormatDescriptionRef description)
+{
+    RetainPtr extensions = PAL::CMFormatDescriptionGetExtensions(description);
+    if (!extensions)
+        return nullptr;
+    RetainPtr atoms = dynamic_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(extensions, PAL::kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms));
+    if (!atoms)
+        return nullptr;
+    return dynamic_cf_cast<CFDataRef>(CFDictionaryGetValue(atoms, CFSTR("vpcC")));
+}
+
+static std::optional<DecodedPixelFormat> decodedPixelFormat(CMFormatDescriptionRef description)
+{
+#if ENABLE(VP9)
+    RetainPtr configuration = vpcCFromFormatDescription(description);
+    if (!configuration)
+        return { };
+    auto record = createVPCodecConfigurationRecordFromVPCC(span(configuration));
+    if (!record)
+        return { };
+
+    bool isFullRange = record->videoFullRangeFlag == VPConfigurationRange::FullRange;
+    bool isChroma422 = record->chromaSubsampling == VPConfigurationChromaSubsampling::Subsampling_422;
+    if (!isChroma422 && record->chromaSubsampling != VPConfigurationChromaSubsampling::Subsampling_420_Vertical && record->chromaSubsampling != VPConfigurationChromaSubsampling::Subsampling_420_Colocated)
+        return { };
+
+    switch (record->bitDepth) {
+    case 8:
+        if (isChroma422) {
+            return DecodedPixelFormat {
+                .format = isFullRange ? kCVPixelFormatType_422YpCbCr8BiPlanarFullRange : kCVPixelFormatType_422YpCbCr8BiPlanarVideoRange,
+                .isFullRange = isFullRange,
+                .isTenBit = false,
+            };
+        }
+        return DecodedPixelFormat {
+            .format = isFullRange ? kCVPixelFormatType_420YpCbCr8BiPlanarFullRange : kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange,
+            .isFullRange = isFullRange,
+            .isTenBit = false,
+        };
+    case 10:
+        if (isChroma422) {
+            return DecodedPixelFormat {
+                .format = isFullRange ? kCVPixelFormatType_422YpCbCr10BiPlanarFullRange : kCVPixelFormatType_422YpCbCr10BiPlanarVideoRange,
+                .isFullRange = isFullRange,
+                .isTenBit = true,
+            };
+        }
+        return DecodedPixelFormat {
+            .format = isFullRange ? kCVPixelFormatType_420YpCbCr10BiPlanarFullRange : kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange,
+            .isFullRange = isFullRange,
+            .isTenBit = true,
+        };
+    default:
+        return { };
+    }
+#else
+    UNUSED_PARAM(description);
+    return { };
+#endif
+}
+
+static NSDictionary *pixelBufferAttributesWithFormats(NSArray *formats)
+{
+    return @{
+        (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: formats,
+        (__bridge NSString *)kCVPixelBufferIOSurfaceCoreAnimationCompatibilityKey: (id)kCFBooleanTrue,
+        (__bridge NSString *)kCVPixelBufferPreferRealTimeCacheModeIfEveryoneDoesKey: (id)kCFBooleanTrue,
+        (__bridge NSString *)kCVPixelBufferIOSurfacePropertiesKey: @{ /* empty dictionary */ }
+    };
+}
+
+// 8-bit in the stream's range keeps coverage unscaled; an explicit format avoids the hardware decoder's lossless-compressed output.
+static RetainPtr<NSDictionary> alphaDecoderPixelBufferAttributes(bool isFullRange)
+{
+    return pixelBufferAttributesWithFormats(@[ @(isFullRange ? kCVPixelFormatType_420YpCbCr8BiPlanarFullRange : kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange) ]);
+}
+
+// VideoToolbox fails to convert '420f' into 'x0a8' at some sizes (rdar://192565918), so 8-bit full range is merged on the CPU.
+static NSDictionary *colorDecoderPixelBufferAttributesWithAlpha(CMFormatDescriptionRef description)
+{
+    if (auto format = decodedPixelFormat(description)) {
+        if (format->isFullRange && !format->isTenBit)
+            return pixelBufferAttributesWithFormats(@[ @(format->format) ]);
+        if (auto formatWithAlpha = pixelFormatWithAlpha(format->format))
+            return pixelBufferAttributesWithFormats(@[ @(*formatWithAlpha) ]);
+    }
+    return pixelBufferAttributesWithFormats(createNSArray(pixelFormatsWithAlphaPlane(), [](OSType format) {
+        return @(format);
+    }));
+}
+
 NSDictionary *WebCoreDecompressionSession::defaultPixelBufferAttributes()
 {
     return @{
@@ -312,8 +326,9 @@ NSDictionary *WebCoreDecompressionSession::defaultPixelBufferAttributes()
     };
 }
 
-WebCoreDecompressionSession::WebCoreDecompressionSession(NSDictionary *pixelBufferAttributes, GuaranteedSerialFunctionDispatcher* dispatcher)
+WebCoreDecompressionSession::WebCoreDecompressionSession(NSDictionary *pixelBufferAttributes, GuaranteedSerialFunctionDispatcher* dispatcher, IsAlphaDecoder isAlphaDecoder)
     : m_pixelBufferAttributes(pixelBufferAttributes ? pixelBufferAttributes : defaultPixelBufferAttributes())
+    , m_isAlphaDecoder(isAlphaDecoder)
     , m_dispatcher(dispatcher ? *dispatcher : queueSingleton())
     , m_stereoSupported(VTIsStereoMVHEVCDecodeSupported())
 {
@@ -525,7 +540,10 @@ std::expected<RefPtr<VideoDecoderVTBSession>, OSStatus> WebCoreDecompressionSess
     m_lastFormatDescription = videoFormatDescription;
 
     if (!m_videoDecoderVTB) {
-        m_videoDecoderVTB = VideoDecoderVTBSession::create(videoFormatDescription.get(), (__bridge CFDictionaryRef)m_pixelBufferAttributes.get());
+        RetainPtr attributes = m_pixelBufferAttributes;
+        if (m_isAlphaDecoder == IsAlphaDecoder::No && (hasSeparateAlphaStream(videoFormatDescription) || compressedAlphaData(cmSample)))
+            attributes = colorDecoderPixelBufferAttributesWithAlpha(videoFormatDescription);
+        m_videoDecoderVTB = VideoDecoderVTBSession::create(videoFormatDescription, bridge_cast(WTF::move(attributes)));
         if (m_dispatcher->isCurrent()) {
             assertIsCurrent(m_dispatcher.get());
 
@@ -684,16 +702,8 @@ Ref<WebCoreDecompressionSession::DecodingPromise> WebCoreDecompressionSession::d
                 RetainPtr videoFormatDescription = PAL::CMSampleBufferGetFormatDescription(sample);
                 auto fourCC = PAL::CMFormatDescriptionGetMediaSubType(videoFormatDescription.get());
 
-                RetainPtr extensions = PAL::CMFormatDescriptionGetExtensions(videoFormatDescription.get());
-                if (!extensions)
-                    return DecodingPromise::createAndReject(0);
-
-                RetainPtr extensionAtoms = dynamic_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(extensions.get(), PAL::kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms));
-                if (!extensionAtoms)
-                    return DecodingPromise::createAndReject(0);
-
                 // We should only hit this code path for VP8 and SW VP9 decoder, look for the vpcC path.
-                RetainPtr configurationRecord = dynamic_cf_cast<CFDataRef>(CFDictionaryGetValue(extensionAtoms.get(), CFSTR("vpcC")));
+                RetainPtr configurationRecord = vpcCFromFormatDescription(videoFormatDescription);
                 if (!configurationRecord)
                     return DecodingPromise::createAndReject(0);
 
@@ -825,11 +835,27 @@ Ref<WebCoreDecompressionSession::DecodingPromise> WebCoreDecompressionSession::d
         return decodeSampleInternal(sample, flags);
 
     RefPtr<WebCoreDecompressionSession> alphaSession;
+    RefPtr<WebCoreDecompressionSession> staleAlphaSession;
     {
         Locker lock { m_lock };
-        if (!m_alphaDecompressionSession && !isInvalidated())
-            m_alphaDecompressionSession = WebCoreDecompressionSession::createOpenGL(m_dispatcher.ptr());
+        if (!isInvalidated()) {
+            RetainPtr formatDescription = PAL::CMSampleBufferGetFormatDescription(sample);
+            if (!m_alphaSourceFormatDescription || !PAL::CMFormatDescriptionEqual(formatDescription, m_alphaSourceFormatDescription)) {
+                auto format = decodedPixelFormat(formatDescription);
+                bool isFullRange = format && format->isFullRange;
+                if (m_alphaDecompressionSession && isFullRange != m_alphaDecoderIsFullRange)
+                    staleAlphaSession = std::exchange(m_alphaDecompressionSession, nullptr);
+                m_alphaDecoderIsFullRange = isFullRange;
+                m_alphaSourceFormatDescription = WTF::move(formatDescription);
+            }
+            if (!m_alphaDecompressionSession)
+                m_alphaDecompressionSession = adoptRef(*new WebCoreDecompressionSession(alphaDecoderPixelBufferAttributes(m_alphaDecoderIsFullRange), m_dispatcher.ptr(), IsAlphaDecoder::Yes));
+        }
         alphaSession = m_alphaDecompressionSession;
+    }
+    if (staleAlphaSession) {
+        RELEASE_LOG_INFO(Media, "WebM alpha: stream range changed, recreating the alpha decoder");
+        staleAlphaSession->invalidate();
     }
     if (!alphaSession)
         return decodeSampleInternal(sample, flags);
@@ -875,13 +901,18 @@ Ref<WebCoreDecompressionSession::DecodingPromise> WebCoreDecompressionSession::d
             });
         }
 
-        producer.resolve(protectedThis->compositeAlphaOntoColorFrames(WTF::move(*colorResult), alphaPixelBuffers));
+        auto composited = protectedThis->compositeAlphaOntoColorFrames(WTF::move(*colorResult), alphaPixelBuffers);
+        if (!composited) {
+            producer.reject(composited.error());
+            return;
+        }
+        producer.resolve(WTF::move(*composited));
     });
 
     return promise;
 }
 
-Vector<RetainPtr<CMSampleBufferRef>> WebCoreDecompressionSession::compositeAlphaOntoColorFrames(Vector<RetainPtr<CMSampleBufferRef>>&& colorFrames, const Vector<RetainPtr<CVPixelBufferRef>>& alphaPixelBuffers)
+std::expected<Vector<RetainPtr<CMSampleBufferRef>>, OSStatus> WebCoreDecompressionSession::compositeAlphaOntoColorFrames(Vector<RetainPtr<CMSampleBufferRef>>&& colorFrames, const Vector<RetainPtr<CVPixelBufferRef>>& alphaPixelBuffers)
 {
     assertIsCurrent(m_dispatcher.get());
 
@@ -897,17 +928,36 @@ Vector<RetainPtr<CMSampleBufferRef>> WebCoreDecompressionSession::compositeAlpha
         RetainPtr alphaPixelBuffer = index < alphaPixelBuffers.size() ? alphaPixelBuffers[index] : nullptr;
         if (alphaPixelBuffer) {
             RetainPtr colorPixelBuffer = PAL::CMSampleBufferGetImageBuffer(colorFrame);
+            OSType colorFormat = colorPixelBuffer ? CVPixelBufferGetPixelFormatType(colorPixelBuffer) : 0;
+            bool hasAlphaPlane = isPixelFormatWithAlphaPlane(colorFormat);
             RetainPtr colorFormatDescription = PAL::CMSampleBufferGetFormatDescription(colorFrame);
-            if (!m_mergedPixelBufferPool || !colorFormatDescription || !m_mergedSourceFormatDescription || !PAL::CMFormatDescriptionEqual(colorFormatDescription, m_mergedSourceFormatDescription)) {
-                int32_t width = colorPixelBuffer ? static_cast<int32_t>(CVPixelBufferGetWidth(colorPixelBuffer)) : 0;
-                int32_t height = colorPixelBuffer ? static_cast<int32_t>(CVPixelBufferGetHeight(colorPixelBuffer)) : 0;
-                m_mergedPixelBufferPool = createIOSurfaceCVPixelBufferPool(width, height, kCVPixelFormatType_32BGRA, 4).value_or(nullptr);
+            if (!colorFormatDescription || !m_mergedSourceFormatDescription || !PAL::CMFormatDescriptionEqual(colorFormatDescription, m_mergedSourceFormatDescription)) {
+                m_mergedPixelBufferPool = nullptr;
+                if (!hasAlphaPlane && !pixelFormatWithAlpha(colorFormat))
+                    RELEASE_LOG_ERROR(Media, "WebM alpha merge: unsupported colour format %" PUBLIC_LOG_STRING ", playing without alpha", FourCC(colorFormat).string().data());
                 m_mergedFormatDescription = nullptr;
                 m_mergedSourceFormatDescription = WTF::move(colorFormatDescription);
             }
-            if (!m_ciContext)
-                m_ciContext = [CIContext contextWithOptions:nil];
-            RetainPtr merged = mergeColorAndAlphaPixelBuffers(colorPixelBuffer, alphaPixelBuffer, m_ciContext, m_mergedPixelBufferPool);
+            if (!hasAlphaPlane && !m_mergedPixelBufferPool) {
+                if (auto mergedFormat = pixelFormatWithAlpha(colorFormat)) {
+                    auto pool = createIOSurfaceCVPixelBufferPool(CVPixelBufferGetWidth(colorPixelBuffer), CVPixelBufferGetHeight(colorPixelBuffer), *mergedFormat, 4);
+                    if (!pool) {
+                        RELEASE_LOG_ERROR(Media, "WebM alpha merge: CVPixelBufferPool creation failed (status=%d)", int(pool.error()));
+                        return makeUnexpected(kVTAllocationFailedErr);
+                    }
+                    m_mergedPixelBufferPool = WTF::move(*pool);
+                }
+            }
+            RetainPtr<CVPixelBufferRef> merged;
+            if (hasAlphaPlane) {
+                if (copyAlphaIntoAlphaPlane(colorPixelBuffer, alphaPixelBuffer))
+                    merged = colorPixelBuffer;
+            } else if (m_mergedPixelBufferPool) {
+                auto mergedBuffer = createPixelBufferWithAlpha(colorPixelBuffer, alphaPixelBuffer, m_mergedPixelBufferPool);
+                if (!mergedBuffer)
+                    return makeUnexpected(kVTAllocationFailedErr);
+                merged = WTF::move(*mergedBuffer);
+            }
             if (merged) {
                 if (!m_mergedFormatDescription)
                     m_mergedFormatDescription = createFormatDescriptionWithAlpha(merged);

@@ -507,6 +507,16 @@ static std::optional<AudioStreamDescription::PCMFormat> encodedPCMFormat(const A
     }
 }
 
+static RetainPtr<CFStringRef> separateAlphaStreamExtensionKey()
+{
+    return CFSTR("org.webkit.SeparateAlphaStream");
+}
+
+bool hasSeparateAlphaStream(CMFormatDescriptionRef description)
+{
+    return description && PAL::CMFormatDescriptionGetExtension(description, separateAlphaStreamExtensionKey()) == kCFBooleanTrue;
+}
+
 RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromTrackInfo(const TrackInfo& info)
 {
     ASSERT(info.isVideo() || info.isAudio());
@@ -577,6 +587,9 @@ RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromTrackInfo(const Tra
 
     if (videoInfo.colorSpace().fullRange.value_or(false))
         CFDictionaryAddValue(extensions.get(), PAL::kCMFormatDescriptionExtension_FullRangeVideo, kCFBooleanTrue);
+
+    if (videoInfo.hasSeparateAlphaStream())
+        CFDictionaryAddValue(extensions, separateAlphaStreamExtensionKey(), kCFBooleanTrue);
 
     int bitDepth = videoInfo.bitDepth();
     RetainPtr bitsPerComponent = adoptCF(CFNumberCreate(nullptr, kCFNumberIntType, &bitDepth));
@@ -676,6 +689,7 @@ RefPtr<VideoInfo> createVideoInfoFromFormatDescription(CMFormatDescriptionRef de
             .fieldDetail = fieldDetailFromFormatDescription(description),
             .extensionAtoms = WTF::move(extensionAtoms),
             .reorderQueueMaxSize = reorderQueueMaxSize,
+            .hasSeparateAlphaStream = hasSeparateAlphaStream(description),
 #if PLATFORM(VISION)
             .immersiveVideoMetadata = immersiveVideoMetadataFromFormatDescription(description)
 #endif

@@ -48,8 +48,6 @@ typedef struct OpaqueCMTaggedBufferGroup *CMTaggedBufferGroupRef;
 typedef UInt32 VTDecodeInfoFlags;
 typedef struct OpaqueVTDecompressionSession*  VTDecompressionSessionRef;
 
-OBJC_CLASS CIContext;
-
 namespace WebCore {
 
 class VideoDecoder;
@@ -82,20 +80,22 @@ public:
     bool isHardwareAccelerated() const;
 
 private:
-    WEBCORE_EXPORT WebCoreDecompressionSession(NSDictionary *, GuaranteedSerialFunctionDispatcher*);
+    enum class IsAlphaDecoder : bool { No, Yes };
+    WEBCORE_EXPORT WebCoreDecompressionSession(NSDictionary *, GuaranteedSerialFunctionDispatcher*, IsAlphaDecoder = IsAlphaDecoder::No);
     static NSDictionary *defaultPixelBufferAttributes();
 
     std::expected<RefPtr<VideoDecoderVTBSession>, OSStatus> ensureDecoderForSample(CMSampleBufferRef);
 
     Ref<DecodingPromise> decodeSampleInternal(CMSampleBufferRef, DecodingFlags);
     Ref<DecodingPromise> decodeSampleWithAlpha(CMSampleBufferRef, CFArrayRef alphaDatas, DecodingFlags);
-    Vector<RetainPtr<CMSampleBufferRef>> compositeAlphaOntoColorFrames(Vector<RetainPtr<CMSampleBufferRef>>&&, const Vector<RetainPtr<CVPixelBufferRef>>& alphaPixelBuffers);
+    std::expected<Vector<RetainPtr<CMSampleBufferRef>>, OSStatus> compositeAlphaOntoColorFrames(Vector<RetainPtr<CMSampleBufferRef>>&&, const Vector<RetainPtr<CVPixelBufferRef>>& alphaPixelBuffers);
     void assignResourceOwner(CVImageBufferRef);
 
     Ref<MediaPromise> initializeVideoDecoder(FourCharCode, std::span<const uint8_t>, const std::optional<PlatformVideoColorSpace>&);
     bool isInvalidated() const { return m_invalidated; }
 
     const RetainPtr<NSDictionary> m_pixelBufferAttributes;
+    const IsAlphaDecoder m_isAlphaDecoder;
     static WorkQueue& queueSingleton();
     const Ref<GuaranteedSerialFunctionDispatcher> m_dispatcher;
 
@@ -123,7 +123,8 @@ private:
 
     // WebM alpha compositing.
     RefPtr<WebCoreDecompressionSession> m_alphaDecompressionSession WTF_GUARDED_BY_LOCK(m_lock);
-    RetainPtr<CIContext> m_ciContext WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get());
+    RetainPtr<CMFormatDescriptionRef> m_alphaSourceFormatDescription WTF_GUARDED_BY_LOCK(m_lock);
+    bool m_alphaDecoderIsFullRange WTF_GUARDED_BY_LOCK(m_lock) { false };
     RetainPtr<CVPixelBufferPoolRef> m_mergedPixelBufferPool WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get());
     RetainPtr<CMFormatDescriptionRef> m_mergedFormatDescription WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get());
     RetainPtr<CMFormatDescriptionRef> m_mergedSourceFormatDescription WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get());

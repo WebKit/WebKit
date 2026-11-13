@@ -7230,6 +7230,7 @@ header: <WebCore/TrackInfo.h>
     Vector<std::pair<WebCore::FourCC, Ref<WebCore::SharedBuffer>>> extensionAtoms;
     std::optional<uint8_t> reorderQueueMaxSize;
     std::optional<WebCore::VideoPixelFormat> pixelFormat;
+    bool hasSeparateAlphaStream;
 
 #if PLATFORM(VISION)
     std::optional<WebCore::ImmersiveVideoMetadata> immersiveVideoMetadata;

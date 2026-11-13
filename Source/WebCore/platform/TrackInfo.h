@@ -171,6 +171,7 @@ struct VideoSpecificInfoData {
     Vector<TrackInfo::AtomData> extensionAtoms { };
     std::optional<uint8_t> reorderQueueMaxSize { };
     std::optional<VideoPixelFormat> pixelFormat { };
+    bool hasSeparateAlphaStream { false };
 
 #if PLATFORM(VISION)
     std::optional<ImmersiveVideoMetadata> immersiveVideoMetadata { };
@@ -196,6 +197,7 @@ public:
     std::optional<uint8_t> reorderQueueMaxSize() const { return m_data.reorderQueueMaxSize; }
     std::optional<VideoPixelFormat> pixelFormat() const { return m_data.pixelFormat; }
     bool isDecoded() const { return !!m_data.pixelFormat; }
+    bool hasSeparateAlphaStream() const { return m_data.hasSeparateAlphaStream; }
 
     const Vector<AtomData>& extensionAtoms() const LIFETIME_BOUND { return m_data.extensionAtoms; }
 

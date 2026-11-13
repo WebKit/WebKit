@@ -28,6 +28,7 @@
 
 #include "CVUtilities.h"
 #include "GraphicsContextCG.h"
+#include "ImageTransferSessionVT.h"
 #include "ImageUtilities.h"
 #include "NativeImage.h"
 #include <pal/spi/cg/CoreGraphicsSPI.h>
@@ -72,7 +73,11 @@ RefPtr<NativeImage> PixelBufferConformerCV::createImageFromPixelBuffer(CVPixelBu
     RetainPtr buffer { rawBuffer };
     RetainPtr colorSpace = createCGColorSpaceForCVPixelBuffer(buffer.get());
 
-    if (!VTPixelBufferConformerIsConformantPixelBuffer(m_pixelConformer.get(), buffer.get())) {
+    if (isPixelFormatWithAlphaPlane(CVPixelBufferGetPixelFormatType(buffer))) {
+        buffer = ImageTransferSessionVT::convertPixelBuffer(buffer, kCVPixelFormatType_32BGRA, ImageTransferSessionVT::DestinationColorSpace::Unspecified);
+        if (!buffer)
+            return nullptr;
+    } else if (!VTPixelBufferConformerIsConformantPixelBuffer(m_pixelConformer, buffer)) {
         CVPixelBufferRef outputBuffer = nullptr;
         OSStatus status = VTPixelBufferConformerCopyConformedPixelBuffer(m_pixelConformer.get(), buffer.get(), false, &outputBuffer);
         if (status != noErr || !outputBuffer)
