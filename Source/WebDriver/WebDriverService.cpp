@@ -31,6 +31,7 @@
 #include "Logging.h"
 #include "SessionHost.h"
 #include <cmath>
+#include <numbers>
 #include <ranges>
 #include <wtf/Compiler.h>
 #include <wtf/FileSystem.h>
@@ -2603,6 +2604,44 @@ static bool processPointerMoveAction(JSON::Object& actionItem, Action& action, s
     return true;
 }
 
+static bool processPointerProperties(JSON::Object& actionItem, std::optional<String>& errorMessage)
+{
+    // https://www.w3.org/TR/webdriver2/#dfn-process-a-pointer-up-or-pointer-down-action
+    // https://www.w3.org/TR/webdriver2/#dfn-process-a-pointer-move-action
+    // FIXME: Store these in the action and dispatch them with the events, https://bugs.webkit.org/show_bug.cgi?id=270895
+    struct Property {
+        ASCIILiteral name;
+        double minAllowed;
+        double maxAllowed;
+        bool isInteger;
+    };
+    static const std::array properties {
+        Property { "width"_s, 0, std::numeric_limits<double>::max(), false },
+        Property { "height"_s, 0, std::numeric_limits<double>::max(), false },
+        Property { "pressure"_s, 0, 1, false },
+        Property { "tangentialPressure"_s, -1, 1, false },
+        Property { "tiltX"_s, -90, 90, true },
+        Property { "tiltY"_s, -90, 90, true },
+        Property { "twist"_s, 0, 359, true },
+        Property { "altitudeAngle"_s, 0, std::numbers::pi / 2, false },
+        Property { "azimuthAngle"_s, 0, 2 * std::numbers::pi, false },
+    };
+
+    for (auto& property : properties) {
+        auto value = actionItem.getValue(property.name);
+        if (!value)
+            continue;
+
+        auto number = valueAsNumberInRange(*value, property.minAllowed, property.maxAllowed);
+        if (!number || (property.isInteger && number.value() != std::floor(number.value()))) {
+            errorMessage = makeString("The '"_s, property.name, "' parameter for the pointer action is invalid"_s);
+            return false;
+        }
+    }
+
+    return true;
+}
+
 static std::optional<Action> processPointerAction(const String& id, PointerParameters& parameters, JSON::Object& actionItem, std::optional<String>& errorMessage)
 {
     Action::Subtype actionSubtype;
@@ -2643,10 +2682,14 @@ static std::optional<Action> processPointerAction(const String& id, PointerParam
             return std::nullopt;
         }
         action.button = actionMouseButton(button.value());
+        if (!processPointerProperties(actionItem, errorMessage))
+            return std::nullopt;
         break;
     }
     case Action::Subtype::PointerMove:
         if (!processPointerMoveAction(actionItem, action, errorMessage))
+            return std::nullopt;
+        if (!processPointerProperties(actionItem, errorMessage))
             return std::nullopt;
         break;
     case Action::Subtype::PointerCancel:
@@ -2734,10 +2777,11 @@ static std::optional<PointerParameters> processPointerParameters(JSON::Object& a
         return std::nullopt;
     }
 
-    auto pointerType = parametersData->getString("pointerType"_s);
-    if (!pointerType)
+    auto pointerTypeValue = parametersData->getValue("pointerType"_s);
+    if (!pointerTypeValue)
         return parameters;
 
+    auto& pointerType = pointerTypeValue->asString();
     if (pointerType == "mouse"_s)
         parameters.pointerType = PointerType::Mouse;
     else if (pointerType == "pen"_s)
