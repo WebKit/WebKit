@@ -34,6 +34,9 @@
 #include "Crypto.h"
 #include "CustomElementRegistry.h"
 #include "DOMRect.h"
+#if ENABLE(DOCUMENT_PIP)
+#include "DocumentPictureInPicture.h"
+#endif
 #include "DocumentSecurityOrigin.h"
 #include "DocumentView.h"
 #include "ExceptionOr.h"
@@ -145,8 +148,15 @@ void DOMWindow::close()
     }
 
     RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
+#if ENABLE(DOCUMENT_PIP)
+    // https://wicg.github.io/document-picture-in-picture/#close-document-pip-window
+    // Document Picture-in-Picture windows skip checking whether unloading is user-canceled.
+    if (localFrame && !page->isDocumentPictureInPicture() && !localFrame->loader().shouldClose())
+        return;
+#else
     if (localFrame && !localFrame->loader().shouldClose())
         return;
+#endif
 
     ResourceLoadObserver::singleton().updateCentralStatisticsStore([] { });
 
@@ -450,6 +460,16 @@ ExceptionOr<CookieStore&> DOMWindow::cookieStore()
         return Exception { ExceptionCode::SecurityError };
     return localThis->cookieStore();
 }
+
+#if ENABLE(DOCUMENT_PIP)
+ExceptionOr<DocumentPictureInPicture&> DOMWindow::documentPictureInPicture()
+{
+    auto* localThis = dynamicDowncast<LocalDOMWindow>(*this);
+    if (!localThis)
+        return Exception { ExceptionCode::SecurityError };
+    return localThis->documentPictureInPicture();
+}
+#endif
 
 ExceptionOr<Screen&> DOMWindow::screen()
 {
@@ -850,22 +870,20 @@ ExceptionOr<void> DOMWindow::moveTo(int x, int y) const
     return { };
 }
 
-ExceptionOr<void> DOMWindow::resizeBy(int x, int y) const
+ExceptionOr<void> DOMWindow::resizeBy(int x, int y)
 {
-    auto* localThis = dynamicDowncast<LocalDOMWindow>(*this);
+    RefPtr localThis = dynamicDowncast<LocalDOMWindow>(*this);
     if (!localThis)
         return Exception { ExceptionCode::SecurityError };
-    localThis->resizeBy(x, y);
-    return { };
+    return localThis->resizeBy(x, y);
 }
 
-ExceptionOr<void> DOMWindow::resizeTo(int width, int height) const
+ExceptionOr<void> DOMWindow::resizeTo(int width, int height)
 {
-    auto* localThis = dynamicDowncast<LocalDOMWindow>(*this);
+    RefPtr localThis = dynamicDowncast<LocalDOMWindow>(*this);
     if (!localThis)
         return Exception { ExceptionCode::SecurityError };
-    localThis->resizeTo(width, height);
-    return { };
+    return localThis->resizeTo(width, height);
 }
 
 ExceptionOr<DOMSelection*> DOMWindow::getSelection()

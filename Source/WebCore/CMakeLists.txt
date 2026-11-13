@@ -32,6 +32,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/cookie-store"
     "${WEBCORE_DIR}/Modules/credentialmanagement"
     "${WEBCORE_DIR}/Modules/device-posture"
+    "${WEBCORE_DIR}/Modules/documentpip"
     "${WEBCORE_DIR}/Modules/encryptedmedia"
     "${WEBCORE_DIR}/Modules/encryptedmedia/legacy"
     "${WEBCORE_DIR}/Modules/entriesapi"
@@ -405,6 +406,9 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/device-posture/DevicePosture.idl
     Modules/device-posture/DevicePostureType.idl
     Modules/device-posture/Navigator+DevicePosture.idl
+
+    Modules/documentpip/DocumentPictureInPicture.idl
+    Modules/documentpip/DocumentPictureInPictureEvent.idl
 
     Modules/encryptedmedia/MediaKeyEncryptionScheme.idl
     Modules/encryptedmedia/MediaKeyMessageEvent.idl
@@ -1981,6 +1985,8 @@ set(WebCore_SUPPLEMENTAL_IDL_FILES
     Modules/cookie-store/DOMWindow+CookieStore.idl
 
     Modules/credentialmanagement/Navigator+Credentials.idl
+
+    Modules/documentpip/DOMWindow+DocumentPictureInPicture.idl
 
     Modules/encryptedmedia/Navigator+EME.idl
 

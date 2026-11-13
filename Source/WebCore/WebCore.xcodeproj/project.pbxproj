@@ -7765,6 +7765,13 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		86CFA5D131AA05AA716D0512 /* DOMWindow+DocumentPictureInPicture.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "DOMWindow+DocumentPictureInPicture.idl"; sourceTree = "<group>"; };
+		995B9A9688FE73824BE0085A /* DocumentPictureInPictureEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DocumentPictureInPictureEvent.idl; sourceTree = "<group>"; };
+		A72BABAD95B13D76675E99DB /* DocumentPictureInPictureEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentPictureInPictureEvent.cpp; sourceTree = "<group>"; };
+		CA598F5455BC441BACFC465F /* DocumentPictureInPictureEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentPictureInPictureEvent.h; sourceTree = "<group>"; };
+		333D094E1DE73959720F5197 /* DocumentPictureInPicture.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DocumentPictureInPicture.idl; sourceTree = "<group>"; };
+		91FEDEADB12F6D50CDCECE52 /* DocumentPictureInPicture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentPictureInPicture.cpp; sourceTree = "<group>"; };
+		BB8223E72368C61F458FC3F9 /* DocumentPictureInPicture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentPictureInPicture.h; sourceTree = "<group>"; };
 		2346E0FF92D1BDEFA870881B /* RasterDrawingOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RasterDrawingOptions.h; sourceTree = "<group>"; };
 		F4545C832C4D153807E9E90E /* RasterDrawingOptions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RasterDrawingOptions.cpp; sourceTree = "<group>"; };
 		02C7A954E7356C44F0D32986 /* WorkerInternals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerInternals.h; sourceTree = "<group>"; };
@@ -26632,6 +26639,20 @@
 			name = PictureInPicture;
 			sourceTree = "<group>";
 		};
+		43C6B048CA6B944A080570C3 /* documentpip */ = {
+			isa = PBXGroup;
+			children = (
+				91FEDEADB12F6D50CDCECE52 /* DocumentPictureInPicture.cpp */,
+				BB8223E72368C61F458FC3F9 /* DocumentPictureInPicture.h */,
+				333D094E1DE73959720F5197 /* DocumentPictureInPicture.idl */,
+				A72BABAD95B13D76675E99DB /* DocumentPictureInPictureEvent.cpp */,
+				CA598F5455BC441BACFC465F /* DocumentPictureInPictureEvent.h */,
+				995B9A9688FE73824BE0085A /* DocumentPictureInPictureEvent.idl */,
+				86CFA5D131AA05AA716D0512 /* DOMWindow+DocumentPictureInPicture.idl */,
+			);
+			path = documentpip;
+			sourceTree = "<group>";
+		};
 		1DEF06A2233C32DB00EE228D /* pictureinpicture */ = {
 			isa = PBXGroup;
 			children = (
@@ -33961,6 +33982,7 @@
 				7B3ED2F42A4CD56E0042B08A /* cookie-store */,
 				57C7A6881E56946D00C67D71 /* credentialmanagement */,
 				E5D7AD9E2F2157780043ECBE /* device-posture */,
+				43C6B048CA6B944A080570C3 /* documentpip */,
 				CDA98DBD16014E0800FEA3B1 /* encryptedmedia */,
 				83FB33651F508A1700986E54 /* entriesapi */,
 				41F54F7C1C50C4F600338488 /* fetch */,

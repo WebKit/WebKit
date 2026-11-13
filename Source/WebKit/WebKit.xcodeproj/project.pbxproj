@@ -3440,6 +3440,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		5FB49B9D646A0CCC11FB4739 /* WKDocumentPictureInPictureWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKDocumentPictureInPictureWindowController.mm; sourceTree = "<group>"; };
+		604EA7948D7A99284B010E6D /* WKDocumentPictureInPictureWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDocumentPictureInPictureWindowController.h; sourceTree = "<group>"; };
 		005D158E18E4C4EB00734619 /* _WKFindDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKFindDelegate.h; sourceTree = "<group>"; };
 		00B9661518E24CBA00CE1F88 /* APIFindClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIFindClient.h; sourceTree = "<group>"; };
 		00B9661718E25AE100CE1F88 /* FindClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FindClient.mm; sourceTree = "<group>"; };
@@ -17371,6 +17373,8 @@
 				868160CF187645370021E79D /* WindowServerConnection.mm */,
 				8A434B247F350052E6C3BE1B /* WKCapturePreviewPrompt.h */,
 				5641685ADE7EE247669DC0A7 /* WKCapturePreviewPrompt.mm */,
+				604EA7948D7A99284B010E6D /* WKDocumentPictureInPictureWindowController.h */,
+				5FB49B9D646A0CCC11FB4739 /* WKDocumentPictureInPictureWindowController.mm */,
 				CDCA85C7132ABA4E00E961DF /* WKFullScreenWindowController.h */,
 				CDCA85C6132ABA4E00E961DF /* WKFullScreenWindowController.mm */,
 				9321D5851A38EE3C008052BE /* WKImmediateActionController.h */,

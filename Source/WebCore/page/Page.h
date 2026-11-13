@@ -499,6 +499,12 @@ public:
     bool openedByDOMWithOpener() const { return m_openedByDOMWithOpener; }
     void setOpenedByDOMWithOpener(bool value) { m_openedByDOMWithOpener = value; }
 
+    // https://wicg.github.io/document-picture-in-picture/#is-document-picture-in-picture
+#if ENABLE(DOCUMENT_PIP)
+    bool isDocumentPictureInPicture() const { return m_isDocumentPictureInPicture; }
+    void setIsDocumentPictureInPicture(bool value) { m_isDocumentPictureInPicture = value; }
+#endif
+
     const RegistrableDomain& openedByScriptDomain() const LIFETIME_BOUND { return m_openedByScriptDomain; }
     void setOpenedByScriptDomain(RegistrableDomain&& domain) { m_openedByScriptDomain = WTF::move(domain); }
 
@@ -1617,6 +1623,9 @@ private:
 
     bool m_openedByDOM { false };
     bool m_openedByDOMWithOpener { false };
+#if ENABLE(DOCUMENT_PIP)
+    bool m_isDocumentPictureInPicture { false };
+#endif
 
     bool m_tabKeyCyclesThroughElements { true };
     bool m_defersLoading { false };

@@ -103,6 +103,10 @@ private:
     void reportProcessCPUTime(Seconds, WebCore::ActivityStateForCPUSampling) final;
 
     bool isPopup() const final;
+#if ENABLE(DOCUMENT_PIP)
+    bool supportsDocumentPictureInPicture() const final;
+    void startDocumentPictureInPictureWindowDrag() final;
+#endif
     
     void setResizable(bool) final;
     

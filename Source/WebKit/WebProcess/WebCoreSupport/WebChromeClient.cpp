@@ -532,6 +532,19 @@ bool WebChromeClient::isPopup() const
     return page->isPopup();
 }
 
+#if ENABLE(DOCUMENT_PIP)
+bool WebChromeClient::supportsDocumentPictureInPicture() const
+{
+    return true;
+}
+
+void WebChromeClient::startDocumentPictureInPictureWindowDrag()
+{
+    if (RefPtr page = m_page)
+        page->send(Messages::WebPageProxy::StartDocumentPictureInPictureWindowDrag());
+}
+#endif
+
 void WebChromeClient::setResizable(bool resizable)
 {
     if (RefPtr page = m_page.get())

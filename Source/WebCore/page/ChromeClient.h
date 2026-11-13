@@ -266,6 +266,13 @@ public:
 
     virtual bool isPopup() const = 0;
 
+    // https://wicg.github.io/document-picture-in-picture/#pip-support
+#if ENABLE(DOCUMENT_PIP)
+    virtual bool supportsDocumentPictureInPicture() const { return false; }
+    // Moves a document picture-in-picture window along with the current mouse drag.
+    virtual void startDocumentPictureInPictureWindowDrag() { }
+#endif
+
     virtual void setResizable(bool) = 0;
 
     virtual void addMessageToConsole(JSC::MessageSource, JSC::MessageLevel, const String& message, unsigned lineNumber, unsigned columnNumber, const String& sourceID) = 0;

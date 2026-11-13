@@ -1055,6 +1055,10 @@ public:
     void setOpenedByDOM() { m_openedByDOM = true; }
     bool openedByDOM() const { return m_openedByDOM; }
 
+#if ENABLE(DOCUMENT_PIP)
+    bool isDocumentPictureInPicture() const;
+#endif
+
     bool hasCommittedAnyProvisionalLoads() const { return m_hasCommittedAnyProvisionalLoads; }
 
     void setAlwaysUseRelatedPageProcess() { m_alwaysUseRelatedPageProcess = true; }
@@ -1545,6 +1549,9 @@ public:
     void attributedSubstringForCharacterRangeAsync(const EditingRange&, CompletionHandler<void(const WebCore::AttributedString&, const EditingRange&)>&&);
 
     void startWindowDrag();
+#if ENABLE(DOCUMENT_PIP)
+    void startDocumentPictureInPictureWindowDrag(IPC::Connection&);
+#endif
     NSWindow *platformWindow();
     void rootViewToWindow(const WebCore::IntRect& viewRect, WebCore::IntRect& windowRect);
 

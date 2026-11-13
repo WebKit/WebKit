@@ -177,6 +177,8 @@ namespace WebCore {
     macro(DeviceOrientationEvent) \
     macro(DevicePosture) \
     macro(DigitalCredential) \
+    macro(DocumentPictureInPicture) \
+    macro(DocumentPictureInPictureEvent) \
     macro(DocumentTimeline) \
     macro(DynamicsCompressorNode) \
     macro(ElementImage) \
@@ -615,6 +617,7 @@ namespace WebCore {
     macro(didDetectExtraBytes) \
     macro(disturbed) \
     macro(document) \
+    macro(documentPictureInPicture) \
     macro(encode) \
     macro(encoding) \
     macro(errorSteps) \
