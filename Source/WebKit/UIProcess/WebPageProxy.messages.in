@@ -85,6 +85,7 @@ messages -> WebPageProxy {
 #if ENABLE(WEB_AUTHN)
     [EnabledBy=DigitalCredentialsEnabled] ShowDigitalCredentialsChooser(std::optional<WebCore::FrameIdentifier> frameID, struct WebCore::DigitalCredentialsRequestData requestData) -> (std::expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData> response)
     [EnabledBy=DigitalCredentialsEnabled] DismissDigitalCredentialsChooser() -> (bool didDismiss)
+    [EnabledBy=DigitalCredentialsEnabled] HasVirtualWalletForDigitalCredentials(std::optional<WebCore::FrameIdentifier> frameID) -> (bool hasVirtualWallet)
 #endif
 
     PrintFrame(WebCore::FrameIdentifier frameID, String title, WebCore::FloatSize pdfFirstPageSize) -> () Synchronous

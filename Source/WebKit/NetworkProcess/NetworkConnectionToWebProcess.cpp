@@ -128,6 +128,12 @@
 #include <WebCore/ResourceMonitorThrottlerHolder.h>
 #endif
 
+#if ENABLE(WEB_AUTHN) && PLATFORM(COCOA)
+#include <WebCore/DigitalCredentialsRequestData.h>
+#include <WebCore/DigitalCredentialsResponseData.h>
+#include <WebCore/ExceptionData.h>
+#endif
+
 #define CONNECTION_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [webProcessIdentifier=%" PRIu64 "] NetworkConnectionToWebProcess::" fmt, this, this->webProcessIdentifier().toUInt64(), ##__VA_ARGS__)
 #define CONNECTION_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - [webProcessIdentifier=%" PRIu64 "] NetworkConnectionToWebProcess::" fmt, this, this->webProcessIdentifier().toUInt64(), ##__VA_ARGS__)
 
@@ -687,6 +693,24 @@ void NetworkConnectionToWebProcess::completeQueuedExistingLoaderResume(Ref<Netwo
     m_networkResourceLoaders.add(*identifier, loader.copyRef());
     loader->transferToNewWebProcess(*this, loadParameters);
 }
+
+#if ENABLE(WEB_AUTHN) && PLATFORM(COCOA)
+void NetworkConnectionToWebProcess::presentDigitalCredentialRequest(WebPageProxyIdentifier webPageProxyID, WebCore::DigitalCredentialsRequestData&& requestData, Vector<WebCore::UnvalidatedDigitalCredentialRequest>&& rawRequests, CompletionHandler<void(std::expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&& completionHandler)
+{
+    auto notAllowed = [&] {
+        completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::NotAllowedError, "Digital credentials request is not allowed."_s }));
+    };
+    MESSAGE_CHECK_COMPLETION(m_sharedPreferencesForWebProcess.digitalCredentialsEnabled, notAllowed());
+    MESSAGE_CHECK_COMPLETION(rawRequests.size() == requestData.requests.size(), notAllowed());
+    MESSAGE_CHECK_COMPLETION(NetworkProcess::singleton().allowsWebPageProxyIdentifier(m_webProcessIdentifier, webPageProxyID), notAllowed());
+    MESSAGE_CHECK_COMPLETION(NetworkProcess::singleton().allowsFirstPartyForCookies(m_webProcessIdentifier, WebCore::RegistrableDomain { requestData.topOrigin }), notAllowed());
+
+    CONNECTION_RELEASE_LOG(Loading, "presentDigitalCredentialRequest: %zu requests", requestData.requests.size());
+
+    // FIXME: Present the request once there is platform support.
+    completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::NotSupportedError, "Digital credentials are not available in this app."_s }));
+}
+#endif
 
 void NetworkConnectionToWebProcess::terminateForInvalidLoaderResumeClaim()
 {

@@ -13836,6 +13836,38 @@ static VirtualWalletDisposition applyVirtualWalletBehavior(const VirtualWalletBe
 #endif
 
 #if ENABLE(WEB_AUTHN)
+#if ENABLE(WEBDRIVER_BIDI)
+String WebPageProxy::digitalCredentialsAutomationContextID(WebAutomationSession& automationSession, const std::optional<WebCore::FrameIdentifier>& frameID)
+{
+    if (!frameID)
+        return automationSession.handleForWebPageProxy(*this);
+    if (RefPtr frame = WebFrameProxy::webFrame(*frameID); frame && frame->page() == this)
+        return automationSession.effectiveHandleForWebFrameProxy(*frame);
+    return { };
+}
+#endif
+
+void WebPageProxy::hasVirtualWalletForDigitalCredentials(std::optional<WebCore::FrameIdentifier>&& frameID, CompletionHandler<void(bool)>&& completionHandler)
+{
+#if ENABLE(WEBDRIVER_BIDI)
+    using VirtualWalletAction = Inspector::Protocol::BidiDigitalCredentials::VirtualWalletAction;
+    auto willAnswer = [](const std::optional<VirtualWalletBehavior>& behavior) {
+        return behavior && behavior->action != VirtualWalletAction::Clear;
+    };
+    if (isControlledByAutomation()) {
+        if (RefPtr automationSession = configuration().processPool().automationSession()) {
+            if (willAnswer(automationSession->bidiProcessor().digitalCredentialsAgent().behaviorForContext(digitalCredentialsAutomationContextID(*automationSession, frameID))))
+                return completionHandler(true);
+        }
+    }
+    if (willAnswer(internals().testingVirtualWalletBehavior))
+        return completionHandler(true);
+#else
+    UNUSED_PARAM(frameID);
+#endif
+    completionHandler(false);
+}
+
 void WebPageProxy::showDigitalCredentialsChooser(IPC::Connection& connection, std::optional<WebCore::FrameIdentifier>&& frameID, const WebCore::DigitalCredentialsRequestData& requestData, CompletionHandler<void(std::expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&& completionHandler)
 {
     LOG_WITH_STREAM(DigitalCredentials, stream << "WebPageProxy::showDigitalCredentialsChooser() - UIProcess: received IPC from WebProcess for origin: "_s << requestData.topOrigin.toString());
@@ -13866,12 +13898,7 @@ void WebPageProxy::showDigitalCredentialsChooser(IPC::Connection& connection, st
             // BiDi browsing-context id; this matches the id-space SET uses. The
             // end-to-end iframe-scoped test lands with the WKTR actuation bridge
             // (webkit.org/b/306292).
-            String contextID;
-            if (frameID) {
-                if (RefPtr frame = WebFrameProxy::webFrame(*frameID); frame && frame->page() == this)
-                    contextID = automationSession->effectiveHandleForWebFrameProxy(*frame);
-            } else
-                contextID = automationSession->handleForWebPageProxy(*this);
+            String contextID = digitalCredentialsAutomationContextID(*automationSession, frameID);
             const auto walletBehavior = agent.behaviorForContext(contextID);
             if (walletBehavior) {
                 switch (applyVirtualWalletBehavior(*walletBehavior, completionHandler)) {

@@ -732,6 +732,7 @@ def types_that_cannot_be_forward_declared():
         'WebCore::TextDrawingModeFlags',
         'WebCore::TrackID',
         'WebCore::TransferredMessagePort',
+        'WebCore::UnvalidatedDigitalCredentialRequest',
         'WebCore::UserGestureTokenIdentifier',
         'WebCore::WebLockIdentifier',
         'WebKit::ActivityStateChangeID',

@@ -37,6 +37,9 @@ messages -> NetworkConnectionToWebProcess WantsDispatchMessage {
     SendH2Ping(URL url, WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, WebCore::FrameIdentifier webFrameID, enum:bool std::optional<WebKit::NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections) -> (std::expected<Seconds, WebCore::ResourceError> result)
     PreconnectTo(struct WebKit::PreconnectRequest request);
     IsResourceLoadFinished(WebCore::ResourceLoaderIdentifier resourceLoadIdentifier) -> (bool isFinished)
+#if ENABLE(WEB_AUTHN) && PLATFORM(COCOA)
+    PresentDigitalCredentialRequest(WebKit::WebPageProxyIdentifier webPageProxyID, struct WebCore::DigitalCredentialsRequestData requestData, Vector<WebCore::UnvalidatedDigitalCredentialRequest> rawRequests) -> (std::expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData> response)
+#endif
 
     StartDownload(WebKit::DownloadID downloadID, WebCore::ResourceRequest request, std::optional<WebCore::SecurityOriginData> topOrigin, enum:bool std::optional<WebKit::NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections, String suggestedName, enum:bool WebCore::FromDownloadAttribute fromDownloadAttribute, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID)
     ConvertMainResourceLoadToDownload(std::optional<WebCore::ResourceLoaderIdentifier> mainResourceLoadIdentifier, WebKit::DownloadID downloadID, WebCore::ResourceRequest request, std::optional<WebCore::SecurityOriginData> topOrigin, WebCore::ResourceResponse response, enum:bool std::optional<WebKit::NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)

@@ -67,6 +67,8 @@ public:
 private:
     explicit DigitalCredentialsCoordinator(WebPage&);
 
+    void showChooserInUIProcess(std::optional<WebCore::FrameIdentifier>, WebCore::DigitalCredentialsRawRequests&&, const WebCore::DigitalCredentialsRequestData&, CompletionHandler<void(std::expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&&);
+
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 

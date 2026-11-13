@@ -2634,7 +2634,9 @@ public:
     void dismissDigitalCredentialsChooser(IPC::Connection&, CompletionHandler<void(bool)>&&);
     void fetchRawDigitalCredentialRequests(CompletionHandler<void(WebCore::DigitalCredentialsRawRequests)>&&);
     void showDigitalCredentialsChooser(IPC::Connection&, std::optional<WebCore::FrameIdentifier>&&, const WebCore::DigitalCredentialsRequestData&, CompletionHandler<void(std::expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&&);
+    void hasVirtualWalletForDigitalCredentials(std::optional<WebCore::FrameIdentifier>&&, CompletionHandler<void(bool)>&&);
 #if ENABLE(WEBDRIVER_BIDI)
+    String digitalCredentialsAutomationContextID(WebAutomationSession&, const std::optional<WebCore::FrameIdentifier>&);
     // Test-only wallet actuation for run-webkit-tests (no automation session); webkit.org/b/306292.
     void setVirtualWalletBehaviorForTesting(const String& action, const String& protocol, const String& responseJSON);
     void settlePendingTestingDigitalCredentialHandler(ASCIILiteral rejectionMessage);

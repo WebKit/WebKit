@@ -77,6 +77,10 @@
 #include "CocoaWindow.h"
 #endif
 
+#if ENABLE(WEB_AUTHN) && PLATFORM(COCOA)
+#include <WebCore/UnvalidatedDigitalCredentialRequest.h>
+#endif
+
 namespace PAL {
 class SessionID;
 }
@@ -85,6 +89,9 @@ namespace WebCore {
 class BlobDataFileReference;
 class BlobPart;
 class BlobRegistryImpl;
+struct DigitalCredentialsRequestData;
+struct DigitalCredentialsResponseData;
+struct ExceptionData;
 class LoginStatus;
 class MockContentFilterSettings;
 class ResourceError;
@@ -304,6 +311,9 @@ public:
     // Called by NetworkSession when draining the deferred-claim queue for a parked loader.
     void completeQueuedExistingLoaderResume(Ref<NetworkResourceLoader>&&, NetworkResourceLoadParameters&&);
     void terminateForInvalidLoaderResumeClaim();
+#if ENABLE(WEB_AUTHN) && PLATFORM(COCOA)
+    void presentDigitalCredentialRequest(WebPageProxyIdentifier, WebCore::DigitalCredentialsRequestData&&, Vector<WebCore::UnvalidatedDigitalCredentialRequest>&&, CompletionHandler<void(std::expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&&);
+#endif
 
 private:
     NetworkConnectionToWebProcess(WebCore::ProcessIdentifier, PAL::SessionID, NetworkProcessConnectionParameters&&, IPC::Connection::Identifier&&);

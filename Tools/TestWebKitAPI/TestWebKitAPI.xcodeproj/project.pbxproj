@@ -608,6 +608,7 @@
 				WebKit/WKWebView/CodingTests.swift,
 				WebKit/WKWebView/ContentAutoSizing.swift,
 				WebKit/WKWebView/CrossOriginOpenerPolicyAboutBlankTests.swift,
+				WebKit/WKWebView/DigitalCredentialsNetworkProcess.swift,
 				WebKit/WKWebView/HTTP2Server.swift,
 				WebKit/WKWebView/HTTP3Server.swift,
 				WebKit/WKWebView/NavigationResponseProcessSwapTests.swift,

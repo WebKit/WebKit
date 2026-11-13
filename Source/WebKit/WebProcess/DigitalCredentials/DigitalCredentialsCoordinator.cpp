@@ -30,7 +30,10 @@
 #include "DigitalCredentialsCoordinatorMessages.h"
 #include "DigitalCredentialsRequestValidatorBridge.h"
 #include "Logging.h"
+#include "NetworkConnectionToWebProcessMessages.h"
+#include "NetworkProcessConnection.h"
 #include "WebPage.h"
+#include "WebPageProxyMessages.h"
 #include "WebProcess.h"
 #include <WebCore/DigitalCredentialsProtocols.h>
 #include <WebCore/DigitalCredentialsRequestData.h>
@@ -61,9 +64,42 @@ Ref<DigitalCredentialsCoordinator> DigitalCredentialsCoordinator::create(WebPage
     return adoptRef(*new DigitalCredentialsCoordinator(webPage));
 }
 
+#if PLATFORM(COCOA)
+static bool uiProcessMayPresentDigitalCredentials()
+{
+    static bool mayPresent = WebProcess::singleton().parentProcessHasEntitlement("com.apple.developer.web-browser"_s)
+        || WebProcess::singleton().parentProcessHasEntitlement("com.apple.developer.identity-document-services.web-presentment-controller"_s);
+    return mayPresent;
+}
+#endif
+
 void DigitalCredentialsCoordinator::showDigitalCredentialsChooser(std::optional<WebCore::FrameIdentifier> frameID, WebCore::DigitalCredentialsRawRequests&& rawRequests, const WebCore::DigitalCredentialsRequestData& request, WTF::CompletionHandler<void(std::expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&& completionHandler)
 {
     ASSERT(m_rawRequests.isEmpty());
+
+#if PLATFORM(COCOA)
+    if (!uiProcessMayPresentDigitalCredentials()) {
+        RefPtr page = m_page;
+        if (!page)
+            return completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::InvalidStateError, "The page is not available."_s }));
+        page->sendWithAsyncReply(Messages::WebPageProxy::HasVirtualWalletForDigitalCredentials(frameID), [weakThis = WeakPtr { *this }, frameID, rawRequests = WTF::move(rawRequests), request = WebCore::DigitalCredentialsRequestData { request }, completionHandler = WTF::move(completionHandler)](bool hasVirtualWallet) mutable {
+            RefPtr protectedThis = weakThis;
+            RefPtr page = protectedThis ? protectedThis->m_page.get() : nullptr;
+            if (!page)
+                return completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::AbortError, "The coordinator is no longer available."_s }));
+            if (hasVirtualWallet)
+                return protectedThis->showChooserInUIProcess(frameID, WTF::move(rawRequests), request, WTF::move(completionHandler));
+            protect(WebProcess::singleton().ensureNetworkProcessConnection().connection())->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::PresentDigitalCredentialRequest(page->webPageProxyIdentifier(), request, WTF::move(rawRequests)), WTF::move(completionHandler));
+        });
+        return;
+    }
+#endif
+
+    showChooserInUIProcess(frameID, WTF::move(rawRequests), request, WTF::move(completionHandler));
+}
+
+void DigitalCredentialsCoordinator::showChooserInUIProcess(std::optional<WebCore::FrameIdentifier> frameID, WebCore::DigitalCredentialsRawRequests&& rawRequests, const WebCore::DigitalCredentialsRequestData& request, CompletionHandler<void(std::expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&& completionHandler)
+{
     m_rawRequests = WTF::move(rawRequests);
 
     if (RefPtr page = m_page.get()) {
