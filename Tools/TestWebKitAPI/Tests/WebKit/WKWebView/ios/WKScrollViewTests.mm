@@ -60,6 +60,11 @@
 - (void)_scheduleForcedVisibleContentRectUpdate;
 @end
 
+@interface UIScrollView (WKScrollViewTestsKeyboard)
+- (void)_adjustForAutomaticKeyboardInfo:(NSDictionary *)info animated:(BOOL)animated lastAdjustment:(CGFloat *)lastAdjustment;
+- (UIEdgeInsets)_systemContentInset;
+@end
+
 @implementation UIView (TestWebKitAPI)
 
 - (BOOL)_appearsBeforeViewInSubviewOrder:(UIView *)view
@@ -1444,6 +1449,55 @@ TEST(WKScrollViewTests, FixedClippingViewTracksRubberBandDuringInteractiveObscur
     EXPECT_NEAR(clipBounds.origin.y, -150.0, 1.0);
 
     [webView _endInteractiveObscuredInsetsChange];
+}
+
+static constexpr CGFloat testKeyboardInset = 300;
+
+static CGFloat overrideKeyboardVerticalOverlap(id self, SEL _cmd, UIView *view, NSDictionary *info)
+{
+    return testKeyboardInset;
+}
+
+static UIEdgeInsets overrideKeyboardSystemContentInset(id self, SEL _cmd)
+{
+    return UIEdgeInsetsMake(0, 0, testKeyboardInset, 0);
+}
+
+TEST(WKScrollViewTests, ObscuredInsetDoesNotAddToKeyboardSystemInset)
+{
+    constexpr CGFloat obscuredInset = 100;
+    constexpr CGFloat contentInset = 100;
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView _setObscuredInsets:UIEdgeInsetsMake(0, 0, obscuredInset, 0)];
+    [webView scrollView].contentInset = UIEdgeInsetsMake(0, 0, contentInset, 0);
+
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><html><body></body></html>"];
+
+    // Fake the UIKit keyboard overlap and system content inset so this test
+    // deterministically exercises WKScrollView's obscured-inset deduplication.
+    Class peripheralHostClass = NSClassFromString(@"UIPeripheralHost");
+    SEL keyboardOverlapSelector = NSSelectorFromString(@"getVerticalOverlapForView:usingKeyboardInfo:");
+    ASSERT_TRUE(peripheralHostClass);
+    ASSERT_TRUE(class_getInstanceMethod(peripheralHostClass, keyboardOverlapSelector));
+    InstanceMethodSwizzler keyboardOverlapSwizzler(peripheralHostClass, keyboardOverlapSelector, reinterpret_cast<IMP>(overrideKeyboardVerticalOverlap));
+    InstanceMethodSwizzler systemContentInsetSwizzler(UIScrollView.class, @selector(_systemContentInset), reinterpret_cast<IMP>(overrideKeyboardSystemContentInset));
+
+    RetainPtr window = [webView window];
+    CGRect frameInWindow = [webView convertRect:CGRectMake(0, CGRectGetHeight([webView bounds]) - testKeyboardInset, CGRectGetWidth([webView bounds]), testKeyboardInset) toView:window];
+    CGRect frameInScreen = [window convertRect:frameInWindow toCoordinateSpace:[window screen].coordinateSpace];
+    NSDictionary *keyboardInfo = @{
+        UIKeyboardFrameEndUserInfoKey: [NSValue valueWithCGRect:frameInScreen],
+        UIKeyboardIsLocalUserInfoKey: @YES,
+    };
+
+    CGFloat lastAdjustment = 0;
+    [[webView scrollView] _adjustForAutomaticKeyboardInfo:keyboardInfo animated:NO lastAdjustment:&lastAdjustment];
+
+    // The 100px obscured inset overlaps the 300px keyboard system inset, so
+    // WKScrollView should contribute only the remaining 200px. Together with
+    // contentInset.bottom = 100, adjustedContentInset.bottom should be 300.
+    EXPECT_FLOAT_EQ(testKeyboardInset, [webView scrollView].adjustedContentInset.bottom);
 }
 
 } // namespace TestWebKitAPI
