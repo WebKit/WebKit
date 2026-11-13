@@ -2648,6 +2648,14 @@ FullscreenRequirementForScreenOrientationLockingEnabled:
   humanReadableDescription: "Require being in Fullscreen to lock screen orientation"
   defaultValue: true
 
+FullscreenSafeAreaQuirkEnabled:
+  type: bool
+  status: internal
+  humanReadableName: "Fullscreen safe area quirk enabled"
+  humanReadableDescription: "Fullscreen safe area quirk enabled"
+  condition: PLATFORM(IOS)
+  defaultValue: false
+
 FullscreenSceneAspectRatioLockingEnabled:
   type: bool
   status: internal

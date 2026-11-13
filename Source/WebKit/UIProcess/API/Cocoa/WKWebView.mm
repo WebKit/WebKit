@@ -908,6 +908,10 @@ static void addBrowsingContextControllerMethodStubsIfNeeded()
     preferences->setAllowTestOnlyIPC(!![_configuration _allowTestOnlyIPC]);
     preferences->setUsesSingleWebProcess(pool.usesSingleWebProcess());
 
+#if PLATFORM(IOS)
+    preferences->setFullscreenSafeAreaQuirkEnabled(PAL::currentUserInterfaceIdiomIsSmallScreen() && WTF::processHasEntitlement("com.apple.developer.web-browser"_s));
+#endif
+
     preferences->endBatchingUpdates();
 
 #if PLATFORM(APPLETV)
