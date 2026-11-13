@@ -34,6 +34,7 @@
 #include "ArchiveResourceCollection.h"
 #include "CachedPage.h"
 #include "CachedRawResource.h"
+#include "ConnectionAllowlist.h"
 #include "ContentExtensionError.h"
 #include "ContentRuleListResults.h"
 #include "ContentSecurityPolicy.h"
@@ -967,6 +968,15 @@ void DocumentLoader::responseReceived(const CachedResource& resource, const Reso
     }
     if (frame && frame->document() && frame->document()->settings().crossOriginOpenerPolicyEnabled())
         m_responseCOOP = obtainCrossOriginOpenerPolicy(response);
+
+    // https://w3c.github.io/connection-allowlists/#parse-a-responses-connection-allowlists
+    if (frame && frame->settings().connectionAllowlistsEnabled()) {
+        m_connectionAllowlists.clear();
+        if (auto allowlist = parseConnectionAllowlist(response, HTTPHeaderName::ConnectionAllowlist))
+            m_connectionAllowlists.append(WTF::move(allowlist));
+        if (auto allowlist = parseConnectionAllowlist(response, HTTPHeaderName::ConnectionAllowlistReportOnly))
+            m_connectionAllowlists.append(WTF::move(allowlist));
+    }
 
     // https://w3c.github.io/webappsec-subresource-integrity/#parse-integrity-policy-headers
     m_integrityPolicy = processIntegrityPolicy(response, HTTPHeaderName::IntegrityPolicy);

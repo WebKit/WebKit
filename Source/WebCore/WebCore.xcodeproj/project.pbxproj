@@ -2073,6 +2073,7 @@
 		514C766E0CE923A1007EF3CD /* Credential.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C76590CE923A1007EF3CD /* Credential.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		514C76700CE923A1007EF3CD /* FormData.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C765B0CE923A1007EF3CD /* FormData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		514C76710CE923A1007EF3CD /* HTTPHeaderMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C765C0CE923A1007EF3CD /* HTTPHeaderMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		132DB6074E0AA01F1F6A043D /* ConnectionAllowlist.h in Headers */ = {isa = PBXBuildFile; fileRef = 393AEDC2D19DD4160E571398 /* ConnectionAllowlist.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		514C76730CE923A1007EF3CD /* HTTPParsers.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C765E0CE923A1007EF3CD /* HTTPParsers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		514C76750CE923A1007EF3CD /* ProtectionSpaceBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C76600CE923A1007EF3CD /* ProtectionSpaceBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		514C76790CE923A1007EF3CD /* ResourceHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C76640CE923A1007EF3CD /* ResourceHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -19023,6 +19024,8 @@
 		BA69206E2E0E939C0014E98A /* SpeculationRulesMatcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpeculationRulesMatcher.h; sourceTree = "<group>"; };
 		BA69206F2E0E939C0014E98A /* SpeculationRulesMatcher.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SpeculationRulesMatcher.cpp; sourceTree = "<group>"; };
 		BA79DEEF2DDDF89D000DB04C /* IntegrityPolicy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IntegrityPolicy.h; sourceTree = "<group>"; };
+		393AEDC2D19DD4160E571398 /* ConnectionAllowlist.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConnectionAllowlist.h; sourceTree = "<group>"; };
+		D8F8A3C439AA500CC6579F6D /* ConnectionAllowlist.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ConnectionAllowlist.cpp; sourceTree = "<group>"; };
 		BA79DEF02DDDF89D000DB04C /* IntegrityPolicy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IntegrityPolicy.cpp; sourceTree = "<group>"; };
 		BA9683692E8FDA9A0035D494 /* LoadableSpeculationRules.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoadableSpeculationRules.h; sourceTree = "<group>"; };
 		BA96836A2E8FDA9A0035D494 /* LoadableSpeculationRules.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LoadableSpeculationRules.cpp; sourceTree = "<group>"; };
@@ -38872,6 +38875,8 @@
 				EFCC6C8D20FE914000A2321B /* CanvasActivityRecord.h */,
 				46C3C1F928CBCB9300C3DA78 /* COEPInheritenceViolationReportBody.cpp */,
 				46C3C1F728CBCB9300C3DA78 /* COEPInheritenceViolationReportBody.h */,
+				D8F8A3C439AA500CC6579F6D /* ConnectionAllowlist.cpp */,
+				393AEDC2D19DD4160E571398 /* ConnectionAllowlist.h */,
 				A149786C1ABAF33800CEF7E4 /* ContentFilter.cpp */,
 				A149786D1ABAF33800CEF7E4 /* ContentFilter.h */,
 				5CDCDDBF23D7B7BE00BA34A1 /* ContentFilterClient.h */,
@@ -44980,6 +44985,7 @@
 				7A4D2E9F1B6C3A8E5D0F2B47 /* ConcreteObjectSize.h in Headers */,
 				FD31608F12B026F700C1A359 /* Cone.h in Headers */,
 				65C97AF308EA908800ACD273 /* config.h in Headers */,
+				132DB6074E0AA01F1F6A043D /* ConnectionAllowlist.h in Headers */,
 				E7C8E13B24E2FE7E0027A27F /* ConstantSourceNode.h in Headers */,
 				E7C8E13724E2FBCE0027A27F /* ConstantSourceOptions.h in Headers */,
 				E596DD5D251BB08200C275A7 /* ContactInfo.h in Headers */,
