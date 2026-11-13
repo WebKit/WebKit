@@ -61,6 +61,7 @@
 #import "RemoteObjectRegistry.h"
 #import "RemoteObjectRegistryMessages.h"
 #import "RemoteScrollingCoordinatorProxy.h"
+#import "TabCapturePicker.h"
 #import "TextChecker.h"
 #import "TextCheckerState.h"
 #import "TransientZoomState.h"
@@ -2576,6 +2577,10 @@ void WebViewImpl::viewDidMoveToWindow()
     auto isInNativeFullScreen = window && (window.get().styleMask & NSWindowStyleMaskFullScreen);
     m_page->setWindowIsInNativeFullScreen(isInNativeFullScreen ? WebPageProxy::WindowIsInNativeFullScreen::Yes : WebPageProxy::WindowIsInNativeFullScreen::No);
 #endif
+
+#if HAVE(SCREEN_CAPTURE_KIT)
+    TabCapturePicker::webViewVisibilityDidChange();
+#endif
 }
 
 void WebViewImpl::viewDidChangeBackingProperties()
@@ -2594,6 +2599,10 @@ void WebViewImpl::viewDidHide()
     LOG(ActivityState, "WebViewImpl %p (page %llu) viewDidHide", this, m_page->identifier().toUInt64());
     m_page->activityStateDidChange(WebCore::ActivityState::IsVisible);
     updateTitlebarAdjacencyState();
+
+#if HAVE(SCREEN_CAPTURE_KIT)
+    TabCapturePicker::webViewVisibilityDidChange();
+#endif
 }
 
 void WebViewImpl::viewDidUnhide()
@@ -2601,6 +2610,10 @@ void WebViewImpl::viewDidUnhide()
     LOG(ActivityState, "WebViewImpl %p (page %llu) viewDidUnhide", this, m_page->identifier().toUInt64());
     m_page->activityStateDidChange(WebCore::ActivityState::IsVisible);
     updateTitlebarAdjacencyState();
+
+#if HAVE(SCREEN_CAPTURE_KIT)
+    TabCapturePicker::webViewVisibilityDidChange();
+#endif
 }
 
 void WebViewImpl::activeSpaceDidChange()
