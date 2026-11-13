@@ -321,8 +321,12 @@ template<CSSPropertyID propertyID> struct InsetEdgeSharedAdaptor {
     template<typename F> decltype(auto) computedValue(ExtractorState& state, const InsetEdge& value, NOESCAPE const F& functor) const
     {
         // If the element is not displayed; return the "computed value".
-        CheckedPtr box = dynamicDowncast<RenderBox>(state.renderer);
+        CheckedPtr box = dynamicDowncast<RenderBoxModelObject>(state.renderer);
         if (!box)
+            return functor(value);
+
+        CheckedPtr renderBox = dynamicDowncast<RenderBox>(*box);
+        if (!renderBox && !box->isInlineBox())
             return functor(value);
 
         auto* containingBlock = dynamicDowncast<RenderBoxModelObject>(box->container());
@@ -339,15 +343,18 @@ template<CSSPropertyID propertyID> struct InsetEdgeSharedAdaptor {
                 else
                     containingBlockSize = enclosingClippingBox.contentBoxLogicalWidth();
             } else {
-                if (box->isOutOfFlowPositioned()) {
+                if (renderBox && renderBox->isOutOfFlowPositioned()) {
                     if (isVerticalProperty)
-                        containingBlockSize = box->containingBlockRangeForPositioned(*containingBlock, BoxAxis::Vertical).size();
+                        containingBlockSize = renderBox->containingBlockRangeForPositioned(*containingBlock, BoxAxis::Vertical).size();
                     else
-                        containingBlockSize = box->containingBlockRangeForPositioned(*containingBlock, BoxAxis::Horizontal).size();
+                        containingBlockSize = renderBox->containingBlockRangeForPositioned(*containingBlock, BoxAxis::Horizontal).size();
                 } else {
-                    if (isVerticalProperty == containingBlock->isHorizontalWritingMode())
-                        containingBlockSize = box->containingBlockLogicalHeightForContent(AvailableLogicalHeightType::ExcludeMarginBorderPadding);
-                    else
+                    if (isVerticalProperty == containingBlock->isHorizontalWritingMode()) {
+                        if (renderBox)
+                            containingBlockSize = renderBox->containingBlockLogicalHeightForContent(AvailableLogicalHeightType::ExcludeMarginBorderPadding);
+                        else if (CheckedPtr inlineContainingBlock = box->containingBlock())
+                            containingBlockSize = inlineContainingBlock->contentBoxLogicalHeight();
+                    } else
                         containingBlockSize = box->containingBlockLogicalWidthForContent();
                 }
             }
@@ -358,7 +365,7 @@ template<CSSPropertyID propertyID> struct InsetEdgeSharedAdaptor {
         if (!value.isAuto())
             return functor(value);
 
-        auto insetUsedStyleRelative = [&](const RenderBox& box) -> LayoutUnit {
+        auto insetUsedStyleRelative = [&](const RenderBoxModelObject& box) -> LayoutUnit {
             // For relatively positioned boxes, the inset is with respect to the top edges
             // of the box itself. This ties together top/bottom and left/right to be
             // opposites of each other.
@@ -440,8 +447,8 @@ template<CSSPropertyID propertyID> struct InsetEdgeSharedAdaptor {
                 return box.offsetLeft() - box.marginLeft();
         };
 
-        if (containingBlock && box->isOutOfFlowPositioned())
-            return functor(unzoomed<Length<>>(state, insetUsedStyleOutOfFlowPositioned(*containingBlock, *box)));
+        if (containingBlock && renderBox && renderBox->isOutOfFlowPositioned())
+            return functor(unzoomed<Length<>>(state, insetUsedStyleOutOfFlowPositioned(*containingBlock, *renderBox)));
 
         return functor(CSS::Keyword::Auto { });
     }
