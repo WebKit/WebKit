@@ -240,6 +240,7 @@ namespace JSC {
     macro(TypedArrayByteLengthIntrinsic) \
     macro(DataViewByteLengthIntrinsic) \
     macro(TypedArrayByteOffsetIntrinsic) \
+    macro(TypedArrayBufferIntrinsic) \
     macro(UnderscoreProtoIntrinsic) \
     macro(SpeciesGetterIntrinsic) \
     macro(WebAssemblyInstanceExportsIntrinsic) \

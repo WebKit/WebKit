@@ -4344,6 +4344,7 @@ bool InlineCacheCompiler::canEmitIntrinsicGetter(PropertyInlineCache& propertyCa
         return true;
     }
     case TypedArrayByteOffsetIntrinsic:
+    case TypedArrayBufferIntrinsic:
     case TypedArrayByteLengthIntrinsic:
     case TypedArrayLengthIntrinsic: {
         if (!isTypedView(structure->typeInfo().type()))
@@ -4512,6 +4513,46 @@ void InlineCacheCompiler::emitIntrinsicGetter(IntrinsicGetterAccessCase& accessC
         jit.load32(MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfByteOffset()), valueGPR);
         jit.boxInt32(valueGPR, valueGPR);
 #endif
+        succeed();
+        return;
+    }
+
+    case TypedArrayBufferIntrinsic: {
+        auto slowCases = jit.loadTypedArrayBufferWrapper(baseGPR, m_scratchGPR);
+        jit.move(m_scratchGPR, valueGPR);
+        succeed();
+
+        slowCases.link(&jit);
+        InlineCacheCompiler::SpillState spillState = preserveLiveRegistersToStackForCall();
+
+        if (m_propertyCache.isHandlerIC()) {
+            callSiteIndexForExceptionHandlingOrOriginal();
+            jit.transfer32(CCallHelpers::Address(m_propertyCache.propertyCacheGPR(), PropertyInlineCache::offsetOfCallSiteIndex()), CCallHelpers::highWordFor(CallFrameSlot::argumentCountIncludingThis));
+        } else
+            jit.store32(CCallHelpers::TrustedImm32(callSiteIndexForExceptionHandlingOrOriginal().bits()), CCallHelpers::highWordFor(CallFrameSlot::argumentCountIncludingThis));
+
+        if (m_propertyCache.isHandlerIC())
+            InlineCacheCompiler::emitDataICPrepareForCall(jit);
+        jit.makeSpaceOnStackForCCall();
+
+        jit.setupArguments<decltype(operationGetTypedArrayBuffer)>(CCallHelpers::TrustedImmPtr(accessCase.structure()->realm()), baseGPR);
+        jit.prepareCallOperation(m_vm);
+        jit.callOperation<OperationPtrTag>(operationGetTypedArrayBuffer);
+        jit.setupResults(valueGPR);
+
+        jit.reclaimSpaceOnStackForCCall();
+        if (m_propertyCache.isHandlerIC())
+            InlineCacheCompiler::emitDataICRestoreAfterCall(jit);
+
+        CCallHelpers::Jump noException = jit.emitExceptionCheck(m_vm, CCallHelpers::InvertedExceptionCheck);
+
+        restoreLiveRegistersFromStackForCallWithThrownException(spillState);
+        emitExplicitExceptionHandler();
+
+        noException.link(&jit);
+        RegisterSet dontRestore;
+        dontRestore.add(valueGPR, IgnoreVectors);
+        restoreLiveRegistersFromStackForCall(spillState, dontRestore);
         succeed();
         return;
     }

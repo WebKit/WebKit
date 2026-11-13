@@ -1419,7 +1419,8 @@ private:
             break;
         }
 
-        case NewTypedArrayBuffer: {
+        case NewTypedArrayBuffer:
+        case GetTypedArrayBuffer: {
             setPrediction(SpecObjectOther);
             break;
         }
