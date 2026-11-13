@@ -214,7 +214,6 @@ public:
     void resetEnclosingFragmentedFlowAndChildInfoIncludingDescendants(RenderFragmentedFlow* = nullptr) final;
 
     std::optional<LayoutUnit> availableLogicalHeightForPercentageComputation() const final;
-    bool hasDefiniteLogicalHeight() const;
     bool hasDefiniteLogicalHeightForPercentageResolutionFromStyle() const final;
 
     static String updateSecurityDiscCharacters(const Style::ComputedStyle&, String&&);

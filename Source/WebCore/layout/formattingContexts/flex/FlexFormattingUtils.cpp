@@ -379,11 +379,7 @@ bool FlexFormattingUtils::canResolveFullyConstrainedLogicalHeight(const RenderFl
     if (!flexBox.hasFullyConstrainedLogicalHeight())
         return false;
     CheckedRef<const RenderBoxModelObject> containingBlock = *flexBox.containingBlock();
-    // A block may first be laid out at a height it doesn't end up with (a flex item before it is stretched), while the height
-    // of an inline box comes from its content and doesn't change when the block around it is stretched.
-    if (containingBlock->isInlineBox())
-        return true;
-    return downcast<RenderBlock>(containingBlock).hasDefiniteLogicalHeight();
+    return containingBlock->hasDefiniteLogicalHeight();
 }
 
 bool FlexFormattingUtils::flexItemHasComputableAspectRatio(const RenderBox& flexItem)
