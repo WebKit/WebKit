@@ -17905,6 +17905,89 @@ TEST(SiteIsolation, ScreenCaptureStateReachesCrossSiteIframeProcesses)
     EXPECT_TRUE(screenIsBeingCapturedInProcessForFrame(webView.get(), newChildFrame.get()));
 }
 
+static bool isLayerTreeFrozenInProcessForFrame(TestWKWebView *webView, WKFrameInfo *frame)
+{
+    __block bool done = false;
+    __block bool result = false;
+    [webView _isLayerTreeFrozenForFrame:frame._handle completionHandler:^(BOOL frozen) {
+        result = frozen;
+        done = true;
+    }];
+    Util::run(&done);
+    return result;
+}
+
+TEST(SiteIsolation, ApplicationBackgroundStateReachesCrossSiteIframeProcesses)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe src='https://b.com/subframe'></iframe>"_s } },
+        { "/subframe"_s, { "subframe"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegateWithoutSharedProcess(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr<WKFrameInfo> mainFrame = [webView mainFrame].info;
+    RetainPtr childFrame = [webView firstChildFrame];
+    EXPECT_NE([mainFrame _processIdentifier], [childFrame _processIdentifier]);
+    EXPECT_FALSE(isLayerTreeFrozenInProcessForFrame(webView.get(), childFrame.get()));
+
+    [NSNotificationCenter.defaultCenter postNotificationName:UIApplicationDidEnterBackgroundNotification object:UIApplication.sharedApplication userInfo:@{ @"isSuspendedUnderLock": @NO }];
+    [NSNotificationCenter.defaultCenter postNotificationName:UISceneDidEnterBackgroundNotification object:[webView window].windowScene];
+    while (!isLayerTreeFrozenInProcessForFrame(webView.get(), mainFrame.get()))
+        Util::spinRunLoop();
+    EXPECT_TRUE(isLayerTreeFrozenInProcessForFrame(webView.get(), childFrame.get()));
+
+    [NSNotificationCenter.defaultCenter postNotificationName:UIApplicationWillEnterForegroundNotification object:UIApplication.sharedApplication userInfo:@{ @"isSuspendedUnderLock": @NO }];
+    [NSNotificationCenter.defaultCenter postNotificationName:UISceneWillEnterForegroundNotification object:[webView window].windowScene];
+    while (isLayerTreeFrozenInProcessForFrame(webView.get(), mainFrame.get()))
+        Util::spinRunLoop();
+    EXPECT_FALSE(isLayerTreeFrozenInProcessForFrame(webView.get(), childFrame.get()));
+}
+
+static bool hasVisibilityPropagationToProcess(TestWKWebView *webView, pid_t process)
+{
+    return [[webView _processIdentifiersWithVisibilityPropagationForTesting] containsObject:@(process)];
+}
+
+TEST(SiteIsolation, VisibilityPropagationKeepsIframeProcessAfterMainFrameProcessSwap)
+{
+    HTTPServer server({
+        { "/example"_s, { "<!DOCTYPE html><iframe src='https://webkit.org/webkit'></iframe>"_s } },
+        { "/apple"_s, { "<!DOCTYPE html><iframe src='https://webkit.org/webkit'></iframe>"_s } },
+        { "/w3c"_s, { "<!DOCTYPE html><iframe src='https://webkit.org/webkit'></iframe>"_s } },
+        { "/webkit"_s, { "<!DOCTYPE html>webkit"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegateWithoutSharedProcess(server);
+    webView.get().configuration.preferences.javaScriptCanOpenWindowsAutomatically = YES;
+    RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+    [webView setUIDelegate:uiDelegate.get()];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    pid_t mainFrameProcess = [webView _webProcessIdentifier];
+    pid_t iframeProcess = [webView firstChildFrame]._processIdentifier;
+    EXPECT_TRUE(Util::waitFor([&] {
+        return hasVisibilityPropagationToProcess(webView.get(), mainFrameProcess) && hasVisibilityPropagationToProcess(webView.get(), iframeProcess);
+    }));
+
+    // Keep webkit.org referenced in the browsing context group so webView's remote page for it
+    // survives across the main-frame navigation instead of being torn down and recreated.
+    auto opened = openWindowFromFrame(webView.get(), uiDelegate.get(), @"https://apple.com/apple", [webView mainFrame].info);
+    EXPECT_EQ([opened.webView firstChildFrame]._processIdentifier, iframeProcess);
+    [webView evaluateJavaScript:@"location.href = 'https://w3.org/w3c'" completionHandler:nil];
+    [navigationDelegate waitForDidFinishNavigation];
+    pid_t newMainFrameProcess = [webView _webProcessIdentifier];
+    EXPECT_NE(newMainFrameProcess, mainFrameProcess);
+    EXPECT_EQ([webView firstChildFrame]._processIdentifier, iframeProcess);
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return hasVisibilityPropagationToProcess(webView.get(), newMainFrameProcess);
+    }));
+    [webView waitForNextPresentationUpdate];
+    EXPECT_TRUE(hasVisibilityPropagationToProcess(webView.get(), iframeProcess));
+}
+
 TEST(SiteIsolation, ClearGeolocationWatchInCrossOriginIframe)
 {
     HTTPServer server({

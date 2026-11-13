@@ -1164,6 +1164,18 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse, _WKCALaye
     });
 }
 
+- (void)_isLayerTreeFrozenForFrame:(_WKFrameHandle *)frameHandle completionHandler:(void (^)(BOOL frozen))completionHandler
+{
+    RefPtr pageForTesting = _page->pageForTesting();
+    auto frameID = frameHandle->_frameHandle->frameID();
+    if (!pageForTesting || !frameID)
+        return completionHandler(NO);
+
+    pageForTesting->isLayerTreeFrozen(*frameID, [completionHandler = makeBlockPtr(completionHandler)](bool isFrozen) {
+        completionHandler(isFrozen);
+    });
+}
+
 - (void)_numberOfLiveDocumentsForTesting:(void (^)(NSUInteger count))completionHandler
 {
     RefPtr pageForTesting = _page->pageForTesting();

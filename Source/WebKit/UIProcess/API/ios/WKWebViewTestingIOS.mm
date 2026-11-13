@@ -599,6 +599,11 @@ static void dumpUIView(TextStream& ts, UIView *view, bool traverse)
     });
 }
 
+- (NSArray<NSNumber *> *)_processIdentifiersWithVisibilityPropagationForTesting
+{
+    return [_contentView _processIdentifiersWithVisibilityPropagationForTesting];
+}
+
 @end
 
 #endif // PLATFORM(IOS_FAMILY)

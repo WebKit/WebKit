@@ -40,6 +40,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)stopPropagatingVisibilityToProcess:(WebKit::AuxiliaryProcessProxy&)process;
 - (void)clear;
 
+- (NSArray<NSNumber *> *)processIdentifiersForTesting;
+
 @end
 
 NS_ASSUME_NONNULL_END
