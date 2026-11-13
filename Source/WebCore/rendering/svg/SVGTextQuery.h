@@ -20,21 +20,22 @@
 
 #pragma once
 
+#include "AffineTransform.h"
 #include "FloatRect.h"
-#include "InlineIteratorInlineBox.h"
-#include "InlineIteratorSVGTextBox.h"
-#include "SVGTextFragment.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-class RenderObject;
+class RenderElement;
 
+// Answers the SVGTextContentElement queries from the result of the text layout: the text fragments and the metrics of the
+// typographic characters. Characters are numbered in logical order, positions are in the user space of the text.
+// https://w3c.github.io/svgwg/svg2-draft/text.html#InterfaceSVGTextContentElement
 class SVGTextQuery {
 public:
-    SVGTextQuery(RenderObject*);
+    explicit SVGTextQuery(const RenderElement&);
 
-    unsigned numberOfCharacters() const;
+    unsigned numberOfCharacters() const { return m_numberOfCharacters; }
     float textLength() const;
     float subStringLength(unsigned startPosition, unsigned length) const;
     FloatPoint startPositionOfCharacter(unsigned position) const;
@@ -43,29 +44,26 @@ public:
     FloatRect extentOfCharacter(unsigned position) const;
     int characterNumberAtPosition(const FloatPoint&) const;
 
-    // Public helper struct. Private classes in SVGTextQuery inherit from it.
-    struct Data;
-
 private:
-    typedef bool (SVGTextQuery::*ProcessTextFragmentCallback)(Data*, const SVGTextFragment&) const;
-    bool executeQuery(Data*, ProcessTextFragmentCallback) const;
+    struct TypographicCharacter {
+        unsigned start { 0 };
+        unsigned length { 0 };
+        float advance { 0 };
+        float spacing { 0 };
+        float rotation { 0 };
+        // Before the transform of the text fragment.
+        FloatRect glyphCell { };
+        FloatPoint startPosition { };
+        FloatPoint endPosition { };
+        // Characters that are not rendered, like the ones beyond the end of a text path, have no fragment.
+        std::optional<unsigned> fragmentIndex { };
+    };
 
-    void collectTextBoxesInInlineBox(InlineIterator::InlineBoxIterator);
-    NODELETE bool mapStartEndPositionsIntoFragmentCoordinates(Data*, const SVGTextFragment&, unsigned& startPosition, unsigned& endPosition) const;
-    NODELETE void modifyStartEndPositionsRespectingLigatures(Data*, const SVGTextFragment&, unsigned& startPosition, unsigned& endPosition) const;
+    const TypographicCharacter* findTypographicCharacter(unsigned position) const;
 
-private:
-    NODELETE bool numberOfCharactersCallback(Data*, const SVGTextFragment&) const;
-    NODELETE bool textLengthCallback(Data*, const SVGTextFragment&) const;
-    bool subStringLengthCallback(Data*, const SVGTextFragment&) const;
-    bool startPositionOfCharacterCallback(Data*, const SVGTextFragment&) const;
-    bool endPositionOfCharacterCallback(Data*, const SVGTextFragment&) const;
-    bool rotationOfCharacterCallback(Data*, const SVGTextFragment&) const;
-    bool extentOfCharacterCallback(Data*, const SVGTextFragment&) const;
-    bool characterNumberAtPositionCallback(Data*, const SVGTextFragment&) const;
-
-private:
-    Vector<InlineIterator::SVGTextBoxIterator> m_textBoxes;
+    Vector<TypographicCharacter> m_typographicCharacters;
+    Vector<AffineTransform> m_fragmentTransforms;
+    unsigned m_numberOfCharacters { 0 };
 };
 
 } // namespace WebCore

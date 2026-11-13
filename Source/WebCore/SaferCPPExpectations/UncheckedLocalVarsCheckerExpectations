@@ -60,7 +60,6 @@ rendering/svg/SVGPathFromElement.cpp
 rendering/svg/SVGRenderSupport.cpp
 rendering/svg/SVGRenderingContext.cpp
 rendering/svg/SVGTextBoxPainter.cpp
-rendering/svg/SVGTextMetrics.cpp
 rendering/svg/legacy/LegacyRenderSVGContainer.cpp
 rendering/svg/legacy/LegacyRenderSVGPath.cpp
 rendering/svg/legacy/LegacyRenderSVGResource.cpp

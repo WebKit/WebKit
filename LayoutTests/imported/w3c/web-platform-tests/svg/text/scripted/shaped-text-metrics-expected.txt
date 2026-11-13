@@ -22,5 +22,5 @@ PASS Text on a path uses the shaped text
 PASS textLength spaces out typographic characters, not the characters of a ligature
 PASS The anchoring of text with a combining mark uses the shaped text
 PASS A rotate value does not break the shaping of a text chunk
-FAIL Letter spacing breaks the shaping of a text chunk assert_approx_equals: getComputedTextLength() expected 112.54999542236328 +/- 1 but got 72.875
+PASS Letter spacing breaks the shaping of a text chunk
 

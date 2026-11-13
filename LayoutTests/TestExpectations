@@ -282,11 +282,6 @@ fast/shapes/shape-outside-floats/shape-outside-imagedata-overflow.html [ Skip ]
 [ Debug ] security/decode-buffer-size.html [ Skip ]
 [ Debug ] security/text-decode-long-strings.html [ Skip ]
 
-webkit.org/b/197181 [ Debug ] imported/w3c/web-platform-tests/svg/text/scripted/text-query-fragments.html [ Skip ]
-webkit.org/b/197181 imported/w3c/web-platform-tests/svg/text/scripted/getcomputedtextlength.html [ Pass Crash ]
-webkit.org/b/197181 imported/w3c/web-platform-tests/svg/text/scripted/getsubstringlength.html [ Pass Crash ]
-webkit.org/b/197181 imported/w3c/web-platform-tests/svg/text/scripted/text-query-bidi.html [ Pass Crash ]
-
 # These hit debug-only assertions in UniqueIDBDatabase teardown, so we skip them there.
 # <rdar://186427316>
 [ Debug ] storage/indexeddb/clear-data-with-stalled-abort-crash.html [ Skip ]
@@ -8028,9 +8023,6 @@ imported/w3c/web-platform-tests/css/CSS2/floats/overhanging-float-paint-order.ht
 webkit.org/b/286884 imported/w3c/web-platform-tests/css/CSS2/floats/zero-width-floats-positioning.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/CSS2/floats/float-nowrap-hyphen-rewind-1.html [ ImageOnlyFailure ]
 [ Debug ] imported/w3c/web-platform-tests/css/CSS2/floats/line-pushed-by-floats-crash.html [ Skip ]
-
-# This test is flaky. Resizing the window exposures the failure
-webkit.org/b/288689 svg/text/bidi-text-query.svg [ Skip ]
 
 imported/w3c/web-platform-tests/css/css-align/abspos/align-items-static-position.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-align/abspos/align-self-static-position-001.html [ ImageOnlyFailure ]

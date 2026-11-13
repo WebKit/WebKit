@@ -1029,6 +1029,7 @@ void SVGTextLayoutAlgorithm::buildFragments()
         auto fragment = std::optional<SVGTextFragment> { };
         auto fragmentLengthAdjustScale = 1.f;
         auto fragmentHasSpacing = false;
+        auto fragmentSpacing = 0.f;
         auto lastRotate = 0.f;
         auto previousIsPositioned = false;
 
@@ -1045,6 +1046,7 @@ void SVGTextLayoutAlgorithm::buildFragments()
             auto& lastMetrics = metrics[metricsEnd - 1];
             fragment->width = m_isVertical ? lastMetrics.width() : inlineLength;
             fragment->height = m_isVertical ? inlineLength : lastMetrics.height();
+            fragment->spacing = fragmentSpacing;
             fragments.append(*fragment);
             fragment = { };
         };
@@ -1075,6 +1077,7 @@ void SVGTextLayoutAlgorithm::buildFragments()
 
             if (!startsFragment) {
                 fragmentHasSpacing |= !!character.spacing;
+                fragmentSpacing = character.spacing;
                 continue;
             }
 
@@ -1100,6 +1103,7 @@ void SVGTextLayoutAlgorithm::buildFragments()
                 fragment->transform.translate(character.xOrientationShift, character.yOrientationShift);
             if (character.orientationAngle)
                 fragment->transform.rotate(character.orientationAngle);
+            fragment->orientationAngle = character.orientationAngle;
 
             fragment->isTextOnPath = isOnPath && pathScaling != 1;
             if (fragment->isTextOnPath) {
@@ -1120,6 +1124,7 @@ void SVGTextLayoutAlgorithm::buildFragments()
 
             fragmentLengthAdjustScale = character.lengthAdjustScale;
             fragmentHasSpacing = !!character.spacing;
+            fragmentSpacing = character.spacing;
         }
         closeFragment(textBox.start + textBox.length);
     }
