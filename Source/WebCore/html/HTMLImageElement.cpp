@@ -331,6 +331,7 @@ ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
         SizesAttributeParser sizesParser(sizesString, document.get());
 
         m_dynamicMediaQueryResults.appendVector(sizesParser.dynamicMediaQueryResults());
+        m_sizesUseViewportUnits |= sizesParser.usesViewportRelativeUnits();
 
         auto sourceSize = sizesParser.effectiveSize();
         if (sizesParser.isAuto() && LazyLoading::isInLazyState(*this)) {
@@ -369,8 +370,15 @@ void HTMLImageElement::evaluateDynamicMediaQueryDependencies()
         return false;
     }();
 
-    if (!hasChanges)
-        return;
+    if (!hasChanges) {
+        if (!m_sizesUseViewportUnits)
+            return;
+        if (CheckedPtr view = document().view()) {
+            auto viewportSize = view->sizeForCSSDefaultViewportUnits();
+            if (m_lastViewportSizeForSizes && *m_lastViewportSizeForSizes == viewportSize)
+                return;
+        }
+    }
 
     selectImageSource(RelevantMutation::No);
 }
@@ -378,6 +386,7 @@ void HTMLImageElement::evaluateDynamicMediaQueryDependencies()
 void HTMLImageElement::selectImageSource(RelevantMutation relevantMutation)
 {
     m_dynamicMediaQueryResults = { };
+    m_sizesUseViewportUnits = false;
     Ref document = this->document();
     document->removeDynamicMediaQueryDependentImage(*this);
 
@@ -403,6 +412,7 @@ void HTMLImageElement::selectImageSource(RelevantMutation relevantMutation)
             // If we don't have a <picture> or didn't find a source, then we use our own attributes.
             SizesAttributeParser sizesParser(attributeWithoutSynchronization(sizesAttr).string(), document.get());
             m_dynamicMediaQueryResults.appendVector(sizesParser.dynamicMediaQueryResults());
+            m_sizesUseViewportUnits |= sizesParser.usesViewportRelativeUnits();
             auto sourceSize = sizesParser.effectiveSize();
             if (sizesParser.isAuto() && LazyLoading::isInLazyState(*this)) {
                 if (auto layoutWidth = autoSizesLayoutWidth())
@@ -416,7 +426,12 @@ void HTMLImageElement::selectImageSource(RelevantMutation relevantMutation)
     setBestFitURLAndDPRFromImageCandidate(candidate);
     m_imageLoader->updateFromElementIgnoringPreviousError(relevantMutation);
 
-    if (!m_dynamicMediaQueryResults.isEmpty())
+    if (m_sizesUseViewportUnits) {
+        if (CheckedPtr view = document->view())
+            m_lastViewportSizeForSizes = view->sizeForCSSDefaultViewportUnits();
+    }
+
+    if (!m_dynamicMediaQueryResults.isEmpty() || m_sizesUseViewportUnits)
         document->addDynamicMediaQueryDependentImage(*this);
 }
 

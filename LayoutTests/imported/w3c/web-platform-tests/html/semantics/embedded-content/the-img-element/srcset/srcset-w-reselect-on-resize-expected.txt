@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT srcset w-descriptor: narrow to wide selects higher-density candidate Test timed out
+PASS srcset w-descriptor: narrow to wide selects higher-density candidate
 
