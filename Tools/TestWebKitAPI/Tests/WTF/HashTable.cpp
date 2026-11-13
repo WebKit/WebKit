@@ -382,7 +382,7 @@ TEST(WTF_HashTable, RemoveWritesDeleted)
     ASSERT_EQ(table.capacity(), 16u);
 
     Layout layout(table);
-    for (int i = 1; i <= 8; ++i) {
+    for (int i = 1; i <= 4; ++i) {
         unsigned index = layout.indexOf(table.find(i).get());
         table.remove<ShouldValidateKey::Yes>(i);
         ASSERT_EQ(table.capacity(), 16u);
@@ -391,8 +391,16 @@ TEST(WTF_HashTable, RemoveWritesDeleted)
         EXPECT_FALSE(table.contains(i));
         table.checkTableConsistency();
     }
-    for (int i = 9; i <= 11; ++i)
+
+    // More than a quarter of the table in deleted slots rehashes at the same size.
+    table.remove<ShouldValidateKey::Yes>(5);
+    ASSERT_EQ(table.capacity(), 16u);
+    EXPECT_EQ(Layout(table).deletedCount(), 0u);
+    EXPECT_EQ(table.size(), 6u);
+    EXPECT_FALSE(table.contains(5));
+    for (int i = 6; i <= 11; ++i)
         EXPECT_TRUE(table.contains(i));
+    table.checkTableConsistency();
 }
 
 TEST(WTF_HashTable, AddReusesDeletedSlotInProbeSequence)
@@ -474,35 +482,37 @@ TEST(WTF_HashTable, ExpandAndShrink)
 
 TEST(WTF_HashTable, SameSizeRehashClearsTombstones)
 {
-    constexpr unsigned capacity = 64;
+    constexpr unsigned capacity = 2048;
     Vector<int> keys;
-    for (int key = 1; key <= 47; ++key)
+    for (int key = 1; key <= 1000; ++key)
         keys.append(key);
     IntTable table;
     for (int key : keys)
         table.add(key);
     ASSERT_EQ(table.capacity(), capacity);
 
-    Layout layout(table);
     std::unordered_set<int> removed;
-    for (unsigned i = 0; i < 30; ++i) {
+    for (unsigned i = 0; i < 400; ++i) {
         table.remove<ShouldValidateKey::Yes>(keys[i]);
         removed.insert(keys[i]);
     }
-    EXPECT_EQ(layout.deletedCount(), 30u);
-    EXPECT_EQ(table.size(), 17u);
+    EXPECT_EQ(Layout(table).deletedCount(), 400u);
+    EXPECT_EQ(table.size(), 600u);
     table.checkTableConsistency();
 
-    // A key whose home slot is EMPTY consumes it instead of reusing a DELETED slot, which triggers the rehash.
-    int newKey = keys.last() + 1;
-    while (!layout.statusByte(homeSlot(newKey, capacity)).isEmpty())
-        ++newKey;
-    table.add(newKey);
+    // Keys whose home slot is EMPTY consume it instead of reusing a DELETED slot, until the max load triggers the rehash.
+    Vector<int> added;
+    for (int newKey = keys.last() + 1; Layout(table).deletedCount(); ++newKey) {
+        if (!Layout(table).statusByte(homeSlot(newKey, capacity)).isEmpty())
+            continue;
+        table.add(newKey);
+        added.append(newKey);
+    }
     EXPECT_EQ(table.capacity(), capacity);
-    Layout rehashedLayout(table);
-    EXPECT_EQ(rehashedLayout.deletedCount(), 0u);
-    EXPECT_EQ(table.size(), 18u);
-    EXPECT_TRUE(table.contains(newKey));
+    EXPECT_EQ(added.size(), 24u);
+    EXPECT_EQ(table.size(), 624u);
+    for (int key : added)
+        EXPECT_TRUE(table.contains(key));
     for (int key : keys)
         EXPECT_EQ(table.contains(key), !removed.contains(key));
     table.checkTableConsistency();
@@ -610,6 +620,30 @@ TEST(WTF_HashTable, WeakNullKeys)
         table.checkTableConsistency();
     }
     EXPECT_EQ(FakeWeakKey::liveCount, 0);
+}
+
+TEST(WTF_HashTable, ExpandAfterPurgingWeakNullKeysKeepsSize)
+{
+    fakeWeakTargetIsAlive.fill(true);
+    FakeWeakKey::liveCount = 0;
+    {
+        FakeWeakTable table;
+        for (int id = 1; id <= 47; ++id)
+            table.add(FakeWeakKey { id });
+        ASSERT_EQ(table.capacity(), 64u);
+        for (int id = 1; id <= 20; ++id)
+            fakeWeakTargetIsAlive[id] = false;
+
+        table.add(FakeWeakKey { 48 });
+        EXPECT_EQ(table.capacity(), 64u);
+        EXPECT_EQ(table.size(), 28u);
+        EXPECT_EQ(FakeWeakKey::liveCount, 28);
+        for (int id = 21; id <= 48; ++id)
+            EXPECT_TRUE(table.contains(FakeWeakKey { id }));
+        table.checkTableConsistency();
+    }
+    EXPECT_EQ(FakeWeakKey::liveCount, 0);
+    fakeWeakTargetIsAlive.fill(true);
 }
 
 TEST(WTF_HashTable, IteratorSkipsEmptyAndDeletedSlots)

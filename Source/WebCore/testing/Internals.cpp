@@ -8877,7 +8877,8 @@ ExceptionOr<Vector<String>> Internals::platformSupportedCommands() const
     if (!manager || !contextDocument())
         return Exception { ExceptionCode::InvalidAccessError };
 
-    auto commands = manager->supportedCommands();
+    auto commands = copyToVector(manager->supportedCommands());
+    std::ranges::sort(commands);
     Vector<String> commandStrings;
     for (auto command : commands)
         commandStrings.append(convertEnumerationToString(command));

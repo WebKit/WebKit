@@ -1062,4 +1062,33 @@ TEST(WTF_HashSet, InlineWeakPtr)
     EXPECT_LT(set.size(), 16u);
 }
 
+TEST(WTF_HashSet, CapacityUnderChurn)
+{
+    struct Expectation {
+        unsigned keyCount;
+        unsigned freshCapacity;
+        unsigned churnedCapacity;
+    };
+    for (auto [keyCount, freshCapacity, churnedCapacity] : std::initializer_list<Expectation> { { 13, 32, 32 }, { 28, 64, 64 }, { 40, 64, 128 }, { 600, 1024, 2048 }, { 1500, 4096, 8192 } }) {
+        HashSet<int> set;
+        int nextKey = 1;
+        for (unsigned i = 0; i < keyCount; ++i)
+            set.add(nextKey++);
+        EXPECT_EQ(freshCapacity, set.capacity());
+
+        int oldestKey = 1;
+        for (unsigned round = 0; round < 20; ++round) {
+            for (unsigned i = 0; i < keyCount; ++i) {
+                set.remove(oldestKey++);
+                set.add(nextKey++);
+            }
+        }
+        EXPECT_EQ(churnedCapacity, set.capacity());
+        EXPECT_EQ(keyCount, set.size());
+        for (int key = oldestKey; key < nextKey; ++key)
+            EXPECT_TRUE(set.contains(key));
+        EXPECT_FALSE(set.contains(oldestKey - 1));
+    }
+}
+
 } // namespace TestWebKitAPI
