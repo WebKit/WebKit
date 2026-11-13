@@ -27,10 +27,13 @@
 
 #ifdef __cplusplus
 
+#include "Algorithm.h"
 #include "Environment.h"
 #include "FailureAction.h"
 #include "Mutex.h"
 #include "StaticPerProcess.h"
+#include <cstdlib>
+#include <limits>
 #include <mutex>
 #include <unordered_map>
 
@@ -39,6 +42,13 @@
 #endif
 
 namespace bmalloc {
+
+BINLINE void* systemAlignedAlloc(size_t alignment, size_t size)
+{
+    if (size > std::numeric_limits<size_t>::max() - (alignment - 1))
+        return nullptr;
+    return ::aligned_alloc(alignment, roundUpToMultipleOf(alignment, size));
+}
 
 class SystemHeap : private StaticPerProcess<SystemHeap> {
 public:
