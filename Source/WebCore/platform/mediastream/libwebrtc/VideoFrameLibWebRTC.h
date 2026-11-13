@@ -60,7 +60,7 @@ private:
     uint32_t pixelFormat() const final { return m_videoPixelFormat; }
     CVPixelBufferRef pixelBuffer() const final;
 
-    Ref<VideoFrame> clone() final;
+    Ref<VideoFrame> clone(CloneOverrides) final;
 
     const Ref<webrtc::VideoFrameBuffer> m_buffer;
     IntSize m_size;

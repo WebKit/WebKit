@@ -4264,6 +4264,12 @@ struct WebCore::CSSValueKey {
     bool useElevatedUserInterfaceLevel;
 };
 
+header: <WebCore/VideoFrame.h>
+[CustomHeader] struct WebCore::VideoFrameCloneOverrides {
+    std::optional<WebCore::VideoFrameRotation> rotation;
+    std::optional<bool> isMirrored;
+};
+
 struct WebCore::VideoFrameTimeMetadata {
     std::optional<double> processingDuration;
     std::optional<Seconds> captureTime;

@@ -50,6 +50,8 @@ namespace WebKit {
 
 using namespace WebCore;
 
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_connection.ptr())
+
 static WorkQueue& remoteVideoFrameObjectHeapQueueSingleton()
 {
     static NeverDestroyed queue = WorkQueue::create("org.webkit.RemoteVideoFrameObjectHeap"_s, WorkQueue::QOS::UserInteractive);
@@ -143,8 +145,12 @@ void RemoteVideoFrameObjectHeap::convertFrameBuffer(SharedVideoFrame&& sharedVid
     Ref connection = m_connection;
 
     if (std::holds_alternative<RemoteVideoFrameReadReference>(sharedVideoFrame.buffer)) {
-        if (RefPtr heapFrame = get(WTF::move(std::get<RemoteVideoFrameReadReference>(sharedVideoFrame.buffer))))
-            frame = heapFrame->updateOrientation(sharedVideoFrame.rotation, sharedVideoFrame.mirrored, VideoFrame::ShouldClone::Yes);
+        frame = get(WTF::move(std::get<RemoteVideoFrameReadReference>(sharedVideoFrame.buffer)));
+        ASSERT(!frame || (frame->rotation() == sharedVideoFrame.rotation && frame->isMirrored() == sharedVideoFrame.mirrored)
+#if ENABLE(IPC_TESTING_API)
+            || connection->ignoreInvalidMessageForTesting()
+#endif
+        );
     } else
         frame = m_sharedVideoFrameReader.read(WTF::move(sharedVideoFrame));
 
@@ -217,6 +223,21 @@ RefPtr<WebCore::VideoFrame> RemoteVideoFrameObjectHeap::get(RemoteVideoFrameRead
     return m_heap.read(WTF::move(read), timeout);
 }
 
+void RemoteVideoFrameObjectHeap::clone(RemoteVideoFrameReference cloneReference, RemoteVideoFrameReadReference clonedReference, WebCore::VideoFrameCloneOverrides cloneOverrides)
+{
+    assertIsCurrent(remoteVideoFrameObjectHeapQueueSingleton());
+    MESSAGE_CHECK(!isInGPUProcessObjectIdentifierDomain(cloneReference.identifier().toUInt64()));
+
+    RefPtr cloned = get(WTF::move(clonedReference));
+    if (!cloned) {
+        RELEASE_LOG_ERROR(WebRTC, "RemoteVideoFrameObjectHeap::clone no frame to clone");
+        return;
+    }
+
+    bool isAdded = m_heap.add(cloneReference, cloned->clone(cloneOverrides));
+    MESSAGE_CHECK(isAdded);
+}
+
 #endif
 
 void RemoteVideoFrameObjectHeap::lowMemoryHandler()
@@ -227,6 +248,8 @@ void RemoteVideoFrameObjectHeap::lowMemoryHandler()
     m_imageRotationSession = nullptr;
 #endif
 }
+
+#undef MESSAGE_CHECK
 
 }
 

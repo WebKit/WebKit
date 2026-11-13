@@ -77,21 +77,20 @@ private:
     RemoteVideoFrameProxy(IPC::Connection&, RemoteVideoFrameObjectHeapProxy&, RemoteVideoFrameReference, Properties&&);
 
     enum CloneConstructor { cloneConstructor };
-    RemoteVideoFrameProxy(CloneConstructor, RemoteVideoFrameProxy&);
+    RemoteVideoFrameProxy(CloneConstructor, RemoteVideoFrameProxy&, CloneOverrides);
 
-    Ref<VideoFrame> clone() final;
+    Ref<VideoFrame> clone(CloneOverrides) final;
     void setShouldIgnoreAlpha(bool shouldIgnoreAlpha) final { m_shouldIgnoreAlpha = shouldIgnoreAlpha; }
 
     static inline Seconds defaultTimeout = 10_s;
 
-    const RefPtr<RemoteVideoFrameProxy> m_baseVideoFrame;
-    const RefPtr<IPC::Connection> m_connection;
-    std::optional<RemoteVideoFrameReferenceTracker> m_referenceTracker;
+    const Ref<IPC::Connection> m_connection;
+    // FIXME: Remove this.
+    const Ref<RemoteVideoFrameObjectHeapProxy> m_videoFrameObjectHeapProxy;
+    const RemoteVideoFrameReferenceTracker m_referenceTracker;
     const WebCore::IntSize m_size;
     uint32_t m_pixelFormat { 0 };
     bool m_shouldIgnoreAlpha { false };
-    // FIXME: Remove this.
-    mutable RefPtr<RemoteVideoFrameObjectHeapProxy> m_videoFrameObjectHeapProxy;
 #if PLATFORM(COCOA)
     mutable Lock m_pixelBufferLock;
     mutable RetainPtr<CVPixelBufferRef> m_pixelBuffer;

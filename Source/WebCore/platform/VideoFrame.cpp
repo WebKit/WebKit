@@ -71,15 +71,15 @@ Ref<VideoFrame> VideoFrame::updateTimestamp(MediaTime mediaTime, ShouldClone sho
     return updatedVideoFrame;
 }
 
-Ref<VideoFrame> VideoFrame::updateOrientation(Rotation rotation, bool isMirrored, ShouldClone shouldCloneIfUpdating)
+Ref<VideoFrame> VideoFrame::updateOrientation(Rotation rotation, bool isMirrored)
 {
     if (m_rotation == rotation && m_isMirrored == isMirrored)
         return *this;
 
-    Ref updatedVideoFrame = shouldCloneIfUpdating == ShouldClone::Yes ? clone() : Ref { *this };
-    const_cast<Rotation&>(updatedVideoFrame->m_rotation) = rotation;
-    const_cast<bool&>(updatedVideoFrame->m_isMirrored) = isMirrored;
-    return updatedVideoFrame;
+    return clone({
+        .rotation = rotation,
+        .isMirrored = isMirrored
+    });
 }
 
 ImageOrientation VideoFrame::orientation() const
@@ -134,7 +134,7 @@ bool VideoFrame::is10bits() const
 #endif
 
 #if !PLATFORM(COCOA) && !USE(GSTREAMER)
-RefPtr<VideoFrame> VideoFrame::fromNativeImage(NativeImage&)
+RefPtr<VideoFrame> VideoFrame::fromNativeImage(NativeImage&, Init&&)
 {
     // FIXME: Add support.
     return nullptr;

@@ -40,6 +40,7 @@ class ColorSpace;
 class ImageRotationSessionVT;
 class PixelBufferConformerCV;
 class VideoFrame;
+struct VideoFrameCloneOverrides;
 }
 
 namespace WebKit {
@@ -77,6 +78,7 @@ private:
     void convertFrameBuffer(SharedVideoFrame&&, bool shouldApplyRotation, CompletionHandler<void(WebCore::ColorSpace)>&&);
     void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
     void setSharedVideoFrameMemory(WebCore::SharedMemory::Handle&&);
+    void clone(RemoteVideoFrameReference, RemoteVideoFrameReadReference, WebCore::VideoFrameCloneOverrides);
 
     UniqueRef<WebCore::PixelBufferConformerCV> createPixelConformer();
 #endif
