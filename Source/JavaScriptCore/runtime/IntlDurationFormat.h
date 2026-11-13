@@ -26,9 +26,9 @@
 #pragma once
 
 #include "ISO8601.h"
-#include "IntlListFormat.h"
 #include "IntlNumberFormat.h"
 #include "JSObject.h"
+#include <wtf/unicode/ListFormatter.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
 namespace JSC {
@@ -111,7 +111,7 @@ private:
         std::array<std::unique_ptr<UNumberFormatter, UNumberFormatterDeleter>, numberOfTemporalUnits> m_formatters { };
     };
 
-    std::unique_ptr<UListFormatter, UListFormatterDeleter> m_listFormat;
+    ListFormatter m_listFormat;
     mutable std::unique_ptr<FormatterCache> m_formatterCache;
     String m_locale;
     String m_dataLocale;

@@ -187,6 +187,7 @@
 		5CC0EE892162BC2200A1A842 /* URLCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CC0EE862162BC2200A1A842 /* URLCocoa.mm */; };
 		5CC0EE8A2162BC2200A1A842 /* NSURLExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CC0EE882162BC2200A1A842 /* NSURLExtras.mm */; };
 		5CFF32572925A2EC001050F2 /* ThreadSafeWeakPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFF32562925A2EB001050F2 /* ThreadSafeWeakPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5EBED866547A9D46A767D47B /* ListFormatterICU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84A379B17A085B661F9584D0 /* ListFormatterICU.cpp */; };
 		5FAD3AE221B9636600BEE178 /* URLHelpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5FAD3AE121B9636600BEE178 /* URLHelpers.cpp */; };
 		6311592628989A55006A9A12 /* LibraryPathDiagnostics.h in Headers */ = {isa = PBXBuildFile; fileRef = 6311592428989A55006A9A12 /* LibraryPathDiagnostics.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6311592728989A55006A9A12 /* LibraryPathDiagnostics.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6311592528989A55006A9A12 /* LibraryPathDiagnostics.mm */; };
@@ -985,6 +986,7 @@
 		EBEE51142D2DF488004FEC23 /* ContinuousApproximateTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBEE51122D2DF488004FEC23 /* ContinuousApproximateTime.cpp */; };
 		F50D171852941FCC9DB3F894 /* Borrow.h in Headers */ = {isa = PBXBuildFile; fileRef = DED4D271AFDD9025027F5497 /* Borrow.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FA0C387B2BEAD56B00583842 /* SmallMap.h in Headers */ = {isa = PBXBuildFile; fileRef = FA0C387A2BEAD56B00583842 /* SmallMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FA0F776EC07F848087758FC7 /* ListFormatter.h in Headers */ = {isa = PBXBuildFile; fileRef = 7DA1EDC65D454CEFE6248742 /* ListFormatter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FA864D602DA9809F006820D3 /* Variant.h in Headers */ = {isa = PBXBuildFile; fileRef = FA864D5F2DA9809F006820D3 /* Variant.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FAC31B9D2D80083D006CCA20 /* CoroutineUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = FAC31B9C2D80083D006CCA20 /* CoroutineUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE032AD22463E43B0012D7C7 /* WTFConfig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE032AD02463E43B0012D7C7 /* WTFConfig.cpp */; };
@@ -1536,6 +1538,7 @@
 		7CEAE5AC1EA6E10F00DB6890 /* NotFound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotFound.h; sourceTree = "<group>"; };
 		7CEF23EB23D1257900F8B904 /* PlatformCallingConventions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformCallingConventions.h; sourceTree = "<group>"; };
 		7CFAF3C923D0AF1500D21BDD /* PlatformUse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformUse.h; sourceTree = "<group>"; };
+		7DA1EDC65D454CEFE6248742 /* ListFormatter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ListFormatter.h; sourceTree = "<group>"; };
 		7E29C33D15FFD79B00516D61 /* ObjCRuntimeExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjCRuntimeExtras.h; sourceTree = "<group>"; };
 		8134013615B092FD001FF0B8 /* Base64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Base64.cpp; sourceTree = "<group>"; };
 		8134013715B092FD001FF0B8 /* Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Base64.h; sourceTree = "<group>"; };
@@ -1544,6 +1547,7 @@
 		83ABB3C020B3823200BA3306 /* WeakObjCPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakObjCPtr.h; sourceTree = "<group>"; };
 		83F2BADE1CF9524E003E99C3 /* Function.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Function.h; sourceTree = "<group>"; };
 		83FBA93119DF459700F30ADB /* TypeCasts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypeCasts.h; sourceTree = "<group>"; };
+		84A379B17A085B661F9584D0 /* ListFormatterICU.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ListFormatterICU.cpp; sourceTree = "<group>"; };
 		862A8D32278DE74A0014120C /* SignedPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SignedPtr.h; sourceTree = "<group>"; };
 		86F46F5F1A2840EE00CCBF22 /* RefCounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RefCounter.h; sourceTree = "<group>"; };
 		8AB05DF92C99482E00738BDD /* PreciseSum.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PreciseSum.cpp; sourceTree = "<group>"; };
@@ -3086,6 +3090,7 @@
 				A8A47349151A825B004123FF /* CharacterNames.h */,
 				A8A4734A151A825B004123FF /* Collator.h */,
 				A8A4734B151A825B004123FF /* CollatorDefault.cpp */,
+				7DA1EDC65D454CEFE6248742 /* ListFormatter.h */,
 				A8A47357151A825B004123FF /* UTF8Conversion.cpp */,
 				A8A47358151A825B004123FF /* UTF8Conversion.h */,
 			);
@@ -3098,6 +3103,7 @@
 				A8A47350151A825B004123FF /* CollatorICU.cpp */,
 				E3BE09A624A58545009DF2B4 /* ICUHelpers.cpp */,
 				52B228C12458DC8200753D91 /* ICUHelpers.h */,
+				84A379B17A085B661F9584D0 /* ListFormatterICU.cpp */,
 			);
 			path = icu;
 			sourceTree = "<group>";
@@ -3744,6 +3750,7 @@
 				DD3DC8B427A4BF8E007E5B61 /* LikelyDenseUnsignedIntegerSet.h in Headers */,
 				DDF307D527C086DF006A526F /* LineEnding.h in Headers */,
 				DD3DC96727A4BF8E007E5B61 /* ListDump.h in Headers */,
+				FA0F776EC07F848087758FC7 /* ListFormatter.h in Headers */,
 				DD3DC8E027A4BF8E007E5B61 /* ListHashSet.h in Headers */,
 				DD3DC87827A4BF8E007E5B61 /* Liveness.h in Headers */,
 				92874A1B2D6AF35200BBF326 /* LLVMProfilingUtils.h in Headers */,
@@ -4625,6 +4632,7 @@
 				6311592728989A55006A9A12 /* LibraryPathDiagnostics.mm in Sources */,
 				337B2D6A26546EB300DDFD3D /* LikelyDenseUnsignedIntegerSet.cpp in Sources */,
 				C2BCFC551F621F3F00C9222C /* LineEnding.cpp in Sources */,
+				5EBED866547A9D46A767D47B /* ListFormatterICU.cpp in Sources */,
 				0FE1646A1B6FFC9600400E7C /* Lock.cpp in Sources */,
 				0F60F32F1DFCBD1B00416D6C /* LockedPrintStream.cpp in Sources */,
 				1CF18F3B26BB579E004B1722 /* LogChannels.cpp in Sources */,

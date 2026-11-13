@@ -26,17 +26,11 @@
 #pragma once
 
 #include "JSObject.h"
-#include <wtf/unicode/icu/ICUHelpers.h>
-
-struct UListFormatter;
+#include <wtf/unicode/ListFormatter.h>
 
 namespace JSC {
 
 enum class RelevantExtensionKey : uint8_t;
-
-struct UListFormatterDeleter {
-    JS_EXPORT_PRIVATE void operator()(UListFormatter*);
-};
 
 class IntlListFormat final : public JSNonFinalObject {
 public:
@@ -70,13 +64,13 @@ private:
     IntlListFormat(VM&, Structure*);
     DECLARE_DEFAULT_FINISH_CREATION;
 
-    enum class Type : uint8_t { Conjunction, Disjunction, Unit };
-    enum class Style : uint8_t { Short, Long, Narrow };
+    using Type = ListFormatter::Type;
+    using Style = ListFormatter::Style;
 
     static ASCIILiteral typeString(Type);
     static ASCIILiteral styleString(Style);
 
-    std::unique_ptr<UListFormatter, UListFormatterDeleter> m_listFormat;
+    ListFormatter m_listFormat;
     String m_locale;
     Type m_type { Type::Conjunction };
     Style m_style { Style::Long };

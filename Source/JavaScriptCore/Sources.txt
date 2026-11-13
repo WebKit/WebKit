@@ -865,7 +865,7 @@ runtime/IntlDisplayNamesPrototype.cpp
 runtime/IntlDurationFormat.cpp @no-unify // Confine U_HIDE_DRAFT_API's effect in this file.
 runtime/IntlDurationFormatConstructor.cpp
 runtime/IntlDurationFormatPrototype.cpp
-runtime/IntlListFormat.cpp @no-unify // Confine U_HIDE_DRAFT_API's effect in this file.
+runtime/IntlListFormat.cpp
 runtime/IntlListFormatConstructor.cpp
 runtime/IntlListFormatPrototype.cpp
 runtime/IntlLocale.cpp

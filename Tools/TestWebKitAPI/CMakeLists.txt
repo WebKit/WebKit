@@ -107,6 +107,7 @@ set(TestWTF_SOURCES
     Tests/WTF/LazyUniqueRef.cpp
     Tests/WTF/LifecycleLogger.cpp
     Tests/WTF/LineEnding.cpp
+    Tests/WTF/ListFormatter.cpp
     Tests/WTF/ListHashSet.cpp
     Tests/WTF/Lock.cpp
     Tests/WTF/Logger.cpp

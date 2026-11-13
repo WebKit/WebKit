@@ -416,31 +416,6 @@ JSArray* createArrayFromIntVector(JSGlobalObject* globalObject, const Container&
     return result;
 }
 
-class ListFormatInput {
-    WTF_MAKE_NONCOPYABLE(ListFormatInput);
-public:
-    ListFormatInput(Vector<String, 4>&& strings)
-        : m_strings(WTF::move(strings))
-    {
-        m_stringPointers.reserveInitialCapacity(m_strings.size());
-        m_stringLengths.reserveInitialCapacity(m_strings.size());
-        for (auto& string : m_strings) {
-            string.convertTo16Bit();
-            m_stringPointers.append(string.span16().data());
-            m_stringLengths.append(string.length());
-        }
-    }
-
-    int32_t size() const { return m_stringPointers.size(); }
-    const char16_t* const* stringPointers() const { return m_stringPointers.span().data(); }
-    const int32_t* stringLengths() const LIFETIME_BOUND { return m_stringLengths.span().data(); }
-
-private:
-    Vector<String, 4> m_strings;
-    Vector<const char16_t*, 4> m_stringPointers;
-    Vector<int32_t, 4> m_stringLengths;
-};
-
 } // namespace JSC
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -1402,6 +1402,7 @@
 				WTF/LEBEncoder.cpp,
 				WTF/LifecycleLogger.cpp,
 				WTF/LineEnding.cpp,
+				WTF/ListFormatter.cpp,
 				WTF/ListHashSet.cpp,
 				WTF/Lock.cpp,
 				WTF/Logger.cpp,

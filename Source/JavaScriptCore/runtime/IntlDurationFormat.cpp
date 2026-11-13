@@ -36,17 +36,12 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
-// While UListFormatter APIs are draft in ICU 67, they are stable in ICU 68 with the same function signatures.
-// So we can assume that these signatures of draft APIs are stable.
-// If UListFormatter is available, UNumberFormatter is also available.
 #ifdef U_HIDE_DRAFT_API
 #undef U_HIDE_DRAFT_API
 #endif
-#include <unicode/ulistformatter.h>
 #include <unicode/unumberformatter.h>
 #include <unicode/ures.h>
 #define U_HIDE_DRAFT_API 1
-#include <unicode/uformattedvalue.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -268,27 +263,26 @@ void IntlDurationFormat::initializeDurationFormat(JSGlobalObject* globalObject, 
     RETURN_IF_EXCEPTION(scope, void());
 
     {
-        auto toUListFormatterWidth = [](Style style) {
+        auto toListStyle = [](Style style) {
             // 6. Let listStyle be durationFormat.[[Style]].
             // 7. If listStyle is "digital", then
             //     a. Set listStyle to "short".
             // 8. Perform ! CreateDataPropertyOrThrow(lfOpts, "style", listStyle).
             switch (style) {
             case Style::Long:
-                return ULISTFMT_WIDTH_WIDE;
+                return ListFormatter::Style::Long;
             case Style::Short:
             case Style::Digital:
-                return ULISTFMT_WIDTH_SHORT;
+                return ListFormatter::Style::Short;
             case Style::Narrow:
-                return ULISTFMT_WIDTH_NARROW;
+                return ListFormatter::Style::Narrow;
             }
-            return ULISTFMT_WIDTH_WIDE;
+            return ListFormatter::Style::Long;
         };
 
         // 5. Perform ! CreateDataPropertyOrThrow(lfOpts, "type", "unit").
-        UErrorCode status = U_ZERO_ERROR;
-        m_listFormat = std::unique_ptr<UListFormatter, UListFormatterDeleter>(ulistfmt_openForType(m_locale.ascii().data(), ULISTFMT_TYPE_UNITS, toUListFormatterWidth(m_style), &status));
-        if (U_FAILURE(status)) {
+        m_listFormat = ListFormatter { m_locale.ascii(), ListFormatter::Type::Unit, toListStyle(m_style) };
+        if (!m_listFormat) {
             throwTypeError(globalObject, scope, "failed to initialize DurationFormat"_s);
             return;
         }
@@ -687,19 +681,18 @@ JSValue IntlDurationFormat::format(JSGlobalObject* globalObject, ISO8601::Durati
     if (stringLengths.size() <= 1)
         return jsString(vm, StringImpl::create8BitIfPossible(buffer.span()));
 
-    Vector<const char16_t*, numberOfTemporalUnits> stringPointers;
-    const char16_t* stringPointer = buffer.span().data();
+    Vector<std::span<const char16_t>, numberOfTemporalUnits> strings;
+    size_t offset = 0;
     for (int32_t stringLength : stringLengths) {
-        stringPointers.append(stringPointer);
-        stringPointer += stringLength;
+        strings.append(buffer.subspan(offset, stringLength));
+        offset += stringLength;
     }
 
-    Vector<char16_t, 128> result;
-    auto status = callBufferProducingFunction(ulistfmt_format, m_listFormat.get(), stringPointers.span().data(), stringLengths.span().data(), static_cast<int32_t>(stringLengths.size()), result);
-    if (U_FAILURE(status))
+    auto result = m_listFormat.format(strings.span());
+    if (!result)
         return throwTypeError(globalObject, scope, "failed to format list of strings"_s);
 
-    return jsString(vm, StringImpl::create8BitIfPossible(result.span()));
+    return jsString(vm, WTF::move(*result));
 }
 
 // https://tc39.es/proposal-intl-duration-format/#sec-Intl.DurationFormat.prototype.formatToParts
@@ -749,40 +742,15 @@ JSValue IntlDurationFormat::formatToParts(JSGlobalObject* globalObject, ISO8601:
     }
     ASSERT(stringList.size() == groupedElements.size());
 
-    ListFormatInput input(WTF::move(stringList));
-
-    UErrorCode status = U_ZERO_ERROR;
-
-    auto result = std::unique_ptr<UFormattedList, ICUDeleter<ulistfmt_closeResult>>(ulistfmt_openResult(&status));
-    if (U_FAILURE(status))
-        return throwTypeError(globalObject, scope, "failed to format list of strings"_s);
-
-    ulistfmt_formatStringsToResult(m_listFormat.get(), input.stringPointers(), input.stringLengths(), input.size(), result.get(), &status);
-    if (U_FAILURE(status))
-        return throwTypeError(globalObject, scope, "failed to format list of strings"_s);
-
-    // UFormattedValue is owned by UFormattedList. We do not need to close it.
-    auto formattedValue = ulistfmt_resultAsValue(result.get(), &status);
-    if (U_FAILURE(status))
+    auto formattedList = m_listFormat.formatToParts(stringList.span());
+    if (!formattedList)
         return throwTypeError(globalObject, scope, "failed to format list of strings"_s);
 
     JSArray* parts = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 0);
     if (!parts)
         return throwOutOfMemoryError(globalObject, scope);
 
-    int32_t formattedStringLength = 0;
-    const char16_t* formattedStringPointer = ufmtval_getString(formattedValue, &formattedStringLength, &status);
-    if (U_FAILURE(status))
-        return throwTypeError(globalObject, scope, "failed to format list of strings"_s);
-    StringView resultStringView(std::span(formattedStringPointer, formattedStringLength));
-
-    auto iterator = std::unique_ptr<UConstrainedFieldPosition, ICUDeleter<ucfpos_close>>(ucfpos_open(&status));
-    if (U_FAILURE(status))
-        return throwTypeError(globalObject, scope, "failed to format list of strings"_s);
-
-    ucfpos_constrainField(iterator.get(), UFIELD_CATEGORY_LIST, ULISTFMT_ELEMENT_FIELD, &status);
-    if (U_FAILURE(status))
-        return throwTypeError(globalObject, scope, "failed to format list of strings"_s);
+    StringView resultStringView = formattedList->string;
 
     auto literalString = jsNontrivialString(vm, "literal"_s);
 
@@ -815,22 +783,12 @@ JSValue IntlDurationFormat::formatToParts(JSGlobalObject* globalObject, ISO8601:
         }
     };
 
-    int32_t resultLength = resultStringView.length();
-    int32_t previousEndIndex = 0;
+    unsigned resultLength = resultStringView.length();
+    unsigned previousEndIndex = 0;
     unsigned elementIndex = 0;
-    while (true) {
-        bool next = ufmtval_nextPosition(formattedValue, iterator.get(), &status);
-        if (U_FAILURE(status))
-            return throwTypeError(globalObject, scope, "failed to format list of strings"_s);
-        if (!next)
-            break;
-
-        int32_t beginIndex = 0;
-        int32_t endIndex = 0;
-        ucfpos_getIndexes(iterator.get(), &beginIndex, &endIndex, &status);
-        if (U_FAILURE(status))
-            return throwTypeError(globalObject, scope, "failed to format list of strings"_s);
-
+    for (auto range : formattedList->elementRanges) {
+        auto beginIndex = range.begin();
+        auto endIndex = range.end();
         if (previousEndIndex < beginIndex) {
             auto value = jsString(vm, resultStringView.substring(previousEndIndex, beginIndex - previousEndIndex));
             JSObject* part = createPart(literalString, value);

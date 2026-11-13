@@ -184,7 +184,6 @@ runtime/IntlLocale.cpp
 runtime/IntlNumberFormat.cpp
 runtime/IntlNumberFormatInlines.h
 runtime/IntlObject.cpp
-runtime/IntlObjectInlines.h
 runtime/JSBigInt.cpp
 runtime/JSFinalizationRegistry.cpp
 runtime/JSGenericTypedArrayViewInlines.h
