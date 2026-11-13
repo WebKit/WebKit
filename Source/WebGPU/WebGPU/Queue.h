@@ -194,8 +194,11 @@ private:
     Lock m_committedNotCompletedBuffersLock;
     NSMapTable<id<MTLCommandBuffer>, id<MTLCommandEncoder>> * _Nullable m_openCommandEncoders;
     const ThreadSafeWeakPtr<Instance> m_instance;
+    // Monotonic bump-allocated scratch buffer shared by queue-staged copies and uncommitted
+    // RenderPassEncoder draw-clamp passes; m_temporaryBufferOffset must never rewind on an
+    // existing m_temporaryBuffer because unsubmitted encoders and completion handlers hold slices.
     id<MTLBuffer> _Nullable m_temporaryBuffer;
-    uint64_t m_temporaryBufferOffset;
+    uint64_t m_temporaryBufferOffset { 0 };
     // The bytes a pending staged copy aliases, waiting for finalizeBlitCommandEncoder() to attach
     // them to the staging command buffer. Set only inside
     // writeBuffer(Buffer&, uint64_t, Vector<uint8_t>&&).
