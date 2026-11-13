@@ -4418,6 +4418,8 @@ void BBQJIT::materializeVectorConstant(v128_t value, Location result)
             ScratchScope<0, 1> scratches(*this, valueLocation, resultLocation);
             if (info.signMode == SIMDSignMode::Signed)
                 m_jit.vectorTruncSat(info, valueLocation.asFPR(), resultLocation.asFPR(), wasmScratchGPR, wasmScratchFPR, scratches.fpr(0));
+            else if (op == JSC::SIMDLaneOperation::RelaxedTruncSat)
+                m_jit.vectorRelaxedTruncUnsignedFloat32(valueLocation.asFPR(), resultLocation.asFPR(), wasmScratchGPR, wasmScratchFPR, scratches.fpr(0));
             else
                 m_jit.vectorTruncSatUnsignedFloat32(valueLocation.asFPR(), resultLocation.asFPR(), wasmScratchGPR, wasmScratchFPR, scratches.fpr(0));
             break;

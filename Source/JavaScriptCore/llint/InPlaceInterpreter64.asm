@@ -8350,11 +8350,16 @@ ipintOp(_simd_i32x4_relaxed_trunc_f32x4_u, macro()
     if ARM64 or ARM64E
         emit "fcvtzu v16.4s, v16.4s"
     elsif X86_64
-        # Relaxed semantics: vcvttps2dq converts to signed i32, so values >= 2^31
-        # produce 0x80000000 (implementation-defined under relaxed spec).
-        emit "vxorps %xmm1, %xmm1, %xmm1"
-        emit "vmaxps %xmm1, %xmm0, %xmm0"
+        # cvttps2dq is signed. Lanes in [2^31, 2^32) are 0x80000000 plus trunc(x - 2^31).
+        emit "vcvttps2dq %xmm0, %xmm1"
+        emit "movl $0x4f000000, %eax"
+        emit "vmovd %eax, %xmm2"
+        emit "vshufps $0, %xmm2, %xmm2, %xmm2"
+        emit "vsubps %xmm2, %xmm0, %xmm0"
         emit "vcvttps2dq %xmm0, %xmm0"
+        emit "vxorps %xmm2, %xmm2, %xmm2"
+        emit "vpmaxsd %xmm2, %xmm0, %xmm0"
+        emit "vpaddd %xmm0, %xmm1, %xmm0"
     else
         break # Not implemented
     end

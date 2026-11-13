@@ -5900,6 +5900,8 @@ private:
                 case SIMDLane::f32x4:
                     if (value->signMode() == SIMDSignMode::Signed)
                         append(Air::VectorTruncSat, Arg::simdInfo(value->simdInfo()), v, result, m_code.newTmp(B3::GP), m_code.newTmp(B3::FP), m_code.newTmp(B3::FP));
+                    else if (value->opcode() == B3::VectorRelaxedTruncSat)
+                        append(VectorRelaxedTruncUnsignedFloat32, v, result, m_code.newTmp(B3::GP), m_code.newTmp(B3::FP), m_code.newTmp(B3::FP));
                     else
                         append(VectorTruncSatUnsignedFloat32, v, result, m_code.newTmp(B3::GP), m_code.newTmp(B3::FP), m_code.newTmp(B3::FP));
                     return;
