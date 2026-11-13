@@ -63,10 +63,9 @@ public:
     // Construction repopulates the grid, so it has to happen immediately before placement.
     GridLanesLayout(RenderGrid&, unsigned gridAxisTracksCount, Style::GridTrackSizingDirection stackingAxisDirection);
 
-    enum class Phase : uint8_t {
+    enum class Phase : bool {
         Layout,
-        MinContent,
-        MaxContent
+        MaxContent // https://github.com/w3c/csswg-drafts/issues/12843
     };
 
     using ResolvedFitTolerance = Variant<LayoutUnit, CSS::Keyword::Infinite>;

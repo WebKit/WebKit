@@ -2072,7 +2072,6 @@ imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/dense-pac
 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/dense-packing/row-fill-reverse-dense-packing-definite-size-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/grid-lanes-item-placement-006.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/grid-lanes-item-placement-007.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/row-auto-placement-min-content.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/row-negative-margin-004.html [ ImageOnlyFailure ]
 # Grid lanes does not use the limited min-content contribution for items spanning flexible tracks under a min-content constraint.
 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/items/column-flex-spanning-items.html [ ImageOnlyFailure ]

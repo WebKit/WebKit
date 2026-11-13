@@ -89,8 +89,6 @@ LayoutUnit GridLanesLayout::calculateGridLanesIntrinsicLogicalWidth(RenderBox& g
 {
     auto intrinsicWidthComputationScope = IntrinsicLogicalWidthComputationScope { protect(gridItem.layoutContext()), gridItem };
     switch (layoutPhase) {
-    case Phase::MinContent:
-        return gridItem.computeSizingKeywordLogicalWidthUsing(CSS::Keyword::MinContent { }, { }, gridItem.borderAndPaddingLogicalWidth());
     case Phase::MaxContent:
         return gridItem.computeSizingKeywordLogicalWidthUsing(CSS::Keyword::MaxContent { }, { }, gridItem.borderAndPaddingLogicalWidth());
     case Phase::Layout:

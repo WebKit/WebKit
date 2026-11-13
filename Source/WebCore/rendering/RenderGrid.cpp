@@ -918,17 +918,13 @@ std::pair<LayoutUnit, LayoutUnit> RenderGrid::computeIntrinsicLogicalWidths() co
 
         auto gridAxisTracksCountBeforeAutoPlacement = currentGrid().numTracks(Style::GridTrackSizingDirection::Rows);
 
-        // To determine the width of the grid when we have a grid lanes layout in the column direction we need to perform a layout with the min and max
-        // content sizes. We will override the grid items widths to accomplish this and then calculate the final grid content size after placement.
-        // Constructing a GridLanesLayout clears the grid, so the track count both runs are given
-        // has to be the one taken before either of them placed anything.
+        // To determine the width of the grid when we have a grid lanes layout in the column direction we need to perform a layout with the
+        // max-content sizes. We will override the grid items widths to accomplish this and then calculate the final grid content size after placement.
         auto fitTolerance = resolveFitTolerance(*this, Style::GridTrackSizingDirection::Columns);
-
-        auto minContentLayout = GridLanesLayout { const_cast<RenderGrid&>(*this), gridAxisTracksCountBeforeAutoPlacement, Style::GridTrackSizingDirection::Columns };
-        minLogicalWidth = minContentLayout.performGridLanesPlacement(algorithm, fitTolerance, GridLanesLayout::Phase::MinContent).gridContentSize();
 
         auto maxContentLayout = GridLanesLayout { const_cast<RenderGrid&>(*this), gridAxisTracksCountBeforeAutoPlacement, Style::GridTrackSizingDirection::Columns };
         maxLogicalWidth = maxContentLayout.performGridLanesPlacement(algorithm, fitTolerance, GridLanesLayout::Phase::MaxContent).gridContentSize();
+        minLogicalWidth = maxLogicalWidth;
     }
 
     m_grid.resetCurrentGrid();
