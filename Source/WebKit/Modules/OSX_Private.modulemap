@@ -2104,6 +2104,11 @@ framework module WebKit_Private [system] {
     export *
   }
 
+  explicit module _WKWebExtensionBookmarkConfiguration {
+    header "_WKWebExtensionBookmarkConfiguration.h"
+    export *
+  }
+
   explicit module WKWebExtensionCommandPrivate {
     header "WKWebExtensionCommandPrivate.h"
     export *

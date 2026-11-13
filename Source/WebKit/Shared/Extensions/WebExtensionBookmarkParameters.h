@@ -27,18 +27,28 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS_BOOKMARKS)
 
+#include <wtf/URL.h>
 #include <wtf/Vector.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
+inline constexpr auto webExtensionBookmarkRootIdentifier = "0"_s;
+
+enum class WebExtensionBookmarkFolderType : uint8_t {
+    None,
+    BookmarksBar,
+    Managed,
+    Other,
+};
+
 struct WebExtensionBookmarkParameters {
     String identifier;
     std::optional<String> parentIdentifier;
     std::optional<uint64_t> index;
-    std::optional<String> title;
-    std::optional<String> url;
+    String title;
+    std::optional<URL> url;
     WallTime dateAdded;
     std::optional<Vector<WebExtensionBookmarkParameters>> children;
 };

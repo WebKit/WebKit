@@ -459,6 +459,7 @@ list(APPEND WebKit_PRIVATE_FRAMEWORK_HEADERS
     UIProcess/API/Cocoa/_WKWebAuthenticationPanelForTesting.h
     UIProcess/API/Cocoa/_WKWebExtension.h
     UIProcess/API/Cocoa/_WKWebExtensionAction.h
+    UIProcess/API/Cocoa/_WKWebExtensionBookmarkConfiguration.h
     UIProcess/API/Cocoa/_WKWebExtensionBookmarks.h
     UIProcess/API/Cocoa/_WKWebExtensionCommand.h
     UIProcess/API/Cocoa/_WKWebExtensionCommandPrivate.h

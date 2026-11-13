@@ -35,6 +35,7 @@
 
 #import "CocoaHelpers.h"
 #import "MessageSenderInlines.h"
+#import "WebExtensionBookmarkChanges.h"
 #import "WebExtensionBookmarkParameters.h"
 #import "WebExtensionContextMessages.h"
 #import "WebExtensionUtilities.h"
@@ -49,14 +50,16 @@ static inline NSDictionary *toWebAPI(const WebExtensionBookmarkParameters& bookm
     auto *result = [NSMutableDictionary dictionary];
 
     result[idKey] = bookmark.identifier.createNSString().get();
-    result[indexKey] = @(bookmark.index.value_or(0));
-    result[titleKey] = bookmark.title.value_or(emptyString()).createNSString().get();
+    result[titleKey] = bookmark.title.createNSString().get();
+
+    if (bookmark.index)
+        result[indexKey] = @(*bookmark.index);
 
     if (bookmark.parentIdentifier)
         result[parentIdKey] = bookmark.parentIdentifier->createNSString().get();
 
     if (bookmark.url && !bookmark.url->isEmpty()) {
-        result[urlKey] = bookmark.url->createNSString().get();
+        result[urlKey] = bookmark.url->string().createNSString().get();
         result[typeKey] = bookmarkKey;
         result[dateAddedKey] = @(bookmark.dateAdded.secondsSinceEpoch().milliseconds());
     } else
@@ -100,7 +103,7 @@ void WebExtensionAPIBookmarks::createBookmark(NSDictionary *bookmark, Ref<WebExt
         }
     }
 
-    WebExtensionBookmarkParameters parameters;
+    WebExtensionBookmarkChanges parameters;
 
     if (auto *parentIdentifier = objectForKey<NSString>(bookmark, parentIdKey))
         parameters.parentIdentifier = String(parentIdentifier);
@@ -108,10 +111,24 @@ void WebExtensionAPIBookmarks::createBookmark(NSDictionary *bookmark, Ref<WebExt
     if (auto *title = objectForKey<NSString>(bookmark, titleKey))
         parameters.title = String(title);
 
-    if (auto *url = objectForKey<NSString>(bookmark, urlKey))
-        parameters.url = String(url);
+    if (auto *urlString = objectForKey<NSString>(bookmark, urlKey); urlString.length) {
+        URL url { String(urlString) };
+        if (!url.isValid()) {
+            *outExceptionString = toErrorString(nullString(), urlKey, @"it must be a valid URL").createNSString().autorelease();
+            return;
+        }
 
-    parameters.index = objectForKey<NSNumber>(bookmark, indexKey).unsignedLongValue;
+        parameters.url = WTF::move(url);
+    }
+
+    if (auto *index = objectForKey<NSNumber>(bookmark, indexKey)) {
+        if (index.longLongValue < 0) {
+            *outExceptionString = toErrorString(nullString(), indexKey, @"it must not be negative").createNSString().autorelease();
+            return;
+        }
+
+        parameters.index = index.unsignedLongLongValue;
+    }
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::BookmarksCreate(WTF::move(parameters)), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<WebExtensionBookmarkParameters, WebExtensionError>&& result) {
         if (!result) {
@@ -166,13 +183,7 @@ void WebExtensionAPIBookmarks::getSubTree(NSString *bookmarkIdentifier, Ref<WebE
             return;
         }
 
-        const auto& subtreeRoot = result.value()[0];
-        if (!subtreeRoot.children) {
-            callback->call(toJSValueRef(callback->globalContext(), @[ ]));
-            return;
-        }
-
-        callback->call(toJSValueRef(callback->globalContext(), toWebAPI(*subtreeRoot.children)));
+        callback->call(toJSValueRef(callback->globalContext(), toWebAPI(result.value())));
     }, extensionContext().identifier());
 }
 
@@ -234,14 +245,20 @@ void WebExtensionAPIBookmarks::move(NSString *bookmarkIdentifier, NSDictionary *
     if (!validateDictionary(destination, destinationKey, nil, types, outExceptionString))
         return;
 
-    WebExtensionBookmarkParameters parameters;
+    WebExtensionBookmarkChanges parameters;
     parameters.identifier = bookmarkIdentifier;
 
     if (auto *parentIdentifier = objectForKey<NSString>(destination, parentIdKey))
         parameters.parentIdentifier = String(parentIdentifier);
 
-    if (auto *index = objectForKey<NSNumber>(destination, indexKey))
+    if (auto *index = objectForKey<NSNumber>(destination, indexKey)) {
+        if (index.longLongValue < 0) {
+            *outExceptionString = toErrorString(nullString(), indexKey, @"it must not be negative").createNSString().autorelease();
+            return;
+        }
+
         parameters.index = index.unsignedLongLongValue;
+    }
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::BookmarksMove(WTF::move(parameters)), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<WebExtensionBookmarkParameters, WebExtensionError>&& result) {
         if (!result) {
@@ -341,14 +358,21 @@ void WebExtensionAPIBookmarks::update(NSString *bookmarkIdentifier, NSDictionary
     if (!validateDictionary(changes, changesKey, nil, types, outExceptionString))
         return;
 
-    WebExtensionBookmarkParameters parameters;
+    WebExtensionBookmarkChanges parameters;
     parameters.identifier = bookmarkIdentifier;
 
     if (auto *title = objectForKey<NSString>(changes, titleKey))
         parameters.title = String(title);
 
-    if (auto *url = objectForKey<NSString>(changes, urlKey))
-        parameters.url = String(url);
+    if (auto *urlString = objectForKey<NSString>(changes, urlKey); urlString.length) {
+        URL url { String(urlString) };
+        if (!url.isValid()) {
+            *outExceptionString = toErrorString(nullString(), urlKey, @"it must be a valid URL").createNSString().autorelease();
+            return;
+        }
+
+        parameters.url = WTF::move(url);
+    }
 
     if (!parameters.title && !parameters.url) {
         *outExceptionString = toErrorString(nullString(), changesKey, @"it must contain a title or a url").createNSString().autorelease();

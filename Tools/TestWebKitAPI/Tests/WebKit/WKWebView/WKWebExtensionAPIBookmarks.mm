@@ -34,20 +34,113 @@
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebExtensionControllerDelegatePrivate.h>
 #import <WebKit/_WKFeature.h>
+#import <WebKit/_WKWebExtensionBookmarkConfiguration.h>
 #import <WebKit/_WKWebExtensionBookmarks.h>
 
+// Holds the bookmarks that the nodes read and change.
+@interface TestBookmarkStore : NSObject
+@property (nonatomic, strong) NSMutableArray<NSMutableDictionary *> *topLevelBookmarks;
+@property (nonatomic) NSInteger nextIdentifier;
+@property (nonatomic) BOOL completesAsynchronously;
+@property (nonatomic, copy) NSString *failureMessage;
+@property (nonatomic) BOOL createReturnsNoBookmark;
+@property (nonatomic) BOOL nodesAreSnapshots;
+- (NSError *)failure;
+- (NSMutableArray<NSMutableDictionary *> *)siblingsOfBookmark:(NSMutableDictionary *)bookmark;
+- (void)complete:(dispatch_block_t)block;
+@end
+
 @interface TestBookmarkNode : NSObject <_WKWebExtensionBookmark>
+- (instancetype)initWithDictionary:(NSDictionary *)dictionary store:(TestBookmarkStore *)store;
 - (instancetype)initWithDictionary:(NSDictionary *)dictionary;
 @property (nonatomic, strong) NSMutableDictionary *dictionary;
+@property (nonatomic, strong) NSMutableDictionary *originalDictionary;
+@property (nonatomic, strong) TestBookmarkStore *store;
+@end
+
+@implementation TestBookmarkStore
+
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        self.topLevelBookmarks = [NSMutableArray array];
+        _nextIdentifier = 100;
+    }
+    return self;
+}
+
+static NSMutableArray<NSMutableDictionary *> *siblingsOfBookmarkInArray(NSMutableArray<NSMutableDictionary *> *bookmarks, NSMutableDictionary *target)
+{
+    if ([bookmarks indexOfObjectIdenticalTo:target] != NSNotFound)
+        return bookmarks;
+
+    for (NSMutableDictionary *bookmark in bookmarks) {
+        id children = bookmark[@"children"];
+        if (![children isKindOfClass:NSMutableArray.class])
+            continue;
+
+        if (NSMutableArray *found = siblingsOfBookmarkInArray(children, target))
+            return found;
+    }
+
+    return nil;
+}
+
+- (NSMutableArray<NSMutableDictionary *> *)siblingsOfBookmark:(NSMutableDictionary *)bookmark
+{
+    return siblingsOfBookmarkInArray(_topLevelBookmarks, bookmark);
+}
+
+- (NSError *)failure
+{
+    if (!self.failureMessage)
+        return nil;
+
+    return [NSError errorWithDomain:@"TestBookmarks" code:1 userInfo:@{ NSLocalizedDescriptionKey: self.failureMessage }];
+}
+
+- (void)complete:(dispatch_block_t)block
+{
+    if (_completesAsynchronously) {
+        dispatch_async(mainDispatchQueueSingleton(), block);
+        return;
+    }
+
+    block();
+}
+
 @end
 
 @implementation TestBookmarkNode
-- (instancetype)initWithDictionary:(NSDictionary *)dictionary
+
+- (instancetype)initWithDictionary:(NSDictionary *)dictionary store:(TestBookmarkStore *)store
 {
     self = [super init];
-    if (self)
-        _dictionary = [dictionary mutableCopy];
+    if (self) {
+        self.dictionary = [dictionary isKindOfClass:NSMutableDictionary.class] ? (NSMutableDictionary *)dictionary : adoptNS([dictionary mutableCopy]).get();
+        self.store = store;
+
+        // A snapshot node answers from a copy and sends changes to the stored bookmark, like an app whose nodes are values.
+        if (store.nodesAreSnapshots && [dictionary isKindOfClass:NSMutableDictionary.class]) {
+            self.originalDictionary = (NSMutableDictionary *)dictionary;
+            self.dictionary = adoptNS([dictionary mutableCopy]).get();
+        }
+    }
     return self;
+}
+
+- (instancetype)initWithDictionary:(NSDictionary *)dictionary
+{
+    return [self initWithDictionary:dictionary store:nil];
+}
+
+- (NSMutableArray<NSMutableDictionary *> *)mutableChildren
+{
+    if (!_dictionary[@"children"])
+        _dictionary[@"children"] = [NSMutableArray array];
+
+    return _dictionary[@"children"];
 }
 
 - (NSString *)identifierForWebExtensionContext:(WKWebExtensionContext *)context
@@ -55,36 +148,44 @@
     return _dictionary[@"id"];
 }
 
-- (NSString *)parentIdentifierForWebExtensionContext:(WKWebExtensionContext *)context
-{
-    return _dictionary[@"parentId"];
-}
-
 - (NSString *)titleForWebExtensionContext:(WKWebExtensionContext *)context
 {
     return _dictionary[@"title"];
 }
 
-- (NSString *)urlStringForWebExtensionContext:(WKWebExtensionContext *)context
+- (NSURL *)urlForWebExtensionContext:(WKWebExtensionContext *)context
 {
-    return _dictionary[@"url"];
+    NSString *url = _dictionary[@"url"];
+    return url.length ? [NSURL URLWithString:url] : nil;
 }
 
-- (NSUInteger)indexForWebExtensionContext:(WKWebExtensionContext *)context
+- (_WKWebExtensionBookmarkFolderType)folderTypeForWebExtensionContext:(WKWebExtensionContext *)context
 {
-    return [_dictionary[@"index"] unsignedIntegerValue];
+    NSString *folderType = _dictionary[@"folderType"];
+    if ([folderType isEqualToString:@"bookmarks-bar"])
+        return _WKWebExtensionBookmarkFolderTypeBookmarksBar;
+
+    if ([folderType isEqualToString:@"managed"])
+        return _WKWebExtensionBookmarkFolderTypeManaged;
+
+    if ([folderType isEqualToString:@"other"])
+        return _WKWebExtensionBookmarkFolderTypeOther;
+
+    return _WKWebExtensionBookmarkFolderTypeNone;
+}
+
+- (BOOL)isManagedForWebExtensionContext:(WKWebExtensionContext *)context
+{
+    return [_dictionary[@"managed"] boolValue];
 }
 
 - (_WKWebExtensionBookmarkType)bookmarkTypeForWebExtensionContext:(WKWebExtensionContext *)context
 {
-    NSString *typeString = self.dictionary[@"type"];
-    if ([typeString isEqualToString:@"folder"])
+    if ([_dictionary[@"type"] isEqualToString:@"folder"])
         return _WKWebExtensionBookmarkTypeFolder;
 
-    NSString *url = self.dictionary[@"url"];
-    if (url && url.length > 0)
-        return _WKWebExtensionBookmarkTypeBookmark;
-    return _WKWebExtensionBookmarkTypeFolder;
+    NSString *url = _dictionary[@"url"];
+    return url.length ? _WKWebExtensionBookmarkTypeBookmark : _WKWebExtensionBookmarkTypeFolder;
 }
 
 - (NSArray<id<_WKWebExtensionBookmark>> *)childrenForWebExtensionContext:(WKWebExtensionContext *)context
@@ -92,9 +193,11 @@
     NSArray *childDictionaries = _dictionary[@"children"];
     if (!childDictionaries)
         return nil;
+
     NSMutableArray<id<_WKWebExtensionBookmark>> *children = [NSMutableArray array];
-    for (NSDictionary *childDict in childDictionaries)
-        [children addObject:[[TestBookmarkNode alloc] initWithDictionary:childDict]];
+    for (NSDictionary *childDictionary in childDictionaries)
+        [children addObject:[[TestBookmarkNode alloc] initWithDictionary:childDictionary store:_store]];
+
     return children;
 }
 
@@ -104,61 +207,147 @@
     if (!dateValue)
         return nil;
 
-    double millisecondsSinceEpoch = dateValue.doubleValue;
-    NSTimeInterval secondsSinceEpoch = millisecondsSinceEpoch / 1000.0;
+    return [NSDate dateWithTimeIntervalSince1970:dateValue.doubleValue / 1000.0];
+}
 
-    return [NSDate dateWithTimeIntervalSince1970:secondsSinceEpoch];
+- (void)createChildUsingConfiguration:(_WKWebExtensionBookmarkConfiguration *)configuration forWebExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(id<_WKWebExtensionBookmark>, NSError *))completionHandler
+{
+    if (_store.failure || _store.createReturnsNoBookmark) {
+        [_store complete:^{
+            completionHandler(nil, _store.failure);
+        }];
+        return;
+    }
+
+    auto *newDictionary = [NSMutableDictionary dictionary];
+    newDictionary[@"id"] = [NSString stringWithFormat:@"%ld", (long)_store.nextIdentifier++];
+    newDictionary[@"title"] = configuration.title;
+    newDictionary[@"dateAdded"] = @(NSDate.date.timeIntervalSince1970 * 1000.0);
+
+    if (configuration.type == _WKWebExtensionBookmarkTypeBookmark)
+        newDictionary[@"url"] = configuration.url.absoluteString;
+    else {
+        newDictionary[@"type"] = @"folder";
+        newDictionary[@"children"] = [NSMutableArray array];
+    }
+
+    auto *children = self.mutableChildren;
+    [children insertObject:newDictionary atIndex:std::min(configuration.index, children.count)];
+
+    [_store complete:^{
+        completionHandler([[TestBookmarkNode alloc] initWithDictionary:newDictionary store:_store], nil);
+    }];
+}
+
+- (void)setTitle:(NSString *)title forWebExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
+{
+    if (_store.failure) {
+        [_store complete:^{
+            completionHandler(_store.failure);
+        }];
+        return;
+    }
+
+    (_originalDictionary ?: _dictionary)[@"title"] = title;
+
+    [_store complete:^{
+        completionHandler(nil);
+    }];
+}
+
+- (void)setURL:(NSURL *)url forWebExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
+{
+    if (_store.failure) {
+        [_store complete:^{
+            completionHandler(_store.failure);
+        }];
+        return;
+    }
+
+    (_originalDictionary ?: _dictionary)[@"url"] = url.absoluteString;
+
+    [_store complete:^{
+        completionHandler(nil);
+    }];
+}
+
+- (void)moveToParent:(id<_WKWebExtensionBookmark>)parent atIndex:(NSUInteger)index forWebExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
+{
+    if (_store.failure) {
+        [_store complete:^{
+            completionHandler(_store.failure);
+        }];
+        return;
+    }
+
+    auto *newParent = (TestBookmarkNode *)parent;
+    auto *oldSiblings = [_store siblingsOfBookmark:_dictionary];
+    auto *newSiblings = newParent.mutableChildren;
+
+    NSUInteger oldIndex = [oldSiblings indexOfObjectIdenticalTo:_dictionary];
+    [oldSiblings removeObjectAtIndex:oldIndex];
+
+    if (oldSiblings == newSiblings && oldIndex < index)
+        --index;
+
+    [newSiblings insertObject:_dictionary atIndex:std::min(index, newSiblings.count)];
+
+    [_store complete:^{
+        completionHandler(nil);
+    }];
+}
+
+- (void)removeForWebExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
+{
+    if (_store.failure) {
+        [_store complete:^{
+            completionHandler(_store.failure);
+        }];
+        return;
+    }
+
+    [[_store siblingsOfBookmark:_dictionary] removeObjectIdenticalTo:_dictionary];
+
+    [_store complete:^{
+        completionHandler(nil);
+    }];
 }
 
 @end
 
-static NSMutableDictionary *findParentInMockTree(NSMutableArray<NSMutableDictionary *> *tree, NSString *parentId)
+@interface TestMinimalBookmarkNode : NSObject <_WKWebExtensionBookmark>
+@end
+
+@interface TestStaticBookmarkNode : NSObject <_WKWebExtensionBookmark>
+@end
+
+@implementation TestMinimalBookmarkNode
+
+- (NSString *)identifierForWebExtensionContext:(WKWebExtensionContext *)context
 {
-    for (NSMutableDictionary *node in tree) {
-        if ([node[@"id"] isEqualToString:parentId])
-            return node;
-        id children = node[@"children"];
-        if (children && [children isKindOfClass:[NSMutableArray class]]) {
-            NSMutableDictionary *found = findParentInMockTree(children, parentId);
-            if (found)
-                return found;
-        }
-    }
-    return nil;
+    return @"minimal";
 }
 
-static NSMutableDictionary *findBookmarkAndParentArrayInMockTree(NSMutableArray *children, NSString *bookmarkId)
-{
-    if (!children.count)
-        return nil;
+@end
 
-    for (NSMutableDictionary *childDict in children) {
-        if ([childDict[@"id"] isEqualToString:bookmarkId])
-            return [@{ @"bookmark": childDict, @"parentChildren": children } mutableCopy];
-        if ([childDict[@"type"] isEqualToString:@"folder"] && [childDict[@"children"] isKindOfClass:[NSMutableArray class]]) {
-            NSMutableDictionary *found = findBookmarkAndParentArrayInMockTree(childDict[@"children"], bookmarkId);
-            if (found)
-                return found;
-        }
-    }
-    return nil;
+@implementation TestStaticBookmarkNode
+
+- (NSString *)identifierForWebExtensionContext:(WKWebExtensionContext *)context
+{
+    return @"read-only";
 }
 
-static NSMutableDictionary *findBookmarkInMockTree(NSMutableArray *tree, NSString *bookmarkId)
+- (NSString *)titleForWebExtensionContext:(WKWebExtensionContext *)context
 {
-    if (!tree || !bookmarkId)
-        return nil;
-    for (NSMutableDictionary *item in tree) {
-        if ([item[@"id"] isEqualToString:bookmarkId])
-            return item;
-        if ([item[@"type"] isEqualToString:@"folder"] && item[@"children"]) {
-            NSMutableDictionary *foundInChild = findBookmarkInMockTree(item[@"children"], bookmarkId);
-            if (foundInChild)
-                return foundInChild;
-        }
-    }
-    return nil;
+    return @"WebKit";
 }
+
+- (NSURL *)urlForWebExtensionContext:(WKWebExtensionContext *)context
+{
+    return [NSURL URLWithString:@"https://webkit.org/"];
+}
+
+@end
 
 namespace TestWebKitAPI {
 
@@ -208,14 +397,14 @@ protected:
         }
     }
 
-    RetainPtr<NSMutableArray> uiProcessMockBookmarks;
-    NSInteger nextMockBookmarkId;
+    RetainPtr<TestBookmarkStore> bookmarkStore;
 
     void SetUp() override
     {
         testing::Test::SetUp();
-        uiProcessMockBookmarks = adoptNS([NSMutableArray new]);
-        nextMockBookmarkId = 100;
+
+        bookmarkStore = adoptNS([[TestBookmarkStore alloc] init]);
+        [[bookmarkStore topLevelBookmarks] addObject:[@{ @"id": @"other", @"title": @"Other", @"type": @"folder", @"folderType": @"other", @"children": [NSMutableArray array] } mutableCopy]];
     }
 
     RetainPtr<TestWebExtensionManager> getManagerFor(NSArray<NSString *> *script, NSDictionary<NSString *, id> *manifest)
@@ -228,169 +417,17 @@ protected:
         return Util::parseExtension(manifest, resources, bookmarkConfig);
     }
 
-    void configureCreateBookmarkDelegate(TestWebExtensionManager *manager)
+    void configureBookmarksDelegate(TestWebExtensionManager *manager)
     {
-        manager.internalDelegate.createBookmarkWithParentIdentifier = ^(NSString *parentId, NSNumber *index, NSString *url, NSString *title, void (^completionHandler)(NSObject<_WKWebExtensionBookmark>*, NSError*)) {
-            NSMutableDictionary *newBookmarkData = [NSMutableDictionary dictionary];
-            newBookmarkData[@"title"] = title;
-            if (url)
-                newBookmarkData[@"url"] = url;
-            double dateAddedInMilliseconds = NSDate.date.timeIntervalSince1970 * 1000.0;
-            newBookmarkData[@"dateAdded"] = @(dateAddedInMilliseconds);
+        auto store = bookmarkStore;
+        manager.internalDelegate.bookmarksForExtensionContext = ^(void (^completionHandler)(NSArray<id<_WKWebExtensionBookmark>> *, NSError *)) {
+            [store complete:^{
+                auto *nodes = [NSMutableArray array];
+                for (NSMutableDictionary *dictionary in [store topLevelBookmarks])
+                    [nodes addObject:adoptNS([[TestBookmarkNode alloc] initWithDictionary:dictionary store:store.get()]).get()];
 
-            if (!newBookmarkData[@"type"]) {
-                NSString *url = newBookmarkData[@"url"];
-                newBookmarkData[@"type"] = (url && url.length > 0) ? @"bookmark" : @"folder";
-            }
-
-            NSString *newId = [NSString stringWithFormat:@"%ld", (long)this->nextMockBookmarkId];
-            this->nextMockBookmarkId++;
-            newBookmarkData[@"id"] = newId;
-
-            newBookmarkData[@"parentId"] = parentId;
-            if (parentId && ![parentId isEqualToString:@"0"]) {
-                NSMutableDictionary *parentDict = findParentInMockTree(this->uiProcessMockBookmarks.get(), parentId);
-                if (parentDict) {
-                    NSMutableArray *children = [parentDict[@"children"] mutableCopy] ?: [NSMutableArray array];
-                    newBookmarkData[@"parentId"] = parentId;
-                    newBookmarkData[@"index"] = index ?: @(children.count);
-                    [children addObject:newBookmarkData];
-                    parentDict[@"children"] = children;
-                    completionHandler(adoptNS([[TestBookmarkNode alloc] initWithDictionary:newBookmarkData]).get(), nil);
-                    return;
-                }
-            }
-
-            newBookmarkData[@"index"] = index ?: @(this->uiProcessMockBookmarks.get().count);
-            [this->uiProcessMockBookmarks addObject:newBookmarkData];
-            completionHandler(adoptNS([[TestBookmarkNode alloc] initWithDictionary:newBookmarkData]).get(), nil);
-        };
-    }
-
-    void configureGetBookmarksDelegate(TestWebExtensionManager *manager)
-    {
-        manager.internalDelegate.bookmarksForExtensionContext = ^(void (^completionHandler)(NSArray<NSObject<_WKWebExtensionBookmark> *>*, NSError*)) {
-            NSMutableArray<NSObject<_WKWebExtensionBookmark>*> *results = [NSMutableArray array];
-            for (NSDictionary *dict in this->uiProcessMockBookmarks.get())
-                [results addObject:[[TestBookmarkNode alloc] initWithDictionary:dict]];
-            completionHandler(results, nil);
-        };
-    }
-
-    void configureRemoveBookmarksDelegate(TestWebExtensionManager *manager)
-    {
-        manager.internalDelegate.removeBookmarkWithIdentifier = ^(NSString *bookmarkId, BOOL removeFolderWithChildren, void (^completionHandler)(NSError *)) {
-            NSMutableDictionary *foundInfo = findBookmarkAndParentArrayInMockTree(uiProcessMockBookmarks.get(), bookmarkId);
-
-            if (!foundInfo) {
-                completionHandler([NSError errorWithDomain:NSCocoaErrorDomain code:NSExecutableRuntimeMismatchError userInfo:@{ NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Bookmark with ID '%@' not found.", bookmarkId] }]);
-                return;
-            }
-
-            NSMutableDictionary *foundBookmarkDict = foundInfo[@"bookmark"];
-            NSMutableArray *parentChildrenArray = foundInfo[@"parentChildren"];
-            NSString *foundBookmarkType = foundBookmarkDict[@"type"];
-
-            if (!removeFolderWithChildren) {
-                if ([foundBookmarkType isEqualToString:@"folder"]) {
-                    NSArray *folderChildren = foundBookmarkDict[@"children"];
-
-                    if (folderChildren.count) {
-                        completionHandler([NSError errorWithDomain:NSCocoaErrorDomain code:NSFileWriteUnknownError userInfo:@{ NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Bookmark with ID '%@' is a non-empty folder and cannot be removed with bookmarks.remove(). Use bookmarks.removeTree().", bookmarkId] }]);
-                        return;
-                    }
-                }
-            } else {
-                if ([foundBookmarkType isEqualToString:@"bookmark"]) {
-                    completionHandler([NSError errorWithDomain:NSCocoaErrorDomain code:NSFileWriteUnknownError userInfo:@{ NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Can't remove a non-folder item '%@' with bookmarks.removeTree(). Use bookmarks.remove().", bookmarkId] }]);
-                    return;
-                }
-            }
-
-            if (parentChildrenArray) {
-                [parentChildrenArray removeObject:foundBookmarkDict];
-                completionHandler(nil);
-            } else
-                completionHandler([NSError errorWithDomain:NSCocoaErrorDomain code:NSExecutableRuntimeMismatchError userInfo:@{ NSLocalizedDescriptionKey: @"Failed to remove bookmark from top level (parent array not found)." }]);
-        };
-    }
-
-    void configureUpdateBookmarksDelegate(TestWebExtensionManager *manager)
-    {
-        manager.internalDelegate.updateBookmarkWithIdentifier = ^(NSString *bookmarkId, NSString *title, NSString *url, void (^completionHandler)(NSObject<_WKWebExtensionBookmark> *, NSError *)) {
-            NSMutableDictionary *bookmarkToUpdate = findBookmarkInMockTree(uiProcessMockBookmarks.get(), bookmarkId);
-            if (!bookmarkToUpdate) {
-                completionHandler(nil, [NSError errorWithDomain:NSCocoaErrorDomain code:NSExecutableRuntimeMismatchError userInfo:@{ NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Bookmark with ID '%@' not found.", bookmarkId] }]);
-                return;
-            }
-
-            if (title)
-                bookmarkToUpdate[@"title"] = title;
-
-            if (url) {
-                NSString *bookmarkType = bookmarkToUpdate[@"type"];
-                if ([bookmarkType isEqualToString:@"folder"]) {
-                    completionHandler(nil, [NSError errorWithDomain:NSCocoaErrorDomain code:NSExecutableRuntimeMismatchError userInfo:@{ NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Cannot update URL for a %@ (ID: %@).", bookmarkType, bookmarkId] }]);
-                    return;
-                }
-                bookmarkToUpdate[@"url"] = url;
-            }
-
-            TestBookmarkNode *updatedMockNode = [[TestBookmarkNode alloc] initWithDictionary:bookmarkToUpdate];
-            completionHandler(updatedMockNode, nil);
-        };
-    }
-
-    void configureMoveBookmarksDelegate(TestWebExtensionManager *manager)
-    {
-        manager.internalDelegate.moveBookmarkWithIdentifier = ^(NSString *bookmarkId, NSString *toParentId, NSNumber *atIndex, void (^completionHandler)(NSObject<_WKWebExtensionBookmark> *, NSError *)) {
-            NSMutableDictionary *foundInfo = findBookmarkAndParentArrayInMockTree(uiProcessMockBookmarks.get(), bookmarkId);
-            if (!foundInfo) {
-                completionHandler(nil, [NSError errorWithDomain:NSCocoaErrorDomain code:NSExecutableRuntimeMismatchError userInfo:@{ NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Bookmark with ID '%@' not found for move.", bookmarkId] }]);
-                return;
-            }
-
-            NSMutableDictionary *bookmarkToMove = foundInfo[@"bookmark"];
-            NSMutableArray *oldParentChildrenArray = foundInfo[@"parentChildren"];
-
-            NSUInteger oldIndex = [oldParentChildrenArray indexOfObject:bookmarkToMove];
-            if (oldIndex == NSNotFound) {
-                completionHandler(nil, [NSError errorWithDomain:NSCocoaErrorDomain code:NSExecutableRuntimeMismatchError userInfo:@{ NSLocalizedDescriptionKey: @"Bookmark found but not in its reported parent array." }]);
-                return;
-            }
-
-            NSMutableArray *newParentChildrenArray = nil;
-            if (!toParentId)
-                newParentChildrenArray = uiProcessMockBookmarks.get();
-            else {
-                NSMutableDictionary *newParent = findBookmarkInMockTree(uiProcessMockBookmarks.get(), toParentId);
-                if (!newParent || ![newParent[@"type"] isEqualToString:@"folder"]) {
-                    completionHandler(nil, [NSError errorWithDomain:NSCocoaErrorDomain code:NSExecutableRuntimeMismatchError userInfo:@{ NSLocalizedDescriptionKey: [NSString stringWithFormat:@"New parent folder with ID '%@' not found or not a folder.", toParentId] }]);
-                    return;
-                }
-                newParentChildrenArray = newParent[@"children"];
-            }
-
-            NSUInteger rawTargetIndex = atIndex ? atIndex.unsignedIntegerValue : newParentChildrenArray.count;
-            [oldParentChildrenArray removeObjectAtIndex:oldIndex];
-
-            if (oldParentChildrenArray == newParentChildrenArray && oldIndex < rawTargetIndex)
-                rawTargetIndex--;
-
-            NSUInteger finalTargetIndex = rawTargetIndex;
-            if (finalTargetIndex > newParentChildrenArray.count)
-                finalTargetIndex = newParentChildrenArray.count;
-
-            bookmarkToMove[@"parentId"] = toParentId ?: @"0";
-            NSUInteger targetIndex = atIndex ? atIndex.unsignedIntegerValue : newParentChildrenArray.count;
-            if (targetIndex > newParentChildrenArray.count)
-                targetIndex = newParentChildrenArray.count;
-
-            [newParentChildrenArray insertObject:bookmarkToMove atIndex:targetIndex];
-            bookmarkToMove[@"index"] = @(targetIndex);
-
-            TestBookmarkNode *movedMockNode = [[TestBookmarkNode alloc] initWithDictionary:bookmarkToMove];
-            completionHandler(movedMockNode, nil);
+                completionHandler(nodes, nil);
+            }];
         };
     }
 
@@ -457,7 +494,7 @@ TEST_F(WKWebExtensionAPIBookmarks, IncorrectArguments)
         @"browser.test.assertThrows(() => browser.bookmarks.get('test', 'test'), /The 'callback' value is invalid, because a function is expected./i)",
         @"browser.test.assertThrows(() => browser.bookmarks.move(123, {}), /The 'id' value is invalid, because a string is expected./i)",
         @"browser.test.assertThrows(() => browser.bookmarks.move('someId', 'not-an-object'), /The 'destination' value is invalid, because an object is expected./i)",
-        @"browser.test.assertThrows(() => browser.bookmarks.remove(123), /The 'id' value is invalid, because a string is expected./i)",
+        @"browser.test.assertThrows(() => browser.bookmarks.remove(123), /The 'id' value is invalid, because a string is expected/i)",
         @"browser.test.assertThrows(() => browser.bookmarks.search(123, 'test'), /The 'callback' value is invalid, because a function is expected./i)",
         @"browser.test.assertThrows(() => browser.bookmarks.update(123, {}), /The 'id' value is invalid, because a string is expected./i)",
         @"browser.test.notifyPass()",
@@ -502,8 +539,7 @@ TEST_F(WKWebExtensionAPIBookmarks, GetRecent)
 
     auto manager = getManagerFor(resources, bookmarksManifest);
 
-    configureCreateBookmarkDelegate(manager.get());
-    configureGetBookmarksDelegate(manager.get());
+    configureBookmarksDelegate(manager.get());
 
     [manager loadAndRun];
 }
@@ -522,6 +558,9 @@ TEST_F(WKWebExtensionAPIBookmarks, Create)
         @"browser.test.assertEq('My Children Folder', createdNode3.title, 'Title should match');",
         @"browser.test.assertEq('folder', createdNode3.type, 'type should be folder because url is not specified');",
         @"browser.test.assertEq(createdNode2.id, createdNode3.parentId, 'parentId should match');",
+        @"browser.test.assertEq('other', createdNode.parentId, 'A bookmark without a parent should be in the default folder');",
+        @"browser.test.assertEq(0, createdNode.index, 'The first top-level bookmark should have index 0');",
+        @"browser.test.assertEq(0, createdNode3.index, 'The first child should have index 0');",
         @"browser.test.notifyPass()",
     ];
 
@@ -529,7 +568,7 @@ TEST_F(WKWebExtensionAPIBookmarks, Create)
 
     auto manager = getManagerFor(resources, bookmarksManifest);
 
-    configureCreateBookmarkDelegate(manager.get());
+    configureBookmarksDelegate(manager.get());
 
     [manager loadAndRun];
 }
@@ -541,9 +580,18 @@ TEST_F(WKWebExtensionAPIBookmarks, GetTree)
         @"let folder1 = await browser.bookmarks.create({type: 'folder', title: 'Top Folder 1'});",
         @"let bookmark2 = await browser.bookmarks.create({title: 'Child Bookmark 2', url: 'http://example.com/bm2', parentId: folder1.id});",
         @"let bookmark3 = await browser.bookmarks.create({title: 'Top Bookmark 3', url: 'http://example.com/bm3'});",
-        @"let root = await browser.bookmarks.getTree();",
-        @"browser.test.assertTrue(Array.isArray(root), 'Root object should have a children array');",
-        @"browser.test.assertTrue(root.length >= 1, 'Root should have at least one child (default folder)');",
+        @"let tree = await browser.bookmarks.getTree();",
+        @"browser.test.assertTrue(Array.isArray(tree), 'The tree should be an array');",
+        @"browser.test.assertEq(1, tree.length, 'The tree should have one root');",
+        @"browser.test.assertEq('0', tree[0].id, 'The root should have the root identifier');",
+        @"browser.test.assertEq('', tree[0].title, 'The root should have an empty title');",
+        @"browser.test.assertEq('folder', tree[0].type, 'The root should be a folder');",
+        @"browser.test.assertTrue(tree[0].parentId === undefined, 'The root should not have a parent');",
+        @"let root = tree[0].children;",
+        @"browser.test.assertEq(1, root.length, 'The root should have the default folder');",
+        @"browser.test.assertEq('other', root[0].id, 'The root should have the default folder');",
+        @"root = root[0].children;",
+        @"browser.test.assertEq(3, root.length, 'The default folder should have the three new nodes');",
         @"let foundBookmark1 = root.find(n => n.title === bookmark1.title);",
         @"browser.test.assertEq('Top Bookmark 1', foundBookmark1.title, 'Bm1 title matches');",
         @"browser.test.assertEq('http://example.com/bm1', foundBookmark1.url, 'Bm1 URL matches');",
@@ -557,6 +605,8 @@ TEST_F(WKWebExtensionAPIBookmarks, GetTree)
         @"browser.test.assertEq('http://example.com/bm2', foundBookmark2.url, 'Bm2 URL matches');",
         @"browser.test.assertEq('bookmark', foundBookmark2.type, 'Bm2 type is bookmark');",
         @"browser.test.assertEq(folder1.id, foundBookmark2.parentId, 'Bm2 parentId matches Folder1');",
+        @"browser.test.assertEq('other', foundBookmark1.parentId, 'Bm1 parentId matches the default folder');",
+        @"browser.test.assertEq(0, foundBookmark1.index, 'Bm1 index is its position in the default folder');",
         @"browser.test.notifyPass()",
     ];
 
@@ -564,8 +614,7 @@ TEST_F(WKWebExtensionAPIBookmarks, GetTree)
 
     auto manager = getManagerFor(resources, bookmarksManifest);
 
-    configureCreateBookmarkDelegate(manager.get());
-    configureGetBookmarksDelegate(manager.get());
+    configureBookmarksDelegate(manager.get());
     [manager loadAndRun];
 }
 
@@ -578,7 +627,7 @@ TEST_F(WKWebExtensionAPIBookmarks, CreateAndGetTree)
         @"let bookmark = await browser.bookmarks.create({ parentId: folder.id, title: 'WebKit.org', url: 'https://webkit.org/' });",
         @"browser.test.assertEq(bookmark.title, 'WebKit.org', 'Bookmark title should be correct');",
         @"browser.test.assertEq(bookmark.url, 'https://webkit.org/', 'Bookmark URL should be correct');",
-        @"let rootNode = await browser.bookmarks.getTree();",
+        @"let rootNode = (await browser.bookmarks.getTree())[0].children[0].children;",
         @"browser.test.assertTrue(Array.isArray(rootNode), 'Root object should have a children array');",
         @"browser.test.assertEq(rootNode.length, 1);",
         @"browser.test.assertEq(rootNode[0].title, 'Test Folder');",
@@ -588,7 +637,7 @@ TEST_F(WKWebExtensionAPIBookmarks, CreateAndGetTree)
         @"let bookmark2 = await browser.bookmarks.create({ id: 'topLevelBookmark', title: 'Test Top Bookmark', url: 'https://coolbook.com/' });",
         @"browser.test.assertEq(bookmark2.title, 'Test Top Bookmark', 'Bookmark title should be correct');",
         @"browser.test.assertEq(bookmark2.url, 'https://coolbook.com/', 'Bookmark URL should be correct');",
-        @"let updatedRootNode = await browser.bookmarks.getTree();",
+        @"let updatedRootNode = (await browser.bookmarks.getTree())[0].children[0].children;",
         @"browser.test.assertEq(updatedRootNode.length, 2);",
         @"browser.test.assertEq(updatedRootNode[0].title, 'Test Folder');",
         @"browser.test.assertEq(updatedRootNode[1].title, 'Test Top Bookmark');",
@@ -599,8 +648,7 @@ TEST_F(WKWebExtensionAPIBookmarks, CreateAndGetTree)
 
     auto manager = getManagerFor(resources, bookmarksManifest);
 
-    configureCreateBookmarkDelegate(manager.get());
-    configureGetBookmarksDelegate(manager.get());
+    configureBookmarksDelegate(manager.get());
     [manager loadAndRun];
 }
 
@@ -619,16 +667,24 @@ TEST_F(WKWebExtensionAPIBookmarks, GetSubTreeChildren)
         @"let bookmark2 = await browser.bookmarks.create({parentId: folder2.id, title: 'Bookmark 2', url: 'https://bookmark2.org/' });",
         @"let subtreeFolder1 = await browser.bookmarks.getSubTree(folder.id);",
         @"browser.test.assertTrue(Array.isArray(subtreeFolder1), 'subtreeFolder1 should be an array');",
-        @"browser.test.assertEq(2, subtreeFolder1.length, 'subtreeFolder1 array should have 2 elements');",
-        @"browser.test.assertEq('Folder 2', subtreeFolder1[1].title, 'childs title should be Folder 2');",
-        @"browser.test.assertEq('folder', subtreeFolder1[1].type, 'type should be folder');",
-        @"browser.test.assertTrue(Array.isArray(subtreeFolder1[1].children), 'Folder 2 should have children');",
-        @"browser.test.assertEq(1, subtreeFolder1[1].children.length, 'folder 2 should have 1 child');",
-        @"browser.test.assertEq(bookmark2.title, subtreeFolder1[1].children[0].title, 'bookmark2 should be child of folder2');",
-        @"browser.test.assertEq(bookmark.id, subtreeFolder1[0].id, 'First child is bookmark');",
+        @"browser.test.assertEq(1, subtreeFolder1.length, 'subtreeFolder1 array should only contain the requested node');",
+        @"browser.test.assertEq(folder.id, subtreeFolder1[0].id, 'The requested node should be returned');",
+        @"browser.test.assertEq(2, subtreeFolder1[0].children.length, 'The requested node should have 2 children');",
+        @"browser.test.assertEq(bookmark.id, subtreeFolder1[0].children[0].id, 'First child is bookmark');",
+        @"browser.test.assertEq('Folder 2', subtreeFolder1[0].children[1].title, 'Second child title should be Folder 2');",
+        @"browser.test.assertEq('folder', subtreeFolder1[0].children[1].type, 'type should be folder');",
+        @"browser.test.assertEq(1, subtreeFolder1[0].children[1].children.length, 'Folder 2 should have 1 child');",
+        @"browser.test.assertEq(bookmark2.title, subtreeFolder1[0].children[1].children[0].title, 'bookmark2 should be child of folder2');",
         @"let subtreeBookmark = await browser.bookmarks.getSubTree(bookmark.id);",
         @"browser.test.assertTrue(Array.isArray(subtreeBookmark), 'subtreeBookmark should be an array');",
-        @"browser.test.assertEq(0, subtreeBookmark.length, 'subtreeBookmark array should be empty');",
+        @"browser.test.assertEq(1, subtreeBookmark.length, 'subtreeBookmark array should have 1 element');",
+        @"browser.test.assertEq(bookmark.id, subtreeBookmark[0].id, 'The requested bookmark should be returned');",
+        @"browser.test.assertTrue(subtreeBookmark[0].children === undefined, 'A bookmark should not have children');",
+        @"let childrenOfBookmark = await browser.bookmarks.getChildren(bookmark.id);",
+        @"browser.test.assertTrue(Array.isArray(childrenOfBookmark), 'childrenOfBookmark should be an array');",
+        @"browser.test.assertEq(0, childrenOfBookmark.length, 'A bookmark should have no children');",
+        @"let subtreeRoot = await browser.bookmarks.getSubTree('0');",
+        @"browser.test.assertEq('0', subtreeRoot[0].id, 'The root can be requested');",
         @"let childrenFolder1 = await browser.bookmarks.getChildren(folder.id);",
         @"browser.test.assertTrue(Array.isArray(childrenFolder1), 'childrenFolder1 should be an array');",
         @"browser.test.assertEq('Folder 2', childrenFolder1[1].title, 'childs title should be Folder 2');",
@@ -644,8 +700,7 @@ TEST_F(WKWebExtensionAPIBookmarks, GetSubTreeChildren)
 
     auto manager = getManagerFor(resources, bookmarksManifest);
 
-    configureCreateBookmarkDelegate(manager.get());
-    configureGetBookmarksDelegate(manager.get());
+    configureBookmarksDelegate(manager.get());
 
     [manager loadAndRun];
 }
@@ -658,43 +713,38 @@ TEST_F(WKWebExtensionAPIBookmarks, RemoveAndRemoveTree)
         @"let folder2 = await browser.bookmarks.create({ parentId: folder1.id, title: 'Folder Two' });",
         @"let bookmarkB = await browser.bookmarks.create({ parentId: folder2.id, title: 'Bookmark B', url: 'http://example.com/b' });",
         @"let topLevelBookmark = await browser.bookmarks.create({ title: 'Top Level Bookmark', url: 'http://example.com/top' });",
-        @"let tree1 = await browser.bookmarks.getTree();",
+        @"let tree1 = (await browser.bookmarks.getTree())[0].children[0].children;",
         @"browser.test.assertEq(2, tree1[0].children.length, 'folder1 should have 2 children');",
         @"browser.test.assertEq('Top Level Bookmark', tree1[1].title, 'Second top-level is topBookmark');",
         @"browser.test.assertEq('Bookmark A', tree1[0].children[0].title, 'bookmarkA is child of folder1');",
 
         @"await browser.test.assertRejects(",
-        @"browser.bookmarks.removeTree(bookmarkA.id),",
-        @"/Can't remove a non-folder item '.*' with bookmarks.removeTree\\(\\). Use bookmarks.remove\\(\\)./,",
-        @"'FAIL-1: removeTree on a bookmark should fail with the correct message');",
-
-        @"await browser.test.assertRejects(",
         @"browser.bookmarks.remove(folder2.id),",
-        @"/Bookmark with ID '.*' is a non-empty folder and cannot be removed with bookmarks.remove\\(\\). Use bookmarks.removeTree\\(\\)./,",
+        @"/the folder is not empty/i,",
         @"'FAIL-2: remove on a non-empty folder should fail with the correct message');",
 
         @"await browser.test.assertRejects(",
         @"browser.bookmarks.remove('nonexistent-id-123'),",
-        @"/Bookmark with ID 'nonexistent-id-123' not found./,",
+        @"/bookmark not found/i,",
         @"'FAIL-3a: remove on a non-existent ID should fail with the correct message');",
 
         @"await browser.test.assertRejects(",
         @"browser.bookmarks.removeTree('nonexistent-id-456'),",
-        @"/Bookmark with ID 'nonexistent-id-456' not found./,",
+        @"/bookmark not found/i,",
         @"'FAIL-3b: removeTree on a non-existent ID should fail with the correct message');",
 
         @"await browser.bookmarks.remove(bookmarkA.id);",
-        @"let tree2 = await browser.bookmarks.getTree();",
+        @"let tree2 = (await browser.bookmarks.getTree())[0].children[0].children;",
         @"browser.test.assertEq(1, tree2[0].children.length, 'folder1 should now have 1 child after removing bookmarkA');",
         @"browser.test.assertEq('Folder Two', tree2[0].children[0].title, 'folder2 should be the only child of folder1');",
         @"await browser.bookmarks.removeTree(folder2.id);",
-        @"let tree3 = await browser.bookmarks.getTree();",
+        @"let tree3 = (await browser.bookmarks.getTree())[0].children[0].children;",
         @"browser.test.assertEq(0, tree3[0].children.length, 'folder1 should now have 0 children after removing folder2');",
         @"browser.test.assertEq(2, tree3.length, 'Tree should still have 2 top-level items (folder1 and topBookmark)');",
         @"browser.test.assertEq('Folder One', tree3[0].title, 'folder1 is still present');",
         @"browser.test.assertEq(0, tree3[0].children.length, 'folder1 is still present but has no children');",
         @"await browser.bookmarks.remove(folder1.id);",
-        @"let tree4 = await browser.bookmarks.getTree();",
+        @"let tree4 = (await browser.bookmarks.getTree())[0].children[0].children;",
         @"browser.test.assertEq(1, tree4.length, 'the top level now ONLY has the top level bookmark');",
         @"browser.test.notifyPass();",
     ];
@@ -703,9 +753,7 @@ TEST_F(WKWebExtensionAPIBookmarks, RemoveAndRemoveTree)
 
     auto manager = getManagerFor(resources, bookmarksManifest);
 
-    configureCreateBookmarkDelegate(manager.get());
-    configureGetBookmarksDelegate(manager.get());
-    configureRemoveBookmarksDelegate(manager.get());
+    configureBookmarksDelegate(manager.get());
 
     [manager loadAndRun];
 }
@@ -736,12 +784,12 @@ TEST_F(WKWebExtensionAPIBookmarks, Update)
 
         @"await browser.test.assertRejects(",
         @"browser.bookmarks.update(folder.id, { url: 'http://example.com/should-fail' }),",
-        @"/Cannot update URL for a \\w+ \\(ID: .*\\)\\./,",
+        @"/the URL of a folder cannot be set/i,",
         @"'FAIL: Updating a folder URL should be rejected with the correct error message');",
 
         @"await browser.test.assertRejects(",
         @"browser.bookmarks.update('nonexistent-id', { title: 'New Title' }),",
-        @"/Bookmark with ID 'nonexistent-id' not found\\./,",
+        @"/bookmark not found/i,",
         @"'FAIL: Updating a non-existent ID should be rejected with the correct error message');",
 
         @"browser.test.notifyPass();",
@@ -751,9 +799,7 @@ TEST_F(WKWebExtensionAPIBookmarks, Update)
 
     auto manager = getManagerFor(resources, bookmarksManifest);
 
-    configureCreateBookmarkDelegate(manager.get());
-    configureGetBookmarksDelegate(manager.get());
-    configureUpdateBookmarksDelegate(manager.get());
+    configureBookmarksDelegate(manager.get());
 
     [manager loadAndRun];
 }
@@ -774,27 +820,28 @@ TEST_F(WKWebExtensionAPIBookmarks, Move)
         @"browser.test.assertEq(1, movedBm1.index, 'bmA should be at index 1 in Folder B');",
 
         @"let bmD = await browser.bookmarks.create({ title: 'Bookmark D', url: 'http://d.com', parentId: folderA.id });",
-        @"let movedBm2 = await browser.bookmarks.move(bmC.id, { parentId: folderA.id, index: 1 });",
+        @"let movedBm2 = await browser.bookmarks.move(bmC.id, { parentId: folderA.id, index: 2 });",
         @"browser.test.assertEq(bmC.id, movedBm2.id, 'Moved bookmark ID should match');",
         @"browser.test.assertEq(folderA.id, movedBm2.parentId, 'bmC parentId should be Folder A');",
         @"browser.test.assertEq(1, movedBm2.index, 'bmC should be at index 1 in Folder A');",
 
         @"let movedFolder = await browser.bookmarks.move(folderB.id, { index: 0 });",
         @"browser.test.assertEq(folderB.id, movedFolder.id, 'Moved folder ID should match');",
-        @"browser.test.assertEq(0, movedFolder.index, 'Folder B parentId should be null (root)');",
+        @"browser.test.assertEq('other', movedFolder.parentId, 'Folder B should stay in its folder');",
+        @"browser.test.assertEq(0, movedFolder.index, 'Folder B should be first in its folder');",
         @"let movedFolder2 = await browser.bookmarks.move(folderB.id, { parentId: folderA.id });",
         @"browser.test.assertEq(folderB.id, movedFolder2.id, 'Moved folder ID should match');",
-        @"browser.test.assertEq(folderA.id, movedFolder2.parentId, 'Folder B parentId should be null (root)');",
+        @"browser.test.assertEq(folderA.id, movedFolder2.parentId, 'Folder B should be a child of Folder A');",
 
         @"await browser.test.assertRejects(",
         @"browser.bookmarks.move('nonexistent-id', { parentId: folderA.id }),",
-        @"/Bookmark with ID 'nonexistent-id' not found for move./,",
+        @"/bookmark not found/i,",
         @"'FAIL-1: Moving a non-existent bookmark should reject with the correct message');",
 
         @"browser.test.log('Testing move to a non-folder parent...');",
         @"await browser.test.assertRejects(",
         @"browser.bookmarks.move(bmB.id, { parentId: bmD.id }),",
-        @"/New parent folder with ID '.*' not found or not a folder./,",
+        @"/the new parent is not a folder/i,",
         @"'FAIL-2: Moving to a non-folder parent should reject with the correct message');",
 
         @"browser.test.notifyPass();",
@@ -804,9 +851,7 @@ TEST_F(WKWebExtensionAPIBookmarks, Move)
 
     auto manager = getManagerFor(resources, bookmarksManifest);
 
-    configureCreateBookmarkDelegate(manager.get());
-    configureGetBookmarksDelegate(manager.get());
-    configureMoveBookmarksDelegate(manager.get());
+    configureBookmarksDelegate(manager.get());
 
     [manager loadAndRun];
 }
@@ -901,8 +946,253 @@ TEST_F(WKWebExtensionAPIBookmarks, Search)
 
     auto manager = getManagerFor(resources, bookmarksManifest);
 
-    configureCreateBookmarkDelegate(manager.get());
-    configureGetBookmarksDelegate(manager.get());
+    configureBookmarksDelegate(manager.get());
+
+    [manager loadAndRun];
+}
+
+TEST_F(WKWebExtensionAPIBookmarks, RootIdentifier)
+{
+    auto *script = @[
+        @"let topLevel = await browser.bookmarks.getChildren('0')",
+        @"browser.test.assertEq(1, topLevel.length, 'The root should have the top-level node')",
+        @"browser.test.assertEq('Other', topLevel[0].title, 'The top-level node should be the default folder')",
+        @"browser.test.assertEq('0', topLevel[0].parentId, 'Top-level nodes should have the root as their parent')",
+        @"let roots = await browser.bookmarks.get('0')",
+        @"browser.test.assertEq(1, roots.length, 'The root can be requested')",
+        @"browser.test.assertEq('0', roots[0].id, 'The root should have the root identifier')",
+        @"browser.test.notifyPass()",
+    ];
+
+    auto manager = getManagerFor(script, bookmarksManifest);
+
+    configureBookmarksDelegate(manager.get());
+
+    [manager loadAndRun];
+}
+
+TEST_F(WKWebExtensionAPIBookmarks, UnknownBookmarkIdentifier)
+{
+    auto *script = @[
+        @"await browser.bookmarks.create({ title: 'WebKit', url: 'https://webkit.org/' })",
+
+        @"await browser.test.assertRejects(",
+        @"browser.bookmarks.getSubTree('missing'),",
+        @"/bookmark not found/i,",
+        @"'getSubTree with an unknown identifier should fail');",
+
+        @"await browser.test.assertRejects(",
+        @"browser.bookmarks.getChildren('missing'),",
+        @"/bookmark not found/i,",
+        @"'getChildren with an unknown identifier should fail');",
+
+        @"await browser.test.assertRejects(",
+        @"browser.bookmarks.get('missing'),",
+        @"/bookmark not found/i,",
+        @"'get with an unknown identifier should fail');",
+
+        @"browser.test.notifyPass()",
+    ];
+
+    auto manager = getManagerFor(script, bookmarksManifest);
+
+    configureBookmarksDelegate(manager.get());
+
+    [manager loadAndRun];
+}
+
+TEST_F(WKWebExtensionAPIBookmarks, CreateUsesTheDefaultFolderAndIndex)
+{
+    auto *script = @[
+        @"let first = await browser.bookmarks.create({ title: 'First', url: 'https://webkit.org/' })",
+        @"browser.test.assertEq('other', first.parentId, 'A bookmark without a parent should go in the default folder')",
+        @"browser.test.assertEq(0, first.index, 'The first bookmark should have index 0')",
+        @"let second = await browser.bookmarks.create({ title: 'Second', url: 'https://webkit.org/blog/' })",
+        @"browser.test.assertEq(1, second.index, 'A bookmark without an index should be added at the end')",
+        @"let inserted = await browser.bookmarks.create({ title: 'Inserted', url: 'https://webkit.org/status/', index: 1 })",
+        @"browser.test.assertEq(1, inserted.index, 'A bookmark with an index should be inserted there')",
+        @"let children = await browser.bookmarks.getChildren('other')",
+        @"browser.test.assertEq('First,Inserted,Second', children.map(child => child.title).join(','), 'The children should be in order')",
+
+        @"browser.test.assertThrows(() => browser.bookmarks.create({ title: 'Negative', url: 'https://webkit.org/', index: -1 }), /The 'index' value is invalid, because it must not be negative/i)",
+        @"await browser.test.assertRejects(",
+        @"browser.bookmarks.create({ title: 'Too Far', url: 'https://webkit.org/', index: 4 }),",
+        @"/index out of bounds/i,",
+        @"'An index past the end should fail');",
+
+        @"browser.test.assertThrows(() => browser.bookmarks.create({ title: 'Invalid', url: 'not a url' }), /The 'url' value is invalid, because it must be a valid URL/i)",
+        @"browser.test.notifyPass()",
+    ];
+
+    auto manager = getManagerFor(script, bookmarksManifest);
+
+    configureBookmarksDelegate(manager.get());
+
+    [manager loadAndRun];
+}
+
+TEST_F(WKWebExtensionAPIBookmarks, CreateWithoutDefaultFolderFails)
+{
+    auto *script = @[
+        @"await browser.test.assertRejects(",
+        @"browser.bookmarks.create({ title: 'WebKit', url: 'https://webkit.org/' }),",
+        @"/there is no default folder for new bookmarks/i,",
+        @"'A bookmark without a parent needs a default folder');",
+        @"let folder = await browser.bookmarks.create({ title: 'Folder', parentId: 'ordinary' })",
+        @"browser.test.assertEq('ordinary', folder.parentId, 'A bookmark with a parent should not need a default folder')",
+        @"browser.test.notifyPass()",
+    ];
+
+    auto manager = getManagerFor(script, bookmarksManifest);
+
+    [[bookmarkStore topLevelBookmarks] removeAllObjects];
+    [[bookmarkStore topLevelBookmarks] addObject:[@{ @"id": @"ordinary", @"title": @"Ordinary", @"type": @"folder", @"children": [NSMutableArray array] } mutableCopy]];
+
+    configureBookmarksDelegate(manager.get());
+
+    [manager loadAndRun];
+}
+
+TEST_F(WKWebExtensionAPIBookmarks, MutationsRespectTheRootAndManagedBookmarks)
+{
+    auto *script = @[
+        @"let bookmark = await browser.bookmarks.create({ title: 'WebKit', url: 'https://webkit.org/' })",
+
+        @"await browser.test.assertRejects(browser.bookmarks.create({ title: 'In Root', parentId: '0' }), /the bookmark root cannot be modified/i, 'create in the root')",
+        @"await browser.test.assertRejects(browser.bookmarks.update('0', { title: 'Renamed' }), /the bookmark root cannot be modified/i, 'update the root')",
+        @"await browser.test.assertRejects(browser.bookmarks.move(bookmark.id, { parentId: '0' }), /the bookmark root cannot be modified/i, 'move into the root')",
+        @"await browser.test.assertRejects(browser.bookmarks.move('0', { parentId: 'other' }), /the bookmark root cannot be modified/i, 'move the root')",
+        @"await browser.test.assertRejects(browser.bookmarks.remove('0'), /the bookmark root cannot be modified/i, 'remove the root')",
+        @"await browser.test.assertRejects(browser.bookmarks.removeTree('0'), /the bookmark root cannot be modified/i, 'remove the root tree')",
+
+        @"await browser.test.assertRejects(browser.bookmarks.create({ title: 'In Managed', parentId: 'managed' }), /managed bookmarks cannot be modified/i, 'create in a managed folder')",
+        @"await browser.test.assertRejects(browser.bookmarks.update('managed-bookmark', { title: 'Renamed' }), /managed bookmarks cannot be modified/i, 'update a managed bookmark')",
+        @"await browser.test.assertRejects(browser.bookmarks.move(bookmark.id, { parentId: 'managed' }), /managed bookmarks cannot be modified/i, 'move into a managed folder')",
+        @"await browser.test.assertRejects(browser.bookmarks.move('managed-bookmark', { parentId: 'other' }), /managed bookmarks cannot be modified/i, 'move a managed bookmark')",
+        @"await browser.test.assertRejects(browser.bookmarks.remove('managed-bookmark'), /managed bookmarks cannot be modified/i, 'remove a managed bookmark')",
+        @"await browser.test.assertRejects(browser.bookmarks.removeTree('managed'), /managed bookmarks cannot be modified/i, 'remove a managed folder')",
+
+        @"let remaining = await browser.bookmarks.getChildren('managed')",
+        @"browser.test.assertEq(1, remaining.length, 'The managed bookmark should still be there')",
+        @"browser.test.notifyPass()",
+    ];
+
+    auto manager = getManagerFor(script, bookmarksManifest);
+
+    [[bookmarkStore topLevelBookmarks] addObject:[@{ @"id": @"managed", @"title": @"Managed", @"type": @"folder", @"folderType": @"managed", @"managed": @YES, @"children": [@[ [@{ @"id": @"managed-bookmark", @"title": @"Policy", @"url": @"https://webkit.org/", @"managed": @YES } mutableCopy] ] mutableCopy] } mutableCopy]];
+
+    configureBookmarksDelegate(manager.get());
+
+    [manager loadAndRun];
+}
+
+TEST_F(WKWebExtensionAPIBookmarks, MoveRejectsInvalidDestinations)
+{
+    auto *script = @[
+        @"let folder = await browser.bookmarks.create({ title: 'Folder' })",
+        @"let child = await browser.bookmarks.create({ title: 'Child', parentId: folder.id })",
+        @"let bookmark = await browser.bookmarks.create({ title: 'WebKit', url: 'https://webkit.org/' })",
+
+        @"await browser.test.assertRejects(browser.bookmarks.move(folder.id, { parentId: folder.id }), /a folder cannot be moved into itself or its descendants/i, 'into itself')",
+        @"await browser.test.assertRejects(browser.bookmarks.move(folder.id, { parentId: child.id }), /a folder cannot be moved into itself or its descendants/i, 'into a descendant')",
+        @"await browser.test.assertRejects(browser.bookmarks.move(child.id, { parentId: bookmark.id }), /the new parent is not a folder/i, 'into a bookmark')",
+        @"await browser.test.assertRejects(browser.bookmarks.move(child.id, { parentId: 'missing' }), /parent bookmark not found/i, 'into a missing folder')",
+        @"await browser.test.assertRejects(browser.bookmarks.move(child.id, { parentId: folder.id, index: 3 }), /index out of bounds/i, 'past the end')",
+        @"browser.test.assertThrows(() => browser.bookmarks.move(child.id, { index: -1 }), /The 'index' value is invalid, because it must not be negative/i)",
+        @"browser.test.notifyPass()",
+    ];
+
+    auto manager = getManagerFor(script, bookmarksManifest);
+
+    configureBookmarksDelegate(manager.get());
+
+    [manager loadAndRun];
+}
+
+TEST_F(WKWebExtensionAPIBookmarks, RemoveRequiresAnEmptyFolderUnlessRecursive)
+{
+    auto *script = @[
+        @"let folder = await browser.bookmarks.create({ title: 'Folder' })",
+        @"let child = await browser.bookmarks.create({ title: 'Child', parentId: folder.id, url: 'https://webkit.org/' })",
+        @"await browser.test.assertRejects(browser.bookmarks.remove(folder.id), /the folder is not empty, use removeTree\\(\\) to remove it/i, 'remove a folder with children')",
+        @"await browser.bookmarks.removeTree(child.id)",
+        @"let empty = await browser.bookmarks.getChildren(folder.id)",
+        @"browser.test.assertEq(0, empty.length, 'removeTree should remove a bookmark')",
+        @"await browser.bookmarks.remove(folder.id)",
+        @"await browser.test.assertRejects(browser.bookmarks.getChildren(folder.id), /bookmark not found/i, 'the folder should be gone')",
+        @"browser.test.notifyPass()",
+    ];
+
+    auto manager = getManagerFor(script, bookmarksManifest);
+
+    configureBookmarksDelegate(manager.get());
+
+    [manager loadAndRun];
+}
+
+TEST_F(WKWebExtensionAPIBookmarks, ChangesFailWhenTheNodeCannotDoThem)
+{
+    auto *script = @[
+        @"await browser.test.assertRejects(browser.bookmarks.create({ title: 'Child', parentId: 'minimal' }), /it is not implemented/i, 'create')",
+        @"await browser.test.assertRejects(browser.bookmarks.update('minimal', { title: 'Renamed' }), /it is not implemented/i, 'update')",
+        @"await browser.test.assertRejects(browser.bookmarks.move('minimal', { parentId: 'minimal' }), /a folder cannot be moved into itself or its descendants/i, 'move into itself')",
+        @"await browser.test.assertRejects(browser.bookmarks.remove('minimal'), /it is not implemented/i, 'remove')",
+        @"browser.test.notifyPass()",
+    ];
+
+    auto manager = getManagerFor(script, bookmarksManifest);
+
+    manager.get().internalDelegate.bookmarksForExtensionContext = ^(void (^completionHandler)(NSArray<id<_WKWebExtensionBookmark>> *, NSError *)) {
+        completionHandler(@[ adoptNS([[TestMinimalBookmarkNode alloc] init]).get() ], nil);
+    };
+
+    [manager loadAndRun];
+}
+
+TEST_F(WKWebExtensionAPIBookmarks, DelegateCompletesAfterReturning)
+{
+    auto *script = @[
+        @"let created = await browser.bookmarks.create({ title: 'WebKit', url: 'https://webkit.org/' })",
+        @"browser.test.assertEq('WebKit', created.title, 'The created bookmark should be returned')",
+        @"let updated = await browser.bookmarks.update(created.id, { title: 'Blog' })",
+        @"browser.test.assertEq('Blog', updated.title, 'The updated bookmark should be returned')",
+        @"let folder = await browser.bookmarks.create({ title: 'Folder' })",
+        @"let moved = await browser.bookmarks.move(created.id, { parentId: folder.id })",
+        @"browser.test.assertEq(folder.id, moved.parentId, 'The moved bookmark should be in the folder')",
+        @"let tree = await browser.bookmarks.getTree()",
+        @"browser.test.assertEq(1, tree[0].children.length, 'The root should have one child')",
+        @"await browser.bookmarks.remove(created.id)",
+        @"browser.test.notifyPass()",
+    ];
+
+    auto manager = getManagerFor(script, bookmarksManifest);
+
+    [bookmarkStore setCompletesAsynchronously:YES];
+
+    configureBookmarksDelegate(manager.get());
+
+    [manager loadAndRun];
+}
+
+TEST_F(WKWebExtensionAPIBookmarks, GetTreeWithBookmarkMissingOptionalMethods)
+{
+    auto *script = @[
+        @"let tree = await browser.bookmarks.getTree()",
+        @"browser.test.assertEq(1, tree[0].children.length, 'The root should have one child')",
+        @"let node = tree[0].children[0]",
+        @"browser.test.assertEq('minimal', node.id, 'The identifier should come from the delegate')",
+        @"browser.test.assertEq('', node.title, 'The title should default to empty')",
+        @"browser.test.assertEq(0, node.index, 'The index should be its position')",
+        @"browser.test.assertEq('0', node.parentId, 'The parent should be the root')",
+        @"browser.test.assertEq('folder', node.type, 'A node without a URL should be a folder')",
+        @"browser.test.notifyPass()",
+    ];
+
+    auto manager = getManagerFor(script, bookmarksManifest);
+
+    manager.get().internalDelegate.bookmarksForExtensionContext = ^(void (^completionHandler)(NSArray<id<_WKWebExtensionBookmark>> *, NSError *)) {
+        completionHandler(@[ adoptNS([[TestMinimalBookmarkNode alloc] init]).get() ], nil);
+    };
 
     [manager loadAndRun];
 }
@@ -919,6 +1209,313 @@ TEST_F(WKWebExtensionAPIBookmarks, InvalidIdentifiersAndChanges)
     ];
 
     Util::loadAndRunExtension(bookmarksManifest, @{ @"background.js": Util::constructScript(script) }, bookmarkConfig);
+}
+
+
+TEST_F(WKWebExtensionAPIBookmarks, ChangesReportTheErrorFromTheApp)
+{
+    auto *script = @[
+        @"await browser.test.assertRejects(browser.bookmarks.create({ title: 'Docs', parentId: 'reading' }), /The bookmark database is locked/i, 'create')",
+        @"await browser.test.assertRejects(browser.bookmarks.update('webkit', { title: 'WebKit Home' }), /The bookmark database is locked/i, 'update title')",
+        @"await browser.test.assertRejects(browser.bookmarks.update('webkit', { url: 'https://example.org/' }), /The bookmark database is locked/i, 'update url')",
+        @"await browser.test.assertRejects(browser.bookmarks.move('webkit', { parentId: 'reading' }), /The bookmark database is locked/i, 'move')",
+        @"await browser.test.assertRejects(browser.bookmarks.remove('webkit'), /The bookmark database is locked/i, 'remove')",
+        @"await browser.test.assertRejects(browser.bookmarks.removeTree('reading'), /The bookmark database is locked/i, 'removeTree')",
+        @"browser.test.notifyPass()",
+    ];
+
+    NSMutableArray *children = [bookmarkStore topLevelBookmarks][0][@"children"];
+    [children addObject:[@{ @"id": @"webkit", @"title": @"WebKit", @"url": @"https://webkit.org/" } mutableCopy]];
+    [children addObject:[@{ @"id": @"reading", @"title": @"Reading", @"type": @"folder", @"children": [NSMutableArray array] } mutableCopy]];
+    [bookmarkStore setFailureMessage:@"The bookmark database is locked"];
+
+    auto manager = getManagerFor(script, bookmarksManifest);
+
+    configureBookmarksDelegate(manager.get());
+
+    [manager loadAndRun];
+}
+
+TEST_F(WKWebExtensionAPIBookmarks, CreateWithoutABookmarkOrAnErrorFails)
+{
+    auto *script = @[
+        @"await browser.test.assertRejects(browser.bookmarks.create({ title: 'WebKit', url: 'https://webkit.org/' }), /an unknown error occurred/i)",
+        @"browser.test.notifyPass()",
+    ];
+
+    [bookmarkStore setCreateReturnsNoBookmark:YES];
+
+    auto manager = getManagerFor(script, bookmarksManifest);
+
+    configureBookmarksDelegate(manager.get());
+
+    [manager loadAndRun];
+}
+
+TEST_F(WKWebExtensionAPIBookmarks, GetTreeFailsWhenTheAppReportsAnError)
+{
+    auto *script = @[
+        @"await browser.test.assertRejects(browser.bookmarks.getTree(), /The bookmarks could not be read/i)",
+        @"browser.test.notifyPass()",
+    ];
+
+    auto manager = getManagerFor(script, bookmarksManifest);
+
+    manager.get().internalDelegate.bookmarksForExtensionContext = ^(void (^completionHandler)(NSArray<id<_WKWebExtensionBookmark>> *, NSError *)) {
+        completionHandler(nil, [NSError errorWithDomain:@"TestBookmarks" code:1 userInfo:@{ NSLocalizedDescriptionKey: @"The bookmarks could not be read" }]);
+    };
+
+    [manager loadAndRun];
+}
+
+TEST_F(WKWebExtensionAPIBookmarks, GetTreeFailsWithoutBookmarksOrAnError)
+{
+    auto *script = @[
+        @"await browser.test.assertRejects(browser.bookmarks.getTree(), /an unknown error occurred/i)",
+        @"browser.test.notifyPass()",
+    ];
+
+    auto manager = getManagerFor(script, bookmarksManifest);
+
+    manager.get().internalDelegate.bookmarksForExtensionContext = ^(void (^completionHandler)(NSArray<id<_WKWebExtensionBookmark>> *, NSError *)) {
+        completionHandler(nil, nil);
+    };
+
+    [manager loadAndRun];
+}
+
+TEST_F(WKWebExtensionAPIBookmarks, BookmarksFailWhenTheControllerDoesNotProvideThem)
+{
+    auto *script = @[
+        @"await browser.test.assertRejects(browser.bookmarks.getTree(), /it is not implemented/i, 'getTree')",
+        @"await browser.test.assertRejects(browser.bookmarks.get('1'), /it is not implemented/i, 'get')",
+        @"await browser.test.assertRejects(browser.bookmarks.create({ title: 'WebKit', url: 'https://webkit.org/' }), /it is not implemented/i, 'create')",
+        @"browser.test.notifyPass()",
+    ];
+
+    Util::loadAndRunExtension(bookmarksManifest, @{ @"background.js": Util::constructScript(script) }, bookmarkConfig);
+}
+
+TEST_F(WKWebExtensionAPIBookmarks, CreateInsideABookmarkFails)
+{
+    auto *script = @[
+        @"const bookmark = await browser.bookmarks.create({ title: 'WebKit', url: 'https://webkit.org/' })",
+        @"await browser.test.assertRejects(browser.bookmarks.create({ title: 'Docs', parentId: bookmark.id }), /the parent is not a folder/i)",
+        @"browser.test.notifyPass()",
+    ];
+
+    auto manager = getManagerFor(script, bookmarksManifest);
+
+    configureBookmarksDelegate(manager.get());
+
+    [manager loadAndRun];
+}
+
+TEST_F(WKWebExtensionAPIBookmarks, CreateRejectsAnUnknownType)
+{
+    auto *script = @[
+        @"browser.test.assertThrows(() => browser.bookmarks.create({ title: 'Divider', type: 'separator' }), /it must specify either 'bookmark' or 'folder'/i)",
+        @"browser.test.notifyPass()",
+    ];
+
+    Util::loadAndRunExtension(bookmarksManifest, @{ @"background.js": Util::constructScript(script) }, bookmarkConfig);
+}
+
+TEST_F(WKWebExtensionAPIBookmarks, UpdateNeedsTheBookmarkToSupportTheChange)
+{
+    auto *script = @[
+        @"await browser.test.assertRejects(browser.bookmarks.update('read-only', { title: 'WebKit Home' }), /it is not implemented for 'title'/i, 'title')",
+        @"await browser.test.assertRejects(browser.bookmarks.update('read-only', { url: 'https://example.org/' }), /it is not implemented for 'url'/i, 'url')",
+        @"browser.test.notifyPass()",
+    ];
+
+    auto manager = getManagerFor(script, bookmarksManifest);
+
+    manager.get().internalDelegate.bookmarksForExtensionContext = ^(void (^completionHandler)(NSArray<id<_WKWebExtensionBookmark>> *, NSError *)) {
+        completionHandler(@[ adoptNS([[TestStaticBookmarkNode alloc] init]).get() ], nil);
+    };
+
+    [manager loadAndRun];
+}
+
+TEST_F(WKWebExtensionAPIBookmarks, BookmarksWithoutAnIdentifierAreSkipped)
+{
+    auto *script = @[
+        @"const children = await browser.bookmarks.getChildren('other')",
+        @"browser.test.assertEq(1, children.length, 'Only the bookmark with an identifier should be listed')",
+        @"browser.test.assertEq('webkit', children[0].id)",
+        @"browser.test.notifyPass()",
+    ];
+
+    NSMutableArray *children = [bookmarkStore topLevelBookmarks][0][@"children"];
+    [children addObject:[@{ @"id": @"", @"title": @"Nameless", @"url": @"https://webkit.org/blog/" } mutableCopy]];
+    [children addObject:[@{ @"id": @"webkit", @"title": @"WebKit", @"url": @"https://webkit.org/" } mutableCopy]];
+
+    auto manager = getManagerFor(script, bookmarksManifest);
+
+    configureBookmarksDelegate(manager.get());
+
+    [manager loadAndRun];
+}
+
+
+TEST_F(WKWebExtensionAPIBookmarks, UpdateKeepsTheURLForEmptyOrInvalidValues)
+{
+    auto *script = @[
+        @"const bookmark = await browser.bookmarks.create({ title: 'WebKit', url: 'https://webkit.org/' })",
+        @"const unchanged = await browser.bookmarks.update(bookmark.id, { title: 'WebKit Home', url: '' })",
+        @"browser.test.assertEq('WebKit Home', unchanged.title, 'The title should change')",
+        @"browser.test.assertEq('https://webkit.org/', unchanged.url, 'An empty URL should leave the URL alone')",
+        @"browser.test.assertThrows(() => browser.bookmarks.update(bookmark.id, { url: 'this is not a valid url' }), /it must be a valid URL/i)",
+        @"const current = await browser.bookmarks.get(bookmark.id)",
+        @"browser.test.assertEq('https://webkit.org/', current[0].url, 'An invalid URL should not change the URL')",
+        @"browser.test.notifyPass()",
+    ];
+
+    auto manager = getManagerFor(script, bookmarksManifest);
+
+    configureBookmarksDelegate(manager.get());
+
+    [manager loadAndRun];
+}
+
+TEST_F(WKWebExtensionAPIBookmarks, CreateWithAnEmptyURLCreatesAFolder)
+{
+    auto *script = @[
+        @"const folder = await browser.bookmarks.create({ title: 'Reading', url: '' })",
+        @"browser.test.assertEq('folder', folder.type, 'An empty URL should create a folder')",
+        @"browser.test.assertEq(undefined, folder.url, 'A folder should not have a URL')",
+        @"browser.test.notifyPass()",
+    ];
+
+    auto manager = getManagerFor(script, bookmarksManifest);
+
+    configureBookmarksDelegate(manager.get());
+
+    [manager loadAndRun];
+}
+
+TEST_F(WKWebExtensionAPIBookmarks, GetReturnsBookmarksInTheRequestedOrder)
+{
+    auto *script = @[
+        @"const first = await browser.bookmarks.create({ title: 'First', url: 'https://webkit.org/' })",
+        @"const second = await browser.bookmarks.create({ title: 'Second', url: 'https://webkit.org/blog/' })",
+        @"const nodes = await browser.bookmarks.get([second.id, first.id])",
+        @"browser.test.assertEq(2, nodes.length)",
+        @"browser.test.assertEq(second.id, nodes[0].id, 'The first result should be the first identifier')",
+        @"browser.test.assertEq(first.id, nodes[1].id, 'The second result should be the second identifier')",
+        @"await browser.test.assertRejects(browser.bookmarks.get([first.id, 'missing']), /bookmark not found/i, 'One unknown identifier should fail the call')",
+        @"browser.test.notifyPass()",
+    ];
+
+    auto manager = getManagerFor(script, bookmarksManifest);
+
+    configureBookmarksDelegate(manager.get());
+
+    [manager loadAndRun];
+}
+
+TEST_F(WKWebExtensionAPIBookmarks, GetChildrenAndGetSubTreeShapes)
+{
+    auto *script = @[
+        @"const parent = await browser.bookmarks.create({ title: 'Parent' })",
+        @"const child = await browser.bookmarks.create({ title: 'Child', parentId: parent.id })",
+        @"const leaf = await browser.bookmarks.create({ title: 'WebKit', url: 'https://webkit.org/', parentId: child.id })",
+        @"const empty = await browser.bookmarks.create({ title: 'Empty' })",
+        @"const children = await browser.bookmarks.getChildren(parent.id)",
+        @"browser.test.assertEq(1, children.length, 'Only the immediate children should be returned')",
+        @"browser.test.assertEq(undefined, children[0].children, 'The children should not include their own children')",
+        @"const [subTree] = await browser.bookmarks.getSubTree(parent.id)",
+        @"browser.test.assertEq(leaf.id, subTree.children[0].children[0].id, 'The subtree should include every descendant')",
+        @"const [emptySubTree] = await browser.bookmarks.getSubTree(empty.id)",
+        @"browser.test.assertEq(0, emptySubTree.children.length, 'An empty folder should have an empty list of children')",
+        @"const [leafSubTree] = await browser.bookmarks.getSubTree(leaf.id)",
+        @"browser.test.assertEq(leaf.id, leafSubTree.id, 'The subtree of a bookmark should be the bookmark')",
+        @"browser.test.assertEq(0, (await browser.bookmarks.getChildren(leaf.id)).length, 'A bookmark should have no children')",
+        @"await browser.test.assertRejects(browser.bookmarks.getChildren('missing'), /bookmark not found/i, 'getChildren')",
+        @"await browser.test.assertRejects(browser.bookmarks.getSubTree('missing'), /bookmark not found/i, 'getSubTree')",
+        @"browser.test.notifyPass()",
+    ];
+
+    auto manager = getManagerFor(script, bookmarksManifest);
+
+    configureBookmarksDelegate(manager.get());
+
+    [manager loadAndRun];
+}
+
+TEST_F(WKWebExtensionAPIBookmarks, RemovedBookmarksLeaveGetAndSearch)
+{
+    auto *script = @[
+        @"const folder = await browser.bookmarks.create({ title: 'Reading' })",
+        @"const nested = await browser.bookmarks.create({ title: 'Nested Folder', parentId: folder.id })",
+        @"const inner = await browser.bookmarks.create({ title: 'Inner Link', url: 'https://webkit.org/blog/', parentId: nested.id })",
+        @"const leaf = await browser.bookmarks.create({ title: 'Outer Link', url: 'https://webkit.org/' })",
+        @"const empty = await browser.bookmarks.create({ title: 'Empty' })",
+        @"await browser.bookmarks.remove(leaf.id)",
+        @"browser.test.assertEq(0, (await browser.bookmarks.search('Outer Link')).length, 'A removed bookmark should not be found')",
+        @"await browser.test.assertRejects(browser.bookmarks.get(leaf.id), /bookmark not found/i, 'A removed bookmark should not be returned')",
+        @"await browser.bookmarks.remove(empty.id)",
+        @"await browser.test.assertRejects(browser.bookmarks.get(empty.id), /bookmark not found/i, 'A removed empty folder should not be returned')",
+        @"await browser.bookmarks.removeTree(folder.id)",
+        @"await browser.test.assertRejects(browser.bookmarks.get(inner.id), /bookmark not found/i, 'A descendant should be removed with the folder')",
+        @"browser.test.assertEq(0, (await browser.bookmarks.search('Inner Link')).length, 'A removed descendant should not be found')",
+        @"const another = await browser.bookmarks.create({ title: 'Another Link', url: 'https://webkit.org/status/' })",
+        @"await browser.bookmarks.removeTree(another.id)",
+        @"await browser.test.assertRejects(browser.bookmarks.get(another.id), /bookmark not found/i, 'removeTree should remove a bookmark')",
+        @"browser.test.notifyPass()",
+    ];
+
+    auto manager = getManagerFor(script, bookmarksManifest);
+
+    configureBookmarksDelegate(manager.get());
+
+    [manager loadAndRun];
+}
+
+TEST_F(WKWebExtensionAPIBookmarks, MovingAFolderKeepsItsChildren)
+{
+    auto *script = @[
+        @"const source = await browser.bookmarks.create({ title: 'Source' })",
+        @"const destination = await browser.bookmarks.create({ title: 'Destination' })",
+        @"const link = await browser.bookmarks.create({ title: 'WebKit', url: 'https://webkit.org/', parentId: source.id })",
+        @"const moved = await browser.bookmarks.move(source.id, { parentId: destination.id })",
+        @"browser.test.assertEq(destination.id, moved.parentId, 'The folder should have the new parent')",
+        @"const children = await browser.bookmarks.getChildren(source.id)",
+        @"browser.test.assertEq(1, children.length, 'The folder should keep its children')",
+        @"browser.test.assertEq(link.id, children[0].id)",
+        @"await browser.test.assertRejects(browser.bookmarks.move(link.id, { parentId: 'missing' }), /parent bookmark not found/i, 'A move to an unknown parent should fail')",
+        @"browser.test.notifyPass()",
+    ];
+
+    auto manager = getManagerFor(script, bookmarksManifest);
+
+    configureBookmarksDelegate(manager.get());
+
+    [manager loadAndRun];
+}
+
+
+
+TEST_F(WKWebExtensionAPIBookmarks, UpdateRepliesWithTheChangedBookmark)
+{
+    auto *script = @[
+        @"const bookmark = await browser.bookmarks.create({ title: 'WebKit', url: 'https://webkit.org/' })",
+        @"const renamed = await browser.bookmarks.update(bookmark.id, { title: 'WebKit Home' })",
+        @"browser.test.assertEq('WebKit Home', renamed.title, 'The reply should have the new title')",
+        @"const moved = await browser.bookmarks.update(bookmark.id, { url: 'https://webkit.org/blog/' })",
+        @"browser.test.assertEq('https://webkit.org/blog/', moved.url, 'The reply should have the new URL')",
+        @"browser.test.assertEq('WebKit Home', moved.title, 'The reply should keep the earlier title')",
+        @"browser.test.notifyPass()",
+    ];
+
+    [bookmarkStore setNodesAreSnapshots:YES];
+
+    auto manager = getManagerFor(script, bookmarksManifest);
+
+    configureBookmarksDelegate(manager.get());
+
+    [manager loadAndRun];
 }
 
 }

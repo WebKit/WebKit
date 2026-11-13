@@ -603,6 +603,7 @@
 		1C66BDDA2A8ADB8A009D4452 /* WebExtensionTabIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C66BDD82A8ADB8A009D4452 /* WebExtensionTabIdentifier.h */; };
 		1C66BDDB2A8ADB8A009D4452 /* WebExtensionWindowIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C66BDD92A8ADB8A009D4452 /* WebExtensionWindowIdentifier.h */; };
 		1C66BDDC2A8ADB94009D4452 /* WebExtensionTab.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C66BDD72A8AD957009D4452 /* WebExtensionTab.h */; };
+		509538FB09218E4E74A6750F /* WebExtensionBookmark.h in Headers */ = {isa = PBXBuildFile; fileRef = DB244B2A0921A3E496919E0A /* WebExtensionBookmark.h */; };
 		1C66BDDE2A8AEADE009D4452 /* WebExtensionWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C66BDDD2A8AEADD009D4452 /* WebExtensionWindow.h */; };
 		1C6B84CC2B0D6CF500E885DD /* WebExtensionMenuItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C6B84CB2B0D6CF500E885DD /* WebExtensionMenuItem.h */; };
 		1C6BE79F2B0A910200D01D93 /* WebExtensionMenuItemParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C6BE79E2B0A910200D01D93 /* WebExtensionMenuItemParameters.h */; };
@@ -1962,7 +1963,10 @@
 		9565083A26D87A2B00E15CB7 /* AppleMediaServicesUISPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 9565083826D87A2B00E15CB7 /* AppleMediaServicesUISPI.h */; };
 		9593675F252E5E3100D3F0A0 /* WKStylusDeviceObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 9593675D252E5E3000D3F0A0 /* WKStylusDeviceObserver.h */; };
 		95C943912523C0D00054F3D5 /* BaseBoardSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 95C943902523C0D00054F3D5 /* BaseBoardSPI.h */; };
+		3A072B47D60762FFF0ABBC8D /* _WKWebExtensionBookmarkConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 9732EB702B0C3AD41300B915 /* _WKWebExtensionBookmarkConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		25BFF652DDAEFDBACDDAD110 /* _WKWebExtensionBookmarkConfigurationInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = DEBD2EC0A85270B76EE10453 /* _WKWebExtensionBookmarkConfigurationInternal.h */; };
 		960C47F52E1CB1BB00B8D2D1 /* _WKWebExtensionBookmarks.h in Headers */ = {isa = PBXBuildFile; fileRef = 960C47F42E1C861C00B8D2D1 /* _WKWebExtensionBookmarks.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		777E4ADB7F4193CCB0DF104A /* WebExtensionBookmarkChanges.h in Headers */ = {isa = PBXBuildFile; fileRef = CBBD34C5597A00BE87C53E51 /* WebExtensionBookmarkChanges.h */; };
 		961A72D02E17270900DD2AF9 /* WebExtensionBookmarkParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 96CC7DBF2E15EC2800233E69 /* WebExtensionBookmarkParameters.h */; };
 		96418A5E2DFA4B8100C19CDC /* JSWebExtensionAPIBookmarks.h in Headers */ = {isa = PBXBuildFile; fileRef = 96418A5D2DFA4B8100C19CDC /* JSWebExtensionAPIBookmarks.h */; };
 		96EE6CE82DFA4980000F90BD /* WebExtensionAPIBookmarks.h in Headers */ = {isa = PBXBuildFile; fileRef = 96EE6CE72DFA4975000F90BD /* WebExtensionAPIBookmarks.h */; };
@@ -4482,11 +4486,13 @@
 		1C62900E28EF4A1D00C26B60 /* FoundationSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FoundationSPI.h; sourceTree = "<group>"; };
 		1C66A8EE2B7C1D6D00BCF58D /* WebExtensionContextAPIDevToolsInspectedWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionContextAPIDevToolsInspectedWindow.mm; sourceTree = "<group>"; };
 		1C66BDD72A8AD957009D4452 /* WebExtensionTab.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebExtensionTab.h; sourceTree = "<group>"; };
+		DB244B2A0921A3E496919E0A /* WebExtensionBookmark.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebExtensionBookmark.h; sourceTree = "<group>"; };
 		1C66BDD82A8ADB8A009D4452 /* WebExtensionTabIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebExtensionTabIdentifier.h; sourceTree = "<group>"; };
 		1C66BDD92A8ADB8A009D4452 /* WebExtensionWindowIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebExtensionWindowIdentifier.h; sourceTree = "<group>"; };
 		1C66BDDD2A8AEADD009D4452 /* WebExtensionWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebExtensionWindow.h; sourceTree = "<group>"; };
 		1C66BDDF2A8C282F009D4452 /* WebExtensionWindowCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionWindowCocoa.mm; sourceTree = "<group>"; };
 		1C66BDE02A8C282F009D4452 /* WebExtensionTabCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionTabCocoa.mm; sourceTree = "<group>"; };
+		24B55E94A21CEC7A8369F7B7 /* WebExtensionBookmarkCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionBookmarkCocoa.mm; sourceTree = "<group>"; };
 		1C6B84B92B0BE3A300E885DD /* WebExtensionContextAPIMenusCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionContextAPIMenusCocoa.mm; sourceTree = "<group>"; };
 		1C6B84C92B0D6CDF00E885DD /* WebExtensionMenuItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebExtensionMenuItem.cpp; sourceTree = "<group>"; };
 		1C6B84CB2B0D6CF500E885DD /* WebExtensionMenuItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebExtensionMenuItem.h; sourceTree = "<group>"; };
@@ -7695,11 +7701,15 @@
 		9593675D252E5E3000D3F0A0 /* WKStylusDeviceObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKStylusDeviceObserver.h; sourceTree = "<group>"; };
 		9593675E252E5E3100D3F0A0 /* WKStylusDeviceObserver.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKStylusDeviceObserver.mm; sourceTree = "<group>"; };
 		95C943902523C0D00054F3D5 /* BaseBoardSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseBoardSPI.h; sourceTree = "<group>"; };
+		9732EB702B0C3AD41300B915 /* _WKWebExtensionBookmarkConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKWebExtensionBookmarkConfiguration.h; sourceTree = "<group>"; };
+		51E74B99F13436F7CC297AD9 /* _WKWebExtensionBookmarkConfiguration.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKWebExtensionBookmarkConfiguration.mm; sourceTree = "<group>"; };
+		DEBD2EC0A85270B76EE10453 /* _WKWebExtensionBookmarkConfigurationInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKWebExtensionBookmarkConfigurationInternal.h; sourceTree = "<group>"; };
 		960C47F42E1C861C00B8D2D1 /* _WKWebExtensionBookmarks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKWebExtensionBookmarks.h; sourceTree = "<group>"; };
 		96418A5D2DFA4B8100C19CDC /* JSWebExtensionAPIBookmarks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSWebExtensionAPIBookmarks.h; sourceTree = "<group>"; };
 		96418A5F2DFA4BA900C19CDC /* JSWebExtensionAPIBookmarks.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = JSWebExtensionAPIBookmarks.mm; sourceTree = "<group>"; };
 		966F42B3BF3CA9AFEE64F9BF /* RemoteSerializedImageBufferIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteSerializedImageBufferIdentifier.h; sourceTree = "<group>"; };
 		96CC7DBD2E15DA2900233E69 /* WebExtensionContextAPIBookmarksCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionContextAPIBookmarksCocoa.mm; sourceTree = "<group>"; };
+		CBBD34C5597A00BE87C53E51 /* WebExtensionBookmarkChanges.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebExtensionBookmarkChanges.h; sourceTree = "<group>"; };
 		96CC7DBF2E15EC2800233E69 /* WebExtensionBookmarkParameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebExtensionBookmarkParameters.h; sourceTree = "<group>"; };
 		96CC7DC02E15F19500233E69 /* WebExtensionBookmarkParameters.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebExtensionBookmarkParameters.serialization.in; sourceTree = "<group>"; };
 		96D1B84C2E01F06300D2D42E /* WebExtensionAPIBookmarksCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionAPIBookmarksCocoa.mm; sourceTree = "<group>"; };
@@ -11488,6 +11498,7 @@
 				3326F2632B06A1F4001A535F /* _WKWebExtensionDeclarativeNetRequestTranslator.h */,
 				3326F2642B06A1F4001A535F /* _WKWebExtensionDeclarativeNetRequestTranslator.mm */,
 				1CF0C94F2AC380E900EC82F2 /* WebExtensionActionCocoa.mm */,
+				24B55E94A21CEC7A8369F7B7 /* WebExtensionBookmarkCocoa.mm */,
 				1C627477288A1DDE00CED3A2 /* WebExtensionCocoa.mm */,
 				1C8ECFD92AFC12CC007BAA62 /* WebExtensionCommandCocoa.mm */,
 				1C0234DB28A0268B00AC1E5B /* WebExtensionContextCocoa.mm */,
@@ -11922,6 +11933,7 @@
 				1CF0C94D2AC380C400EC82F2 /* WebExtensionAction.h */,
 				1C2B4D3C2A8091FF00C528A1 /* WebExtensionAlarm.cpp */,
 				1C2B4D3D2A8091FF00C528A1 /* WebExtensionAlarm.h */,
+				DB244B2A0921A3E496919E0A /* WebExtensionBookmark.h */,
 				1C974FE62AFAD17D009DE8FC /* WebExtensionCommand.cpp */,
 				1C974FE42AFAD137009DE8FC /* WebExtensionCommand.h */,
 				1C0234C128A00E7D00AC1E5B /* WebExtensionContext.cpp */,
@@ -13248,6 +13260,9 @@
 				574728D023456E98001700AF /* _WKWebAuthenticationPanel.mm */,
 				5790A6512565DE6A0077C5A7 /* _WKWebAuthenticationPanelForTesting.h */,
 				574728D3234570AE001700AF /* _WKWebAuthenticationPanelInternal.h */,
+				9732EB702B0C3AD41300B915 /* _WKWebExtensionBookmarkConfiguration.h */,
+				51E74B99F13436F7CC297AD9 /* _WKWebExtensionBookmarkConfiguration.mm */,
+				DEBD2EC0A85270B76EE10453 /* _WKWebExtensionBookmarkConfigurationInternal.h */,
 				960C47F42E1C861C00B8D2D1 /* _WKWebExtensionBookmarks.h */,
 				E11A5A00000000000000D001 /* _WKWebExtensionNotification.h */,
 				E11A5A00000000000000D003 /* _WKWebExtensionNotification.mm */,
@@ -16018,6 +16033,7 @@
 				020A17A12C99FD9B0012CFA5 /* WebExtensionActionClickBehavior.serialization.in */,
 				1C2B4D412A817D6B00C528A1 /* WebExtensionAlarmParameters.h */,
 				1C2B4D402A817D6A00C528A1 /* WebExtensionAlarmParameters.serialization.in */,
+				CBBD34C5597A00BE87C53E51 /* WebExtensionBookmarkChanges.h */,
 				96CC7DBF2E15EC2800233E69 /* WebExtensionBookmarkParameters.h */,
 				96CC7DC02E15F19500233E69 /* WebExtensionBookmarkParameters.serialization.in */,
 				1C8ECFED2AFC8355007BAA62 /* WebExtensionCommandParameters.h */,
@@ -18373,6 +18389,8 @@
 				574728D4234570AE001700AF /* _WKWebAuthenticationPanelInternal.h in Headers */,
 				1CC5CA6D2C5ACB8500DF3B94 /* _WKWebExtension.h in Headers */,
 				1CC5CA722C5ACB8500DF3B94 /* _WKWebExtensionAction.h in Headers */,
+				3A072B47D60762FFF0ABBC8D /* _WKWebExtensionBookmarkConfiguration.h in Headers */,
+				25BFF652DDAEFDBACDDAD110 /* _WKWebExtensionBookmarkConfigurationInternal.h in Headers */,
 				960C47F52E1CB1BB00B8D2D1 /* _WKWebExtensionBookmarks.h in Headers */,
 				1CC5CA702C5ACB8500DF3B94 /* _WKWebExtensionCommand.h in Headers */,
 				1CC5CA922C5ACD5700DF3B94 /* _WKWebExtensionCommandPrivate.h in Headers */,
@@ -19387,6 +19405,8 @@
 				337042042B58A2430077FF78 /* WebExtensionAPIWebRequestEvent.h in Headers */,
 				1C5ACFB02A96F9F200C041C0 /* WebExtensionAPIWindows.h in Headers */,
 				1C5ACFB22A96FA0000C041C0 /* WebExtensionAPIWindowsEvent.h in Headers */,
+				509538FB09218E4E74A6750F /* WebExtensionBookmark.h in Headers */,
+				777E4ADB7F4193CCB0DF104A /* WebExtensionBookmarkChanges.h in Headers */,
 				961A72D02E17270900DD2AF9 /* WebExtensionBookmarkParameters.h in Headers */,
 				1C974FE52AFAD137009DE8FC /* WebExtensionCommand.h in Headers */,
 				1C8ECFEE2AFC8355007BAA62 /* WebExtensionCommandParameters.h in Headers */,

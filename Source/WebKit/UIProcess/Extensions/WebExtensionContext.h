@@ -103,6 +103,8 @@
 #endif
 
 #if ENABLE(WK_WEB_EXTENSIONS_BOOKMARKS)
+#include "WebExtensionBookmark.h"
+#include "WebExtensionBookmarkChanges.h"
 #include "WebExtensionBookmarkParameters.h"
 #endif
 
@@ -513,6 +515,10 @@ public:
     void forgetWindow(WebExtensionWindowIdentifier) const;
 
     Ref<WebExtensionTab> getOrCreateTab(WKWebExtensionTab *) const;
+
+#if ENABLE(WK_WEB_EXTENSIONS_BOOKMARKS)
+    void bookmarkTree(const String& apiName, CompletionHandler<void(std::expected<Ref<WebExtensionBookmark>, WebExtensionError>&&)>&&);
+#endif
     RefPtr<WebExtensionTab> getTab(WebExtensionTabIdentifier, IgnoreExtensionAccess = IgnoreExtensionAccess::No) const;
     RefPtr<WebExtensionTab> getTab(WebPageProxyIdentifier, std::optional<WebExtensionTabIdentifier> = std::nullopt, IncludeExtensionViews = IncludeExtensionViews::No, IgnoreExtensionAccess = IgnoreExtensionAccess::No) const;
     RefPtr<WebExtensionTab> getCurrentTab(WebPageProxyIdentifier, IncludeExtensionViews = IncludeExtensionViews::Yes, IgnoreExtensionAccess = IgnoreExtensionAccess::No) const;
@@ -948,15 +954,15 @@ private:
     // Bookmarks APIs
 #if ENABLE(WK_WEB_EXTENSIONS_BOOKMARKS)
     bool isBookmarksMessageAllowed(IPC::Decoder&);
-    void bookmarksCreate(const WebExtensionBookmarkParameters&, CompletionHandler<void(std::expected<WebExtensionBookmarkParameters, WebExtensionError>&&)>&&);
+    void bookmarksCreate(const WebExtensionBookmarkChanges&, CompletionHandler<void(std::expected<WebExtensionBookmarkParameters, WebExtensionError>&&)>&&);
     void bookmarksGetTree(CompletionHandler<void(std::expected<Vector<WebExtensionBookmarkParameters>, WebExtensionError>&&)>&&);
     void bookmarksGetSubTree(const String& bookmarkIdentifier, CompletionHandler<void(std::expected<Vector<WebExtensionBookmarkParameters>, WebExtensionError>&&)>&&);
     void bookmarksGet(const Vector<String>& bookmarkIdentifiers, CompletionHandler<void(std::expected<Vector<WebExtensionBookmarkParameters>, WebExtensionError>&&)>&&);
     void bookmarksGetChildren(const String& bookmarkIdentifier, CompletionHandler<void(std::expected<Vector<WebExtensionBookmarkParameters>, WebExtensionError>&&)>&&);
     void bookmarksGetRecent(uint64_t numberOfItems, CompletionHandler<void(std::expected<Vector<WebExtensionBookmarkParameters>, WebExtensionError>&&)>&&);
     void bookmarksSearch(std::optional<String> query, std::optional<String> url, std::optional<String> title, CompletionHandler<void(std::expected<Vector<WebExtensionBookmarkParameters>, WebExtensionError>&&)>&&);
-    void bookmarksUpdate(const WebExtensionBookmarkParameters&, CompletionHandler<void(std::expected<WebExtensionBookmarkParameters, WebExtensionError>&&)>&&);
-    void bookmarksMove(const WebExtensionBookmarkParameters&, CompletionHandler<void(std::expected<WebExtensionBookmarkParameters, WebExtensionError>&&)>&&);
+    void bookmarksUpdate(const WebExtensionBookmarkChanges&, CompletionHandler<void(std::expected<WebExtensionBookmarkParameters, WebExtensionError>&&)>&&);
+    void bookmarksMove(const WebExtensionBookmarkChanges&, CompletionHandler<void(std::expected<WebExtensionBookmarkParameters, WebExtensionError>&&)>&&);
     void bookmarksRemove(const String& bookmarkIdentifier, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
     void bookmarksRemoveTree(const String& bookmarkIdentifier, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&&);
 #endif // ENABLE(WK_WEB_EXTENSIONS_BOOKMARKS)

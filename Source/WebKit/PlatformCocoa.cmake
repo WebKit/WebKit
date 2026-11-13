@@ -1965,6 +1965,7 @@ list(APPEND WebKit_PRIVATE_FRAMEWORK_HEADERS
     UIProcess/API/Cocoa/_WKVisitedLinkStoreInternal.h
     UIProcess/API/Cocoa/_WKWebAuthenticationAssertionResponseInternal.h
     UIProcess/API/Cocoa/_WKWebAuthenticationPanelInternal.h
+    UIProcess/API/Cocoa/_WKWebExtensionBookmarkConfigurationInternal.h
     UIProcess/API/Cocoa/_WKWebExtensionNotificationInternal.h
     UIProcess/API/Cocoa/_WKWebExtensionSidebarInternal.h
     UIProcess/API/Cocoa/_WKWebPushActionInternal.h
