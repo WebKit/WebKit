@@ -2214,6 +2214,9 @@ struct WebCore::PlatformMediaDecodingConfiguration : WebCore::PlatformMediaConfi
     bool canExposeVP9;
 };
 
+header: <WebCore/IncludesCredentials.h>
+enum class WebCore::IncludesCredentials : bool;
+
 header: <WebCore/ResourceResponseBase.h>
 enum class WebCore::UsedLegacyTLS : bool;
 enum class WebCore::WasPrivateRelayed : bool;

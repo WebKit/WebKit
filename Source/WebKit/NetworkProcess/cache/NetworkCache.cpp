@@ -184,7 +184,7 @@ Key Cache::makeCacheKey(RecordType recordType, const WebCore::ResourceRequest& r
     // FIXME: This implements minimal Range header disk cache support. We don't parse
     // ranges so only the same exact range request will be served from the cache.
     String range = request.httpHeaderField(WebCore::HTTPHeaderName::Range);
-    auto includesCredentials = recordType == RecordType::Resource && !request.allowCookies() ? Key::IncludesCredentials::No : Key::IncludesCredentials::Yes;
+    auto includesCredentials = recordType == RecordType::Resource && !request.allowCookies() ? WebCore::IncludesCredentials::No : WebCore::IncludesCredentials::Yes;
     return { request.cachePartition(), recordTypeName(recordType), range, request.url().stringWithoutFragmentIdentifier(), m_storage->salt(), includesCredentials };
 }
 

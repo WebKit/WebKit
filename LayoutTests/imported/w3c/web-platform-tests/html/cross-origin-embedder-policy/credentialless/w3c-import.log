@@ -26,6 +26,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/iframe.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/image.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/link.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/no-cors-omit.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/no-cors-omit.https.window.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/redirect.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/reporting-navigation.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/reporting-subresource-corp.https.window.js

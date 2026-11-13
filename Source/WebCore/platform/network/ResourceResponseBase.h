@@ -30,6 +30,7 @@
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/HTTPHeaderMap.h>
 #include <WebCore/IPAddressSpace.h>
+#include <WebCore/IncludesCredentials.h>
 #include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/ParsedContentRange.h>
 #include <optional>
@@ -230,6 +231,10 @@ public:
     bool isFromPrevalentDomain() const { return m_isFromPrevalentDomain; }
     void setIsFromPrevalentDomain(bool isFromPrevalentDomain) { m_isFromPrevalentDomain = isFromPrevalentDomain; }
 
+    // https://fetch.spec.whatwg.org/#response-request-includes-credentials
+    IncludesCredentials requestIncludesCredentials() const { return m_requestIncludesCredentials; }
+    void setRequestIncludesCredentials(IncludesCredentials requestIncludesCredentials) { m_requestIncludesCredentials = requestIncludesCredentials; }
+
     WEBCORE_EXPORT bool containsInvalidHTTPHeaders() const;
 
     WEBCORE_EXPORT static ResourceResponse dataURLResponse(const URL&, const DataURLDecoder::Result&);
@@ -301,6 +306,7 @@ private:
     bool m_isRedirected : 1 { false };
     bool m_isRangeRequested : 1 { false };
     bool m_isFromPrevalentDomain : 1 { false };
+    IncludesCredentials m_requestIncludesCredentials : 1 { IncludesCredentials::Yes };
 
     Tainting m_tainting : bitWidthOfTainting { Tainting::Basic };
     Source m_source : bitWidthOfSource { Source::Unknown };
@@ -315,7 +321,7 @@ struct ResourceResponseData {
     ResourceResponseData() = default;
     ResourceResponseData(ResourceResponseData&&) = default;
     ResourceResponseData& operator=(ResourceResponseData&&) = default;
-    ResourceResponseData(URL&& url, String&& mimeType, long long expectedContentLength, String&& textEncodingName, int httpStatusCode, String&& httpStatusText, String&& httpVersion, HTTPHeaderMap&& httpHeaderFields, std::optional<NetworkLoadMetrics>&& networkLoadMetrics, ResourceResponseSource source, ResourceResponseBaseType type, ResourceResponseBaseTainting tainting, bool isRedirected, UsedLegacyTLS usedLegacyTLS, WasPrivateRelayed wasPrivateRelayed, String&& proxyName, bool isRangeRequested, std::optional<CertificateInfo>&& certificateInfo, IPAddressSpace ipAddressSpace, bool isFromPrevalentDomain)
+    ResourceResponseData(URL&& url, String&& mimeType, long long expectedContentLength, String&& textEncodingName, int httpStatusCode, String&& httpStatusText, String&& httpVersion, HTTPHeaderMap&& httpHeaderFields, std::optional<NetworkLoadMetrics>&& networkLoadMetrics, ResourceResponseSource source, ResourceResponseBaseType type, ResourceResponseBaseTainting tainting, bool isRedirected, UsedLegacyTLS usedLegacyTLS, WasPrivateRelayed wasPrivateRelayed, String&& proxyName, bool isRangeRequested, std::optional<CertificateInfo>&& certificateInfo, IPAddressSpace ipAddressSpace, bool isFromPrevalentDomain, IncludesCredentials requestIncludesCredentials)
         : url(WTF::move(url))
         , mimeType(WTF::move(mimeType))
         , expectedContentLength(expectedContentLength)
@@ -336,6 +342,7 @@ struct ResourceResponseData {
         , certificateInfo(WTF::move(certificateInfo))
         , ipAddressSpace(ipAddressSpace)
         , isFromPrevalentDomain(isFromPrevalentDomain)
+        , requestIncludesCredentials(requestIncludesCredentials)
     {
     }
 
@@ -361,6 +368,7 @@ struct ResourceResponseData {
     std::optional<CertificateInfo> certificateInfo;
     IPAddressSpace ipAddressSpace;
     bool isFromPrevalentDomain { false };
+    IncludesCredentials requestIncludesCredentials { IncludesCredentials::Yes };
 };
 
 } // namespace WebCore

@@ -241,6 +241,8 @@ ResourceError NetworkLoadChecker::validateResponse(const ResourceRequest& reques
     if (m_redirectCount)
         response.setRedirected(true);
 
+    response.setRequestIncludesCredentials(m_storedCredentialsPolicy == StoredCredentialsPolicy::Use ? IncludesCredentials::Yes : IncludesCredentials::No);
+
     if (response.type() == ResourceResponse::Type::Opaqueredirect) {
         response.setTainting(ResourceResponse::Tainting::Opaqueredirect);
         return { };

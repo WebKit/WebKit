@@ -46,7 +46,7 @@ Key::Key(const Key& o)
 {
 }
 
-Key::Key(const String& partition, const String& type, const String& range, const String& identifier, const Salt& salt, IncludesCredentials includesCredentials)
+Key::Key(const String& partition, const String& type, const String& range, const String& identifier, const Salt& salt, WebCore::IncludesCredentials includesCredentials)
     : m_partition(partition)
     , m_type(type)
     , m_identifier(identifier)
@@ -65,7 +65,7 @@ Key::Key(const DataKey& dataKey, const Salt& salt)
     : m_partition(dataKey.partition)
     , m_type(dataKey.type)
     , m_identifier(hashAsString(dataKey.identifier))
-    , m_hash(computeHash(salt, IncludesCredentials::Yes))
+    , m_hash(computeHash(salt, WebCore::IncludesCredentials::Yes))
     , m_partitionHash(computePartitionHash(salt))
 {
 }
@@ -89,7 +89,7 @@ static void hashString(SHA1& sha1, const String& string)
     sha1.addUTF8Bytes(string);
 }
 
-Key::HashType Key::computeHash(const Salt& salt, IncludesCredentials includesCredentials) const
+Key::HashType Key::computeHash(const Salt& salt, WebCore::IncludesCredentials includesCredentials) const
 {
     // We don't really need a cryptographic hash. The key is always verified against the entry header.
     // SHA1 just happens to be suitably sized, fast and available.
@@ -101,7 +101,7 @@ Key::HashType Key::computeHash(const Salt& salt, IncludesCredentials includesCre
     hashString(sha1, m_identifier);
     hashString(sha1, m_range);
 
-    if (includesCredentials == IncludesCredentials::No) {
+    if (includesCredentials == WebCore::IncludesCredentials::No) {
         static constexpr std::array<uint8_t, 1> withoutCredentials { 0 };
         sha1.addBytes(std::span { withoutCredentials });
     }

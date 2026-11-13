@@ -163,6 +163,7 @@ struct CORPViolation {
     URL blockedURL;
     URL responseURL;
     String crossOriginResourcePolicy;
+    IncludesCredentials requestIncludesCredentials { IncludesCredentials::Yes };
 };
 
 struct RetrieveRecordsResult {

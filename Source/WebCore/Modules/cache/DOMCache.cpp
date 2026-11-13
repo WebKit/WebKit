@@ -524,7 +524,7 @@ static void queueCORPViolationReports(ScriptExecutionContext& context, const Vec
     // The network process decided what to block, so this only queues the reports.
     for (auto& violation : violations) {
         CORPViolationReportContext reportContext { *client, context.url(), FetchOptions::Destination::EmptyString, violation.blockedURL };
-        performCrossOriginResourcePolicyCheck(context.crossOriginEmbedderPolicy(), context.documentIsolationPolicy(), *protect(context.securityOrigin()), violation.blockedURL, false, violation.responseURL, violation.crossOriginResourcePolicy, ForNavigation::No, OriginAccessPatternsForWebProcess::singleton(), &reportContext);
+        performCrossOriginResourcePolicyCheck(context.crossOriginEmbedderPolicy(), context.documentIsolationPolicy(), *protect(context.securityOrigin()), violation.blockedURL, false, violation.responseURL, violation.crossOriginResourcePolicy, violation.requestIncludesCredentials, ForNavigation::No, OriginAccessPatternsForWebProcess::singleton(), &reportContext);
     }
 }
 

@@ -89,6 +89,7 @@ ResourceResponseBase::ResourceResponseBase(std::optional<ResourceResponseData>&&
     , m_isRedirected(data ? data->isRedirected : false)
     , m_isRangeRequested(data ? data->isRangeRequested : false)
     , m_isFromPrevalentDomain(data ? data->isFromPrevalentDomain : false)
+    , m_requestIncludesCredentials(data ? data->requestIncludesCredentials : IncludesCredentials::Yes)
     , m_tainting(data ? data->tainting : Tainting::Basic)
     , m_source(data ? data->source : Source::Unknown)
     , m_type(data ? data->type : Type::Default)
@@ -122,6 +123,7 @@ ResourceResponseData ResourceResponseData::isolatedCopy() const
         result.certificateInfo = certificateInfo->isolatedCopy();
     result.ipAddressSpace = ipAddressSpace;
     result.isFromPrevalentDomain = isFromPrevalentDomain;
+    result.requestIncludesCredentials = requestIncludesCredentials;
     return result;
 }
 
@@ -151,6 +153,7 @@ ResourceResponseData ResourceResponseBase::crossThreadData() const
         data.certificateInfo = m_certificateInfo->isolatedCopy();
     data.ipAddressSpace = m_ipAddressSpace;
     data.isFromPrevalentDomain = m_isFromPrevalentDomain;
+    data.requestIncludesCredentials = m_requestIncludesCredentials;
 
     return data;
 }
@@ -184,6 +187,7 @@ ResourceResponse ResourceResponseBase::fromCrossThreadData(CrossThreadData&& dat
     response.m_certificateInfo = WTF::move(data.certificateInfo);
     response.m_ipAddressSpace = data.ipAddressSpace;
     response.m_isFromPrevalentDomain = data.isFromPrevalentDomain;
+    response.m_requestIncludesCredentials = data.requestIncludesCredentials;
     return response;
 }
 
@@ -943,7 +947,8 @@ std::optional<ResourceResponseData> ResourceResponseBase::getResponseData() cons
         m_isRangeRequested,
         std::optional<CertificateInfo> { m_certificateInfo },
         m_ipAddressSpace,
-        m_isFromPrevalentDomain
+        m_isFromPrevalentDomain,
+        m_requestIncludesCredentials
     } };
 }
 
@@ -972,6 +977,7 @@ void Coder<WebCore::ResourceResponseData>::encodeForPersistence(Encoder& encoder
     encoder << data.proxyName;
     encoder << data.isRangeRequested;
     encoder << data.ipAddressSpace;
+    encoder << data.requestIncludesCredentials;
 }
 
 std::optional<WebCore::ResourceResponseData> Coder<WebCore::ResourceResponseData>::decodeForPersistence(Decoder& decoder)
@@ -1066,6 +1072,11 @@ std::optional<WebCore::ResourceResponseData> Coder<WebCore::ResourceResponseData
     if (!ipAddressSpace)
         return std::nullopt;
 
+    std::optional<WebCore::IncludesCredentials> requestIncludesCredentials;
+    decoder >> requestIncludesCredentials;
+    if (!requestIncludesCredentials)
+        return std::nullopt;
+
     return WebCore::ResourceResponseData {
         WTF::move(*url),
         WTF::move(*mimeType),
@@ -1086,7 +1097,8 @@ std::optional<WebCore::ResourceResponseData> Coder<WebCore::ResourceResponseData
         *isRangeRequested,
         WTF::move(*certificateInfo),
         *ipAddressSpace,
-        false
+        false,
+        *requestIncludesCredentials
     };
 }
 

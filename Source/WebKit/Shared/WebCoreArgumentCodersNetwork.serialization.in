@@ -228,6 +228,7 @@ class WebCore::ResourceResponse : WebCore::ResourceResponseBase {
     std::optional<WebCore::CertificateInfo> certificateInfo;
     WebCore::IPAddressSpace ipAddressSpace;
     bool isFromPrevalentDomain;
+    WebCore::IncludesCredentials requestIncludesCredentials;
 };
 
 [CreateUsing=create] class WebCore::HTTPHeaderField {

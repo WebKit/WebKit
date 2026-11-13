@@ -48,7 +48,7 @@ static constexpr auto versionDirectoryPrefix = "Version "_s;
 static constexpr auto recordsDirectoryName = "Records"_s;
 static constexpr auto blobsDirectoryName = "Blobs"_s;
 static constexpr auto blobSuffix = "-blob"_s;
-static const unsigned currentVersion = 17;
+static const unsigned currentVersion = 18;
 
 std::span<const uint8_t> CacheStorageDiskStore::SafeFileData::span() const
 {

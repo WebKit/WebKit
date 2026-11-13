@@ -287,6 +287,7 @@ using WebCore::DOMCacheEngine::CrossThreadRecordsOrError = std::expected<Vector<
     URL blockedURL;
     URL responseURL;
     String crossOriginResourcePolicy;
+    WebCore::IncludesCredentials requestIncludesCredentials;
 };
 
 [CustomHeader] struct WebCore::DOMCacheEngine::RetrieveRecordsResult {

@@ -1765,6 +1765,7 @@
 		467A68D9275EA998009B31C5 /* SharedWorkerThreadProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 467A68D6275EA98C009B31C5 /* SharedWorkerThreadProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		467FB38F70C5854F710BA5C2 /* invalid-placard@1x.png in Copy Modern Media Controls Images */ = {isa = PBXBuildFile; fileRef = 714F5B091DEE5F9E0075BD17 /* invalid-placard@1x.png */; platformFilters = (macos, ); };
 		4682D2001F79783000C863DB /* StoredCredentialsPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 4682D1FF1F79782300C863DB /* StoredCredentialsPolicy.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		497650E877AAE0702933635B /* IncludesCredentials.h in Headers */ = {isa = PBXBuildFile; fileRef = 93635C5742F4F007E6C90F4F /* IncludesCredentials.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		468344E01EDDFAAA00B7795B /* DOMRectList.h in Headers */ = {isa = PBXBuildFile; fileRef = 468344DE1EDDFA5F00B7795B /* DOMRectList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4688C4B92B6B06F2003533C9 /* SharedMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 4688C4B72B6B06F2003533C9 /* SharedMemory.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4688E98027B6B45000567CD2 /* CoreLocationGeolocationProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 4688E97F27B6B44400567CD2 /* CoreLocationGeolocationProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -11963,6 +11964,7 @@
 		467A68D6275EA98C009B31C5 /* SharedWorkerThreadProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SharedWorkerThreadProxy.h; sourceTree = "<group>"; };
 		467A7AA628A6F754001457F5 /* URLRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URLRegistry.cpp; sourceTree = "<group>"; };
 		4682D1FF1F79782300C863DB /* StoredCredentialsPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StoredCredentialsPolicy.h; sourceTree = "<group>"; };
+		93635C5742F4F007E6C90F4F /* IncludesCredentials.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IncludesCredentials.h; sourceTree = "<group>"; };
 		468344DC1EDDFA5F00B7795B /* DOMRectList.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = DOMRectList.idl; sourceTree = "<group>"; };
 		468344DD1EDDFA5F00B7795B /* DOMRectList.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DOMRectList.cpp; sourceTree = "<group>"; };
 		468344DE1EDDFA5F00B7795B /* DOMRectList.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DOMRectList.h; sourceTree = "<group>"; };
@@ -30961,6 +30963,7 @@
 				514C765E0CE923A1007EF3CD /* HTTPParsers.h */,
 				D2858AF12C58149300EEEEF1 /* HTTPSByDefaultMode.h */,
 				D245B6D02B6791BA009AA00E /* HTTPStatusCodes.h */,
+				93635C5742F4F007E6C90F4F /* IncludesCredentials.h */,
 				628D214B12131ED10055DCFC /* NetworkingContext.h */,
 				416D759F20C6441300D02D2C /* NetworkLoadInformation.h */,
 				5CAF7AAF26FA99680003F19E /* NetworkLoadMetrics.cpp */,
@@ -46495,6 +46498,7 @@
 				07AA6B6C166D2C1300D45671 /* InbandTextTrackPrivateAVFObjC.h in Headers */,
 				07CE77D516712A6A00C55A47 /* InbandTextTrackPrivateClient.h in Headers */,
 				BE16C59517CFE17200852C04 /* InbandWebVTTTextTrack.h in Headers */,
+				497650E877AAE0702933635B /* IncludesCredentials.h in Headers */,
 				DB23C2CC0A508D29002489EB /* IndentOutdentCommand.h in Headers */,
 				5185FCB21BB4C4E80012898F /* IndexedDB.h in Headers */,
 				F4CF9C342AB4C5B100E9C72E /* IndexedDB.serialization.in in Headers */,
