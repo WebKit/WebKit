@@ -1,4 +1,4 @@
-Test that CSS style/rule editing commands (setStyleText, setRuleSelector, setGroupingHeaderText, addRule) work correctly on frame targets under site isolation, routing undoable edits through the frame's InspectorHistory.
+Test that CSS style/rule editing commands (setStyleText, setRuleSelector, setGroupingHeaderText, addRule, setStyleSheetText) work correctly on frame targets under site isolation, routing undoable edits through the frame's InspectorHistory.
 
 
 
@@ -30,4 +30,16 @@ PASS: The '.added-rule' selector should no longer be present after redo().
 PASS: Should find the rule nested inside the @media grouping.
 PASS: Should find the editable @media grouping.
 PASS: Grouping header text should be updated to 'print'.
+
+-- Running test case: SiteIsolation.CSS.EditingCommands.FrameTarget.SetStyleSheetTextThenUndo
+PASS: Should find the frame document's style sheet.
+PASS: setStyleSheetText should update the stylesheet text.
+PASS: undo() should restore the previous stylesheet text.
+PASS: The '.test-class' rule should be back after undo().
+PASS: The '.after-edit' rule should no longer be present after undo().
+
+-- Running test case: SiteIsolation.CSS.EditingCommands.FrameTarget.SetStyleSheetTextRedo
+PASS: redo() should re-apply the edited stylesheet text.
+PASS: The '.after-edit' rule should be back after redo().
+PASS: The '.test-class' rule should no longer be present after redo().
 
