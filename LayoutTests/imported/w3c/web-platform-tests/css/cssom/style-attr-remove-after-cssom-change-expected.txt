@@ -1,0 +1,12 @@
+
+PASS removeAttribute("style") after a CSSOM change to an existing style attribute
+PASS removeAttribute("style") after a CSSOM change with no prior style attribute
+PASS removeAttribute("STYLE") after a CSSOM change to an existing style attribute
+PASS removeAttribute("STYLE") after a CSSOM change with no prior style attribute
+PASS removeAttributeNS(null, "style") after a CSSOM change to an existing style attribute
+PASS removeAttributeNS(null, "style") after a CSSOM change with no prior style attribute
+PASS toggleAttribute("style") after a CSSOM change to an existing style attribute
+PASS toggleAttribute("style") after a CSSOM change with no prior style attribute
+PASS attributes.removeNamedItem("style") after a CSSOM change to an existing style attribute
+PASS attributes.removeNamedItem("style") after a CSSOM change with no prior style attribute
+

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSSOM: Removing the style attribute after a CSSOM change</title>
+<link rel="help" href="https://drafts.csswg.org/cssom/#update-style-attribute-for">
+<link rel="help" href="https://dom.spec.whatwg.org/#concept-element-attributes-remove-by-name">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<div id="container"></div>
+<script>
+const container = document.getElementById('container');
+
+function createElementWithStyleAttribute(t) {
+    const element = document.createElement('div');
+    element.setAttribute('style', 'color: red');
+    container.append(element);
+    t.add_cleanup(() => element.remove());
+    element.style.backgroundColor = 'blue';
+    return element;
+}
+
+function createElementWithCSSOMStyleOnly(t) {
+    const element = document.createElement('div');
+    container.append(element);
+    t.add_cleanup(() => element.remove());
+    element.style.color = 'green';
+    return element;
+}
+
+function recordsForRemoval(element, remove) {
+    const observer = new MutationObserver(() => { });
+    observer.observe(element, { attributes: true, attributeOldValue: true });
+    remove(element);
+    const records = observer.takeRecords();
+    observer.disconnect();
+    return records;
+}
+
+function assertStyleRemoved(element, records, expectedOldValue) {
+    assert_equals(records.length, 1, 'one mutation record');
+    assert_equals(records[0].attributeName, 'style');
+    assert_equals(records[0].attributeNamespace, null);
+    assert_equals(records[0].oldValue, expectedOldValue);
+    assert_false(element.hasAttribute('style'), 'style attribute does not exist');
+    assert_equals(element.getAttribute('style'), null);
+    assert_equals(element.style.cssText, '');
+}
+
+const removals = [
+    ['removeAttribute("style")', element => element.removeAttribute('style')],
+    ['removeAttribute("STYLE")', element => element.removeAttribute('STYLE')],
+    ['removeAttributeNS(null, "style")', element => element.removeAttributeNS(null, 'style')],
+    ['toggleAttribute("style")', element => element.toggleAttribute('style')],
+    ['attributes.removeNamedItem("style")', element => element.attributes.removeNamedItem('style')],
+];
+
+for (const [description, remove] of removals) {
+    test(t => {
+        const element = createElementWithStyleAttribute(t);
+        const records = recordsForRemoval(element, remove);
+        assertStyleRemoved(element, records, 'color: red; background-color: blue;');
+    }, `${description} after a CSSOM change to an existing style attribute`);
+
+    test(t => {
+        const element = createElementWithCSSOMStyleOnly(t);
+        const records = recordsForRemoval(element, remove);
+        assertStyleRemoved(element, records, 'color: green;');
+    }, `${description} after a CSSOM change with no prior style attribute`);
+}
+</script>

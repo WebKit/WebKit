@@ -24,6 +24,7 @@
 
 #include "Document.h"
 #include "Element.h"
+#include "ElementInlines.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "SVGElement.h"
@@ -64,10 +65,16 @@ SVGElement& SVGURIReference::contextElement() const
 
 void SVGURIReference::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
+    Ref element = contextElement();
+
+    // On removal, inspect the stored sibling attribute without synchronizing, since flushing a
+    // pending href value at this point would re-create the attribute that is being removed.
     if (name.matches(SVGNames::hrefAttr))
-        m_href->setBaseValInternal(value.isNull() ? protect(contextElement())->getAttribute(XLinkNames::hrefAttr) : value);
-    else if (name.matches(XLinkNames::hrefAttr) && !protect(contextElement())->hasAttribute(SVGNames::hrefAttr))
-        m_href->setBaseValInternal(value);
+        m_href->setBaseValInternal(value.isNull() ? element->attributeWithoutSynchronization(XLinkNames::hrefAttr) : value);
+    else if (name.matches(XLinkNames::hrefAttr)) {
+        if (value.isNull() ? element->attributeWithoutSynchronization(SVGNames::hrefAttr).isNull() : !element->hasAttribute(SVGNames::hrefAttr))
+            m_href->setBaseValInternal(value);
+    }
 }
 
 AtomString SVGURIReference::fragmentIdentifierFromIRIString(const String& url, const Document& document)

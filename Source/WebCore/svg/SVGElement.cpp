@@ -33,6 +33,7 @@
 #include "DocumentClasses.h"
 #include "DocumentPage.h"
 #include "ElementChildIteratorInlines.h"
+#include "ElementInlines.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "FrameDestructionObserverInlines.h"
@@ -75,6 +76,7 @@
 #include "StyleKeyword+Mappings.h"
 #include "StyleResolver.h"
 #include "StyleUpdate.h"
+#include "XLinkNames.h"
 #include "XMLNames.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
@@ -583,13 +585,15 @@ void SVGElement::synchronizeAttribute(const QualifiedName& name)
 {
     // If the value of the property has changed, serialize the new value to the attribute.
     if (auto value = propertyRegistry().synchronize(*this, name)) {
+        auto& targetName = attributeNameForSynchronization(name);
+
         // If the serialized value is empty and the attribute doesn't exist,
         // don't recreate it. This handles the case where the attribute was
         // explicitly removed after the list was emptied.
-        if (value->isEmpty() && !hasAttribute(name))
+        if (value->isEmpty() && attributeWithoutSynchronization(targetName).isNull())
             return;
 
-        setSynchronizedLazyAttribute(name, AtomString { *value });
+        setSynchronizedLazyAttribute(targetName, AtomString { *value });
     }
 }
 
@@ -598,8 +602,25 @@ void SVGElement::synchronizeAllAttributes()
     // SVGPropertyRegistry::synchronizeAllAttributes() returns the new values of
     // the properties which have changed but not committed yet.
     auto map = propertyRegistry().synchronizeAllAttributes(*this);
-    for (const auto& entry : map)
-        setSynchronizedLazyAttribute(entry.key, AtomString { entry.value });
+    for (const auto& entry : map) {
+        auto& targetName = attributeNameForSynchronization(entry.key);
+        setSynchronizedLazyAttribute(targetName, AtomString { entry.value });
+    }
+}
+
+const QualifiedName& SVGElement::attributeNameForSynchronization(const QualifiedName& attributeName) const
+{
+    if (attributeName.matches(SVGNames::hrefAttr) || attributeName.matches(XLinkNames::hrefAttr)) [[unlikely]] {
+        // The "href" property is shared between the "href" and deprecated "xlink:href"
+        // attributes. SVG 2 makes "href" canonical, but a pre-existing "xlink:href" (with
+        // no "href") keeps backing the property for backwards compatibility, so route
+        // synchronization there and never fabricate the sibling attribute.
+        // https://w3c.github.io/svgwg/svg2-draft/linking.html#XLinkRefAttrs
+        if (attributeWithoutSynchronization(SVGNames::hrefAttr).isNull() && !attributeWithoutSynchronization(XLinkNames::hrefAttr).isNull())
+            return XLinkNames::hrefAttr;
+        return SVGNames::hrefAttr;
+    }
+    return attributeName;
 }
 
 void SVGElement::commitPropertyChange(SVGProperty* property)
