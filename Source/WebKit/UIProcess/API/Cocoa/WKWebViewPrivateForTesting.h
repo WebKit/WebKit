@@ -64,6 +64,19 @@ typedef NSVisualEffectView _WKPlatformVisualEffectView;
 @class _WKNowPlayingMetadata;
 @protocol _WKMediaSessionCoordinator;
 
+// Opt-in additions to the CALayer tree dump. Without options, the dump only has the layer geometry.
+typedef NS_OPTIONS(NSUInteger, _WKCALayerTreeAsTextOptions) {
+    _WKCALayerTreeAsTextOptionsNone = 0,
+    _WKCALayerTreeAsTextOptionsRemoteLayersOnly = 1 << 0,
+    _WKCALayerTreeAsTextOptionsIncludeLayerIdentifiers = 1 << 1,
+    _WKCALayerTreeAsTextOptionsIncludeLayerClasses = 1 << 2,
+    _WKCALayerTreeAsTextOptionsIncludeNames = 1 << 3,
+    _WKCALayerTreeAsTextOptionsIncludeTransforms = 1 << 4,
+    _WKCALayerTreeAsTextOptionsIncludeVisibility = 1 << 5,
+    _WKCALayerTreeAsTextOptionsIncludeContents = 1 << 6,
+    _WKCALayerTreeAsTextOptionsIncludeAnimations = 1 << 7,
+};
+
 // What WebKit's capture permission prompt would show, kept current while it is up.
 WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 @interface _WKMediaCapturePermissionPromptForTesting : NSObject
@@ -102,6 +115,8 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 
 - (NSString *)_caLayerTreeAsTextForLayerWithID:(unsigned long long)layerID;
 - (NSString *)_caLayerTreeAsTextForLayer:(CALayer *)layer;
+- (NSString *)_caLayerTreeAsTextWithOptions:(_WKCALayerTreeAsTextOptions)options;
+- (NSString *)_caLayerTreeAsTextForLayer:(CALayer *)layer options:(_WKCALayerTreeAsTextOptions)options;
 
 - (NSDictionary<NSString *, id> *)_propertiesOfLayerWithID:(unsigned long long)layerID;
 

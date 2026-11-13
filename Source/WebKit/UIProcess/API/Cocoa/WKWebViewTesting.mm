@@ -38,6 +38,7 @@
 #import "PlaybackSessionManagerProxy.h"
 #import "PrintInfo.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
+#import "RemoteLayerTreeNode.h"
 #import "RemoteScrollingCoordinatorProxy.h"
 #import "SuspendedPageProxy.h"
 #import "UserMediaProcessManager.h"
@@ -68,9 +69,11 @@
 #import <WebCore/ValidationBubble.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/Box.h>
+#import <wtf/HexNumber.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/TZoneMallocInlines.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #if USE(APPLE_INTERNAL_SDK)
 #import <wtf/cocoa/Entitlements.h>
@@ -325,12 +328,20 @@ static RetainPtr<NSArray<NSDictionary<NSString *, NSString *> *>> devicesForTest
 
 - (NSString *)_caLayerTreeAsTextForLayer:(CALayer *)layer
 {
+    return [self _caLayerTreeAsTextForLayer:layer options:_WKCALayerTreeAsTextOptionsNone];
+}
+
+- (NSString *)_caLayerTreeAsTextForLayer:(CALayer *)layer options:(_WKCALayerTreeAsTextOptions)options
+{
     TextStream ts(TextStream::LineMode::MultipleLine);
 
     {
         TextStream::GroupScope scope(ts);
         ts << "CALayer tree root "_s;
-        dumpCALayer(ts, layer, true);
+        if (shouldDumpLayer(layer, options))
+            dumpCALayer(ts, layer, true, options);
+        else
+            dumpSublayers(ts, layer, options);
     }
 
     return ts.release().createNSString().autorelease();
@@ -338,14 +349,83 @@ static RetainPtr<NSArray<NSDictionary<NSString *, NSString *> *>> devicesForTest
 
 - (NSString *)_caLayerTreeAsText
 {
+    return [self _caLayerTreeAsTextWithOptions:_WKCALayerTreeAsTextOptionsNone];
+}
+
+- (NSString *)_caLayerTreeAsTextWithOptions:(_WKCALayerTreeAsTextOptions)options
+{
 #if PLATFORM(IOS_FAMILY)
-        return [self _caLayerTreeAsTextForLayer:[_contentView layer]];
+    return [self _caLayerTreeAsTextForLayer:[_contentView layer] options:options];
 #else
-        return [self _caLayerTreeAsTextForLayer:retainPtr(self.layer).get()];
+    return [self _caLayerTreeAsTextForLayer:retainPtr(self.layer).get() options:options];
 #endif
 }
 
-static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
+static bool shouldDumpLayer(CALayer *layer, _WKCALayerTreeAsTextOptions options)
+{
+    return !(options & _WKCALayerTreeAsTextOptionsRemoteLayersOnly) || WebKit::RemoteLayerTreeNode::forCALayer(layer);
+}
+
+static void collectSublayersToDump(CALayer *layer, _WKCALayerTreeAsTextOptions options, Vector<RetainPtr<CALayer>>& sublayers)
+{
+    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+    for (SUPPRESS_UNRETAINED_LOCAL CALayer *sublayer in layer.sublayers) {
+        if (shouldDumpLayer(sublayer, options))
+            sublayers.append(sublayer);
+        else
+            collectSublayersToDump(sublayer, options, sublayers);
+    }
+}
+
+static void dumpSublayers(TextStream& ts, CALayer *layer, _WKCALayerTreeAsTextOptions options)
+{
+    Vector<RetainPtr<CALayer>> sublayers;
+    collectSublayersToDump(layer, options, sublayers);
+    if (sublayers.isEmpty())
+        return;
+
+    TextStream::GroupScope scope(ts);
+    ts << "sublayers"_s;
+    for (auto& sublayer : sublayers) {
+        TextStream::GroupScope scope(ts);
+        dumpCALayer(ts, sublayer.get(), true, options);
+    }
+}
+
+// A hosting layer can be wrapped in layers that are skipped when only dumping remote layers, like for video.
+static std::optional<uint32_t> hostedContextID(CALayer *layer, _WKCALayerTreeAsTextOptions options)
+{
+    if ([layer isKindOfClass:CALayerHost.class])
+        return checked_objc_cast<CALayerHost>(layer).contextId;
+
+    if (!(options & _WKCALayerTreeAsTextOptionsRemoteLayersOnly))
+        return std::nullopt;
+
+    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+    for (SUPPRESS_UNRETAINED_LOCAL CALayer *sublayer in layer.sublayers) {
+        if (shouldDumpLayer(sublayer, options))
+            continue;
+        if (auto contextID = hostedContextID(sublayer, options))
+            return contextID;
+    }
+    return std::nullopt;
+}
+
+static String contentsDescription(id contents)
+{
+    // Identities are only meant to compare dumps from the same run.
+    return makeString(String(NSStringFromClass([contents class])), ' ', hex(reinterpret_cast<uintptr_t>((__bridge void*)contents)));
+}
+
+static String transformToString(const CATransform3D& transform)
+{
+    return makeString('[', transform.m11, ' ', transform.m12, ' ', transform.m13, ' ', transform.m14, "] ["_s,
+        transform.m21, ' ', transform.m22, ' ', transform.m23, ' ', transform.m24, "] ["_s,
+        transform.m31, ' ', transform.m32, ' ', transform.m33, ' ', transform.m34, "] ["_s,
+        transform.m41, ' ', transform.m42, ' ', transform.m43, ' ', transform.m44, ']');
+}
+
+static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse, _WKCALayerTreeAsTextOptions options = _WKCALayerTreeAsTextOptionsNone)
 {
     auto rectToString = [] (auto rect) {
         return makeString("[x: "_s, rect.origin.x, " y: "_s, rect.origin.y, " width: "_s, rect.size.width, " height: "_s, rect.size.height, ']');
@@ -401,16 +481,66 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     constexpr CACornerMask allCorners = kCALayerMinXMinYCorner | kCALayerMaxXMinYCorner | kCALayerMinXMaxYCorner | kCALayerMaxXMaxYCorner;
     if (layer.maskedCorners != allCorners)
         ts.dumpProperty("layer masked corners"_s, makeString(layer.maskedCorners));
-    
-    if (traverse && layer.sublayers.count > 0) {
-        TextStream::GroupScope scope(ts);
-        ts << "sublayers"_s;
+
+    if (options & _WKCALayerTreeAsTextOptionsIncludeLayerIdentifiers) {
+        if (auto layerID = WebKit::RemoteLayerTreeNode::layerID(layer))
+            ts.dumpProperty("layer identifier"_s, makeString(layerID->object().toUInt64(), '-', layerID->processIdentifier().toUInt64()));
+    }
+
+    if (options & _WKCALayerTreeAsTextOptionsIncludeLayerClasses)
+        ts.dumpProperty("layer class"_s, String(NSStringFromClass(layer.class)));
+
+    if ((options & _WKCALayerTreeAsTextOptionsIncludeNames) && layer.name.length)
+        ts.dumpProperty("layer name"_s, String(layer.name));
+
+    if (options & _WKCALayerTreeAsTextOptionsIncludeTransforms) {
+        if (!CATransform3DIsIdentity(layer.transform))
+            ts.dumpProperty("layer transform"_s, transformToString(layer.transform));
+        if (!CATransform3DIsIdentity(layer.sublayerTransform))
+            ts.dumpProperty("layer sublayer transform"_s, transformToString(layer.sublayerTransform));
+    }
+
+    if (options & _WKCALayerTreeAsTextOptionsIncludeVisibility) {
+        if (layer.hidden)
+            ts.dumpProperty("layer hidden"_s, true);
+        if (layer.masksToBounds)
+            ts.dumpProperty("layer masks to bounds"_s, true);
+        if (layer.geometryFlipped)
+            ts.dumpProperty("layer geometry flipped"_s, true);
+        if (!layer.doubleSided)
+            ts.dumpProperty("layer double sided"_s, false);
+    }
+
+    if (options & _WKCALayerTreeAsTextOptionsIncludeContents) {
+        if (RetainPtr<id> contents = layer.contents) {
+            ts.dumpProperty("layer contents"_s, contentsDescription(contents.get()));
+            if (!CGRectEqualToRect(layer.contentsRect, CGRectMake(0, 0, 1, 1)))
+                ts.dumpProperty("layer contents rect"_s, rectToString(layer.contentsRect));
+            if (layer.contentsScale != 1)
+                ts.dumpProperty("layer contents scale"_s, makeString(layer.contentsScale));
+        }
+        if (auto contextID = hostedContextID(layer, options))
+            ts.dumpProperty("layer hosted context"_s, *contextID);
+    }
+
+    if (options & _WKCALayerTreeAsTextOptionsIncludeAnimations) {
+        RetainPtr keys = [layer.animationKeys sortedArrayUsingSelector:@selector(compare:)];
         // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL CALayer *sublayer in layer.sublayers) {
+        for (SUPPRESS_UNRETAINED_LOCAL NSString *key in keys.get()) {
+            RetainPtr animation = [layer animationForKey:key];
             TextStream::GroupScope scope(ts);
-            dumpCALayer(ts, sublayer, true);
+            ts << "animation "_s << String(key);
+            ts.dumpProperty("class"_s, String(NSStringFromClass([animation class])));
+            if (RetainPtr propertyAnimation = dynamic_objc_cast<CAPropertyAnimation>(animation.get()))
+                ts.dumpProperty("key path"_s, String([propertyAnimation keyPath]));
+            ts.dumpProperty("duration"_s, makeString([animation duration]));
         }
     }
+
+    if (!traverse)
+        return;
+
+    dumpSublayers(ts, layer, options);
 }
 
 - (void)_addEventAttributionWithSourceID:(uint8_t)sourceID destinationURL:(NSURL *)destination sourceDescription:(NSString *)sourceDescription purchaser:(NSString *)purchaser reportEndpoint:(NSURL *)reportEndpoint optionalNonce:(NSString *)nonce applicationBundleID:(NSString *)bundleID ephemeral:(BOOL)ephemeral
