@@ -48,8 +48,8 @@ promise_test(async (test) => {
 }, "getUserMedia on third party iframe and check same frame filtering");
 
 promise_test(async (test) => {
-    assert_false(await doIFrameTest(frame1, "checkFiltering"));
-}, "Check same origin filtering as top frame");
+    assert_true(await doIFrameTest(frame1, "checkFiltering"));
+}, "Check filtering of top frame origin is not affected by third party iframe capture");
 
 promise_test(async (test) => {
     assert_false(await doIFrameTest(frame2b, "checkFiltering"));

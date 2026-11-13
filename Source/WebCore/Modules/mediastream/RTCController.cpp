@@ -68,8 +68,8 @@ void RTCController::remove(RTCPeerConnection& connection)
 
 static inline bool matchDocumentOrigin(Document& document, SecurityOrigin& topOrigin, SecurityOrigin& clientOrigin)
 {
-    if (topOrigin.isSameOriginAs(protect(document.securityOrigin())))
-        return true;
+    // Only share the disablement between documents with the exact same top origin and origin,
+    // never with other documents (e.g. the top frame) from a third-party iframe's capture.
     return topOrigin.isSameOriginAs(protect(document.topOrigin())) && clientOrigin.isSameOriginAs(protect(document.securityOrigin()));
 }
 
