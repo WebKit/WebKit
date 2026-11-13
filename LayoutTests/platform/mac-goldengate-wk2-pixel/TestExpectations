@@ -1,7 +1,16 @@
 # This TestExpectations file applies to pixel test runs with --tolerance=0, against the legacy SVG engine
 #
 #    $ run-webkit-tests --additional-platform-directory=$PWD/LayoutTests/platform/mac-goldengate-wk2-pixel \
-#                       --pixel-tests --tolerance=0 css3/masking imported/w3c/web-platform-tests/svg svg
+#                       --pixel-tests --tolerance=0 \
+#                       --test-list=$PWD/LayoutTests/platform/mac-goldengate-wk2-lbse-text/svg-tests-outside-svg-directories.txt --skipped=always \
+#                       svg css3/masking imported/w3c/web-platform-tests/svg \
+#                       imported/mozilla/svg imported/blink/svg imported/blink/css3 \
+#                       dom/svg fast/svg http/tests/svg sar3/svg \
+#                       imported/w3c/web-platform-tests/svg-aam \
+#                       imported/w3c/web-platform-tests/content-security-policy/svg \
+#                       imported/w3c/web-platform-tests/css/css-masking \
+#                       imported/w3c/web-platform-tests/css/css-transforms \
+#                       imported/w3c/web-platform-tests/css/filter-effects
 #
 # and against the Layer-Based SVG Engine (LBSE), whose runs also pass this directory. Entries in
 # platform/mac-goldengate-wk2-lbse-text/TestExpectations take precedence in LBSE runs.
@@ -10,6 +19,7 @@
 # Apparently CoreGraphics accelerated contexts in the GPU process round a few pixels of a scaled image
 # differently, depending on what test ran before. If on the same worker svg/custom/group-opacity.svg
 # ran before, these tests differ from their baselines in a few pixels. No idea why.
+fast/backgrounds/size/contain-and-cover.html                     [ Pass ImageOnlyFailure ]
 svg/as-image/image-preserveAspectRatio-all.svg                   [ Pass ImageOnlyFailure ]
 svg/hixie/perf/004.xml                                           [ Pass ImageOnlyFailure ]
 svg/transforms/animated-path-inside-transformed-html.xhtml       [ Pass ImageOnlyFailure ]
@@ -32,3 +42,41 @@ svg/custom/scrolling-embedded-svg-file-image-repaint-problem.html [ Pass ImageOn
 # Gradient draws depend on test order
 # The bottom right gradient differs from its baseline in a few pixels, depending on what test ran before.
 svg/W3C-SVG-1.1/pservers-grad-19-b.svg [ Pass ImageOnlyFailure ]
+
+# Flaky in full runs, pass on their own.
+svg/hixie/cascade/001-broken.xml [ Pass ImageOnlyFailure ]
+svg/hixie/data-types/001.xml     [ Pass ImageOnlyFailure ]
+svg/hixie/painting/001.xml       [ Pass ImageOnlyFailure ]
+
+# Flaky in Release too, platform/mac-wk2/TestExpectations only marks it for Debug.
+imported/w3c/web-platform-tests/webcodecs/videoFrame-construction.crossOriginSource.sub.html [ Pass Failure ]
+
+# Loads http/tests/misc/acid3-expected.png, which was deleted, so it shows broken images.
+http/tests/misc/slow-loading-image-in-pattern.html [ Failure ImageOnlyFailure ]
+
+# Marked as failing in the shared TestExpectations (for the Golden Gate bots, Tahoe+ or generically),
+# but they pass in these runs.
+fast/canvas/draw-element-image/2d-drawElementImage-rotated-text.html                                    [ Pass ]
+fast/hidpi/filters-blur.html                                                                            [ Pass ]
+fast/hidpi/filters-hue-rotate.html                                                                      [ Pass ]
+fast/hidpi/filters-invert.html                                                                          [ Pass ]
+fast/hidpi/filters-multiple.html                                                                        [ Pass ]
+imported/w3c/web-platform-tests/css/compositing/root-element-background-image-transparency-003.html     [ Pass ]
+imported/w3c/web-platform-tests/css/css-grid/grid-items/replaced-element-015.html                       [ Pass ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-cors-001.sub.html                 [ Pass ]
+imported/w3c/web-platform-tests/css/css-transforms/fractional-scale-gradient-bg-obscure-red-bg.html     [ Pass ]
+imported/w3c/web-platform-tests/css/css-transforms/rotateY-180deg-with-overflow-scroll.html             [ Pass ]
+imported/w3c/web-platform-tests/css/css-transforms/transform3d-matrix3d-001.html                        [ Pass ]
+imported/w3c/web-platform-tests/css/css-transforms/transform3d-preserve3d-001.html                      [ Pass ]
+imported/w3c/web-platform-tests/css/css-transforms/transform3d-preserve3d-013.html                      [ Pass ]
+imported/w3c/web-platform-tests/css/filter-effects/animation/css-filters-animation-combined-001.html    [ Pass ]
+imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-boundary.html                        [ Pass ]
+imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-nested-border-radius-clip-3.html     [ Pass ]
+imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-plus-filter-2.html                   [ Pass ]
+imported/w3c/web-platform-tests/css/filter-effects/fecolormatrix-display-p3.html                        [ Pass ]
+imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-001.html             [ Pass ]
+imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-linear-gradient.html [ Pass ]
+imported/w3c/web-platform-tests/webcodecs/video-encoder-canvasImageSource.https.html                    [ Pass ]
+
+# Only crashes with GuardMalloc (rdar://103256284).
+imported/mozilla/svg/as-image/img-simple-6.html [ Pass ]

@@ -1,0 +1,32 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x420 isolatesBlending
+  RenderBlock {HTML} at (0,0) size 800x420
+    RenderBody {BODY} at (8,8) size 784x404
+      RenderText {#text} at (0,0) size 0x0
+layer at (8,8) size 400x400
+  RenderSVGRoot {svg} at (0,0) size 400x400
+    RenderSVGViewportContainer at (0,0) size 400x400
+      RenderSVGHiddenContainer {defs} at (0,0) size 40x40
+        RenderSVGTransformableContainer {g} at (0,0) size 40x40
+          RenderSVGRect {rect} at (0,0) size 10x40 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=40.00]
+          RenderSVGRect {rect} at (10,0) size 10x40 [fill={[type=SOLID] [color=#00FF00]}] [x=10.00] [y=0.00] [width=10.00] [height=40.00]
+          RenderSVGRect {rect} at (20,0) size 10x40 [fill={[type=SOLID] [color=#0000FF]}] [x=20.00] [y=0.00] [width=10.00] [height=40.00]
+          RenderSVGRect {rect} at (30,0) size 10x40 [fill={[type=SOLID] [color=#7F7F00]}] [x=30.00] [y=0.00] [width=10.00] [height=40.00]
+        RenderSVGRect {rect} at (0,0) size 10x10 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
+layer at (8,8) size 40x40
+  RenderSVGTransformableContainer {g} at (0,0) size 40x40
+layer at (8,8) size 40x40
+  RenderSVGTransformableContainer {use} at (0,0) size 40x40
+    RenderSVGTransformableContainer {g} at (0,0) size 40x40
+      RenderSVGRect {rect} at (0,0) size 10x40 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=40.00]
+      RenderSVGRect {rect} at (10,0) size 10x40 [fill={[type=SOLID] [color=#00FF00]}] [x=10.00] [y=0.00] [width=10.00] [height=40.00]
+      RenderSVGRect {rect} at (20,0) size 10x40 [fill={[type=SOLID] [color=#0000FF]}] [x=20.00] [y=0.00] [width=10.00] [height=40.00]
+      RenderSVGRect {rect} at (30,0) size 10x40 [fill={[type=SOLID] [color=#7F7F00]}] [x=30.00] [y=0.00] [width=10.00] [height=40.00]
+layer at (8,8) size 40x40 blendMode: difference
+  RenderSVGTransformableContainer {use} at (0,0) size 40x40
+    RenderSVGTransformableContainer {g} at (0,0) size 40x40
+      RenderSVGRect {rect} at (0,0) size 10x40 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=40.00]
+      RenderSVGRect {rect} at (10,0) size 10x40 [fill={[type=SOLID] [color=#00FF00]}] [x=10.00] [y=0.00] [width=10.00] [height=40.00]
+      RenderSVGRect {rect} at (20,0) size 10x40 [fill={[type=SOLID] [color=#0000FF]}] [x=20.00] [y=0.00] [width=10.00] [height=40.00]
+      RenderSVGRect {rect} at (30,0) size 10x40 [fill={[type=SOLID] [color=#7F7F00]}] [x=30.00] [y=0.00] [width=10.00] [height=40.00]

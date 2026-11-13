@@ -1,0 +1,10 @@
+Some text
+Some text
+Some text
+Text underText over
+
+PASS elementsFromPoint for a point inside a <text>
+PASS elementsFromPoint for a point inside a <tspan> nested in a <text> without content
+PASS elementsFromPoint for a point inside a <textPath> nested in a <text> without content
+PASS elementsFromPoint for a point inside an overlapping <tspan> nested in a <text>
+

@@ -1,0 +1,4 @@
+
+
+PASS drawElementImage does not use SVG patterns outside the subtree
+

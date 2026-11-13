@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x462 isolatesBlending
+  RenderBlock {HTML} at (0,0) size 800x462
+    RenderBody {BODY} at (8,16) size 784x438
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 545x18
+          text run at (0,0) width 545: "Test for isolation caused by blending. This test passes if the whole rectangle is green."
+      RenderBlock (anonymous) at (0,34) size 784x404
+        RenderText {#text} at (0,0) size 0x0
+layer at (8,50) size 400x400
+  RenderSVGRoot {svg} at (0,0) size 400x400
+    RenderSVGViewportContainer at (0,0) size 400x400
+layer at (8,50) size 40x40
+  RenderSVGTransformableContainer {g} at (0,0) size 40x40
+    RenderSVGRect {rect} at (0,0) size 40x40 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=40.00] [height=40.00]
+layer at (18,60) size 20x20 isolatesBlending blendMode: multiply
+  RenderSVGTransformableContainer {g} at (10,10) size 20x20
+layer at (18,60) size 20x20 blendMode: difference
+  RenderSVGRect {rect} at (0,0) size 20x20 [fill={[type=SOLID] [color=#00FF00]}] [x=10.00] [y=10.00] [width=20.00] [height=20.00]

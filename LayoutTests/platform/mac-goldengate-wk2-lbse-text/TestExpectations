@@ -2,13 +2,31 @@
 #
 # 1. Run tests against legacy SVG engine
 #    $ run-webkit-tests --additional-platform-directory=$PWD/LayoutTests/platform/mac-goldengate-wk2-pixel \
-#                       --pixel-tests --tolerance=0 css3/masking imported/w3c/web-platform-tests/svg svg
+#                       --pixel-tests --tolerance=0 \
+#                       --test-list=$PWD/LayoutTests/platform/mac-goldengate-wk2-lbse-text/svg-tests-outside-svg-directories.txt --skipped=always \
+#                       svg css3/masking imported/w3c/web-platform-tests/svg \
+#                       imported/mozilla/svg imported/blink/svg imported/blink/css3 \
+#                       dom/svg fast/svg http/tests/svg sar3/svg \
+#                       imported/w3c/web-platform-tests/svg-aam \
+#                       imported/w3c/web-platform-tests/content-security-policy/svg \
+#                       imported/w3c/web-platform-tests/css/css-masking \
+#                       imported/w3c/web-platform-tests/css/css-transforms \
+#                       imported/w3c/web-platform-tests/css/filter-effects
 #
 # 2. Run tests against LBSE
 #    $ run-webkit-tests --additional-platform-directory=$PWD/LayoutTests/platform/mac-goldengate-wk2-lbse-text \
 #                       --additional-platform-directory=$PWD/LayoutTests/platform/mac-goldengate-wk2-pixel \
 #                       --additional-expectations=$PWD/LayoutTests/platform/mac-goldengate-wk2-lbse-text/TestExpectations \
-#                       --pixel-tests --tolerance=0 --internal-feature=LayerBasedSVGEngineEnabled=true css3/masking imported/w3c/web-platform-tests/svg svg
+#                       --pixel-tests --tolerance=0 --internal-feature=LayerBasedSVGEngineEnabled=true \
+#                       --test-list=$PWD/LayoutTests/platform/mac-goldengate-wk2-lbse-text/svg-tests-outside-svg-directories.txt --skipped=always \
+#                       svg css3/masking imported/w3c/web-platform-tests/svg \
+#                       imported/mozilla/svg imported/blink/svg imported/blink/css3 \
+#                       dom/svg fast/svg http/tests/svg sar3/svg \
+#                       imported/w3c/web-platform-tests/svg-aam \
+#                       imported/w3c/web-platform-tests/content-security-policy/svg \
+#                       imported/w3c/web-platform-tests/css/css-masking \
+#                       imported/w3c/web-platform-tests/css/css-transforms \
+#                       imported/w3c/web-platform-tests/css/filter-effects
 #
 # Notes:
 # - 'platform/mac-goldengate-wk2-pixel'     -> contains only pixel test results (-expected.png) generated on macOS Tahoe 26.0 using legacy SVG engine
@@ -45,6 +63,91 @@ svg/animations/animateMotion-remove-or-retarget-resets-previous-target.html [ Fa
 svg/in-html/overflow-svg-root-attr.html  [ ImageOnlyFailure ]
 svg/in-html/overflow-svg-root-style.html [ ImageOnlyFailure ]
 
+# Failures found by extending the runs to all SVG related tests (the added directories and svg-tests-outside-svg-directories.txt)
+accessibility/svg-bounds.html                                                                                                                                     [ Failure ]
+accessibility/svg-remote-element.html                                                                                                                             [ Failure ]
+compositing/hdr/hdr-svg-inline-image.html                                                                                                                         [ Failure ]
+css3/blending/svg-blend-layer-clip-path.html                                                                                                                      [ ImageOnlyFailure ]
+css3/filters/reference-filter-change-repaint.html                                                                                                                 [ Failure ]
+fast/dom/nodesFromRect/nodesFromRect-svg.html                                                                                                                     [ Failure ]
+fast/images/hdr-svg-inline-image.html                                                                                                                             [ ImageOnlyFailure ]
+fast/multicol/crash-when-spanner-candidate-is-out-of-flow.html                                                                                                    [ Failure ]
+fast/multicol/state-propagation-over-out-of-flow-boundary.html                                                                                                    [ Failure ]
+fast/scrolling/mac/scrollbars/scrollbars-controller-type.html                                                                                                     [ Failure ]
+fast/scrolling/mac/scrollbars/svg-foreign-object-overlay-scrollbar-hovered.html                                                                                   [ Timeout ]
+http/tests/svg/use-custom-property-inheritance.html                                                                                                               [ ImageOnlyFailure ]
+imported/blink/css3/blending/svg-isolation-foreign-no-isolation.html                                                                                              [ ImageOnlyFailure ]
+imported/blink/fast/multicol/foreignObject.html                                                                                                                   [ ImageOnlyFailure ]
+imported/blink/fast/multicol/span/sole-svg-spanner-with-foreignObject-crash.html                                                                                  [ Failure ]
+imported/mozilla/svg/dynamic-pattern-contents-01.svg                                                                                                              [ ImageOnlyFailure ]
+imported/mozilla/svg/dynamic-rect-03.svg                                                                                                                          [ ImageOnlyFailure ]
+imported/mozilla/svg/dynamic-text-03.svg                                                                                                                          [ ImageOnlyFailure ]
+imported/mozilla/svg/filters-and-group-opacity-01.svg                                                                                                             [ ImageOnlyFailure ]
+imported/mozilla/svg/marker-effects-01.svg                                                                                                                        [ ImageOnlyFailure ]
+imported/mozilla/svg/objectBoundingBox-and-clipPath.svg                                                                                                           [ ImageOnlyFailure ]
+imported/mozilla/svg/paint-order-02.svg                                                                                                                           [ ImageOnlyFailure ]
+imported/mozilla/svg/pattern-live-01b.svg                                                                                                                         [ ImageOnlyFailure ]
+imported/mozilla/svg/rect-04.svg                                                                                                                                  [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/content-security-policy/svg/object-in-svg-foreignobject.sub.html                                                                  [ Failure ]
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/style-query-attr-change-svg.html                                                            [ Failure ]
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/svg-foreignobject-child-container.html                                                      [ Failure ]
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/svg-root-size-container.html                                                                [ Failure ]
+imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-022.html                                                                    [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-025.html                                                                    [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-svg-path.html                                                               [ Failure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-clip-nested-twice.svg                                                             [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-content-use-002.svg                                                               [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-content-use-003.svg                                                               [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-objectboundingbox-004.svg                                                         [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-text-005.svg                                                                      [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-userspaceonuse-001.svg                                                            [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/hit-test/clip-path-svg-geometry-box.html                                                                          [ Failure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-svg-child-will-change.html                                                                  [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-empty-container-with-filter.svg                                                             [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-overflow/overflow-clip-x-visible-y-svg.html                                                                               [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-transforms/translate/translate-and-transform-css-property-in-svg.html                                                     [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-transforms/z-index-does-not-apply.html                                                                                    [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ui/outline-svg-nested-svg-001.html                                                                                        [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/cssom-view/cssom-getBoundingClientRect-003.html                                                                               [ Failure ]
+imported/w3c/web-platform-tests/css/cssom-view/elementsFromPoint-svg.html                                                                                         [ Failure ]
+imported/w3c/web-platform-tests/css/cssom-view/getBoundingClientRect-svg.html                                                                                     [ Failure ]
+imported/w3c/web-platform-tests/css/cssom-view/scrollIntoView-svg-shape.html                                                                                      [ Failure ]
+imported/w3c/web-platform-tests/css/filter-effects/svg-empty-element-with-filter-001.html                                                                         [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/motion/offset-anchor-transform-box-fill-box-001.html                                                                          [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/motion/offset-anchor-transform-box-fill-box-002.html                                                                          [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/motion/offset-anchor-transform-box-fill-box-003.html                                                                          [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/svg/svg-pattern-filter-transformed-text.tentative.https.sub.html            [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/svg/svg-pattern-with-feImage-cross-origin-image.tentative.https.sub.html    [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/svg/svg-pattern-with-feImage-transformed-text.tentative.https.sub.html      [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/svg/svg-use-chained-outside-subtree-images-ignored.tentative.https.sub.html [ Failure ]
+imported/w3c/web-platform-tests/html/dom/elements/the-innertext-and-outertext-properties/getter.html                                                              [ Failure ]
+imported/w3c/web-platform-tests/html/syntax/parsing/html-integration-point.html                                                                                   [ Failure ]
+imported/w3c/web-platform-tests/intersection-observer/svg-group-target.html                                                                                       [ Failure ]
+imported/w3c/web-platform-tests/intersection-observer/svg-stroke-change.html                                                                                      [ Failure ]
+imported/w3c/web-platform-tests/paint-timing/fcp-only/fcp-svg.html                                                                                                [ Failure ]
+imported/w3c/web-platform-tests/scroll-animations/view-timelines/svg-graphics-element-001.html                                                                    [ Failure ]
+imported/w3c/web-platform-tests/scroll-animations/view-timelines/svg-graphics-element-002.html                                                                    [ Crash ]
+imported/w3c/web-platform-tests/scroll-animations/view-timelines/svg-graphics-element-003.html                                                                    [ Failure ]
+resize-observer/resize-observer-with-zoom.html                                                                                                                    [ Timeout ]
+transforms/2d/rotate-and-transform-css-property-in-svg.svg                                                                                                        [ ImageOnlyFailure ]
+transforms/2d/scale-and-transform-css-property-in-svg.svg                                                                                                         [ ImageOnlyFailure ]
+transforms/2d/translate-and-transform-css-property-in-svg.svg                                                                                                     [ ImageOnlyFailure ]
+
+# REGRESSION(326430@main): the transform of a <clipPath> is never computed. It is skipped while the renderer has no parent,
+# and layout does not update it for SVG resources.
+css3/masking/clip-path-overflow-hidden-bounds.html                                                    [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-css-transform-001.svg [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-css-transform-002.svg [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-transform-mutated-001.html        [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/hit-test/clip-path-element-objectboundingbox-001.html [ Failure ]
+svg/clip-path/hittest-transformed-clip-objectboundingbox-mask.html                                    [ Failure ]
+svg/clip-path/hittest-transformed-clip-objectboundingbox.html                                         [ Failure ]
+svg/clip-path/transformed-clip-mask.svg                                                               [ ImageOnlyFailure ]
+svg/clip-path/transformed-clip.svg                                                                    [ ImageOnlyFailure ]
+
+# The legacy engine output changed after the 08819820fefc baseline update, and LBSE no longer matches it.
+svg/foreignObject/filter.html [ ImageOnlyFailure ]
+
 ###############
 # Buggy tests #
 ###############
@@ -56,7 +159,10 @@ svg/outermost-svg-root.html [ Failure ]
 # Flaky tests #
 ###############
 
-svg/as-image/svg-as-image-pattern-scale.html [ Pass ImageOnlyFailure ]
+fast/canvas/draw-element-image/2d-drawElementImage-rotated-text.html                                                                         [ Pass ImageOnlyFailure ]
+imported/mozilla/svg/dynamic-mask-contents-01.svg                                                                                            [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/svg/svg-pattern-outside-subtree-ignored.tentative.html [ Pass Failure ]
+svg/as-image/svg-as-image-pattern-scale.html                                                                                                 [ Pass ImageOnlyFailure ]
 
 ###############
 #  OVERRIDES  #
@@ -66,6 +172,18 @@ svg/as-image/svg-as-image-pattern-scale.html [ Pass ImageOnlyFailure ]
 fast/shadow-dom/svg-multiple-references-in-multiple-shadows-pattern.html                                          [ Pass ]
 fast/shadow-dom/svg-pattern-dynamic-update-href-in-shadow-tree.html                                               [ Pass ]
 fast/shadow-dom/svg-pattern-href-in-shadow-tree.html                                                              [ Pass ]
+imported/mozilla/svg/blend-difference-stacking.html                                                               [ Pass ]
+imported/mozilla/svg/dynamic-marker-01.svg                                                                        [ Pass ]
+imported/w3c/web-platform-tests/css/compositing/svg/mix-blend-mode-in-svg-image.html                              [ Pass ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-descendant-text-mutated-001.html              [ Pass ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-url-reference-change-from-empty.html          [ Pass ]
+imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-svg-foreignObject.html                         [ Pass ]
+imported/w3c/web-platform-tests/css/filter-effects/svg-empty-hidden-foreignobject-with-filter-001.html            [ Pass ]
+imported/w3c/web-platform-tests/css/filter-effects/svg-multiple-filter-functions.html                             [ Pass ]
+imported/w3c/web-platform-tests/css/filter-effects/svg-mutation-url-to-function.html                              [ Pass ]
+imported/w3c/web-platform-tests/css/filter-effects/svg-shorthand-hue-rotate-001.html                              [ Pass ]
+imported/w3c/web-platform-tests/css/filter-effects/svg-visibility-hidden-element-with-filter-001.html             [ Pass ]
+imported/w3c/web-platform-tests/css/filter-effects/svg-visibility-hidden-element-with-filter-002.html             [ Pass ]
 imported/w3c/web-platform-tests/svg/extensibility/foreignObject/foreign-object-scale-scroll.html                  [ Pass ]
 imported/w3c/web-platform-tests/svg/extensibility/foreignObject/foreign-object-with-position-under-clip-path.html [ Pass ]
 imported/w3c/web-platform-tests/svg/extensibility/foreignObject/isolation-with-html.html                          [ Pass ]
