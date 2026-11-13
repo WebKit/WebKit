@@ -30,6 +30,7 @@
 
 #pragma once
 
+#include <wtf/Function.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -61,7 +62,8 @@ public:
 
     InspectorHistory() = default;
 
-    ExceptionOr<void> perform(std::unique_ptr<Action>);
+    // `didPerform` runs after a successful perform(), while the action is still guaranteed to be alive.
+    ExceptionOr<void> perform(std::unique_ptr<Action>, NOESCAPE const Function<void()>& didPerform = { });
     void markUndoableState();
 
     ExceptionOr<void> undo();

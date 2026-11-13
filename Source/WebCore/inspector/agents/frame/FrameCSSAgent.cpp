@@ -531,12 +531,14 @@ Inspector::CommandResult<Ref<Inspector::Protocol::CSS::CSSRule>> FrameCSSAgent::
 
     auto action = makeUnique<AddRuleAction>(inspectorStyleSheet.get(), selector);
     auto& rawAction = *action;
-    auto performResult = domAgent->history()->perform(WTF::move(action));
+    InspectorCSSId newRuleId;
+    auto performResult = domAgent->history()->perform(WTF::move(action), [&] {
+        newRuleId = rawAction.newRuleId();
+    });
     if (performResult.hasException())
         return makeUnexpected(InspectorDOMAgent::toErrorString(performResult.releaseException()));
 
-    // FIXME <https://webkit.org/b/317684>: Reconsider whether accessing rawAction.newRuleId here is safe.
-    auto rule = inspectorStyleSheet->buildObjectForRule(protect(inspectorStyleSheet->ruleForId(rawAction.newRuleId())));
+    auto rule = inspectorStyleSheet->buildObjectForRule(protect(inspectorStyleSheet->ruleForId(newRuleId)));
     if (!rule)
         return makeUnexpected("Internal error: missing style sheet"_s);
 
