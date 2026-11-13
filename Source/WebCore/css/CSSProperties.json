@@ -8765,7 +8765,8 @@
                 "computed-style-storage-path": ["m_svgData", "strokeData"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::SVGStrokeDashoffset",
-                "parser-grammar": "<length-percentage> | <number>"
+                "parser-grammar": "<number> | <length-percentage>",
+                "parser-grammar-comment": "Current spec grammar is '<length-percentage> | <number>'. <number> goes first so that 0 is a <number> (css-values-4 lengths)."
             },
             "specification": {
                 "category": "svg",
@@ -8893,7 +8894,8 @@
                 "computed-style-storage-path": ["m_inheritedRareData"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::StrokeWidth",
-                "parser-grammar": "<length-percentage [0,inf]> | <number [0,inf]>",
+                "parser-grammar": "<number [0,inf]> | <length-percentage [0,inf]>",
+                "parser-grammar-comment": "Current spec grammar is '<length-percentage [0,inf]> | <number [0,inf]>'. <number> goes first so that 0 is a <number> (css-values-4 lengths).",
                 "applies-to-highlight-pseudo-elements": "yes"
             },
             "status": "supported",

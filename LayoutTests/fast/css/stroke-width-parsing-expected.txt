@@ -14,13 +14,12 @@ target.style.strokeWidth = '20';
 PASS target.style.strokeWidth is "20"
 PASS getComputedStyle(target).strokeWidth is "20px"
 target.style.strokeWidth = '0';
-FAIL target.style.strokeWidth should be 0. Was 0px.
+PASS target.style.strokeWidth is "0"
 PASS getComputedStyle(target).strokeWidth is "0px"
 target.style.strokeWidth = '-30px';
 PASS target.style.strokeWidth is ""
 PASS getComputedStyle(target).strokeWidth is "1px"
 PASS successfullyParsed is true
-Some tests failed.
 
 TEST COMPLETE
 
