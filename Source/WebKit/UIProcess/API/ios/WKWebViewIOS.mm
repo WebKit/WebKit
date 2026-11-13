@@ -1846,6 +1846,12 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 #else
         const double webViewStandardFontSize = 16;
         scale = clampTo<double>(webViewStandardFontSize / fontSize, minimumScale, maximumScale);
+
+        // Don't bother zooming if the change would be too subtle to meaningfully improve legibility,
+        // since even a slight zoom causes horizontal overflow on responsive pages.
+        const double minimumRelativeScaleChangeToRevealFocusedElement = 0.1;
+        if (std::abs(scale / currentScale - 1) < minimumRelativeScaleChangeToRevealFocusedElement)
+            scale = currentScale;
 #endif
     }
 

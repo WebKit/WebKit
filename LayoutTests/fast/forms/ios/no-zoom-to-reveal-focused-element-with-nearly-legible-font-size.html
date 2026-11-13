@@ -1,0 +1,66 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <script src="../../../resources/js-test.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <style>
+        input {
+            display: block;
+            width: 100px;
+            margin: 10px;
+        }
+
+        #nearly-legible {
+            font-size: 15px;
+        }
+
+        #small {
+            font-size: 14px;
+        }
+    </style>
+    <script>
+        jsTestIsAsync = true;
+
+        async function focusAndWaitForZoomToSettle(element)
+        {
+            await UIHelper.activateElementAndWaitForInputSession(element);
+            await UIHelper.waitForZoomingOrScrollingToEnd();
+            return UIHelper.waitForZoomScaleToSettle();
+        }
+
+        async function blurAndWaitForKeyboardToHide(element)
+        {
+            element.blur();
+            await UIHelper.waitForKeyboardToHide();
+            await UIHelper.waitForZoomingOrScrollingToEnd();
+        }
+
+        addEventListener("load", async () => {
+            description("Verifies that we don't zoom to reveal a focused element when the zoom would be too subtle to meaningfully improve legibility; requires WebKitTestRunner.");
+
+            await UIHelper.setHardwareKeyboardAttached(false);
+            const nearlyLegibleField = document.getElementById("nearly-legible");
+            const smallField = document.getElementById("small");
+
+            debug("Focusing a field with 15px text");
+            scale = await focusAndWaitForZoomToSettle(nearlyLegibleField);
+            shouldBe("scale", "1");
+            await blurAndWaitForKeyboardToHide(nearlyLegibleField);
+
+            debug("\nFocusing a field with 14px text");
+            scale = await focusAndWaitForZoomToSettle(smallField);
+            shouldBeTrue("scale > 1");
+            await blurAndWaitForKeyboardToHide(smallField);
+
+            finishJSTest();
+        });
+    </script>
+</head>
+<body>
+    <input id="nearly-legible" type="text">
+    <input id="small" type="text">
+    <div id="description"></div>
+    <div id="console"></div>
+</body>
+</html>
