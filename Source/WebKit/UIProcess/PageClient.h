@@ -488,6 +488,9 @@ public:
 #if ENABLE(TOUCH_EVENTS)
     virtual void doneWithTouchEvent(const WebTouchEvent&, bool wasEventHandled) = 0;
 #endif
+#if ENABLE(COORDINATED_TOUCH_EVENTS)
+    virtual bool isTouchScrollInProgress() const { return false; }
+#endif
 #if ENABLE(IOS_TOUCH_EVENTS)
     virtual void doneDeferringTouchStart(bool preventNativeGestures) = 0;
     virtual void doneDeferringTouchMove(bool preventNativeGestures) = 0;

@@ -6143,6 +6143,15 @@ void WebPageProxy::processNextQueuedTouchEvent()
     });
 }
 
+void WebPageProxy::handleUnpreventableTouchEvent(NativeWebTouchEvent& event)
+{
+    event.setCanPreventNativeGestures(false);
+    auto frameID = m_mainFrame->frameID();
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::EventDispatcher::TouchEvent(webPageIDInProcess(processContainingFrame(frameID)), frameID, Ref { event }), [](WebEventType, bool) { });
+    if (RefPtr pageClient = this->pageClient())
+        pageClient->doneWithTouchEvent(event, false);
+}
+
 void WebPageProxy::handleTouchEvent(IPC::Connection*, Ref<NativeWebTouchEvent>&& event)
 {
     if (!hasRunningProcess())
@@ -6150,6 +6159,14 @@ void WebPageProxy::handleTouchEvent(IPC::Connection*, Ref<NativeWebTouchEvent>&&
 
     if (!m_mainFrame)
         return;
+
+    // Only when nothing is queued, so that this event doesn't overtake older ones.
+    RefPtr pageClient = this->pageClient();
+    bool isTouchStart = event->type() == WebEventType::TouchStart;
+    if (!isTouchStart && internals().touchEventQueue.isEmpty() && pageClient && pageClient->isTouchScrollInProgress()) {
+        handleUnpreventableTouchEvent(event);
+        return;
+    }
 
     // Coalesce the touch moves waiting to be sent to the web process. The newer event replaces the
     // queued one so that the page gets the latest touch point positions. The first queued event has

@@ -42,6 +42,10 @@ public:
 
     const Vector<PlatformTouchEvent>& predictedEvents() const LIFETIME_BOUND { return m_predictedEvents; }
 
+#if ENABLE(COORDINATED_TOUCH_EVENTS)
+    bool canPreventNativeGestures() const { return m_canPreventNativeGestures; }
+#endif
+
 #if PLATFORM(WPE)
     // FIXME: since WPE currently does not send touch stationary events, we need to be able to set
     // TouchCancelled touchPoints subsequently
@@ -52,6 +56,9 @@ protected:
     Vector<PlatformTouchPoint> m_touchPoints;
     Vector<PlatformTouchEvent> m_coalescedEvents;
     Vector<PlatformTouchEvent> m_predictedEvents;
+#if ENABLE(COORDINATED_TOUCH_EVENTS)
+    bool m_canPreventNativeGestures { true };
+#endif
 };
 
 }
