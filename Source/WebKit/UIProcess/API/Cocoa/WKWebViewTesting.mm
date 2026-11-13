@@ -379,8 +379,11 @@ static void collectSublayersToDump(CALayer *layer, _WKCALayerTreeAsTextOptions o
 
 static void dumpSublayers(TextStream& ts, CALayer *layer, _WKCALayerTreeAsTextOptions options)
 {
-    Vector<RetainPtr<CALayer>> sublayers;
-    collectSublayersToDump(layer, options, sublayers);
+    const auto sublayers = [&] {
+        Vector<RetainPtr<CALayer>> sublayers;
+        collectSublayersToDump(layer, options, sublayers);
+        return sublayers;
+    }();
     if (sublayers.isEmpty())
         return;
 
