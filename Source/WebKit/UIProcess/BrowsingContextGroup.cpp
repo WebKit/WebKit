@@ -28,6 +28,7 @@
 
 #include "APIPageConfiguration.h"
 #include "APIWebsitePolicies.h"
+#include "DrawingAreaProxy.h"
 #include "EnhancedSecurity.h"
 #include "FrameProcess.h"
 #include "Logging.h"
@@ -505,7 +506,9 @@ void BrowsingContextGroup::transitionProvisionalPageToRemotePage(ProvisionalPage
         ASSERT(existingPage->page() == newRemotePage->page());
     }
 #endif
-    set.add(WTF::move(newRemotePage));
+    set.add(newRemotePage.copyRef());
+    if (RefPtr drawingArea = page.page()->drawingArea())
+        newRemotePage->setDrawingArea(drawingArea.get());
 }
 
 bool BrowsingContextGroup::hasRemotePages(const WebPageProxy& page)

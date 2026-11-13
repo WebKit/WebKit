@@ -277,6 +277,24 @@ void ProvisionalPageProxy::cancel(ProvisionalLoadIsReplaced isReplaced)
     didFailProvisionalLoad(WTF::move(frameInfo), ResourceRequest { m_request }, m_navigationID, String { m_provisionalLoadURL.string() }, WTF::move(error), WebCore::WillContinueLoading::No, UserData { }, WebCore::WillInternallyHandleFailure::No, isReplaced); // Will delete |this|.
 }
 
+void ProvisionalPageProxy::navigationWillContinueInAnotherProcess()
+{
+    RefPtr page = m_page;
+    RefPtr mainFrame = m_mainFrame;
+    if (!page || !mainFrame)
+        return;
+
+    if (m_siteOfTakenOverRemotePage) {
+        PROVISIONALPAGEPROXY_RELEASE_LOG(ProcessSwapping, "navigationWillContinueInAnotherProcess: Transitioning back to a remote page");
+        Ref process = this->process();
+        process->send(Messages::WebFrame::StopLoadingDueToProcessSwap(m_navigationID), mainFrame->frameID());
+        process->send(Messages::WebFrame::DestroyProvisionalFrame(), mainFrame->frameID());
+        m_browsingContextGroup->transitionProvisionalPageToRemotePage(*this, *m_siteOfTakenOverRemotePage);
+        m_shouldClosePage = false;
+    } else if (RefPtr takenRemotePage = std::exchange(m_takenRemotePage, nullptr))
+        m_browsingContextGroup->addRemotePage(*page, takenRemotePage.releaseNonNull());
+}
+
 void ProvisionalPageProxy::initializeWebPage(RefPtr<API::WebsitePolicies>&& websitePolicies, bool isRestoringFromBFCache)
 {
     Ref page = *m_page;
@@ -294,6 +312,7 @@ void ProvisionalPageProxy::initializeWebPage(RefPtr<API::WebsitePolicies>&& webs
         if (RefPtr existingRemotePageProxy = m_browsingContextGroup->takeRemotePageInProcessForProvisionalPage(page, process)) {
             if (m_shouldReuseMainFrame) {
                 m_webPageID = existingRemotePageProxy->pageID();
+                m_siteOfTakenOverRemotePage = existingRemotePageProxy->site();
                 m_mainFrame = existingRemotePageProxy->page()->mainFrame();
                 m_messageReceiverRegistration.stopReceivingMessages();
                 m_messageReceiverRegistration.transferMessageReceivingFrom(existingRemotePageProxy->messageReceiverRegistration(), *this, *this);

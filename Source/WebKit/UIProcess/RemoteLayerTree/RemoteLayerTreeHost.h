@@ -118,6 +118,7 @@ public:
     bool cssUnprefixedBackdropFilterEnabled() const;
 
     void remotePageProcessDidTerminate(WebCore::ProcessIdentifier);
+    void removeLayersFromProcess(WebCore::ProcessIdentifier);
 
 #if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
     void updateOrDeferInteractionRegions(RemoteLayerTreeNode&);
