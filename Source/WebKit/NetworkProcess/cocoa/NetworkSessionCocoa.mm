@@ -427,7 +427,7 @@ static void updateIgnoreStrictTransportSecuritySetting(RetainPtr<NSURLRequest>& 
     if (RefPtr networkDataTask = [self existingTask:task]) {
         bool shouldIgnoreHSTS = false;
         if (CheckedPtr sessionCocoa = networkDataTask->networkSession()) {
-            CheckedPtr storageSession = sessionCocoa->networkProcess().storageSession(sessionCocoa->sessionID());
+            CheckedPtr storageSession = protect(WebKit::NetworkProcess::singleton())->storageSession(sessionCocoa->sessionID());
             RetainPtr firstPartyForCookies = networkDataTask->isTopLevelNavigation() ? request.URL : request.mainDocumentURL;
             shouldIgnoreHSTS = schemeWasUpgradedDueToDynamicHSTS(request)
                 && storageSession->thirdPartyCookieBlockingDecisionForRequest(firstPartyForCookies.get(), request.URL, networkDataTask->frameID(), networkDataTask->webPageProxyID(), networkDataTask->shouldRelaxThirdPartyCookieBlocking(), NetworkSession::isRequestToKnownCrossSiteTracker(request)) != WebCore::ThirdPartyCookieBlockingDecision::None;
@@ -491,7 +491,7 @@ static void updateIgnoreStrictTransportSecuritySetting(RetainPtr<NSURLRequest>& 
     if (RefPtr networkDataTask = [self existingTask:task]) {
         bool shouldIgnoreHSTS = false;
         if (CheckedPtr sessionCocoa = networkDataTask->networkSession()) {
-            CheckedPtr storageSession = sessionCocoa->networkProcess().storageSession(sessionCocoa->sessionID());
+            CheckedPtr storageSession = protect(WebKit::NetworkProcess::singleton())->storageSession(sessionCocoa->sessionID());
             shouldIgnoreHSTS = schemeWasUpgradedDueToDynamicHSTS(request)
                 && storageSession->thirdPartyCookieBlockingDecisionForRequest(request, networkDataTask->frameID(), networkDataTask->webPageProxyID(), networkDataTask->shouldRelaxThirdPartyCookieBlocking(), NetworkSession::isRequestToKnownCrossSiteTracker(request)) != WebCore::ThirdPartyCookieBlockingDecision::None;
             if (shouldIgnoreHSTS) {
@@ -560,8 +560,8 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
 
     if (auto downloadID = _sessionWrapper->downloadMap.getOptional(task.taskIdentifier)) {
         if (CheckedPtr session = _session.get()) {
-            if (RefPtr download = protect(session->networkProcess().downloadManager())->download(*downloadID))
-                return downcast<NetworkSessionCocoa>(session->networkProcess().networkSession(download->sessionID()));
+            if (RefPtr download = protect(protect(WebKit::NetworkProcess::singleton())->downloadManager())->download(*downloadID))
+                return downcast<NetworkSessionCocoa>(protect(WebKit::NetworkProcess::singleton())->networkSession(download->sessionID()));
         }
         return nullptr;
     }
@@ -574,7 +574,7 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
 
 void NetworkSessionCocoa::setClientAuditToken(const WebCore::AuthenticationChallenge& challenge)
 {
-    if (auto auditData = networkProcess().sourceApplicationAuditData())
+    if (auto auditData = protect(NetworkProcess::singleton())->sourceApplicationAuditData())
         SecTrustSetClientAuditToken(RetainPtr { protect(challenge.nsURLAuthenticationChallenge()).get().protectionSpace.serverTrust }.get(), auditData.get());
 
 }
@@ -776,7 +776,7 @@ static NSDictionary<NSString *, id> *extractResolutionReport(NSError *error)
             return;
         if (!_session)
             return;
-        RefPtr download = protect(_session->networkProcess().downloadManager())->download(*downloadID);
+        RefPtr download = protect(protect(WebKit::NetworkProcess::singleton())->downloadManager())->download(*downloadID);
         if (!download)
             return;
 
@@ -971,7 +971,7 @@ static NSDictionary<NSString *, id> *extractResolutionReport(NSError *error)
     if (!downloadID)
         return;
     if (CheckedPtr session = _session.get()) {
-        if (RefPtr download = protect(session->networkProcess().downloadManager())->download(*downloadID))
+        if (RefPtr download = protect(protect(WebKit::NetworkProcess::singleton())->downloadManager())->download(*downloadID))
             download->didFinish();
     }
 }
@@ -986,7 +986,7 @@ static NSDictionary<NSString *, id> *extractResolutionReport(NSError *error)
     if (!downloadID)
         return;
     if (CheckedPtr session = _session.get()) {
-        if (RefPtr download = protect(session->networkProcess().downloadManager())->download(*downloadID))
+        if (RefPtr download = protect(protect(WebKit::NetworkProcess::singleton())->downloadManager())->download(*downloadID))
             download->didReceiveData(bytesWritten, totalBytesWritten, totalBytesExpectedToWrite);
     }
 }
@@ -1001,7 +1001,7 @@ static NSDictionary<NSString *, id> *extractResolutionReport(NSError *error)
         return;
 
     auto downloadID = *networkDataTask->pendingDownloadID();
-    CheckedRef downloadManager = sessionCocoa->networkProcess().downloadManager();
+    CheckedRef downloadManager = protect(WebKit::NetworkProcess::singleton())->downloadManager();
     Ref download = WebKit::Download::create(downloadManager, downloadID, downloadTask, *sessionCocoa, networkDataTask->suggestedFilename(), networkDataTask->advancedPrivacyProtections());
     networkDataTask->transferSandboxExtensionToDownload(download);
     ASSERT(FileSystem::fileExists(networkDataTask->pendingDownloadLocation()));
@@ -1098,9 +1098,9 @@ NSURLCredentialStorage *NetworkSessionCocoa::nsCredentialStorage() const
     return m_defaultSessionSet->sessionWithCredentialStorage->session.get().configuration.URLCredentialStorage;
 }
 
-std::unique_ptr<NetworkSession> NetworkSessionCocoa::create(NetworkProcess& networkProcess, const NetworkSessionCreationParameters& parameters)
+std::unique_ptr<NetworkSession> NetworkSessionCocoa::create(const NetworkSessionCreationParameters& parameters)
 {
-    return makeUnique<NetworkSessionCocoa>(networkProcess, parameters);
+    return makeUnique<NetworkSessionCocoa>(parameters);
 }
 
 static RetainPtr<NSDictionary> proxyDictionary(const URL& httpProxy, const URL& httpsProxy)
@@ -1137,7 +1137,7 @@ void SessionWrapper::initialize(NSURLSessionConfiguration *configuration, Networ
     UNUSED_PARAM(isNavigatingToAppBoundDomain);
 
     // FIXME: The following `isParentProcessAFullWebBrowser` check is inaccurate in Safari on macOS.
-    auto isFullBrowser = isParentProcessAFullWebBrowser(networkSession.networkProcess());
+    auto isFullBrowser = isParentProcessAFullWebBrowser(protect(NetworkProcess::singleton()).get());
 #if PLATFORM(MAC)
     isFullBrowser = WTF::MacApplication::isSafari();
 #endif
@@ -1150,8 +1150,8 @@ void SessionWrapper::initialize(NSURLSessionConfiguration *configuration, Networ
     session = [NSURLSession sessionWithConfiguration:configuration delegate:delegate.get() delegateQueue:[NSOperationQueue mainQueue]];
 }
 
-NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, const NetworkSessionCreationParameters& parameters)
-    : NetworkSession(networkProcess, parameters)
+NetworkSessionCocoa::NetworkSessionCocoa(const NetworkSessionCreationParameters& parameters)
+    : NetworkSession(parameters)
     , m_defaultSessionSet(SessionSet::create())
     , m_boundInterfaceIdentifier(parameters.boundInterfaceIdentifier)
     , m_sourceApplicationBundleIdentifier(parameters.sourceApplicationBundleIdentifier)
@@ -1169,7 +1169,7 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, const N
     sessionsCreated = true;
 #endif
 
-    RetainPtr configuration = configurationForSessionID(m_sessionID, networkProcess.isParentProcessFullWebBrowserOrRunningTest());
+    RetainPtr configuration = configurationForSessionID(m_sessionID, NetworkProcess::singleton().isParentProcessFullWebBrowserOrRunningTest());
 
     if (!m_sessionID.isEphemeral())
         m_blobRegistry.setFileDirectory(FileSystem::createTemporaryDirectory(@"BlobRegistryFiles"));
@@ -1205,7 +1205,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     // The WebKit network cache was already queried.
     configuration.get().URLCache = nil;
 
-    if (auto data = networkProcess.sourceApplicationAuditData())
+    if (auto data = NetworkProcess::singleton().sourceApplicationAuditData())
         configuration.get()._sourceApplicationAuditTokenData = (__bridge NSData *)data.get();
 
     if (!m_sourceApplicationBundleIdentifier.isEmpty()) {
@@ -1238,7 +1238,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
 #if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
-    protect(networkProcess.supplement<LegacyCustomProtocolManager>())->registerProtocolClass(configuration.get());
+    protect(NetworkProcess::singleton().supplement<LegacyCustomProtocolManager>())->registerProtocolClass(configuration.get());
 #endif
 
     configuration.get()._timingDataOptions = _TimingDataOptionsEnableW3CNavigationTiming;
@@ -1251,7 +1251,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     configuration.get()._companionProxyPreference = NSURLSessionCompanionProxyPreferencePreferDirectToCloud;
 #endif
 
-    CheckedPtr storageSession = networkProcess.storageSession(parameters.sessionID);
+    CheckedPtr storageSession = NetworkProcess::singleton().storageSession(parameters.sessionID);
     RELEASE_ASSERT(storageSession);
 
     RetainPtr<NSHTTPCookieStorage> cookieStorage;
@@ -1402,7 +1402,7 @@ CheckedRef<SessionWrapper> NetworkSessionCocoa::sessionWrapperForTask(std::optio
 {
     auto shouldBeConsideredAppBound = isNavigatingToAppBoundDomain ? *isNavigatingToAppBoundDomain : NavigatingToAppBoundDomain::Yes;
     // FIXME: The following `isParentProcessAFullWebBrowser` check is inaccurate in Safari on macOS.
-    if (isParentProcessAFullWebBrowser(networkProcess()))
+    if (isParentProcessAFullWebBrowser(protect(NetworkProcess::singleton()).get()))
         shouldBeConsideredAppBound = NavigatingToAppBoundDomain::No;
 
     if (CheckedPtr storageSession = networkStorageSession()) {
@@ -1646,10 +1646,10 @@ void NetworkSessionCocoa::clearCredentials(WallTime modifiedSince)
     }
 }
 
-static CompletionHandler<void(WebKit::AuthenticationChallengeDisposition disposition, const WebCore::Credential& credential)> createChallengeCompletionHandler(Ref<NetworkProcess>&& networkProcess, PAL::SessionID sessionID,  const WebCore::AuthenticationChallenge& challenge, const String& partition, uint64_t taskIdentifier, CompletionHandler<void(WebKit::AuthenticationChallengeDisposition, const WebCore::Credential&)>&& completionHandler)
+static CompletionHandler<void(WebKit::AuthenticationChallengeDisposition disposition, const WebCore::Credential& credential)> createChallengeCompletionHandler(PAL::SessionID sessionID,  const WebCore::AuthenticationChallenge& challenge, const String& partition, uint64_t taskIdentifier, CompletionHandler<void(WebKit::AuthenticationChallengeDisposition, const WebCore::Credential&)>&& completionHandler)
  {
     WebCore::AuthenticationChallenge authenticationChallenge { challenge };
-    return [completionHandler = WTF::move(completionHandler), networkProcess = WTF::move(networkProcess), sessionID, authenticationChallenge, taskIdentifier, partition](WebKit::AuthenticationChallengeDisposition disposition, const WebCore::Credential& credential) mutable {
+    return [completionHandler = WTF::move(completionHandler), sessionID, authenticationChallenge, taskIdentifier, partition](WebKit::AuthenticationChallengeDisposition disposition, const WebCore::Credential& credential) mutable {
 #if !LOG_DISABLED
         LOG(NetworkSession, "%llu didReceiveChallenge completionHandler %hhu", taskIdentifier, disposition);
 #else
@@ -1660,7 +1660,7 @@ static CompletionHandler<void(WebKit::AuthenticationChallengeDisposition disposi
             URL urlToStore;
             if (authenticationChallenge.failureResponse().httpStatusCode() == httpStatus401Unauthorized)
                 urlToStore = authenticationChallenge.failureResponse().url();
-            if (CheckedPtr storageSession = networkProcess->storageSession(sessionID))
+            if (CheckedPtr storageSession = NetworkProcess::singleton().storageSession(sessionID))
                 storageSession->credentialStorage().set(partition, nonPersistentCredential, authenticationChallenge.protectionSpace(), urlToStore);
             else
                 ASSERT_NOT_REACHED();
@@ -1676,12 +1676,12 @@ void NetworkSessionCocoa::continueDidReceiveChallenge(SessionWrapper& sessionWra
 {
     if (!networkDataTask) {
         if (RefPtr webSocketTask = sessionWrapper.webSocketDataTaskMap.get(taskIdentifier).get()) {
-            auto challengeCompletionHandler = createChallengeCompletionHandler(networkProcess(), sessionID(), challenge, webSocketTask->partition(), 0, WTF::move(completionHandler));
-            protect(networkProcess().authenticationManager())->didReceiveAuthenticationChallenge(sessionID(), webSocketTask->webPageProxyID(), !webSocketTask->topOrigin().isNull() ? &webSocketTask->topOrigin() : nullptr, challenge, negotiatedLegacyTLS, WTF::move(challengeCompletionHandler));
+            auto challengeCompletionHandler = createChallengeCompletionHandler(sessionID(), challenge, webSocketTask->partition(), 0, WTF::move(completionHandler));
+            protect(protect(NetworkProcess::singleton())->authenticationManager())->didReceiveAuthenticationChallenge(sessionID(), webSocketTask->webPageProxyID(), !webSocketTask->topOrigin().isNull() ? &webSocketTask->topOrigin() : nullptr, challenge, negotiatedLegacyTLS, WTF::move(challengeCompletionHandler));
             return;
         }
         if (auto downloadID = sessionWrapper.downloadMap.getOptional(taskIdentifier)) {
-            if (RefPtr download = protect(networkProcess().downloadManager())->download(*downloadID)) {
+            if (RefPtr download = protect(protect(NetworkProcess::singleton())->downloadManager())->download(*downloadID)) {
                 WebCore::AuthenticationChallenge authenticationChallenge { challenge };
                 // Received an authentication challenge for a download being resumed.
                 download->didReceiveChallenge(authenticationChallenge, WTF::move(completionHandler));
@@ -1693,7 +1693,7 @@ void NetworkSessionCocoa::continueDidReceiveChallenge(SessionWrapper& sessionWra
         return;
     }
 
-    auto challengeCompletionHandler = createChallengeCompletionHandler(networkProcess(), sessionID(), challenge, networkDataTask->partition(), taskIdentifier, WTF::move(completionHandler));
+    auto challengeCompletionHandler = createChallengeCompletionHandler(sessionID(), challenge, networkDataTask->partition(), taskIdentifier, WTF::move(completionHandler));
     if (negotiatedLegacyTLS == NegotiatedLegacyTLS::Yes
         && fastServerTrustEvaluationEnabled()
         && !networkDataTask->isTopLevelNavigation())
@@ -1764,7 +1764,7 @@ RefPtr<WebSocketTask> NetworkSessionCocoa::createWebSocketTask(WebPageProxyIdent
 #if ENABLE(OPT_IN_PARTITIONED_COOKIES) && defined(CFN_COOKIE_ACCEPTS_POLICY_PARTITION) && CFN_COOKIE_ACCEPTS_POLICY_PARTITION
     if ([ensureMutableRequest() respondsToSelector:@selector(_setAllowOnlyPartitionedCookies:)]) {
         if (CheckedPtr storageSession = networkStorageSession(); storageSession && storageSession->isOptInCookiePartitioningEnabled()) {
-            bool shouldAllowOnlyPartitioned = storageSession->thirdPartyCookieBlockingDecisionForRequest(request, frameID, webPageProxyID, networkProcess().shouldRelaxThirdPartyCookieBlockingForPage(webPageProxyID), isRequestToKnownCrossSiteTracker(request)) == WebCore::ThirdPartyCookieBlockingDecision::AllExceptPartitioned;
+            bool shouldAllowOnlyPartitioned = storageSession->thirdPartyCookieBlockingDecisionForRequest(request, frameID, webPageProxyID, protect(NetworkProcess::singleton())->shouldRelaxThirdPartyCookieBlockingForPage(webPageProxyID), isRequestToKnownCrossSiteTracker(request)) == WebCore::ThirdPartyCookieBlockingDecision::AllExceptPartitioned;
             [mutableRequest _setAllowOnlyPartitionedCookies:shouldAllowOnlyPartitioned];
         }
     }
@@ -1901,14 +1901,14 @@ void NetworkSessionCocoa::dataTaskWithRequest(WebPageProxyIdentifier pageID, Web
 {
     auto identifier = DataTaskIdentifier::generate();
     if (request.url().protocolIsBlob()) {
-        m_blobDataTasksForAPI.add(identifier, BlobDataTaskClient::create(WTF::move(request), topOrigin, *this, protect(networkProcess().parentProcessConnection()).get(), identifier));
+        m_blobDataTasksForAPI.add(identifier, BlobDataTaskClient::create(WTF::move(request), topOrigin, *this, protect(protect(NetworkProcess::singleton())->parentProcessConnection()).get(), identifier));
         return completionHandler(identifier);
     }
 
     RetainPtr nsRequest = request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody);
     if (![nsRequest URL]) {
         completionHandler(identifier);
-        protect(networkProcess().parentProcessConnection())->send(Messages::NetworkProcessProxy::DataTaskDidCompleteWithError(identifier, cannotShowURLError(request)), 0);
+        protect(protect(NetworkProcess::singleton())->parentProcessConnection())->send(Messages::NetworkProcessProxy::DataTaskDidCompleteWithError(identifier, cannotShowURLError(request)), 0);
         return;
     }
 
@@ -2014,7 +2014,7 @@ void NetworkSessionCocoa::donateToSKAdNetwork(WebCore::PrivateClickMeasurement&&
         ", sourceWebRegistrableDomain: "_s,
         pcm.sourceSite().registrableDomain.string(),
         ", version: 3"_s);
-    networkProcess().broadcastConsoleMessage(sessionID(), MessageSource::PrivateClickMeasurement, MessageLevel::Debug, debugString);
+    protect(NetworkProcess::singleton())->broadcastConsoleMessage(sessionID(), MessageSource::PrivateClickMeasurement, MessageLevel::Debug, debugString);
 }
 
 void NetworkSessionCocoa::deleteAlternativeServicesForHostNames(const Vector<String>& hosts)
@@ -2212,7 +2212,7 @@ void NetworkSessionCocoa::removeNetworkWebsiteData(std::optional<WallTime> modif
 
     auto bundleID = applicationBundleIdentifier();
     // FIXME: The following `isParentProcessAFullWebBrowser` check is inaccurate in Safari on macOS.
-    if (!isParentProcessAFullWebBrowser(networkProcess()) && !isActingOnBehalfOfAFullWebBrowser(bundleID))
+    if (!isParentProcessAFullWebBrowser(protect(NetworkProcess::singleton()).get()) && !isActingOnBehalfOfAFullWebBrowser(bundleID))
         return completionHandler();
 
     if (!SymptomAnalyticsLibrary()

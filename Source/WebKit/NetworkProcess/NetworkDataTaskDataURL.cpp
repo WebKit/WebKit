@@ -172,7 +172,7 @@ void NetworkDataTaskDataURL::downloadDecodedData(Vector<uint8_t>&& data)
         return;
     }
 
-    auto& downloadManager = m_session->networkProcess().downloadManager();
+    auto& downloadManager = protect(NetworkProcess::singleton())->downloadManager();
     Ref download = Download::create(downloadManager, *m_pendingDownloadID, *this, *m_session, suggestedFilename());
     downloadManager.dataTaskBecameDownloadTask(*m_pendingDownloadID, download.copyRef());
     download->didCreateDestination(m_pendingDownloadLocation);

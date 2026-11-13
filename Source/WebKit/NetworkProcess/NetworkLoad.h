@@ -91,7 +91,6 @@ public:
     void setTimingAllowFailedFlag();
     NODELETE std::optional<WebCore::FrameIdentifier> webFrameID() const;
     NODELETE std::optional<WebCore::PageIdentifier> webPageID() const;
-    NODELETE NetworkProcess& networkProcess();
 
     NODELETE size_t bytesTransferredOverNetwork() const;
 

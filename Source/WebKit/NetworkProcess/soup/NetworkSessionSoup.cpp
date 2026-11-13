@@ -42,8 +42,8 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkSessionSoup);
 
-NetworkSessionSoup::NetworkSessionSoup(NetworkProcess& networkProcess, const NetworkSessionCreationParameters& parameters)
-    : NetworkSession(networkProcess, parameters)
+NetworkSessionSoup::NetworkSessionSoup(const NetworkSessionCreationParameters& parameters)
+    : NetworkSession(parameters)
     , m_networkSession(makeUnique<SoupNetworkSession>(m_sessionID))
     , m_persistentCredentialStorageEnabled(parameters.persistentCredentialStorageEnabled)
 {
@@ -122,7 +122,7 @@ RefPtr<WebSocketTask> NetworkSessionSoup::createWebSocketTask(WebPageProxyIdenti
         }), this);
     }
 
-    bool shouldBlockCookies = protect(networkStorageSession())->shouldBlockCookies(request, frameID, webPageProxyID, networkProcess().shouldRelaxThirdPartyCookieBlockingForPage(webPageProxyID), WebCore::IsKnownCrossSiteTracker::No);
+    bool shouldBlockCookies = protect(networkStorageSession())->shouldBlockCookies(request, frameID, webPageProxyID, protect(NetworkProcess::singleton())->shouldRelaxThirdPartyCookieBlockingForPage(webPageProxyID), WebCore::IsKnownCrossSiteTracker::No);
     if (shouldBlockCookies)
         soup_message_disable_feature(soupMessage.get(), SOUP_TYPE_COOKIE_JAR);
 

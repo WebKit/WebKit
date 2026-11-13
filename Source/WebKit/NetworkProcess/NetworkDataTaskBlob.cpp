@@ -75,7 +75,6 @@ NetworkDataTaskBlob::NetworkDataTaskBlob(NetworkSession& session, NetworkDataTas
     : NetworkDataTask(session, client, request, StoredCredentialsPolicy::DoNotUse, false, false, false)
     , BlobResourceHandleBase(true /* async */, blobDataFrom(session, request, topOrigin.get()))
     , m_fileReferences(fileReferences)
-    , m_networkProcess(session.networkProcess())
 {
     for (Ref fileReference : borrow(m_fileReferences).get())
         fileReference->prepareForFileAccess();
@@ -209,7 +208,7 @@ void NetworkDataTaskBlob::download()
         return;
     }
 
-    CheckedRef downloadManager = m_networkProcess->downloadManager();
+    CheckedRef downloadManager = NetworkProcess::singleton().downloadManager();
     Ref download = Download::create(downloadManager, *m_pendingDownloadID, *this, *protect(networkSession()), suggestedFilename());
     downloadManager->dataTaskBecameDownloadTask(*m_pendingDownloadID, download.copyRef());
     download->didCreateDestination(m_pendingDownloadLocation);
@@ -230,7 +229,7 @@ bool NetworkDataTaskBlob::writeDownload(std::span<const uint8_t> data)
     }
 
     m_downloadBytesWritten += *bytesWritten;
-    RefPtr download = protect(m_networkProcess->downloadManager())->download(*m_pendingDownloadID);
+    RefPtr download = protect(NetworkProcess::singleton().downloadManager())->download(*m_pendingDownloadID);
     ASSERT(download);
     download->didReceiveData(*bytesWritten, m_downloadBytesWritten, totalSize());
     return true;
@@ -255,7 +254,7 @@ void NetworkDataTaskBlob::didFailDownload(const ResourceError& error)
     if (RefPtr client = m_client.get())
         client->didCompleteWithError(error);
     else {
-        RefPtr download = protect(m_networkProcess->downloadManager())->download(*m_pendingDownloadID);
+        RefPtr download = protect(NetworkProcess::singleton().downloadManager())->download(*m_pendingDownloadID);
         ASSERT(download);
         download->didFail(error, { });
     }
@@ -274,7 +273,7 @@ void NetworkDataTaskBlob::didFinishDownload()
 #endif
 
     clearStream();
-    RefPtr download = protect(m_networkProcess->downloadManager())->download(*m_pendingDownloadID);
+    RefPtr download = protect(NetworkProcess::singleton().downloadManager())->download(*m_pendingDownloadID);
     ASSERT(download);
 
 #if HAVE(MODERN_DOWNLOADPROGRESS)

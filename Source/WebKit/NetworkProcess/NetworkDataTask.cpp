@@ -97,7 +97,7 @@ NetworkDataTask::NetworkDataTask(NetworkSession& session, NetworkDataTaskClient&
         return;
     }
 
-    if (!session.networkProcess().ftpEnabled()
+    if (!protect(NetworkProcess::singleton())->ftpEnabled()
         && requestWithCredentials.url().protocolIsInFTPFamily()) {
         scheduleFailure(FailureType::FTPDisabled);
         return;

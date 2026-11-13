@@ -44,9 +44,9 @@
 namespace WebKit {
 using namespace WebCore;
 
-NODELETE static inline bool computeIsAlwaysOnLoggingAllowed(NetworkSession& session)
+static inline bool computeIsAlwaysOnLoggingAllowed(NetworkSession& session)
 {
-    if (session.networkProcess().sessionIsControlledByAutomation(session.sessionID()))
+    if (protect(NetworkProcess::singleton())->sessionIsControlledByAutomation(session.sessionID()))
         return true;
 
     return session.sessionID().isAlwaysOnLoggingAllowed();
@@ -442,7 +442,7 @@ bool NetworkTaskCocoa::shouldAllowOnlyPartitionedCookies(const WebCore::Resource
 
 ShouldRelaxThirdPartyCookieBlocking NetworkTaskCocoa::shouldRelaxThirdPartyCookieBlocking() const
 {
-    return m_networkSession->networkProcess().shouldRelaxThirdPartyCookieBlockingForPage(webPageProxyID());
+    return protect(NetworkProcess::singleton())->shouldRelaxThirdPartyCookieBlockingForPage(webPageProxyID());
 }
 
 } // namespace WebKit
