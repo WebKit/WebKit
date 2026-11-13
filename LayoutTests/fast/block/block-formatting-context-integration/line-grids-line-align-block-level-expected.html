@@ -1,0 +1,33 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { margin: 4px; }
+.grid { -webkit-line-grid: grid; -webkit-line-align: edges; font: 14px/17px sans-serif; width: 250px; padding: 0 7px 0 5px; margin-bottom: 4px; }
+.box { height: 10px; background: green; }
+</style>
+<div class=grid>
+  <div class=box style="float: left; width: 40px;"></div>
+  <div class=box style="float: right; width: 50px; background: blue;"></div>
+  <div class=box style="float: left; width: 60px; margin-left: 3px; background: orange;"></div>
+  <div class=box style="display: flow-root; background: gray;"></div>
+  <div class=box style="clear: both;"></div>
+</div>
+<div class=grid>
+  <div class=box style="float: left; width: 120px; height: 20px;"></div>
+  <div class=box style="float: left; width: 120px; height: 30px; background: blue;"></div>
+  <div class=box style="display: flow-root; width: 100px; background: gray;"></div>
+  <div class=box style="overflow: hidden; margin-left: 2px; background: orange;"></div>
+</div>
+<div class=grid>
+  <div class=box style="float: left; width: 120px; height: 15px;"></div>
+  <div class=box style="float: left; width: 80px; background: blue;"></div>
+  <div class=box style="clear: both; background: gray;"></div>
+</div>
+<div class=grid style="direction: rtl;">
+  <div class=box style="float: left; width: 40px;"></div>
+  <div class=box style="float: right; width: 50px; background: blue;"></div>
+  <div class=box style="display: flow-root; background: gray;"></div>
+</div>
+<div class=grid style="text-align: center; position: relative; height: 20px;">
+  <div class=box style="width: 10px;"></div>
+  <img style="position: absolute; width: 8px; height: 8px; background: red;">
+</div>

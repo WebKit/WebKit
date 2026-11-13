@@ -1000,7 +1000,8 @@ std::optional<LayoutUnit> BlockFormattingContext::placeBesideFloats(const Render
     auto contentBoxStart = containingBlockState.inlineRange.min();
     auto contentBoxEnd = containingBlockState.inlineRange.max();
     auto spaceBetween = [&](LayoutUnit top, LayoutUnit bottom) {
-        return spaceBesideFloats(floatingContext, containingBlockState, top, bottom);
+        auto [spaceStart, spaceEnd] = spaceBesideFloats(floatingContext, containingBlockState, top, bottom);
+        return spaceOnLineGridColumns(containingBlockState, spaceStart, spaceEnd);
     };
 
     // Its inline size and margins in a space, and where its border box starts in it, like RenderBlockFlow::determineLogicalLeftPositionForChild:
@@ -1042,6 +1043,15 @@ std::optional<LayoutUnit> BlockFormattingContext::placeBesideFloats(const Render
     auto layoutBorderBoxLogicalTop = hypotheticalBorderBoxLogicalTop;
     auto laidOutBorderBoxLogicalTop = std::optional<LayoutUnit> { };
     auto containingBlockBorderBoxInlineSize = std::optional<LayoutUnit> { };
+    // An auto start margin is in the space, a float may sit in a positive one, and a negative one pulls the box back only where no float is
+    // (RenderBlockFlow::determineLogicalLeftPositionForChild).
+    auto borderBoxStartInSpace = [&](LayoutUnit spaceStart, const BoxGeometry& geometry) {
+        if (marginStartLength.isAuto())
+            return spaceStart + geometry.marginStart();
+        if (spaceStart > contentBoxStart)
+            return std::max(contentBoxStart + geometry.marginStart(), spaceStart);
+        return contentBoxStart + geometry.marginStart();
+    };
     auto placementIn = [&](LayoutUnit spaceStart, LayoutUnit spaceEnd) {
         auto geometry = boxState.geometry;
         auto marginInFloats = [](LayoutUnit margin, LayoutUnit floatsInlineSize) {
@@ -1050,6 +1060,8 @@ std::optional<LayoutUnit> BlockFormattingContext::placeBesideFloats(const Render
         auto stretchFitInlineSize = spaceEnd - spaceStart - marginStart - marginEnd + marginInFloats(marginStart, spaceStart - contentBoxStart) + marginInFloats(marginEnd, contentBoxEnd - spaceEnd);
         if (!hasOwnInlineSize) {
             computeInlineSizeAndMargins(box, containingBlockState, geometry, stretchFitInlineSize + marginStart + marginEnd);
+            // Where it goes in the space, which -webkit-line-align puts its lines on the columns of the line grid from.
+            geometry.setLeft(borderBoxStartInSpace(spaceStart, geometry) + BlockFormattingUtils::justifySelfOffset(box, geometry.borderBoxWidth(), geometry.marginStart(), geometry.marginEnd(), containingBlockState.inlineRange.size(), containingBlockStyle));
             return Placement { WTF::move(geometry), spaceStart, spaceEnd };
         }
         auto borderBoxInlineSize = std::optional<LayoutUnit> { };
@@ -1157,17 +1169,8 @@ std::optional<LayoutUnit> BlockFormattingContext::placeBesideFloats(const Render
     // Its end margin still takes what makes the equality true in the containing block, past the floats (RenderBox::computeLogicalWidth).
     if (containingBlockState.inlineRange.size() && BlockFormattingUtils::ignoresEndMarginWhenOverConstrained(box, containingBlockStyle))
         geometry.setHorizontalMargin({ geometry.marginStart(), containingBlockState.inlineRange.size() - geometry.borderBoxWidth() - geometry.marginStart() });
-    // An auto start margin is in the space, a float may sit in a positive one, and a negative one pulls the box back only where no float is
-    // (RenderBlockFlow::determineLogicalLeftPositionForChild).
-    auto borderBoxStart = [&] {
-        if (marginStartLength.isAuto())
-            return placement.spaceStart + geometry.marginStart();
-        if (placement.spaceStart > contentBoxStart)
-            return std::max(contentBoxStart + geometry.marginStart(), placement.spaceStart);
-        return contentBoxStart + geometry.marginStart();
-    }();
     // justify-self moves it from there by the free space in the containing block, not in the space beside the floats.
-    geometry.setLeft(borderBoxStart + BlockFormattingUtils::justifySelfOffset(box, geometry.borderBoxWidth(), geometry.marginStart(), geometry.marginEnd(), containingBlockState.inlineRange.size(), containingBlockStyle));
+    geometry.setLeft(borderBoxStartInSpace(placement.spaceStart, geometry) + BlockFormattingUtils::justifySelfOffset(box, geometry.borderBoxWidth(), geometry.marginStart(), geometry.marginEnd(), containingBlockState.inlineRange.size(), containingBlockStyle));
     // Below the hypothetical position the floats put it, as clearance would (resolveBorderBoxLogicalTops).
     if (borderBoxLogicalTop > hypotheticalBorderBoxLogicalTop) {
         if (pendingFloats.isEmpty())
@@ -1416,6 +1419,32 @@ void BlockFormattingContext::handleFloat(const RenderBox& box, BlockLayoutResult
     if (isOpposite)
         geometryInRoot.setHorizontalMargin({ geometry.marginEnd(), geometry.marginStart() });
     geometryInRoot.setTopLeft(floatingContext.positionForFloat(box.layoutBox(), geometryInRoot, containingBlock));
+    // -webkit-line-align puts it against the edges of the space beside the floats on the columns of the line grid, lower down while its margin
+    // box, no wider than the content box, does not fit between them (RenderBlockFlow::computeLogicalLocationForFloat).
+    if (containingBlockState.lineGrid && containingBlockState.blockContainer->style().lineAlign() != LineAlign::None) {
+        auto marginBoxLogicalTop = containingBlockOffsetInRoot.height() + BoxGeometry::borderBoxTop(geometryInRoot) - geometry.marginBefore();
+        auto spaceAt = [&](LayoutUnit top) {
+            auto [spaceStart, spaceEnd] = spaceBesideFloats(floatingContext, containingBlockState, top, top);
+            return spaceOnLineGridColumns(containingBlockState, spaceStart, spaceEnd);
+        };
+        auto marginBoxInlineSize = std::min(geometry.marginBoxWidth(), containingBlockState.inlineRange.size());
+        auto [spaceStart, spaceEnd] = spaceAt(marginBoxLogicalTop);
+        while (spaceEnd - spaceStart < marginBoxInlineSize) {
+            auto nextFloatLogicalBottom = std::optional<LayoutUnit> { };
+            for (auto& floatItem : placedFloats.list()) {
+                auto floatLogicalBottom = floatItem.absoluteRectWithMargin().bottom();
+                if (floatLogicalBottom > marginBoxLogicalTop && (!nextFloatLogicalBottom || floatLogicalBottom < *nextFloatLogicalBottom))
+                    nextFloatLogicalBottom = floatLogicalBottom;
+            }
+            if (!nextFloatLogicalBottom)
+                break;
+            marginBoxLogicalTop = *nextFloatLogicalBottom;
+            std::tie(spaceStart, spaceEnd) = spaceAt(marginBoxLogicalTop);
+        }
+        auto isAtInlineStart = (box.usedStyle().floating() == UsedFloat::Left) == containingBlockState.blockContainer->writingMode().isLogicalLeftInlineStart();
+        auto borderBoxStart = (isAtInlineStart ? spaceStart : spaceEnd - marginBoxInlineSize) + geometry.marginStart();
+        geometryInRoot.setTopLeft({ isOpposite ? containingBlockInlineSize - borderBoxStart - geometry.borderBoxWidth() : borderBoxStart, marginBoxLogicalTop - containingBlockOffsetInRoot.height() + geometry.marginBefore() });
+    }
     // Its content snaps to the line grid around it from where it goes (RenderBlockFlow::positionNewFloats places a float before its layout),
     // where it stays.
     if (lineGridForBoxLaidOutThroughRenderTree(box, containingBlockState, { })) {
@@ -1455,13 +1484,16 @@ void BlockFormattingContext::handleOutOfFlowBox(const RenderBox& box, BlockLayou
     auto lineRange = [&] {
         auto& inlineRange = parentState.inlineRange;
         auto* placedFloats = m_blockLayoutState.placedFloats();
-        if (!placedFloats || placedFloats->isEmpty())
-            return inlineRange;
-        auto& rootState = m_blockLayoutState.containingBlockStates().first();
-        auto floats = floatsAtHypotheticalPosition();
-        auto staticBlockPositionInRoot = hypotheticalPosition().borderBoxLogicalTop;
-        auto floatingContext = FloatingContext { root().layoutBox(), floats, { }, rootState.geometry.borderBoxWidth() };
-        auto [lineStart, lineEnd] = spaceBesideFloats(floatingContext, parentState, staticBlockPositionInRoot, staticBlockPositionInRoot);
+        auto lineStart = inlineRange.min();
+        auto lineEnd = inlineRange.max();
+        if (placedFloats && !placedFloats->isEmpty()) {
+            auto& rootState = m_blockLayoutState.containingBlockStates().first();
+            auto floats = floatsAtHypotheticalPosition();
+            auto staticBlockPositionInRoot = hypotheticalPosition().borderBoxLogicalTop;
+            auto floatingContext = FloatingContext { root().layoutBox(), floats, { }, rootState.geometry.borderBoxWidth() };
+            std::tie(lineStart, lineEnd) = spaceBesideFloats(floatingContext, parentState, staticBlockPositionInRoot, staticBlockPositionInRoot);
+        }
+        std::tie(lineStart, lineEnd) = spaceOnLineGridColumns(parentState, lineStart, lineEnd);
         return LayoutRange { lineStart, lineEnd - lineStart };
     };
     auto staticInlinePosition = [&] {
@@ -1757,6 +1789,31 @@ std::optional<LineGridInLayoutState> BlockFormattingContext::lineGridInLayoutSta
         addLineGrid(lineGrid.blockContainer, inLayoutState(lineGridBorderBoxOffsetAndBorderAndPaddingBefore(lineGrid).first));
     }
     return LineGridInLayoutState { WTF::move(lineGrids), inLayoutState(borderBoxOffset) };
+}
+
+// -webkit-line-align puts the edges of the space the block-level boxes in a block container go in, and the out-of-flow boxes that were inline-level,
+// on the columns of the line grid of its content, from the border box of the block container that establishes it, the start pushed in and the end
+// pulled back to the nearest column (RenderBlock::adjustLogicalLeftOffsetForLine, adjustLogicalRightOffsetForLine).
+std::pair<LayoutUnit, LayoutUnit> BlockFormattingContext::spaceOnLineGridColumns(const ContainingBlockState& blockContainerState, LayoutUnit start, LayoutUnit end)
+{
+    auto& lineGrid = blockContainerState.lineGrid;
+    CheckedRef blockContainer = blockContainerState.blockContainer;
+    if (!lineGrid || blockContainer->style().lineAlign() == LineAlign::None || lineGrid->blockContainer->writingMode().computedWritingMode() != blockContainer->writingMode().computedWritingMode())
+        return { start, end };
+    float columnWidth = lineGrid->blockContainer->style().fontCascade().primaryFont().maxCharWidth();
+    if (!columnWidth)
+        return { start, end };
+    auto offset = borderBoxLogicalLeftAndTopInRoot(blockContainerState).width() - lineGridBorderBoxOffsetAndBorderAndPaddingBefore(*lineGrid).first.width();
+    // From the left of the block container's border box, like the columns.
+    auto isLeftToRight = blockContainer->writingMode().isLogicalLeftInlineStart();
+    auto borderBoxInlineSize = blockContainerState.geometry.borderBoxWidth();
+    auto left = isLeftToRight ? start : borderBoxInlineSize - end;
+    auto right = isLeftToRight ? end : borderBoxInlineSize - start;
+    left += fmodf(columnWidth - fmodf((left + offset).toFloat(), columnWidth), columnWidth);
+    right -= ceilf(fmodf(fmodf((right + offset).toFloat(), columnWidth), columnWidth));
+    if (isLeftToRight)
+        return { left, right };
+    return { borderBoxInlineSize - right, borderBoxInlineSize - left };
 }
 
 // A box the render tree lays out on its own gets the line grid around it from the layout state of its containing block, which the block

@@ -171,6 +171,7 @@ private:
     std::pair<LayoutSize, LayoutUnit> lineGridBorderBoxOffsetAndBorderAndPaddingBefore(const ContainingBlockState::LineGrid&);
     LayoutSize logicalLeftAndTopInRoot(LayoutUnit inlineStartInRoot, LayoutUnit borderBoxInlineSize, LayoutUnit logicalTopInRoot) const;
     std::optional<LineGridInLayoutState> lineGridInLayoutState(const ContainingBlockState&, LayoutSize borderBoxOffset);
+    std::pair<LayoutUnit, LayoutUnit> spaceOnLineGridColumns(const ContainingBlockState&, LayoutUnit start, LayoutUnit end);
     std::optional<LineGridInLayoutState> lineGridForBoxLaidOutThroughRenderTree(const RenderBox&, const ContainingBlockState&, LayoutSize borderBoxOffset);
     LayoutSize borderBoxLogicalLeftAndTopInRoot(const ContainingBlockState&);
 

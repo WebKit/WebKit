@@ -123,14 +123,6 @@ static std::optional<BlockAvoidanceReason> lineGridAvoidanceReason(const RenderB
     return { };
 }
 
-// -webkit-line-align puts the block-level boxes beside floats, and the out-of-flow boxes that were inline-level, on the columns of the line grid
-// (RenderBlock::adjustLogicalLeftOffsetForLine).
-static bool alignsBlockLevelBoxesToLineGrid(const RenderElement& blockContainer)
-{
-    CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(blockContainer);
-    return blockFlow && !blockFlow->childrenInline() && blockFlow->style().lineAlign() != LineAlign::None && hasLineGridName(*blockFlow);
-}
-
 // The -webkit-left, -webkit-right and -webkit-center values of text-align move block-level children too (RenderBox::computeInlineDirectionMargins).
 static std::optional<BlockAvoidanceReason> rootAvoidanceReason(const RenderBlockFlow& rootContainer)
 {
@@ -572,9 +564,6 @@ static std::optional<BlockAvoidanceReason> independentFormattingContextAvoidance
 // §9.5.1), and its own formatting context lays out through the render tree.
 static std::optional<BlockAvoidanceReason> floatAvoidanceReason(const RenderBox& floatBox, const RenderBlockFlow& rootContainer)
 {
-    // FIXME: -webkit-line-align, which the block formatting context does not place floats with.
-    if (alignsBlockLevelBoxesToLineGrid(*floatBox.parent()))
-        return BlockAvoidanceReason::ContentHasLineGrid;
     for (CheckedPtr containingBlock = floatBox.containingBlock(); containingBlock; containingBlock = containingBlock->containingBlock()) {
         // margin-trim at the block-end edge moves the boxes the margins collapse through at the end of the content, and their floats would
         // have to move with them (placeChildrenAtTrimmedBlockEnd).
@@ -605,10 +594,6 @@ static std::optional<BlockAvoidanceReason> floatAvoiderAvoidanceReason(const Ren
     auto textAlign = containingBlockStyle->textAlign();
     if (textAlign == Style::TextAlign::WebKitCenter || textAlign == Style::TextAlign::WebKitLeft || textAlign == Style::TextAlign::WebKitRight)
         return BlockAvoidanceReason::ContentHasFloat;
-    // FIXME: -webkit-line-align, which the block formatting context does not place boxes beside floats with, and which aligns the lines in a box
-    // beside floats from where it starts in the inline direction, which the block formatting context knows only once it is laid out.
-    if (alignsBlockLevelBoxesToLineGrid(*box.containingBlock()) || (isInLineGridAround(box) && box.style().lineAlign() != LineAlign::None))
-        return BlockAvoidanceReason::ContentHasLineGrid;
     for (CheckedPtr<const RenderBlock> ancestor = box.containingBlock(); ancestor; ancestor = ancestor->containingBlock()) {
         auto marginTrim = ancestor->style().marginTrim();
         if (marginTrim.contains(Style::MarginTrimSide::BlockStart) || marginTrim.contains(Style::MarginTrimSide::BlockEnd))
@@ -662,9 +647,6 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
             return reason;
         if (auto reason = lineGridAvoidanceReason(downcast<RenderBox>(renderer)))
             return reason;
-        // FIXME: -webkit-line-align, which the block formatting context does not give static positions with.
-        if (renderer.style().originalDisplay().isInlineType() && alignsBlockLevelBoxesToLineGrid(*renderer.parent()))
-            return BlockAvoidanceReason::ContentHasLineGrid;
         // A replaced element has no block container checks to pass.
         if (renderer.isRenderReplaced() || renderer.isRenderOrLegacyRenderSVGRoot())
             return { };
