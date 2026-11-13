@@ -431,9 +431,9 @@ void WebProcessProxy::addAllowedFirstPartyForCookies(const WebCore::Site& site, 
         m_allowedFirstPartiesForCookies.first = LoadedWebArchive::Yes;
 }
 
-Ref<WebProcessProxy> WebProcessProxy::create(WebProcessPool& processPool, WebsiteDataStore* websiteDataStore, LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, IsPrewarmed isPrewarmed, ProcessCrossOriginIsolation crossOriginIsolation, ShouldLaunchProcess shouldLaunchProcess)
+Ref<WebProcessProxy> WebProcessProxy::create(WebProcessPool& processPool, WebsiteDataStore* websiteDataStore, LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, IsPrewarmed isPrewarmed, ProcessCrossOriginIsolation crossOriginIsolation, ShouldLaunchProcess shouldLaunchProcess, EnableRegExpInterpreterBodyRestart enableRegExpInterpreterBodyRestart)
 {
-    Ref proxy = adoptRef(*new WebProcessProxy(processPool, websiteDataStore, isPrewarmed, crossOriginIsolation, lockdownMode, enhancedSecurity));
+    Ref proxy = adoptRef(*new WebProcessProxy(processPool, websiteDataStore, isPrewarmed, crossOriginIsolation, lockdownMode, enhancedSecurity, enableRegExpInterpreterBodyRestart));
 #if PLATFORM(MAC) && USE(RUNNINGBOARD)
     // FIXME(rdar://188839922): disable jetsam boost on prewarmed processes always, not just when SI is enabled.
     if (isPrewarmed == IsPrewarmed::Yes && WebProcessPool::hasAnyProcessPoolUsedSiteIsolation())
@@ -503,7 +503,7 @@ Ref<WebProcessProxy> WebProcessProxy::createForRemoteWorkers(RemoteWorkerType wo
     return proxy;
 }
 
-WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* websiteDataStore, IsPrewarmed isPrewarmed, ProcessCrossOriginIsolation crossOriginIsolation, LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity)
+WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* websiteDataStore, IsPrewarmed isPrewarmed, ProcessCrossOriginIsolation crossOriginIsolation, LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, EnableRegExpInterpreterBodyRestart enableRegExpInterpreterBodyRestart)
     : AuxiliaryProcessProxy("WebProcess"_s, processPool.shouldTakeUIBackgroundAssertion() ? ShouldTakeUIBackgroundAssertion::Yes : ShouldTakeUIBackgroundAssertion::No
     , processPool.alwaysRunsAtBackgroundPriority() ? AlwaysRunsAtBackgroundPriority::Yes : AlwaysRunsAtBackgroundPriority::No)
     , m_backgroundResponsivenessTimer(makeUniqueRef<BackgroundProcessResponsivenessTimer>(*this))
@@ -521,6 +521,7 @@ WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* 
     , m_lockdownMode(lockdownMode)
     , m_enhancedSecurity(enhancedSecurity)
     , m_crossOriginIsolation(crossOriginIsolation)
+    , m_enableRegExpInterpreterBodyRestart(enableRegExpInterpreterBodyRestart)
     , m_shutdownPreventingScopeCounter([weakThis = WeakPtr { *this }](RefCounterEvent event) {
         if (RefPtr protectedThis = weakThis; protectedThis && event == RefCounterEvent::Decrement)
             protectedThis->maybeShutDown();
@@ -867,8 +868,11 @@ void WebProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOpt
 
     if (shouldEnableLockdownMode())
         launchOptions.extraInitializationData.add<HashTranslatorASCIILiteral>("enable-lockdown-mode"_s, "1"_s);
-    else if (shouldEnableEnhancedSecurity())
+    else if (shouldEnableEnhancedSecurity()) {
         launchOptions.extraInitializationData.add<HashTranslatorASCIILiteral>("enable-enhanced-security"_s, "1"_s);
+        if (m_enableRegExpInterpreterBodyRestart == EnableRegExpInterpreterBodyRestart::Yes)
+            launchOptions.extraInitializationData.add<HashTranslatorASCIILiteral>("enable-regexp-interpreter-body-restart"_s, "1"_s);
+    }
 }
 
 #if !PLATFORM(GTK) && !PLATFORM(WPE)

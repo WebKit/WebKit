@@ -881,9 +881,9 @@ void WebProcessPool::resolvePathsForSandboxExtensions()
     platformResolvePathsForSandboxExtensions();
 }
 
-Ref<WebProcessProxy> WebProcessPool::createNewWebProcess(WebsiteDataStore* websiteDataStore, WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, WebProcessProxy::EnableWebAssemblyDebugger enableWebAssemblyDebugger, WebProcessProxy::IsPrewarmed isPrewarmed, ProcessCrossOriginIsolation crossOriginIsolation, JSCOptionsForWebProcess jscOptions)
+Ref<WebProcessProxy> WebProcessPool::createNewWebProcess(WebsiteDataStore* websiteDataStore, WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, WebProcessProxy::EnableWebAssemblyDebugger enableWebAssemblyDebugger, WebProcessProxy::IsPrewarmed isPrewarmed, ProcessCrossOriginIsolation crossOriginIsolation, JSCOptionsForWebProcess jscOptions, WebProcessProxy::EnableRegExpInterpreterBodyRestart enableRegExpInterpreterBodyRestart)
 {
-    auto processProxy = WebProcessProxy::create(*this, websiteDataStore, lockdownMode, enhancedSecurity, isPrewarmed, crossOriginIsolation, WebProcessProxy::ShouldLaunchProcess::Yes);
+    auto processProxy = WebProcessProxy::create(*this, websiteDataStore, lockdownMode, enhancedSecurity, isPrewarmed, crossOriginIsolation, WebProcessProxy::ShouldLaunchProcess::Yes, enableRegExpInterpreterBodyRestart);
     initializeNewWebProcess(processProxy, websiteDataStore, isPrewarmed, enableWebAssemblyDebugger, jscOptions);
     m_processes.append(processProxy.copyRef());
 
@@ -1415,7 +1415,12 @@ Ref<WebProcessProxy> WebProcessPool::processForSite(WebsiteDataStore& websiteDat
         return process.releaseNonNull();
     }
 
-    if (RefPtr process = tryTakePrewarmedProcess(websiteDataStore, lockdownMode, enhancedSecurity, pageConfiguration, crossOriginIsolation)) {
+    auto enableRegExpInterpreterBodyRestart = WebProcessProxy::EnableRegExpInterpreterBodyRestart::No;
+    if (isolatedProcessType == WebProcessProxy::IsolatedProcessType::Shared && lockdownMode == WebProcessProxy::LockdownMode::Disabled && isEnhancedSecurityEnabledForState(enhancedSecurity)
+        && protect(pageConfiguration.preferences())->siteIsolationSharedProcessEnhancedSecurityEnabled())
+        enableRegExpInterpreterBodyRestart = WebProcessProxy::EnableRegExpInterpreterBodyRestart::Yes;
+
+    if (RefPtr process = enableRegExpInterpreterBodyRestart == WebProcessProxy::EnableRegExpInterpreterBodyRestart::No ? tryTakePrewarmedProcess(websiteDataStore, lockdownMode, enhancedSecurity, pageConfiguration, crossOriginIsolation) : nullptr) {
         WEBPROCESSPOOL_RELEASE_LOG(ProcessSwapping, "processForSite: Using prewarmed process (process=%p, PID=%i)", process.get(), process->processID());
         if (site && !site->isEmpty())
             tryPrewarmWithDomainInformation(*process, site->domain());
@@ -1445,7 +1450,7 @@ Ref<WebProcessProxy> WebProcessPool::processForSite(WebsiteDataStore& websiteDat
         }
     }
     auto enableWebAssemblyDebugger = protect(pageConfiguration.preferences())->webAssemblyDebuggerEnabled() ? WebProcessProxy::EnableWebAssemblyDebugger::Yes : WebProcessProxy::EnableWebAssemblyDebugger::No;
-    Ref process = createNewWebProcess(&websiteDataStore, lockdownMode, enhancedSecurity, enableWebAssemblyDebugger, WebProcessProxy::IsPrewarmed::No, crossOriginIsolation, WebKit::jscOptionsForWebProcess(pageConfiguration.preferences().store(), lockdownMode == WebProcessProxy::LockdownMode::Enabled));
+    Ref process = createNewWebProcess(&websiteDataStore, lockdownMode, enhancedSecurity, enableWebAssemblyDebugger, WebProcessProxy::IsPrewarmed::No, crossOriginIsolation, WebKit::jscOptionsForWebProcess(pageConfiguration.preferences().store(), lockdownMode == WebProcessProxy::LockdownMode::Enabled), enableRegExpInterpreterBodyRestart);
     process->setIsolatedProcessType(isolatedProcessType, mainFrameSite);
     updateWebProcessCacheEligibilityForCOOPSwap(process);
     return process;

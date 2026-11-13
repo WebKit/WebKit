@@ -515,14 +515,21 @@ public:
     unsigned m_frameSize;
 };
 
+enum class BodyRestart : uint8_t {
+    AnyPosition,
+    LineStart,
+    Never,
+};
+
 struct BytecodePattern {
     WTF_MAKE_TZONE_ALLOCATED(BytecodePattern);
 public:
-    BytecodePattern(std::unique_ptr<ByteDisjunction> body, Vector<std::unique_ptr<ByteDisjunction>>& parenthesesInfoToAdopt, YarrPattern& pattern, BumpPointerAllocator* allocator, ConcurrentJSLock* lock, unsigned offsetVectorBaseForNamedCaptures, unsigned offsetsSize)
+    BytecodePattern(std::unique_ptr<ByteDisjunction> body, Vector<std::unique_ptr<ByteDisjunction>>& parenthesesInfoToAdopt, YarrPattern& pattern, BumpPointerAllocator* allocator, ConcurrentJSLock* lock, unsigned offsetVectorBaseForNamedCaptures, unsigned offsetsSize, BodyRestart bodyRestart)
         : m_body(WTF::move(body))
         , m_flags(pattern.m_flags)
         , m_allocator(allocator)
         , m_lock(lock)
+        , m_bodyRestart(bodyRestart)
         , m_offsetVectorBaseForNamedCaptures(offsetVectorBaseForNamedCaptures)
         , m_offsetsSize(offsetsSize)
         , m_duplicateNamedGroupForSubpatternId(pattern.m_duplicateNamedGroupForSubpatternId)
@@ -586,6 +593,7 @@ public:
 
     unsigned m_numDuplicateNamedCaptureGroups;
     unsigned m_endAnchoredFixedSize { YarrPattern::endAnchoredFixedSizeNotSet };
+    BodyRestart m_bodyRestart;
     unsigned m_offsetVectorBaseForNamedCaptures;
     unsigned m_offsetsSize;
     Vector<unsigned> m_duplicateNamedGroupForSubpatternId;
