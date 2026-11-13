@@ -378,7 +378,7 @@ public:
         else
             ++m_checkedPtrCount;
     }
-    NODELETE SWIFT_UNSAFE SUPPRESS_NODELETE ALWAYS_INLINE void decrementCheckedPtrCount() const
+    NODELETE SUPPRESS_NODELETE SWIFT_UNSAFE ALWAYS_INLINE void decrementCheckedPtrCount() const
     {
         // In normal execution, a CheckedPtr always points to an object with a non-zero checkedPtrCount().
         // When it detects a dangling pointer, WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR scribbles an object with zeroes and then leaks it.
