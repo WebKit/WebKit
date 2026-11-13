@@ -1472,9 +1472,7 @@ namespace angle
 //
 // Some entry points pass a void pointer argument to UnlockedTailCall::run method intended to
 // contain the return value filled by the backend, the rest of the entry points pass in a
-// nullptr.  Regardless, Display::terminate runs pending tail calls passing in a nullptr, so
-// the tail calls that return a value in the argument still have to guard against a nullptr
-// parameter.
+// nullptr.
 class UnlockedTailCall final : angle::NonCopyable
 {
   public:
@@ -1497,12 +1495,6 @@ class UnlockedTailCall final : angle::NonCopyable
   private:
     void runImpl(void *resultOut);
 
-    // Typically, there is only one tail call.  It is possible to end up with 2 tail calls currently
-    // with unMakeCurrent destroying both the read and draw surfaces, each adding a tail call in the
-    // Vulkan backend.
-    //
-    // Some apps will create multiple windows surfaces and not call corresponding destroy api, which
-    // cause many tail calls been added, so remove the max call count limitations.
     std::vector<CallType> mCalls;
 };
 

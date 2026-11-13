@@ -1,7 +1,7 @@
 /* WARNING: This is auto-generated file. Do not modify, since changes will
  * be lost! Modify the generating script instead.
  *
- * Generated from Khronos GL API description (gl.xml) revision 7d0cb181dace7461bc4f26650fec71efeacc18a5.
+ * Generated from Khronos GL API description (gl.xml) revision 6af574a14089ccfee87efe230ebcdd8742859813.
  */
 
 void CallLogWrapper::glActiveShaderProgram (glw::GLuint pipeline, glw::GLuint program)
@@ -16,6 +16,13 @@ void CallLogWrapper::glActiveTexture (glw::GLenum texture)
 	if (m_enableLog)
 		m_log << TestLog::Message << "glActiveTexture(" << getTextureUnitStr(texture) << ");" << TestLog::EndMessage;
 	m_gl.activeTexture(texture);
+}
+
+void CallLogWrapper::glAddClientPointerRangeMESA (void *addr, glw::GLsizeiptr size)
+{
+	if (m_enableLog)
+		m_log << TestLog::Message << "glAddClientPointerRangeMESA(" << addr << ", " << size << ");" << TestLog::EndMessage;
+	m_gl.addClientPointerRangeMESA(addr, size);
 }
 
 void CallLogWrapper::glAttachShader (glw::GLuint program, glw::GLuint shader)
@@ -4738,6 +4745,16 @@ void CallLogWrapper::glReadnPixels (glw::GLint x, glw::GLint y, glw::GLsizei wid
 	if (m_enableLog)
 		m_log << TestLog::Message << "glReadnPixels(" << x << ", " << y << ", " << width << ", " << height << ", " << toHex(format) << ", " << toHex(type) << ", " << bufSize << ", " << data << ");" << TestLog::EndMessage;
 	m_gl.readnPixels(x, y, width, height, format, type, bufSize, data);
+}
+
+void* CallLogWrapper::glReleaseClientPointerRangeMESA (glw::GLbitfield flags, glw::GLsizeiptr *size)
+{
+	if (m_enableLog)
+		m_log << TestLog::Message << "glReleaseClientPointerRangeMESA(" << toHex(flags) << ", " << toHex(reinterpret_cast<uintptr_t>(static_cast<const void*>(size))) << ");" << TestLog::EndMessage;
+	void* returnValue = m_gl.releaseClientPointerRangeMESA(flags, size);
+	if (m_enableLog)
+		m_log << TestLog::Message << "// " << returnValue << " returned" << TestLog::EndMessage;
+	return returnValue;
 }
 
 void CallLogWrapper::glReleaseShaderCompiler (void)

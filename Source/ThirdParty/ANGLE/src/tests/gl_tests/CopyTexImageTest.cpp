@@ -2694,6 +2694,91 @@ void main() {
     }
 }
 
+// CopyTexImage from GL_RGBA to GL_RGBA4 cubemap, while the cubemap has incompatibly defined faces
+TEST_P(CopyTexImageTest, RGBAToRGBA4CubemapWithIncompatibleFaces)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_required_internalformat"));
+
+    constexpr uint32_t kSize = 17;
+
+    // Set up the cubemap, which will be the copy destination.
+    GLTexture cube;
+    glBindTexture(GL_TEXTURE_CUBE_MAP, cube);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    const std::vector<GLColor> kFaceData(kSize * kSize, GLColor::blue);
+    for (GLenum face = GL_TEXTURE_CUBE_MAP_POSITIVE_X; face <= GL_TEXTURE_CUBE_MAP_NEGATIVE_Z;
+         face++)
+    {
+        glTexImage2D(face, 0, GL_RGBA4, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                     kFaceData.data());
+    }
+
+    // Sample once from the cubemap so it gets allocated.
+    constexpr char kCubeSampleFS[] = R"(precision mediump float;
+uniform mediump samplerCube texCube;
+void main() {
+    gl_FragColor = textureCube(texCube, vec3(-1.0, 0.0, 0.0));
+})";
+    ANGLE_GL_PROGRAM(cubeProgram, essl1_shaders::vs::Simple(), kCubeSampleFS);
+    drawQuad(cubeProgram, essl1_shaders::PositionAttrib(), 0.0f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, kFaceData[0]);
+    ASSERT_GL_NO_ERROR();
+
+    // Set up the src texture.
+    const std::vector<GLColor> kSrcData(kSize * kSize, GLColor::green);
+    GLTexture src;
+    glBindTexture(GL_TEXTURE_2D, src);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 kSrcData.data());
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, src, 0);
+
+    // Redefine the X- face with incompatible format/size
+    const std::vector<GLColor> kIncompatibleFaceData(kSize * kSize * 100, GLColor::red);
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GL_RGBA, kSize * 10, kSize * 10, 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, kIncompatibleFaceData.data());
+
+    // Copy from the framebuffer to the Y+ face (not the one that is incompatible)
+    // With ES2, glCopyTexSubImage2D can be used, but that is not allowed in ES3.
+    if (isAtLeastClientVersion(3, 0))
+    {
+        glCopyTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GL_RGBA, 0, 0, kSize, kSize, 0);
+
+        // Make the other faces compatible and verify the contents of the cube map.
+        for (GLenum face = GL_TEXTURE_CUBE_MAP_POSITIVE_X; face <= GL_TEXTURE_CUBE_MAP_NEGATIVE_Z;
+             face++)
+        {
+            if (face != GL_TEXTURE_CUBE_MAP_POSITIVE_Y)
+            {
+                glTexImage2D(face, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                             kFaceData.data());
+            }
+        }
+    }
+    else
+    {
+        glCopyTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, 0, 0, 0, 0, kSize, kSize);
+
+        // Make the incompatible face compatible and verify the contents of the cube map.
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GL_RGBA4, kSize, kSize, 0, GL_RGBA,
+                     GL_UNSIGNED_BYTE, kFaceData.data());
+    }
+    ASSERT_GL_NO_ERROR();
+
+    for (GLenum face = GL_TEXTURE_CUBE_MAP_POSITIVE_X; face <= GL_TEXTURE_CUBE_MAP_NEGATIVE_Z;
+         face++)
+    {
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, face, cube, 0);
+        EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize,
+                             face == GL_TEXTURE_CUBE_MAP_POSITIVE_Y ? kSrcData[0] : kFaceData[0]);
+    }
+    ASSERT_GL_NO_ERROR();
+}
+
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
     CopyTexImageTest,
     ES2_D3D11_PRESENT_PATH_FAST(),
@@ -2704,7 +2789,9 @@ ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
     ES3_OPENGL().enable(Feature::EmulateCopyTexImage2D),
     ES3_OPENGLES().enable(Feature::EmulateCopyTexImage2D),
     ES3_OPENGL().enable(Feature::EmulateCopyTexImage2DFromRenderbuffers),
-    ES3_OPENGLES().enable(Feature::EmulateCopyTexImage2DFromRenderbuffers));
+    ES3_OPENGLES().enable(Feature::EmulateCopyTexImage2DFromRenderbuffers),
+    ES2_VULKAN_SWIFTSHADER().enable(Feature::ForceRenderableFallbackFormat),
+    ES3_VULKAN_SWIFTSHADER().enable(Feature::ForceRenderableFallbackFormat));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(CopyTexImageTestES3);
 ANGLE_INSTANTIATE_TEST_ES3_AND(
@@ -2712,13 +2799,15 @@ ANGLE_INSTANTIATE_TEST_ES3_AND(
     ES3_OPENGL().enable(Feature::EmulateCopyTexImage2D),
     ES3_OPENGLES().enable(Feature::EmulateCopyTexImage2D),
     ES3_OPENGL().enable(Feature::EmulateCopyTexImage2DFromRenderbuffers),
-    ES3_OPENGLES().enable(Feature::EmulateCopyTexImage2DFromRenderbuffers));
+    ES3_OPENGLES().enable(Feature::EmulateCopyTexImage2DFromRenderbuffers),
+    ES3_VULKAN_SWIFTSHADER().enable(Feature::ForceRenderableFallbackFormat));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(CopyTexImageLumaWorkaroundTestES3);
 ANGLE_INSTANTIATE_TEST_ES3_AND(
     CopyTexImageLumaWorkaroundTestES3,
     ES3_OPENGL().enable(Feature::ForceLumaWorkaroundForSameTextureCopyTexImage2D),
-    ES3_OPENGLES().enable(Feature::ForceLumaWorkaroundForSameTextureCopyTexImage2D));
+    ES3_OPENGLES().enable(Feature::ForceLumaWorkaroundForSameTextureCopyTexImage2D),
+    ES3_VULKAN_SWIFTSHADER().enable(Feature::ForceRenderableFallbackFormat));
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
     CopyTexImageTestRobustResourceInit,
@@ -2726,7 +2815,8 @@ ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
     ES2_OPENGL().enable(Feature::EmulateCopyTexImage2D),
     ES2_OPENGLES().enable(Feature::EmulateCopyTexImage2D),
     ES2_OPENGL().enable(Feature::EmulateCopyTexImage2DFromRenderbuffers),
-    ES2_OPENGLES().enable(Feature::EmulateCopyTexImage2DFromRenderbuffers));
+    ES2_OPENGLES().enable(Feature::EmulateCopyTexImage2DFromRenderbuffers),
+    ES2_VULKAN_SWIFTSHADER().enable(Feature::ForceRenderableFallbackFormat));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(CopyTexImagePreRotationTest);
 ANGLE_INSTANTIATE_TEST_ES3_AND(CopyTexImagePreRotationTest,

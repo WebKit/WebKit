@@ -2575,10 +2575,23 @@ void CaptureFramebufferAttachment(std::vector<CallCapture> *setupCalls,
         }
         else
         {
-            Capture(setupCalls,
-                    framebufferFuncs.framebufferTexture2D(
-                        replayState, true, GL_FRAMEBUFFER, attachment.getBinding(),
-                        index.getTargetOrFirstCubeFace(), {resourceID}, index.getLevelIndex()));
+            if (attachment.isRenderToTexture())
+            {
+                // Capture sample count of textures attached with
+                // glFramebufferTexture2DMultisampleEXT
+                Capture(setupCalls,
+                        CaptureFramebufferTexture2DMultisampleEXT(
+                            replayState, true, GL_FRAMEBUFFER, attachment.getBinding(),
+                            index.getTargetOrFirstCubeFace(), {resourceID}, index.getLevelIndex(),
+                            attachment.getRenderToTextureSamples()));
+            }
+            else
+            {
+                Capture(setupCalls,
+                        framebufferFuncs.framebufferTexture2D(
+                            replayState, true, GL_FRAMEBUFFER, attachment.getBinding(),
+                            index.getTargetOrFirstCubeFace(), {resourceID}, index.getLevelIndex()));
+            }
         }
 
         std::vector<gl::TextureID> textureIDs;

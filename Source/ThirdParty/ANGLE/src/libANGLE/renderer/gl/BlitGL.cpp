@@ -434,6 +434,14 @@ angle::Result BlitGL::copyImageToLUMAWorkaroundTexture(const gl::Context *contex
     {
         readType = GL_HALF_FLOAT;
     }
+    else if (readType == GL_UNSIGNED_SHORT_4_4_4_4 || readType == GL_UNSIGNED_SHORT_5_5_5_1 ||
+             readType == GL_UNSIGNED_SHORT_5_6_5)
+    {
+        // 16-bit packed types are only valid with their specific GL_RGB or GL_RGBA formats, not
+        // with the GL_RED or GL_RG formats used to emulate LUMA textures. Allocate the workaround
+        // texture with 8-bit unsigned normalized channels instead.
+        readType = GL_UNSIGNED_BYTE;
+    }
 
     gl::PixelUnpackState unpack;
     ANGLE_TRY(mStateManager->setPixelUnpackState(context, unpack));
@@ -445,7 +453,8 @@ angle::Result BlitGL::copyImageToLUMAWorkaroundTexture(const gl::Context *contex
                                sourceArea.width, sourceArea.height, 0, format, readType, nullptr));
 
     return copySubImageToLUMAWorkaroundTexture(context, texture, textureType, target, lumaFormat,
-                                               level, gl::Offset(0, 0, 0), sourceArea, source);
+                                               level, gl::Offset(0, 0, 0), sourceArea,
+                                               internalFormat, source);
 }
 
 angle::Result BlitGL::copySubImageToLUMAWorkaroundTexture(const gl::Context *context,
@@ -456,6 +465,7 @@ angle::Result BlitGL::copySubImageToLUMAWorkaroundTexture(const gl::Context *con
                                                           size_t level,
                                                           const gl::Offset &destOffset,
                                                           const gl::Rectangle &sourceArea,
+                                                          GLenum internalFormat,
                                                           gl::Framebuffer *source)
 {
     ANGLE_TRY(initializeResources(context));
@@ -476,9 +486,17 @@ angle::Result BlitGL::copySubImageToLUMAWorkaroundTexture(const gl::Context *con
     {
         readType = GL_HALF_FLOAT;
     }
+    else if (readType == GL_UNSIGNED_SHORT_4_4_4_4 || readType == GL_UNSIGNED_SHORT_5_5_5_1 ||
+             readType == GL_UNSIGNED_SHORT_5_6_5)
+    {
+        // 16-bit packed types are only valid with their specific GL_RGB or GL_RGBA formats, not
+        // with the GL_RED or GL_RG formats used to emulate LUMA textures. Allocate the workaround
+        // texture with 8-bit unsigned normalized channels instead.
+        readType = GL_UNSIGNED_BYTE;
+    }
 
     nativegl::CopyTexImageImageFormat copyTexImageFormat =
-        nativegl::GetCopyTexImageImageFormat(mFunctions, mFeatures, readFormat);
+        nativegl::GetCopyTexImageImageFormat(mFunctions, mFeatures, readFormat, readType);
 
     mStateManager->bindTexture(gl::TextureType::_2D, mScratchTextures[0]);
     ANGLE_GL_TRY_ALWAYS_CHECK(
@@ -540,21 +558,50 @@ angle::Result BlitGL::copySubImageToLUMAWorkaroundTexture(const gl::Context *con
     ANGLE_GL_TRY(context, mFunctions->drawArrays(GL_TRIANGLES, 0, 3));
 
     // Copy the swizzled texture to the destination texture
-    mStateManager->bindTexture(textureType, texture);
-
-    if (nativegl::UseTexImage3D(textureType))
+    const gl::InternalFormat &scratchFormatInfo =
+        nativegl::GetCopyTexImageInternalFormatInfo(copyTexImageFormat.internalFormat, readType);
+    if (sourceArea.width > 0 && sourceArea.height > 0 &&
+        nativegl::ShouldUseScratchTextureForCopySubImage(mFunctions, mFeatures, scratchFormatInfo,
+                                                         internalFormat))
     {
-        ANGLE_GL_TRY(context,
-                     mFunctions->copyTexSubImage3D(ToGLenum(target), static_cast<GLint>(level),
-                                                   destOffset.x, destOffset.y, destOffset.z, 0, 0,
-                                                   sourceArea.width, sourceArea.height));
+        mStateManager->bindTexture(gl::TextureType::_2D, mScratchTextures[0]);
+        ANGLE_GL_TRY_ALWAYS_CHECK(
+            context, mFunctions->copyTexImage2D(GL_TEXTURE_2D, 0, internalFormat, 0, 0,
+                                                sourceArea.width, sourceArea.height, 0));
+
+        GLenum dstCopyTarget = ToGLenum(target);
+        GLint dstZ           = destOffset.z;
+        if (gl::IsCubeMapFaceTarget(target))
+        {
+            dstCopyTarget = GL_TEXTURE_CUBE_MAP;
+            dstZ          = static_cast<GLint>(gl::CubeMapTextureTargetToFaceIndex(target));
+        }
+
+        ANGLE_GL_TRY_ALWAYS_CHECK(
+            context, mFunctions->copyImageSubData(mScratchTextures[0], GL_TEXTURE_2D, 0, 0, 0, 0,
+                                                  texture, dstCopyTarget, static_cast<GLint>(level),
+                                                  destOffset.x, destOffset.y, dstZ,
+                                                  sourceArea.width, sourceArea.height, 1));
     }
     else
     {
-        ASSERT(nativegl::UseTexImage2D(textureType));
-        ANGLE_GL_TRY(context, mFunctions->copyTexSubImage2D(
-                                  ToGLenum(target), static_cast<GLint>(level), destOffset.x,
-                                  destOffset.y, 0, 0, sourceArea.width, sourceArea.height));
+        mStateManager->bindTexture(textureType, texture);
+
+        if (nativegl::UseTexImage3D(textureType))
+        {
+            ANGLE_GL_TRY_ALWAYS_CHECK(
+                context, mFunctions->copyTexSubImage3D(ToGLenum(target), static_cast<GLint>(level),
+                                                       destOffset.x, destOffset.y, destOffset.z, 0,
+                                                       0, sourceArea.width, sourceArea.height));
+        }
+        else
+        {
+            ASSERT(nativegl::UseTexImage2D(textureType));
+            ANGLE_GL_TRY_ALWAYS_CHECK(
+                context, mFunctions->copyTexSubImage2D(ToGLenum(target), static_cast<GLint>(level),
+                                                       destOffset.x, destOffset.y, 0, 0,
+                                                       sourceArea.width, sourceArea.height));
+        }
     }
 
     // Finally orphan the scratch textures so they can be GCed by the driver.
@@ -654,7 +701,7 @@ angle::Result BlitGL::blitColorBufferWithShader(const gl::Context *context,
 
         const gl::InternalFormat &sourceInternalFormat       = *readAttachment->getFormat().info;
         nativegl::CopyTexImageImageFormat copyTexImageFormat = nativegl::GetCopyTexImageImageFormat(
-            mFunctions, mFeatures, sourceInternalFormat.internalFormat);
+            mFunctions, mFeatures, sourceInternalFormat.internalFormat, sourceInternalFormat.type);
         const FramebufferGL *sourceGL = GetImplAs<FramebufferGL>(source);
         mStateManager->bindFramebuffer(GL_READ_FRAMEBUFFER, sourceGL->getFramebufferID());
         mStateManager->bindTexture(gl::TextureType::_2D, textureId);

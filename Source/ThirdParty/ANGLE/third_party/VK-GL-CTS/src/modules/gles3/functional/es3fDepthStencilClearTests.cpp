@@ -461,7 +461,7 @@ void DepthStencilClearCase::renderReference(tcu::Surface &dst, const vector<Clea
         int stencilBits = renderTarget.getStencilBits();
         tcu::TextureLevel depthBufRow(getStencilFormat(stencilBits), dst.getWidth(), 1, 1);
         tcu::PixelBufferAccess rowAccess = depthBufRow.getAccess();
-        uint32_t bufMask                 = (1u << stencilBits) - 1;
+        uint32_t bufMask                 = deBitMask32(0, stencilBits);
 
         for (int y = 0; y < dst.getHeight(); y++)
         {
@@ -495,9 +495,9 @@ void DepthStencilClearCase::renderReference(tcu::Surface &dst, const vector<Clea
             // Map to colors.
             for (int x = 0; x < dst.getWidth(); x++)
             {
-                uint32_t stencil = rowAccess.getPixStencil(x, 0);
-                float step =
-                    (float)(stencil / ((1u << stencilBits) / (uint32_t)STENCIL_STEPS)) / (float)(STENCIL_STEPS - 1);
+                uint32_t stencil   = rowAccess.getPixStencil(x, 0);
+                uint64_t stepNdx   = stencil / ((uint64_t(1) << stencilBits) / (uint32_t)STENCIL_STEPS);
+                float step         = (float)stepNdx / (float)(STENCIL_STEPS - 1);
                 tcu::RGBA oldColor = dst.getPixel(x, y);
                 tcu::RGBA newColor = tcu::RGBA(oldColor.getRed(), deClamp32(deRoundFloatToInt32(step * 255.0f), 0, 255),
                                                oldColor.getBlue(), oldColor.getAlpha());

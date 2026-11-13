@@ -16,6 +16,7 @@
 #include "compiler/translator/tree_util/FindSymbolNode.h"
 #include "compiler/translator/tree_util/IntermNode_util.h"
 #include "compiler/translator/tree_util/IntermTraverse.h"
+#include "compiler/translator/tree_util/ReplaceVariable.h"
 #include "compiler/translator/util.h"
 
 namespace sh
@@ -302,6 +303,8 @@ class InitializeLocalsTraverser final : public TIntermTraverser
   protected:
     bool visitDeclaration(Visit visit, TIntermDeclaration *node) override
     {
+        // SeparateDeclarations must have already been run
+        ASSERT(node->getSequence()->size() <= 1);
         for (TIntermNode *declarator : *node->getSequence())
         {
             if (!mInGlobalScope && !declarator->getAsBinaryNode())
@@ -426,6 +429,98 @@ class InitializeLocalsTraverser final : public TIntermTraverser
     angle::HashMap<const TFunction *, TFunction *> mFunctionsToReplace;
 };
 
+class ExtractSwitchVariablesTraverser final : public TIntermTraverser
+{
+  public:
+    ExtractSwitchVariablesTraverser(TSymbolTable *symbolTable)
+        : TIntermTraverser(true, false, false, symbolTable)
+    {}
+
+    bool finalize(TCompiler *compiler, TIntermBlock *root)
+    {
+        if (!updateTree(compiler, root))
+        {
+            return false;
+        }
+        return mExtractedVariables.empty() || ReplaceVariables(compiler, root, mExtractedVariables);
+    }
+
+  protected:
+    bool visitSwitch(Visit visit, TIntermSwitch *node) override
+    {
+        TIntermSequence &statements = *node->getStatementList()->getSequence();
+        TIntermSequence replacement;
+        TIntermSequence declarations;
+
+        // Take all the declarations directly inside the switch.  If there is an existing
+        // initializer, leave it in as an assignment instead.  The variable declaration will be
+        // uninitialized, but InitializeUninitializedLocals will follow up and initialize it.
+        for (TIntermNode *statement : statements)
+        {
+            TIntermDeclaration *decl = statement->getAsDeclarationNode();
+            if (decl != nullptr && !decl->getSequence()->empty())
+            {
+                extractVariable(decl, &replacement, &declarations);
+            }
+            else
+            {
+                replacement.push_back(statement);
+            }
+        }
+
+        if (!declarations.empty())
+        {
+            node->getStatementList()->replaceAllChildren(std::move(replacement));
+
+            // Replace the switch with itself preceded by the extracted declarations.
+            declarations.push_back(node);
+            mMultiReplacements.emplace_back(getParentNode()->getAsBlock(), node,
+                                            std::move(declarations));
+        }
+
+        return true;
+    }
+
+  private:
+    void extractVariable(TIntermDeclaration *decl,
+                         TIntermSequence *switchStatements,
+                         TIntermSequence *extractedDeclarations)
+    {
+        // SeparateDeclarations must have already been run
+        ASSERT(decl->getSequence()->size() == 1);
+        TIntermNode *declarator = (*decl->getSequence())[0];
+
+        TIntermSymbol *symbolNode = declarator->getAsSymbolNode();
+        TIntermTyped *initializer = nullptr;
+        if (symbolNode == nullptr)
+        {
+            TIntermBinary *initNode = declarator->getAsBinaryNode();
+            ASSERT(initNode != nullptr && initNode->getOp() == EOpInitialize);
+            symbolNode  = initNode->getLeft()->getAsSymbolNode();
+            initializer = initNode->getRight();
+        }
+
+        ASSERT(symbolNode != nullptr);
+
+        // Declare a replacement temp variable; can't use the original because multiple variables
+        // with the same name might end up in the same scope.
+        TVariable *newVar = CreateTempVariable(mSymbolTable, &symbolNode->getType(), EvqTemporary);
+
+        extractedDeclarations->push_back(decl->deepCopy());
+
+        // If there was an initializer, turn the existing declaration into an assignment.
+        if (initializer != nullptr)
+        {
+            switchStatements->push_back(
+                new TIntermBinary(EOpAssign, symbolNode->deepCopy(), initializer));
+        }
+
+        // Finally, schedule the variable to be replaced by the new temp variable.
+        mExtractedVariables[symbolNode->uniqueId()] = new TIntermSymbol(newVar);
+    }
+
+    VariableReplacementMap mExtractedVariables;
+};
 }  // namespace
 
 void CreateInitCode(const TIntermTyped *initializedSymbol,
@@ -442,6 +537,28 @@ bool InitializeUninitializedLocals(TCompiler *compiler,
                                    bool canUseLoopsToInitialize,
                                    TSymbolTable *symbolTable)
 {
+    // In a prepass, extract all switch variables and declare them before the switch.  In a
+    // shader like this:
+    //
+    //     switch (one)
+    //     {
+    //     case 0:
+    //         float initializer_wont_execute = ...;
+    //         break;
+    //     case 1:
+    //         output = initializer_wont_execute;
+    //         break;
+    //     }
+    //
+    // The initializer of |initializer_wont_execute| will never execute.  The variable needs to be
+    // pulled out of the switch so that it's always initialized by this function.
+    ExtractSwitchVariablesTraverser extractSwitchVariables(symbolTable);
+    root->traverse(&extractSwitchVariables);
+    if (!extractSwitchVariables.finalize(compiler, root))
+    {
+        return false;
+    }
+
     InitializeLocalsTraverser traverser(shaderVersion, symbolTable, canUseLoopsToInitialize);
     traverser.collectUnnamedOutFunctions(*root);
     root->traverse(&traverser);

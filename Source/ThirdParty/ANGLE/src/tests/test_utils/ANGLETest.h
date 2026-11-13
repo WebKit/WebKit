@@ -20,6 +20,7 @@
 #include "angle_test_platform.h"
 #include "common/angleutils.h"
 #include "common/platform_helpers.h"
+#include "common/span.h"
 #include "common/system_utils.h"
 #include "common/vector_utils.h"
 #include "platform/PlatformMethods.h"
@@ -228,6 +229,46 @@ bool operator==(const GLColorT<T> &a, const GLColorT<T> &b)
 
 std::ostream &operator<<(std::ostream &ostream, const GLColor32F &color);
 GLColor32F ReadColor32F(GLint x, GLint y);
+
+namespace priv
+{
+// Returns the `size` bytes mapped at `ptr` as a span of T, or an empty span if the mapping
+// failed.
+template <typename T>
+Span<T> MappedBufferAsSpan(void *ptr, GLsizeiptr size)
+{
+    if (ptr == nullptr)
+    {
+        return {};
+    }
+    ASSERT(size % sizeof(T) == 0);
+    // SAFETY: the GL map call returned a mapping of exactly `size` bytes.
+    return ANGLE_UNSAFE_BUFFERS(Span(static_cast<T *>(ptr), static_cast<size_t>(size) / sizeof(T)));
+}
+}  // namespace priv
+
+// Call the matching glMapBuffer* function and return the mapping as a span of T, or an empty
+// span if the mapping fails. Use a const T for read-only mappings.
+template <typename T>
+Span<T> MapBufferRange(GLenum target, GLintptr offset, GLsizeiptr length, GLbitfield access)
+{
+    return priv::MappedBufferAsSpan<T>(glMapBufferRange(target, offset, length, access), length);
+}
+
+template <typename T>
+Span<T> MapBufferRangeEXT(GLenum target, GLintptr offset, GLsizeiptr length, GLbitfield access)
+{
+    return priv::MappedBufferAsSpan<T>(glMapBufferRangeEXT(target, offset, length, access), length);
+}
+
+// glMapBufferOES maps the whole buffer, so its size is queried from GL_BUFFER_SIZE.
+template <typename T>
+Span<T> MapBufferOES(GLenum target, GLenum access)
+{
+    GLint size = 0;
+    glGetBufferParameteriv(target, GL_BUFFER_SIZE, &size);
+    return priv::MappedBufferAsSpan<T>(glMapBufferOES(target, access), size);
+}
 
 constexpr std::array<GLenum, 6> kCubeFaces = {
     {GL_TEXTURE_CUBE_MAP_POSITIVE_X, GL_TEXTURE_CUBE_MAP_NEGATIVE_X, GL_TEXTURE_CUBE_MAP_POSITIVE_Y,

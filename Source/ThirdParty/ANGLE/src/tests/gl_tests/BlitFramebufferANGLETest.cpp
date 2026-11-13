@@ -4031,9 +4031,9 @@ TEST_P(BlitFramebufferTestES31, MultisampleFlippedResolveReadWithBlitAndFlippedD
                            0);
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
-    ANGLE_GL_PROGRAM(gradientProgram, essl31_shaders::vs::Passthrough(),
-                     essl31_shaders::fs::RedGreenGradient());
-    drawQuad(gradientProgram, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ANGLE_GL_PROGRAM(gradientProgram, essl1_shaders::vs::Passthrough(),
+                     essl1_shaders::fs::RedGreenGradient());
+    drawQuad(gradientProgram, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
     ASSERT_GL_NO_ERROR();
 
     // Create another FBO to resolve the multisample buffer into.
@@ -4085,9 +4085,9 @@ TEST_P(BlitFramebufferTestES31, MultisampleFlippedResolveReadWithBlitAndNonFlipp
                            0);
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
-    ANGLE_GL_PROGRAM(gradientProgram, essl31_shaders::vs::Passthrough(),
-                     essl31_shaders::fs::RedGreenGradient());
-    drawQuad(gradientProgram, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ANGLE_GL_PROGRAM(gradientProgram, essl1_shaders::vs::Passthrough(),
+                     essl1_shaders::fs::RedGreenGradient());
+    drawQuad(gradientProgram, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
     ASSERT_GL_NO_ERROR();
 
     // Create another FBO to resolve the multisample buffer into.
@@ -4140,9 +4140,9 @@ TEST_P(BlitFramebufferTestES31, MultisampleFlippedResolveDrawWithBlitAndNonFlipp
                            0);
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
-    ANGLE_GL_PROGRAM(gradientProgram, essl31_shaders::vs::Passthrough(),
-                     essl31_shaders::fs::RedGreenGradient());
-    drawQuad(gradientProgram, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ANGLE_GL_PROGRAM(gradientProgram, essl1_shaders::vs::Passthrough(),
+                     essl1_shaders::fs::RedGreenGradient());
+    drawQuad(gradientProgram, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
     ASSERT_GL_NO_ERROR();
 
     // Create another FBO to resolve the multisample buffer into.
@@ -4197,9 +4197,9 @@ TEST_P(BlitFramebufferTestES31, MultisampleFlippedResolveWithBlitAndNonFlippedDr
                            0);
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
-    ANGLE_GL_PROGRAM(gradientProgram, essl31_shaders::vs::Passthrough(),
-                     essl31_shaders::fs::RedGreenGradient());
-    drawQuad(gradientProgram, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ANGLE_GL_PROGRAM(gradientProgram, essl1_shaders::vs::Passthrough(),
+                     essl1_shaders::fs::RedGreenGradient());
+    drawQuad(gradientProgram, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
     ASSERT_GL_NO_ERROR();
 
     // Create another FBO to resolve the multisample buffer into.

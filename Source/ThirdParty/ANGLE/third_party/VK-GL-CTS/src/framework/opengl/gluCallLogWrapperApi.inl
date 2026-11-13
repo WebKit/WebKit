@@ -1,10 +1,11 @@
 /* WARNING: This is auto-generated file. Do not modify, since changes will
  * be lost! Modify the generating script instead.
  *
- * Generated from Khronos GL API description (gl.xml) revision 7d0cb181dace7461bc4f26650fec71efeacc18a5.
+ * Generated from Khronos GL API description (gl.xml) revision 6af574a14089ccfee87efe230ebcdd8742859813.
  */
 void					glActiveShaderProgram								(glw::GLuint pipeline, glw::GLuint program);
 void					glActiveTexture										(glw::GLenum texture);
+void					glAddClientPointerRangeMESA							(void *addr, glw::GLsizeiptr size);
 void					glAttachShader										(glw::GLuint program, glw::GLuint shader);
 void					glBeginConditionalRender							(glw::GLuint id, glw::GLenum mode);
 void					glBeginQuery										(glw::GLenum target, glw::GLuint id);
@@ -646,6 +647,7 @@ void					glQueryCounter										(glw::GLuint id, glw::GLenum target);
 void					glReadBuffer										(glw::GLenum src);
 void					glReadPixels										(glw::GLint x, glw::GLint y, glw::GLsizei width, glw::GLsizei height, glw::GLenum format, glw::GLenum type, void *pixels);
 void					glReadnPixels										(glw::GLint x, glw::GLint y, glw::GLsizei width, glw::GLsizei height, glw::GLenum format, glw::GLenum type, glw::GLsizei bufSize, void *data);
+void*					glReleaseClientPointerRangeMESA						(glw::GLbitfield flags, glw::GLsizeiptr *size);
 void					glReleaseShaderCompiler								(void);
 void					glRenderGpuMaskNV									(glw::GLbitfield mask);
 void					glRenderbufferStorage								(glw::GLenum target, glw::GLenum internalformat, glw::GLsizei width, glw::GLsizei height);

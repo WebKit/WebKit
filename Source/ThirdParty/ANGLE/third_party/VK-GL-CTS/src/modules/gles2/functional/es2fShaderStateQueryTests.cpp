@@ -1292,9 +1292,9 @@ public:
 
         for (int ndx = 0; ndx < DE_LENGTH_OF_ARRAY(uniformTypes); ++ndx)
         {
-            tcu::ScopedLogSection(m_log, uniformTypes[ndx].declaration,
-                                  std::string("Verify type of ") + uniformTypes[ndx].declaration + " variable" +
-                                      uniformTypes[ndx].postDeclaration);
+            const tcu::ScopedLogSection section(m_log, uniformTypes[ndx].declaration,
+                                                std::string("Verify type of ") + uniformTypes[ndx].declaration +
+                                                    " variable" + uniformTypes[ndx].postDeclaration);
 
             // gen fragment shader
 

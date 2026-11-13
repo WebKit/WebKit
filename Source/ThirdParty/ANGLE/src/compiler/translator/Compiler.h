@@ -209,12 +209,17 @@ class TCompiler : public TShHandleBase
 
     bool areClipDistanceOrCullDistanceUsed() const
     {
-        return mClipDistanceSize > 0 || mCullDistanceSize > 0;
+        return mClipDistanceSize > 0 || mCullDistanceSize > 0 || mInputClipDistanceSize > 0 ||
+               mInputCullDistanceSize > 0;
     }
 
     uint8_t getClipDistanceArraySize() const { return mClipDistanceSize; }
 
     uint8_t getCullDistanceArraySize() const { return mCullDistanceSize; }
+
+    uint8_t getInputClipDistanceArraySize() const { return mInputClipDistanceSize; }
+
+    uint8_t getInputCullDistanceArraySize() const { return mInputCullDistanceSize; }
 
     bool usesDerivatives() const { return mUsesDerivatives; }
 
@@ -337,6 +342,8 @@ class TCompiler : public TShHandleBase
     // Track gl_ClipDistance / gl_CullDistance usage.
     uint8_t mClipDistanceSize;
     uint8_t mCullDistanceSize;
+    uint8_t mInputClipDistanceSize;
+    uint8_t mInputCullDistanceSize;
 
     // geometry shader parameters.
     int mGeometryShaderMaxVertices;

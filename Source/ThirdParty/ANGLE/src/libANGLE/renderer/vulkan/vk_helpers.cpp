@@ -1103,18 +1103,21 @@ void CommandBufferHelperCommon::bufferWrite(Context *context,
 {
     VkPipelineStageFlags writePipelineStageFlags =
         GetBufferMemoryBarrierData(writeStage).pipelineStageFlags;
-    bufferWriteImpl(context, writeAccessType, writePipelineStageFlags, writeStage, buffer);
+    bufferWriteImpl(context, writeAccessType, writePipelineStageFlags, writeStage, buffer,
+                    kNoMemoryBarrierBits);
 }
 
 void CommandBufferHelperCommon::bufferWrite(Context *context,
                                             VkAccessFlags writeAccessType,
                                             const gl::ShaderBitSet &writeShaderStages,
-                                            BufferHelper *buffer)
+                                            BufferHelper *buffer,
+                                            const GLbitfield memoryBarrierBits)
 {
     VkPipelineStageFlags writePipelineStageFlags =
         ConvertShaderBitSetToVkPipelineStageFlags(writeShaderStages);
     PipelineStage firstWriteStage = GetPipelineStage(writeShaderStages.first());
-    bufferWriteImpl(context, writeAccessType, writePipelineStageFlags, firstWriteStage, buffer);
+    bufferWriteImpl(context, writeAccessType, writePipelineStageFlags, firstWriteStage, buffer,
+                    memoryBarrierBits);
 }
 
 void CommandBufferHelperCommon::bufferRead(Context *context,
@@ -1124,20 +1127,23 @@ void CommandBufferHelperCommon::bufferRead(Context *context,
 {
     VkPipelineStageFlags readPipelineStageFlags =
         GetBufferMemoryBarrierData(readStage).pipelineStageFlags;
-    bufferReadImpl(context, readAccessType, readPipelineStageFlags, readStage, buffer);
+    bufferReadImpl(context, readAccessType, readPipelineStageFlags, readStage, buffer,
+                   kNoMemoryBarrierBits);
 }
 
 void CommandBufferHelperCommon::bufferRead(Context *context,
                                            VkAccessFlags readAccessType,
                                            const gl::ShaderBitSet &readShaderStages,
-                                           BufferHelper *buffer)
+                                           BufferHelper *buffer,
+                                           const GLbitfield memoryBarrierBits)
 {
     for (const gl::ShaderType shaderType : readShaderStages)
     {
         PipelineStage readStage = GetPipelineStage(shaderType);
         VkPipelineStageFlags readPipelineStageFlags =
             GetBufferMemoryBarrierData(readStage).pipelineStageFlags;
-        bufferReadImpl(context, readAccessType, readPipelineStageFlags, readStage, buffer);
+        bufferReadImpl(context, readAccessType, readPipelineStageFlags, readStage, buffer,
+                       memoryBarrierBits);
     }
 }
 
@@ -1145,10 +1151,11 @@ void CommandBufferHelperCommon::bufferWriteImpl(Context *context,
                                                 VkAccessFlags writeAccessType,
                                                 VkPipelineStageFlags writePipelineStageFlags,
                                                 PipelineStage writeStage,
-                                                BufferHelper *buffer)
+                                                BufferHelper *buffer,
+                                                const GLbitfield memoryBarrierBits)
 {
     buffer->recordWriteBarrier(context, writeAccessType, writePipelineStageFlags, writeStage,
-                               mQueueSerial, &mPipelineBarriers, &mEventBarriers,
+                               mQueueSerial, memoryBarrierBits, &mPipelineBarriers, &mEventBarriers,
                                &mRefCountedEventCollector);
 
     // Make sure host-visible buffer writes result in a barrier inserted at the end of the frame to
@@ -1167,10 +1174,12 @@ void CommandBufferHelperCommon::bufferReadImpl(Context *context,
                                                VkAccessFlags readAccessType,
                                                VkPipelineStageFlags readPipelineStageFlags,
                                                PipelineStage readStage,
-                                               BufferHelper *buffer)
+                                               BufferHelper *buffer,
+                                               const GLbitfield memoryBarrierBits)
 {
     buffer->recordReadBarrier(context, readAccessType, readPipelineStageFlags, readStage,
-                              &mPipelineBarriers, &mEventBarriers, &mRefCountedEventCollector);
+                              memoryBarrierBits, &mPipelineBarriers, &mEventBarriers,
+                              &mRefCountedEventCollector);
     ASSERT(!usesBufferForWrite(*buffer));
 
     buffer->recordReadEvent(context, readAccessType, readPipelineStageFlags, readStage,
@@ -1356,10 +1365,14 @@ void OutsideRenderPassCommandBufferHelper::imageWrite(Context *context,
                                                       uint32_t layerCount,
                                                       VkImageAspectFlags aspectFlags,
                                                       ImageAccess imageAccess,
-                                                      ImageHelper *image)
+                                                      ImageHelper *image,
+                                                      const GLbitfield memoryBarrierBits)
 {
-    imageWriteImpl(context, level, layerStart, layerCount, aspectFlags, imageAccess,
-                   BarrierType::Event, image);
+    const BarrierType barrierType = (memoryBarrierBits & kImageMemoryBarrierBits) != 0
+                                        ? BarrierType::Pipeline
+                                        : BarrierType::Event;
+    imageWriteImpl(context, level, layerStart, layerCount, aspectFlags, imageAccess, barrierType,
+                   image);
     retainImageWithEvent(context, image);
 }
 
@@ -1656,10 +1669,14 @@ void RenderPassCommandBufferHelper::imageWrite(ContextVk *contextVk,
                                                uint32_t layerCount,
                                                VkImageAspectFlags aspectFlags,
                                                ImageAccess imageAccess,
-                                               ImageHelper *image)
+                                               ImageHelper *image,
+                                               const GLbitfield memoryBarrierBits)
 {
-    imageWriteImpl(contextVk, level, layerStart, layerCount, aspectFlags, imageAccess,
-                   BarrierType::Event, image);
+    const BarrierType barrierType = (memoryBarrierBits & kImageMemoryBarrierBits) != 0
+                                        ? BarrierType::Pipeline
+                                        : BarrierType::Event;
+    imageWriteImpl(contextVk, level, layerStart, layerCount, aspectFlags, imageAccess, barrierType,
+                   image);
     retainImageWithEvent(contextVk, image);
 }
 
@@ -5324,14 +5341,25 @@ void BufferHelper::recordReadBarrier(Context *context,
                                      VkAccessFlags readAccessType,
                                      VkPipelineStageFlags readPipelineStageFlags,
                                      PipelineStage stageIndex,
+                                     const GLbitfield memoryBarrierBits,
                                      PipelineBarrierArray *pipelineBarriers,
                                      EventBarrierArray *eventBarriers,
                                      RefCountedEventCollector *eventCollector)
 {
+    const bool forcePipelineBarrier = (memoryBarrierBits & kBufferMemoryBarrierBits) != 0;
+    if (forcePipelineBarrier && mCurrentWriteEvent.valid())
+    {
+        // Turn events into pipelineBarriers
+        mCurrentWriteAccess |= mCurrentWriteEvent.getAccessFlags();
+        mCurrentWriteStages |=
+            mCurrentWriteEvent.getEvent().getPipelineStageMask(context->getRenderer());
+        mCurrentWriteEvent.releaseToEventCollector(eventCollector);
+    }
+
     // If the type of read already tracked by mCurrentReadEvents, it means we must already inserted
     // the barrier when mCurrentReadEvents is set. No new barrier is needed.
     EventStage eventStage = GetBufferMemoryBarrierData(stageIndex).eventStage;
-    if (mCurrentReadEvents.hasEventAndAccess(eventStage, readAccessType))
+    if (!forcePipelineBarrier && mCurrentReadEvents.hasEventAndAccess(eventStage, readAccessType))
     {
         ASSERT((context->getRenderer()->getPipelineStageMask(eventStage) &
                 readPipelineStageFlags) == readPipelineStageFlags);
@@ -5341,7 +5369,7 @@ void BufferHelper::recordReadBarrier(Context *context,
 
     // If the type of read already tracked by mCurrentReadAccess, it means we must already inserted
     // the barrier when mCurrentReadAccess is set. No new barrier is needed.
-    if ((mCurrentReadAccess & readAccessType) == readAccessType &&
+    if (!forcePipelineBarrier && (mCurrentReadAccess & readAccessType) == readAccessType &&
         (mCurrentReadStages & readPipelineStageFlags) == readPipelineStageFlags)
     {
         return;
@@ -5418,10 +5446,12 @@ void BufferHelper::recordWriteBarrier(Context *context,
                                       VkPipelineStageFlags writeStage,
                                       PipelineStage stageIndex,
                                       const QueueSerial &queueSerial,
+                                      const GLbitfield memoryBarrierBits,
                                       PipelineBarrierArray *pipelineBarriers,
                                       EventBarrierArray *eventBarriers,
                                       RefCountedEventCollector *eventCollector)
 {
+    const bool forcePipelineBarrier = (memoryBarrierBits & kBufferMemoryBarrierBits) != 0;
     Renderer *renderer = context->getRenderer();
 
     updatePipelineStageWriteHistory(context, stageIndex);
@@ -5432,7 +5462,7 @@ void BufferHelper::recordWriteBarrier(Context *context,
         // If we already have a event in the same command buffer, fall back to pipeline. Otherwise
         // you may run into wait an event that has not been set. This may be can be removed once we
         // fix https://issuetracker.google.com/392968868
-        if (usedByCommandBuffer(queueSerial))
+        if (forcePipelineBarrier || usedByCommandBuffer(queueSerial))
         {
             for (EventStage eventStage : mCurrentReadEvents.getBitMask())
             {
@@ -5466,7 +5496,7 @@ void BufferHelper::recordWriteBarrier(Context *context,
         // stage bits. Both are a bit complex. Without evidence showing we are hitting performance
         // issue in real world situation, this will just use pipeline barriers to track extra stages
         // that not captured by mCurrentWriteEvent.
-        if (writtenByCommandBuffer(queueSerial))
+        if (forcePipelineBarrier || writtenByCommandBuffer(queueSerial))
         {
             mCurrentWriteStages |= srcStageFlags;
             mCurrentWriteAccess |= mCurrentWriteEvent.getAccessFlags();
@@ -5663,8 +5693,9 @@ angle::Result InitMappableDeviceMemory(ErrorContext *context,
 }
 
 // ImageHelper implementation.
-ImageHelper::ImageHelper()
+ImageHelper::ImageHelper(VkImageType imageType)
 {
+    mImageType = imageType;
     resetCachedProperties();
     // Reserve reasonable amount of space to avoid storage reallocation.
     mSubresourceUpdates.reserve(12);
@@ -5678,7 +5709,6 @@ ImageHelper::~ImageHelper()
 
 void ImageHelper::resetCachedProperties()
 {
-    mImageType                     = VK_IMAGE_TYPE_2D;
     mTilingMode                    = VK_IMAGE_TILING_OPTIMAL;
     mCreateFlags                   = kVkImageCreateFlagsNone;
     mRequestedUsage                = 0;
@@ -5966,7 +5996,7 @@ angle::Result ImageHelper::initExternal(ErrorContext *context,
 
     Renderer *renderer = context->getRenderer();
 
-    mImageType           = gl_vk::GetImageType(textureType);
+    ASSERT(mImageType == gl_vk::GetImageType(textureType));
     mExtents             = extents;
     mRotatedAspectRatio  = false;
     mIntendedFormatID    = intendedFormatID;
@@ -6039,6 +6069,15 @@ angle::Result ImageHelper::initExternal(ErrorContext *context,
             // VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT
             mCreateFlags |= VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT;
         }
+    }
+
+    // Adreno 702 reads back all-ones texels written into a non-MUTABLE_FORMAT R8G8B8A8_SINT image
+    // as +1 instead of -1; MUTABLE_FORMAT avoids it.
+    if (renderer->getFeatures().mutableFormatForIntColorImages.enabled &&
+        externalImageCreateInfo == nullptr && actualFormat.isInt() &&
+        !actualFormat.hasDepthOrStencilBits())
+    {
+        mCreateFlags |= VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT;
     }
 
     if (hasProtectedContent)
@@ -6708,7 +6747,7 @@ angle::Result ImageHelper::fallbackFromTileMemory(ContextVk *contextVk)
     contextVk->getShareGroup()->imageWillFallbackFromTileMemory(this);
 
     // Move the necessary information from this ImageHelper to prevImage
-    std::unique_ptr<ImageHelper> prevImage = std::make_unique<ImageHelper>();
+    std::unique_ptr<ImageHelper> prevImage = std::make_unique<ImageHelper>(mImageType);
     // Move storage from this object to prevImage
     prevImage->copyStateAndMoveStorageFrom(this);
 
@@ -7018,7 +7057,6 @@ void ImageHelper::destroy(Renderer *renderer)
     mDeviceMemory.destroy(device);
     mVmaAllocation.destroy(renderer->getAllocator());
     mCurrentAccess        = ImageAccess::Undefined;
-    mImageType            = VK_IMAGE_TYPE_2D;
     mLayerCount           = 0;
     mLevelCount           = 0;
     mMemoryAllocationType = MemoryAllocationType::InvalidEnum;
@@ -7079,13 +7117,12 @@ angle::Result ImageHelper::init2DStaging(ErrorContext *context,
 {
     gl_vk::GetExtent(glExtents, &mExtents);
 
-    return initStaging(context, hasProtectedContent, VK_IMAGE_TYPE_2D, mExtents, intendedFormatID,
-                       actualFormatID, 1, usage, 1, layerCount);
+    return initStaging(context, hasProtectedContent, mExtents, intendedFormatID, actualFormatID, 1,
+                       usage, 1, layerCount);
 }
 
 angle::Result ImageHelper::initStaging(ErrorContext *context,
                                        bool hasProtectedContent,
-                                       VkImageType imageType,
                                        const VkExtent3D &extents,
                                        angle::FormatID intendedFormatID,
                                        angle::FormatID actualFormatID,
@@ -7099,7 +7136,6 @@ angle::Result ImageHelper::initStaging(ErrorContext *context,
     ASSERT(!IsAnySubresourceContentDefined(mVkImageStencilContentDefined));
     vk::Renderer *renderer = context->getRenderer();
 
-    mImageType          = imageType;
     mExtents            = extents;
     mRotatedAspectRatio = false;
     mIntendedFormatID   = intendedFormatID;
@@ -7111,8 +7147,8 @@ angle::Result ImageHelper::initStaging(ErrorContext *context,
     mRequestedUsage     = usage;
 
     // Validate that mLayerCount is compatible with the image type
-    ASSERT(imageType != VK_IMAGE_TYPE_3D || mLayerCount == 1);
-    ASSERT(imageType != VK_IMAGE_TYPE_2D || mExtents.depth == 1);
+    ASSERT(mImageType != VK_IMAGE_TYPE_3D || mLayerCount == 1);
+    ASSERT(mImageType != VK_IMAGE_TYPE_2D || mExtents.depth == 1);
 
     mCurrentAccess = ImageAccess::Undefined;
 
@@ -8343,8 +8379,6 @@ angle::Result ImageHelper::CopyImageSubData(const gl::Context *context,
         bool isSrc3D                         = srcImage->getType() == VK_IMAGE_TYPE_3D;
         bool isDst3D                         = dstImage->getType() == VK_IMAGE_TYPE_3D;
         const VkImageAspectFlags aspectFlags = srcImage->getAspectFlags();
-        const gl::OwnerLayer srcBaseLayer    = isSrc3D ? gl::OwnerLayer(0) : srcZ;
-        const gl::OwnerLayer dstBaseLayer    = isDst3D ? gl::OwnerLayer(0) : dstZ;
 
         ASSERT(srcImage->getAspectFlags() == dstImage->getAspectFlags());
 
@@ -8352,12 +8386,12 @@ angle::Result ImageHelper::CopyImageSubData(const gl::Context *context,
 
         region.srcSubresource.aspectMask     = aspectFlags;
         region.srcSubresource.mipLevel       = srcImage->toVkLevel(srcLevelGL).get();
-        region.srcSubresource.baseArrayLayer = srcBaseLayer.get();
+        region.srcSubresource.baseArrayLayer = isSrc3D ? 0 : srcZ.get();
         region.srcSubresource.layerCount     = isSrc3D ? 1 : srcDepth;
 
         region.dstSubresource.aspectMask     = aspectFlags;
         region.dstSubresource.mipLevel       = dstImage->toVkLevel(dstLevelGL).get();
-        region.dstSubresource.baseArrayLayer = dstBaseLayer.get();
+        region.dstSubresource.baseArrayLayer = isDst3D ? 0 : dstZ.get();
         region.dstSubresource.layerCount     = isDst3D ? 1 : srcDepth;
 
         region.srcOffset.x   = srcX;
@@ -8373,15 +8407,13 @@ angle::Result ImageHelper::CopyImageSubData(const gl::Context *context,
         CommandResources resources;
         if (srcImage == dstImage)
         {
-            resources.onImageSelfCopy(srcLevelGL, 1, srcBaseLayer, region.srcSubresource.layerCount,
-                                      dstLevelGL, 1, dstBaseLayer, region.dstSubresource.layerCount,
+            resources.onImageSelfCopy(srcLevelGL, 1, srcZ, srcDepth, dstLevelGL, 1, dstZ, srcDepth,
                                       aspectFlags, srcImage);
         }
         else
         {
             resources.onImageTransferRead(aspectFlags, srcImage);
-            resources.onImageTransferWrite(dstLevelGL, 1, dstBaseLayer,
-                                           region.dstSubresource.layerCount, aspectFlags, dstImage);
+            resources.onImageTransferWrite(dstLevelGL, 1, dstZ, srcDepth, aspectFlags, dstImage);
         }
 
         OutsideRenderPassCommandBuffer *commandBuffer;
@@ -8478,11 +8510,14 @@ angle::Result ImageHelper::generateMipmapsWithBlit(ContextVk *contextVk,
 {
     Renderer *renderer = contextVk->getRenderer();
 
+    const uint32_t layerCountOrDepth =
+        mImageType == VK_IMAGE_TYPE_3D ? getLevelExtents(baseLevel + 1).depth : mLayerCount;
+
     CommandResources resources;
     gl::OwnerLevel baseLevelGL = toGLLevel(baseLevel);
-    resources.onImageTransferWrite(baseLevelGL + 1,
-                                   std::min(mLevelCount - 1, maxLevel.get()) - baseLevel.get(),
-                                   gl::OwnerLayer(0), mLayerCount, VK_IMAGE_ASPECT_COLOR_BIT, this);
+    resources.onImageTransferWrite(
+        baseLevelGL + 1, std::min(mLevelCount - 1, maxLevel.get()) - baseLevel.get(),
+        gl::OwnerLayer(0), layerCountOrDepth, VK_IMAGE_ASPECT_COLOR_BIT, this);
 
     OutsideRenderPassCommandBuffer *commandBuffer;
     ANGLE_TRY(contextVk->getOutsideRenderPassCommandBuffer(resources, &commandBuffer));
@@ -9113,10 +9148,10 @@ angle::Result ImageHelper::updateSubresourceOnHost(ContextVk *contextVk,
     // other reasons, which would now be superseded by the data upload.
     const gl::OwnerLevel updateLevelGL = index.getLevelIndex();
     const gl::OwnerLayer layerIndex = index.hasLayer() ? index.getLayerIndex() : gl::OwnerLayer(0);
-    const uint32_t layerCount = index.getLayerCount();
     const bool isArray                  = gl::IsArrayTextureType(index.getType());
     const bool is3D                     = mImageType == VK_IMAGE_TYPE_3D;
     const gl::OwnerLayer baseArrayLayer = isArray || is3D ? gl::OwnerLayer(offset.z) : layerIndex;
+    const uint32_t layerCount           = isArray || is3D ? glExtents.depth : index.getLayerCount();
     const gl::Box updateBoundingBox =
         MakeUpdateBoundingBox(offset, glExtents, baseArrayLayer, layerCount);
     pruneSupersededUpdatesForLevelImpl(contextVk, updateLevelGL, updateBoundingBox,
@@ -10421,8 +10456,8 @@ void ImageHelper::copyStateAndMoveStorageFrom(ImageHelper *other)
     // Copy over state
     mUse = other->mUse;
 
+    ASSERT(mImageType == other->mImageType);
     mVkImageCreateInfo  = other->mVkImageCreateInfo;
-    mImageType          = other->mImageType;
     mTilingMode         = other->mTilingMode;
     mCreateFlags        = other->mCreateFlags;
     mRequestedUsage     = other->mRequestedUsage;
@@ -10498,7 +10533,7 @@ void ImageHelper::stageSelfAsSubresourceUpdates(
     contextVk->getShareGroup()->finalizeImageLayoutInAllSharedContexts(this);
 
     std::unique_ptr<RefCounted<ImageHelper>> prevImage =
-        std::make_unique<RefCounted<ImageHelper>>();
+        std::make_unique<RefCounted<ImageHelper>>(mImageType);
 
     // Move storage from this object to prevImage
     prevImage->get().copyStateAndMoveStorageFrom(this);
@@ -10554,6 +10589,7 @@ angle::Result ImageHelper::flushSingleSubresourceStagedUpdates(ContextVk *contex
     if (deferredClears)
     {
         Optional<size_t> foundClear;
+        VkImageAspectFlags foundClearAspects = 0;
 
         for (size_t updateIndex = 0; updateIndex < levelUpdates->size(); ++updateIndex)
         {
@@ -10563,10 +10599,17 @@ angle::Result ImageHelper::flushSingleSubresourceStagedUpdates(ContextVk *contex
             {
                 // On any data update or the clear does not match exact layer range, we'll need to
                 // do a full upload.
+                //
+                // If there are multiple clears with mismatching aspect flags (for depth/stencil),
+                // also do a full upload.  If needed, this can be optimized in the future such that
+                // the |foundClear| for depth and stencil are tracked separately.  Currently, only
+                // obscure tests hit this scenario.
                 const bool isClear = IsClearOfAllChannels(update.updateSource);
-                if (isClear && matchesLayerRange(update, levelGL, layer, layerCount))
+                if (isClear && matchesLayerRange(update, levelGL, layer, layerCount) &&
+                    (!foundClear.valid() || update.data.clear.aspectFlags == foundClearAspects))
                 {
                     foundClear = updateIndex;
+                    foundClearAspects = update.data.clear.aspectFlags;
                 }
                 else
                 {
@@ -11332,6 +11375,11 @@ void ImageHelper::pruneSupersededUpdatesForLevelImpl(ContextVk *contextVk,
                           &boundingBox](SubresourceUpdate &update) {
         if (IsClear(update.updateSource) && reason == PruneReason::MemoryOptimization)
         {
+            // Staged clears don't consume much memory, so no point in pruning them to reduce
+            // memory.  More importantly, MemoryOptimization pruning may happen while the image has
+            // not been initialized yet (only allocated by TextureVk and updates staged against it),
+            // in which case Clear updates that specify kEntireLevel cannot be resolved because the
+            // image dimensions are unknown.
             return false;
         }
         VkDeviceSize updateSize       = 0;
@@ -11978,7 +12026,7 @@ angle::Result ImageHelper::readPixelsImpl(ContextVk *contextVk,
     // If the source image is multisampled, we need to resolve it into a temporary image before
     // performing a readback.
     bool isMultisampled = mSamples > 1;
-    RendererScoped<ImageHelper> resolvedImage(contextVk->getRenderer());
+    RendererScoped<ImageHelper> resolvedImage(contextVk->getRenderer(), VK_IMAGE_TYPE_2D);
 
     ImageHelper *src = this;
 
@@ -12515,6 +12563,7 @@ void ImageHelper::getDestSubresource(const SubresourceUpdate &update,
                                      uint32_t *layerCountOut) const
 {
     const bool is3D = mImageType == VK_IMAGE_TYPE_3D;
+
     if (IsClear(update.updateSource))
     {
         *baseLayerOut  = gl::OwnerLayer(update.data.clear.layerIndex);

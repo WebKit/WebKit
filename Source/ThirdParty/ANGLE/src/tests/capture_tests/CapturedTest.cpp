@@ -936,11 +936,120 @@ TEST_P(CapturedTest, NonFrameBoundarySwaps)
     ASSERT_GL_NO_ERROR();
 }
 
+// This test's trace output is intentionally excluded from the output comparison
+TEST_P(CapturedTest, MECSurfaceRelease)
+{
+    EGLWindow *window      = getEGLWindow();
+    EGLDisplay dpy         = window->getDisplay();
+    EGLConfig config       = window->getConfig();
+    EGLSurface surface     = window->getSurface();
+    EGLContext mainContext = window->getContext();
+
+    // Create a side context in the main context's share group representing the AR app's camera
+    // context
+    EGLContext sideContext = window->createContext(mainContext, nullptr);
+    ASSERT_EGL_SUCCESS();
+    ASSERT_NE(sideContext, EGL_NO_CONTEXT);
+
+    EGLint pbufferAttribs[] = {EGL_WIDTH, 1, EGL_HEIGHT, 1, EGL_NONE};
+    EGLSurface sidePbuffer  = eglCreatePbufferSurface(dpy, config, pbufferAttribs);
+    ASSERT_EGL_SUCCESS();
+
+    ASSERT_EGL_TRUE(eglMakeCurrent(dpy, sidePbuffer, sidePbuffer, sideContext));
+    glClear(GL_COLOR_BUFFER_BIT);
+    ASSERT_EGL_TRUE(eglMakeCurrent(dpy, surface, surface, mainContext));
+
+    glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    // Swap and start capture while the side context is live in our share group. MEC will make
+    // it current for capturing its state
+    swapBuffers();
+
+    // Detach and reacquire the window surface. If MEC left a side context reference to the window
+    // surface it will fail with EGL_BAD_ACCESS
+    ASSERT_EGL_TRUE(eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+    EGLBoolean reacquired = eglMakeCurrent(dpy, surface, surface, mainContext);
+    EXPECT_EGL_TRUE(reacquired);
+
+    if (reacquired)
+    {
+        // Reach capture end
+        for (int i = 0; i < 10; i++)
+        {
+            swapBuffers();
+        }
+    }
+
+    eglDestroySurface(dpy, sidePbuffer);
+    eglDestroyContext(dpy, sideContext);
+}
+
+// Run with multisampled-render-to-texture force-enabled so that
+// GL_EXT_multisampled_render_to_texture is set for all platforms
+class CapturedTestMSRTT : public CapturedTest
+{};
+
+// Test that MEC preserves the sample count of a texture attached with
+// glFramebufferTexture2DMultisampleEXT
+TEST_P(CapturedTestMSRTT, MultisampledRenderToTextureAttachment)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_multisampled_render_to_texture"));
+
+    constexpr GLsizei kSize    = 16;
+    constexpr GLsizei kSamples = 4;
+
+    GLTexture color;
+    glBindTexture(GL_TEXTURE_2D, color);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kSize, kSize);
+
+    GLRenderbuffer depthStencil;
+    glBindRenderbuffer(GL_RENDERBUFFER, depthStencil);
+    glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER, kSamples, GL_DEPTH24_STENCIL8, kSize,
+                                        kSize);
+
+    // Both attachments must be MSRTT and have the same sample count
+    GLFramebuffer framebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glFramebufferTexture2DMultisampleEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color,
+                                         0, kSamples);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                              depthStencil);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ASSERT_GL_NO_ERROR();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    swapBuffers();
+
+    // Use FB during capture so it ends up in trace's setup
+    for (int frame = 0; frame < 10; frame++)
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+        glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        swapBuffers();
+    }
+    ASSERT_GL_NO_ERROR();
+}
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(CapturedTest);
+// Capture is only supported on the Vulkan backend
+ANGLE_INSTANTIATE_TEST(CapturedTest, ES3_VULKAN());
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(CapturedTestMSRTT);
+ANGLE_INSTANTIATE_TEST(CapturedTestMSRTT,
+                       ES3_VULKAN().enable(Feature::EnableMultisampledRenderToTexture));
+
 #if defined(CAPTURE_TESTS_AHB_SUPPORT)
+// Android-only tests run in their own suite after all other suites, so that the context IDs
+// they consume do not shift the expected output of tests that run on every platform
+class CapturedTestAHB : public CapturedTest
+{};
+
 // Test capture and replay of external AHBs on Android platforms. On other platforms
 // not supporting AHBs, the test will be skipped and the outtput will not be
 // compared to the expected results
-TEST_P(CapturedTest, ExternalAHB)
+TEST_P(CapturedTestAHB, ExternalAHB)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_EGL_image_external"));
     ANGLE_SKIP_TEST_IF(
@@ -1048,57 +1157,7 @@ void main()
     AHardwareBuffer_release(redAHB);
     AHardwareBuffer_release(blueAHB);
 }
+
+ANGLE_INSTANTIATE_TEST(CapturedTestAHB, ES3_VULKAN());
 #endif  // defined(CAPTURE_TESTS_AHB_SUPPORT)
-
-// This test's trace output is intentionally excluded from the output comparison
-TEST_P(CapturedTest, MECSurfaceRelease)
-{
-    EGLWindow *window      = getEGLWindow();
-    EGLDisplay dpy         = window->getDisplay();
-    EGLConfig config       = window->getConfig();
-    EGLSurface surface     = window->getSurface();
-    EGLContext mainContext = window->getContext();
-
-    // Create a side context in the main context's share group representing the AR app's camera
-    // context
-    EGLContext sideContext = window->createContext(mainContext, nullptr);
-    ASSERT_EGL_SUCCESS();
-    ASSERT_NE(sideContext, EGL_NO_CONTEXT);
-
-    EGLint pbufferAttribs[] = {EGL_WIDTH, 1, EGL_HEIGHT, 1, EGL_NONE};
-    EGLSurface sidePbuffer  = eglCreatePbufferSurface(dpy, config, pbufferAttribs);
-    ASSERT_EGL_SUCCESS();
-
-    ASSERT_EGL_TRUE(eglMakeCurrent(dpy, sidePbuffer, sidePbuffer, sideContext));
-    glClear(GL_COLOR_BUFFER_BIT);
-    ASSERT_EGL_TRUE(eglMakeCurrent(dpy, surface, surface, mainContext));
-
-    glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-    // Swap and start capture while the side context is live in our share group. MEC will make
-    // it current for capturing its state
-    swapBuffers();
-
-    // Detach and reacquire the window surface. If MEC left a side context reference to the window
-    // surface it will fail with EGL_BAD_ACCESS
-    ASSERT_EGL_TRUE(eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
-    EGLBoolean reacquired = eglMakeCurrent(dpy, surface, surface, mainContext);
-    EXPECT_EGL_TRUE(reacquired);
-
-    if (reacquired)
-    {
-        // Reach capture end
-        for (int i = 0; i < 10; i++)
-        {
-            swapBuffers();
-        }
-    }
-
-    eglDestroySurface(dpy, sidePbuffer);
-    eglDestroyContext(dpy, sideContext);
-}
-
-GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(CapturedTest);
-// Capture is only supported on the Vulkan backend
-ANGLE_INSTANTIATE_TEST(CapturedTest, ES3_VULKAN());
 }  // anonymous namespace

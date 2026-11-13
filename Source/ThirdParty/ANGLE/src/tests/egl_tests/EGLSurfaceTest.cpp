@@ -4762,6 +4762,7 @@ TEST_P(EGLSurfaceTest, CreatePlatformWindowSurfaceEXT)
     initializeDisplay();
 
     // eglCreatePlatformWindowSurfaceEXT comes from the EGL_EXT_platform_base client extension.
+    ANGLE_SKIP_TEST_IF(!IsEGLClientExtensionEnabled("EGL_EXT_platform_base"));
     auto createPlatformWindowSurfaceEXT =
         reinterpret_cast<PFNEGLCREATEPLATFORMWINDOWSURFACEEXTPROC>(
             eglGetProcAddress("eglCreatePlatformWindowSurfaceEXT"));

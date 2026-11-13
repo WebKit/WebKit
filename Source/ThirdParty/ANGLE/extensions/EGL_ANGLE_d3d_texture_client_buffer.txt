@@ -22,7 +22,7 @@ Status
 
 Version
 
-    Version 12, 2026/10/09
+    Version 13, 2026/10/30
 
 Number
 
@@ -170,9 +170,11 @@ Additions to Chapter 3 of the EGL 1.2 Specification (EGL Functions and Errors)
                        DXGI_FORMAT_Y210. It is ignored for all non-YUV formats.
 
                        The packed YUV formats DXGI_FORMAT_Y410 and
-                       DXGI_FORMAT_Y210 are sample-only: they are valid for
-                       eglCreateImageKHR only, and eglCreatePbufferFromClientBuffer
-                       fails with an EGL_BAD_PARAMETER error for them.
+                       DXGI_FORMAT_Y210 are valid for eglCreateImageKHR only,
+                       and eglCreatePbufferFromClientBuffer fails with an
+                       EGL_BAD_PARAMETER error for them. DXGI_FORMAT_Y410 may
+                       be rendered to through its R10G10B10A2_UNORM view alias;
+                       DXGI_FORMAT_Y210 is sample-only.
 
                        EGL_TEXTURE_INTERNAL_FORMAT_ANGLE (if specified) must be
                        GL_RGBA (supported for all RGBA and BGRA formats),
@@ -252,6 +254,9 @@ Issues
     correct rendering in that case.
 
 Revision History
+
+    Version 13, 2026/10/30 - allowed rendering to DXGI_FORMAT_Y410 through its
+    DXGI_FORMAT_R10G10B10A2_UNORM view alias.
 
     Version 12, 2026/10/09 - added support for the packed YUV formats
     DXGI_FORMAT_Y410 and DXGI_FORMAT_Y210.

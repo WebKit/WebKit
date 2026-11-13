@@ -171,7 +171,7 @@ EGLBoolean DestroyStreamKHR(Thread *thread, Display *display, Stream *streamObje
 
 EGLBoolean DestroySyncKHR(Thread *thread, ThreadSafeDisplay *display, Sync *syncObject)
 {
-    display->destroySync(syncObject);
+    display->releaseSync(syncObject);
 
     thread->setSuccess();
     return EGL_TRUE;

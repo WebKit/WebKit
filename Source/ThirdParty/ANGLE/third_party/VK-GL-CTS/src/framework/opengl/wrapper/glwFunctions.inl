@@ -1,10 +1,11 @@
 /* WARNING: This is auto-generated file. Do not modify, since changes will
  * be lost! Modify the generating script instead.
  *
- * Generated from Khronos GL API description (gl.xml) revision 7d0cb181dace7461bc4f26650fec71efeacc18a5.
+ * Generated from Khronos GL API description (gl.xml) revision 6af574a14089ccfee87efe230ebcdd8742859813.
  */
 glActiveShaderProgramFunc								activeShaderProgram;
 glActiveTextureFunc										activeTexture;
+glAddClientPointerRangeMESAFunc							addClientPointerRangeMESA;
 glAttachShaderFunc										attachShader;
 glBeginConditionalRenderFunc							beginConditionalRender;
 glBeginQueryFunc										beginQuery;
@@ -646,6 +647,7 @@ glQueryCounterFunc										queryCounter;
 glReadBufferFunc										readBuffer;
 glReadPixelsFunc										readPixels;
 glReadnPixelsFunc										readnPixels;
+glReleaseClientPointerRangeMESAFunc						releaseClientPointerRangeMESA;
 glReleaseShaderCompilerFunc								releaseShaderCompiler;
 glRenderGpuMaskNVFunc									renderGpuMaskNV;
 glRenderbufferStorageFunc								renderbufferStorage;

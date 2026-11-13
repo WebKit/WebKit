@@ -440,9 +440,9 @@ Float<StorageType, ExponentBits, MantissaBits, ExponentBias, Flags> Float<Storag
             // Shift and round.
             int bitDiff = (OtherMantissaBits - MantissaBits) + (eMin - e);
 
-            if (bitDiff < 0)
+            if (bitDiff <= 0)
             {
-                // The mantissa has more bits than the original and should be left shifted, no need to round.
+                // The mantissa has at least as many bits as the original and should be left shifted, no need to round.
                 return Float(StorageType(s | (m << -bitDiff)));
             }
 

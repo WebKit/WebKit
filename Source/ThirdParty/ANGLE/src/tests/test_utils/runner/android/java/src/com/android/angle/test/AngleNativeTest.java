@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Process;
+import android.system.ErrnoException;
 import android.system.Os;
 import android.util.Log;
 import android.view.View;
@@ -51,6 +52,28 @@ public class AngleNativeTest
         {
             mReporter.uncaughtException(Process.myPid(), ex);
             if (mWrappedHandler != null) mWrappedHandler.uncaughtException(thread, ex);
+        }
+    }
+
+    // Points TMPDIR at the app's cache directory, where native code can write temporary files.
+    // Newer Android releases set it for every app, but older ones don't, which leaves
+    // angle::GetTempDirectory() with nothing.  Call this before loading the native libraries.
+    public static void setTempDirectory(Activity activity)
+    {
+        File cacheDir = activity.getCacheDir();
+        if (cacheDir == null)
+        {
+            Log.w(TAG, "No cache directory to set TMPDIR to");
+            return;
+        }
+        try
+        {
+            // Don't overwrite TMPDIR if Android already set it
+            Os.setenv("TMPDIR", cacheDir.getPath(), false);
+        }
+        catch (ErrnoException e)
+        {
+            Log.w(TAG, "Failed to set TMPDIR", e);
         }
     }
 

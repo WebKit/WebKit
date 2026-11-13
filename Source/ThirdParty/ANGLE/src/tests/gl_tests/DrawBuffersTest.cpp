@@ -4,12 +4,9 @@
 // found in the LICENSE file.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include <array>
 
+#include "common/span.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 
@@ -87,14 +84,14 @@ class DrawBuffersTest : public ANGLETest<>
         return true;
     }
 
-    void setupMRTProgramESSL3(bool bufferEnabled[8], GLuint *programOut)
+    void setupMRTProgramESSL3(Span<const bool, 8> bufferEnabled, GLuint *programOut)
     {
         std::stringstream strstr;
 
         strstr << "#version 300 es\n"
                   "precision highp float;\n";
 
-        for (unsigned int index = 0; index < 8; index++)
+        for (unsigned int index = 0; index < bufferEnabled.size(); index++)
         {
             if (bufferEnabled[index])
             {
@@ -108,7 +105,7 @@ class DrawBuffersTest : public ANGLETest<>
         strstr << "void main()\n"
                   "{\n";
 
-        for (unsigned int index = 0; index < 8; index++)
+        for (unsigned int index = 0; index < bufferEnabled.size(); index++)
         {
             if (bufferEnabled[index])
             {
@@ -130,7 +127,7 @@ class DrawBuffersTest : public ANGLETest<>
         }
     }
 
-    void setupMRTProgramESSL1(bool bufferEnabled[8], GLuint *programOut)
+    void setupMRTProgramESSL1(Span<const bool, 8> bufferEnabled, GLuint *programOut)
     {
         std::stringstream strstr;
 
@@ -139,7 +136,7 @@ class DrawBuffersTest : public ANGLETest<>
                   "void main()\n"
                   "{\n";
 
-        for (unsigned int index = 0; index < 8; index++)
+        for (unsigned int index = 0; index < bufferEnabled.size(); index++)
         {
             if (bufferEnabled[index])
             {
@@ -161,7 +158,7 @@ class DrawBuffersTest : public ANGLETest<>
         }
     }
 
-    void setupMRTProgram(bool bufferEnabled[8], GLuint *programOut)
+    void setupMRTProgram(Span<const bool, 8> bufferEnabled, GLuint *programOut)
     {
         if (getClientMajorVersion() == 3)
         {
@@ -568,7 +565,7 @@ TEST_P(DrawBuffersTest, FirstHalfNULL)
 {
     ANGLE_SKIP_TEST_IF(!setupTest());
 
-    bool flags[8]  = {false};
+    std::array<bool, 8> flags  = {};
     std::array<GLenum, 8> bufs = {GL_NONE};
 
     ASSERT_GT(mMaxDrawBuffers, 0);
@@ -648,7 +645,7 @@ TEST_P(DrawBuffersTest, None)
 {
     ANGLE_SKIP_TEST_IF(!setupTest());
 
-    bool flags[8]  = {false};
+    std::array<bool, 8> flags  = {};
     std::array<GLenum, 8> bufs = {GL_NONE};
     std::array<GLTexture, 8> textures;
 
@@ -821,7 +818,7 @@ TEST_P(DrawBuffersTest, AllRGBA8)
 {
     ANGLE_SKIP_TEST_IF(!setupTest());
 
-    bool flags[8]  = {false};
+    std::array<bool, 8> flags  = {};
     std::array<GLenum, 8> bufs = {GL_NONE};
     std::array<GLTexture, 8> textures;
 
@@ -866,10 +863,10 @@ TEST_P(DrawBuffersWebGL2Test, TwoProgramsWithDifferentOutputsAndClear)
     glGetIntegerv(GL_MAX_DRAW_BUFFERS, &mMaxDrawBuffers);
     ASSERT_GE(mMaxDrawBuffers, 4);
 
-    bool flags[8]      = {false};
+    std::array<bool, 8> flags      = {};
     std::array<GLenum, 4> someBufs = {GL_NONE};
-    GLenum allBufs[4]  = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2,
-                          GL_COLOR_ATTACHMENT3};
+    std::array<GLenum, 4> allBufs  = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1,
+                                      GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3};
 
     constexpr GLuint kMaxBuffers     = 4;
     constexpr GLuint kHalfMaxBuffers = 2;
@@ -922,7 +919,7 @@ TEST_P(DrawBuffersWebGL2Test, TwoProgramsWithDifferentOutputsAndClear)
     verifyAttachment2D(3, mTextures[3], GL_TEXTURE_2D, 0);
 
     // Active draw buffers with no fragment output is not allowed.
-    setDrawBuffers(kMaxBuffers, allBufs);
+    setDrawBuffers(kMaxBuffers, allBufs.data());
     drawQuad(program, positionAttrib(), 0.5, 1.0f, true);
     ASSERT_GL_ERROR(GL_INVALID_OPERATION);
     // Exception: when RASTERIZER_DISCARD is enabled.

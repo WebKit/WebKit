@@ -1,7 +1,7 @@
 /* WARNING: This is auto-generated file. Do not modify, since changes will
  * be lost! Modify the generating script instead.
  *
- * Generated from Khronos GL API description (gl.xml) revision 7d0cb181dace7461bc4f26650fec71efeacc18a5.
+ * Generated from Khronos GL API description (gl.xml) revision 6af574a14089ccfee87efe230ebcdd8742859813.
  */
 #define GL_DEPTH_BUFFER_BIT															0x00000100
 #define GL_STENCIL_BUFFER_BIT														0x00000400
@@ -27,6 +27,7 @@
 #define GL_MAP_UNSYNCHRONIZED_BIT													0x0020
 #define GL_MAP_PERSISTENT_BIT														0x0040
 #define GL_MAP_COHERENT_BIT															0x0080
+#define GL_MAP_CLIENT_POINTER_BIT_MESA												0x4000
 #define GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT											0x00000001
 #define GL_ELEMENT_ARRAY_BARRIER_BIT												0x00000002
 #define GL_UNIFORM_BARRIER_BIT														0x00000004
@@ -63,6 +64,7 @@
 #define GL_SUBGROUP_FEATURE_CLUSTERED_BIT_KHR										0x00000040
 #define GL_SUBGROUP_FEATURE_QUAD_BIT_KHR											0x00000080
 #define GL_SUBGROUP_FEATURE_PARTITIONED_BIT_NV										0x00000100
+#define GL_CLIENT_POINTER_RELEASE_ALL_MESA											0x00000001
 #define GL_FALSE																	0
 #define GL_NO_ERROR																	0
 #define GL_ZERO																		0
@@ -1844,3 +1846,13 @@
 #define GL_FRAGMENT_SHADING_RATE_WITH_SHADER_DEPTH_STENCIL_WRITES_SUPPORTED_EXT		0x96DD
 #define GL_FRAGMENT_SHADING_RATE_WITH_SAMPLE_MASK_SUPPORTED_EXT						0x96DE
 #define GL_FRAGMENT_SHADING_RATE_ATTACHMENT_WITH_DEFAULT_FRAMEBUFFER_SUPPORTED_EXT	0x96DF
+#define GL_BUFFER_CLIENT_POINTER_SIZE_MESA											0x9790
+#define GL_CLIENT_POINTER_STREAM_DRAW_MESA											0x9791
+#define GL_CLIENT_POINTER_STREAM_READ_MESA											0x9792
+#define GL_CLIENT_POINTER_STREAM_COPY_MESA											0x9793
+#define GL_CLIENT_POINTER_STATIC_DRAW_MESA											0x9794
+#define GL_CLIENT_POINTER_STATIC_READ_MESA											0x9795
+#define GL_CLIENT_POINTER_STATIC_COPY_MESA											0x9796
+#define GL_CLIENT_POINTER_DYNAMIC_DRAW_MESA											0x9797
+#define GL_CLIENT_POINTER_DYNAMIC_READ_MESA											0x9798
+#define GL_CLIENT_POINTER_DYNAMIC_COPY_MESA											0x9799

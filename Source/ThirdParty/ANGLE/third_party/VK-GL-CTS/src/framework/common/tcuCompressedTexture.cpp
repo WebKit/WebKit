@@ -1669,6 +1669,7 @@ inline uint32_t getBits128(uint64_t low, uint64_t high, uint32_t first, uint32_t
 
 inline int32_t signExtend(int32_t value, int32_t srcBits, int32_t dstBits)
 {
+    DE_ASSERT(srcBits > 0 && srcBits < 32);
     uint32_t sign = value & (1 << (srcBits - 1));
 
     if (!sign)

@@ -8,6 +8,8 @@
 
 #include "libANGLE/renderer/TextureImpl.h"
 
+#include "libANGLE/formatutils.h"
+
 namespace rx
 {
 TextureImpl::TextureImpl(const gl::TextureState &state) : mState(state) {}
@@ -15,6 +17,17 @@ TextureImpl::TextureImpl(const gl::TextureState &state) : mState(state) {}
 TextureImpl::~TextureImpl() {}
 
 void TextureImpl::onDestroy(const gl::Context *context) {}
+
+const gl::InternalFormat &TextureImpl::getCopyImageInternalFormat(const gl::Context *context,
+                                                                  GLenum internalFormat,
+                                                                  gl::Framebuffer *source) const
+{
+    // In ES 2.0 / WebGL 1, non-GL backends (TextureVk, TextureD3D,
+    // TextureMtl) currently still resolve unsized glCopyTexImage2D
+    // formats using GL_UNSIGNED_BYTE and convert/clamp float or
+    // half-float sources to 8-bit UNORM via a shader blit.
+    return gl::GetInternalFormatInfo(internalFormat, GL_UNSIGNED_BYTE);
+}
 
 angle::Result TextureImpl::copyTexture(const gl::Context *context,
                                        const gl::ImageIndex &index,

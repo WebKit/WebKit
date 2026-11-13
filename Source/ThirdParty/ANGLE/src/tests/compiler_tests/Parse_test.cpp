@@ -22,6 +22,7 @@ class ParseTest : public testing::Test
     {
         InitBuiltInResources(&mResources);
         mCompileOptions.intermediateTree = true;
+        mCompileOptions.outputDebugInfo  = true;
     }
 
   protected:

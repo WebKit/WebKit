@@ -51,6 +51,32 @@ class CompiledShader
     GLuint mShader = 0;
 };
 
+class CompiledProgram
+{
+  public:
+    ~CompiledProgram();
+
+    // Link the successfully compiled shaders among the given ones into a program and return the GL
+    // program object.
+    //
+    // If link is successful, the return value will be non-zero.  If link fails, 0 is returned.
+    //
+    // In either case, the linker's logs are placed in mInfoLog.
+    GLuint link(const std::vector<const CompiledShader *> &shaders);
+    void destroy();
+
+    bool success() const { return mProgram != 0; }
+    GLuint getProgram() const { return mProgram; }
+    const std::string &getInfoLog() const { return mInfoLog; }
+
+    // Returns true if the expected message is found in the info log.
+    bool hasInfoLog(const char *expect) const;
+
+  private:
+    std::string mInfoLog;
+    GLuint mProgram = 0;
+};
+
 class CompilerTest : public ANGLETest<>
 {
   public:
@@ -85,7 +111,7 @@ class CompilerTest : public ANGLETest<>
     CompiledShader mFragmentShader;
     CompiledShader mComputeShader;
 
-    GLuint mProgram = 0;
+    CompiledProgram mProgram;
 };
 
 #endif  // TESTS_TEST_UTILS_COMPILER_TEST_H_

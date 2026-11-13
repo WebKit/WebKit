@@ -219,14 +219,14 @@ void android_main(struct android_app *app)
     }
 }
 
-std::string AndroidWindow::GetApplicationDirectory()
+bool AndroidWindow::GetApplicationDirectory(angle::Span<char> buf)
 {
     // Use reverse JNI.
     JNIEnv *jni = GetJniEnv();
     if (!jni)
     {
         std::cerr << "GetApplicationDirectory:: Failed to get JNI env";
-        return "";
+        return false;
     }
 
     // Get the ANativeActivity class
@@ -234,7 +234,7 @@ std::string AndroidWindow::GetApplicationDirectory()
     if (!nativeActivityClass)
     {
         std::cerr << "GetApplicationDirectory: Failed to get ANativeActivity class";
-        return "";
+        return false;
     }
 
     // Get the getApplicationContext() method ID
@@ -243,7 +243,7 @@ std::string AndroidWindow::GetApplicationDirectory()
     if (!getApplicationContextMethod)
     {
         std::cerr << "GetApplicationDirectory: Failed to find getApplicationContext method";
-        return "";
+        return false;
     }
 
     // Call getApplicationContext() to get the Context object
@@ -251,7 +251,7 @@ std::string AndroidWindow::GetApplicationDirectory()
     if (!context)
     {
         std::cerr << "GetApplicationDirectory: Failed to get Context object";
-        return "";
+        return false;
     }
 
     // Get the Context class
@@ -259,7 +259,7 @@ std::string AndroidWindow::GetApplicationDirectory()
     if (!contextClass)
     {
         std::cerr << "GetApplicationDirectory: Failed to get Context class";
-        return "";
+        return false;
     }
 
     // Get the getFilesDir() method ID
@@ -267,7 +267,7 @@ std::string AndroidWindow::GetApplicationDirectory()
     if (!getFilesDirMethod)
     {
         std::cerr << "GetApplicationDirectory: Failed to find getFilesDir method";
-        return "";
+        return false;
     }
 
     // Call getFilesDir() to get the File object
@@ -275,7 +275,7 @@ std::string AndroidWindow::GetApplicationDirectory()
     if (!fileObject)
     {
         std::cerr << "GetApplicationDirectory: Failed to get File object";
-        return "";
+        return false;
     }
 
     // Get the File class
@@ -283,7 +283,7 @@ std::string AndroidWindow::GetApplicationDirectory()
     if (!fileClass)
     {
         std::cerr << "GetApplicationDirectory: Failed to get File class";
-        return "";
+        return false;
     }
 
     // Get the getAbsolutePath() method ID
@@ -292,7 +292,7 @@ std::string AndroidWindow::GetApplicationDirectory()
     if (!getAbsolutePathMethod)
     {
         std::cerr << "GetApplicationDirectory: Failed to find getAbsolutePath method";
-        return "";
+        return false;
     }
 
     // Call getAbsolutePath() to get the path as a jstring
@@ -300,35 +300,43 @@ std::string AndroidWindow::GetApplicationDirectory()
     if (!pathString)
     {
         std::cerr << "GetApplicationDirectory: Failed to get path string";
-        return "";
+        return false;
     }
 
     // Convert the jstring to a std::string
     const char *pathChars = jni->GetStringUTFChars(pathString, nullptr);
-    std::string filesDirPath(pathChars);
+    std::filesystem::path fullPath(pathChars);
     jni->ReleaseStringUTFChars(pathString, pathChars);
-
-    // Return the base directory, stripping "files" essentially
-    std::filesystem::path fullPath(filesDirPath);
-    return fullPath.parent_path();
+    std::string appDir = fullPath.parent_path().string();
+    if (appDir.length() + 1 > buf.size())
+    {
+        std::cerr
+            << "GetApplicationDirectory: Failed because the directory length is too long. Maximum "
+               "allowed chars: "
+            << (buf.size() - 1);
+        return false;
+    }
+    buf.copy_prefix_from(angle::Span(appDir));
+    buf[appDir.size()] = '\0';
+    return true;
 }
 
 // static
-std::string AndroidWindow::GetExternalStorageDirectory()
+bool AndroidWindow::GetExternalStorageDirectory(angle::Span<char> buf)
 {
     // Use reverse JNI.
     JNIEnv *jni = GetJniEnv();
     if (!jni)
     {
         std::cerr << "GetExternalStorageDirectory:: Failed to get JNI env";
-        return "";
+        return false;
     }
 
     jclass classEnvironment = jni->FindClass("android/os/Environment");
     if (classEnvironment == 0)
     {
         std::cerr << "GetExternalStorageDirectory: Failed to find Environment";
-        return "";
+        return false;
     }
 
     // public static File getExternalStorageDirectory ()
@@ -337,7 +345,7 @@ std::string AndroidWindow::GetExternalStorageDirectory()
     if (methodIDgetExternalStorageDirectory == 0)
     {
         std::cerr << "GetExternalStorageDirectory: Failed to get static method";
-        return "";
+        return false;
     }
 
     jobject objectFile =
@@ -348,7 +356,7 @@ std::string AndroidWindow::GetExternalStorageDirectory()
         jni->ExceptionDescribe();
         jni->ExceptionClear();
         std::cerr << "GetExternalStorageDirectory: Failed because of exception";
-        return "";
+        return false;
     }
 
     // Call method on File object to retrieve String object.
@@ -356,7 +364,7 @@ std::string AndroidWindow::GetExternalStorageDirectory()
     if (classEnvironment == 0)
     {
         std::cerr << "GetExternalStorageDirectory: Failed to find object class";
-        return "";
+        return false;
     }
 
     jmethodID methodIDgetAbsolutePath =
@@ -364,7 +372,7 @@ std::string AndroidWindow::GetExternalStorageDirectory()
     if (methodIDgetAbsolutePath == 0)
     {
         std::cerr << "GetExternalStorageDirectory: Failed to get method ID";
-        return "";
+        return false;
     }
 
     jstring stringPath =
@@ -440,11 +448,23 @@ std::string AndroidWindow::GetExternalStorageDirectory()
         jni->ExceptionDescribe();
         jni->ExceptionClear();
         std::cerr << "GetExternalStorageDirectory: Failed because of exception";
-        return "";
+        return false;
     }
 
     const char *path = jni->GetStringUTFChars(stringPath, nullptr);
-    return std::string(path) + "/chromium_tests_root";
+    std::string externalStorageDirectory = std::string(path) + "/chromium_tests_root";
+    jni->ReleaseStringUTFChars(stringPath, path);
+    if (externalStorageDirectory.length() + 1 > buf.size())
+    {
+        std::cerr
+            << "GetExternalStorageDirectory: Failed because the directory length is too long, "
+               "maximum allowed chars: "
+            << (buf.size() - 1);
+        return false;
+    }
+    buf.copy_prefix_from(angle::Span(externalStorageDirectory));
+    buf[externalStorageDirectory.size()] = '\0';
+    return true;
 }
 
 // static

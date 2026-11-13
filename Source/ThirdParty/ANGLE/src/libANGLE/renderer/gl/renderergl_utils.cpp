@@ -2429,6 +2429,9 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
     // Related to virtualizeBaseLevelAndMipchain workaround
     ANGLE_FEATURE_CONDITION(features, readback3DDepthStencilPbosDuringUpload, isPowerVR);
 
+    // Related to virtualizeBaseLevelAndMipchain workaround
+    ANGLE_FEATURE_CONDITION(features, useScratchTextureForConvertingCopySubImage, isPowerVR);
+
     ANGLE_FEATURE_CONDITION(features, recreateTextureOnTexImage3dDepthIncrease,
                             isQualcomm && IsAndroid());
 

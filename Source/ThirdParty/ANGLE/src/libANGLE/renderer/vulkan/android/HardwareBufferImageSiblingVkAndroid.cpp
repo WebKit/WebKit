@@ -553,7 +553,7 @@ angle::Result HardwareBufferImageSiblingVkAndroid::initImpl(DisplayVk *displayVk
     const uint32_t layerCount = mSize.depth;
     vkExtents.depth           = 1;
 
-    mImage = new vk::ImageHelper();
+    mImage = new vk::ImageHelper(VK_IMAGE_TYPE_2D);
 
     // disable robust init for this external image.
     bool robustInitEnabled = false;

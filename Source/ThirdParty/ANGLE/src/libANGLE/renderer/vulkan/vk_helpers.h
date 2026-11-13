@@ -969,6 +969,7 @@ class BufferHelper : public ReadWriteResource
                            VkAccessFlags readAccessType,
                            VkPipelineStageFlags readPipelineStageFlags,
                            PipelineStage stageIndex,
+                           const GLbitfield memoryBarrierBits,
                            PipelineBarrierArray *pipelineBarriers,
                            EventBarrierArray *eventBarriers,
                            RefCountedEventCollector *eventCollector);
@@ -978,6 +979,7 @@ class BufferHelper : public ReadWriteResource
                             VkPipelineStageFlags writeStage,
                             PipelineStage stageIndex,
                             const QueueSerial &queueSerial,
+                            const GLbitfield memoryBarrierBits,
                             PipelineBarrierArray *pipelineBarriers,
                             EventBarrierArray *eventBarriers,
                             RefCountedEventCollector *eventCollector);
@@ -1073,7 +1075,7 @@ class BufferHelper : public ReadWriteResource
         {
             mXFBOrComputeWriteHeuristicBits |= 1;
         }
-        else if ((writeStage == PipelineStage::ComputeShader) && hasVertexInputRead &&
+        else if (writeStage == PipelineStage::ComputeShader && hasVertexInputRead &&
                  context->getFeatures().isVertexSyncDeferred.enabled)
         {
             // When a buffer is written in compute after read in vertex stage, using vkEvent
@@ -1446,7 +1448,8 @@ class CommandBufferHelperCommon : angle::NonCopyable
     void bufferWrite(Context *context,
                      VkAccessFlags writeAccessType,
                      const gl::ShaderBitSet &writeShaderStages,
-                     BufferHelper *buffer);
+                     BufferHelper *buffer,
+                     const GLbitfield memoryBarrierBits);
 
     void bufferRead(Context *context,
                     VkAccessFlags readAccessType,
@@ -1456,7 +1459,8 @@ class CommandBufferHelperCommon : angle::NonCopyable
     void bufferRead(Context *context,
                     VkAccessFlags readAccessType,
                     const gl::ShaderBitSet &readShaderStages,
-                    BufferHelper *buffer);
+                    BufferHelper *buffer,
+                    const GLbitfield memoryBarrierBits);
 
     bool usesBuffer(const BufferHelper &buffer) const
     {
@@ -1546,13 +1550,15 @@ class CommandBufferHelperCommon : angle::NonCopyable
                          VkAccessFlags writeAccessType,
                          VkPipelineStageFlags writePipelineStageFlags,
                          PipelineStage writeStage,
-                         BufferHelper *buffer);
+                         BufferHelper *buffer,
+                         const GLbitfield memoryBarrierBits);
 
     void bufferReadImpl(Context *context,
                         VkAccessFlags readAccessType,
                         VkPipelineStageFlags readPipelineStageFlags,
                         PipelineStage readStage,
-                        BufferHelper *buffer);
+                        BufferHelper *buffer,
+                        const GLbitfield memoryBarrierBits);
 
     void imageReadImpl(Context *context,
                        VkImageAspectFlags aspectFlags,
@@ -1658,7 +1664,8 @@ class OutsideRenderPassCommandBufferHelper final : public CommandBufferHelperCom
                     uint32_t layerCount,
                     VkImageAspectFlags aspectFlags,
                     ImageAccess imageAccess,
-                    ImageHelper *image);
+                    ImageHelper *image,
+                    const GLbitfield memoryBarrierBits);
 
     // Update image with this command buffer's queueSerial.
     void retainImage(Renderer *renderer, ImageHelper *image);
@@ -1912,7 +1919,8 @@ class RenderPassCommandBufferHelper final : public CommandBufferHelperCommon
                     uint32_t layerCount,
                     VkImageAspectFlags aspectFlags,
                     ImageAccess imageAccess,
-                    ImageHelper *image);
+                    ImageHelper *image,
+                    const GLbitfield memoryBarrierBits);
 
     void colorImagesDraw(gl::OwnerLevel level,
                          gl::OwnerLayer layerStart,
@@ -2287,7 +2295,11 @@ class ImageViewHelper;
 class ImageHelper final : public Resource, public angle::Subject
 {
   public:
-    ImageHelper();
+    ImageHelper(VkImageType imageType);
+    // In some cases, a deeply embedded ImageHelper cannot be given the image type.  In all such
+    // cases in the codebase, the image type is 2D.  When initializing the image, the correctness of
+    // mImageType is asserted.
+    ImageHelper() : ImageHelper(VK_IMAGE_TYPE_2D) {}
     ~ImageHelper() override;
 
     angle::Result init(ErrorContext *context,
@@ -2420,7 +2432,6 @@ class ImageHelper final : public Resource, public angle::Subject
     //
     angle::Result initStaging(ErrorContext *context,
                               bool hasProtectedContent,
-                              VkImageType imageType,
                               const VkExtent3D &extents,
                               angle::FormatID intendedFormatID,
                               angle::FormatID actualFormatID,
@@ -4275,6 +4286,7 @@ class CommandResources : angle::NonCopyable
     }
     void onExternalAcquireRelease(ImageHelper *image) { onResourceAccess(image); }
     void onQueryAccess(QueryHelper *query) { onResourceAccess(query); }
+    void onResourceManualBarrier(Resource *resource) { onResourceAccess(resource); }
     void onBufferExternalAcquireRelease(BufferHelper *buffer);
 
     // The limits reflect the current maximum concurrent usage of each resource type.  ASSERTs will

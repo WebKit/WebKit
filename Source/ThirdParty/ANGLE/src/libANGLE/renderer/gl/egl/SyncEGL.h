@@ -49,7 +49,7 @@ class SyncEGL final : public EGLSyncImpl
   private:
     const FunctionsEGL *mEGL;
 
-    std::shared_ptr<EGLSync> mSync;
+    EGLSyncKHR mSync = EGL_NO_SYNC_KHR;
 };
 
 }  // namespace rx

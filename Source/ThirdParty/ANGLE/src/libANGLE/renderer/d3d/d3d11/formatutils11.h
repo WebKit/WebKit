@@ -45,6 +45,8 @@ const Format &GetYUVPlaneFormat(DXGI_FORMAT dxgiFormat, int plane);
 // R16G16B16A16_UNORM).
 const Format *GetPackedYUVFormat(DXGI_FORMAT dxgiFormat);
 
+bool IsPackedYUVFormat(DXGI_FORMAT dxgiFormat);
+
 struct DXGIFormatSize
 {
     DXGIFormatSize(GLuint pixelBits, GLuint blockWidth, GLuint blockHeight);

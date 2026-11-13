@@ -85,7 +85,9 @@ bool DrawCallHasStreamingElementArray(const gl::Context *context, gl::DrawElemen
         {
             BufferD3D *bufferD3D                     = GetImplAs<BufferD3D>(elementArrayBuffer);
             StaticIndexBufferInterface *staticBuffer = bufferD3D->getStaticIndexBuffer();
-            return (staticBuffer->getBufferSize() == 0 || staticBuffer->getIndexType() != dstType);
+            return (staticBuffer->getBufferSize() == 0 ||
+                    !staticBuffer->matchesIndexData(srcType, dstType,
+                                                    glState.isPrimitiveRestartEnabled()));
         }
         default:
             UNREACHABLE();

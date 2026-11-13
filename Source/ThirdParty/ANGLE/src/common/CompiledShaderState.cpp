@@ -250,7 +250,11 @@ CompiledShaderState::CompiledShaderState(gl::ShaderType type)
       tessGenMode(0),
       tessGenSpacing(0),
       tessGenVertexOrder(0),
-      tessGenPointMode(0)
+      tessGenPointMode(0),
+      clipDistanceSize(0),
+      cullDistanceSize(0),
+      inputClipDistanceSize(0),
+      inputCullDistanceSize(0)
 {
     localSize.fill(-1);
 }
@@ -299,6 +303,8 @@ void CompiledShaderState::buildCompiledShaderState(const ShHandle compilerHandle
             allAttributes    = GetShaderVariables(sh::GetAttributes(compilerHandle));
             activeAttributes = GetActiveShaderVariables(&allAttributes);
             numViews         = sh::GetVertexShaderNumViews(compilerHandle);
+            clipDistanceSize = sh::GetClipDistanceArraySize(compilerHandle);
+            cullDistanceSize = sh::GetCullDistanceArraySize(compilerHandle);
             break;
         }
         case gl::ShaderType::Fragment:
@@ -313,6 +319,8 @@ void CompiledShaderState::buildCompiledShaderState(const ShHandle compilerHandle
             advancedBlendEquations =
                 gl::BlendEquationBitSet(sh::GetAdvancedBlendEquations(compilerHandle));
             pixelLocalStorageLayouts = *sh::GetPixelLocalStorageLayouts(compilerHandle);
+            inputClipDistanceSize    = sh::GetInputClipDistanceArraySize(compilerHandle);
+            inputCullDistanceSize    = sh::GetInputCullDistanceArraySize(compilerHandle);
             break;
         }
         case gl::ShaderType::Geometry:
@@ -335,6 +343,10 @@ void CompiledShaderState::buildCompiledShaderState(const ShHandle compilerHandle
                 geometryShaderMaxVertices = sh::GetGeometryShaderMaxVertices(compilerHandle);
             }
             geometryShaderInvocations = sh::GetGeometryShaderInvocations(compilerHandle);
+            clipDistanceSize          = sh::GetClipDistanceArraySize(compilerHandle);
+            cullDistanceSize          = sh::GetCullDistanceArraySize(compilerHandle);
+            inputClipDistanceSize     = sh::GetInputClipDistanceArraySize(compilerHandle);
+            inputCullDistanceSize     = sh::GetInputCullDistanceArraySize(compilerHandle);
             break;
         }
         case gl::ShaderType::TessControl:
@@ -342,6 +354,10 @@ void CompiledShaderState::buildCompiledShaderState(const ShHandle compilerHandle
             inputVaryings             = GetShaderVariables(sh::GetInputVaryings(compilerHandle));
             outputVaryings            = GetShaderVariables(sh::GetOutputVaryings(compilerHandle));
             tessControlShaderVertices = sh::GetTessControlShaderVertices(compilerHandle);
+            clipDistanceSize          = sh::GetClipDistanceArraySize(compilerHandle);
+            cullDistanceSize          = sh::GetCullDistanceArraySize(compilerHandle);
+            inputClipDistanceSize     = sh::GetInputClipDistanceArraySize(compilerHandle);
+            inputCullDistanceSize     = sh::GetInputCullDistanceArraySize(compilerHandle);
             break;
         }
         case gl::ShaderType::TessEvaluation:
@@ -364,6 +380,10 @@ void CompiledShaderState::buildCompiledShaderState(const ShHandle compilerHandle
             {
                 tessGenPointMode = sh::GetTessGenPointMode(compilerHandle);
             }
+            clipDistanceSize      = sh::GetClipDistanceArraySize(compilerHandle);
+            cullDistanceSize      = sh::GetCullDistanceArraySize(compilerHandle);
+            inputClipDistanceSize = sh::GetInputClipDistanceArraySize(compilerHandle);
+            inputCullDistanceSize = sh::GetInputCullDistanceArraySize(compilerHandle);
             break;
         }
 
@@ -434,6 +454,8 @@ void CompiledShaderState::serialize(gl::BinaryOutputStream &stream) const
                 WriteShaderVar(&stream, shaderVariable);
             }
             stream.writeInt(numViews);
+            stream.writeInt(clipDistanceSize);
+            stream.writeInt(cullDistanceSize);
             break;
         }
         case gl::ShaderType::Fragment:
@@ -451,6 +473,8 @@ void CompiledShaderState::serialize(gl::BinaryOutputStream &stream) const
             stream.writeInt(advancedBlendEquations.bits());
             stream.writeInt<size_t>(pixelLocalStorageLayouts.size());
             stream.writeBytes(angle::as_byte_span(pixelLocalStorageLayouts));
+            stream.writeInt(inputClipDistanceSize);
+            stream.writeInt(inputCullDistanceSize);
             break;
         }
         case gl::ShaderType::Geometry:
@@ -480,6 +504,10 @@ void CompiledShaderState::serialize(gl::BinaryOutputStream &stream) const
             }
 
             stream.writeInt(geometryShaderInvocations);
+            stream.writeInt(clipDistanceSize);
+            stream.writeInt(cullDistanceSize);
+            stream.writeInt(inputClipDistanceSize);
+            stream.writeInt(inputCullDistanceSize);
             break;
         }
         case gl::ShaderType::TessControl:
@@ -495,6 +523,10 @@ void CompiledShaderState::serialize(gl::BinaryOutputStream &stream) const
                 WriteShaderVar(&stream, shaderVariable);
             }
             stream.writeInt(tessControlShaderVertices);
+            stream.writeInt(clipDistanceSize);
+            stream.writeInt(cullDistanceSize);
+            stream.writeInt(inputClipDistanceSize);
+            stream.writeInt(inputCullDistanceSize);
             break;
         }
         case gl::ShaderType::TessEvaluation:
@@ -523,6 +555,11 @@ void CompiledShaderState::serialize(gl::BinaryOutputStream &stream) const
 
             value = (unsigned int)tessGenPointMode;
             stream.writeInt(value);
+
+            stream.writeInt(clipDistanceSize);
+            stream.writeInt(cullDistanceSize);
+            stream.writeInt(inputClipDistanceSize);
+            stream.writeInt(inputCullDistanceSize);
             break;
         }
         default:
@@ -603,6 +640,8 @@ void CompiledShaderState::deserialize(gl::BinaryInputStream &stream)
                 LoadShaderVar(&stream, &shaderVariable);
             }
             stream.readInt(&numViews);
+            stream.readInt(&clipDistanceSize);
+            stream.readInt(&cullDistanceSize);
             break;
         }
         case gl::ShaderType::Fragment:
@@ -624,6 +663,8 @@ void CompiledShaderState::deserialize(gl::BinaryInputStream &stream)
             advancedBlendEquations = gl::BlendEquationBitSet(advancedBlendEquationBits);
             pixelLocalStorageLayouts.resize(stream.readInt<size_t>());
             stream.readBytes(angle::as_writable_byte_span(pixelLocalStorageLayouts));
+            stream.readInt(&inputClipDistanceSize);
+            stream.readInt(&inputCullDistanceSize);
             break;
         }
         case gl::ShaderType::Geometry:
@@ -660,6 +701,10 @@ void CompiledShaderState::deserialize(gl::BinaryInputStream &stream)
             }
 
             stream.readInt(&geometryShaderInvocations);
+            stream.readInt(&clipDistanceSize);
+            stream.readInt(&cullDistanceSize);
+            stream.readInt(&inputClipDistanceSize);
+            stream.readInt(&inputCullDistanceSize);
             break;
         }
         case gl::ShaderType::TessControl:
@@ -677,6 +722,10 @@ void CompiledShaderState::deserialize(gl::BinaryInputStream &stream)
                 LoadShaderVar(&stream, &shaderVariable);
             }
             stream.readInt(&tessControlShaderVertices);
+            stream.readInt(&clipDistanceSize);
+            stream.readInt(&cullDistanceSize);
+            stream.readInt(&inputClipDistanceSize);
+            stream.readInt(&inputCullDistanceSize);
             break;
         }
         case gl::ShaderType::TessEvaluation:
@@ -707,6 +756,11 @@ void CompiledShaderState::deserialize(gl::BinaryInputStream &stream)
 
             stream.readInt(&value);
             tessGenPointMode = (GLenum)value;
+
+            stream.readInt(&clipDistanceSize);
+            stream.readInt(&cullDistanceSize);
+            stream.readInt(&inputClipDistanceSize);
+            stream.readInt(&inputCullDistanceSize);
             break;
         }
         default:

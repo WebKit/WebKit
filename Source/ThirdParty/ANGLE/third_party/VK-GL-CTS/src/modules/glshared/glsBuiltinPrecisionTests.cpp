@@ -1946,7 +1946,8 @@ protected:
     DoubleFunc2 &m_func;
 };
 
-class InfixOperator : public FloatFunc2
+// Printed as an infix operator: (a op b).
+class InfixFunc2 : public FloatFunc2
 {
 protected:
     virtual string getSymbol(void) const = 0;
@@ -1955,7 +1956,12 @@ protected:
     {
         os << "(" << *args[0] << " " << getSymbol() << " " << *args[1] << ")";
     }
+};
 
+// An infix operator with a correctly rounded result, like GLSL +, - and *.
+class InfixOperator : public InfixFunc2
+{
+protected:
     Interval applyPoint(const EvalContext &ctx, double x, double y) const
     {
         const double exact = this->applyExact(x, y);
@@ -2157,7 +2163,8 @@ protected:
     }
 };
 
-class Div : public InfixOperator
+// Not an InfixOperator: GLSL division is accurate to 2.5 ULP, not correctly rounded.
+class Div : public InfixFunc2
 {
 public:
     string getName(void) const
@@ -3067,7 +3074,8 @@ public:
 
     void doPrint(ostream &os, const BaseArgExprs &args) const
     {
-        Func<Sig>::doPrint(os, args);
+        // Printed as a function call, matrixCompMult(a, b), not as Mul's infix operator.
+        os << getName() << "(" << *args[0] << ", " << *args[1] << ")";
     }
 };
 

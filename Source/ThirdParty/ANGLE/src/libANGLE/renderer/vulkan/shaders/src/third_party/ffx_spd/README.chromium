@@ -1,9 +1,8 @@
 Name: FideltyFX Single Pass Downsampler
 Short Name: ffx-spd
 URL: https://github.com/GPUOpen-Effects/FidelityFX-SPD
-Version: 1.0
-Date: 2019-05-31
-Revision: 0e82a6f4f491aa18adde62edc3f5c4ed20d92627
+Version: 2.0
+Revision: 7c796c6d9fa6a9439e3610478148cfd742d97daf
 Update Mechanism: Static.HardFork (https://crbug.com/576058959)
 License: MIT
 License File: src/LICENSE

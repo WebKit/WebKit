@@ -1,0 +1,15 @@
+upstream {
+  commit: "53090429539bf3404250d18fe58db971f0907c04"
+  artifacts {
+    git {
+      repository: "https://github.com/Themaister/Granite"
+      commit: "53090429539bf3404250d18fe58db971f0907c04"
+    }
+  }
+}
+stages {
+  input {
+    patch { copybara {} }
+  }
+  publish { git {} }
+}

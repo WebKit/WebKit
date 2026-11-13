@@ -190,6 +190,35 @@ void ApplySampleCoverage(const gl::State &glState, uint32_t coverageSampleCount,
     *maskOut &= coverageMask;
 }
 
+uint32_t DeriveSampleMask(const gl::State &glState, uint32_t rasterizationSamples)
+{
+    static_assert(sizeof(uint32_t) == sizeof(GLbitfield), "Vulkan assumes 32-bit sample masks");
+    ASSERT(glState.getMaxSampleMaskWords() == 1);
+
+    uint32_t mask = std::numeric_limits<uint16_t>::max();
+
+    // The following assumes that supported sample counts for multisampled
+    // rendering does not include 1. This is true in the Vulkan backend,
+    // where 1x multisampling is disallowed.
+    if (rasterizationSamples > 1)
+    {
+        if (glState.isSampleMaskEnabled())
+        {
+            mask = glState.getSampleMaskWord(0) & angle::BitMask<uint32_t>(rasterizationSamples);
+        }
+
+        // If sample coverage is enabled, emulate it by generating and applying a mask on top of the
+        // sample mask.
+        if (glState.isSampleCoverageEnabled())
+        {
+            ApplySampleCoverage(glState, GetCoverageSampleCount(glState, rasterizationSamples),
+                                &mask);
+        }
+    }
+
+    return mask;
+}
+
 SurfaceRotation DetermineSurfaceRotation(const gl::Framebuffer *framebuffer,
                                          const WindowSurfaceVk *windowSurface)
 {
@@ -527,7 +556,7 @@ void OnImageBufferWrite(vk::Context *context,
 {
     vk::BufferHelper &buffer = bufferVk->getBuffer();
     VkAccessFlags accessFlags = VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_SHADER_WRITE_BIT;
-    commandBufferHelper->bufferWrite(context, accessFlags, stages, &buffer);
+    commandBufferHelper->bufferWrite(context, accessFlags, stages, &buffer, kNoMemoryBarrierBits);
     bufferVk->onDataChanged();
 }
 
@@ -830,6 +859,7 @@ ContextVk::ContextVk(const gl::State &state, gl::ErrorSet *errorSet, vk::Rendere
       mCurrentGraphicsPipelineShaders(nullptr),
       mCurrentComputePipeline(nullptr),
       mCurrentDrawMode(gl::PrimitiveMode::Unused1),
+      mCurrentRasterizationSamples(0),
       mCurrentWindowSurface(nullptr),
       mCurrentRotationDrawFramebuffer(SurfaceRotation::Identity),
       mCurrentRotationReadFramebuffer(SurfaceRotation::Identity),
@@ -995,6 +1025,10 @@ ContextVk::ContextVk(const gl::State &state, gl::ErrorSet *errorSet, vk::Rendere
     {
         mDynamicStateDirtyBits.set(DIRTY_BIT_DYNAMIC_POLYGON_MODE);
     }
+    if (mRenderer->getFeatures().supportsSampleMaskDynamicState.enabled)
+    {
+        mDynamicStateDirtyBits.set(DIRTY_BIT_DYNAMIC_SAMPLE_MASK);
+    }
     if (getFeatures().supportsFragmentShadingRate.enabled)
     {
         mDynamicStateDirtyBits.set(DIRTY_BIT_DYNAMIC_FRAGMENT_SHADING_RATE);
@@ -1110,6 +1144,8 @@ ContextVk::ContextVk(const gl::State &state, gl::ErrorSet *errorSet, vk::Rendere
         &ContextVk::handleDirtyGraphicsDynamicLogicOpEnable;
     mGraphicsDirtyBitHandlers[DIRTY_BIT_DYNAMIC_POLYGON_MODE] =
         &ContextVk::handleDirtyGraphicsDynamicPolygonMode;
+    mGraphicsDirtyBitHandlers[DIRTY_BIT_DYNAMIC_SAMPLE_MASK] =
+        &ContextVk::handleDirtyGraphicsDynamicSampleMask;
     mGraphicsDirtyBitHandlers[DIRTY_BIT_DYNAMIC_FRAGMENT_SHADING_RATE] =
         &ContextVk::handleDirtyGraphicsDynamicFragmentShadingRate;
 
@@ -1236,7 +1272,8 @@ ContextVk::ContextVk(const gl::State &state, gl::ErrorSet *errorSet, vk::Rendere
     {
         mPipelineDirtyBitsMask.reset(gl::state::DIRTY_BIT_POLYGON_OFFSET_FILL_ENABLED);
     }
-    // Dynamic state in VK_EXT_extended_dynamic_state3:
+    // Dynamic state in VK_EXT_extended_dynamic_state3 (most of which is in "extended" front-end
+    // state, hence cannot be excluded here):
     if (mRenderer->getFeatures().supportsAlphaToCoverageEnableDynamicState.enabled)
     {
         mPipelineDirtyBitsMask.reset(gl::state::DIRTY_BIT_SAMPLE_ALPHA_TO_COVERAGE_ENABLED);
@@ -1244,6 +1281,13 @@ ContextVk::ContextVk(const gl::State &state, gl::ErrorSet *errorSet, vk::Rendere
     if (mRenderer->getFeatures().supportsAlphaToOneEnableDynamicState.enabled)
     {
         mPipelineDirtyBitsMask.reset(gl::state::DIRTY_BIT_SAMPLE_ALPHA_TO_ONE);
+    }
+    if (mRenderer->getFeatures().supportsSampleMaskDynamicState.enabled)
+    {
+        mPipelineDirtyBitsMask.reset(gl::state::DIRTY_BIT_SAMPLE_COVERAGE_ENABLED);
+        mPipelineDirtyBitsMask.reset(gl::state::DIRTY_BIT_SAMPLE_COVERAGE);
+        mPipelineDirtyBitsMask.reset(gl::state::DIRTY_BIT_SAMPLE_MASK_ENABLED);
+        mPipelineDirtyBitsMask.reset(gl::state::DIRTY_BIT_SAMPLE_MASK);
     }
     // Dynamic state in VK_EXT_vertex_input_dynamic_state
     if (getFeatures().supportsVertexInputDynamicState.enabled)
@@ -3601,6 +3645,19 @@ angle::Result ContextVk::handleDirtyGraphicsDynamicPolygonMode(
     return angle::Result::Continue;
 }
 
+angle::Result ContextVk::handleDirtyGraphicsDynamicSampleMask(
+    DirtyBits::Iterator *dirtyBitsIterator,
+    DirtyBits dirtyBitMask)
+{
+    const uint32_t rasterizationSamples = getDrawFramebuffer()->getSamples();
+    const uint32_t mask                 = DeriveSampleMask(mState, rasterizationSamples);
+    ASSERT(rasterizationSamples <= VK_SAMPLE_COUNT_16_BIT);
+    // See comment in SecondaryCommandBuffer::setSampleMask, using a sample count that's higher than
+    // rasterization samples is ok per the Vulkan spec.
+    mRenderPassCommandBuffer->setSampleMask(VK_SAMPLE_COUNT_16_BIT, &mask);
+    return angle::Result::Continue;
+}
+
 angle::Result ContextVk::handleDirtyGraphicsDynamicFragmentShadingRate(
     DirtyBits::Iterator *dirtyBitsIterator,
     DirtyBits dirtyBitMask)
@@ -4896,31 +4953,15 @@ void ContextVk::updateBlendFuncsAndEquations()
 
 void ContextVk::updateSampleMaskWithRasterizationSamples(const uint32_t rasterizationSamples)
 {
-    static_assert(sizeof(uint32_t) == sizeof(GLbitfield), "Vulkan assumes 32-bit sample masks");
-    ASSERT(mState.getMaxSampleMaskWords() == 1);
-
-    uint32_t mask = std::numeric_limits<uint16_t>::max();
-
-    // The following assumes that supported sample counts for multisampled
-    // rendering does not include 1. This is true in the Vulkan backend,
-    // where 1x multisampling is disallowed.
-    if (rasterizationSamples > 1)
+    if (mRenderer->getFeatures().supportsSampleMaskDynamicState.enabled)
     {
-        if (mState.isSampleMaskEnabled())
-        {
-            mask = mState.getSampleMaskWord(0) & angle::BitMask<uint32_t>(rasterizationSamples);
-        }
-
-        // If sample coverage is enabled, emulate it by generating and applying a mask on top of the
-        // sample mask.
-        if (mState.isSampleCoverageEnabled())
-        {
-            ApplySampleCoverage(mState, GetCoverageSampleCount(mState, rasterizationSamples),
-                                &mask);
-        }
+        mGraphicsDirtyBits.set(DIRTY_BIT_DYNAMIC_SAMPLE_MASK);
     }
-
-    mGraphicsPipelineDesc->updateSampleMask(&mGraphicsPipelineTransition, 0, mask);
+    else
+    {
+        const uint32_t mask = DeriveSampleMask(mState, rasterizationSamples);
+        mGraphicsPipelineDesc->updateSampleMask(&mGraphicsPipelineTransition, 0, mask);
+    }
 }
 
 void ContextVk::updateAlphaToCoverageWithRasterizationSamples(const uint32_t rasterizationSamples)
@@ -5218,13 +5259,15 @@ void ContextVk::updateSampleShadingWithRasterizationSamples(const uint32_t raste
 // rasterization sample should be updated.
 void ContextVk::updateRasterizationSamples(const uint32_t rasterizationSamples)
 {
-    uint32_t prevSampleCount = mGraphicsPipelineDesc->getRasterizationSamples();
+    uint32_t prevSampleCount = mCurrentRasterizationSamples;
     updateFrameBufferFetchSamples(prevSampleCount, rasterizationSamples);
     mGraphicsPipelineDesc->updateRasterizationSamples(&mGraphicsPipelineTransition,
                                                       rasterizationSamples);
     updateSampleShadingWithRasterizationSamples(rasterizationSamples);
     updateSampleMaskWithRasterizationSamples(rasterizationSamples);
     updateAlphaToCoverageWithRasterizationSamples(rasterizationSamples);
+
+    mCurrentRasterizationSamples = rasterizationSamples;
 }
 
 void ContextVk::updateRasterizerDiscardEnabled(bool isPrimitivesGeneratedQueryActive)
@@ -5578,14 +5621,8 @@ angle::Result ContextVk::syncState(const gl::Context *context,
                 updateStencilWriteWorkaround();
                 break;
             case gl::state::DIRTY_BIT_SAMPLE_COVERAGE_ENABLED:
-                updateSampleMaskWithRasterizationSamples(drawFramebufferVk->getSamples());
-                break;
             case gl::state::DIRTY_BIT_SAMPLE_COVERAGE:
-                updateSampleMaskWithRasterizationSamples(drawFramebufferVk->getSamples());
-                break;
             case gl::state::DIRTY_BIT_SAMPLE_MASK_ENABLED:
-                updateSampleMaskWithRasterizationSamples(drawFramebufferVk->getSamples());
-                break;
             case gl::state::DIRTY_BIT_SAMPLE_MASK:
                 updateSampleMaskWithRasterizationSamples(drawFramebufferVk->getSamples());
                 break;
@@ -6609,8 +6646,7 @@ angle::Result ContextVk::onFramebufferChange(FramebufferVk *framebufferVk, gl::C
     onRenderPassFinished(RenderPassClosureReason::FramebufferChange);
 
     // Ensure that the pipeline description is updated.
-    if (mGraphicsPipelineDesc->getRasterizationSamples() !=
-        static_cast<uint32_t>(framebufferVk->getSamples()))
+    if (mCurrentRasterizationSamples != static_cast<uint32_t>(framebufferVk->getSamples()))
     {
         updateRasterizationSamples(framebufferVk->getSamples());
     }
@@ -7629,12 +7665,9 @@ angle::Result ContextVk::updateActiveImages(CommandBufferHelperT *commandBufferH
 
     // If there are memoryBarrier call being made that requires we insert barriers for images we
     // must do so.
-    bool memoryBarrierRequired = false;
-    if ((mDeferredMemoryBarriers & kWriteAfterAccessImageMemoryBarriers) != 0)
-    {
-        memoryBarrierRequired = true;
-        mDeferredMemoryBarriers &= ~kWriteAfterAccessImageMemoryBarriers;
-    }
+    const GLbitfield memoryBarrierBits =
+        mDeferredMemoryBarriers & kWriteAfterAccessImageMemoryBarriers;
+    mDeferredMemoryBarriers &= ~kWriteAfterAccessImageMemoryBarriers;
 
     FillWithNullptr(&mActiveImages);
 
@@ -7693,7 +7726,7 @@ angle::Result ContextVk::updateActiveImages(CommandBufferHelperT *commandBufferH
         const vk::ImageAccess imageAccess = GetImageWriteAccessAndSubresource(
             imageUnit, *image, shaderStages, &level, &layerStart, &layerCount);
 
-        if (imageAccess == image->getCurrentImageAccess() && !memoryBarrierRequired)
+        if (imageAccess == image->getCurrentImageAccess() && memoryBarrierBits == 0)
         {
             // GL spec does not require implementation to do WAW barriers for shader image access.
             // If there is no layout change, we skip the barrier here unless there is prior
@@ -7703,7 +7736,8 @@ angle::Result ContextVk::updateActiveImages(CommandBufferHelperT *commandBufferH
         else
         {
             commandBufferHelper->imageWrite(this, level, layerStart, layerCount,
-                                            image->getAspectFlags(), imageAccess, image);
+                                            image->getAspectFlags(), imageAccess, image,
+                                            memoryBarrierBits);
         }
     }
 

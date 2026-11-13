@@ -28,6 +28,8 @@
 //     those should always be Temporary: validate_block_variable_name_sources_are_temporary()
 //   - NameSource::Internal names don't start with the user and temporary name prefixes (*_PREFIX
 //     constants): validate_internal_name_prefixes()
+//   - A NameSource::Internal interface block or struct variable is never given an empty ("") name:
+//     validate_internal_interface_block_and_struct_variable_names()
 //
 // Types:
 //   - Validate that ImageType fields are valid in combination with ImageDimension:
@@ -67,6 +69,8 @@
 //     generated right now): validate_merge_block_with_input()
 //   - Loop blocks ends in the appropriate instructions:
 //     validate_loop_block_ends_in_appropriate_instruction()
+//   - There is no foldable control flow (`If constant`, `Switch constant ...`, `Loop`+`LoopIf
+//     false`): validate_no_constant_foldable_instruction(), validate_no_foldable_loop()
 //
 // Instructions:
 //   - Access to struct fields are in bounds: validate_struct_field_in_bounds()
@@ -97,13 +101,9 @@
 
 // TODO(http://anglebug.com/349994211): to validate:
 //   - If there's a cached "has side effect", that it's correct.
-//   - Type matches?
 //   - Whatever else is in the AST validation currently.
 //   - Validate built-ins that accept an out or inout parameter, that the corresponding parameter is
 //     passed a Pointer at the call site.  For that matter, do the same for user function calls too.
-//   - There is no foldable control flow (`If constant`, `Switch constant ...`, `Loop`+`LoopIf
-//     false`)
-//   - A NameSource::Internal interface block or struct variable is never given an empty ("") name.
 
 use crate::ir::*;
 use crate::traverser::BlockKind;
@@ -309,6 +309,7 @@ impl<'a> Validator<'a> {
         self.validate_misuse_of_builtin_names();
         self.validate_interface_variables_have_unique_names();
         self.validate_block_variable_name_sources_are_temporary();
+        self.validate_internal_interface_block_and_struct_variable_names();
         self.validate_internal_name_prefixes();
         self.validate_decorations();
         self.validate_no_pointer_to_pointer_type();
@@ -320,6 +321,7 @@ impl<'a> Validator<'a> {
         self.validate_all_branch_instructions_have_valid_target();
         self.validate_merge_block_with_input();
         self.validate_loop_block_ends_in_appropriate_instruction();
+        self.validate_no_foldable_loop();
         self.validate_all_instructions();
         self.validate_function_parameter_variables();
         self.validate_function_return_types();
@@ -1378,6 +1380,7 @@ impl<'a> Validator<'a> {
         }
     }
 
+    // TODO:(http://anglebug.com/349994211): add the validation that checks the result type is correct
     fn validate_sampler_operand_is_compatible_with_textureop(&self, opcode: &OpCode) {
         match opcode {
             OpCode::Texture(texture_opcode, sampler, _) => {
@@ -1831,9 +1834,306 @@ impl<'a> Validator<'a> {
                     }
                 }
             }
-            // TODO(http://anglebug.com/349994211): add validation for BuiltInOpCode::TexelFetch, BuiltInOpCode::TexelFetchOffset,
-            // BuiltInOpCode::TextureSize, BuiltInOpCode::PixelLocalStoreANGLE,
-            // BuiltInOpCode::Image*
+            // gvec4 texelFetch(gsampler2D, ivec2, int)
+            // gvec4 texelFetch(gsampler3D, ivec3, int)
+            // gvec4 texelFetch(gsampler2DArray, ivec3, int)
+            // gvec4 texelFetch(gsamplerBuffer, int)
+            // gvec4 texelFetch(gsampler2DMS, ivec2, int)
+            // gvec4 texelFetch(gsampler2DMSArray, ivec3, int)
+            // vec4 texelFetch(samplerExternalOES sampler, ivec2, int)
+            // vec4 texelFetch(samplerExternal2DY2YEXT sampler, ivec2, int)
+            OpCode::BuiltIn(BuiltInOpCode::TexelFetch, args) => {
+                let sampler_type = self.ir.meta.get_type(args[0].type_id);
+                let image_type = match *sampler_type {
+                    Type::Image(_, image_type) => image_type,
+                    _ => {
+                        self.on_error(format_args!(
+                            "first operand in {:?} must be Image type",
+                            opcode
+                        ));
+                    }
+                };
+
+                if !image_type.is_sampled {
+                    self.on_error(format_args!("first operand in {:?} must be sampler", opcode));
+                }
+
+                if image_type.is_shadow {
+                    self.on_error(format_args!(
+                        "first operand in {:?} must NOT be shadow sampler",
+                        opcode
+                    ));
+                }
+
+                if !(matches!(
+                    image_type.dimension,
+                    ImageDimension::D2
+                        | ImageDimension::D3
+                        | ImageDimension::Buffer
+                        | ImageDimension::External
+                        | ImageDimension::ExternalY2Y
+                )) {
+                    self.on_error(format_args!(
+                        "first operand in {:?} must be 2D, 3D, Buffer, External or ExternalY2Y \
+                         sampler",
+                        opcode
+                    ));
+                }
+            }
+            // gvec4 texelFetchOffset(gsampler2D, ivec2, int, ivec2)
+            // gvec4 texelFetchOffset(gsampler3D, ivec3, int, ivec3)
+            // gvec4 texelFetchOffset(gsampler2DArray, ivec3, int, ivec2)
+            OpCode::BuiltIn(BuiltInOpCode::TexelFetchOffset, args) => {
+                let sampler_type = self.ir.meta.get_type(args[0].type_id);
+                let image_type = match *sampler_type {
+                    Type::Image(_, image_type) => image_type,
+                    _ => {
+                        self.on_error(format_args!(
+                            "first operand in {:?} must be Image type",
+                            opcode
+                        ));
+                    }
+                };
+
+                if !image_type.is_sampled {
+                    self.on_error(format_args!("first operand in {:?} must be sampler", opcode));
+                }
+
+                if image_type.is_shadow {
+                    self.on_error(format_args!(
+                        "first operand in {:?} must NOT be shadow sampler",
+                        opcode
+                    ));
+                }
+
+                if image_type.is_ms {
+                    self.on_error(format_args!(
+                        "first operand in {:?} must NOT be multisampled sampler",
+                        opcode
+                    ));
+                }
+
+                if !(matches!(image_type.dimension, ImageDimension::D2 | ImageDimension::D3)) {
+                    self.on_error(format_args!(
+                        "first operand in {:?} must be 2D or 3D sampler",
+                        opcode
+                    ));
+                }
+            }
+            // ivec2 textureSize(gsampler2D, int)
+            // ivec3 textureSize(gsampler3D, int)
+            // ivec2 textureSize(gsamplerCube, int)
+            // ivec2 textureSize(sampler2DShadow, int)
+            // ivec2 textureSize(samplerCubeShadow, int)
+            // ivec3 textureSize(gsamplerCubeArray, int)
+            // ivec3 textureSize(samplerCubeArrayShadow, int)
+            // ivec3 textureSize(gsampler2DArray, int)
+            // ivec3 textureSize(sampler2DArrayShadow, int)
+            // int textureSize(gsamplerBuffer)
+            // ivec2 textureSize(gsampler2DMS)
+            // ivec3 textureSize(gsampler2DMSArray)
+            // ivec2 textureSize(samplerExternalOES, int)
+            // ivec2 textureSize(samplerExternal2DY2YEXT, int)
+            OpCode::BuiltIn(BuiltInOpCode::TextureSize, args) => {
+                let sampler_type = self.ir.meta.get_type(args[0].type_id);
+                let image_type = match *sampler_type {
+                    Type::Image(_, image_type) => image_type,
+                    _ => {
+                        self.on_error(format_args!(
+                            "first operand in {:?} must be Image type",
+                            opcode
+                        ));
+                    }
+                };
+
+                if !image_type.is_sampled {
+                    self.on_error(format_args!("first operand in {:?} must be sampler", opcode));
+                }
+
+                if !(matches!(
+                    image_type.dimension,
+                    ImageDimension::D2
+                        | ImageDimension::D3
+                        | ImageDimension::Cube
+                        | ImageDimension::Buffer
+                        | ImageDimension::External
+                        | ImageDimension::ExternalY2Y
+                )) {
+                    self.on_error(format_args!(
+                        "first operand in {:?} must be 2D, 3D, Cube, Buffer, External or \
+                         ExternalY2Y sampler",
+                        opcode
+                    ));
+                }
+            }
+            OpCode::BuiltIn(BuiltInOpCode::PixelLocalStoreANGLE, args) => {
+                let sampler_type = self.ir.meta.get_type(args[0].type_id);
+                let image_type = match *sampler_type {
+                    Type::Image(_, image_type) => image_type,
+                    _ => {
+                        self.on_error(format_args!(
+                            "first operand in {:?} must be Image type",
+                            opcode
+                        ));
+                    }
+                };
+                if image_type.dimension != ImageDimension::PixelLocal {
+                    self.on_error(format_args!(
+                        "first operand in {:?} must be PixelLocal image",
+                        opcode
+                    ));
+                }
+            }
+            // vec2 textureQueryLOD(gsampler2D, vec2);
+            // vec2 textureQueryLOD(gsampler3D, vec3);
+            // vec2 textureQueryLOD(gsamplerCube, vec3);
+            // vec2 textureQueryLOD(gsampler2DArray, vec2);
+            // vec2 textureQueryLOD(sampler2DShadow, vec2);
+            // vec2 textureQueryLOD(samplerCubeShadow, vec3);
+            // vec2 textureQueryLOD(sampler2DArrayShadow, vec2);
+            // vec2 textureQueryLOD(gsamplerCubeArray, vec3);
+            // vec2 textureQueryLOD(samplerCubeArrayShadow, vec3);
+            OpCode::BuiltIn(BuiltInOpCode::TextureQueryLod, args) => {
+                let sampler_type = self.ir.meta.get_type(args[0].type_id);
+                let image_type = match *sampler_type {
+                    Type::Image(_, image_type) => image_type,
+                    _ => {
+                        self.on_error(format_args!(
+                            "first operand in {:?} must be Image type",
+                            opcode
+                        ));
+                    }
+                };
+                if !image_type.is_sampled {
+                    self.on_error(format_args!("first operand in {:?} must be sampler", opcode));
+                }
+                if image_type.is_ms {
+                    self.on_error(format_args!(
+                        "first operand in {:?} must NOT be multisampled sampler",
+                        opcode
+                    ));
+                }
+                if !(matches!(
+                    image_type.dimension,
+                    ImageDimension::D2 | ImageDimension::Cube | ImageDimension::D3
+                )) {
+                    self.on_error(format_args!(
+                        "first operand in {:?} must be 2D, 3D or Cube sampler",
+                        opcode
+                    ));
+                }
+            }
+            // gvec4 subpassLoad(gsubpassInput);
+            OpCode::BuiltIn(BuiltInOpCode::SubpassLoad, args) => {
+                let image_type = match *self.ir.meta.get_type(args[0].type_id) {
+                    Type::Image(_, image_type) => image_type,
+                    _ => {
+                        self.on_error(format_args!(
+                            "first operand in {:?} must be Image type",
+                            opcode
+                        ));
+                    }
+                };
+
+                if image_type.dimension != ImageDimension::Subpass {
+                    self.on_error(format_args!(
+                        "first operand in {:?} must be Subpass image",
+                        opcode
+                    ));
+                }
+            }
+            // ivec2 imageSize(gimage2D);
+            // ivec3 imageSize(gimage3D);
+            // ivec3 imageSize(gimage2DArray);
+            // ivec2 imageSize(gimageCube);
+            // ivec3 imageSize(gimageCubeArray);
+            // int imageSize(gimageBuffer);
+            OpCode::Unary(UnaryOpCode::ImageSize, arg) => {
+                let image_type = match *self.ir.meta.get_type(arg.type_id) {
+                    Type::Image(_, image_type) => image_type,
+                    _ => {
+                        self.on_error(format_args!(
+                            "first operand in {:?} must be Image type",
+                            opcode
+                        ));
+                    }
+                };
+                if image_type.is_sampled {
+                    self.on_error(format_args!(
+                        "first operand in {:?} must be image, not sampler",
+                        opcode
+                    ));
+                }
+                if !(matches!(
+                    image_type.dimension,
+                    ImageDimension::D2
+                        | ImageDimension::Cube
+                        | ImageDimension::D3
+                        | ImageDimension::Buffer
+                )) {
+                    self.on_error(format_args!(
+                        "first operand in {:?} must be 2D, 3D, Cube or Buffer image",
+                        opcode
+                    ));
+                }
+            }
+
+            // void imageStore(writeonly IMAGE_PARAMS, gvec4)
+            // gvec4 imageLoad(readonly IMAGE_PARAMS)
+            // uint/int imageAtomicAdd(IMAGE_PARAMS, uint/int)
+            // uint/int imageAtomicAnd(IMAGE_PARAMS, uint/int)
+            // uint/int imageAtomicOr(IMAGE_PARAMS, uint/int)
+            // uint/int imageAtomicXor(IMAGE_PARAMS, uint/int)
+            // uint/int imageAtomicMin(IMAGE_PARAMS, uint/int)
+            // uint/int imageAtomicMax(IMAGE_PARAMS, uint/int)
+            // uint/int imageAtomicCompSwap(IMAGE_PARAMS, uint/int, uint/int)
+            // uint/int/float imageAtomicExchange(IMAGE_PARAMS, uint/int/float)
+            // where IMAGE_PARAMS is one of the followings:
+            // gimage2D image, ivec2 P
+            // gimage3D image, ivec3 P
+            // gimageCube image, ivec3 P
+            // gimageBuffer image, int P
+            // gimage2DArray image, ivec3 P
+            // gimageCubeArray image, ivec3 P
+            OpCode::BuiltIn(BuiltInOpCode::ImageStore, args)
+            | OpCode::BuiltIn(BuiltInOpCode::ImageLoad, args)
+            | OpCode::BuiltIn(BuiltInOpCode::ImageAtomicAdd, args)
+            | OpCode::BuiltIn(BuiltInOpCode::ImageAtomicAnd, args)
+            | OpCode::BuiltIn(BuiltInOpCode::ImageAtomicOr, args)
+            | OpCode::BuiltIn(BuiltInOpCode::ImageAtomicXor, args)
+            | OpCode::BuiltIn(BuiltInOpCode::ImageAtomicMin, args)
+            | OpCode::BuiltIn(BuiltInOpCode::ImageAtomicMax, args)
+            | OpCode::BuiltIn(BuiltInOpCode::ImageAtomicExchange, args)
+            | OpCode::BuiltIn(BuiltInOpCode::ImageAtomicCompSwap, args) => {
+                let image_operand_type = self.ir.meta.get_type(args[0].type_id);
+                let image_type = match *image_operand_type {
+                    Type::Image(_, image_type) => image_type,
+                    _ => {
+                        self.on_error(format_args!(
+                            "first operand in {:?} must be Image type",
+                            opcode
+                        ));
+                    }
+                };
+                if image_type.is_sampled {
+                    self.on_error(format_args!(
+                        "first operand in {:?} must be image, not sampler",
+                        opcode
+                    ));
+                }
+                if !matches!(
+                    image_type.dimension,
+                    ImageDimension::D2
+                        | ImageDimension::D3
+                        | ImageDimension::Cube
+                        | ImageDimension::Buffer
+                ) {
+                    self.on_error(format_args!(
+                        "first operand in {:?} must be 2D, 3D, Cube or Buffer image",
+                        opcode
+                    ));
+                }
+            }
             _ => return,
         }
     }
@@ -1881,20 +2181,22 @@ impl<'a> Validator<'a> {
                         opcode
                     ));
                 }
-
-                if let Id::Constant(switch_condition_constant_id) = switch_condition.id {
-                    for case_value_id in case_values.iter().flatten() {
-                        if switch_condition_constant_id != *case_value_id {
-                            self.on_error(format_args!(
-                                "operation {:?} could be constant folded. Case value does not \
-                                 match with switch condition constant, case should be removed",
-                                opcode
-                            ));
-                        }
-                    }
+                if matches!(switch_condition.id, Id::Constant(_)) {
+                    self.on_error(format_args!(
+                        "invalid instruction {:?}. switch(constant) should be folded",
+                        opcode
+                    ));
                 }
             }
-            // Other instructions can't be constant folded.
+            OpCode::If(condition) => {
+                if matches!(condition.id, Id::Constant(_)) {
+                    self.on_error(format_args!(
+                        "invalid instruction {:?}, if(constant) should be folded",
+                        opcode
+                    ));
+                }
+            }
+            // Other instructions can't be constant folded or are not checked.
             OpCode::MergeInput
             | OpCode::Discard
             | OpCode::Return(_)
@@ -1903,10 +2205,9 @@ impl<'a> Validator<'a> {
             | OpCode::Passthrough
             | OpCode::NextBlock
             | OpCode::Merge(_)
-            // OpCode::If and OpCode::LoopIf condition can be Constant(ConstantId), as long as the
-            // condition.type_id is TYPE_ID_BOOL. See function
-            // validate_instruction_operand_and_result_type(), and test GLSLTestLoops.ForNoCondition.
-            | OpCode::If(_)
+            // OpCode::LoopIf condition can be Constant(ConstantId),
+            // Loop + LoopIf(true) and DoLoop + LoopIf(constant) are valid.
+            // Loop + LoopIf(false) must be constant folded, which is checked by validate_no_foldable_loop().
             | OpCode::LoopIf(_)
             | OpCode::Loop
             | OpCode::DoLoop
@@ -1923,6 +2224,33 @@ impl<'a> Validator<'a> {
             | OpCode::BuiltIn(_, _)
             | OpCode::Texture(_, _, _) => {}
         };
+    }
+
+    fn validate_no_foldable_loop(&self) {
+        traverser::visitor::for_each_function(
+            &mut (),
+            &self.ir.function_entries,
+            |_, _| {},
+            |_, block, _, _| {
+                // reject loop + loopIf(false),
+                // allow:
+                //  loop + loopif(true)
+                //  doloop + loopif(constant)
+                if matches!(block.get_terminating_op(), OpCode::Loop) {
+                    let condition_block = block.get_loop_condition_block();
+                    let last_op = condition_block.get_merge_chain_terminating_op();
+                    if let &OpCode::LoopIf(condition) = last_op
+                        && condition.id == Id::Constant(CONSTANT_ID_FALSE)
+                    {
+                        self.on_error(format_args!(
+                            "loop + loopif false should be constant folded"
+                        ));
+                    }
+                }
+                traverser::visitor::VISIT_SUB_BLOCKS
+            },
+            |_, _| {},
+        );
     }
 
     fn validate_not_all_args_are_constant(&self, opcode: &OpCode, instruction_args: &[TypedId]) {
@@ -2453,6 +2781,24 @@ impl<'a> Validator<'a> {
             },
             |_, _| {},
         );
+    }
+
+    fn validate_internal_interface_block_and_struct_variable_names(&self) {
+        for variable in self.ir.meta.all_variables().iter().filter(|variable| {
+            !variable.is_dead_code_eliminated
+                && variable.name.source == NameSource::Internal
+                && variable.name.name.is_empty()
+                && !variable.is_built_in()
+        }) {
+            let type_id = self.ir.meta.get_pointee_type(variable.type_id);
+            if matches!(self.ir.meta.get_type(type_id), Type::Struct(..)) {
+                self.on_error(format_args!(
+                    "invalid variable {:?}: internal interface block or struct variable name must \
+                     not be empty",
+                    variable
+                ));
+            }
+        }
     }
 
     fn validate_internal_name_prefixes(&self) {

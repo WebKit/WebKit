@@ -907,6 +907,8 @@ tcu::TestCase::IterateResult BindMaxAliasingAttributeTest::iterate(void)
     for (int loc = maxAttributes - arrayElementCount * m_type.getLocationSize(); loc >= 0;
          loc -= m_type.getLocationSize() * arrayElementCount)
     {
+        if (ndx >= maxAttributes / 2)
+            break;
         attributes.push_back(Attribute(m_type, "a_" + de::toString(ndx), Attribute::LOC_UNDEF, Cond("A", true)));
         bindings.push_back(Bind("a_" + de::toString(ndx), loc));
 

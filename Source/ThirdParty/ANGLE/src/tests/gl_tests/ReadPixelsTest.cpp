@@ -7,7 +7,7 @@
 //   Tests calls related to glReadPixels.
 //
 
-#include "common/unsafe_buffers.h"
+#include "common/span.h"
 #include "test_utils/ANGLETest.h"
 
 #include <array>
@@ -187,13 +187,13 @@ TEST_P(ReadPixelsPBONVTest, Basic)
     glBindBuffer(GL_PIXEL_PACK_BUFFER, mPBO);
     glReadPixels(0, 0, 16, 16, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 
-    void *mappedPtr = glMapBufferRangeEXT(GL_PIXEL_PACK_BUFFER, 0, mPBOBufferSize, GL_MAP_READ_BIT);
-    GLColor *dataColor = static_cast<GLColor *>(mappedPtr);
+    auto dataColor =
+        MapBufferRangeEXT<const GLColor>(GL_PIXEL_PACK_BUFFER, 0, mPBOBufferSize, GL_MAP_READ_BIT);
     EXPECT_GL_NO_ERROR();
 
     EXPECT_EQ(GLColor::red, dataColor[0]);
-    ANGLE_UNSAFE_TODO(EXPECT_EQ(GLColor::red, dataColor[16 * 16 - 2]));
-    ANGLE_UNSAFE_TODO(EXPECT_EQ(GLColor::green, dataColor[16 * 16 - 1]));
+    EXPECT_EQ(GLColor::red, dataColor[16 * 16 - 2]);
+    EXPECT_EQ(GLColor::green, dataColor[16 * 16 - 1]);
 
     glUnmapBufferOES(GL_PIXEL_PACK_BUFFER);
     EXPECT_GL_NO_ERROR();
@@ -218,12 +218,11 @@ TEST_P(ReadPixelsPBONVTest, SubDataPreservesContents)
     glBindBuffer(GL_ARRAY_BUFFER, mPBO);
     glBufferSubData(GL_ARRAY_BUFFER, 0, 4, data);
 
-    void *mappedPtr    = glMapBufferRangeEXT(GL_ARRAY_BUFFER, 0, 32, GL_MAP_READ_BIT);
-    GLColor *dataColor = static_cast<GLColor *>(mappedPtr);
+    auto dataColor = MapBufferRangeEXT<const GLColor>(GL_ARRAY_BUFFER, 0, 32, GL_MAP_READ_BIT);
     EXPECT_GL_NO_ERROR();
 
     EXPECT_EQ(GLColor(1, 2, 3, 4), dataColor[0]);
-    ANGLE_UNSAFE_TODO(EXPECT_EQ(GLColor::red, dataColor[1]));
+    EXPECT_EQ(GLColor::red, dataColor[1]);
 
     glUnmapBufferOES(GL_ARRAY_BUFFER);
     EXPECT_GL_NO_ERROR();
@@ -251,12 +250,11 @@ TEST_P(ReadPixelsPBONVTest, DynamicPBO)
     glBindBuffer(GL_ARRAY_BUFFER, mPBO);
     glBufferSubData(GL_ARRAY_BUFFER, 0, 4, data);
 
-    void *mappedPtr    = glMapBufferRangeEXT(GL_ARRAY_BUFFER, 0, 32, GL_MAP_READ_BIT);
-    GLColor *dataColor = static_cast<GLColor *>(mappedPtr);
+    auto dataColor = MapBufferRangeEXT<const GLColor>(GL_ARRAY_BUFFER, 0, 32, GL_MAP_READ_BIT);
     EXPECT_GL_NO_ERROR();
 
     EXPECT_EQ(GLColor(1, 2, 3, 4), dataColor[0]);
-    ANGLE_UNSAFE_TODO(EXPECT_EQ(GLColor::red, dataColor[1]));
+    EXPECT_EQ(GLColor::red, dataColor[1]);
 
     glUnmapBufferOES(GL_ARRAY_BUFFER);
     EXPECT_GL_NO_ERROR();
@@ -281,14 +279,13 @@ TEST_P(ReadPixelsPBONVTest, ReadFromFBO)
     glBindBuffer(GL_PIXEL_PACK_BUFFER, mPBO);
     glReadPixels(0, 0, mFBOWidth, mFBOHeight, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 
-    void *mappedPtr =
-        glMapBufferRangeEXT(GL_PIXEL_PACK_BUFFER, 0, 4 * mFBOWidth * mFBOHeight, GL_MAP_READ_BIT);
-    GLColor *dataColor = static_cast<GLColor *>(mappedPtr);
+    auto dataColor = MapBufferRangeEXT<const GLColor>(GL_PIXEL_PACK_BUFFER, 0,
+                                                      4 * mFBOWidth * mFBOHeight, GL_MAP_READ_BIT);
     EXPECT_GL_NO_ERROR();
 
     EXPECT_EQ(GLColor::red, dataColor[0]);
-    ANGLE_UNSAFE_TODO(EXPECT_EQ(GLColor::red, dataColor[mFBOWidth * mFBOHeight - 2]));
-    ANGLE_UNSAFE_TODO(EXPECT_EQ(GLColor::green, dataColor[mFBOWidth * mFBOHeight - 1]));
+    EXPECT_EQ(GLColor::red, dataColor[mFBOWidth * mFBOHeight - 2]);
+    EXPECT_EQ(GLColor::green, dataColor[mFBOWidth * mFBOHeight - 1]);
 
     glUnmapBufferOES(GL_PIXEL_PACK_BUFFER);
     EXPECT_GL_NO_ERROR();
@@ -317,14 +314,13 @@ TEST_P(ReadPixelsPBONVTest, ReadFromFBOWithDataOffset)
     glReadPixels(0, 0, mFBOWidth, mFBOHeight - 1, GL_RGBA, GL_UNSIGNED_BYTE,
                  reinterpret_cast<void *>(mFBOWidth * static_cast<uintptr_t>(4)));
 
-    void *mappedPtr =
-        glMapBufferRangeEXT(GL_PIXEL_PACK_BUFFER, 0, 4 * mFBOWidth * mFBOHeight, GL_MAP_READ_BIT);
-    GLColor *dataColor = static_cast<GLColor *>(mappedPtr);
+    auto dataColor = MapBufferRangeEXT<const GLColor>(GL_PIXEL_PACK_BUFFER, 0,
+                                                      4 * mFBOWidth * mFBOHeight, GL_MAP_READ_BIT);
     EXPECT_GL_NO_ERROR();
 
-    ANGLE_UNSAFE_TODO(EXPECT_EQ(GLColor::green, dataColor[mFBOWidth]));
-    ANGLE_UNSAFE_TODO(EXPECT_EQ(GLColor::red, dataColor[mFBOWidth + 1]));
-    ANGLE_UNSAFE_TODO(EXPECT_EQ(GLColor::red, dataColor[mFBOWidth * mFBOHeight - 1]));
+    EXPECT_EQ(GLColor::green, dataColor[mFBOWidth]);
+    EXPECT_EQ(GLColor::red, dataColor[mFBOWidth + 1]);
+    EXPECT_EQ(GLColor::red, dataColor[mFBOWidth * mFBOHeight - 1]);
 
     glUnmapBufferOES(GL_PIXEL_PACK_BUFFER);
     EXPECT_GL_NO_ERROR();
@@ -421,8 +417,7 @@ TEST_P(ReadPixelsPBOTest, Basic)
     glBindBuffer(GL_PIXEL_PACK_BUFFER, mPBO);
     glReadPixels(0, 0, 16, 16, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 
-    void *mappedPtr    = glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, 32, GL_MAP_READ_BIT);
-    GLColor *dataColor = static_cast<GLColor *>(mappedPtr);
+    auto dataColor = MapBufferRange<const GLColor>(GL_PIXEL_PACK_BUFFER, 0, 32, GL_MAP_READ_BIT);
     EXPECT_GL_NO_ERROR();
 
     EXPECT_EQ(GLColor::red, dataColor[0]);
@@ -473,18 +468,18 @@ TEST_P(ReadPixelsPBOTest, Snorm)
     glReadPixels(0, 0, kSize, kSize, GL_RGBA, GL_BYTE, 0);
 
     std::vector<GLColor> result(kSize * kSize);
-    void *mappedPtr = glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, kSize * kSize * 4, GL_MAP_READ_BIT);
-    ANGLE_UNSAFE_TODO(memcpy(result.data(), mappedPtr, kSize * kSize * 4));
+    Span(result).copy_from(
+        MapBufferRange<const GLColor>(GL_PIXEL_PACK_BUFFER, 0, kSize * kSize * 4, GL_MAP_READ_BIT));
     glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
     EXPECT_GL_NO_ERROR();
 
-    auto verify = [&](const GLColor expect[4]) {
+    auto verify = [&](Span<const GLColor, 4> expect) {
         for (size_t i = 0; i < kSize; ++i)
         {
             for (size_t j = 0; j < kSize; ++j)
             {
                 uint32_t index = (i < kSize / 2 ? 0 : 1) << 1 | (j < kSize / 2 ? 0 : 1);
-                ANGLE_UNSAFE_TODO(EXPECT_EQ(result[i * kSize + j], expect[index])) << i << " " << j;
+                EXPECT_EQ(result[i * kSize + j], expect[index]) << i << " " << j;
             }
         }
     };
@@ -511,8 +506,8 @@ TEST_P(ReadPixelsPBOTest, Snorm)
         glPixelStorei(GL_PACK_REVERSE_ROW_ORDER_ANGLE, GL_TRUE);
         glReadPixels(0, 0, kSize, kSize, GL_RGBA, GL_BYTE, 0);
 
-        mappedPtr = glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, kSize * kSize * 4, GL_MAP_READ_BIT);
-        ANGLE_UNSAFE_TODO(memcpy(result.data(), mappedPtr, kSize * kSize * 4));
+        Span(result).copy_from(MapBufferRange<const GLColor>(GL_PIXEL_PACK_BUFFER, 0,
+                                                             kSize * kSize * 4, GL_MAP_READ_BIT));
         glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
         EXPECT_GL_NO_ERROR();
 
@@ -553,9 +548,8 @@ TEST_P(ReadPixelsPBOTest, SrgbUnorm)
     glPixelStorei(GL_PACK_REVERSE_ROW_ORDER_ANGLE, GL_TRUE);
     glReadPixels(0, 0, kSize, kSize, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 
-    GLColor result;
-    void *mappedPtr = glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, kSize * kSize * 4, GL_MAP_READ_BIT);
-    ANGLE_UNSAFE_TODO(memcpy(result.data(), mappedPtr, kSize * kSize * 4));
+    const GLColor result = MapBufferRange<const GLColor>(GL_PIXEL_PACK_BUFFER, 0, kSize * kSize * 4,
+                                                         GL_MAP_READ_BIT)[0];
     glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
     EXPECT_GL_NO_ERROR();
 
@@ -604,8 +598,7 @@ TEST_P(ReadPixelsPBOTest, ArrayBufferTarget)
     glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
     glBindBuffer(GL_ARRAY_BUFFER, mPBO);
 
-    void *mappedPtr    = glMapBufferRange(GL_ARRAY_BUFFER, 0, 32, GL_MAP_READ_BIT);
-    GLColor *dataColor = static_cast<GLColor *>(mappedPtr);
+    auto dataColor = MapBufferRange<const GLColor>(GL_ARRAY_BUFFER, 0, 32, GL_MAP_READ_BIT);
     EXPECT_GL_NO_ERROR();
 
     EXPECT_EQ(GLColor::red, dataColor[0]);
@@ -633,16 +626,15 @@ TEST_P(ReadPixelsPBOTest, ExistingDataPreserved)
 
     // Read 16x16 region from green backbuffer to PBO at offset 16
     glReadPixels(0, 0, 16, 16, GL_RGBA, GL_UNSIGNED_BYTE, reinterpret_cast<void *>(16));
-    void *mappedPtr =
-        glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, 17 * sizeof(GLColor), GL_MAP_READ_BIT);
-    GLColor *dataColor = static_cast<GLColor *>(mappedPtr);
+    auto dataColor = MapBufferRange<const GLColor>(GL_PIXEL_PACK_BUFFER, 0, 17 * sizeof(GLColor),
+                                                   GL_MAP_READ_BIT);
     EXPECT_GL_NO_ERROR();
 
     // Test pixel 0 is red (existing data)
     EXPECT_EQ(GLColor::red, dataColor[0]);
 
     // Test pixel 16 is green (new data)
-    ANGLE_UNSAFE_TODO(EXPECT_EQ(GLColor::green, dataColor[16]));
+    EXPECT_EQ(GLColor::green, dataColor[16]);
 
     glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
     EXPECT_GL_NO_ERROR();
@@ -664,8 +656,7 @@ TEST_P(ReadPixelsPBOTest, SubDataPreservesContents)
     glBindBuffer(GL_ARRAY_BUFFER, mPBO);
     glBufferSubData(GL_ARRAY_BUFFER, 0, 4, data);
 
-    void *mappedPtr    = glMapBufferRange(GL_ARRAY_BUFFER, 0, 32, GL_MAP_READ_BIT);
-    GLColor *dataColor = static_cast<GLColor *>(mappedPtr);
+    auto dataColor = MapBufferRange<const GLColor>(GL_ARRAY_BUFFER, 0, 32, GL_MAP_READ_BIT);
     EXPECT_GL_NO_ERROR();
 
     EXPECT_EQ(GLColor(1, 2, 3, 4), dataColor[0]);
@@ -693,12 +684,11 @@ TEST_P(ReadPixelsPBOTest, SubDataOffsetPreservesContents)
     glBindBuffer(GL_ARRAY_BUFFER, mPBO);
     glBufferSubData(GL_ARRAY_BUFFER, 16, 4, data);
 
-    void *mappedPtr    = glMapBufferRange(GL_ARRAY_BUFFER, 0, 32, GL_MAP_READ_BIT);
-    GLColor *dataColor = static_cast<GLColor *>(mappedPtr);
+    auto dataColor = MapBufferRange<const GLColor>(GL_ARRAY_BUFFER, 0, 32, GL_MAP_READ_BIT);
     EXPECT_GL_NO_ERROR();
 
     EXPECT_EQ(GLColor::red, dataColor[0]);
-    ANGLE_UNSAFE_TODO(EXPECT_EQ(GLColor(1, 2, 3, 4), dataColor[4]));
+    EXPECT_EQ(GLColor(1, 2, 3, 4), dataColor[4]);
 
     glUnmapBuffer(GL_ARRAY_BUFFER);
     EXPECT_GL_NO_ERROR();
@@ -755,15 +745,14 @@ void main()
     // Read the framebuffer pixels
     glReadPixels(0, 0, mFBOWidth, mFBOHeight, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 
-    void *mappedPtr =
-        glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, sizeof(kInitialData), GL_MAP_READ_BIT);
-    GLColor *dataColor = static_cast<GLColor *>(mappedPtr);
+    auto dataColor = MapBufferRange<const GLColor>(GL_PIXEL_PACK_BUFFER, 0, sizeof(kInitialData),
+                                                   GL_MAP_READ_BIT);
     EXPECT_GL_NO_ERROR();
 
     EXPECT_EQ(GLColor::blue, dataColor[0]);
-    ANGLE_UNSAFE_TODO(EXPECT_EQ(GLColor::green, dataColor[1]));
-    ANGLE_UNSAFE_TODO(EXPECT_EQ(GLColor::green, dataColor[2]));
-    ANGLE_UNSAFE_TODO(EXPECT_EQ(GLColor::green, dataColor[3]));
+    EXPECT_EQ(GLColor::green, dataColor[1]);
+    EXPECT_EQ(GLColor::green, dataColor[2]);
+    EXPECT_EQ(GLColor::green, dataColor[3]);
 
     glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
     EXPECT_GL_NO_ERROR();
@@ -800,8 +789,9 @@ TEST_P(ReadPixelsPBOTest, SmallRowLength)
     glReadPixels(0, 0, kSize, kSize, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
     ASSERT_GL_NO_ERROR();
 
-    void *mappedPtr = glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, mPBOBufferSize, GL_MAP_READ_BIT);
-    ASSERT_NE(nullptr, mappedPtr);
+    auto dataColor =
+        MapBufferRange<const GLColor>(GL_PIXEL_PACK_BUFFER, 0, mPBOBufferSize, GL_MAP_READ_BIT);
+    ASSERT_FALSE(dataColor.empty());
     ASSERT_GL_NO_ERROR();
 
     // TODO(anglebug.com/354005999)
@@ -809,11 +799,10 @@ TEST_P(ReadPixelsPBOTest, SmallRowLength)
     // Suppressed until a fallback is implemented
     if (!IsMetal())
     {
-        GLColor *colorPtr = static_cast<GLColor *>(mappedPtr);
-        EXPECT_EQ(colorPtr[0], GLColor::red);
-        ANGLE_UNSAFE_TODO(EXPECT_EQ(colorPtr[1], GLColor::blue));
-        ANGLE_UNSAFE_TODO(EXPECT_EQ(colorPtr[2], GLColor::white));
-        ANGLE_UNSAFE_TODO(EXPECT_EQ(colorPtr[3], GLColor::black));
+        EXPECT_EQ(dataColor[0], GLColor::red);
+        EXPECT_EQ(dataColor[1], GLColor::blue);
+        EXPECT_EQ(dataColor[2], GLColor::white);
+        EXPECT_EQ(dataColor[3], GLColor::black);
     }
     ASSERT_TRUE(glUnmapBuffer(GL_PIXEL_PACK_BUFFER));
     ASSERT_GL_NO_ERROR();
@@ -844,20 +833,19 @@ TEST_P(ReadPixelsPBOTest, PackLargeRowLength)
     glReadPixels(0, 0, 1, 2, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
     EXPECT_GL_NO_ERROR();
 
-    void *mappedPtr = glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, kBufferSize, GL_MAP_READ_BIT);
-    ASSERT_NE(nullptr, mappedPtr);
+    auto dataColor =
+        MapBufferRange<const GLColor>(GL_PIXEL_PACK_BUFFER, 0, kBufferSize, GL_MAP_READ_BIT);
+    ASSERT_FALSE(dataColor.empty());
 
-    const GLColor *colorPtr = static_cast<const GLColor *>(mappedPtr);
     GLColor actualColorRow0;
     GLColor actualColorRow1;
 
     // Check row 0 pixel (at byte offset 0)
-    actualColorRow0 = colorPtr[0];
+    actualColorRow0 = dataColor[0];
 
     // Check row 1 pixel (at byte offset kByteOffsetToVerify)
     constexpr size_t kRow1OffsetInPixels = kByteOffsetToVerify / sizeof(GLColor);
-    // SAFETY: test-only code.
-    ANGLE_UNSAFE_BUFFERS(actualColorRow1 = colorPtr[kRow1OffsetInPixels]);
+    actualColorRow1                      = dataColor[kRow1OffsetInPixels];
 
     glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
 
@@ -1088,20 +1076,18 @@ class ReadPixelsTextureNorm16PBOTest : public ReadPixelsTest
             ANGLE_SKIP_TEST_IF(!supportedCombination);
         }
 
-        T *dataRead =
-            static_cast<T *>(glMapBufferRange(GL_PIXEL_PACK_BUFFER, offset, 8, GL_MAP_READ_BIT));
+        auto dataRead = MapBufferRange<const T>(GL_PIXEL_PACK_BUFFER, offset, 8, GL_MAP_READ_BIT);
         ASSERT_GL_NO_ERROR();
 
         EXPECT_EQ(dataRead[0], data[0]);
         if (readFormat == GL_RGBA || readFormat == GL_RG)
         {
-            ANGLE_UNSAFE_TODO(EXPECT_EQ(dataRead[1], format != GL_RED ? data[1] : 0));
+            EXPECT_EQ(dataRead[1], format != GL_RED ? data[1] : 0);
         }
         if (readFormat == GL_RGBA)
         {
-            ANGLE_UNSAFE_TODO(EXPECT_EQ(dataRead[2], format == GL_RGBA ? data[2] : 0));
-            ANGLE_UNSAFE_TODO(
-                EXPECT_EQ(dataRead[3], format == GL_RGBA ? data[3] : (isSigned ? 32767 : 65535)));
+            EXPECT_EQ(dataRead[2], format == GL_RGBA ? data[2] : 0);
+            EXPECT_EQ(dataRead[3], format == GL_RGBA ? data[3] : (isSigned ? 32767 : 65535));
         }
         glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
     }
@@ -1300,10 +1286,10 @@ TEST_P(ReadPixelsMultisampleTest, DefaultFramebufferPBO)
 
     const std::vector<angle::GLColor> expectedColor(w * h, GLColor::red);
     std::vector<angle::GLColor> actualColor(w * h);
-    const void *mapPointer =
-        glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, sizeof(angle::GLColor) * w * h, GL_MAP_READ_BIT);
-    ASSERT_NE(nullptr, mapPointer);
-    ANGLE_UNSAFE_TODO(memcpy(actualColor.data(), mapPointer, sizeof(angle::GLColor) * w * h));
+    auto mapped = MapBufferRange<const angle::GLColor>(
+        GL_PIXEL_PACK_BUFFER, 0, sizeof(angle::GLColor) * w * h, GL_MAP_READ_BIT);
+    ASSERT_FALSE(mapped.empty());
+    Span(actualColor).copy_from(mapped);
     glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
 
     EXPECT_EQ(expectedColor, actualColor);
@@ -1441,11 +1427,10 @@ class ReadPixelsTextureTest : public ANGLETest<>
         const std::vector<angle::GLColor> expectedColor(size * size, getColorValue(level, layer));
         std::vector<angle::GLColor> actualColor(size * size);
 
-        void *mapPointer = glMapBufferRange(GL_PIXEL_PACK_BUFFER, offset,
-                                            sizeof(angle::GLColor) * size * size, GL_MAP_READ_BIT);
-        ASSERT_NE(nullptr, mapPointer);
-        ANGLE_UNSAFE_TODO(
-            memcpy(actualColor.data(), mapPointer, sizeof(angle::GLColor) * size * size));
+        auto mapped = MapBufferRange<const angle::GLColor>(
+            GL_PIXEL_PACK_BUFFER, offset, sizeof(angle::GLColor) * size * size, GL_MAP_READ_BIT);
+        ASSERT_FALSE(mapped.empty());
+        Span(actualColor).copy_from(mapped);
         glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
 
         ASSERT_GL_NO_ERROR();
@@ -1792,8 +1777,8 @@ TEST_P(ReadPixelsFloat32TypePBOTest, Basic)
     glReadPixels(0, 0, mFBOWidth, mFBOHeight, GL_RGBA, GL_FLOAT, 0);
     EXPECT_GL_NO_ERROR();
 
-    void *mappedPtr = glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, mPBOBufferSize, GL_MAP_READ_BIT);
-    GLColor32F *dataColor = static_cast<GLColor32F *>(mappedPtr);
+    auto dataColor =
+        MapBufferRange<const GLColor32F>(GL_PIXEL_PACK_BUFFER, 0, mPBOBufferSize, GL_MAP_READ_BIT);
     EXPECT_GL_NO_ERROR();
 
     EXPECT_EQ(GLColor32F(0.5f, 0.2f, 0.3f, 0.4f), dataColor[0]);

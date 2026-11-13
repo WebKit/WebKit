@@ -3659,8 +3659,9 @@ void ReferenceContext::clear(uint32_t buffers)
             rr::getSubregion(stencilBuf, stencilArea.x(), stencilArea.y(), stencilArea.z(), stencilArea.w()));
         int stencilBits = getNumStencilBits(stencilBuf.raw().getFormat());
         int stencil     = maskStencil(stencilBits, m_clearStencil);
+        uint32_t mask   = deBitMask32(0, stencilBits);
 
-        if ((m_stencil[rr::FACETYPE_FRONT].writeMask & ((1u << stencilBits) - 1u)) != ((1u << stencilBits) - 1u))
+        if ((m_stencil[rr::FACETYPE_FRONT].writeMask & mask) != mask)
         {
             // Slow path where depth or stencil is masked out in write.
             for (int y = 0; y < access.raw().getDepth(); y++)

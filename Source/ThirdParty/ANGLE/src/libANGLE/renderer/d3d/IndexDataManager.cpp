@@ -190,7 +190,8 @@ angle::Result IndexDataManager::prepareIndexData(const gl::Context *context,
 
     bool staticBufferInitialized = staticBuffer && staticBuffer->getBufferSize() != 0;
     bool staticBufferUsable =
-        staticBuffer && offsetAligned && staticBuffer->getIndexType() == dstType;
+        staticBuffer && offsetAligned &&
+        staticBuffer->matchesIndexData(srcType, dstType, primitiveRestartFixedIndexEnabled);
 
     if (staticBufferInitialized && !staticBufferUsable)
     {
@@ -224,8 +225,11 @@ angle::Result IndexDataManager::prepareIndexData(const gl::Context *context,
                 static_cast<unsigned int>(buffer->getSize()) >> srcTypeShift;
             ANGLE_TRY(StreamInIndexBuffer(context, staticBuffer, bufferData, convertCount, srcType,
                                           dstType, primitiveRestartFixedIndexEnabled, nullptr));
+            staticBuffer->setSrcIndexType(srcType);
+            staticBuffer->setPrimitiveRestartFixedIndexEnabled(primitiveRestartFixedIndexEnabled);
         }
-        ASSERT(offsetAligned && staticBuffer->getIndexType() == dstType);
+        ASSERT(offsetAligned &&
+               staticBuffer->matchesIndexData(srcType, dstType, primitiveRestartFixedIndexEnabled));
 
         translated->indexBuffer = staticBuffer->getIndexBuffer();
         translated->serial      = staticBuffer->getSerial();

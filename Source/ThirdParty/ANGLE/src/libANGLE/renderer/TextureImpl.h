@@ -78,6 +78,13 @@ class TextureImpl : public FramebufferAttachmentObjectImpl
                                                 size_t imageSize,
                                                 const uint8_t *pixels) = 0;
 
+    // Provides an interposition point for backends to resolve the effective gl::InternalFormat
+    // stored in TextureState by Texture::copyImage (for example, using the source framebuffer's
+    // implementation color read type for unsized internal formats instead of defaulting to
+    // GL_UNSIGNED_BYTE).
+    virtual const gl::InternalFormat &getCopyImageInternalFormat(const gl::Context *context,
+                                                                 GLenum internalFormat,
+                                                                 gl::Framebuffer *source) const;
     virtual angle::Result copyImage(const gl::Context *context,
                                     const gl::ImageIndex &index,
                                     const gl::Rectangle &sourceArea,

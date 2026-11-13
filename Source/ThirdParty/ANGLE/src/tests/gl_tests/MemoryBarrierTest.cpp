@@ -3221,6 +3221,130 @@ class MemoryBarrierBufferOnlyTest : public MemoryBarrierTestBase,
     }
 };
 
+class MemoryBarrierSequentialBufferTest : public MemoryBarrierTestBase, public ANGLETest<>
+{
+  protected:
+    MemoryBarrierSequentialBufferTest()
+    {
+        setWindowWidth(16);
+        setWindowHeight(32);
+        setConfigRedBits(8);
+        setConfigGreenBits(8);
+        setConfigBlueBits(8);
+        setConfigAlphaBits(8);
+    }
+};
+
+// Verify that a VkEvent-backed SSBO does not consume a global storage barrier before other
+// pipeline-barrier-backed SSBOs are processed.
+TEST_P(MemoryBarrierSequentialBufferTest, StorageBarrierAcrossSequentialRebinds)
+{
+    GLTexture color;
+    GLFramebuffer fbo;
+    createFramebuffer(color, fbo, GLColor::black);
+
+    std::array<GLBuffer, 4> buffers;
+    constexpr std::array<float, 4> kInitData = {2.0, 2.0, 2.0, 2.0};
+    for (GLBuffer &buffer : buffers)
+    {
+        createStorageBuffer(WriteResource::Buffer, buffer, 0, sizeof(kInitData), kInitData.data());
+    }
+
+    // Prime only the first buffer's vertex-input-to-compute history so its write is tracked by a
+    // VkEvent. The other writes remain tracked by pipeline-barrier state.
+    GLProgram readProgram;
+    createVertexVerifyProgram(buffers[0], &readProgram);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+    glFinish();
+
+    GLProgram writeProgram;
+    createProgram(ShaderWritePipeline::Compute, WriteResource::Buffer, &writeProgram);
+    constexpr std::array<float, 4> kFirstWriteData = {1.5, 3.75, 5.0, 12.125};
+    setUniformData(writeProgram, kFirstWriteData);
+    for (GLBuffer &buffer : buffers)
+    {
+        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, buffer);
+        glDispatchCompute(1, 1, 1);
+    }
+
+    glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+
+    constexpr std::array<float, 4> kSecondWriteData = {12.34, 5.6, 78.91, 123.456};
+    setUniformData(writeProgram, kSecondWriteData);
+    for (GLBuffer &buffer : buffers)
+    {
+        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, buffer);
+        glDispatchCompute(1, 1, 1);
+    }
+
+    for (const GLBuffer &buffer : buffers)
+    {
+        glBindBuffer(GL_SHADER_STORAGE_BUFFER, buffer);
+        verifyBufferContents(kSecondWriteData);
+    }
+    EXPECT_GL_NO_ERROR();
+}
+
+class MemoryBarrierSequentialImageTest : public MemoryBarrierSequentialBufferTest
+{};
+
+// Verify that an image barrier orders fragment shader image reads before subsequent fragment
+// writes.
+TEST_P(MemoryBarrierSequentialImageTest, FragmentReadThenFragmentWrite)
+{
+    shaderImageAccessBitImageReadThenImageWrite(ShaderWritePipeline::Graphics, WriteResource::Image,
+                                                NoopOp::None, NoopOp::None);
+}
+
+// Verify that an image barrier covers all prior compute writes across sequential image rebinds,
+// even when the first image's VkEvent was set before the other images were written.
+TEST_P(MemoryBarrierSequentialImageTest, ImageBarrierAcrossSequentialRebinds)
+{
+    GLTexture color;
+    GLFramebuffer fbo;
+    createFramebuffer(color, fbo, GLColor::black);
+
+    std::array<GLTexture, 4> textures;
+    constexpr std::array<float, 4> kInitData = {0.125, 0.25, 0.5, 0.75};
+    for (GLTexture &texture : textures)
+    {
+        createStorageImage(WriteResource::Image, 0, texture, kInitData);
+    }
+
+    GLProgram readProgram;
+    createImageVerifyProgram(WriteResource::Image, textures[0], &readProgram);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+    glFinish();
+
+    GLProgram writeProgram;
+    createProgram(ShaderWritePipeline::Compute, WriteResource::Image, &writeProgram);
+    constexpr std::array<float, 4> kFirstWriteData = {0.25, 0.5, 0.75, 1.0};
+    setUniformData(writeProgram, kFirstWriteData);
+    for (GLTexture &texture : textures)
+    {
+        glBindImageTexture(0, texture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8);
+        glDispatchCompute(1, 1, 1);
+    }
+
+    glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+
+    constexpr std::array<float, 4> kSecondWriteData = {1.0, 0.75, 0.5, 0.25};
+    setUniformData(writeProgram, kSecondWriteData);
+    for (GLTexture &texture : textures)
+    {
+        glBindImageTexture(0, texture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8);
+        glDispatchCompute(1, 1, 1);
+    }
+
+    for (const GLTexture &texture : textures)
+    {
+        verifyImageContents(texture, kSecondWriteData);
+    }
+    EXPECT_GL_NO_ERROR();
+}
+
 // Test GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT; shader write -> vertex read
 TEST_P(MemoryBarrierBufferTest, VertexAtrribArrayBitWriteThenVertexRead)
 {
@@ -4001,5 +4125,15 @@ ANGLE_INSTANTIATE_TEST_COMBINE_4(MemoryBarrierBufferOnlyTest,
                                  testing::ValuesIn(kNoopOps),
                                  testing::ValuesIn(kNoopOps),
                                  ES31_VULKAN_SWIFTSHADER());
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(MemoryBarrierSequentialBufferTest);
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(MemoryBarrierSequentialImageTest);
+ANGLE_INSTANTIATE_TEST(MemoryBarrierSequentialImageTest,
+                       ES31_VULKAN().enable(Feature::UseVkEventForImageBarrier),
+                       ES31_VULKAN().disable(Feature::UseVkEventForImageBarrier));
+ANGLE_INSTANTIATE_TEST_ES31_AND(MemoryBarrierSequentialBufferTest,
+                                ES31_VULKAN()
+                                    .enable(Feature::UseVkEventForBufferBarrier)
+                                    .enable(Feature::IsVertexSyncDeferred));
 
 }  // anonymous namespace

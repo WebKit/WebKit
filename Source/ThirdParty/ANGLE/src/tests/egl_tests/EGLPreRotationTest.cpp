@@ -8,7 +8,7 @@
 //
 
 #include <gtest/gtest.h>
-#include "common/unsafe_buffers.h"
+#include "common/span.h"
 
 #include <vector>
 
@@ -729,7 +729,7 @@ class EGLPreRotationBlitFramebufferTest : public EGLPreRotationLargeSurfaceTest
     void initializeGeometry(GLuint program,
                             GLBuffer *indexBuffer,
                             GLVertexArray *vertexArray,
-                            GLBuffer *vertexBuffers)
+                            Span<GLBuffer, 2> vertexBuffers)
     {
         GLint positionLocation = glGetAttribLocation(program, "position");
         ASSERT_NE(-1, positionLocation);
@@ -741,14 +741,14 @@ class EGLPreRotationBlitFramebufferTest : public EGLPreRotationLargeSurfaceTest
 
         std::vector<GLushort> indices = {0, 1, 2, 2, 3, 0};
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, *indexBuffer);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort) * indices.size(), &indices[0],
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, Span(indices).size_bytes(), indices.data(),
                      GL_STATIC_DRAW);
 
         std::vector<GLfloat> positionData = {// quad vertices
                                              -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f};
 
         glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[0]);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * positionData.size(), &positionData[0],
+        glBufferData(GL_ARRAY_BUFFER, Span(positionData).size_bytes(), positionData.data(),
                      GL_STATIC_DRAW);
         glVertexAttribPointer(positionLocation, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 2,
                               nullptr);
@@ -757,8 +757,8 @@ class EGLPreRotationBlitFramebufferTest : public EGLPreRotationLargeSurfaceTest
         std::vector<GLfloat> redGreenData = {// green(0,1), black(0,0), red(1,0), yellow(1,1)
                                              0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f};
 
-        glBindBuffer(GL_ARRAY_BUFFER, ANGLE_UNSAFE_TODO(vertexBuffers[1]));
-        glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * redGreenData.size(), &redGreenData[0],
+        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[1]);
+        glBufferData(GL_ARRAY_BUFFER, Span(redGreenData).size_bytes(), redGreenData.data(),
                      GL_STATIC_DRAW);
         glVertexAttribPointer(redGreenLocation, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 2,
                               nullptr);
@@ -1142,9 +1142,9 @@ TEST_P(EGLPreRotationBlitFramebufferTest, BlitStencilWithFlip)
     // If the blit finished successfully, the stencil test should all pass.
     glEnable(GL_STENCIL_TEST);
     glStencilFunc(GL_EQUAL, 1, 255);
-    ANGLE_GL_PROGRAM(gradientProgram, essl31_shaders::vs::Passthrough(),
-                     essl31_shaders::fs::RedGreenGradient());
-    drawQuad(gradientProgram, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ANGLE_GL_PROGRAM(gradientProgram, essl1_shaders::vs::Passthrough(),
+                     essl1_shaders::fs::RedGreenGradient());
+    drawQuad(gradientProgram, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
 
     // Check the result, especially the boundaries.
     EXPECT_PIXEL_NEAR(0, 0, 0, 0, 0, 255, 1.0);                      // Black
@@ -1188,8 +1188,8 @@ TEST_P(EGLPreRotationBlitFramebufferTest, BlitColorToDefault)
     glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    ANGLE_GL_PROGRAM(gradientProgram, essl31_shaders::vs::Passthrough(),
-                     essl31_shaders::fs::RedGreenGradient());
+    ANGLE_GL_PROGRAM(gradientProgram, essl1_shaders::vs::Passthrough(),
+                     essl1_shaders::fs::RedGreenGradient());
 
     EGLint desiredWidth  = 300;
     EGLint desiredHeight = 400;
@@ -1200,7 +1200,7 @@ TEST_P(EGLPreRotationBlitFramebufferTest, BlitColorToDefault)
     ASSERT_EGL_SUCCESS();
 
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer.get());
-    drawQuad(gradientProgram, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    drawQuad(gradientProgram, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
 
     // Blit color buffer to default frambuffer without flip.
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
@@ -1268,8 +1268,8 @@ TEST_P(EGLPreRotationBlitFramebufferTest, BlitColorFromDefault)
     glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    ANGLE_GL_PROGRAM(gradientProgram, essl31_shaders::vs::Passthrough(),
-                     essl31_shaders::fs::RedGreenGradient());
+    ANGLE_GL_PROGRAM(gradientProgram, essl1_shaders::vs::Passthrough(),
+                     essl1_shaders::fs::RedGreenGradient());
 
     EGLint desiredWidth  = 300;
     EGLint desiredHeight = 400;
@@ -1280,7 +1280,7 @@ TEST_P(EGLPreRotationBlitFramebufferTest, BlitColorFromDefault)
     ASSERT_EGL_SUCCESS();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    drawQuad(gradientProgram, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    drawQuad(gradientProgram, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
 
     // Blit color buffer from default frambuffer without flip.
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer.get());
@@ -1353,9 +1353,9 @@ TEST_P(EGLPreRotationBlitFramebufferTest, BlitMultisampleColorToResolved)
     glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    ANGLE_GL_PROGRAM(gradientProgram, essl31_shaders::vs::Passthrough(),
-                     essl31_shaders::fs::RedGreenGradient());
-    drawQuad(gradientProgram, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ANGLE_GL_PROGRAM(gradientProgram, essl1_shaders::vs::Passthrough(),
+                     essl1_shaders::fs::RedGreenGradient());
+    drawQuad(gradientProgram, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
 
     GLFramebuffer framebufferResolved;
     glBindFramebuffer(GL_FRAMEBUFFER, framebufferResolved.get());
@@ -1371,7 +1371,7 @@ TEST_P(EGLPreRotationBlitFramebufferTest, BlitMultisampleColorToResolved)
     ASSERT_EGL_SUCCESS();
 
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebufferMS.get());
-    drawQuad(gradientProgram, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    drawQuad(gradientProgram, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
 
     glBindFramebuffer(GL_READ_FRAMEBUFFER, framebufferMS.get());
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebufferResolved.get());
@@ -1425,9 +1425,9 @@ TEST_P(EGLPreRotationBlitFramebufferTest, BlitColorWithLinearFilter)
     glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    ANGLE_GL_PROGRAM(gradientProgram, essl31_shaders::vs::Passthrough(),
-                     essl31_shaders::fs::RedGreenGradient());
-    drawQuad(gradientProgram, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ANGLE_GL_PROGRAM(gradientProgram, essl1_shaders::vs::Passthrough(),
+                     essl1_shaders::fs::RedGreenGradient());
+    drawQuad(gradientProgram, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
 
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
     glBlitFramebuffer(0, 0, kSize, kSize, 0, 0, kSize, kSize, GL_COLOR_BUFFER_BIT, GL_LINEAR);

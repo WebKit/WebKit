@@ -7,10 +7,6 @@
 //   Various tests related for Frambuffers.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include <array>
 
 #include "common/mathutil.h"
@@ -4167,9 +4163,9 @@ TEST_P(FramebufferTest_ES31, BasicDrawToYFlippedFBO)
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
-    ANGLE_GL_PROGRAM(gradientProgram, essl31_shaders::vs::Passthrough(),
-                     essl31_shaders::fs::RedGreenGradient());
-    drawQuad(gradientProgram, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ANGLE_GL_PROGRAM(gradientProgram, essl1_shaders::vs::Passthrough(),
+                     essl1_shaders::fs::RedGreenGradient());
+    drawQuad(gradientProgram, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
     ASSERT_GL_NO_ERROR();
 
     // Remove the flag so that glReadPixels do not implicitly use that.
@@ -4201,9 +4197,9 @@ TEST_P(FramebufferTest_ES31, MultisampleResolveWithBlit)
                            0);
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
-    ANGLE_GL_PROGRAM(gradientProgram, essl31_shaders::vs::Passthrough(),
-                     essl31_shaders::fs::RedGreenGradient());
-    drawQuad(gradientProgram, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ANGLE_GL_PROGRAM(gradientProgram, essl1_shaders::vs::Passthrough(),
+                     essl1_shaders::fs::RedGreenGradient());
+    drawQuad(gradientProgram, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
     ASSERT_GL_NO_ERROR();
 
     // Create another FBO to resolve the multisample buffer into.
@@ -4247,9 +4243,9 @@ TEST_P(FramebufferTest_ES31, MultisampleResolveWithBlitInto3DTexture)
                            0);
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
-    ANGLE_GL_PROGRAM(gradientProgram, essl31_shaders::vs::Passthrough(),
-                     essl31_shaders::fs::RedGreenGradient());
-    drawQuad(gradientProgram, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ANGLE_GL_PROGRAM(gradientProgram, essl1_shaders::vs::Passthrough(),
+                     essl1_shaders::fs::RedGreenGradient());
+    drawQuad(gradientProgram, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
     ASSERT_GL_NO_ERROR();
 
     // Create another FBO to resolve the multisample buffer into.  Use a 3D texture.
@@ -4294,9 +4290,9 @@ TEST_P(FramebufferTest_ES31, MultisampleResolveWithBlitIntoMixedTextures)
                            0);
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
-    ANGLE_GL_PROGRAM(gradientProgram, essl31_shaders::vs::Passthrough(),
-                     essl31_shaders::fs::RedGreenGradient());
-    drawQuad(gradientProgram, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ANGLE_GL_PROGRAM(gradientProgram, essl1_shaders::vs::Passthrough(),
+                     essl1_shaders::fs::RedGreenGradient());
+    drawQuad(gradientProgram, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
     ASSERT_GL_NO_ERROR();
 
     // Create another FBO to resolve the multisample buffer into.  Use a 3D texture for some
@@ -4365,9 +4361,9 @@ TEST_P(FramebufferTest_ES31, MultisampleResolveWithBlitIntoMixedTexturesAfterFin
                            0);
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
-    ANGLE_GL_PROGRAM(gradientProgram, essl31_shaders::vs::Passthrough(),
-                     essl31_shaders::fs::RedGreenGradient());
-    drawQuad(gradientProgram, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ANGLE_GL_PROGRAM(gradientProgram, essl1_shaders::vs::Passthrough(),
+                     essl1_shaders::fs::RedGreenGradient());
+    drawQuad(gradientProgram, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
     ASSERT_GL_NO_ERROR();
 
     // Close the render pass.  In the Vulkan backend, this disallows directly resolving into the
@@ -4445,9 +4441,9 @@ TEST_P(FramebufferTest_ES31_MSAA, MultisampleResolveWithBlitIntoMixedTextures)
     constexpr uint32_t kDepth     = 16;
     constexpr uint32_t kBlitSlice = 11;
 
-    ANGLE_GL_PROGRAM(gradientProgram, essl31_shaders::vs::Passthrough(),
-                     essl31_shaders::fs::RedGreenGradient());
-    drawQuad(gradientProgram, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ANGLE_GL_PROGRAM(gradientProgram, essl1_shaders::vs::Passthrough(),
+                     essl1_shaders::fs::RedGreenGradient());
+    drawQuad(gradientProgram, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
     ASSERT_GL_NO_ERROR();
 
     // Create another FBO to resolve the multisample buffer into.  Use a 3D texture for some
@@ -5104,9 +5100,9 @@ TEST_P(FramebufferTest_ES31, MultisampleResolveWithBlitDifferentFormats)
                            0);
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
-    ANGLE_GL_PROGRAM(gradientProgram, essl31_shaders::vs::Passthrough(),
-                     essl31_shaders::fs::RedGreenGradient());
-    drawQuad(gradientProgram, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ANGLE_GL_PROGRAM(gradientProgram, essl1_shaders::vs::Passthrough(),
+                     essl1_shaders::fs::RedGreenGradient());
+    drawQuad(gradientProgram, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
     ASSERT_GL_NO_ERROR();
 
     // Create another FBO to resolve the multisample buffer into.
@@ -5289,9 +5285,9 @@ TEST_P(FramebufferTest_ES31, MultisampleResolveWithBlitDifferentReadDrawBuffers)
                            0);
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
-    ANGLE_GL_PROGRAM(gradientProgram, essl31_shaders::vs::Passthrough(),
-                     essl31_shaders::fs::RedGreenGradient());
-    drawQuad(gradientProgram, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ANGLE_GL_PROGRAM(gradientProgram, essl1_shaders::vs::Passthrough(),
+                     essl1_shaders::fs::RedGreenGradient());
+    drawQuad(gradientProgram, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
     ASSERT_GL_NO_ERROR();
 
     // Create another FBO to resolve the multisample buffer into.
@@ -5366,9 +5362,9 @@ TEST_P(FramebufferTest_ES31, MultisampleResolveIntoMipMapWithBlit)
                            0);
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
-    ANGLE_GL_PROGRAM(gradientProgram, essl31_shaders::vs::Passthrough(),
-                     essl31_shaders::fs::RedGreenGradient());
-    drawQuad(gradientProgram, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ANGLE_GL_PROGRAM(gradientProgram, essl1_shaders::vs::Passthrough(),
+                     essl1_shaders::fs::RedGreenGradient());
+    drawQuad(gradientProgram, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
     ASSERT_GL_NO_ERROR();
 
     // Create another FBO to resolve the multisample buffer into.
@@ -5569,9 +5565,9 @@ TEST_P(FramebufferTest_ES31, MultisampleResolveWithBlitThenDraw)
                            0);
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
-    ANGLE_GL_PROGRAM(gradientProgram, essl31_shaders::vs::Passthrough(),
-                     essl31_shaders::fs::RedGreenGradient());
-    drawQuad(gradientProgram, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ANGLE_GL_PROGRAM(gradientProgram, essl1_shaders::vs::Passthrough(),
+                     essl1_shaders::fs::RedGreenGradient());
+    drawQuad(gradientProgram, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
     ASSERT_GL_NO_ERROR();
 
     // Create another FBO to resolve the multisample buffer into.
@@ -5697,9 +5693,9 @@ TEST_P(FramebufferTest_ES31, MultisampleResolveWithBlitThenDrawThenResolveAgain)
                            0);
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
-    ANGLE_GL_PROGRAM(gradientProgram, essl31_shaders::vs::Passthrough(),
-                     essl31_shaders::fs::RedGreenGradient());
-    drawQuad(gradientProgram, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ANGLE_GL_PROGRAM(gradientProgram, essl1_shaders::vs::Passthrough(),
+                     essl1_shaders::fs::RedGreenGradient());
+    drawQuad(gradientProgram, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
     ASSERT_GL_NO_ERROR();
 
     // Create another FBO to resolve the multisample buffer into.
@@ -5760,9 +5756,9 @@ TEST_P(FramebufferTest_ES31, MultisampleResolveWithBlitThenDrawThenResolveAgainT
                            0);
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
-    ANGLE_GL_PROGRAM(gradientProgram, essl31_shaders::vs::Passthrough(),
-                     essl31_shaders::fs::RedGreenGradient());
-    drawQuad(gradientProgram, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ANGLE_GL_PROGRAM(gradientProgram, essl1_shaders::vs::Passthrough(),
+                     essl1_shaders::fs::RedGreenGradient());
+    drawQuad(gradientProgram, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
     ASSERT_GL_NO_ERROR();
 
     // Create another FBO to resolve the multisample buffer into.
@@ -5840,9 +5836,9 @@ TEST_P(FramebufferTest_ES31, MultisampleResolveWithBlitNonZeroLevel)
                            0);
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
-    ANGLE_GL_PROGRAM(gradientProgram, essl31_shaders::vs::Passthrough(),
-                     essl31_shaders::fs::RedGreenGradient());
-    drawQuad(gradientProgram, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ANGLE_GL_PROGRAM(gradientProgram, essl1_shaders::vs::Passthrough(),
+                     essl1_shaders::fs::RedGreenGradient());
+    drawQuad(gradientProgram, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
     ASSERT_GL_NO_ERROR();
 
     // Create a resolve FBO and texture. The multisample buffer will be resolved into level 1 of the
@@ -6572,7 +6568,7 @@ TEST_P(FramebufferTest_ES31, ClearWithColorMasksRGB5A1)
     std::vector<uint8_t> epsilon = {0, 0, 0, 0};
     for (int i = 0; i < 4; ++i)
     {
-        glGetIntegerv(GL_RED_BITS + i, bits.data() + i);
+        glGetIntegerv(GL_RED_BITS + i, &bits[i]);
         epsilon[i] =
             std::min(255u, static_cast<unsigned int>(
                                ceil(1.0 + 255.0 * (1.0 / pow(2.0, static_cast<double>(bits[i]))))));
@@ -6654,7 +6650,7 @@ void clearColorMorePrecisionThanFBOFormatNoDithering(const GLint &fboInternalFor
     std::vector<uint8_t> epsilon = {0, 0, 0, 0};
     for (int i = 0; i < 4; ++i)
     {
-        glGetIntegerv(GL_RED_BITS + i, bits.data() + i);
+        glGetIntegerv(GL_RED_BITS + i, &bits[i]);
         epsilon[i] =
             std::min(255u, static_cast<unsigned int>(
                                ceil(1.0 + 255.0 * (1.0 / pow(2.0, static_cast<double>(bits[i]))))));
@@ -8914,9 +8910,9 @@ TEST_P(FramebufferTest_ES31, MultisampleResolveMultipleTimes)
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
     glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
-    ANGLE_GL_PROGRAM(gradientProgram, essl31_shaders::vs::Passthrough(),
-                     essl31_shaders::fs::RedGreenGradient());
-    drawQuad(gradientProgram, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ANGLE_GL_PROGRAM(gradientProgram, essl1_shaders::vs::Passthrough(),
+                     essl1_shaders::fs::RedGreenGradient());
+    drawQuad(gradientProgram, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
     ASSERT_GL_NO_ERROR();
 
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO1);
@@ -9102,9 +9098,9 @@ TEST_P(FramebufferTest_ES31, MultisampleResolveMultipleTimesWithDrawInBetween)
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
     glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
-    ANGLE_GL_PROGRAM(gradientProgram, essl31_shaders::vs::Passthrough(),
-                     essl31_shaders::fs::RedGreenGradient());
-    drawQuad(gradientProgram, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ANGLE_GL_PROGRAM(gradientProgram, essl1_shaders::vs::Passthrough(),
+                     essl1_shaders::fs::RedGreenGradient());
+    drawQuad(gradientProgram, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
     ASSERT_GL_NO_ERROR();
 
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO1);
@@ -9359,7 +9355,7 @@ void main()
 
         if (invalidate == Invalidate::AfterEachResolve)
         {
-            glInvalidateFramebuffer(GL_READ_FRAMEBUFFER, 1, discards + 1);
+            glInvalidateFramebuffer(GL_READ_FRAMEBUFFER, 1, &discards[1]);
         }
         else if (invalidate == Invalidate::AllAtEnd)
         {
@@ -11283,16 +11279,17 @@ void main() {
     };
 
     // Same-FBO respecification with colliding layouts CA -> CB (Carrier 1 ch=C).
-    const GLenum layoutCA[6] = {GL_RG32UI, GL_RG32UI, GL_RGBA16UI, GL_R8UI, GL_R32UI, GL_RG8UI};
-    const GLenum layoutCB[7] = {GL_R32UI, GL_RGBA16UI, GL_RG32UI, GL_R16UI,
-                                GL_RGBA8, GL_RGBA32UI, GL_R16UI};
+    constexpr std::array<GLenum, 6> layoutCA = {GL_RG32UI, GL_RG32UI, GL_RGBA16UI,
+                                                GL_R8UI,   GL_R32UI,  GL_RG8UI};
+    constexpr std::array<GLenum, 7> layoutCB = {GL_R32UI, GL_RGBA16UI, GL_RG32UI, GL_R16UI,
+                                                GL_RGBA8, GL_RGBA32UI, GL_R16UI};
 
     GLFramebuffer fboRespec;
     GLTexture texC0Float;
     std::array<GLTexture, 6> texCADisabled;
     glBindFramebuffer(GL_FRAMEBUFFER, fboRespec);
     attachStorageTex(GL_RGBA8, GL_COLOR_ATTACHMENT0, texC0Float);
-    for (size_t i = 0; i < 6; ++i)
+    for (size_t i = 0; i < layoutCA.size(); ++i)
     {
         attachStorageTex(layoutCA[i], static_cast<GLenum>(GL_COLOR_ATTACHMENT1 + i),
                          texCADisabled[i]);
@@ -11312,7 +11309,7 @@ void main() {
     GLTexture texC0Uint;
     std::array<GLTexture, 7> texCBDisabled;
     attachStorageTex(GL_RGBA32UI, GL_COLOR_ATTACHMENT0, texC0Uint);
-    for (size_t i = 0; i < 7; ++i)
+    for (size_t i = 0; i < layoutCB.size(); ++i)
     {
         attachStorageTex(layoutCB[i], static_cast<GLenum>(GL_COLOR_ATTACHMENT1 + i),
                          texCBDisabled[i]);
@@ -11367,16 +11364,17 @@ void main() {
     };
 
     // Colliding disabled draw-buffer layouts A and B (Carrier 1 ch=A, hash = 0xbcc863eb).
-    const GLenum layoutA[6] = {GL_R32UI, GL_RG32UI, GL_RG32UI, GL_RGBA32UI, GL_RGBA16UI, GL_RG32UI};
-    const GLenum layoutB[7] = {GL_R8,      GL_R32UI, GL_RG8UI,  GL_R32UI,
-                               GL_RGBA8UI, GL_R32UI, GL_RGBA8UI};
+    constexpr std::array<GLenum, 6> layoutA = {GL_R32UI,    GL_RG32UI,   GL_RG32UI,
+                                               GL_RGBA32UI, GL_RGBA16UI, GL_RG32UI};
+    constexpr std::array<GLenum, 7> layoutB = {GL_R8,      GL_R32UI, GL_RG8UI,  GL_R32UI,
+                                               GL_RGBA8UI, GL_R32UI, GL_RGBA8UI};
 
     GLFramebuffer fboA;
     GLTexture texA0;
     std::array<GLTexture, 6> texADisabled;
     glBindFramebuffer(GL_FRAMEBUFFER, fboA);
     attachStorageTex(GL_RGBA8, GL_COLOR_ATTACHMENT0, texA0);
-    for (size_t i = 0; i < 6; ++i)
+    for (size_t i = 0; i < layoutA.size(); ++i)
     {
         attachStorageTex(layoutA[i], static_cast<GLenum>(GL_COLOR_ATTACHMENT1 + i),
                          texADisabled[i]);
@@ -11395,7 +11393,7 @@ void main() {
     std::array<GLTexture, 7> texBDisabled;
     glBindFramebuffer(GL_FRAMEBUFFER, fboB);
     attachStorageTex(GL_RGBA8, GL_COLOR_ATTACHMENT0, texB0);
-    for (size_t i = 0; i < 7; ++i)
+    for (size_t i = 0; i < layoutB.size(); ++i)
     {
         attachStorageTex(layoutB[i], static_cast<GLenum>(GL_COLOR_ATTACHMENT1 + i),
                          texBDisabled[i]);

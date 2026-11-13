@@ -1,10 +1,11 @@
 /* WARNING: This is auto-generated file. Do not modify, since changes will
  * be lost! Modify the generating script instead.
  *
- * Generated from Khronos GL API description (gl.xml) revision 7d0cb181dace7461bc4f26650fec71efeacc18a5.
+ * Generated from Khronos GL API description (gl.xml) revision 6af574a14089ccfee87efe230ebcdd8742859813.
  */
 typedef GLW_APICALL void			(GLW_APIENTRY* glActiveShaderProgramFunc)								(GLuint pipeline, GLuint program);
 typedef GLW_APICALL void			(GLW_APIENTRY* glActiveTextureFunc)										(GLenum texture);
+typedef GLW_APICALL void			(GLW_APIENTRY* glAddClientPointerRangeMESAFunc)							(void *addr, GLsizeiptr size);
 typedef GLW_APICALL void			(GLW_APIENTRY* glAttachShaderFunc)										(GLuint program, GLuint shader);
 typedef GLW_APICALL void			(GLW_APIENTRY* glBeginConditionalRenderFunc)							(GLuint id, GLenum mode);
 typedef GLW_APICALL void			(GLW_APIENTRY* glBeginQueryFunc)										(GLenum target, GLuint id);
@@ -646,6 +647,7 @@ typedef GLW_APICALL void			(GLW_APIENTRY* glQueryCounterFunc)										(GLuint i
 typedef GLW_APICALL void			(GLW_APIENTRY* glReadBufferFunc)										(GLenum src);
 typedef GLW_APICALL void			(GLW_APIENTRY* glReadPixelsFunc)										(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, void *pixels);
 typedef GLW_APICALL void			(GLW_APIENTRY* glReadnPixelsFunc)										(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLsizei bufSize, void *data);
+typedef GLW_APICALL void*			(GLW_APIENTRY* glReleaseClientPointerRangeMESAFunc)						(GLbitfield flags, GLsizeiptr *size);
 typedef GLW_APICALL void			(GLW_APIENTRY* glReleaseShaderCompilerFunc)								(void);
 typedef GLW_APICALL void			(GLW_APIENTRY* glRenderGpuMaskNVFunc)									(GLbitfield mask);
 typedef GLW_APICALL void			(GLW_APIENTRY* glRenderbufferStorageFunc)								(GLenum target, GLenum internalformat, GLsizei width, GLsizei height);

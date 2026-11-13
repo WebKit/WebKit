@@ -452,6 +452,12 @@ struct FeaturesVk : FeatureSetBase
         &members,
     };
 
+    FeatureInfo mutableFormatForIntColorImages = {
+        "mutableFormatForIntColorImages",
+        FeatureCategory::VulkanWorkarounds,
+        &members,
+    };
+
     FeatureInfo supportsImageFormatList = {
         "supportsImageFormatList",
         FeatureCategory::VulkanFeatures,
@@ -878,6 +884,12 @@ struct FeaturesVk : FeatureSetBase
         &members,
     };
 
+    FeatureInfo supportsSampleMaskDynamicState = {
+        "supportsSampleMaskDynamicState",
+        FeatureCategory::VulkanFeatures,
+        &members,
+    };
+
     FeatureInfo supportsFragmentShadingRate = {
         "supportsFragmentShadingRate",
         FeatureCategory::VulkanFeatures,
@@ -1040,8 +1052,8 @@ struct FeaturesVk : FeatureSetBase
         &members,
     };
 
-    FeatureInfo syncMonolithicPipelinesToBlobCache = {
-        "syncMonolithicPipelinesToBlobCache",
+    FeatureInfo syncGlobalPipelineCacheToBlobCache = {
+        "syncGlobalPipelineCacheToBlobCache",
         FeatureCategory::VulkanWorkarounds,
         &members,
     };

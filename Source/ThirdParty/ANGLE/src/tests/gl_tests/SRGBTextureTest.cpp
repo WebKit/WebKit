@@ -1652,6 +1652,124 @@ TEST_P(SRGBTextureTestES3, GenerateMipmapsSolid)
     EXPECT_PIXEL_COLOR_NEAR(0, 0, color, 1);
 }
 
+// Test that deleting an sRGB texture with GL_SKIP_DECODE_EXT immediately after
+// glGenerateMipmap, which itself follows an open render pass, does not crash.
+TEST_P(SRGBTextureTestES3, GenerateMipmapWithDrawDeferredFlushThenDelete)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_sRGB_decode"));
+
+    constexpr GLsizei kTexSize   = 64;
+    constexpr GLsizei kMipLevels = 7;
+    std::vector<GLColor> level0Data(kTexSize * kTexSize, GLColor::red);
+
+    GLTexture mipTex;
+    glBindTexture(GL_TEXTURE_2D, mipTex);
+    glTexStorage2D(GL_TEXTURE_2D, kMipLevels, GL_SRGB8_ALPHA8, kTexSize, kTexSize);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kTexSize, kTexSize, GL_RGBA, GL_UNSIGNED_BYTE,
+                    level0Data.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SRGB_DECODE_EXT, GL_SKIP_DECODE_EXT);
+    // Automatically define the rest of the mips.
+    glGenerateMipmap(GL_TEXTURE_2D);
+    ASSERT_GL_NO_ERROR();
+
+    GLTexture fboTex;
+    glBindTexture(GL_TEXTURE_2D, fboTex);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, 16, 16);
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fboTex, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Open a render pass before mipmap generation.  Add a sync object after the draw call
+    // to be waited on later.
+    ANGLE_GL_PROGRAM(greenProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+    glViewport(0, 0, 16, 16);
+
+    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    drawQuad(greenProgram, essl1_shaders::PositionAttrib(), 0.5f);
+    GLsync sync = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+    glFlush();
+
+    // Trigger mipmap generation, which on some backends uses draw calls due to GL_SKIP_DECODE_EXT.
+    glBindTexture(GL_TEXTURE_2D, mipTex);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    // Wait for the render pass before the mipmap generation to finish.
+    glClientWaitSync(sync, 0, 1'000'000'000);
+
+    // Delete mipTex while mipmap generation is in progress.
+    mipTex.reset();
+
+    // Verify the first render pass worked correctly
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+    glDeleteSync(sync);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test that deleting a 2D array sRGB texture with GL_SKIP_DECODE_EXT immediately after
+// glGenerateMipmap with many layers does not crash.
+TEST_P(SRGBTextureTestES3, GenerateMipmapWithDrawManyArrayLayersThenDelete)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_sRGB_decode"));
+
+    constexpr GLsizei kTexSize     = 8;
+    constexpr GLsizei kMipLevels   = 4;
+    constexpr GLsizei kArrayLayers = 192;
+    GLint maxArrayLayers           = 0;
+    glGetIntegerv(GL_MAX_ARRAY_TEXTURE_LAYERS, &maxArrayLayers);
+    ANGLE_SKIP_TEST_IF(maxArrayLayers < kArrayLayers);
+
+    std::vector<GLColor> level0Data(kTexSize * kTexSize * kArrayLayers, GLColor::blue);
+
+    GLTexture mipTex;
+    glBindTexture(GL_TEXTURE_2D_ARRAY, mipTex);
+    glTexStorage3D(GL_TEXTURE_2D_ARRAY, kMipLevels, GL_SRGB8_ALPHA8, kTexSize, kTexSize,
+                   kArrayLayers);
+    glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, 0, kTexSize, kTexSize, kArrayLayers, GL_RGBA,
+                    GL_UNSIGNED_BYTE, level0Data.data());
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_SRGB_DECODE_EXT, GL_SKIP_DECODE_EXT);
+    // Automatically define the rest of the mips.
+    glGenerateMipmap(GL_TEXTURE_2D_ARRAY);
+    ASSERT_GL_NO_ERROR();
+
+    GLTexture fboTex;
+    glBindTexture(GL_TEXTURE_2D, fboTex);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, 16, 16);
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fboTex, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Open a render pass before mipmap generation.  Add a sync object after the draw call
+    // to be waited on later.
+    ANGLE_GL_PROGRAM(greenProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+    glViewport(0, 0, 16, 16);
+
+    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    drawQuad(greenProgram, essl1_shaders::PositionAttrib(), 0.5f);
+    GLsync sync = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+
+    // Generating 3 mip levels across 192 layers opens 576 render passes, exceeding
+    // kMaxRenderPassCountPerCommandBuffer (128) and submitting mid-call.
+    glBindTexture(GL_TEXTURE_2D_ARRAY, mipTex);
+    glGenerateMipmap(GL_TEXTURE_2D_ARRAY);
+
+    // Wait for the render pass before the mipmap generation to finish.
+    glClientWaitSync(sync, 0, 1'000'000'000);
+
+    // Delete mipTex while mipmap generation is in progress.
+    mipTex.reset();
+
+    // Verify the first render pass worked correctly
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+    glDeleteSync(sync);
+    ASSERT_GL_NO_ERROR();
+}
+
 // SRGB override sample an immutable texture then dispatch
 TEST_P(SRGBTextureTestES31, ImmutableTextureSRGBOverrideSampleThenDispatch)
 {

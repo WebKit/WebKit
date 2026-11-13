@@ -74,8 +74,9 @@ egl::Error ExternalImageSiblingImpl11::initialize(const egl::Display *display)
     DXGI_USAGE resourceUsage = 0;
     resource->GetUsage(&resourceUsage);
 
-    // Bind flags can claim render-target usage for formats without a renderable
-    // view (packed YUV has none); the format entry is the ground truth.
+    // A texture may have D3D11_BIND_RENDER_TARGET even when the format table has no RTV format for
+    // it (e.g. Y210), so require a valid rtvFormat or createRenderTarget() would build an RTV with
+    // DXGI_FORMAT_UNKNOWN.
     mIsRenderable = (textureDesc.BindFlags & D3D11_BIND_RENDER_TARGET) &&
                     (resourceUsage & DXGI_USAGE_RENDER_TARGET_OUTPUT) &&
                     !(resourceUsage & DXGI_USAGE_READ_ONLY) &&

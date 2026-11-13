@@ -25,6 +25,7 @@ class SimplifyLoopConditionsTest : public MatchOutputCodeTest
         ShCompileOptions defaultCompileOptions       = {};
         defaultCompileOptions.simplifyLoopConditions = true;
         defaultCompileOptions.validateAST            = true;
+        defaultCompileOptions.outputDebugInfo        = true;
         setDefaultCompileOptions(defaultCompileOptions);
     }
 };

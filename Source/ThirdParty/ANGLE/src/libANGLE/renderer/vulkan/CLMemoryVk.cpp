@@ -564,7 +564,7 @@ CLImageVk::~CLImageVk()
         mBufferViews.release(mContext->getRenderer());
     }
 
-    mImage.destroy(mRenderer);
+    mImage->destroy(mRenderer);
     mImageView.destroy(mContext->getDevice());
 }
 
@@ -608,11 +608,12 @@ angle::Result CLImageVk::create(void *hostPtr)
         }
     }
 
-    ANGLE_CL_IMPL_TRY_ERROR(mImage.initStaging(mContext, false, cl_vk::GetImageType(getType()),
-                                               cl_vk::GetExtent(mExtent), mAngleFormat,
-                                               mAngleFormat, VK_SAMPLE_COUNT_1_BIT,
-                                               getVkImageUsageFlags(), 1, (uint32_t)getArraySize()),
-                            CL_OUT_OF_RESOURCES);
+    mImage = std::make_unique<vk::ImageHelper>(cl_vk::GetImageType(getType()));
+    ANGLE_CL_IMPL_TRY_ERROR(
+        mImage->initStaging(mContext, false, cl_vk::GetExtent(mExtent), mAngleFormat, mAngleFormat,
+                            VK_SAMPLE_COUNT_1_BIT, getVkImageUsageFlags(), 1,
+                            (uint32_t)getArraySize()),
+        CL_OUT_OF_RESOURCES);
 
     ASSERT(mStagingBuffer == nullptr);
     CLBufferVk *stagingBuffer = nullptr;
@@ -647,7 +648,7 @@ angle::Result CLImageVk::create(void *hostPtr)
             stagingBuffer->getOffset(), static_cast<uint32_t>(getRowPitch()),
             static_cast<uint32_t>(getSlicePitch()), cl::kOffsetZero, getImageExtent(), this);
         ANGLE_CL_IMPL_TRY_ERROR(
-            mImage.copyToBufferOneOff(mContext, &stagingBuffer->getBuffer(), copyRegion),
+            mImage->copyToBufferOneOff(mContext, &stagingBuffer->getBuffer(), copyRegion),
             CL_OUT_OF_RESOURCES);
     }
 
@@ -788,7 +789,7 @@ angle::Result CLImageVk::copyStagingToFromWithPitch(void *hostPtr,
 
 bool CLImageVk::isCurrentlyInUse() const
 {
-    return !mRenderer->hasResourceUseFinished(mImage.getResourceUse());
+    return !mRenderer->hasResourceUseFinished(mImage->getResourceUse());
 }
 
 bool CLImageVk::containsHostMemExtension()

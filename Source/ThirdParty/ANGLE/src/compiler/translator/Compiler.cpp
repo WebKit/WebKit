@@ -518,9 +518,21 @@ TIntermBlock *TCompiler::compileTreeImpl(angle::Span<const char *const> shaderSt
         ASSERT(root == nullptr);
         ir::IR ir = parseContext.getIR();
 
-        // Create an AST out of the IR while the rest of the translator is still AST based.
+        // Create an AST out of the IR while the rest of the translator is still AST based, or
+        // emit target source code directly for IR codegen backends (e.g. WGSL).
         ir::Output output = ir::GenerateAST(std::move(ir), this, compileOptions);
-        root              = output.root;
+        if (output.root != nullptr)
+        {
+            ASSERT(output.outputSource.empty());
+            root = output.root;
+        }
+        else
+        {
+            // Direct source code emission (e.g. WGSL). Since there are no compilation errors in
+            // IR, output is always generated.
+            ASSERT(!output.outputSource.empty());
+            getInfoSink().obj << output.outputSource;
+        }
 
         // Vertex shader inputs and compute shader built-ins are gathered as "inputs" in IR, but are
         // exposed as an "attributes" list.
@@ -550,7 +562,7 @@ TIntermBlock *TCompiler::compileTreeImpl(angle::Span<const char *const> shaderSt
         mVariablesCollected = true;
     }
 #endif
-    ASSERT(root != nullptr);
+    ASSERT(root != nullptr || getInfoSink().obj.size() != 0);
 
     const bool hasAnyClipCullDistance =
         parseContext.isExtensionEnabled(TExtension::ANGLE_clip_cull_distance) ||
@@ -560,6 +572,21 @@ TIntermBlock *TCompiler::compileTreeImpl(angle::Span<const char *const> shaderSt
     {
         mClipDistanceSize = static_cast<uint8_t>(parseContext.getClipDistanceArraySize());
         mCullDistanceSize = static_cast<uint8_t>(parseContext.getCullDistanceArraySize());
+        if (mShaderType == GL_FRAGMENT_SHADER)
+        {
+            // Fragment shaders have no gl_PerVertex input block. gl_ClipDistance and
+            // gl_CullDistance are themselves inputs, so the sizes tracked by parseContext are the
+            // input sizes.
+            mInputClipDistanceSize = mClipDistanceSize;
+            mInputCullDistanceSize = mCullDistanceSize;
+        }
+        else
+        {
+            mInputClipDistanceSize =
+                static_cast<uint8_t>(parseContext.getInputClipDistanceArraySize());
+            mInputCullDistanceSize =
+                static_cast<uint8_t>(parseContext.getInputCullDistanceArraySize());
+        }
         mMetadataFlags[MetadataFlags::HasClipDistance] = parseContext.isClipDistanceUsed();
     }
 
@@ -1276,14 +1303,14 @@ bool TCompiler::compile(angle::Span<const char *const> shaderStrings,
     TScopedPoolAllocator scopedAlloc;
     TIntermBlock *root = compileTreeImpl(shaderStrings, compileOptions);
 
-    if (root)
+    if (root || getInfoSink().obj.size() != 0)
     {
-        if (compileOptions.intermediateTree)
+        if (compileOptions.intermediateTree && root)
         {
             OutputTree(root, mInfoSink.info);
         }
 
-        if (compileOptions.objectCode)
+        if (compileOptions.objectCode && root)
         {
             PerformanceDiagnostics perfDiagnostics(&mDiagnostics);
             if (!translate(root, compileOptions, &perfDiagnostics))
@@ -1539,8 +1566,10 @@ void TCompiler::clearResults()
 
     mNumViews = -1;
 
-    mClipDistanceSize = 0;
-    mCullDistanceSize = 0;
+    mClipDistanceSize      = 0;
+    mCullDistanceSize      = 0;
+    mInputClipDistanceSize = 0;
+    mInputCullDistanceSize = 0;
 
     mGeometryShaderInputPrimitiveType  = EptUndefined;
     mGeometryShaderOutputPrimitiveType = EptUndefined;

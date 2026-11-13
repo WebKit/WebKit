@@ -152,9 +152,11 @@ GLint GetMaxShaderOutputVectors(const Caps &caps, ShaderType shaderStage)
 bool ShouldSkipPackedVarying(const sh::ShaderVariable &varying, PackMode packMode)
 {
     // Don't pack gl_Position.
-    // Additionally, gl_TessLevelInner and gl_TessLevelOuter should not be packed.
+    // Additionally, gl_TessLevelInner, gl_TessLevelOuter, gl_ClipDistance, and gl_CullDistance
+    // should not be packed.
     return varying.name == "gl_Position" || varying.name == "gl_TessLevelInner" ||
-           varying.name == "gl_TessLevelOuter";
+           varying.name == "gl_TessLevelOuter" || varying.name == "gl_ClipDistance" ||
+           varying.name == "gl_CullDistance";
 }
 
 std::vector<unsigned int> StripVaryingArrayDimension(const sh::ShaderVariable *frontVarying,

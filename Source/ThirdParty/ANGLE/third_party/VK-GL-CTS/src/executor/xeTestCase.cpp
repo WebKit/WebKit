@@ -96,8 +96,8 @@ TestNode::TestNode(TestGroup *parent, TestNodeType nodeType, const char *name)
     if (m_parent)
     {
         // Verify that the name is unique.
-        if (parent->m_childNames.find(name) != parent->m_childNames.end())
-            throw Error(std::string("Duplicate node '") + name + "' in '" + parent->getFullPath());
+        if (m_parent->m_childNames.find(name) != m_parent->m_childNames.end())
+            throw Error(std::string("Duplicate node '") + name + "' in '" + m_parent->getFullPath());
 
         m_parent->m_children.push_back(this);
         m_parent->m_childNames.insert(name);

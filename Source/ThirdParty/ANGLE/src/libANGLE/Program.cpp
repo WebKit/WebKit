@@ -2025,6 +2025,26 @@ void Program::linkShaders()
             mState.mExecutable->mPod.tessGenPointMode   = tessEvaluationShader->tessGenPointMode;
         }
     }
+
+    // Cache the gl_ClipDistance and gl_CullDistance array sizes of each stage. They are needed to
+    // validate the built-in varyings between stages of different programs in a program pipeline.
+    for (ShaderType shaderType : AllShaderTypes())
+    {
+        const SharedCompiledShaderState &shader = shaders[shaderType];
+        if (!shader)
+        {
+            continue;
+        }
+
+        mState.mExecutable->mPod.clipDistanceSizes[shaderType] =
+            static_cast<uint8_t>(shader->clipDistanceSize);
+        mState.mExecutable->mPod.cullDistanceSizes[shaderType] =
+            static_cast<uint8_t>(shader->cullDistanceSize);
+        mState.mExecutable->mPod.inputClipDistanceSizes[shaderType] =
+            static_cast<uint8_t>(shader->inputClipDistanceSize);
+        mState.mExecutable->mPod.inputCullDistanceSizes[shaderType] =
+            static_cast<uint8_t>(shader->inputCullDistanceSize);
+    }
 }
 
 bool Program::linkVaryings()
@@ -2051,23 +2071,27 @@ bool Program::linkVaryings()
             {
                 return false;
             }
+
+            ASSERT(previousShader->clipDistanceSize < UINT8_MAX);
+            ASSERT(previousShader->cullDistanceSize < UINT8_MAX);
+            ASSERT(currentShader->inputClipDistanceSize < UINT8_MAX);
+            ASSERT(currentShader->inputCullDistanceSize < UINT8_MAX);
+
+            // Validate built-in varyings (gl_ClipDistance, gl_CullDistance) match between
+            // shader stages.
+            if (!LinkValidateBuiltInVaryings(
+                    outputVaryings, currentShader->inputVaryings, previousShaderType,
+                    currentShader->shaderType, previousShader->shaderVersion,
+                    currentShader->shaderVersion,
+                    static_cast<uint8_t>(previousShader->clipDistanceSize),
+                    static_cast<uint8_t>(previousShader->cullDistanceSize),
+                    static_cast<uint8_t>(currentShader->inputClipDistanceSize),
+                    static_cast<uint8_t>(currentShader->inputCullDistanceSize), mState.mInfoLog))
+            {
+                return false;
+            }
         }
         previousShaderType = currentShader->shaderType;
-    }
-
-    // TODO: http://anglebug.com/42262233 and http://anglebug.com/42262234
-    // Need to move logic of validating builtin varyings inside the for-loop above.
-    // This is because the built-in symbols `gl_ClipDistance` and `gl_CullDistance`
-    // can be redeclared in Geometry or Tessellation shaders as well.
-    const SharedCompiledShaderState &vertexShader   = mState.mAttachedShaders[ShaderType::Vertex];
-    const SharedCompiledShaderState &fragmentShader = mState.mAttachedShaders[ShaderType::Fragment];
-    if (vertexShader && fragmentShader &&
-        !LinkValidateBuiltInVaryings(vertexShader->outputVaryings, fragmentShader->inputVaryings,
-                                     vertexShader->shaderType, fragmentShader->shaderType,
-                                     vertexShader->shaderVersion, fragmentShader->shaderVersion,
-                                     mState.mInfoLog))
-    {
-        return false;
     }
 
     return true;

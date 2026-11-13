@@ -23,6 +23,11 @@ namespace angle
 struct FeaturesGL;
 }  // namespace angle
 
+namespace gl
+{
+struct InternalFormat;
+}  // namespace gl
+
 namespace rx
 {
 
@@ -101,13 +106,21 @@ CompressedTexSubImageFormat GetCompressedSubTexImageFormat(const FunctionsGL *fu
                                                            const angle::FeaturesGL &features,
                                                            GLenum format);
 
+const gl::InternalFormat &GetCopyTexImageInternalFormatInfo(GLenum internalFormat, GLenum type);
+
 struct CopyTexImageImageFormat
 {
     GLenum internalFormat = GL_NONE;
 };
 CopyTexImageImageFormat GetCopyTexImageImageFormat(const FunctionsGL *functions,
                                                    const angle::FeaturesGL &features,
-                                                   GLenum internalFormat);
+                                                   GLenum internalFormat,
+                                                   GLenum type);
+
+bool ShouldUseScratchTextureForCopySubImage(const FunctionsGL *functions,
+                                            const angle::FeaturesGL &features,
+                                            const gl::InternalFormat &sourceFormatInfo,
+                                            GLenum destInternalFormat);
 
 struct TexStorageFormat
 {

@@ -36,6 +36,7 @@ class TypeTrackingTest : public testing::Test
     {
         ShCompileOptions compileOptions = {};
         compileOptions.intermediateTree = true;
+        compileOptions.outputDebugInfo  = true;
 
         const char *shaderStrings[] = {shaderString.c_str()};
         bool compilationSuccess     = mTranslator->compile(shaderStrings, compileOptions);

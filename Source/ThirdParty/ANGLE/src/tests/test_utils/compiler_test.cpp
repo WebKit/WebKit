@@ -80,6 +80,7 @@ bool compileTestShader(GLenum type,
 
     ShCompileOptions options = compileOptions;
     options.objectCode       = true;
+    options.outputDebugInfo  = true;
     bool compilationSuccess  = translator->compile(shaderStrings, options);
     TInfoSink &infoSink      = translator->getInfoSink();
     if (translatedCode)

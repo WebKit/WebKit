@@ -341,6 +341,17 @@
             "issue": "https://crbug.com/550607402"
         },
         {
+            "name": "use_scratch_texture_for_converting_copy_sub_image",
+            "category": "Workarounds",
+            "description": [
+                "Related to virtualizeBaseLevelAndMipchain workaround. ",
+                "glCopyTexSubImage2D and glCopyTexSubImage3D fail with GL_INVALID_OPERATION on ",
+                "PowerVR when converting between framebuffer and texture formats; copy into a ",
+                "temporary 2D texture with glCopyTexImage2D and then transfer via glCopyImageSubData."
+            ],
+            "issue": "https://crbug.com/576651388"
+        },
+        {
             "name": "recreate_texture_on_tex_image_3d_depth_increase",
             "category": "Workarounds",
             "description": [

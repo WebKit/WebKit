@@ -1311,7 +1311,7 @@ group conditional_inclusion "Conditional Inclusion Tests"
             ${DECLARATIONS}
             void main()
             {
-    #define AAA defined(BBB)
+    #define AAA 0
 
     #if !AAA
                 out0 = 1.0;

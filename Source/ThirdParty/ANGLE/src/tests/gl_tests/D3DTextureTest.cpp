@@ -41,6 +41,12 @@ class D3DTextureTest : public ANGLETest<>
 
     void testSetUp() override
     {
+        if (!IsEGLDisplayExtensionEnabled(getEGLWindow()->getDisplay(),
+                                          "EGL_ANGLE_d3d_texture_client_buffer"))
+        {
+            return;
+        }
+
         constexpr char kVS[] =
             R"(precision highp float;
             attribute vec4 position;
@@ -126,8 +132,11 @@ class D3DTextureTest : public ANGLETest<>
             mD3D11Device = nullptr;
         }
 
-        FreeLibrary(mD3D11Module);
-        mD3D11Module = nullptr;
+        if (mD3D11Module)
+        {
+            FreeLibrary(mD3D11Module);
+            mD3D11Module = nullptr;
+        }
     }
 
     EGLSurface createD3D11PBuffer(size_t width,
@@ -251,9 +260,9 @@ class D3DTextureTest : public ANGLETest<>
         EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(0u, 127u, 0u, 255u), 2);
     }
 
-    GLuint mTextureProgram;
-    GLuint mTextureProgramNoSampling;
-    GLint mTextureUniformLocation;
+    GLuint mTextureProgram           = 0;
+    GLuint mTextureProgramNoSampling = 0;
+    GLint mTextureUniformLocation    = -1;
 
     HMODULE mD3D11Module       = nullptr;
     ID3D11Device *mD3D11Device = nullptr;
@@ -1992,7 +2001,8 @@ class D3DTextureYUVTestES3 : public D3DTextureTest
 
     void RunPackedYUVNotRenderableTest(DXGI_FORMAT format)
     {
-        ASSERT(format == DXGI_FORMAT_Y410 || format == DXGI_FORMAT_Y210);
+        // Y410 is renderable through its R10G10B10A2_UNORM view alias; only Y210 is sample-only.
+        ASSERT(format == DXGI_FORMAT_Y210);
         UINT formatSupport;
         ANGLE_SKIP_TEST_IF(!valid() || !IsD3D11() ||
                            FAILED(mD3D11Device->CheckFormatSupport(format, &formatSupport)));
@@ -2012,19 +2022,15 @@ class D3DTextureYUVTestES3 : public D3DTextureTest
         // renderability check is only observable where creation succeeds.
         ANGLE_SKIP_TEST_IF(FAILED(mD3D11Device->CreateTexture2D(&desc, nullptr, &d3d11Texture)));
 
-        const bool isY410           = (format == DXGI_FORMAT_Y410);
-        const GLenum internalFormat = isY410 ? GL_RGB10_A2 : GL_RGBA16_EXT;
-
         // Image binding allocates the aliased SRV; apply the same gate.
         Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> srv;
         D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-        srvDesc.Format = isY410 ? DXGI_FORMAT_R10G10B10A2_UNORM : DXGI_FORMAT_R16G16B16A16_UNORM;
-        srvDesc.ViewDimension       = D3D11_SRV_DIMENSION_TEXTURE2D;
-        srvDesc.Texture2D.MipLevels = 1;
+        srvDesc.Format                          = DXGI_FORMAT_R16G16B16A16_UNORM;
+        srvDesc.ViewDimension                   = D3D11_SRV_DIMENSION_TEXTURE2D;
+        srvDesc.Texture2D.MipLevels             = 1;
         ANGLE_SKIP_TEST_IF(
             FAILED(mD3D11Device->CreateShaderResourceView(d3d11Texture.Get(), &srvDesc, &srv)));
-        const EGLint attribs[] = {EGL_TEXTURE_INTERNAL_FORMAT_ANGLE,
-                                  static_cast<EGLint>(internalFormat), EGL_NONE};
+        const EGLint attribs[] = {EGL_TEXTURE_INTERNAL_FORMAT_ANGLE, GL_RGBA16_EXT, EGL_NONE};
         EGLImage image =
             eglCreateImageKHR(display, EGL_NO_CONTEXT, EGL_D3D11_TEXTURE_ANGLE,
                               static_cast<EGLClientBuffer>(d3d11Texture.Get()), attribs);
@@ -2047,6 +2053,191 @@ class D3DTextureYUVTestES3 : public D3DTextureTest
         ASSERT_GL_NO_ERROR();
 
         eglDestroyImageKHR(display, image);
+    }
+
+    void RunPackedYUVRenderTest(DXGI_FORMAT format)
+    {
+        // Only Y410 has a renderable view alias; Y210 keeps rtvFormat unset.
+        ASSERT(format == DXGI_FORMAT_Y410);
+        UINT formatSupport;
+        ANGLE_SKIP_TEST_IF(!valid() || !IsD3D11() ||
+                           FAILED(mD3D11Device->CheckFormatSupport(format, &formatSupport)));
+        ANGLE_SKIP_TEST_IF(!(formatSupport & D3D11_FORMAT_SUPPORT_TEXTURE2D));
+
+        // Deliberately not gated on D3D11_FORMAT_SUPPORT_RENDER_TARGET: drivers
+        // omit that bit for Y410 while still accepting the aliased RTV, so the
+        // creation calls below are the real capability check.
+        const uint32_t kY410U = 0x234;
+        const uint32_t kY410Y = 0x123;
+        const uint32_t kY410V = 0x345;
+        const uint32_t kY410A = 3;
+
+        constexpr char kVS[] =
+            R"(precision highp float;
+            attribute vec4 position;
+
+            void main()
+            {
+                gl_Position = position;
+            })";
+
+        constexpr char kFS[] =
+            R"(precision highp float;
+            uniform vec4 color;
+
+            void main()
+            {
+                gl_FragColor = color;
+            })";
+
+        GLuint program = CompileProgram(kVS, kFS);
+        ASSERT_NE(0u, program) << "shader compilation failed.";
+
+        GLint colorLocation = glGetUniformLocation(program, "color");
+        ASSERT_NE(-1, colorLocation);
+
+        EGLWindow *window  = getEGLWindow();
+        EGLDisplay display = window->getDisplay();
+        window->makeCurrent();
+
+        const UINT bufferSize = 32;
+        EXPECT_TRUE(mD3D11Device != nullptr);
+        Microsoft::WRL::ComPtr<ID3D11Texture2D> d3d11Texture;
+        CD3D11_TEXTURE2D_DESC desc(format, bufferSize, bufferSize, 1, 1,
+                                   D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET);
+        ANGLE_SKIP_TEST_IF(FAILED(mD3D11Device->CreateTexture2D(&desc, nullptr, &d3d11Texture)));
+
+        const EGLint attribs[] = {EGL_TEXTURE_INTERNAL_FORMAT_ANGLE, GL_RGB10_A2, EGL_NONE};
+        EGLImage image =
+            eglCreateImageKHR(display, EGL_NO_CONTEXT, EGL_D3D11_TEXTURE_ANGLE,
+                              static_cast<EGLClientBuffer>(d3d11Texture.Get()), attribs);
+        ASSERT_EGL_SUCCESS();
+        ASSERT_NE(image, EGL_NO_IMAGE_KHR);
+
+        GLTexture texture;
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, image);
+        ASSERT_GL_NO_ERROR();
+
+        GLFramebuffer fbo;
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+        EXPECT_EQ(glCheckFramebufferStatus(GL_FRAMEBUFFER),
+                  static_cast<unsigned>(GL_FRAMEBUFFER_COMPLETE));
+        ASSERT_GL_NO_ERROR();
+
+        // Under the R10G10B10A2_UNORM view, red/green/blue/alpha land in the
+        // U/Y/V/A fields of the Y410 word respectively.
+        glUseProgram(program);
+        glUniform4f(colorLocation, kY410U / 1023.0f, kY410Y / 1023.0f, kY410V / 1023.0f,
+                    kY410A / 3.0f);
+        ASSERT_GL_NO_ERROR();
+        drawQuad(program, "position", 1.0f);
+        ASSERT_GL_NO_ERROR();
+
+        Microsoft::WRL::ComPtr<ID3D11Texture2D> stagingTexture;
+        CD3D11_TEXTURE2D_DESC stagingDesc = desc;
+        stagingDesc.BindFlags             = 0;
+        stagingDesc.Usage                 = D3D11_USAGE_STAGING;
+        stagingDesc.CPUAccessFlags        = D3D11_CPU_ACCESS_READ;
+        EXPECT_TRUE(
+            SUCCEEDED(mD3D11Device->CreateTexture2D(&stagingDesc, nullptr, &stagingTexture)));
+
+        Microsoft::WRL::ComPtr<ID3D11DeviceContext> context;
+        mD3D11Device->GetImmediateContext(&context);
+        context->CopyResource(stagingTexture.Get(), d3d11Texture.Get());
+
+        D3D11_MAPPED_SUBRESOURCE mapped = {};
+        EXPECT_TRUE(SUCCEEDED(context->Map(stagingTexture.Get(), 0, D3D11_MAP_READ, 0, &mapped)));
+
+        const uint8_t *pixels = reinterpret_cast<const uint8_t *>(mapped.pData);
+        uint32_t packed       = 0;
+        memcpy(&packed, pixels + mapped.RowPitch * (bufferSize / 2) + (bufferSize / 2) * 4,
+               sizeof(packed));
+        context->Unmap(stagingTexture.Get(), 0);
+
+        // One step of tolerance for the float -> UNORM10 conversion.
+        EXPECT_NEAR(packed & 0x3FF, kY410U, 1);
+        EXPECT_NEAR((packed >> 10) & 0x3FF, kY410Y, 1);
+        EXPECT_NEAR((packed >> 20) & 0x3FF, kY410V, 1);
+        EXPECT_EQ((packed >> 30) & 0x3, kY410A);
+
+        glDeleteProgram(program);
+        eglDestroyImageKHR(display, image);
+    }
+
+    // Creates a renderable |size|x|size| Y410 texture and binds it to |texture| through an EGL
+    // image. Skips the test if the device can't create one.
+    void CreateRenderableY410Image(UINT size,
+                                   Microsoft::WRL::ComPtr<ID3D11Texture2D> *d3d11Texture,
+                                   EGLImage *image,
+                                   GLuint texture)
+    {
+        UINT formatSupport;
+        ANGLE_SKIP_TEST_IF(
+            !valid() || !IsD3D11() ||
+            FAILED(mD3D11Device->CheckFormatSupport(DXGI_FORMAT_Y410, &formatSupport)));
+        ANGLE_SKIP_TEST_IF(!(formatSupport & D3D11_FORMAT_SUPPORT_TEXTURE2D));
+
+        CD3D11_TEXTURE2D_DESC desc(DXGI_FORMAT_Y410, size, size, 1, 1,
+                                   D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET);
+        ANGLE_SKIP_TEST_IF(FAILED(
+            mD3D11Device->CreateTexture2D(&desc, nullptr, d3d11Texture->ReleaseAndGetAddressOf())));
+
+        const EGLint attribs[] = {EGL_TEXTURE_INTERNAL_FORMAT_ANGLE, GL_RGB10_A2, EGL_NONE};
+        *image =
+            eglCreateImageKHR(getEGLWindow()->getDisplay(), EGL_NO_CONTEXT, EGL_D3D11_TEXTURE_ANGLE,
+                              static_cast<EGLClientBuffer>(d3d11Texture->Get()), attribs);
+        ASSERT_EGL_SUCCESS();
+        ASSERT_NE(*image, EGL_NO_IMAGE_KHR);
+
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, *image);
+        ASSERT_GL_NO_ERROR();
+    }
+
+    // Returns the 32-bit word at (|x|, |y|) of a single-level Y410 |texture|, read through D3D11
+    // so that it doesn't depend on ANGLE's readback path.
+    uint32_t ReadY410Word(ID3D11Texture2D *texture, UINT x, UINT y)
+    {
+        D3D11_TEXTURE2D_DESC stagingDesc;
+        texture->GetDesc(&stagingDesc);
+        stagingDesc.BindFlags      = 0;
+        stagingDesc.MiscFlags      = 0;
+        stagingDesc.Usage          = D3D11_USAGE_STAGING;
+        stagingDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+        Microsoft::WRL::ComPtr<ID3D11Texture2D> stagingTexture;
+        EXPECT_TRUE(
+            SUCCEEDED(mD3D11Device->CreateTexture2D(&stagingDesc, nullptr, &stagingTexture)));
+
+        Microsoft::WRL::ComPtr<ID3D11DeviceContext> context;
+        mD3D11Device->GetImmediateContext(&context);
+        context->CopyResource(stagingTexture.Get(), texture);
+
+        D3D11_MAPPED_SUBRESOURCE mapped = {};
+        EXPECT_TRUE(SUCCEEDED(context->Map(stagingTexture.Get(), 0, D3D11_MAP_READ, 0, &mapped)));
+        const uint8_t *pixels = reinterpret_cast<const uint8_t *>(mapped.pData);
+        uint32_t word         = 0;
+        memcpy(&word, pixels + mapped.RowPitch * y + x * sizeof(word), sizeof(word));
+        context->Unmap(stagingTexture.Get(), 0);
+        return word;
+    }
+
+    static constexpr uint32_t PackRGB10A2(uint32_t r, uint32_t g, uint32_t b, uint32_t a)
+    {
+        return (r & 0x3FF) | ((g & 0x3FF) << 10) | ((b & 0x3FF) << 20) | ((a & 0x3) << 30);
+    }
+
+    // Clears the bound draw framebuffer to the RGB10_A2 color with the given 10-bit channel
+    // values and 2-bit alpha.
+    void ClearRGB10A2(uint32_t r, uint32_t g, uint32_t b, uint32_t a)
+    {
+        glClearColor(r / 1023.0f, g / 1023.0f, b / 1023.0f, a / 3.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
     }
 
     void RunYUVRenderTest(DXGI_FORMAT format)
@@ -2701,15 +2892,280 @@ TEST_P(D3DTextureYUVTestES3, Y210TextureImageInvalidAttribs)
     RunPackedYUVInvalidAttribTest(DXGI_FORMAT_Y210);
 }
 
-// Test that packed YUV textures are not framebuffer-attachable even when the
-// D3D texture claims render-target usage.
-TEST_P(D3DTextureYUVTestES3, Y410TextureImageNotRenderable)
+// Test that a Y410 D3D11 texture can be rendered into through its aliased
+// R10G10B10A2_UNORM view, and that the result lands as a packed U:Y:V:A word.
+TEST_P(D3DTextureYUVTestES3, Y410TextureImageRender)
 {
-    RunPackedYUVNotRenderableTest(DXGI_FORMAT_Y410);
+    RunPackedYUVRenderTest(DXGI_FORMAT_Y410);
 }
 
-// Test that packed YUV textures are not framebuffer-attachable even when the
-// D3D texture claims render-target usage.
+// Test that glReadPixels from a Y410 framebuffer returns its U:Y:V:A words as RGB10_A2 data.
+TEST_P(D3DTextureYUVTestES3, Y410TextureImageReadPixels)
+{
+    constexpr UINT kSize = 32;
+    Microsoft::WRL::ComPtr<ID3D11Texture2D> d3d11Texture;
+    EGLImage image = EGL_NO_IMAGE_KHR;
+    GLTexture texture;
+    CreateRenderableY410Image(kSize, &d3d11Texture, &image, texture);
+    if (IsSkipped() || HasFatalFailure())
+    {
+        return;
+    }
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ClearRGB10A2(0x234, 0x123, 0x345, 3);
+
+    uint32_t pixel = 0;
+    glReadPixels(kSize / 2, kSize / 2, 1, 1, GL_RGBA, GL_UNSIGNED_INT_2_10_10_10_REV, &pixel);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_EQ(pixel, PackRGB10A2(0x234, 0x123, 0x345, 3));
+
+    eglDestroyImageKHR(getEGLWindow()->getDisplay(), image);
+}
+
+// Test that glBlitFramebuffer copies between Y410 and RGB10_A2 framebuffers in both directions.
+// They share a format ID, but CopySubresourceRegion can't copy between their DXGI formats.
+TEST_P(D3DTextureYUVTestES3, Y410TextureImageBlitFramebuffer)
+{
+    constexpr UINT kSize = 32;
+    Microsoft::WRL::ComPtr<ID3D11Texture2D> d3d11Texture;
+    EGLImage image = EGL_NO_IMAGE_KHR;
+    GLTexture y410Texture;
+    CreateRenderableY410Image(kSize, &d3d11Texture, &image, y410Texture);
+    if (IsSkipped() || HasFatalFailure())
+    {
+        return;
+    }
+
+    GLFramebuffer y410Fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, y410Fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, y410Texture, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    GLTexture rgbTexture;
+    glBindTexture(GL_TEXTURE_2D, rgbTexture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB10_A2, kSize, kSize);
+    GLFramebuffer rgbFbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, rgbFbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, rgbTexture, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Y410 to RGB10_A2.
+    glBindFramebuffer(GL_FRAMEBUFFER, y410Fbo);
+    ClearRGB10A2(0x234, 0x123, 0x345, 3);
+    glBindFramebuffer(GL_FRAMEBUFFER, rgbFbo);
+    ClearRGB10A2(0, 0, 0, 0);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, y410Fbo);
+    glBlitFramebuffer(0, 0, kSize, kSize, 0, 0, kSize, kSize, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, rgbFbo);
+    uint32_t pixel = 0;
+    glReadPixels(kSize / 2, kSize / 2, 1, 1, GL_RGBA, GL_UNSIGNED_INT_2_10_10_10_REV, &pixel);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_EQ(pixel, PackRGB10A2(0x234, 0x123, 0x345, 3));
+
+    // RGB10_A2 to Y410.
+    ClearRGB10A2(0x111, 0x222, 0x333, 1);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, y410Fbo);
+    glBlitFramebuffer(0, 0, kSize, kSize, 0, 0, kSize, kSize, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_EQ(ReadY410Word(d3d11Texture.Get(), kSize / 2, kSize / 2),
+              PackRGB10A2(0x111, 0x222, 0x333, 1));
+
+    eglDestroyImageKHR(getEGLWindow()->getDisplay(), image);
+}
+
+// Test that glBlitFramebuffer resolves a multisampled RGB10_A2 framebuffer into a Y410 one. They
+// share a format ID, but ResolveSubresource can't resolve into the Y410 texture.
+TEST_P(D3DTextureYUVTestES3, Y410TextureImageBlitFramebufferResolve)
+{
+    constexpr UINT kSize = 32;
+    Microsoft::WRL::ComPtr<ID3D11Texture2D> d3d11Texture;
+    EGLImage image = EGL_NO_IMAGE_KHR;
+    GLTexture y410Texture;
+    CreateRenderableY410Image(kSize, &d3d11Texture, &image, y410Texture);
+    if (IsSkipped() || HasFatalFailure())
+    {
+        return;
+    }
+
+    GLint maxSamples = 0;
+    glGetInternalformativ(GL_RENDERBUFFER, GL_RGB10_A2, GL_SAMPLES, 1, &maxSamples);
+    ANGLE_SKIP_TEST_IF(maxSamples < 4);
+
+    GLFramebuffer y410Fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, y410Fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, y410Texture, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ClearRGB10A2(0, 0, 0, 0);
+
+    GLRenderbuffer msRenderbuffer;
+    glBindRenderbuffer(GL_RENDERBUFFER, msRenderbuffer);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_RGB10_A2, kSize, kSize);
+    GLFramebuffer msFbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, msFbo);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
+                              msRenderbuffer);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ClearRGB10A2(0x111, 0x222, 0x333, 1);
+
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, y410Fbo);
+    glBlitFramebuffer(0, 0, kSize, kSize, 0, 0, kSize, kSize, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_EQ(ReadY410Word(d3d11Texture.Get(), kSize / 2, kSize / 2),
+              PackRGB10A2(0x111, 0x222, 0x333, 1));
+
+    eglDestroyImageKHR(getEGLWindow()->getDisplay(), image);
+}
+
+// Test that glCopySubTextureCHROMIUM copies between Y410 and RGB10_A2 textures in both
+// directions. They share an internal format, but CopySubresourceRegion can't copy between their
+// DXGI formats.
+TEST_P(D3DTextureYUVTestES3, Y410TextureImageCopySubTexture)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_CHROMIUM_copy_texture"));
+
+    constexpr UINT kSize = 32;
+    Microsoft::WRL::ComPtr<ID3D11Texture2D> d3d11Texture;
+    EGLImage image = EGL_NO_IMAGE_KHR;
+    GLTexture y410Texture;
+    CreateRenderableY410Image(kSize, &d3d11Texture, &image, y410Texture);
+    if (IsSkipped() || HasFatalFailure())
+    {
+        return;
+    }
+
+    GLFramebuffer y410Fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, y410Fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, y410Texture, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ClearRGB10A2(0x234, 0x123, 0x345, 3);
+
+    GLTexture rgbTexture;
+    glBindTexture(GL_TEXTURE_2D, rgbTexture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB10_A2, kSize, kSize);
+    GLFramebuffer rgbFbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, rgbFbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, rgbTexture, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ClearRGB10A2(0, 0, 0, 0);
+
+    // Y410 to RGB10_A2.
+    glCopySubTextureCHROMIUM(y410Texture, 0, GL_TEXTURE_2D, rgbTexture, 0, 0, 0, 0, 0, kSize, kSize,
+                             GL_FALSE, GL_FALSE, GL_FALSE);
+    ASSERT_GL_NO_ERROR();
+    uint32_t pixel = 0;
+    glReadPixels(kSize / 2, kSize / 2, 1, 1, GL_RGBA, GL_UNSIGNED_INT_2_10_10_10_REV, &pixel);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_EQ(pixel, PackRGB10A2(0x234, 0x123, 0x345, 3));
+
+    // RGB10_A2 to Y410.
+    ClearRGB10A2(0x111, 0x222, 0x333, 1);
+    glCopySubTextureCHROMIUM(rgbTexture, 0, GL_TEXTURE_2D, y410Texture, 0, 0, 0, 0, 0, kSize, kSize,
+                             GL_FALSE, GL_FALSE, GL_FALSE);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_EQ(ReadY410Word(d3d11Texture.Get(), kSize / 2, kSize / 2),
+              PackRGB10A2(0x111, 0x222, 0x333, 1));
+
+    eglDestroyImageKHR(getEGLWindow()->getDisplay(), image);
+}
+
+// Test that glCopyTexSubImage2D copies between Y410 and RGB10_A2 textures in both directions.
+TEST_P(D3DTextureYUVTestES3, Y410TextureImageCopyTexSubImage)
+{
+    constexpr UINT kSize = 32;
+    Microsoft::WRL::ComPtr<ID3D11Texture2D> d3d11Texture;
+    EGLImage image = EGL_NO_IMAGE_KHR;
+    GLTexture y410Texture;
+    CreateRenderableY410Image(kSize, &d3d11Texture, &image, y410Texture);
+    if (IsSkipped() || HasFatalFailure())
+    {
+        return;
+    }
+
+    GLFramebuffer y410Fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, y410Fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, y410Texture, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ClearRGB10A2(0x234, 0x123, 0x345, 3);
+
+    GLTexture rgbTexture;
+    glBindTexture(GL_TEXTURE_2D, rgbTexture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB10_A2, kSize, kSize);
+    GLFramebuffer rgbFbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, rgbFbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, rgbTexture, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ClearRGB10A2(0, 0, 0, 0);
+
+    // Y410 to RGB10_A2.
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, y410Fbo);
+    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, kSize, kSize);
+    ASSERT_GL_NO_ERROR();
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, rgbFbo);
+    uint32_t pixel = 0;
+    glReadPixels(kSize / 2, kSize / 2, 1, 1, GL_RGBA, GL_UNSIGNED_INT_2_10_10_10_REV, &pixel);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_EQ(pixel, PackRGB10A2(0x234, 0x123, 0x345, 3));
+
+    // RGB10_A2 to Y410.
+    ClearRGB10A2(0x111, 0x222, 0x333, 1);
+    glBindTexture(GL_TEXTURE_2D, y410Texture);
+    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, kSize, kSize);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_EQ(ReadY410Word(d3d11Texture.Get(), kSize / 2, kSize / 2),
+              PackRGB10A2(0x111, 0x222, 0x333, 1));
+
+    eglDestroyImageKHR(getEGLWindow()->getDisplay(), image);
+}
+
+// Test that glCopyTexImage2D copies from a Y410 framebuffer into a texture level that isn't
+// complete yet. That copy goes to the level's staging image instead of a render target, and
+// CopySubresourceRegion can't copy from the Y410 texture into it.
+TEST_P(D3DTextureYUVTestES3, Y410TextureImageCopyTexImageToIncompleteLevel)
+{
+    constexpr UINT kSize = 32;
+    Microsoft::WRL::ComPtr<ID3D11Texture2D> d3d11Texture;
+    EGLImage image = EGL_NO_IMAGE_KHR;
+    GLTexture y410Texture;
+    CreateRenderableY410Image(kSize, &d3d11Texture, &image, y410Texture);
+    if (IsSkipped() || HasFatalFailure())
+    {
+        return;
+    }
+
+    GLFramebuffer y410Fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, y410Fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, y410Texture, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ClearRGB10A2(0x234, 0x123, 0x345, 3);
+
+    // Level 1 is incomplete while the base level is undefined.
+    GLTexture rgbTexture;
+    glBindTexture(GL_TEXTURE_2D, rgbTexture);
+    glCopyTexImage2D(GL_TEXTURE_2D, 1, GL_RGB10_A2, 0, 0, kSize, kSize, 0);
+    ASSERT_GL_NO_ERROR();
+
+    // Make level 1 the base level to read it back.
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 1);
+    GLFramebuffer rgbFbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, rgbFbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, rgbTexture, 1);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    uint32_t pixel = 0;
+    glReadPixels(kSize / 2, kSize / 2, 1, 1, GL_RGBA, GL_UNSIGNED_INT_2_10_10_10_REV, &pixel);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_EQ(pixel, PackRGB10A2(0x234, 0x123, 0x345, 3));
+
+    eglDestroyImageKHR(getEGLWindow()->getDisplay(), image);
+}
+
+// Test that Y210, which has no renderable view alias, is not
+// framebuffer-attachable even when the D3D texture claims render-target usage.
 TEST_P(D3DTextureYUVTestES3, Y210TextureImageNotRenderable)
 {
     RunPackedYUVNotRenderableTest(DXGI_FORMAT_Y210);

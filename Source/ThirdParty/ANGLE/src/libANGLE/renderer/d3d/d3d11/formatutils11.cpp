@@ -101,11 +101,11 @@ const Format *GetPackedYUVFormat(DXGI_FORMAT dxgiFormat)
     // Hard-coded rather than registered in texture_format_data.json, which is
     // keyed by GL internal format: the packed entries differ only in the DXGI
     // texture format they wrap, sampled through the documented view alias.
-    static constexpr Format y410Info(GL_RGB10_A2, angle::FormatID::R10G10B10A2_UNORM,
-                                     DXGI_FORMAT_Y410, DXGI_FORMAT_R10G10B10A2_UNORM,
-                                     DXGI_FORMAT_UNKNOWN, DXGI_FORMAT_UNKNOWN, DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_R10G10B10A2_UNORM, DXGI_FORMAT_UNKNOWN,
-                                     DXGI_FORMAT_UNKNOWN, DXGI_FORMAT_UNKNOWN, GL_NONE, nullptr);
+    static constexpr Format y410Info(
+        GL_RGB10_A2, angle::FormatID::R10G10B10A2_UNORM, DXGI_FORMAT_Y410,
+        DXGI_FORMAT_R10G10B10A2_UNORM, DXGI_FORMAT_UNKNOWN, DXGI_FORMAT_R10G10B10A2_UNORM,
+        DXGI_FORMAT_UNKNOWN, DXGI_FORMAT_R10G10B10A2_UNORM, DXGI_FORMAT_UNKNOWN,
+        DXGI_FORMAT_UNKNOWN, DXGI_FORMAT_UNKNOWN, GL_NONE, nullptr);
 
     static constexpr Format y210Info(GL_RGBA16_EXT, angle::FormatID::R16G16B16A16_UNORM,
                                      DXGI_FORMAT_Y210, DXGI_FORMAT_R16G16B16A16_UNORM,
@@ -122,6 +122,11 @@ const Format *GetPackedYUVFormat(DXGI_FORMAT dxgiFormat)
         default:
             return nullptr;
     }
+}
+
+bool IsPackedYUVFormat(DXGI_FORMAT dxgiFormat)
+{
+    return GetPackedYUVFormat(dxgiFormat) != nullptr;
 }
 
 DXGIFormatSize::DXGIFormatSize(GLuint pixelBits, GLuint blockWidth, GLuint blockHeight)
@@ -265,8 +270,10 @@ const DXGIFormatSize &GetDXGIFormatSizeInfo(DXGI_FORMAT format)
         case DXGI_FORMAT_BC7_UNORM:
         case DXGI_FORMAT_BC7_UNORM_SRGB:
             return sizeBC7;
-        case DXGI_FORMAT_AYUV:
         case DXGI_FORMAT_Y410:
+            // Y410 is rendered to, read back and copied like its R10G10B10A2_UNORM view alias.
+            return size32;
+        case DXGI_FORMAT_AYUV:
         case DXGI_FORMAT_Y416:
         case DXGI_FORMAT_NV12:
         case DXGI_FORMAT_P010:

@@ -830,6 +830,10 @@ void ProgramExecutable::reset()
     mPod.drawBufferTypeMask.reset();
     mPod.computeShaderLocalSize.fill(1);
 
+    mPod.clipDistanceSizes.fill(0);
+    mPod.cullDistanceSizes.fill(0);
+    mPod.inputClipDistanceSizes.fill(0);
+    mPod.inputCullDistanceSizes.fill(0);
     mPod.padding = 0;
 
     mActiveSamplersMask.reset();

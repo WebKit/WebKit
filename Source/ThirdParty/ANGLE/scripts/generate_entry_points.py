@@ -616,6 +616,45 @@ TEMPLATE_EGL_ENTRY_POINT_WITH_RETURN = """\
 }}
 """
 
+# Used by the entry points whose unlocked tail calls need the display (see
+# egl_tail_call_holds_display()).  The tail calls ({epilog}) run while the entry point still holds
+# its reference to the display, but after the inner scope that holds the object references and the
+# context lock is closed.  That way, the display cannot be terminated while a tail call runs.
+TEMPLATE_EGL_ENTRY_POINT_WITH_RETURN_TAIL_CALL_HOLDS_DISPLAY = """\
+{return_type} EGLAPIENTRY EGL_{name}({params})
+{{
+    {preamble}
+    Thread *thread = egl::GetCurrentThread();
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+    {return_type} returnValue;
+    {{
+        {packed_display_conversions}{{
+            EGL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params});
+
+            {packed_gl_enum_conversions}
+
+            {{
+                {context_lock_statement}
+                if (IsEGLValidationEnabled())
+                {{
+                    {validation_statement}
+                }}
+                else
+                {{
+                    {attrib_map_init}
+                }}
+
+                returnValue = {name}(thread{comma_if_needed}{internal_params});
+            }}
+
+            ANGLE_CAPTURE_EGL({name}, true, {egl_capture_params}, returnValue);
+        }}
+        {epilog}
+    }}
+    return returnValue;
+}}
+"""
+
 TEMPLATE_EGL_ENTRY_POINT_WITH_RETURN_NO_LOCKS = """\
 {return_type} EGLAPIENTRY EGL_{name}({params})
 {{
@@ -1821,6 +1860,19 @@ def is_egl_threadsafe_display_entry_point(cmd_name):
     return False
 
 
+def egl_tail_call_holds_display(cmd_name):
+    # The unlocked tail calls of these entry points wait on the sync through the renderer and
+    # release a ScopedSyncRef, which does not hold a reference to the display, so they must run
+    # before the entry point releases the display.  Other entry points run their tail calls after
+    # releasing the display, so that EGL calls made from a tail call (Android may call back into
+    # EGL, for example from ANativeWindow) don't take a second reference to the display on this
+    # thread, which ThreadSafeDisplay::addRef() forbids.
+    return cmd_name in [
+        "eglClientWaitSync",
+        "eglClientWaitSyncKHR",
+    ]
+
+
 def is_cmd_map_buffer_range(cmd_name):
     if cmd_name == "glMapBufferRange" or cmd_name == "glMapBufferRangeEXT":
         return True
@@ -2198,6 +2250,8 @@ def get_def_template(api, cmd_name, return_type, has_errcode_ret):
         if api == apis.EGL:
             if is_lockless_egl_entry_point(cmd_name):
                 return TEMPLATE_EGL_ENTRY_POINT_WITH_RETURN_NO_LOCKS
+            elif egl_tail_call_holds_display(cmd_name):
+                return TEMPLATE_EGL_ENTRY_POINT_WITH_RETURN_TAIL_CALL_HOLDS_DISPLAY
             else:
                 return TEMPLATE_EGL_ENTRY_POINT_WITH_RETURN
         elif api == apis.CL:
@@ -2539,6 +2593,11 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
     if is_lockless_egl_entry_point(cmd_name):
         assert "{egl_lock}" not in template, (
             f"Lockless entry point {cmd_name} must not use a template containing {{egl_lock}}")
+    if template == TEMPLATE_EGL_ENTRY_POINT_WITH_RETURN_TAIL_CALL_HOLDS_DISPLAY:
+        # The template has no {egl_lock}; the display reference is taken by
+        # packed_display_conversions, which requires a thread-safe display entry point.
+        assert dpy_param and is_egl_threadsafe_display_entry_point(cmd_name), (
+            f"{cmd_name} must be a thread-safe display entry point that takes an EGLDisplay")
     return template.format(**format_params)
 
 
@@ -3881,17 +3940,20 @@ def get_unlocked_tail_call(api, cmd_name):
     # - glCompileShader, glShaderBinary, glLinkProgram -> May perform the compilation /
     #   link in tail call
     #
-    # - eglCreateSync, eglCreateImage,
-    #   eglGetCompositorTimingANDROID, eglGetFrameTimestampsANDROID -> Calls
+    # - eglCreateImage, eglGetCompositorTimingANDROID, eglGetFrameTimestampsANDROID -> Calls
     #   native EGL function in tail call
     #
     # - glFlush, glFinish -> May perform the CPU throttling from the implicit swap buffers call when
     #   the current Window Surface is in the single buffer mode.
     #
+    # - eglMakeCurrent -> Runs the internal cleanup of a display that eglTerminate() was called on,
+    #   once the entry point no longer holds the display or any of its surface or context locks
+    #
     if (cmd_name in [
             'eglCreateWindowSurface', 'eglCreatePlatformWindowSurface',
             'eglCreatePlatformWindowSurfaceEXT', 'eglPrepareSwapBuffersANGLE', 'glFinishFenceNV',
-            'glCompileShader', 'glLinkProgram', 'glShaderBinary', 'glFlush', 'glFinish'
+            'glCompileShader', 'glLinkProgram', 'glShaderBinary', 'glFlush', 'glFinish',
+            'eglMakeCurrent'
     ] or cmd_name.startswith('glTexImage2D') or cmd_name.startswith('glTexImage3D') or
             cmd_name.startswith('glTexSubImage2D') or cmd_name.startswith('glTexSubImage3D') or
             cmd_name.startswith('glCompressedTexImage2D') or
@@ -3905,14 +3967,10 @@ def get_unlocked_tail_call(api, cmd_name):
             'eglClientWaitSync',
             'eglCreateImageKHR',
             'eglCreateImage',
-            'eglCreateSyncKHR',
-            'eglCreateSync',
             'eglGetCompositorTimingANDROID',
             'eglGetFrameTimestampsANDROID',
             'eglSwapBuffers',
             'eglSwapBuffersWithDamageKHR',
-            'eglWaitSyncKHR',
-            'eglWaitSync',
             'glClientWaitSync',
     ]:
         return 'egl::Display::GetCurrentThreadUnlockedTailCall()->run(&returnValue);'

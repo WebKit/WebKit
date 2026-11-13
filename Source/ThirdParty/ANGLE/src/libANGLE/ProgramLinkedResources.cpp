@@ -955,6 +955,78 @@ bool ValidateInterfaceBlocks(GLuint maxInterfaceBlocks,
 
     return true;
 }
+
+bool ValidateClipCullDistanceBuiltInSize(const std::string &name,
+                                         const uint32_t outputClipDistanceSize,
+                                         const uint32_t outputCullDistanceSize,
+                                         const uint32_t inputClipDistanceSize,
+                                         const uint32_t inputCullDistanceSize,
+                                         InfoLog &infoLog)
+{
+    uint32_t outputSize = 0;
+    uint32_t inputSize  = 0;
+    if (name == "gl_ClipDistance")
+    {
+        outputSize = outputClipDistanceSize;
+        inputSize  = inputClipDistanceSize;
+    }
+    else if (name == "gl_CullDistance")
+    {
+        outputSize = outputCullDistanceSize;
+        inputSize  = inputCullDistanceSize;
+    }
+    else
+    {
+        return true;
+    }
+
+    if (inputSize != outputSize)
+    {
+        infoLog << "The " << name << " built-in array must have the same size as in the "
+                << "previous shader stage. Output size " << outputSize << ", input size "
+                << inputSize << ".";
+        return false;
+    }
+    return true;
+}
+
+bool ValidateClipCullDistanceSizes(const std::vector<sh::ShaderVariable> &varyings,
+                                   const uint32_t outputClipDistanceSize,
+                                   const uint32_t outputCullDistanceSize,
+                                   const uint32_t inputClipDistanceSize,
+                                   const uint32_t inputCullDistanceSize,
+                                   InfoLog &infoLog)
+{
+    // gl_ClipDistance and gl_CullDistance can appear either as top-level varyings or as members of
+    // the gl_PerVertex block (gl_in in geometry and tessellation shaders).
+    for (const sh::ShaderVariable &varying : varyings)
+    {
+        if (!varying.isBuiltIn())
+        {
+            continue;
+        }
+        if (!ValidateClipCullDistanceBuiltInSize(varying.name, outputClipDistanceSize,
+                                                 outputCullDistanceSize, inputClipDistanceSize,
+                                                 inputCullDistanceSize, infoLog))
+        {
+            return false;
+        }
+        if (varying.isShaderIOBlock && varying.structOrBlockName == "gl_PerVertex")
+        {
+            for (const sh::ShaderVariable &field : varying.fields)
+            {
+                if (!ValidateClipCullDistanceBuiltInSize(
+                        field.name, outputClipDistanceSize, outputCullDistanceSize,
+                        inputClipDistanceSize, inputCullDistanceSize, infoLog))
+                {
+                    return false;
+                }
+            }
+        }
+    }
+
+    return true;
+}
 }  // anonymous namespace
 
 // UsedUniform implementation
@@ -2205,6 +2277,10 @@ bool LinkValidateBuiltInVaryings(const std::vector<sh::ShaderVariable> &outputVa
                                  ShaderType inputShaderType,
                                  int outputShaderVersion,
                                  int inputShaderVersion,
+                                 const uint8_t outputClipDistanceSize,
+                                 const uint8_t outputCullDistanceSize,
+                                 const uint8_t inputClipDistanceSize,
+                                 const uint8_t inputCullDistanceSize,
                                  InfoLog &infoLog)
 {
     ASSERT(outputShaderVersion == inputShaderVersion);
@@ -2217,56 +2293,16 @@ bool LinkValidateBuiltInVaryings(const std::vector<sh::ShaderVariable> &outputVa
                                                     outputShaderVersion, infoLog);
     }
 
-    uint32_t sizeClipDistance = 0;
-    uint32_t sizeCullDistance = 0;
-
-    for (const sh::ShaderVariable &varying : outputVaryings)
+    // Only validate clip/cull distance sizes if the input shader actually uses them. If the input
+    // shader doesn't use these built-ins, there's no interface matching requirement.
+    // The output shader may write gl_ClipDistance or gl_CullDistance without the input shader
+    // reading them. Whether the input shader uses a built-in is determined by its presence in the
+    // input varyings (either directly or as a member of gl_in).
+    if (inputClipDistanceSize > 0 || inputCullDistanceSize > 0)
     {
-        if (!varying.isBuiltIn())
-        {
-            continue;
-        }
-        if (varying.name.compare("gl_ClipDistance") == 0)
-        {
-            sizeClipDistance = varying.getOutermostArraySize();
-        }
-        else if (varying.name.compare("gl_CullDistance") == 0)
-        {
-            sizeCullDistance = varying.getOutermostArraySize();
-        }
-    }
-
-    for (const sh::ShaderVariable &varying : inputVaryings)
-    {
-        if (!varying.isBuiltIn())
-        {
-            continue;
-        }
-        if (varying.name.compare("gl_ClipDistance") == 0)
-        {
-            if (sizeClipDistance != varying.getOutermostArraySize())
-            {
-                infoLog
-                    << "If a fragment shader statically uses the gl_ClipDistance built-in array, "
-                       "the array must have the same size as in the previous shader stage. "
-                    << "Output size " << sizeClipDistance << ", input size "
-                    << varying.getOutermostArraySize() << ".";
-                return false;
-            }
-        }
-        else if (varying.name.compare("gl_CullDistance") == 0)
-        {
-            if (sizeCullDistance != varying.getOutermostArraySize())
-            {
-                infoLog
-                    << "If a fragment shader statically uses the gl_ClipDistance built-in array, "
-                       "the array must have the same size as in the previous shader stage. "
-                    << "Output size " << sizeCullDistance << ", input size "
-                    << varying.getOutermostArraySize() << ".";
-
-                return false;
-            }
-        }
+        return ValidateClipCullDistanceSizes(inputVaryings, outputClipDistanceSize,
+                                             outputCullDistanceSize, inputClipDistanceSize,
+                                             inputCullDistanceSize, infoLog);
     }
     return true;
 }

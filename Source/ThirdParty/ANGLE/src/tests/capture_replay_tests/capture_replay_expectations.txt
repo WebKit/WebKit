@@ -267,6 +267,7 @@
 42266529 LINUX : BufferDataTestES3.* = SKIP_FOR_CAPTURE
 42266529 LINUX : BufferStorageTestES3.* = SKIP_FOR_CAPTURE
 382101118 : CopyImageTestES31.MultisampleRenderbufferCopyImageSubData/* = SKIP_FOR_CAPTURE
+382101118 : CopyImageTestES31.AllOnesCopyToRGBA8IRenderbuffer/* = SKIP_FOR_CAPTURE
 381727390 : MultisampleTexture2DTestES31.CopyMultisampleImageEXT/* = SKIP_FOR_CAPTURE
 381727390 : MultisampleTexture2DTestES31.CopyMultisampleImageOES/* = SKIP_FOR_CAPTURE
 381727390 : MultisampleTexture2DTestES31.CopyMultisampleArrayImageEXT/* = SKIP_FOR_CAPTURE
@@ -281,6 +282,21 @@
 454830637 : WebGLGLSLValidation*Test* = SKIP_FOR_CAPTURE
 454830637 : WebGL2GLSLValidation*Test* = SKIP_FOR_CAPTURE
 454830637 : GLSLOutput*Test* = SKIP_FOR_CAPTURE
+454830637 : ClipDistanceAPPLETest.FragmentShader/* = SKIP_FOR_CAPTURE
+454830637 : ClipDistanceAPPLETest.NotVarying/* = SKIP_FOR_CAPTURE
+454830637 : ClipDistanceAPPLETest.UndefinedArraySize/* = SKIP_FOR_CAPTURE
+454830637 : ClipDistanceAPPLETest.OutOfRangeArraySize/* = SKIP_FOR_CAPTURE
+454830637 : ClipCullDistanceTest.UndefinedArraySize/* = SKIP_FOR_CAPTURE
+454830637 : ClipCullDistanceTest.UndefinedArraySizeWithTessellationShader/* = SKIP_FOR_CAPTURE
+454830637 : ClipCullDistanceTest.UndefinedArraySizeWithGeometryShader/* = SKIP_FOR_CAPTURE
+454830637 : ClipCullDistanceTest.StorageQualifiers/* = SKIP_FOR_CAPTURE
+454830637 : ClipCullDistanceTest.OutOfRangeArraySize/* = SKIP_FOR_CAPTURE
+454830637 : ClipCullDistanceTest.SizeCheck/* = SKIP_FOR_CAPTURE
+454830637 : ClipCullDistanceTest.SizeCheckWithTessellationShader/* = SKIP_FOR_CAPTURE
+454830637 : ClipCullDistanceTest.SizeCheckWithGeometryShader/* = SKIP_FOR_CAPTURE
+454830637 : ClipCullDistanceTest.UnusedFragmentVaryingNoCrash/* = SKIP_FOR_CAPTURE
+454830637 : ClipCullDistanceTest.BadIndexNoCrash/* = SKIP_FOR_CAPTURE
+454830637 : ClipCullDistanceTest.UnsizedArrayLength/* = SKIP_FOR_CAPTURE
 
 # Missing support for glGetTransformFeedbackVarying
 522887762 : TransformFeedbackTest.QueryVaryingZeroBufferSize/* = SKIP_FOR_CAPTURE

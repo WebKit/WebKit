@@ -859,9 +859,18 @@ TString DecorateStruct(const ImmutableString &string)
     return "_s" + TString(string.data());
 }
 
-TString DecorateVariableIfNeeded(const TVariable &variable)
+TString DecorateVariableIfNeeded(const TVariable &variable, DebugNames debugNames)
 {
     const TQualifier qualifier = variable.getType().getQualifier();
+
+    // If this is a private variable and we're not interested in retaining debug info, use a temp
+    // name.
+    if (debugNames == DebugNames::Drop && variable.symbolType() == SymbolType::UserDefined &&
+        IsPrivate(qualifier))
+    {
+        return TString(variable.getTempName().data());
+    }
+
     if (variable.symbolType() == SymbolType::AngleInternal ||
         variable.symbolType() == SymbolType::BuiltIn || variable.symbolType() == SymbolType::Empty)
     {

@@ -17,22 +17,19 @@
 namespace rx
 {
 
-SyncEGL::SyncEGL(const FunctionsEGL *egl) : mEGL(egl)
-{
-    mSync = std::make_shared<EGLSync>(EGL_NO_SYNC_KHR);
-}
+SyncEGL::SyncEGL(const FunctionsEGL *egl) : mEGL(egl) {}
 
 SyncEGL::~SyncEGL()
 {
-    ASSERT(mSync && *mSync == EGL_NO_SYNC_KHR);
+    ASSERT(mSync == EGL_NO_SYNC_KHR);
 }
 
 void SyncEGL::onDestroy(const egl::ThreadSafeDisplay *display)
 {
-    if (*mSync != EGL_NO_SYNC_KHR)
+    if (mSync != EGL_NO_SYNC_KHR)
     {
-        EGLBoolean result = mEGL->destroySyncKHR(*mSync);
-        *mSync            = EGL_NO_SYNC_KHR;
+        EGLBoolean result = mEGL->destroySyncKHR(mSync);
+        mSync             = EGL_NO_SYNC_KHR;
         if (result == EGL_FALSE)
         {
             ERR() << "eglDestroySyncKHR failed: " << mEGL->getError();
@@ -46,6 +43,7 @@ egl::Error SyncEGL::initialize(const egl::ThreadSafeDisplay *display,
                                const egl::AttributeMap &attribs)
 {
     ASSERT(type == EGL_SYNC_FENCE_KHR || type == EGL_SYNC_NATIVE_FENCE_ANDROID);
+    ASSERT(mSync == EGL_NO_SYNC_KHR);
 
     constexpr size_t kAttribVectorSize = 3;
     angle::FixedVector<EGLint, kAttribVectorSize> nativeAttribs;
@@ -65,18 +63,11 @@ egl::Error SyncEGL::initialize(const egl::ThreadSafeDisplay *display,
         GetImplAs<ContextGL>(context)->markWorkSubmitted();
     }
 
-    egl::Display::GetCurrentThreadUnlockedTailCall()->add(
-        [egl = mEGL, syncRef = mSync, type, attribs = nativeAttribs](void *resultOut) {
-            *syncRef = egl->createSyncKHR(type, attribs.data());
-
-            // If sync creation failed, force the return value of eglCreateSync to EGL_NO_SYNC. This
-            // won't delete this sync object but a driver error is unexpected at this point.
-            if (*syncRef == EGL_NO_SYNC_KHR)
-            {
-                ERR() << "eglCreateSync failed with " << gl::FmtHex(egl->getError());
-                *static_cast<EGLSync *>(resultOut) = EGL_NO_SYNC_KHR;
-            }
-        });
+    mSync = mEGL->createSyncKHR(type, nativeAttribs.data());
+    if (mSync == EGL_NO_SYNC_KHR)
+    {
+        return egl::Error(mEGL->getError(), "eglCreateSyncKHR failed to create sync object");
+    }
 
     return egl::NoError();
 }
@@ -87,12 +78,17 @@ egl::Error SyncEGL::clientWait(const egl::ThreadSafeDisplay *display,
                                EGLTime timeout,
                                EGLint *outResult)
 {
-    ASSERT(*mSync != EGL_NO_SYNC_KHR);
+    ASSERT(mSync != EGL_NO_SYNC_KHR);
 
     // If we need to perform a CPU wait don't set the resultOut parameter passed into the
     // method, instead set the parameter passed into the unlocked tail call.
+    //
+    // The tail call runs after the entry point has released its reference to the sync.  The native
+    // sync still outlives the wait: when a wait is deferred, ClientWaitSync() and
+    // ClientWaitSyncKHR() add another tail call that holds a ScopedSyncRef, which is only released
+    // after all tail calls have run.
     egl::Display::GetCurrentThreadUnlockedTailCall()->add(
-        [egl = mEGL, sync = *mSync, flags, timeout](void *resultOut) {
+        [egl = mEGL, sync = mSync, flags, timeout](void *resultOut) {
             *static_cast<EGLint *>(resultOut) = egl->clientWaitSyncKHR(sync, flags, timeout);
         });
 
@@ -103,20 +99,23 @@ egl::Error SyncEGL::serverWait(const egl::ThreadSafeDisplay *display,
                                const gl::Context *context,
                                EGLint flags)
 {
-    ASSERT(*mSync != EGL_NO_SYNC_KHR);
+    ASSERT(mSync != EGL_NO_SYNC_KHR);
 
-    egl::Display::GetCurrentThreadUnlockedTailCall()->add(
-        [egl = mEGL, sync = *mSync, flags](void *resultOut) {
-            *static_cast<EGLBoolean *>(resultOut) = egl->waitSyncKHR(sync, flags);
-        });
+    // A server wait doesn't block the CPU, so it is done right away, while the entry point keeps
+    // the sync alive.
+    EGLint result = mEGL->waitSyncKHR(mSync, flags);
+    if (result == EGL_FALSE)
+    {
+        return egl::Error(mEGL->getError(), "eglWaitSyncKHR failed");
+    }
 
     return egl::NoError();
 }
 
 egl::Error SyncEGL::getStatus(const egl::ThreadSafeDisplay *display, EGLint *outStatus)
 {
-    ASSERT(*mSync != EGL_NO_SYNC_KHR);
-    EGLBoolean result = mEGL->getSyncAttribKHR(*mSync, EGL_SYNC_STATUS_KHR, outStatus);
+    ASSERT(mSync != EGL_NO_SYNC_KHR);
+    EGLBoolean result = mEGL->getSyncAttribKHR(mSync, EGL_SYNC_STATUS_KHR, outStatus);
 
     if (result == EGL_FALSE)
     {
@@ -128,8 +127,8 @@ egl::Error SyncEGL::getStatus(const egl::ThreadSafeDisplay *display, EGLint *out
 
 egl::Error SyncEGL::dupNativeFenceFD(const egl::ThreadSafeDisplay *display, EGLint *result) const
 {
-    ASSERT(*mSync != EGL_NO_SYNC_KHR);
-    *result = mEGL->dupNativeFenceFDANDROID(*mSync);
+    ASSERT(mSync != EGL_NO_SYNC_KHR);
+    *result = mEGL->dupNativeFenceFDANDROID(mSync);
     if (*result == EGL_NO_NATIVE_FENCE_FD_ANDROID)
     {
         return egl::Error(mEGL->getError(), "eglDupNativeFenceFDANDROID failed");

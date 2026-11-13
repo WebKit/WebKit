@@ -161,7 +161,9 @@ angle::Result StreamingIndexBufferInterface::reserveBufferSpace(const gl::Contex
 }
 
 StaticIndexBufferInterface::StaticIndexBufferInterface(BufferFactoryD3D *factory)
-    : IndexBufferInterface(factory, false)
+    : IndexBufferInterface(factory, false),
+      mSrcIndexType(getIndexType()),
+      mPrimitiveRestartFixedIndexEnabled(false)
 {}
 
 StaticIndexBufferInterface::~StaticIndexBufferInterface() {}

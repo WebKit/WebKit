@@ -507,6 +507,23 @@ class ProgramExecutable final : public angle::Subject
         return mPod.linkedShaderVersions[shaderType];
     }
 
+    uint8_t getLinkedClipDistanceSize(ShaderType shaderType) const
+    {
+        return mPod.clipDistanceSizes[shaderType];
+    }
+    uint8_t getLinkedCullDistanceSize(ShaderType shaderType) const
+    {
+        return mPod.cullDistanceSizes[shaderType];
+    }
+    uint8_t getLinkedInputClipDistanceSize(ShaderType shaderType) const
+    {
+        return mPod.inputClipDistanceSizes[shaderType];
+    }
+    uint8_t getLinkedInputCullDistanceSize(ShaderType shaderType) const
+    {
+        return mPod.inputCullDistanceSizes[shaderType];
+    }
+
     bool isYUVOutput() const { return mPod.hasYUVOutput; }
 
     PrimitiveMode getGeometryShaderInputPrimitiveType() const
@@ -936,6 +953,14 @@ class ProgramExecutable final : public angle::Subject
 
         // 24 bytes
         ShaderMap<int> linkedShaderVersions;
+
+        // 6 bytes each. Array sizes of gl_ClipDistance and gl_CullDistance in each linked shader
+        // stage (as determined by the compiler), or 0 if unused. Used to validate the built-in
+        // varyings between stages of different programs in a program pipeline.
+        ShaderMap<uint8_t> clipDistanceSizes;
+        ShaderMap<uint8_t> cullDistanceSizes;
+        ShaderMap<uint8_t> inputClipDistanceSizes;
+        ShaderMap<uint8_t> inputCullDistanceSizes;
 
         // 4 bytes
         uint32_t padding;

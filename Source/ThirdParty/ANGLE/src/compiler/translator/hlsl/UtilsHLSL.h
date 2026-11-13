@@ -125,10 +125,16 @@ const char *RWTextureTypeSuffix(const TBasicType type,
 const char *SamplerString(const TBasicType type);
 const char *SamplerString(HLSLTextureGroup type);
 
+enum class DebugNames
+{
+    Drop,
+    Retain,
+};
+
 // Adds a prefix to user-defined names to avoid naming clashes.
 TString Decorate(const ImmutableString &string);
 TString DecorateInterfaceVariable(const ImmutableString &string);
-TString DecorateVariableIfNeeded(const TVariable &variable);
+TString DecorateVariableIfNeeded(const TVariable &variable, DebugNames debugNames);
 TString DecorateFunctionIfNeeded(const TFunction *func);
 TString DecorateField(const ImmutableString &string, const TStructure &structure);
 TString DecorateUserStructField(const ImmutableString &string);

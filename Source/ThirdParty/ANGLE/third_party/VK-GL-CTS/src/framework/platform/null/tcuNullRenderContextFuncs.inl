@@ -1,7 +1,7 @@
 /* WARNING: This is auto-generated file. Do not modify, since changes will
  * be lost! Modify the generating script instead.
  *
- * Generated from Khronos GL API description (gl.xml) revision 7d0cb181dace7461bc4f26650fec71efeacc18a5.
+ * Generated from Khronos GL API description (gl.xml) revision 6af574a14089ccfee87efe230ebcdd8742859813.
  */
 
 GLW_APICALL void GLW_APIENTRY glActiveShaderProgram (GLuint pipeline, GLuint program)
@@ -14,6 +14,13 @@ GLW_APICALL void GLW_APIENTRY glActiveShaderProgram (GLuint pipeline, GLuint pro
 GLW_APICALL void GLW_APIENTRY glActiveTexture (GLenum texture)
 {
 	DE_UNREF(texture);
+
+}
+
+GLW_APICALL void GLW_APIENTRY glAddClientPointerRangeMESA (void *addr, GLsizeiptr size)
+{
+	DE_UNREF(addr);
+	DE_UNREF(size);
 
 }
 
@@ -5600,6 +5607,14 @@ GLW_APICALL void GLW_APIENTRY glReadnPixels (GLint x, GLint y, GLsizei width, GL
 	DE_UNREF(bufSize);
 	DE_UNREF(data);
 
+}
+
+GLW_APICALL void* GLW_APIENTRY glReleaseClientPointerRangeMESA (GLbitfield flags, GLsizeiptr *size)
+{
+	DE_UNREF(flags);
+	DE_UNREF(size);
+
+	return (void*)0;
 }
 
 GLW_APICALL void GLW_APIENTRY glReleaseShaderCompiler (void)

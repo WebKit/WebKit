@@ -274,7 +274,9 @@ void registerOptions(de::cmdline::Parser &parser)
         << Option<EGLWindowType>(nullptr, "deqp-egl-window-type", "EGL native window type")
         << Option<EGLPixmapType>(nullptr, "deqp-egl-pixmap-type", "EGL native pixmap type")
         << Option<VKDeviceID>(nullptr, "deqp-vk-device-id", "Vulkan device ID (IDs start from 1)", "1")
-        << Option<MaxCustomDevices>(nullptr, "deqp-max-custom-vk-devices", "Maximum number of custom devices", "5")
+        << Option<MaxCustomDevices>(
+               nullptr, "deqp-max-custom-vk-devices",
+               "Maximum number of custom devices (ignored on Vulkan SC where this is always forced to 1)", "5")
         << Option<VKDeviceGroupID>(nullptr, "deqp-vk-device-group-id", "Vulkan device Group ID (IDs start from 1)", "1")
         << Option<LogImages>(nullptr, "deqp-log-images",
                              "When disabled, prevent any image from being logged into the test results file",

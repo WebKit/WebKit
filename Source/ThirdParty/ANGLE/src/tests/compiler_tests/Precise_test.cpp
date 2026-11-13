@@ -82,6 +82,7 @@ class PreciseTest : public testing::TestWithParam<bool>
 
         ShCompileOptions options = {};
         options.objectCode       = true;
+        options.outputDebugInfo  = true;
         if (shaderOutputType == SH_SPIRV_VULKAN_OUTPUT || shaderOutputType == SH_MSL_METAL_OUTPUT)
         {
             options.removeInactiveVariables = true;

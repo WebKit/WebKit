@@ -79,6 +79,30 @@ void RemoveUnreferencedFunctions(TIntermBlock *root, const FunctionMap &function
     root->replaceAllChildren(std::move(pruned));
 }
 
+// A copied function body isn't traversed in the current pass, so mark its callees as used here to
+// keep them from being removed while the copy still calls them.
+class MarkCalledFunctionsUsedTraverser final : public TIntermTraverser
+{
+  public:
+    explicit MarkCalledFunctionsUsedTraverser(FunctionMap *functionMap)
+        : TIntermTraverser(true, false, false), mFunctionMap(functionMap)
+    {}
+
+    bool visitAggregate(Visit visit, TIntermAggregate *node) override
+    {
+        if (node->getOp() == EOpCallFunctionInAST)
+        {
+            auto iter = mFunctionMap->find(node->getFunction());
+            ASSERT(iter != mFunctionMap->end());
+            iter->second.isOriginalUsed = true;
+        }
+        return true;
+    }
+
+  private:
+    FunctionMap *mFunctionMap;
+};
+
 const TVariable *GetBaseUniform(TIntermTyped *node, bool *isSamplerInStructOut)
 {
     *isSamplerInStructOut = false;
@@ -450,6 +474,9 @@ class MonomorphizeTraverser final : public TIntermTraverser
         GetDeclaratorReplacements(mSymbolTable, substituteBlock, &argumentMap);
         bool valid = ReplaceVariables(mCompiler, substituteBlock, argumentMap);
         ASSERT(valid);
+
+        MarkCalledFunctionsUsedTraverser markUsed(mFunctionMap);
+        substituteBlock->traverse(&markUsed);
 
         return new TIntermFunctionDefinition(substitutePrototype, substituteBlock);
     }

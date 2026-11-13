@@ -642,7 +642,7 @@ gl::Extents SurfaceVk::getSize() const
 }
 
 OffscreenSurfaceVk::AttachmentImage::AttachmentImage(SurfaceVk *surfaceVk)
-    : imageObserverBinding(surfaceVk, kAnySurfaceImageSubjectIndex)
+    : image(VK_IMAGE_TYPE_2D), imageObserverBinding(surfaceVk, kAnySurfaceImageSubjectIndex)
 {
     imageObserverBinding.bind(&image);
 }
@@ -1049,7 +1049,9 @@ WindowSurfaceVk::WindowSurfaceVk(const egl::SurfaceState &surfaceState, EGLNativ
       mCompositeAlpha(VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR),
       mSurfaceColorSpace(VK_COLOR_SPACE_SRGB_NONLINEAR_KHR),
       mCurrentSwapchainImageIndex(0),
+      mDepthStencilImage(VK_IMAGE_TYPE_2D),
       mDepthStencilImageBinding(this, kAnySurfaceImageSubjectIndex),
+      mAncillaryColorImage(VK_IMAGE_TYPE_2D),
       mAncillaryColorImageBinding(this, kAnySurfaceImageSubjectIndex),
       mFrameCount(1),
       mPreserveStartFrame(kNeverPreserved),
@@ -1634,7 +1636,7 @@ void WindowSurfaceVk::createSwapchainImages(uint32_t imageCount)
 
     for (uint32_t index = 0; index < imageCount; ++index)
     {
-        mSwapchainImages[index].image  = std::make_unique<vk::ImageHelper>();
+        mSwapchainImages[index].image  = std::make_unique<vk::ImageHelper>(VK_IMAGE_TYPE_2D);
         mSwapchainImageBindings[index] = angle::ObserverBinding(this, kAnySurfaceImageSubjectIndex);
         mSwapchainImageBindings[index].bind(mSwapchainImages[index].image.get());
     }

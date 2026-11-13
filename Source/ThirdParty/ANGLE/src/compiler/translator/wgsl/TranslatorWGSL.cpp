@@ -2860,6 +2860,7 @@ bool TranslatorWGSL::translate(TIntermBlock *root,
                                const ShCompileOptions &compileOptions,
                                PerformanceDiagnostics *perfDiagnostics)
 {
+    ASSERT(!compileOptions.useIR);
     // TODO(https://issues.angleproject.org/issues/42264589#comment3): remove this, as it is
     // deprecated.
     mValidateASTOptions.validateNoRawFunctionCalls = false;

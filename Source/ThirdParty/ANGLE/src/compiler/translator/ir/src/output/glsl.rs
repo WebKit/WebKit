@@ -11,6 +11,7 @@
 // this.  It will also serve as basis for WGSL, MSL, and HLSL generation.
 //
 
+use super::utils;
 use crate::ir::*;
 use crate::*;
 
@@ -553,20 +554,6 @@ impl Generator {
         });
     }
 
-    fn get_swizzle(index: u32) -> &'static str {
-        match index {
-            0 => "x",
-            1 => "y",
-            2 => "z",
-            3 => "w",
-            _ => panic!("Internal error: Unexpected swizzle index"),
-        }
-    }
-
-    fn get_swizzle_multi(indices: &[u32]) -> String {
-        indices.iter().map(|&index| Self::get_swizzle(index)).collect::<Vec<_>>().join("")
-    }
-
     fn get_constant_expression(&self, id: ConstantId) -> &String {
         &self.constants[&id].text
     }
@@ -905,7 +892,7 @@ impl ast::Target for Generator {
         id: TypedId,
         index: u32,
     ) {
-        let expr = format!("{}.{}", self.get_expression(id), Self::get_swizzle(index));
+        let expr = format!("{}.{}", self.get_expression(id), utils::get_swizzle(index));
         self.expressions.insert(result, expr);
     }
 
@@ -916,7 +903,7 @@ impl ast::Target for Generator {
         id: TypedId,
         indices: &[u32],
     ) {
-        let expr = format!("{}.{}", self.get_expression(id), Self::get_swizzle_multi(indices));
+        let expr = format!("{}.{}", self.get_expression(id), utils::get_swizzle_multi(indices));
         self.expressions.insert(result, expr);
     }
 

@@ -597,24 +597,24 @@ ANGLE_INSTANTIATE_TEST(BlobCacheTest,
                        // when the cache should and shouldn't be hit.
                        ES2_VULKAN()
                            .enable(Feature::DisablePipelineCacheLoadForTesting)
-                           .disable(Feature::SyncMonolithicPipelinesToBlobCache),
+                           .disable(Feature::SyncGlobalPipelineCacheToBlobCache),
                        ES3_VULKAN_SWIFTSHADER()
                            .enable(Feature::DisablePipelineCacheLoadForTesting)
-                           .disable(Feature::SyncMonolithicPipelinesToBlobCache),
+                           .disable(Feature::SyncGlobalPipelineCacheToBlobCache),
                        ES3_VULKAN()
                            .enable(Feature::DisablePipelineCacheLoadForTesting)
-                           .disable(Feature::SyncMonolithicPipelinesToBlobCache),
+                           .disable(Feature::SyncGlobalPipelineCacheToBlobCache),
                        ES2_VULKAN_SWIFTSHADER()
                            .enable(Feature::DisablePipelineCacheLoadForTesting)
-                           .disable(Feature::SyncMonolithicPipelinesToBlobCache),
+                           .disable(Feature::SyncGlobalPipelineCacheToBlobCache),
                        ES2_VULKAN_SWIFTSHADER()
                            .enable(Feature::EnableParallelCompileAndLink)
                            .enable(Feature::DisablePipelineCacheLoadForTesting)
-                           .disable(Feature::SyncMonolithicPipelinesToBlobCache),
+                           .disable(Feature::SyncGlobalPipelineCacheToBlobCache),
                        ES3_VULKAN()
                            .enable(Feature::EnableParallelCompileAndLink)
                            .enable(Feature::DisablePipelineCacheLoadForTesting)
-                           .disable(Feature::SyncMonolithicPipelinesToBlobCache));
+                           .disable(Feature::SyncGlobalPipelineCacheToBlobCache));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(BlobCacheInternalRejectionTest);
 ANGLE_INSTANTIATE_TEST(BlobCacheInternalRejectionTest,

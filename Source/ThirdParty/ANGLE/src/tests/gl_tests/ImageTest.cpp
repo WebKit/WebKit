@@ -15707,6 +15707,311 @@ TEST_P(ImageTestES3RobustInit, NonZeroLevelAndFaceReadbackRenderbuffer)
     ASSERT_GL_NO_ERROR();
 }
 
+// Copy from target to another mip of itself (orphans target)
+TEST_P(ImageTestES3RobustInit, SelfCopy)
+{
+    EGLWindow *window = getEGLWindow();
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt());
+
+    constexpr uint32_t kSize = 10;
+
+    // Create a texture that's not initialized
+    GLTexture source;
+    EGLImageKHR image;
+    createEGLImage2DTextureSource(kSize, kSize, GL_RGBA, GL_UNSIGNED_BYTE, kDefaultAttribs, nullptr,
+                                  source, &image);
+
+    // Create a texture target
+    GLTexture target;
+    createEGLImageTargetTexture2D(image, target);
+
+    // Copy from level 0 of target to level 1
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, target, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    glCopyTexImage2D(GL_TEXTURE_2D, 1, GL_RGBA, 0, 0, kSize, kSize, 0);
+    ASSERT_GL_NO_ERROR();
+
+    // Check that level 1 has the result of copy (target is now orphaned).
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 1);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, target, 1);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::transparentBlack);
+    ASSERT_GL_NO_ERROR();
+
+    // Check that source was robust cleared
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, source, 0);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::transparentBlack);
+    ASSERT_GL_NO_ERROR();
+
+    // Clean up
+    eglDestroyImageKHR(window->getDisplay(), image);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Copy from target to another mip of itself (orphans target), while the copy area is out of bounds.
+TEST_P(ImageTestES3RobustInit, SelfCopyOutOfBounds)
+{
+    EGLWindow *window = getEGLWindow();
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt());
+
+    constexpr uint32_t kSize = 10;
+
+    // Create a texture that's not initialized
+    GLTexture source;
+    EGLImageKHR image;
+    createEGLImage2DTextureSource(kSize, kSize, GL_RGBA, GL_UNSIGNED_BYTE, kDefaultAttribs, nullptr,
+                                  source, &image);
+
+    // Create a texture target
+    GLTexture target;
+    createEGLImageTargetTexture2D(image, target);
+
+    // Initialize level 0 to something
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, target, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    ANGLE_GL_PROGRAM(drawRed, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    drawQuad(drawRed, essl1_shaders::PositionAttrib(), 0.0f);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::red);
+
+    // Copy from level 0 of target to level 1, out of bounds.
+    glCopyTexImage2D(GL_TEXTURE_2D, 1, GL_RGBA, kSize * 2, kSize + 1, kSize, kSize, 0);
+    ASSERT_GL_NO_ERROR();
+
+    // Check that level 1 has the result of copy (target is now orphaned), which should be
+    // transparent black due to robust init.
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 1);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, target, 1);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::transparentBlack);
+    ASSERT_GL_NO_ERROR();
+
+    // Check that source has the draw results
+    //
+    // TODO: This currently fails as the source texture is robust-initialized again by mistake.
+    // http://anglebug.com/532592076
+    //
+    // glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, source, 0);
+    // EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::red);
+    // ASSERT_GL_NO_ERROR();
+
+    // Clean up
+    eglDestroyImageKHR(window->getDisplay(), image);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Copy from target to another mip of itself (orphans target), while the copy area is partially out
+// of bounds.
+TEST_P(ImageTestES3RobustInit, SelfCopyPartiallyOutOfBounds)
+{
+    EGLWindow *window = getEGLWindow();
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt());
+
+    constexpr uint32_t kSize = 10;
+
+    // Create a texture that's not initialized
+    GLTexture source;
+    EGLImageKHR image;
+    createEGLImage2DTextureSource(kSize, kSize, GL_RGBA, GL_UNSIGNED_BYTE, kDefaultAttribs, nullptr,
+                                  source, &image);
+
+    // Create a texture target
+    GLTexture target;
+    createEGLImageTargetTexture2D(image, target);
+
+    // Initialize level 0 to something
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, target, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    ANGLE_GL_PROGRAM(drawRed, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    drawQuad(drawRed, essl1_shaders::PositionAttrib(), 0.0f);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::red);
+
+    // Copy from level 0 of target to level 1, out of bounds.
+    glCopyTexImage2D(GL_TEXTURE_2D, 1, GL_RGBA, kSize / 2, 0, kSize, kSize, 0);
+    ASSERT_GL_NO_ERROR();
+
+    // Check that level 1 has the result of copy (target is now orphaned), which should be
+    // transparent black on the left half due to robust init.
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 1);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, target, 1);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize / 2, kSize, GLColor::transparentBlack);
+    EXPECT_PIXEL_RECT_EQ(kSize / 2, 0, kSize - kSize / 2, kSize, GLColor::red);
+    ASSERT_GL_NO_ERROR();
+
+    // Check that source has the draw results
+    //
+    // TODO: This currently fails as the source texture is robust-initialized again by mistake.
+    // http://anglebug.com/532592076
+    //
+    // glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, source, 0);
+    // EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::red);
+    // ASSERT_GL_NO_ERROR();
+
+    // Clean up
+    eglDestroyImageKHR(window->getDisplay(), image);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Copy from target to another mip of itself (orphans target)
+TEST_P(ImageTestES3RobustInit, SelfSubCopy)
+{
+    EGLWindow *window = getEGLWindow();
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt());
+
+    constexpr uint32_t kSize = 10;
+
+    // Create a texture that's not initialized
+    GLTexture source;
+    EGLImageKHR image;
+    createEGLImage2DTextureSource(kSize, kSize, GL_RGBA, GL_UNSIGNED_BYTE, kDefaultAttribs, nullptr,
+                                  source, &image);
+
+    // Create a texture target
+    GLTexture target;
+    createEGLImageTargetTexture2D(image, target);
+
+    // Copy from level 0 of target to level 1
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, target, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    glTexImage2D(GL_TEXTURE_2D, 1, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glCopyTexSubImage2D(GL_TEXTURE_2D, 1, 0, 0, 0, 0, kSize, kSize);
+    ASSERT_GL_NO_ERROR();
+
+    // Check that level 1 has the result of copy (target is now orphaned).
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 1);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, target, 1);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::transparentBlack);
+    ASSERT_GL_NO_ERROR();
+
+    // Check that source was robust cleared
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, source, 0);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::transparentBlack);
+    ASSERT_GL_NO_ERROR();
+
+    // Clean up
+    eglDestroyImageKHR(window->getDisplay(), image);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Copy from target to another mip of itself (orphans target), while the copy area is out of bounds.
+TEST_P(ImageTestES3RobustInit, SelfSubCopyOutOfBounds)
+{
+    EGLWindow *window = getEGLWindow();
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt());
+
+    constexpr uint32_t kSize = 10;
+
+    // Create a texture that's not initialized
+    GLTexture source;
+    EGLImageKHR image;
+    createEGLImage2DTextureSource(kSize, kSize, GL_RGBA, GL_UNSIGNED_BYTE, kDefaultAttribs, nullptr,
+                                  source, &image);
+
+    // Create a texture target
+    GLTexture target;
+    createEGLImageTargetTexture2D(image, target);
+
+    // Initialize level 0 to something
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, target, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    ANGLE_GL_PROGRAM(drawRed, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    drawQuad(drawRed, essl1_shaders::PositionAttrib(), 0.0f);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::red);
+
+    // Copy from level 0 of target to level 1, out of bounds.
+    glTexImage2D(GL_TEXTURE_2D, 1, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glCopyTexSubImage2D(GL_TEXTURE_2D, 1, 0, 0, kSize * 2, kSize + 1, kSize, kSize);
+    ASSERT_GL_NO_ERROR();
+
+    // Check that level 1 has the result of copy (target is now orphaned), which should be
+    // transparent black due to robust init.
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 1);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, target, 1);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::transparentBlack);
+    ASSERT_GL_NO_ERROR();
+
+    // Check that source has the draw results
+    //
+    // TODO: This currently fails as the source texture is robust-initialized again by mistake.
+    // http://anglebug.com/532592076
+    //
+    // glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, source, 0);
+    // EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::red);
+    // ASSERT_GL_NO_ERROR();
+
+    // Clean up
+    eglDestroyImageKHR(window->getDisplay(), image);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Copy from target to another mip of itself (orphans target), while the copy area is partially out
+// of bounds.
+TEST_P(ImageTestES3RobustInit, SelfSubCopyPartiallyOutOfBounds)
+{
+    EGLWindow *window = getEGLWindow();
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt());
+
+    constexpr uint32_t kSize = 10;
+
+    // Create a texture that's not initialized
+    GLTexture source;
+    EGLImageKHR image;
+    createEGLImage2DTextureSource(kSize, kSize, GL_RGBA, GL_UNSIGNED_BYTE, kDefaultAttribs, nullptr,
+                                  source, &image);
+
+    // Create a texture target
+    GLTexture target;
+    createEGLImageTargetTexture2D(image, target);
+
+    // Initialize level 0 to something
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, target, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    ANGLE_GL_PROGRAM(drawRed, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    drawQuad(drawRed, essl1_shaders::PositionAttrib(), 0.0f);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::red);
+
+    // Copy from level 0 of target to level 1, out of bounds.
+    glTexImage2D(GL_TEXTURE_2D, 1, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glCopyTexSubImage2D(GL_TEXTURE_2D, 1, 0, 0, kSize / 2, 0, kSize, kSize);
+    ASSERT_GL_NO_ERROR();
+
+    // Check that level 1 has the result of copy (target is now orphaned), which should be
+    // transparent black on the left half due to robust init.
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 1);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, target, 1);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize / 2, kSize, GLColor::transparentBlack);
+    EXPECT_PIXEL_RECT_EQ(kSize / 2, 0, kSize - kSize / 2, kSize, GLColor::red);
+    ASSERT_GL_NO_ERROR();
+
+    // Check that source has the draw results
+    //
+    // TODO: This currently fails as the source texture is robust-initialized again by mistake.
+    // http://anglebug.com/532592076
+    //
+    // glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, source, 0);
+    // EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::red);
+    // ASSERT_GL_NO_ERROR();
+
+    // Clean up
+    eglDestroyImageKHR(window->getDisplay(), image);
+    ASSERT_GL_NO_ERROR();
+}
+
 // Test that calling eglCreateImageKHR with a non-current context while another shared context is
 // current works properly and does not flush staged updates on the non-current context.
 // Reproduces bug b/565518145 from peridot trace.

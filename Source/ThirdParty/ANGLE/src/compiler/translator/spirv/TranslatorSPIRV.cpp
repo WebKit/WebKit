@@ -809,24 +809,58 @@ bool TranslatorSPIRV::translateImpl(TIntermBlock *root,
         bool useCullDistance = false;
         for (const ShaderVariable &outputVarying : mOutputVaryings)
         {
-            if (outputVarying.name == "gl_ClipDistance")
+            if (outputVarying.getStructName() == "gl_PerVertex")
             {
-                useClipDistance = true;
+                for (const ShaderVariable &field : outputVarying.fields)
+                {
+                    if (field.name == "gl_ClipDistance")
+                    {
+                        useClipDistance = true;
+                    }
+                    else if (field.name == "gl_CullDistance")
+                    {
+                        useCullDistance = true;
+                    }
+                }
             }
-            else if (outputVarying.name == "gl_CullDistance")
+            else
             {
-                useCullDistance = true;
+                if (outputVarying.name == "gl_ClipDistance")
+                {
+                    useClipDistance = true;
+                }
+                else if (outputVarying.name == "gl_CullDistance")
+                {
+                    useCullDistance = true;
+                }
             }
         }
         for (const ShaderVariable &inputVarying : mInputVaryings)
         {
-            if (inputVarying.name == "gl_ClipDistance")
+            if (inputVarying.getStructName() == "gl_PerVertex")
             {
-                useClipDistance = true;
+                for (const ShaderVariable &field : inputVarying.fields)
+                {
+                    if (field.name == "gl_ClipDistance")
+                    {
+                        useClipDistance = true;
+                    }
+                    else if (field.name == "gl_CullDistance")
+                    {
+                        useCullDistance = true;
+                    }
+                }
             }
-            else if (inputVarying.name == "gl_CullDistance")
+            else
             {
-                useCullDistance = true;
+                if (inputVarying.name == "gl_ClipDistance")
+                {
+                    useClipDistance = true;
+                }
+                else if (inputVarying.name == "gl_CullDistance")
+                {
+                    useCullDistance = true;
+                }
             }
         }
 

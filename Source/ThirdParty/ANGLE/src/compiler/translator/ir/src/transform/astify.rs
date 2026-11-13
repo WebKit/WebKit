@@ -1183,6 +1183,23 @@ fn transform_continue_adjust_condition_block(
     let condition = block.get_terminating_op().get_loop_condition();
     block.unterminate();
 
+    // If loop condition is true, it becomes effectively `if (false) break; continue;`,
+    // simplify to `continue` directly.
+    if condition.id == Id::Constant(CONSTANT_ID_TRUE) {
+        block.terminate(OpCode::Continue);
+        return;
+    }
+    // If loop condition is false, it becomes effectively `if (true) break; continue;`,
+    // simplify to `break` directly.
+    if condition.id == Id::Constant(CONSTANT_ID_FALSE) {
+        for variable_id in variables_to_set {
+            let variable_id = TypedId::from_bool_variable_id(state.ir_meta, variable_id);
+            block.add_void_instruction(OpCode::Store(variable_id, TYPED_CONSTANT_ID_TRUE));
+        }
+        block.terminate(OpCode::Break);
+        return;
+    }
+
     // Create another block that only contains the `Continue` branch, and set it as the
     // merge block of the original block.
     let mut continue_block = Block::new();

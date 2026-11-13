@@ -1,4 +1,4 @@
-#include "CapturedTest_ExternalAHB_ES3_Vulkan.h"
+#include "CapturedTestAHB_ExternalAHB_ES3_Vulkan.h"
 #include "trace_fixture.h"
 #include "angle_trace_gl.h"
 
@@ -6,13 +6,13 @@
 
 void InitReplay(void)
 {
-    // binaryDataFileName = CapturedTest_ExternalAHB_ES3_Vulkan.angledata
+    // binaryDataFileName = CapturedTestAHB_ExternalAHB_ES3_Vulkan.angledata
     // maxClientArraySize = 72
     // readBufferSize = 276
     // resourceIDBufferSize = 0
-    // contextID = 14
+    // contextID = 20
     // maxBuffer = 0
-    // maxContext = 14
+    // maxContext = 20
     // maxFenceNV = 0
     // maxFramebuffer = 2
     // maxImage = 3
@@ -29,7 +29,7 @@ void InitReplay(void)
     // maxTransformFeedback = 0
     // maxVertexArray = 0
     // maxegl_Sync = 0
-    InitializeReplay5("CapturedTest_ExternalAHB_ES3_Vulkan.angledata", 72, 276, 0, 14, 0, 14, 0, 2, 3, 0, 0, 0, 0, 0, 0, 5, 1, 0, 1, 0, 0, 0);
+    InitializeReplay5("CapturedTestAHB_ExternalAHB_ES3_Vulkan.angledata", 72, 276, 0, 20, 0, 20, 0, 2, 3, 0, 0, 0, 0, 0, 0, 5, 1, 0, 1, 0, 0, 0);
     InitializeBinaryDataLoader();
 }
 

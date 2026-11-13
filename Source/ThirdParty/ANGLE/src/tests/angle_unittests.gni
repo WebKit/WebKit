@@ -5,6 +5,7 @@
 import("../../gni/angle.gni")
 
 angle_unittests_sources = [
+  "../../util/test_blob_cache_unittest.cpp",
   "../../util/test_utils_unittest.cpp",
   "../../util/test_utils_unittest_helper.h",
   "../common/BinaryStream_unittest.cpp",

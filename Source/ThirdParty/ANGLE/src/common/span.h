@@ -47,8 +47,8 @@ template <typename T>
 struct IsSpanImpl : std::false_type
 {};
 
-template <typename T>
-struct IsSpanImpl<Span<T>> : std::true_type
+template <typename T, size_t Extent, typename InternalPtr>
+struct IsSpanImpl<Span<T, Extent, InternalPtr>> : std::true_type
 {};
 
 template <typename T>

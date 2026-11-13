@@ -756,7 +756,7 @@ angle_static_library("angle_gpu_info_util") {
 
     if (angle_use_x11 && angle_has_build) {
       sources += libangle_gpu_info_util_x11_sources
-      deps += [ "src/third_party/libXNVCtrl" ]
+      deps += [ "src/third_party/libxnvctrl" ]
       defines += [ "GPU_INFO_USE_X11" ]
       libs += [
         "X11",

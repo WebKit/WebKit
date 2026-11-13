@@ -32,7 +32,11 @@ found in the LICENSE file.
          pointers to match heap allocations. This is required for the
          SystemUtils.PageFaultHandler* tests.
          https://source.android.com/devices/tech/debug/tagged-pointers -->
+    <!-- Explicitly mark test APKs debuggable since Chromium's debuggable_apks
+         defaults to false, and ANGLE's test runners rely on `run-as` as well
+         as loading sideloaded ANGLE debug packages and GPU debug layers. -->
     <application android:label="ANGLEBenchmarkTests"
+      android:debuggable="true"
       android:requestLegacyExternalStorage="true"
       android:allowNativeHeapPointerTagging="false">
         <uses-library android:name="android.test.runner"/>

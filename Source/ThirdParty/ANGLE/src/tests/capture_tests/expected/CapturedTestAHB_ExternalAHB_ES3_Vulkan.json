@@ -2,7 +2,7 @@
     "TraceMetadata": {
         "AreClientArraysEnabled": true,
         "AreExtensionsEnabled": true,
-        "CaptureRevision": 29197,
+        "CaptureRevision": 29290,
         "ConfigAlphaBits": 8,
         "ConfigBlueBits": 8,
         "ConfigDepthBits": 24,
@@ -33,10 +33,10 @@
         "Version": 1
     },
     "TraceFiles": [
-        "CapturedTest_ExternalAHB_ES3_Vulkan.cpp",
-        "CapturedTest_ExternalAHB_ES3_Vulkan.h",
-        "CapturedTest_ExternalAHB_ES3_Vulkan_0001.cpp",
-        "CapturedTest_ExternalAHB_ES3_Vulkan_shared.cpp"
+        "CapturedTestAHB_ExternalAHB_ES3_Vulkan.cpp",
+        "CapturedTestAHB_ExternalAHB_ES3_Vulkan.h",
+        "CapturedTestAHB_ExternalAHB_ES3_Vulkan_0001.cpp",
+        "CapturedTestAHB_ExternalAHB_ES3_Vulkan_shared.cpp"
     ],
-    "WindowSurfaceContextID": 14
+    "WindowSurfaceContextID": 20
 }

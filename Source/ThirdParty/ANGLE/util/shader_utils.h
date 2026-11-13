@@ -114,6 +114,9 @@ ANGLE_UTIL_EXPORT const char *Blue();
 // A shader that samples the texture
 ANGLE_UTIL_EXPORT const char *Texture2D();
 
+// A shader that renders a simple gradient of red to green. Needs varying v_position.
+ANGLE_UTIL_EXPORT const char *RedGreenGradient();
+
 }  // namespace fs
 }  // namespace essl1_shaders
 
@@ -196,9 +199,6 @@ ANGLE_UTIL_EXPORT const char *Red();
 
 // A shader that fills with 100% opaque green.
 ANGLE_UTIL_EXPORT const char *Green();
-
-// A shader that renders a simple gradient of red to green. Needs varying v_position.
-ANGLE_UTIL_EXPORT const char *RedGreenGradient();
 
 }  // namespace fs
 }  // namespace essl31_shaders

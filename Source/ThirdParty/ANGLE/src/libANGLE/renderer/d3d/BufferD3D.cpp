@@ -68,6 +68,7 @@ void BufferD3D::updateD3DBufferUsage(const gl::Context *context,
         case gl::BufferUsage::DynamicDraw:
         case gl::BufferUsage::StreamDraw:
             mUsage = D3DBufferUsage::DYNAMIC;
+            invalidateStaticData(context, feedback);
             break;
         default:
             UNREACHABLE();
@@ -147,7 +148,8 @@ void BufferD3D::invalidateStaticData(const gl::Context *context, BufferFeedback 
 {
     emptyStaticBufferCache();
 
-    if (mStaticIndexBuffer && mStaticIndexBuffer->getBufferSize() != 0)
+    if (mStaticIndexBuffer &&
+        (mStaticIndexBuffer->getBufferSize() != 0 || mUsage != D3DBufferUsage::STATIC))
     {
         SafeDelete(mStaticIndexBuffer);
     }

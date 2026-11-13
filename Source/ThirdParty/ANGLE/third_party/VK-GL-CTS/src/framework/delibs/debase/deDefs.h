@@ -221,13 +221,25 @@ char (&deArraySizeHelper(T (&array)[N]))[N];
 #define DE_LENGTH_OF_ARRAY(ARRAY) ((int)(sizeof(ARRAY) / sizeof((ARRAY)[0])))
 #endif
 
+/* deAssertFail() does not return. Telling the clang static analyzer lets it drop the paths after a failed assertion.
+ * The generated code does not change: clang's code generation does not read the attribute and other compilers do
+ * not see it. */
+#if defined(__has_feature)
+#if __has_feature(attribute_analyzer_noreturn)
+#define DE_ANALYZER_NORETURN __attribute__((analyzer_noreturn))
+#endif
+#endif
+#if !defined(DE_ANALYZER_NORETURN)
+#define DE_ANALYZER_NORETURN
+#endif
+
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
     /* Assertion macro family. */
-    void deAssertFail(const char *reason, const char *file, int line);
+    void deAssertFail(const char *reason, const char *file, int line) DE_ANALYZER_NORETURN;
 
     /* Assertion failure callback. Requires DE_ASSERT_FAILURE_CALLBACK to be defined or otherwise has no effect. */
     typedef void (*deAssertFailureCallbackFunc)(const char *reason, const char *file, int line);

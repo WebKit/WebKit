@@ -282,6 +282,14 @@
             "issue": "https://anglebug.com/423956139"
         },
         {
+            "name": "retain_shader_debug_info",
+            "category": "Features",
+            "description": [
+                "Retain debug info in text-based compiler output."
+            ],
+            "issue": "http://anglebug.com/579047131"
+        },
+        {
             "name": "limit_max_buffer_bytes_to_1MB",
             "category": "Features",
             "description": [

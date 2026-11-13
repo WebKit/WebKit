@@ -515,7 +515,7 @@ angle::Result DmaBufImageSiblingVkLinux::initWithFormat(DisplayVk *displayVk,
                    VK_ERROR_INCOMPATIBLE_DRIVER);
 
     // Create the image
-    mImage = new vk::ImageHelper();
+    mImage = new vk::ImageHelper(VK_IMAGE_TYPE_2D);
 
     VkExtent3D vkExtents;
     gl_vk::GetExtent(mSize, &vkExtents);

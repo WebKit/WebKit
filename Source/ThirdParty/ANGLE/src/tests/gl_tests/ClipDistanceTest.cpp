@@ -8,11 +8,65 @@
 //
 
 #include "test_utils/ANGLETest.h"
+#include "test_utils/CompilerTest.h"
 #include "test_utils/gl_raii.h"
 #include "util/EGLWindow.h"
 #include "util/test_utils.h"
 
 using namespace angle;
+
+namespace
+{
+// Expected errors for the shaders that fail to compile or link in the negative tests
+constexpr char kArraySizeMismatchMsg[] =
+    "array must have the same size as in the previous shader stage";
+constexpr char kIndexOutOfRangeMsg[] = "array index out of range";
+constexpr char kUnsizedMsg[] =
+    "array must be sized by the shader either redeclaring it with a size or indexing it only with "
+    "constant integral expressions";
+
+// Compile the given shaders and link them into a program. If expectedError is nullptr, the
+// program is expected to link successfully. Otherwise, either a shader is expected to fail to
+// compile or the program is expected to fail to link, with expectedError in the info log.
+void CheckProgram(const std::vector<std::pair<GLenum, const char *>> &sources,
+                  const char *expectedError)
+{
+    std::vector<CompiledShader> shaders(sources.size());
+    std::vector<const CompiledShader *> shaderPointers;
+    bool compileFailed = false;
+    bool errorFound    = false;
+    for (size_t i = 0; i < sources.size(); ++i)
+    {
+        shaders[i].compile(sources[i].first, sources[i].second);
+        shaderPointers.push_back(&shaders[i]);
+        if (!shaders[i].success())
+        {
+            compileFailed = true;
+            errorFound =
+                errorFound || (expectedError != nullptr && shaders[i].hasInfoLog(expectedError));
+        }
+    }
+
+    if (compileFailed)
+    {
+        ASSERT_NE(expectedError, nullptr) << "unexpected shader compilation failure";
+        EXPECT_TRUE(errorFound) << expectedError;
+        return;
+    }
+
+    CompiledProgram program;
+    program.link(shaderPointers);
+    if (expectedError == nullptr)
+    {
+        EXPECT_TRUE(program.success()) << program.getInfoLog();
+    }
+    else
+    {
+        EXPECT_FALSE(program.success());
+        EXPECT_TRUE(program.hasInfoLog(expectedError)) << expectedError;
+    }
+}
+}  // namespace
 
 class ClipDistanceAPPLETest : public ANGLETest<>
 {
@@ -118,9 +172,8 @@ void main()
     gl_FragColor = vec4(gl_ClipDistance[0], 1.0, 1.0, 1.0);
 })";
 
-    GLProgram prg;
-    prg.makeRaster(kVS, kFS);
-    EXPECT_FALSE(prg.valid());
+    CheckProgram({{GL_VERTEX_SHADER, kVS}, {GL_FRAGMENT_SHADER, kFS}},
+                 "'gl_ClipDistance' : undeclared identifier");
 }
 
 // Check that gl_ClipDistance cannot be redeclared as a global
@@ -140,9 +193,8 @@ void main()
     gl_ClipDistance[0] = gl_Position.w;
 })";
 
-    GLProgram prg;
-    prg.makeRaster(kVS, essl1_shaders::fs::Red());
-    EXPECT_FALSE(prg.valid());
+    CheckProgram({{GL_VERTEX_SHADER, kVS}, {GL_FRAGMENT_SHADER, essl1_shaders::fs::Red()}},
+                 "invalid or missing storage qualifier");
 }
 
 // Check that gl_ClipDistance size cannot be undefined
@@ -162,9 +214,8 @@ void main()
     }
 })";
 
-    GLProgram prg;
-    prg.makeRaster(kVS, essl1_shaders::fs::Red());
-    EXPECT_FALSE(prg.valid());
+    CheckProgram({{GL_VERTEX_SHADER, kVS}, {GL_FRAGMENT_SHADER, essl1_shaders::fs::Red()}},
+                 kUnsizedMsg);
 }
 
 // Check that gl_ClipDistance size cannot be more than maximum
@@ -206,11 +257,22 @@ void main()
                              << R"(] = gl_Position.w;
 })";
 
-    for (auto stream : {&vsImplicit, &vsRedeclared, &vsRedeclaredInvalidIndex})
+    struct Case
     {
-        GLProgram prg;
-        prg.makeRaster(stream->str().c_str(), essl1_shaders::fs::Red());
-        EXPECT_FALSE(prg.valid());
+        std::stringstream *src;
+        const char *expectedMsg;
+    };
+    const Case cases[] = {
+        {&vsImplicit, kIndexOutOfRangeMsg},
+        {&vsRedeclared, "redeclaration of gl_ClipDistance with size > gl_MaxClipDistances"},
+        {&vsRedeclaredInvalidIndex, kIndexOutOfRangeMsg},
+    };
+    for (const Case &c : cases)
+    {
+        const std::string vs = c.src->str();
+        CheckProgram(
+            {{GL_VERTEX_SHADER, vs.c_str()}, {GL_FRAGMENT_SHADER, essl1_shaders::fs::Red()}},
+            c.expectedMsg);
     }
 }
 
@@ -591,7 +653,7 @@ void main()
         {
             for (int x = getWindowWidth() / 2; x < getWindowWidth(); ++x)
             {
-                const int currentPosition = y * getWindowHeight() + x;
+                const int currentPosition = y * getWindowWidth() + x;
 
                 if (x < getWindowWidth() * 3 / 2 - y - 1 && x < getWindowWidth() * 3 / 4 - 1)
                 {
@@ -643,7 +705,7 @@ void main()
     {
         for (int x = getWindowWidth() / 2; x < getWindowWidth(); ++x)
         {
-            const int currentPosition = y * getWindowHeight() + x;
+            const int currentPosition = y * getWindowWidth() + x;
 
             if (x < getWindowWidth() * 3 / 2 - y - 1)
             {
@@ -710,7 +772,7 @@ void ClipDistanceAPPLETest::threeClipDistancesRedeclared(const char *vs, const c
     {
         for (int x = getWindowWidth() / 2; x < getWindowWidth(); ++x)
         {
-            const int currentPosition = y * getWindowHeight() + x;
+            const int currentPosition = y * getWindowWidth() + x;
 
             if (x < getWindowWidth() * 3 / 2 - y - 1 && x < getWindowWidth() * 3 / 4 - 1)
             {
@@ -861,6 +923,23 @@ class ClipCullDistanceTest : public ANGLETest<ClipCullDistanceTestParams>
         setConfigDepthBits(24);
         setExtensionsEnabled(false);
     }
+
+    void GetAndCheckMaxClipAndCullDistances(GLint &maxClipDistances, GLint &maxCullDistances)
+    {
+        ASSERT_TRUE(EnsureGLExtensionEnabled(kExtensionName));
+        glGetIntegerv(GL_MAX_CLIP_DISTANCES_EXT, &maxClipDistances);
+        ASSERT_GT(maxClipDistances, 0);
+
+        glGetIntegerv(GL_MAX_CULL_DISTANCES_EXT, &maxCullDistances);
+        if (mCullDistanceSupportRequired)
+        {
+            ASSERT_GT(maxCullDistances, 0);
+        }
+        else
+        {
+            ASSERT_GE(maxCullDistances, 0);
+        }
+    }
 };
 
 // Query max clip distances and enable, disable states of clip distances
@@ -985,9 +1064,9 @@ void main()
 
     for (const std::string &vs : {kVSClip, kVSCull})
     {
-        GLProgram prg;
-        prg.makeRaster(vs.c_str(), essl1_shaders::fs::Red());
-        EXPECT_FALSE(prg.valid());
+        CheckProgram(
+            {{GL_VERTEX_SHADER, vs.c_str()}, {GL_FRAGMENT_SHADER, essl3_shaders::fs::Red()}},
+            kUnsizedMsg);
     }
 }
 
@@ -1024,30 +1103,25 @@ TEST_P(ClipCullDistanceTest, StorageQualifiers)
                        << "}";
     };
 
-    auto checkProgram = [=, &vertexSource, &fragmentSource](std::string name,
-                                                            std::string qualifierVertex,
-                                                            std::string qualifierFragment) {
-        GLProgram program;
+    // If expectedMsg != nullptr, the program link is expected to fail with a matching info log.
+    // Otherwise, the program is expected to link successfully.
+    auto checkProgram = [=, &vertexSource, &fragmentSource](
+                            std::string name, std::string qualifierVertex,
+                            std::string qualifierFragment, const char *expectedMsg) {
+        SCOPED_TRACE(::testing::Message() << "name=" << name << " vs=\"" << qualifierVertex
+                                          << "\" fs=\"" << qualifierFragment << "\"");
         vs(name, qualifierVertex);
         fs(name, qualifierFragment);
-        program.makeRaster(vertexSource.str().c_str(), fragmentSource.str().c_str());
-        return program.valid();
+        CheckProgram({{GL_VERTEX_SHADER, vertexSource.str().c_str()},
+                      {GL_FRAGMENT_SHADER, fragmentSource.str().c_str()}},
+                     expectedMsg);
     };
 
     GLint maxClipDistances = 0;
-    glGetIntegerv(GL_MAX_CLIP_DISTANCES_EXT, &maxClipDistances);
-    ASSERT_GT(maxClipDistances, 0);
-
     GLint maxCullDistances = 0;
-    glGetIntegerv(GL_MAX_CULL_DISTANCES_EXT, &maxCullDistances);
-    if (mCullDistanceSupportRequired)
-    {
-        ASSERT_GT(maxCullDistances, 0);
-    }
-    else
-    {
-        ASSERT_GE(maxCullDistances, 0);
-    }
+    ASSERT_NO_FATAL_FAILURE(GetAndCheckMaxClipAndCullDistances(maxClipDistances, maxCullDistances));
+
+    constexpr const char *kStorageQualifierMsg = "invalid or missing storage qualifier";
 
     std::pair<std::string, int> entries[2] = {{"gl_ClipDistance", maxClipDistances},
                                               {"gl_CullDistance", maxCullDistances}};
@@ -1056,16 +1130,16 @@ TEST_P(ClipCullDistanceTest, StorageQualifiers)
         if (entry.second == 0)
             continue;
 
-        EXPECT_TRUE(checkProgram(entry.first, "out", "in"));
+        checkProgram(entry.first, "out", "in", nullptr);
 
-        EXPECT_FALSE(checkProgram(entry.first, "", ""));
-        EXPECT_FALSE(checkProgram(entry.first, "", "in"));
-        EXPECT_FALSE(checkProgram(entry.first, "", "out"));
-        EXPECT_FALSE(checkProgram(entry.first, "in", ""));
-        EXPECT_FALSE(checkProgram(entry.first, "in", "in"));
-        EXPECT_FALSE(checkProgram(entry.first, "in", "out"));
-        EXPECT_FALSE(checkProgram(entry.first, "out", ""));
-        EXPECT_FALSE(checkProgram(entry.first, "out", "out"));
+        checkProgram(entry.first, "", "", kStorageQualifierMsg);
+        checkProgram(entry.first, "", "in", kStorageQualifierMsg);
+        checkProgram(entry.first, "", "out", kStorageQualifierMsg);
+        checkProgram(entry.first, "in", "", kStorageQualifierMsg);
+        checkProgram(entry.first, "in", "in", kStorageQualifierMsg);
+        checkProgram(entry.first, "in", "out", kStorageQualifierMsg);
+        checkProgram(entry.first, "out", "", kStorageQualifierMsg);
+        checkProgram(entry.first, "out", "out", kStorageQualifierMsg);
     }
 }
 
@@ -1111,31 +1185,34 @@ void main()
                                  << R"(] = gl_Position.w;
 })";
 
-        for (auto stream : {&vsImplicit, &vsRedeclared, &vsRedeclaredInvalidIndex})
+        struct Case
         {
-            GLProgram prg;
-            prg.makeRaster(stream->str().c_str(), essl1_shaders::fs::Red());
-            EXPECT_FALSE(prg.valid());
+            std::stringstream *src;
+            const char *expectedMsg;
+        };
+        const Case cases[] = {
+            {&vsImplicit, kIndexOutOfRangeMsg},
+            {&vsRedeclared, "redeclaration of"},
+            {&vsRedeclaredInvalidIndex, kIndexOutOfRangeMsg},
+        };
+        for (const Case &c : cases)
+        {
+            SCOPED_TRACE(::testing::Message() << "name=" << name);
+            CheckProgram({{GL_VERTEX_SHADER, c.src->str().c_str()},
+                          {GL_FRAGMENT_SHADER, essl1_shaders::fs::Red()}},
+                         c.expectedMsg);
         }
     };
 
     GLint maxClipDistances = 0;
-    glGetIntegerv(GL_MAX_CLIP_DISTANCES_EXT, &maxClipDistances);
-    ASSERT_GT(maxClipDistances, 0);
-
     GLint maxCullDistances = 0;
-    glGetIntegerv(GL_MAX_CULL_DISTANCES_EXT, &maxCullDistances);
-    if (mCullDistanceSupportRequired)
-    {
-        ASSERT_GT(maxCullDistances, 0);
-    }
-    else
-    {
-        ASSERT_GE(maxCullDistances, 0);
-    }
+    ASSERT_NO_FATAL_FAILURE(GetAndCheckMaxClipAndCullDistances(maxClipDistances, maxCullDistances));
 
     test("gl_ClipDistance", maxClipDistances);
-    test("gl_CullDistance", maxCullDistances);
+    if (maxCullDistances > 0)
+    {
+        test("gl_CullDistance", maxCullDistances);
+    }
 }
 
 // Check that shader validation enforces matching array sizes between shader stages
@@ -1191,30 +1268,24 @@ TEST_P(ClipCullDistanceTest, SizeCheck)
         fragmentSource << "}\n";
     };
 
-    auto checkProgram = [=, &vertexSource, &fragmentSource](std::string name, bool declareVertex,
-                                                            int sizeVertex, bool declareFragment,
-                                                            int sizeFragment) {
-        GLProgram program;
+    // If expectedMsg != nullptr, the program link is expected to fail with a matching info log.
+    // Otherwise, the program is expected to link successfully.
+    auto checkProgram = [=, &vertexSource, &fragmentSource](
+                            std::string name, bool declareVertex, int sizeVertex,
+                            bool declareFragment, int sizeFragment, const char *expectedMsg) {
+        SCOPED_TRACE(::testing::Message() << "name=" << name << " declareVertex=" << declareVertex
+                                          << " sizeVertex=" << sizeVertex << " declareFragment="
+                                          << declareFragment << " sizeFragment=" << sizeFragment);
         vs(name, declareVertex, sizeVertex);
         fs(name, declareFragment, sizeFragment);
-        program.makeRaster(vertexSource.str().c_str(), fragmentSource.str().c_str());
-        return program.valid();
+        CheckProgram({{GL_VERTEX_SHADER, vertexSource.str().c_str()},
+                      {GL_FRAGMENT_SHADER, fragmentSource.str().c_str()}},
+                     expectedMsg);
     };
 
     GLint maxClipDistances = 0;
-    glGetIntegerv(GL_MAX_CLIP_DISTANCES_EXT, &maxClipDistances);
-    ASSERT_GT(maxClipDistances, 0);
-
     GLint maxCullDistances = 0;
-    glGetIntegerv(GL_MAX_CULL_DISTANCES_EXT, &maxCullDistances);
-    if (mCullDistanceSupportRequired)
-    {
-        ASSERT_GT(maxCullDistances, 0);
-    }
-    else
-    {
-        ASSERT_GE(maxCullDistances, 0);
-    }
+    ASSERT_NO_FATAL_FAILURE(GetAndCheckMaxClipAndCullDistances(maxClipDistances, maxCullDistances));
 
     std::pair<std::string, int> entries[2] = {{"gl_ClipDistance", maxClipDistances},
                                               {"gl_CullDistance", maxCullDistances}};
@@ -1222,54 +1293,57 @@ TEST_P(ClipCullDistanceTest, SizeCheck)
     {
         const std::string name = entry.first;
         const int maxSize      = entry.second;
+        if (maxSize == 0)
+        {
+            continue;
+        }
 
         // Any VS array size is valid when the value is not accessed in the fragment shader
         for (int i = 1; i <= maxSize; i++)
         {
-            EXPECT_TRUE(checkProgram(name, false, i, false, 0));
-            EXPECT_TRUE(checkProgram(name, true, i, false, 0));
+            checkProgram(name, false, i, false, 0, nullptr);
+            checkProgram(name, true, i, false, 0, nullptr);
         }
 
         // Any FS array size is invalid when the value is not written in the vertex shader
         for (int i = 1; i <= maxSize; i++)
         {
-            EXPECT_FALSE(checkProgram(name, false, 0, false, i));
-            EXPECT_FALSE(checkProgram(name, false, 0, true, i));
+            checkProgram(name, false, 0, false, i, kArraySizeMismatchMsg);
+            checkProgram(name, false, 0, true, i, kArraySizeMismatchMsg);
         }
 
         // Matching sizes are valid both for redeclared and implicitly sized arrays
         for (int i = 1; i <= maxSize; i++)
         {
-            EXPECT_TRUE(checkProgram(name, false, i, false, i));
-            EXPECT_TRUE(checkProgram(name, false, i, true, i));
-            EXPECT_TRUE(checkProgram(name, true, i, false, i));
-            EXPECT_TRUE(checkProgram(name, true, i, true, i));
+            checkProgram(name, false, i, false, i, nullptr);
+            checkProgram(name, false, i, true, i, nullptr);
+            checkProgram(name, true, i, false, i, nullptr);
+            checkProgram(name, true, i, true, i, nullptr);
         }
 
         // Non-matching sizes are invalid both for redeclared and implicitly sized arrays
         for (int i = 2; i <= maxSize; i++)
         {
-            EXPECT_FALSE(checkProgram(name, false, i - 1, false, i));
-            EXPECT_FALSE(checkProgram(name, false, i - 1, true, i));
-            EXPECT_FALSE(checkProgram(name, true, i - 1, false, i));
-            EXPECT_FALSE(checkProgram(name, true, i - 1, true, i));
+            checkProgram(name, false, i - 1, false, i, kArraySizeMismatchMsg);
+            checkProgram(name, false, i - 1, true, i, kArraySizeMismatchMsg);
+            checkProgram(name, true, i - 1, false, i, kArraySizeMismatchMsg);
+            checkProgram(name, true, i - 1, true, i, kArraySizeMismatchMsg);
 
-            EXPECT_FALSE(checkProgram(name, false, i, false, i - 1));
-            EXPECT_FALSE(checkProgram(name, false, i, true, i - 1));
-            EXPECT_FALSE(checkProgram(name, true, i, false, i - 1));
-            EXPECT_FALSE(checkProgram(name, true, i, true, i - 1));
+            checkProgram(name, false, i, false, i - 1, kArraySizeMismatchMsg);
+            checkProgram(name, false, i, true, i - 1, kArraySizeMismatchMsg);
+            checkProgram(name, true, i, false, i - 1, kArraySizeMismatchMsg);
+            checkProgram(name, true, i, true, i - 1, kArraySizeMismatchMsg);
         }
 
-        // Out-of-range sizes are invalid
         {
-            EXPECT_FALSE(checkProgram(name, false, 0, false, maxSize + 1));
-            EXPECT_FALSE(checkProgram(name, false, maxSize + 1, false, 0));
-            EXPECT_FALSE(checkProgram(name, false, maxSize + 1, false, maxSize + 1));
-            EXPECT_FALSE(checkProgram(name, false, 0, true, maxSize + 1));
-            EXPECT_FALSE(checkProgram(name, false, maxSize + 1, true, maxSize + 1));
-            EXPECT_FALSE(checkProgram(name, true, maxSize + 1, false, 0));
-            EXPECT_FALSE(checkProgram(name, true, maxSize + 1, false, maxSize + 1));
-            EXPECT_FALSE(checkProgram(name, true, maxSize + 1, true, maxSize + 1));
+            checkProgram(name, false, 0, false, maxSize + 1, kIndexOutOfRangeMsg);
+            checkProgram(name, false, maxSize + 1, false, 0, kIndexOutOfRangeMsg);
+            checkProgram(name, false, maxSize + 1, false, maxSize + 1, kIndexOutOfRangeMsg);
+            checkProgram(name, false, 0, true, maxSize + 1, kIndexOutOfRangeMsg);
+            checkProgram(name, false, maxSize + 1, true, maxSize + 1, kIndexOutOfRangeMsg);
+            checkProgram(name, true, maxSize + 1, false, 0, kIndexOutOfRangeMsg);
+            checkProgram(name, true, maxSize + 1, false, maxSize + 1, kIndexOutOfRangeMsg);
+            checkProgram(name, true, maxSize + 1, true, maxSize + 1, kIndexOutOfRangeMsg);
         }
     }
 }
@@ -1342,19 +1416,8 @@ TEST_P(ClipCullDistanceTest, SizeCheckCombined)
     };
 
     GLint maxClipDistances = 0;
-    glGetIntegerv(GL_MAX_CLIP_DISTANCES_EXT, &maxClipDistances);
-    ASSERT_GT(maxClipDistances, 0);
-
     GLint maxCullDistances = 0;
-    glGetIntegerv(GL_MAX_CULL_DISTANCES_EXT, &maxCullDistances);
-    if (mCullDistanceSupportRequired)
-    {
-        ASSERT_GT(maxCullDistances, 0);
-    }
-    else
-    {
-        ASSERT_GE(maxCullDistances, 0);
-    }
+    ASSERT_NO_FATAL_FAILURE(GetAndCheckMaxClipAndCullDistances(maxClipDistances, maxCullDistances));
 
     GLint maxCombinedClipAndCullDistances = 0;
     glGetIntegerv(GL_MAX_COMBINED_CLIP_AND_CULL_DISTANCES_EXT, &maxCombinedClipAndCullDistances);
@@ -1435,19 +1498,8 @@ TEST_P(ClipCullDistanceTest, Unused)
     };
 
     GLint maxClipDistances = 0;
-    glGetIntegerv(GL_MAX_CLIP_DISTANCES_EXT, &maxClipDistances);
-    ASSERT_GT(maxClipDistances, 0);
-
     GLint maxCullDistances = 0;
-    glGetIntegerv(GL_MAX_CULL_DISTANCES_EXT, &maxCullDistances);
-    if (mCullDistanceSupportRequired)
-    {
-        ASSERT_GT(maxCullDistances, 0);
-    }
-    else
-    {
-        ASSERT_GE(maxCullDistances, 0);
-    }
+    ASSERT_NO_FATAL_FAILURE(GetAndCheckMaxClipAndCullDistances(maxClipDistances, maxCullDistances));
 
     std::pair<std::string, int> entries[2] = {{"gl_ClipDistance", maxClipDistances},
                                               {"gl_CullDistance", maxCullDistances}};
@@ -1496,10 +1548,9 @@ void main()
   float r = gl_ClipDistance[1] + 0.5;
 })";
 
-    GLProgram prg;
-    prg.makeRaster(essl3_shaders::vs::Simple(), kFS.c_str());
-
-    EXPECT_FALSE(prg.valid());
+    CheckProgram(
+        {{GL_VERTEX_SHADER, essl3_shaders::vs::Simple()}, {GL_FRAGMENT_SHADER, kFS.c_str()}},
+        kArraySizeMismatchMsg);
 }
 
 // Test that bad index to gl_ClipDistance does not cause a translator crash
@@ -1517,9 +1568,8 @@ void main()
     gl_ClipDistance[float(0)] = gl_Position.w;
 })";
 
-    GLProgram prg;
-    prg.makeRaster(kVS.c_str(), essl1_shaders::fs::Red());
-    EXPECT_FALSE(prg.valid());
+    CheckProgram({{GL_VERTEX_SHADER, kVS.c_str()}, {GL_FRAGMENT_SHADER, essl1_shaders::fs::Red()}},
+                 "integer expression required");
 }
 
 // Test that length() does not compile for unsized arrays
@@ -1534,9 +1584,12 @@ TEST_P(ClipCullDistanceTest, UnsizedArrayLength)
                      << "#extension " << kExtensionName << " : require\n"
                      << "void main() { " << name << ".length(); }";
 
-        GLProgram program;
-        program.makeRaster(vertexSource.str().c_str(), essl3_shaders::fs::Red());
-        EXPECT_FALSE(program.valid()) << name;
+        std::stringstream expectedInfoLog;
+        expectedInfoLog << "The length() method cannot be called on " << name
+                        << " that is not runtime sized and also has not yet been explicitly sized";
+        CheckProgram({{GL_VERTEX_SHADER, vertexSource.str().c_str()},
+                      {GL_FRAGMENT_SHADER, essl3_shaders::fs::Red()}},
+                     expectedInfoLog.str().c_str());
     }
 }
 
@@ -1591,19 +1644,8 @@ void main()
     };
 
     GLint maxClipDistances = 0;
-    glGetIntegerv(GL_MAX_CLIP_DISTANCES_EXT, &maxClipDistances);
-    ASSERT_GT(maxClipDistances, 0);
-
     GLint maxCullDistances = 0;
-    glGetIntegerv(GL_MAX_CULL_DISTANCES_EXT, &maxCullDistances);
-    if (mCullDistanceSupportRequired)
-    {
-        ASSERT_GT(maxCullDistances, 0);
-    }
-    else
-    {
-        ASSERT_GE(maxCullDistances, 0);
-    }
+    ASSERT_NO_FATAL_FAILURE(GetAndCheckMaxClipAndCullDistances(maxClipDistances, maxCullDistances));
 
     std::pair<std::string, int> entries[2] = {{"gl_ClipDistance", maxClipDistances},
                                               {"gl_CullDistance", maxCullDistances}};
@@ -1693,70 +1735,91 @@ void main()
     gl_ClipDistance[0] = dot(gl_Position, u_plane);
 })";
 
-    ANGLE_GL_PROGRAM(programRed, kVS.c_str(), essl3_shaders::fs::Red());
-    glUseProgram(programRed);
-    ASSERT_GL_NO_ERROR();
+    std::string kVSWithOutputReference = R"(#version 300 es
+#extension )" + kExtensionName +
+                                         R"( : require
 
-    glEnable(GL_CLIP_DISTANCE0_EXT);
+uniform vec4 u_plane;
+in vec2 a_position;
 
-    // Clear to blue
-    glClearColor(0, 0, 1, 1);
-    glClear(GL_COLOR_BUFFER_BIT);
+void WriteClipDistance(out highp float distance)
+{
+    distance = dot(gl_Position, u_plane);
+}
 
-    // Draw full screen quad with color red
-    glUniform4f(glGetUniformLocation(programRed, "u_plane"), 1, 0, 0, 0.5);
-    EXPECT_GL_NO_ERROR();
-    drawQuad(programRed, "a_position", 0);
-    EXPECT_GL_NO_ERROR();
+void main()
+{
+    gl_Position = vec4(a_position, 0.0, 1.0);
+    WriteClipDistance(gl_ClipDistance[0]);
+})";
 
-    // All pixels on the left of the plane x = -0.5 must be blue
-    GLuint x      = 0;
-    GLuint y      = 0;
-    GLuint width  = getWindowWidth() / 4 - 1;
-    GLuint height = getWindowHeight();
-    EXPECT_PIXEL_RECT_EQ(x, y, width, height, GLColor::blue);
+    for (auto vs : {kVS, kVSWithOutputReference})
+    {
+        ANGLE_GL_PROGRAM(programRed, vs.c_str(), essl3_shaders::fs::Red());
+        glUseProgram(programRed);
+        ASSERT_GL_NO_ERROR();
 
-    // All pixels on the right of the plane x = -0.5 must be red
-    x      = getWindowWidth() / 4 + 2;
-    y      = 0;
-    width  = getWindowWidth() - x;
-    height = getWindowHeight();
-    EXPECT_PIXEL_RECT_EQ(x, y, width, height, GLColor::red);
+        glEnable(GL_CLIP_DISTANCE0_EXT);
 
-    // Clear to green
-    glClearColor(0, 1, 0, 1);
-    glClear(GL_COLOR_BUFFER_BIT);
+        // Clear to blue
+        glClearColor(0, 0, 1, 1);
+        glClear(GL_COLOR_BUFFER_BIT);
 
-    // Draw full screen quad with color red
-    glUniform4f(glGetUniformLocation(programRed, "u_plane"), -1, 0, 0, -0.5);
-    EXPECT_GL_NO_ERROR();
-    drawQuad(programRed, "a_position", 0);
-    EXPECT_GL_NO_ERROR();
+        // Draw full screen quad with color red
+        glUniform4f(glGetUniformLocation(programRed, "u_plane"), 1, 0, 0, 0.5);
+        EXPECT_GL_NO_ERROR();
+        drawQuad(programRed, "a_position", 0);
+        EXPECT_GL_NO_ERROR();
 
-    // All pixels on the left of the plane x = -0.5 must be red
-    x      = 0;
-    y      = 0;
-    width  = getWindowWidth() / 4 - 1;
-    height = getWindowHeight();
-    EXPECT_PIXEL_RECT_EQ(x, y, width, height, GLColor::red);
+        // All pixels on the left of the plane x = -0.5 must be blue
+        GLuint x      = 0;
+        GLuint y      = 0;
+        GLuint width  = getWindowWidth() / 4 - 1;
+        GLuint height = getWindowHeight();
+        EXPECT_PIXEL_RECT_EQ(x, y, width, height, GLColor::blue);
 
-    // All pixels on the right of the plane x = -0.5 must be green
-    x      = getWindowWidth() / 4 + 2;
-    y      = 0;
-    width  = getWindowWidth() - x;
-    height = getWindowHeight();
-    EXPECT_PIXEL_RECT_EQ(x, y, width, height, GLColor::green);
+        // All pixels on the right of the plane x = -0.5 must be red
+        x      = getWindowWidth() / 4 + 2;
+        y      = 0;
+        width  = getWindowWidth() - x;
+        height = getWindowHeight();
+        EXPECT_PIXEL_RECT_EQ(x, y, width, height, GLColor::red);
 
-    // Disable GL_CLIP_DISTANCE
-    glDisable(GL_CLIP_DISTANCE0_EXT);
-    drawQuad(programRed, "a_position", 0);
+        // Clear to green
+        glClearColor(0, 1, 0, 1);
+        glClear(GL_COLOR_BUFFER_BIT);
 
-    // All pixels must be red
-    x      = 0;
-    y      = 0;
-    width  = getWindowWidth();
-    height = getWindowHeight();
-    EXPECT_PIXEL_RECT_EQ(x, y, width, height, GLColor::red);
+        // Draw full screen quad with color red
+        glUniform4f(glGetUniformLocation(programRed, "u_plane"), -1, 0, 0, -0.5);
+        EXPECT_GL_NO_ERROR();
+        drawQuad(programRed, "a_position", 0);
+        EXPECT_GL_NO_ERROR();
+
+        // All pixels on the left of the plane x = -0.5 must be red
+        x      = 0;
+        y      = 0;
+        width  = getWindowWidth() / 4 - 1;
+        height = getWindowHeight();
+        EXPECT_PIXEL_RECT_EQ(x, y, width, height, GLColor::red);
+
+        // All pixels on the right of the plane x = -0.5 must be green
+        x      = getWindowWidth() / 4 + 2;
+        y      = 0;
+        width  = getWindowWidth() - x;
+        height = getWindowHeight();
+        EXPECT_PIXEL_RECT_EQ(x, y, width, height, GLColor::green);
+
+        // Disable GL_CLIP_DISTANCE
+        glDisable(GL_CLIP_DISTANCE0_EXT);
+        drawQuad(programRed, "a_position", 0);
+
+        // All pixels must be red
+        x      = 0;
+        y      = 0;
+        width  = getWindowWidth();
+        height = getWindowHeight();
+        EXPECT_PIXEL_RECT_EQ(x, y, width, height, GLColor::red);
+    }
 }
 
 // Write to each gl_ClipDistance element
@@ -2002,7 +2065,7 @@ void main()
         {
             for (int x = getWindowWidth() / 2; x < getWindowWidth(); ++x)
             {
-                const int currentPosition = y * getWindowHeight() + x;
+                const int currentPosition = y * getWindowWidth() + x;
 
                 if (x < getWindowWidth() * 3 / 2 - y - 1 && x < getWindowWidth() * 3 / 4 - 1)
                 {
@@ -2054,7 +2117,7 @@ void main()
     {
         for (int x = getWindowWidth() / 2; x < getWindowWidth(); ++x)
         {
-            const int currentPosition = y * getWindowHeight() + x;
+            const int currentPosition = y * getWindowWidth() + x;
 
             if (x < getWindowWidth() * 3 / 2 - y - 1)
             {
@@ -2149,7 +2212,7 @@ void main()
     {
         for (int x = getWindowWidth() / 2; x < getWindowWidth(); ++x)
         {
-            const int currentPosition = y * getWindowHeight() + x;
+            const int currentPosition = y * getWindowWidth() + x;
 
             if (x < getWindowWidth() * 3 / 2 - y - 1 && x < getWindowWidth() * 3 / 4 - 1)
             {
@@ -2229,7 +2292,7 @@ void main()
     {
         for (int y = 0; y < getWindowHeight(); y++)
         {
-            const int currentPosition = y * getWindowHeight() + x;
+            const int currentPosition = y * getWindowWidth() + x;
 
             if (x >= getWindowWidth() / 4 && x < getWindowWidth() * 3 / 4 &&
                 y >= getWindowHeight() / 4 && y < getWindowHeight() * 3 / 4)
@@ -2264,67 +2327,95 @@ void main()
     gl_CullDistance[0] = dot(gl_Position, u_plane);
 })";
 
-    GLProgram programRed;
-    programRed.makeRaster(kVS.c_str(), essl3_shaders::fs::Red());
-    if (!mCullDistanceSupportRequired)
+    std::string kVSWithOutputReference = R"(#version 300 es
+#extension )" + kExtensionName +
+                                         R"( : require
+
+uniform vec4 u_plane;
+in vec2 a_position;
+
+void WriteCullDistance(out highp float distance)
+{
+    distance = dot(gl_Position, u_plane);
+}
+
+void main()
+{
+    gl_Position = vec4(a_position, 0.0, 1.0);
+    WriteCullDistance(gl_CullDistance[0]);
+})";
+
+    for (auto vs : {kVS, kVSWithOutputReference})
     {
-        GLint maxCullDistances;
-        glGetIntegerv(GL_MAX_CULL_DISTANCES_EXT, &maxCullDistances);
-        if (maxCullDistances == 0)
+        GLProgram programRed;
+        programRed.makeRaster(vs.c_str(), essl3_shaders::fs::Red());
+        if (!mCullDistanceSupportRequired)
         {
-            ASSERT_FALSE(programRed.valid());
-            return;
-        }
-    }
-    glUseProgram(programRed);
-    ASSERT_GL_NO_ERROR();
-
-    // Clear to blue
-    glClearColor(0, 0, 1, 1);
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    // Draw full screen quad with color red
-    glUniform4f(glGetUniformLocation(programRed, "u_plane"), 1, 0, 0, 0.5);
-    EXPECT_GL_NO_ERROR();
-    drawQuad(programRed, "a_position", 0);
-    EXPECT_GL_NO_ERROR();
-
-    {
-        // All pixels must be red
-        GLuint x      = 0;
-        GLuint y      = 0;
-        GLuint width  = getWindowWidth();
-        GLuint height = getWindowHeight();
-        EXPECT_PIXEL_RECT_EQ(x, y, width, height, GLColor::red);
-    }
-
-    // Clear to green
-    glClearColor(0, 1, 0, 1);
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    // Draw full screen quad with color red
-    glUniform4f(glGetUniformLocation(programRed, "u_plane"), 1, 1, 0, 0);
-    EXPECT_GL_NO_ERROR();
-    drawQuad(programRed, "a_position", 0);
-    EXPECT_GL_NO_ERROR();
-
-    // All pixels on the plane y >= -x must be red
-    std::vector<GLColor> actualColors(getWindowWidth() * getWindowHeight());
-    glReadPixels(0, 0, getWindowWidth(), getWindowHeight(), GL_RGBA, GL_UNSIGNED_BYTE,
-                 actualColors.data());
-    for (int x = 0; x < getWindowWidth(); ++x)
-    {
-        for (int y = 0; y < getWindowHeight(); ++y)
-        {
-            const int currentPosition = y * getWindowHeight() + x;
-
-            if ((x + y) >= 0)
+            GLint maxCullDistances;
+            glGetIntegerv(GL_MAX_CULL_DISTANCES_EXT, &maxCullDistances);
+            if (maxCullDistances == 0)
             {
-                EXPECT_EQ(GLColor::red, actualColors[currentPosition]);
+                ASSERT_FALSE(programRed.valid());
+                continue;
             }
-            else
+        }
+        glUseProgram(programRed);
+        ASSERT_GL_NO_ERROR();
+
+        // Clear to blue
+        glClearColor(0, 0, 1, 1);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        // Draw full screen quad with color red
+        glUniform4f(glGetUniformLocation(programRed, "u_plane"), 1, 0, 0, 0.5);
+        EXPECT_GL_NO_ERROR();
+        drawQuad(programRed, "a_position", 0);
+        EXPECT_GL_NO_ERROR();
+
+        {
+            // All pixels must be red
+            GLuint x      = 0;
+            GLuint y      = 0;
+            GLuint width  = getWindowWidth();
+            GLuint height = getWindowHeight();
+            EXPECT_PIXEL_RECT_EQ(x, y, width, height, GLColor::red);
+        }
+
+        // Clear to green
+        glClearColor(0, 1, 0, 1);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        // Draw full screen red, culled by the plane y >= -x. Add a small epsilon to the cull plane
+        // so that points near y >= -x will have a negative cull distance
+        glUniform4f(glGetUniformLocation(programRed, "u_plane"), 1, 1, 0, -0.001);
+        EXPECT_GL_NO_ERROR();
+        drawQuad(programRed, "a_position", 0);
+        EXPECT_GL_NO_ERROR();
+
+        std::vector<GLColor> actualColors(getWindowWidth() * getWindowHeight());
+        glReadPixels(0, 0, getWindowWidth(), getWindowHeight(), GL_RGBA, GL_UNSIGNED_BYTE,
+                     actualColors.data());
+        for (int x = 0; x < getWindowWidth(); ++x)
+        {
+            for (int y = 0; y < getWindowHeight(); ++y)
             {
-                EXPECT_EQ(GLColor::green, actualColors[currentPosition]);
+                const int currentPosition = y * getWindowWidth() + x;
+
+                // Convert [0, windowWidth - 1] image coordinates to [-1.0, 1.0] cartesian
+                // coordinates
+                const float cartesianX = (x - getWindowWidth() / 2 + 0.5) / (getWindowWidth() / 2);
+                const float cartesianY =
+                    (y - getWindowHeight() / 2 + 0.5) / (getWindowHeight() / 2);
+
+                // All pixels above the plane y >= -x should be red
+                if (cartesianY >= -1.0 * cartesianX)
+                {
+                    EXPECT_EQ(GLColor::red, actualColors[currentPosition]);
+                }
+                else
+                {
+                    EXPECT_EQ(GLColor::green, actualColors[currentPosition]);
+                }
             }
         }
     }
@@ -2396,7 +2487,7 @@ void main()
     {
         for (int y = 0; y < getWindowHeight(); y++)
         {
-            const int currentPosition = y * getWindowHeight() + x;
+            const int currentPosition = y * getWindowWidth() + x;
 
             if (x >= getWindowWidth() / 4 && x < getWindowWidth() * 3 / 4 &&
                 y >= getWindowHeight() / 4 && y < getWindowHeight() * 3 / 4)
@@ -2483,7 +2574,7 @@ void main()
     {
         for (int y = 0; y < getWindowHeight(); y++)
         {
-            const int currentPosition = y * getWindowHeight() + x;
+            const int currentPosition = y * getWindowWidth() + x;
 
             if (x >= getWindowWidth() / 4 && x < getWindowWidth() * 3 / 4 &&
                 y >= getWindowHeight() / 4 && y < getWindowHeight() * 3 / 4)
@@ -2591,7 +2682,7 @@ void main()
         {
             // The drawing method of Swiftshader and Native graphic card is different. So the
             // compare function doesn't check the value on the line.
-            const int currentPosition = y * getWindowHeight() + x;
+            const int currentPosition = y * getWindowWidth() + x;
 
             if (checkLeftPlaneFunc(x, y) > 0 && checkRightPlaneFunc(x, y) > 0)
             {
@@ -2691,7 +2782,7 @@ void main()
     {
         for (int y = 0; y < getWindowHeight(); ++y)
         {
-            const int currentPosition = y * getWindowHeight() + x;
+            const int currentPosition = y * getWindowWidth() + x;
 
             if (y > x || y >= -x + getWindowHeight() - 1)
             {
@@ -2843,7 +2934,7 @@ void main()
         {
             // The drawing method of Swiftshader and Native graphic card is different. So the
             // compare function doesn't check the value on the line.
-            const int currentPosition = y * getWindowHeight() + x;
+            const int currentPosition = y * getWindowWidth() + x;
 
             if (checkLeftPlaneFunc(x, y) > 0 && checkRightPlaneFunc(x, y) > 0)
             {
@@ -2985,7 +3076,7 @@ void main()
     {
         for (int y = 0; y < getWindowHeight(); ++y)
         {
-            const int currentPosition = y * getWindowHeight() + x;
+            const int currentPosition = y * getWindowWidth() + x;
 
             if (y > x || y >= -x + getWindowHeight() - 1)
             {

@@ -22,6 +22,8 @@ public class AngleUnitTestActivity extends NativeActivity
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
+        AngleNativeTest.setTempDirectory(this);
+
         // For NativeActivity based tests,
         // dependency libraries must be loaded before NativeActivity::OnCreate,
         // otherwise loading android.app.lib_name will fail

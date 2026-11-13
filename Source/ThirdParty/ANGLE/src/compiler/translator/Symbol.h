@@ -48,6 +48,9 @@ class TSymbol : angle::NonCopyable
     // Don't call getMangledName() for empty symbols (symbolType == SymbolType::Empty).
     ImmutableString getMangledName() const;
 
+    // Make a generated name for the symbol, ignoring its real name.
+    ImmutableString getTempName() const;
+
     bool isFunction() const { return mSymbolClass == SymbolClass::Function; }
     bool isVariable() const { return mSymbolClass == SymbolClass::Variable; }
     bool isStruct() const { return mSymbolClass == SymbolClass::Struct; }

@@ -22,6 +22,7 @@ class WGSLVertexOutputTest : public MatchOutputCodeTest
     {
         ShCompileOptions defaultCompileOptions = {};
         defaultCompileOptions.validateAST      = true;
+        defaultCompileOptions.outputDebugInfo  = true;
         setDefaultCompileOptions(defaultCompileOptions);
     }
 };
@@ -33,6 +34,7 @@ class WGSLOutputTest : public MatchOutputCodeTest
     {
         ShCompileOptions defaultCompileOptions = {};
         defaultCompileOptions.validateAST      = true;
+        defaultCompileOptions.outputDebugInfo  = true;
         setDefaultCompileOptions(defaultCompileOptions);
 
         getResources()->MaxDrawBuffers = 2;

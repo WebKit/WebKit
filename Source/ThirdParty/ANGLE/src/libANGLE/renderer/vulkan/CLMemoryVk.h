@@ -197,8 +197,8 @@ class CLImageVk : public CLMemoryVk
     // State query routines
     vk::ImageHelper &getImage()
     {
-        ASSERT(mImage.valid());
-        return mImage;
+        ASSERT(mImage && mImage->valid());
+        return *mImage;
     }
     const cl::Image &getFrontendObject() const
     {
@@ -243,7 +243,7 @@ class CLImageVk : public CLMemoryVk
     angle::Result mapParentBufferHelper(uint8_t *&ptrOut) override;
     void unmapBufferHelper() override;
 
-    vk::ImageHelper mImage;
+    std::unique_ptr<vk::ImageHelper> mImage;
     cl::Extents mExtent;
     angle::FormatID mAngleFormat;
 

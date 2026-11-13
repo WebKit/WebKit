@@ -118,6 +118,7 @@ class GeometryShaderOutputCodeTest : public MatchOutputCodeTest
     {
         ShCompileOptions defaultCompileOptions = {};
         defaultCompileOptions.objectCode       = true;
+        defaultCompileOptions.outputDebugInfo  = true;
         setDefaultCompileOptions(defaultCompileOptions);
 
         getResources()->EXT_geometry_shader = 1;

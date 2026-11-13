@@ -705,6 +705,7 @@ inline int getBaseTypeConvNdx(VariableType::Type type)
     case VariableType::TYPE_BOOL:
         return 2;
     default:
+        DE_FATAL("Unexpected type");
         return -1;
     }
 }

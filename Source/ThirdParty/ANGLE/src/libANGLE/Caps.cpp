@@ -1253,6 +1253,7 @@ std::vector<std::string> DisplayExtensions::getStrings() const
     InsertExtensionString("EGL_ANGLE_metal_commands_scheduled_sync",             mtlSyncCommandsScheduledANGLE,      &extensionStrings);
     InsertExtensionString("EGL_ANGLE_global_fence_sync",                         globalFenceSyncANGLE,               &extensionStrings);
     InsertExtensionString("EGL_ANGLE_memory_usage_report",                       memoryUsageReportANGLE,             &extensionStrings);
+    InsertExtensionString("EGL_ANGLE_query_renderer_strings",                    queryRendererStringsANGLE,          &extensionStrings);
     InsertExtensionString("EGL_EXT_surface_compression",                         surfaceCompressionEXT,              &extensionStrings);
     InsertExtensionString("EGL_ANGLE_webgpu_texture_client_buffer",              webgpuTextureClientBuffer,          &extensionStrings);
     InsertExtensionString("EGL_ANGLE_create_context_passthrough_shaders",        createContextPassthroughShadersANGLE, &extensionStrings);

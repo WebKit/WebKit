@@ -26,7 +26,7 @@
 
 // Version number for shader translation API.
 // It is incremented every time the API changes.
-#define ANGLE_SH_VERSION 426
+#define ANGLE_SH_VERSION 427
 
 enum ShShaderSpec
 {
@@ -929,6 +929,8 @@ const std::set<std::string> *GetUsedImage2DFunctionNames(const ShHandle handle);
 
 uint8_t GetClipDistanceArraySize(const ShHandle handle);
 uint8_t GetCullDistanceArraySize(const ShHandle handle);
+uint8_t GetInputClipDistanceArraySize(const ShHandle handle);
+uint8_t GetInputCullDistanceArraySize(const ShHandle handle);
 GLenum GetGeometryShaderInputPrimitiveType(const ShHandle handle);
 GLenum GetGeometryShaderOutputPrimitiveType(const ShHandle handle);
 int GetGeometryShaderInvocations(const ShHandle handle);

@@ -1225,11 +1225,6 @@ Sync *ThreadSafeDisplay::removeSync(egl::SyncID syncID)
     return mSyncSet.removeSync(syncID);
 }
 
-void ThreadSafeDisplay::destroySync(Sync *sync)
-{
-    mSyncSet.releaseSync(this, sync);
-}
-
 Error ThreadSafeDisplay::createSync(const gl::Context *currentContext,
                                     EGLenum type,
                                     const AttributeMap &attribs,
@@ -1272,7 +1267,7 @@ bool ThreadSafeDisplay::isValidContext(const gl::ContextID contextID) const
     return getContext(contextID) != nullptr;
 }
 
-void ThreadSafeDisplay::onPendingInternalCleanup() const
+void ThreadSafeDisplay::runPendingInternalCleanup() const
 {
     if (mPendingInternalCleanup.exchange(false, std::memory_order_acq_rel))
     {
@@ -1633,6 +1628,7 @@ Error Display::initialize()
     initVendorString();
     initVersionString();
     initClientAPIString();
+    initRendererString();
 
     // Populate the Display's EGLDeviceEXT if the Display wasn't created using one
     if (mPlatform == EGL_PLATFORM_DEVICE_EXT)
@@ -1815,10 +1811,6 @@ Error Display::terminate(Thread *thread, TerminateReason terminateReason)
         // We also shouldn't set it to null in case eglInitialize() is called again later
         SafeDelete(mDevice);
     }
-
-    // Before tearing down the backend device, ensure all deferred operations are run.  It is not
-    // possible to defer them beyond this point.
-    GetCurrentThreadUnlockedTailCall()->run(nullptr);
 
     mImplementation->terminate();
 
@@ -2275,6 +2267,8 @@ Error ThreadSafeDisplay::makeCurrent(Thread *thread,
     // If eglTerminate() has previously been called and Context was changed, schedule
     // InternalCleanup to invalidate any non-current Contexts, and possibly fully terminate the
     // Display and release all of its resources once the entry point's surface locks are released.
+    // The caller runs it: eglMakeCurrent() in an unlocked tail call, and the entry points that lock
+    // the display before unlocking it (Display::releaseThread() or Display::onUnlockMutex()).
     if (mTerminatedByApi.load(std::memory_order_acquire) && contextChanged)
     {
         mPendingInternalCleanup.store(true, std::memory_order_release);
@@ -2655,6 +2649,9 @@ void Display::initDisplayExtensions()
     // EGL_ANGLE_memory_usage_report is implemented on front end.
     mDisplayExtensions.memoryUsageReportANGLE = true;
 
+    // EGL_ANGLE_query_renderer_strings is implemented on front end.
+    mDisplayExtensions.queryRendererStringsANGLE = true;
+
     mDisplayExtensionString = GenerateExtensionsString(mDisplayExtensions);
 }
 
@@ -2754,6 +2751,42 @@ void Display::initClientAPIString()
     mClientAPIString = "OpenGL_ES";
 }
 
+void Display::initRendererString()
+{
+    // Match the GL_RENDERER string of non-WebGL contexts, which include the full backend version.
+    mRendererString = generateRendererString(true);
+}
+
+std::string Display::generateRendererString(bool includeFullVersion) const
+{
+    constexpr char kRendererString[]        = "ANGLE_GL_RENDERER";
+    constexpr char kAndroidRendererString[] = "debug.angle.gl_renderer";
+
+    std::string overrideRenderer =
+        angle::GetEnvironmentVarOrAndroidProperty(kRendererString, kAndroidRendererString);
+    if (!overrideRenderer.empty())
+    {
+        return overrideRenderer;
+    }
+
+    std::string vendorString(getBackendVendorString());
+    std::string rendererString(getBackendRendererDescription());
+    std::string versionString(getBackendVersionString(includeFullVersion));
+    // Commas are used as a separator in ANGLE's renderer string, so remove commas from each
+    // element.
+    vendorString.erase(std::remove(vendorString.begin(), vendorString.end(), ','),
+                       vendorString.end());
+    rendererString.erase(std::remove(rendererString.begin(), rendererString.end(), ','),
+                         rendererString.end());
+    versionString.erase(std::remove(versionString.begin(), versionString.end(), ','),
+                        versionString.end());
+
+    std::ostringstream frontendRendererString;
+    frontendRendererString << "ANGLE (" << vendorString << ", " << rendererString << ", "
+                           << versionString << ")";
+    return frontendRendererString.str();
+}
+
 void Display::initializeFrontendFeatures()
 {
     // Enable on all Impls
@@ -2795,6 +2828,11 @@ const std::string &Display::getExtensionString() const
 const std::string &Display::getVendorString() const
 {
     return mVendorString;
+}
+
+const std::string &Display::getRendererString() const
+{
+    return mRendererString;
 }
 
 const std::string &Display::getVersionString() const
@@ -3092,28 +3130,32 @@ Error *Display::GetCurrentThreadErrorScratchSpace()
 }
 
 #if defined(ANGLE_ENABLE_ASSERTS)
-// static
-uint32_t ThreadSafeDisplay::GetCurrentThreadDisplayRefCount()
+void AssertCurrentThreadNotHoldingDisplayRefCount()
 {
     TLSData *tls = GetDisplayTLS();
     ASSERT(tls != nullptr);
-    return tls->displayRefCount;
+    ASSERT(tls->displayRefCount == 0);
 }
 
-// static
-void ThreadSafeDisplay::IncrementCurrentThreadDisplayRefCount()
+void AssertCurrentThreadHoldingOneDisplayRefCount()
+{
+    TLSData *tls = GetDisplayTLS();
+    ASSERT(tls != nullptr);
+    ASSERT(tls->displayRefCount == 1);
+}
+
+void IncrementCurrentThreadDisplayRefCount()
 {
     TLSData *tls = GetDisplayTLS();
     ASSERT(tls != nullptr);
     ++tls->displayRefCount;
 }
 
-// static
-void ThreadSafeDisplay::DecrementCurrentThreadDisplayRefCount()
+void DecrementCurrentThreadDisplayRefCount()
 {
     TLSData *tls = GetDisplayTLS();
     ASSERT(tls != nullptr);
-    ASSERT(tls->displayRefCount > 0);
+    ASSERT(tls->displayRefCount == 1);
     --tls->displayRefCount;
 }
 #endif

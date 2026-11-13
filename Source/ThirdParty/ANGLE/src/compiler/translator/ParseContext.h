@@ -279,7 +279,7 @@ class TParseContext : angle::NonCopyable
     void checkClipCullDistanceWholeArrayUse(const TSourceLoc &location,
                                             TIntermTyped *node,
                                             const char *message);
-    void functionCallClipCullDistanceCheck(const TFunction *fnCandidate, TIntermAggregate *fnCall);
+    void functionCallClipCullDistanceCheck(const TIntermSequence &arguments);
     void functionCallFragDataCheck(const TFunction *fnCandidate, TIntermAggregate *fnCall);
     void checkInvariantVariableQualifier(bool invariant,
                                          const TQualifier qualifier,
@@ -598,6 +598,16 @@ class TParseContext : angle::NonCopyable
     uint32_t getCullDistanceArraySize() const
     {
         return mCullDistanceInfo.size > 0 ? mCullDistanceInfo.size : mCullDistanceInfo.maxIndex + 1;
+    }
+    uint32_t getInputClipDistanceArraySize() const
+    {
+        return mInputClipDistanceInfo.size > 0 ? mInputClipDistanceInfo.size
+                                               : mInputClipDistanceInfo.maxIndex + 1;
+    }
+    uint32_t getInputCullDistanceArraySize() const
+    {
+        return mInputCullDistanceInfo.size > 0 ? mInputCullDistanceInfo.size
+                                               : mInputCullDistanceInfo.maxIndex + 1;
     }
     bool isClipDistanceRedeclared() const { return mClipDistanceInfo.size > 0; }
     bool isCullDistanceRedeclared() const { return mCullDistanceInfo.size > 0; }
@@ -957,6 +967,10 @@ class TParseContext : angle::NonCopyable
     // and gl_CullDistance can be validated and sized at the end of compilation.
     ClipCullDistanceInfo mClipDistanceInfo;
     ClipCullDistanceInfo mCullDistanceInfo;
+    // The gl_ClipDistance and gl_CullDistance members of gl_in in tessellation and geometry
+    // shaders, which are sized independently of the shader's outputs.
+    ClipCullDistanceInfo mInputClipDistanceInfo;
+    ClipCullDistanceInfo mInputCullDistanceInfo;
 
     // Keep track of local group size declared in layout. It should be declared only once.
     bool mComputeShaderLocalSizeDeclared;

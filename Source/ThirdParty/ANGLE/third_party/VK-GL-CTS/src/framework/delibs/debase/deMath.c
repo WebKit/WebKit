@@ -176,7 +176,7 @@ float deInt32ToFloatRoundToNegInf(int32_t x)
         const int numLostBits   = exponent - 23;
         const uint32_t lostMask = deBitMask32(0, numLostBits);
 
-        DE_ASSERT(numLostBits > 0);
+        DE_ASSERT(numLostBits > 0 && numLostBits < 8);
 
         if (x > 0)
         {

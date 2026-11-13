@@ -230,18 +230,34 @@ bool ValidateColorMaskForSharedExponentColorBuffer(const Context *context,
     return true;
 }
 
-bool ValidES3ExtensionFormatCombination(GLenum format, GLenum type, GLenum internalFormat)
+bool ValidES3ExtensionFormatCombination(const Context *context,
+                                        GLenum format,
+                                        GLenum type,
+                                        GLenum internalFormat)
 {
     switch (internalFormat)
     {
         case GL_LUMINANCE4_ALPHA4_OES:
-            return (type == GL_UNSIGNED_BYTE && format == GL_LUMINANCE_ALPHA);
+            return (context->getExtensions().requiredInternalformatOES &&
+                    type == GL_UNSIGNED_BYTE && format == GL_LUMINANCE_ALPHA);
         case GL_DEPTH_COMPONENT32_OES:
-            return (type == GL_UNSIGNED_INT && format == GL_DEPTH_COMPONENT);
+            return (context->getExtensions().requiredInternalformatOES &&
+                    context->getExtensions().depthTextureOES &&
+                    context->getExtensions().depth32OES && type == GL_UNSIGNED_INT &&
+                    format == GL_DEPTH_COMPONENT);
         case GL_RGB10_EXT:
+            return (context->getExtensions().textureType2101010REVEXT &&
+                    type == GL_UNSIGNED_INT_2_10_10_10_REV_EXT && format == GL_RGB);
         case GL_RGB8_OES:
         case GL_RGB565_OES:
-            return (type == GL_UNSIGNED_INT_2_10_10_10_REV_EXT && format == GL_RGB);
+            // Core ES3 types for GL_RGB8 and GL_RGB565 (GL_UNSIGNED_BYTE,
+            // GL_UNSIGNED_SHORT_5_6_5) are already handled by ValidES3FormatCombination.
+            // GL_OES_required_internalformat together with GL_EXT_texture_type_2_10_10_10_REV
+            // additionally allows uploading to GL_RGB8_OES and GL_RGB565_OES with
+            // GL_UNSIGNED_INT_2_10_10_10_REV_EXT.
+            return (context->getExtensions().requiredInternalformatOES &&
+                    context->getExtensions().textureType2101010REVEXT &&
+                    type == GL_UNSIGNED_INT_2_10_10_10_REV_EXT && format == GL_RGB);
         default:
             return false;
     }
@@ -318,7 +334,7 @@ bool ValidateTexImageFormatCombination(const Context *context,
     else
     {
         if (!ValidES3FormatCombination(format, type, internalFormat) &&
-            !ValidES3ExtensionFormatCombination(format, type, internalFormat))
+            !ValidES3ExtensionFormatCombination(context, format, type, internalFormat))
         {
             ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInvalidFormatCombination);
             return false;
@@ -564,18 +580,6 @@ bool ValidateES3TexImageParametersBase(const Context *context,
                 ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInvalidFormatCombination);
                 return false;
             }
-
-            // GL_RGB8_OES and GL_RGB565_OES paired with GL_UNSIGNED_INT_2_10_10_10_REV_EXT require
-            // GL_EXT_texture_type_2_10_10_10_REV and GL_OES_required_internalformat for image
-            // creation.
-            if ((internalformat == GL_RGB8_OES || internalformat == GL_RGB565_OES) &&
-                type == GL_UNSIGNED_INT_2_10_10_10_REV_EXT &&
-                (!context->getExtensions().requiredInternalformatOES ||
-                 !context->getExtensions().textureType2101010REVEXT))
-            {
-                ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInvalidFormatCombination);
-                return false;
-            }
         }
 
         if (!ValidateTexImageFormatCombination(context, entryPoint, texType, actualInternalFormat,
@@ -588,7 +592,8 @@ bool ValidateES3TexImageParametersBase(const Context *context,
         {
             const GLenum textureSizedInternalFormat = actualFormatInfo.sizedInternalFormat;
             if (!ValidES3FormatCombination(format, type, textureSizedInternalFormat) &&
-                !ValidES3ExtensionFormatCombination(format, type, textureSizedInternalFormat))
+                !ValidES3ExtensionFormatCombination(context, format, type,
+                                                    textureSizedInternalFormat))
             {
                 ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kTextureTypeMismatch);
                 return false;

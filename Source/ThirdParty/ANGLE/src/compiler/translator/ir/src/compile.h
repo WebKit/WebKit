@@ -29,6 +29,7 @@ namespace ir
 struct Output
 {
     TIntermBlock *root = nullptr;
+    std::string outputSource;
     std::vector<ShaderVariable> inputs;
     std::vector<ShaderVariable> outputs;
     std::vector<ShaderVariable> uniforms;

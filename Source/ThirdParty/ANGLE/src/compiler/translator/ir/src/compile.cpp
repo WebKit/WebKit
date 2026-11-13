@@ -252,6 +252,7 @@ Output GenerateAST(IR ir, TCompiler *compiler, const ShCompileOptions &options)
 
     Output out;
     out.root          = output.ast;
+    out.outputSource  = std::string(output.output_source);
     out.inputs        = ConvertShaderVariables(output.inputs);
     out.outputs       = ConvertShaderVariables(output.outputs);
     out.uniforms      = ConvertShaderVariables(output.uniforms);

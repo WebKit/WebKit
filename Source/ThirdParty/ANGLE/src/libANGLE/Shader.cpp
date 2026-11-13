@@ -673,6 +673,14 @@ void Shader::compile(const Context *context, angle::JobResultExpectancy resultEx
     options.validateAST = true;
 #endif
 
+    // For text-based outputs, it's easy for transformations to mix up shadowed variables during AST
+    // transformations.  Retaining debug info (in AST generators, not IR) is off by default, but can
+    // be enabled with this debug feature.
+    if (context->getFrontendFeatures().retainShaderDebugInfo.enabled)
+    {
+        options.outputDebugInfo = true;
+    }
+
     // Find a shader in Blob Cache
     Compiler *compiler = context->getCompiler();
     setShaderKey(context, options, compiler->getShaderOutputType(),

@@ -64,6 +64,7 @@ class CollectVariablesTest : public testing::Test
     {
         const char *shaderStrings[]     = {shaderString.c_str()};
         ShCompileOptions compileOptions = {};
+        compileOptions.outputDebugInfo  = true;
         ASSERT_TRUE(mTranslator->compile(shaderStrings, compileOptions));
 
         const std::vector<ShaderVariable> &uniforms = mTranslator->getUniforms();

@@ -50,6 +50,24 @@ namespace
 #include "libANGLE/renderer/d3d/d3d11/shaders/compiled/swizzleui2dps.h"
 #include "libANGLE/renderer/d3d/d3d11/shaders/compiled/swizzleui3dps.h"
 
+unsigned int InterpolateNearestCoord(int writeCoord,
+                                     int destOffset,
+                                     int destLength,
+                                     int sourceOffset,
+                                     int sourceLength,
+                                     int sourceMaxSize)
+{
+    // Avoid dividing 0.0f / 0.0f when destLength == 1 (where writeCoord == destOffset), as the
+    // resulting NaN would cause gl::clamp to return 0 instead of sourceOffset.
+    float ratio =
+        (destLength == 1) ? 0.0f : static_cast<float>(writeCoord - destOffset) / (destLength - 1);
+    float rounded = floor(ratio * (sourceLength - 1) + 0.5f);
+    // sourceOffset + rounded is an absolute coordinate in the source texture, so it must be
+    // clamped against the full source texture dimension (sourceMaxSize - 1) rather than the
+    // sub-region length (sourceLength - 1).
+    return static_cast<unsigned int>(gl::clamp(sourceOffset + rounded, 0, sourceMaxSize - 1));
+}
+
 void StretchedBlitNearest_RowByRow(const gl::Box &sourceArea,
                                    const gl::Box &destArea,
                                    const gl::Rectangle &clippedDestArea,
@@ -60,20 +78,16 @@ void StretchedBlitNearest_RowByRow(const gl::Box &sourceArea,
                                    const uint8_t *sourceData,
                                    uint8_t *destData)
 {
-    int srcHeightSubOne = (sourceArea.height - 1);
-    size_t copySize     = pixelSize * clippedDestArea.width;
-    size_t srcOffset    = sourceArea.x * pixelSize;
-    size_t destOffset   = clippedDestArea.x * pixelSize;
+    size_t copySize   = pixelSize * clippedDestArea.width;
+    size_t srcOffset  = sourceArea.x * pixelSize;
+    size_t destOffset = clippedDestArea.x * pixelSize;
 
     for (int y = clippedDestArea.y; y < clippedDestArea.y + clippedDestArea.height; y++)
     {
-        // TODO: Fix divide by zero when height == 1. http://anglebug.com/42264628
-        float yPerc = static_cast<float>(y - destArea.y) / (destArea.height - 1);
-
         // Interpolate using the original source rectangle to determine which row to sample from
         // while clamping to the edges
-        unsigned int readRow = static_cast<unsigned int>(
-            gl::clamp(sourceArea.y + floor(yPerc * srcHeightSubOne + 0.5f), 0, srcHeightSubOne));
+        unsigned int readRow = InterpolateNearestCoord(y, destArea.y, destArea.height, sourceArea.y,
+                                                       sourceArea.height, sourceSize.height);
         unsigned int writeRow = y;
 
         const uint8_t *sourceRow =
@@ -104,19 +118,17 @@ void StretchedBlitNearest_PixelByPixel(const gl::Box &sourceArea,
     {
         // Interpolate using the original source rectangle to determine which row to sample from
         // while clamping to the edges
-        float yPerc    = static_cast<float>(writeRow - destArea.y) / (destArea.height - 1);
-        float yRounded = floor(yPerc * (sourceArea.height - 1) + 0.5f);
         unsigned int readRow =
-            static_cast<unsigned int>(gl::clamp(sourceArea.y + yRounded, 0, sourceSize.height - 1));
+            InterpolateNearestCoord(writeRow, destArea.y, destArea.height, sourceArea.y,
+                                    sourceArea.height, sourceSize.height);
 
         for (int writeColumn = clippedDestArea.x; writeColumn < xMax; writeColumn++)
         {
             // Interpolate the original source rectangle to determine which column to sample
             // from while clamping to the edges
-            float xPerc    = static_cast<float>(writeColumn - destArea.x) / (destArea.width - 1);
-            float xRounded = floor(xPerc * (sourceArea.width - 1) + 0.5f);
-            unsigned int readColumn = static_cast<unsigned int>(
-                gl::clamp(sourceArea.x + xRounded, 0, sourceSize.width - 1));
+            unsigned int readColumn =
+                InterpolateNearestCoord(writeColumn, destArea.x, destArea.width, sourceArea.x,
+                                        sourceArea.width, sourceSize.width);
 
             const uint8_t *sourcePixel = ANGLE_UNSAFE_TODO(
                 sourceData + readRow * sourceRowPitch + readColumn * srcPixelStride + readOffset);
@@ -151,9 +163,9 @@ void StretchedBlitNearest(const gl::Box &sourceArea,
 
     // Determine if entire rows can be copied at once instead of each individual pixel. There
     // must be no out of bounds lookups, whole rows copies, and no scale.
-    if (sourceArea.width == clippedDestArea.width && sourceArea.x >= 0 &&
-        sourceArea.x + sourceArea.width <= sourceSize.width && copySize == srcPixelStride &&
-        copySize == destPixelStride)
+    if (sourceArea.width == destArea.width && destArea.width == clippedDestArea.width &&
+        sourceArea.x >= 0 && sourceArea.x + sourceArea.width <= sourceSize.width &&
+        copySize == srcPixelStride && copySize == destPixelStride)
     {
         StretchedBlitNearest_RowByRow(sourceArea, destArea, clippedDestArea, sourceSize,
                                       sourceRowPitch, destRowPitch, srcPixelStride, sourceData,

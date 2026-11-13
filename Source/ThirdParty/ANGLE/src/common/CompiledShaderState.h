@@ -102,6 +102,12 @@ struct CompiledShaderState
     GLenum tessGenVertexOrder;
     GLenum tessGenPointMode;
 
+    // gl_ClipDistance / gl_CullDistance
+    int clipDistanceSize;
+    int cullDistanceSize;
+    int inputClipDistanceSize;
+    int inputCullDistanceSize;
+
     // ANGLE_shader_pixel_local_storage: A mapping from binding index to the PLS uniform format at
     // that index.
     std::vector<ShPixelLocalStorageLayout> pixelLocalStorageLayouts;

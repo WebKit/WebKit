@@ -86,7 +86,7 @@ shared AU1 spd_counter;
 #define SPD_PACKED_ONLY
 
 // Load from source image
-AH4 SpdLoadSourceImageH(ASU2 p)
+AH4 SpdLoadSourceImageH(ASU2 p, AU1 slice)
 {
    AF2 textureCoord = p * params.invSrcExtent + params.invSrcExtent;
    return AH4(texture(src, textureCoord));
@@ -97,13 +97,13 @@ AH4 SpdLoadSourceImageH(ASU2 p)
 // last thread group will access all its elements and compute the subsequent mips.
 //
 // Unused as we don't support more than 6 levels.
-AH4 SpdLoadH(ASU2 p)
+AH4 SpdLoadH(ASU2 p, AU1 slice)
 {
     return AH4(0);
 }
 
 // Define the store function
-void SpdStoreH(ASU2 p, AH4 value, AU1 mip)
+void SpdStoreH(ASU2 p, AH4 value, AU1 mip, AU1 slice)
 {
     imageStore(dst[mip], p, AF4(value));
 }
@@ -127,7 +127,7 @@ AH4 SpdReduce4H(AH4 v0, AH4 v1, AH4 v2, AH4 v3)
 #else  // A_HALF
 
 // Load from source image
-AF4 SpdLoadSourceImage(ASU2 p)
+AF4 SpdLoadSourceImage(ASU2 p, AU1 slice)
 {
     AF2 textureCoord = p * params.invSrcExtent + params.invSrcExtent;
     return texture(src, textureCoord);
@@ -138,13 +138,13 @@ AF4 SpdLoadSourceImage(ASU2 p)
 // last thread group will access all its elements and compute the subsequent mips
 //
 // Unused as we don't support more than 6 levels.
-AF4 SpdLoad(ASU2 p)
+AF4 SpdLoad(ASU2 p, AU1 slice)
 {
     return AF4(0);
 }
 
 // Define the store function
-void SpdStore(ASU2 p, AF4 value, AU1 mip)
+void SpdStore(ASU2 p, AF4 value, AU1 mip, AU1 slice)
 {
     imageStore(dst[mip], p, value);
 }
@@ -166,18 +166,19 @@ AF4 SpdReduce4(AF4 v0, AF4 v1, AF4 v2, AF4 v3)
 }
 #endif  // A_HALF
 
-// Define the atomic counter increase function.  We don't support more than 6 mips, so these are
+// Define the atomic counter functions.  We don't support more than 6 mips, so these are
 // unused.  Returned value is arbitrary as SpdDownsample will early out before looking at it.
-#define SpdIncreaseAtomicCounter()
+#define SpdIncreaseAtomicCounter(slice)
 #define SpdGetAtomicCounter() 0
+#define SpdResetAtomicCounter(slice)
 
 #include "third_party/ffx_spd/src/ffx_spd.h"
 
 void main()
 {
 #ifdef A_HALF
-    SpdDownsampleH(gl_WorkGroupID.xy, gl_LocalInvocationIndex, params.levelCount, 0);
+    SpdDownsampleH(gl_WorkGroupID.xy, gl_LocalInvocationIndex, params.levelCount, 0, 0);
 #else
-    SpdDownsample(gl_WorkGroupID.xy, gl_LocalInvocationIndex, params.levelCount, 0);
+    SpdDownsample(gl_WorkGroupID.xy, gl_LocalInvocationIndex, params.levelCount, 0, 0);
 #endif
 }

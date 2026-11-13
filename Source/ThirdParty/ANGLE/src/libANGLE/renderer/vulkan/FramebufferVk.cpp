@@ -424,7 +424,10 @@ angle::Result UnresolveYuvImage(ContextVk *contextVk,
 }  // anonymous namespace
 
 FramebufferVk::FramebufferVk(vk::Renderer *renderer, const gl::FramebufferState &state)
-    : FramebufferImpl(state), mBackbuffer(nullptr), mActiveColorComponentMasksForClear(0)
+    : FramebufferImpl(state),
+      mBackbuffer(nullptr),
+      mActiveColorComponentMasksForClear(0),
+      mFragmentShadingRateImage(VK_IMAGE_TYPE_2D)
 {
     if (mState.isDefault())
     {
@@ -2249,27 +2252,8 @@ angle::Result FramebufferVk::invalidateImpl(ContextVk *contextVk,
     // Shouldn't try to issue deferred clears if invalidating sub framebuffer.
     ASSERT(mDeferredClears.empty() || !isSubInvalidate);
 
-    if (contextVk->getFeatures().dropDepthStencilClearOnInvalidate.enabled)
-    {
-        // Remove deferred clears for the invalidated attachments.
-        if (invalidateDepthBuffer)
-        {
-            mDeferredClears.reset(vk::kUnpackedDepthIndex);
-        }
-        if (invalidateStencilBuffer)
-        {
-            mDeferredClears.reset(vk::kUnpackedStencilIndex);
-        }
-    }
     // Limit invalidateColorBuffers to enabled draw buffers
     invalidateColorBuffers &= mState.getEnabledDrawBuffers();
-    for (size_t colorIndexGL : invalidateColorBuffers)
-    {
-        mDeferredClears.reset(colorIndexGL);
-    }
-
-    // If there are still deferred clears, restage them. See relevant comment in invalidateSub.
-    restageDeferredClears(contextVk);
 
     const auto &colorRenderTargets           = mRenderTargetCache.getColors();
     RenderTargetVk *depthStencilRenderTarget = mRenderTargetCache.getDepthStencil();
@@ -2289,22 +2273,28 @@ angle::Result FramebufferVk::invalidateImpl(ContextVk *contextVk,
             RenderTargetVk *colorRenderTarget = colorRenderTargets[colorIndexGL];
             ASSERT(colorRenderTarget);
 
+            // All pending deferred clears on this attachment are dropped, unless it is preferred
+            // that its content remain defined, in which case the invalidation is skipped instead.
             bool preferToKeepContentsDefined = false;
             colorRenderTarget->invalidateEntireContent(contextVk, &preferToKeepContentsDefined);
             if (preferToKeepContentsDefined)
             {
                 invalidateColorBuffers.reset(colorIndexGL);
             }
-            else if (isRobustResourceInitEnabled)
+            else
             {
-                gl::OwnerImageIndex imageIndex = colorRenderTarget->getImageIndexForClear(
-                    mCurrentFramebufferDesc.getLayerCount());
-                colorRenderTarget->getImageForWrite().stageRobustResourceClear(
-                    imageIndex, VK_IMAGE_ASPECT_COLOR_BIT);
+                mDeferredClears.reset(colorIndexGL);
+
+                if (isRobustResourceInitEnabled)
+                {
+                    gl::OwnerImageIndex imageIndex = colorRenderTarget->getImageIndexForClear(
+                        mCurrentFramebufferDesc.getLayerCount());
+                    colorRenderTarget->getImageForWrite().stageRobustResourceClear(
+                        imageIndex, VK_IMAGE_ASPECT_COLOR_BIT);
+                }
             }
         }
 
-        // If we have a depth / stencil render target, invalidate its aspects.
         if (depthStencilRenderTarget)
         {
             if (invalidateDepthBuffer)
@@ -2316,6 +2306,10 @@ angle::Result FramebufferVk::invalidateImpl(ContextVk *contextVk,
                 {
                     invalidateDepthBuffer = false;
                 }
+                else if (contextVk->getFeatures().dropDepthStencilClearOnInvalidate.enabled)
+                {
+                    mDeferredClears.reset(vk::kUnpackedDepthIndex);
+                }
             }
             if (invalidateStencilBuffer)
             {
@@ -2326,8 +2320,21 @@ angle::Result FramebufferVk::invalidateImpl(ContextVk *contextVk,
                 {
                     invalidateStencilBuffer = false;
                 }
+                else if (contextVk->getFeatures().dropDepthStencilClearOnInvalidate.enabled)
+                {
+                    mDeferredClears.reset(vk::kUnpackedStencilIndex);
+                }
             }
+        }
 
+        // If there are still deferred clears, restage them. See relevant comment in invalidateSub.
+        // This must be called before depth/stencil robust clearing below, so that any pending D/S
+        // clears are not restaged on top of the robust clear.
+        restageDeferredClears(contextVk);
+
+        // If we have a D/S render target, stage robust clear for its invalidated aspects.
+        if (depthStencilRenderTarget)
+        {
             if (isRobustResourceInitEnabled)
             {
                 VkImageAspectFlags dsAspectFlags = 0;
@@ -2350,6 +2357,7 @@ angle::Result FramebufferVk::invalidateImpl(ContextVk *contextVk,
             }
         }
     }
+    ASSERT(mDeferredClears.empty());
 
     // To ensure we invalidate the right renderpass we require that the current framebuffer be the
     // same as the current renderpass' framebuffer. E.g. prevent sequence like:

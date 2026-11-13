@@ -325,15 +325,15 @@ void ResourcesHLSL::outputHLSLSamplerUniformGroup(
 
         if (type.isArray())
         {
-            out << "static const uint " << DecorateVariableIfNeeded(*uniform) << ArrayString(type)
-                << " = ";
+            out << "static const uint " << DecorateVariableIfNeeded(*uniform, DebugNames::Retain)
+                << ArrayString(type) << " = ";
             OutputUniformIndexArrayInitializer(out, type, samplerArrayIndex);
             out << ";\n";
         }
         else
         {
-            out << "static const uint " << DecorateVariableIfNeeded(*uniform) << " = "
-                << samplerArrayIndex << ";\n";
+            out << "static const uint " << DecorateVariableIfNeeded(*uniform, DebugNames::Retain)
+                << " = " << samplerArrayIndex << ";\n";
         }
     }
     TString suffix = TextureGroupSuffix(textureGroup);
@@ -368,15 +368,15 @@ void ResourcesHLSL::outputHLSLImageUniformIndices(TInfoSinkBase &out,
 
         if (type.isArray())
         {
-            out << "static const uint " << DecorateVariableIfNeeded(*uniform) << ArrayString(type)
-                << " = ";
+            out << "static const uint " << DecorateVariableIfNeeded(*uniform, DebugNames::Retain)
+                << ArrayString(type) << " = ";
             OutputUniformIndexArrayInitializer(out, type, imageArrayIndex);
             out << ";\n";
         }
         else
         {
-            out << "static const uint " << DecorateVariableIfNeeded(*uniform) << " = "
-                << imageArrayIndex << ";\n";
+            out << "static const uint " << DecorateVariableIfNeeded(*uniform, DebugNames::Retain)
+                << " = " << imageArrayIndex << ";\n";
         }
 
         imageArrayIndex += registerCount;
@@ -445,7 +445,7 @@ void ResourcesHLSL::outputUniform(TInfoSinkBase &out,
 
     out << "uniform " << typeName << " ";
 
-    out << DecorateVariableIfNeeded(variable);
+    out << DecorateVariableIfNeeded(variable, DebugNames::Retain);
 
     out << ArrayString(type) << " : " << registerString << ";\n";
 }

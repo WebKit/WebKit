@@ -1,7 +1,7 @@
 /* WARNING: This is auto-generated file. Do not modify, since changes will
  * be lost! Modify the generating script instead.
  *
- * Generated from Khronos GL API description (gl.xml) revision 7d0cb181dace7461bc4f26650fec71efeacc18a5.
+ * Generated from Khronos GL API description (gl.xml) revision 6af574a14089ccfee87efe230ebcdd8742859813.
  */
 
 void glwActiveShaderProgram (GLuint pipeline, GLuint program)
@@ -18,6 +18,14 @@ void glwActiveTexture (GLenum texture)
     if (!gl)
         return;
     gl->activeTexture(texture);
+}
+
+void glwAddClientPointerRangeMESA (void *addr, GLsizeiptr size)
+{
+    const glw::Functions* gl = glw::getCurrentThreadFunctions();
+    if (!gl)
+        return;
+    gl->addClientPointerRangeMESA(addr, size);
 }
 
 void glwAttachShader (GLuint program, GLuint shader)
@@ -5146,6 +5154,14 @@ void glwReadnPixels (GLint x, GLint y, GLsizei width, GLsizei height, GLenum for
     if (!gl)
         return;
     gl->readnPixels(x, y, width, height, format, type, bufSize, data);
+}
+
+void* glwReleaseClientPointerRangeMESA (GLbitfield flags, GLsizeiptr *size)
+{
+    const glw::Functions* gl = glw::getCurrentThreadFunctions();
+    if (!gl)
+        return (void*)0;
+    return gl->releaseClientPointerRangeMESA(flags, size);
 }
 
 void glwReleaseShaderCompiler (void)

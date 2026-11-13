@@ -2,8 +2,8 @@ Name: Granite
 Short Name: Granite
 URL: https://github.com/Themaister/Granite
 Version: N/A
-Revision: cbc9cc966d2b3cae8906d2d30e761904342b5aba
-Update Mechanism: Manual
+Revision: 53090429539bf3404250d18fe58db971f0907c04
+Update Mechanism: Static.HardFork (https://crbug.com/576057070)
 License: MIT
 License File: LICENSE
 Security Critical: No
@@ -12,7 +12,18 @@ Shipped: yes
 Description:
     compute shader decode etc to rgba.
 
+Update instructions:
+Change the commit in crowbar.txtpb (both the upstream identifier and the
+git artifact) and the Revision above to the new upstream commit, then run
+from this directory:
+crowbar build --no-dry-run ./
+If the generated shaders change, run
+scripts/run_code_generation.py -g "Vulkan internal shader programs".
+
 Local Modifications:
+    src/etc_decoder.h is upstream's assets/shaders/decode/etc2.comp
+    with "#version 450" removed (copy.bara.sky) and
+    patches/0001-adapt-for-angle.patch applied:
     change main function name to DecodeRGB.
     add punchthrough parameter for DecodeRGB.
     add R11 macro for EAC_R11 decode.

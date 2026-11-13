@@ -4189,6 +4189,10 @@ void GraphicsPipelineDesc::initializePipelineSharedNonVertexInputState(
     {
         dynamicStateListOut->push_back(VK_DYNAMIC_STATE_ALPHA_TO_ONE_ENABLE_EXT);
     }
+    if (context->getFeatures().supportsSampleMaskDynamicState.enabled)
+    {
+        dynamicStateListOut->push_back(VK_DYNAMIC_STATE_SAMPLE_MASK_EXT);
+    }
 }
 
 void GraphicsPipelineDesc::initializePipelineFragmentOutputState(
@@ -4441,11 +4445,6 @@ void GraphicsPipelineDesc::updateRasterizerDiscardEnabled(
 {
     mShaders.shaders.bits.rasterizerDiscardEnable = static_cast<uint32_t>(rasterizerDiscardEnabled);
     transition->set(ANGLE_GET_TRANSITION_BIT(mShaders.shaders.bits));
-}
-
-uint32_t GraphicsPipelineDesc::getRasterizationSamples() const
-{
-    return mSharedNonVertexInput.multisample.bits.rasterizationSamplesMinusOne + 1;
 }
 
 void GraphicsPipelineDesc::setRasterizationSamples(uint32_t rasterizationSamples)
@@ -6544,7 +6543,8 @@ void DescriptorSetDescBuilder::updateOneUniformBuffer(
 
     // Insert necessary barriers
     commandBufferHelper->bufferRead(context, VK_ACCESS_UNIFORM_READ_BIT, block.activeShaders(),
-                                    &vk::GetImpl(bufferBinding.get())->getBuffer());
+                                    &vk::GetImpl(bufferBinding.get())->getBuffer(),
+                                    kNoMemoryBarrierBits);
 }
 
 void DescriptorSetDescBuilder::updateOneUniformBufferOffset(
@@ -6605,7 +6605,7 @@ void DescriptorSetDescBuilder::updateOneStorageBuffer(
         // buffer data uploads and copies by knowing that the buffers are not actually
         // being written to.
         commandBufferHelper->bufferRead(context, VK_ACCESS_SHADER_READ_BIT, block.activeShaders(),
-                                        &bufferHelper);
+                                        &bufferHelper, memoryBarrierBits);
     }
     else if (bufferHelper.canShaderWriteBarrierSkipped(block.activeShaders()) &&
              (memoryBarrierBits & kBufferMemoryBarrierBits) == 0)
@@ -6625,8 +6625,8 @@ void DescriptorSetDescBuilder::updateOneStorageBuffer(
     {
         // We set the SHADER_READ_BIT to be conservative.
         VkAccessFlags accessFlags = VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_SHADER_WRITE_BIT;
-        commandBufferHelper->bufferWrite(context, accessFlags, block.activeShaders(),
-                                         &bufferHelper);
+        commandBufferHelper->bufferWrite(context, accessFlags, block.activeShaders(), &bufferHelper,
+                                         memoryBarrierBits);
     }
 }
 
@@ -6704,7 +6704,7 @@ void DescriptorSetDescBuilder::updateAtomicCounters(
 
         VkAccessFlags accessFlags = VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_SHADER_WRITE_BIT;
         commandBufferHelper->bufferWrite(context, accessFlags, atomicCounterBuffer.activeShaders(),
-                                         &bufferHelper);
+                                         &bufferHelper, kNoMemoryBarrierBits);
 
         VkDeviceSize offset = bufferBinding.getOffset() + bufferHelper.getOffset();
 

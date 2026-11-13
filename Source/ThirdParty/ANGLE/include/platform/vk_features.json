@@ -581,6 +581,15 @@
             "issue": "https://anglebug.com/573420557"
         },
         {
+            "name": "mutable_format_for_int_color_images",
+            "category": "Workarounds",
+            "description": [
+                "Create integer color images with VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT, ",
+                "as some drivers return wrong values for data written into them otherwise"
+            ],
+            "issue": "https://anglebug.com/573449713"
+        },
+        {
             "name": "supports_image_format_list",
             "category": "Features",
             "description": [
@@ -1140,6 +1149,14 @@
             "issue": "http://anglebug.com/575891833"
         },
         {
+            "name": "supports_sample_mask_dynamic_state",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the sampleMask feature of VK_EXT_extended_dynamic_state3 extension"
+            ],
+            "issue": "http://anglebug.com/575891833"
+        },
+        {
             "name": "supports_fragment_shading_rate",
             "category": "Features",
             "description": [
@@ -1356,12 +1373,11 @@
             "issue": "https://anglebug.com/42266842"
         },
         {
-            "name": "sync_monolithic_pipelines_to_blob_cache",
+            "name": "sync_global_pipeline_cache_to_blob_cache",
             "category": "Workarounds",
             "description": [
-                "Whether it's beneficial to store monolithic pipelines in the blob cache when ",
-                "VK_EXT_graphics_pipeline_library is in use.  Otherwise the libraries are stored ",
-                "only, and monolithic pipelines are recreated on every run"
+                "Whether it's beneficial to store global pipeline cache in the blob cache. ",
+                "Otherwise the global pipeline cache is recreated on every run"
             ],
             "issue": "https://anglebug.com/42265839"
         },
@@ -1369,9 +1385,8 @@
             "name": "merge_program_pipeline_caches_to_global_cache",
             "category": "Workarounds",
             "description": [
-                "Whether it's beneficial to merge the pipeline cache for the shaders subset of the ",
-                "pipeline into the monolithic pipeline cache.  Only useful on platforms where ",
-                "monolithic pipelines can reuse blobs from partial pipelines"
+                "Whether it's beneficial to merge the per-program pipeline cache into the global ",
+                "pipeline cache after the warm up or load"
             ],
             "issue": "https://anglebug.com/42265839"
         },

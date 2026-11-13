@@ -1,5 +1,5 @@
 #include "angle_trace_gl.h"
-#include "CapturedTest_ExternalAHB_ES3_Vulkan.h"
+#include "CapturedTestAHB_ExternalAHB_ES3_Vulkan.h"
 
 const char *const glShaderSource_string_0[] = { 
 "attribute vec4 a_position;\n"
@@ -27,7 +27,7 @@ const char *const glShaderSource_string_1[] = {
 void SetupReplayContextShared(void)
 {
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    CreateEGLImageKHR(gEGLDisplay, gContextMap2[14], 12465, 0, 0, 2, 2, 1);
+    CreateEGLImageKHR(gEGLDisplay, gContextMap2[20], 12465, 0, 0, 2, 2, 1);
     glGenTextures(1, (GLuint *)gReadBuffer);
     UpdateTextureID(1, 0);
     glBindTexture(GL_TEXTURE_EXTERNAL_OES, gTextureMap[1]);

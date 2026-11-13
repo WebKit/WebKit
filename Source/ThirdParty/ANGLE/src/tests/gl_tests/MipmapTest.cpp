@@ -1654,6 +1654,45 @@ TEST_P(MipmapTestES3, MipmapsForTexture3D)
     EXPECT_PIXEL_COLOR_EQ(px, py, GLColor::red);
 }
 
+// Creates a mipmapped 3D texture, and calls ANGLE's GenerateMipmap.
+// Verification is done using blend and readback.
+TEST_P(MipmapTestES3, MipmapsForTexture3DBlendAndReadback)
+{
+    constexpr uint32_t kWidth      = 27;
+    constexpr uint32_t kHeight     = 19;
+    constexpr uint32_t kDepth      = 5;
+    constexpr uint32_t kLevelCount = 3;
+
+    glBindTexture(GL_TEXTURE_3D, mTexture);
+    glTexStorage3D(GL_TEXTURE_3D, kLevelCount, GL_RGBA8, kWidth, kHeight, kDepth);
+
+    // Fill the first level with green
+    const std::vector<GLColor> uploadData(kWidth * kHeight * kDepth, GLColor::green);
+    glTexSubImage3D(GL_TEXTURE_3D, 0, 0, 0, 0, kWidth, kHeight, kDepth, GL_RGBA, GL_UNSIGNED_BYTE,
+                    uploadData.data());
+
+    glGenerateMipmap(GL_TEXTURE_3D);
+
+    // Verify that every slice is green.
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    ANGLE_GL_PROGRAM(drawRed, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+
+    for (uint32_t level = 0; level < kLevelCount; ++level)
+    {
+        for (uint32_t slice = 0; slice < (kDepth >> level); ++slice)
+        {
+            glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, mTexture, level, slice);
+            drawQuad(drawRed, essl1_shaders::PositionAttrib(), 0.5);
+            EXPECT_PIXEL_RECT_EQ(0, 0, kWidth >> level, kHeight >> level, GLColor::yellow);
+        }
+    }
+    ASSERT_GL_NO_ERROR();
+}
+
 // Create a 2D array, then immediately redefine it to have fewer layers.  Regression test for a bug
 // in the Vulkan backend where the old higher-layer-count data upload was not removed.
 TEST_P(MipmapTestES3, TextureArrayRedefineThenGenerateMipmap)

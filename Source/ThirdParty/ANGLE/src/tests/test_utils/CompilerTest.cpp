@@ -33,7 +33,7 @@ GLuint CompiledShader::compile(GLenum type, const char *source)
     if (compileResult == 0)
     {
         std::cerr << "shader compilation failed: "
-                  << (mInfoLog.empty() ? "<Empty message log>" : mInfoLog.data());
+                  << (mInfoLog.empty() ? "<Empty message log>" : mInfoLog.data()) << "\n";
 
         destroy();
     }
@@ -110,6 +110,64 @@ bool CompiledShader::verifyCountInTranslatedSource(const char *expect, size_t ex
     return count == expectCount;
 }
 
+GLuint CompiledProgram::link(const std::vector<const CompiledShader *> &shaders)
+{
+    mProgram = glCreateProgram();
+
+    for (const CompiledShader *shader : shaders)
+    {
+        if (shader->success())
+        {
+            glAttachShader(mProgram, shader->getShader());
+        }
+    }
+
+    glLinkProgram(mProgram);
+
+    GLint linkResult;
+    glGetProgramiv(mProgram, GL_LINK_STATUS, &linkResult);
+
+    GLint infoLogLength;
+    glGetProgramiv(mProgram, GL_INFO_LOG_LENGTH, &infoLogLength);
+    mInfoLog.clear();
+
+    if (infoLogLength > 0)
+    {
+        std::vector<GLchar> infoLog(infoLogLength);
+        glGetProgramInfoLog(mProgram, infoLogLength, nullptr, infoLog.data());
+
+        // Note: the info log is nul-terminated.
+        mInfoLog = infoLog.data();
+    }
+
+    if (linkResult == 0)
+    {
+        destroy();
+    }
+
+    return mProgram;
+}
+
+CompiledProgram::~CompiledProgram()
+{
+    if (mProgram != 0)
+    {
+        destroy();
+    }
+}
+
+void CompiledProgram::destroy()
+{
+    glDeleteProgram(mProgram);
+    ASSERT_GL_NO_ERROR();
+    mProgram = 0;
+}
+
+bool CompiledProgram::hasInfoLog(const char *expect) const
+{
+    return mInfoLog.find(expect) != std::string::npos;
+}
+
 void CompilerTest::testSetUp() {}
 
 void CompilerTest::testTearDown()
@@ -126,8 +184,7 @@ void CompilerTest::reset()
     mFragmentShader.destroy();
     mComputeShader.destroy();
 
-    glDeleteProgram(mProgram);
-    mProgram = 0;
+    mProgram.destroy();
 }
 
 const CompiledShader &CompilerTest::compile(GLenum type, const char *source)
@@ -162,42 +219,17 @@ CompiledShader &CompilerTest::getCompiledShader(GLenum type)
 
 GLuint CompilerTest::link()
 {
-    mProgram = glCreateProgram();
-
     if (mComputeShader.success())
     {
-        glAttachShader(mProgram, mComputeShader.getShader());
+        mProgram.link({&mComputeShader});
     }
     else
     {
-        if (mVertexShader.success())
-        {
-            glAttachShader(mProgram, mVertexShader.getShader());
-        }
-        if (mTessellationControlShader.success())
-        {
-            glAttachShader(mProgram, mTessellationControlShader.getShader());
-        }
-        if (mTessellationEvaluationShader.success())
-        {
-            glAttachShader(mProgram, mTessellationEvaluationShader.getShader());
-        }
-        if (mGeometryShader.success())
-        {
-            glAttachShader(mProgram, mGeometryShader.getShader());
-        }
-        if (mFragmentShader.success())
-        {
-            glAttachShader(mProgram, mFragmentShader.getShader());
-        }
+        mProgram.link({&mVertexShader, &mTessellationControlShader, &mTessellationEvaluationShader,
+                       &mGeometryShader, &mFragmentShader});
     }
-
-    glLinkProgram(mProgram);
     EXPECT_GL_NO_ERROR();
+    EXPECT_TRUE(mProgram.success()) << mProgram.getInfoLog();
 
-    GLint linkStatus;
-    glGetProgramiv(mProgram, GL_LINK_STATUS, &linkStatus);
-    EXPECT_NE(linkStatus, 0);
-
-    return mProgram;
+    return mProgram.getProgram();
 }

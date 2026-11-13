@@ -295,7 +295,7 @@ void doubleToString(double value, char *buf, size_t bufSize)
 
 static bool endSession(qpTestLog *log)
 {
-    DE_ASSERT(log && log->isSessionOpen);
+    DE_ASSERT(log && log->isSessionOpen && log->outputFile);
 
     /* Make sure xml is flushed. */
     qpXmlWriter_flush(log->writer);
@@ -1005,8 +1005,9 @@ bool qpTestLog_writeImage(qpTestLog *log, const char *name, const char *descript
         else
         {
             /* Need to re-pack pixels. */
-            if (Buffer_resize(&compressedBuffer, (size_t)(packedStride * height)))
+            if (Buffer_resize(&compressedBuffer, (size_t)packedStride * (size_t)height))
             {
+                DE_ASSERT(compressedBuffer.data);
                 int row;
                 for (row = 0; row < height; row++)
                     memcpy(&compressedBuffer.data[packedStride * row], &((const uint8_t *)data)[row * stride],

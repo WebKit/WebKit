@@ -1151,7 +1151,7 @@ def main():
             'src/common/third_party/xxhash/src/LICENSE',
             'src/libANGLE/renderer/vulkan/shaders/src/third_party/ffx_spd/src/LICENSE',
             'src/tests/test_utils/third_party/LICENSE',
-            'src/third_party/libXNVCtrl/LICENSE',
+            'src/third_party/libxnvctrl/LICENSE',
             'src/third_party/volk/src/LICENSE.md',
             'third_party/abseil-cpp/LICENSE',
             'third_party/glslang/LICENSE',
@@ -1197,31 +1197,6 @@ def main():
         'sub_dir': 'permissions',
     }))
 
-    blueprint_targets.append((
-        'java_defaults',
-        {
-            'name': 'ANGLE_java_defaults',
-            'sdk_version': 'system_current',
-            'target_sdk_version': TARGET_SDK_VERSION,
-            'min_sdk_version': MIN_SDK_VERSION,
-            'compile_multilib': 'both',
-            'use_embedded_native_libs': True,
-            'jni_libs': [
-                # hack: assume ABI_ARM
-                gn_target_to_blueprint_target(target, build_info[ABI_ARM][target])
-                for target in ROOT_TARGETS
-            ],
-            'aaptflags': [
-                '-0 .json',  # Don't compress *.json files
-                "--extra-packages com.android.angle.common",
-            ],
-            'srcs': [':ANGLE_srcs'],
-            'privileged': True,
-            'product_specific': True,
-            'owner': 'google',
-            'required': ['android.software.angle.xml'],
-        }))
-
     blueprint_targets.append(('android_library', {
         'name': 'ANGLE_library',
         'sdk_version': 'system_current',
@@ -1232,18 +1207,6 @@ def main():
         'aaptflags': ['-0 .json',],
         'manifest': 'src/android_system_settings/src/com/android/angle/AndroidManifest.xml',
         'static_libs': ['androidx.preference_preference',],
-    }))
-
-    blueprint_targets.append(('android_app', {
-        'name': 'ANGLE',
-        'defaults': ['ANGLE_java_defaults'],
-        'manifest': 'src/android_system_settings/src/com/android/angle/AndroidManifest.xml',
-        'static_libs': ['ANGLE_library'],
-        'optimize': {
-            'enabled': True,
-            'shrink': True,
-        },
-        'asset_dirs': ['src/android_system_settings/assets',],
     }))
 
     blueprint_targets.append((

@@ -37,6 +37,7 @@ class WorkGroupSizeTest : public testing::Test
     {
         ShCompileOptions compileOptions = {};
         compileOptions.intermediateTree = true;
+        compileOptions.outputDebugInfo  = true;
 
         const char *shaderStrings[] = {shaderString.c_str()};
         bool status                 = mTranslator->compile(shaderStrings, compileOptions);

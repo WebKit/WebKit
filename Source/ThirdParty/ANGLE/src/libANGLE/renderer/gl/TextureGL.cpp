@@ -166,6 +166,57 @@ angle::Result GetDepthOneFilledBuffer(const gl::Context *context,
     return angle::Result::Continue;
 }
 
+struct ScopedTextureGL : angle::NonCopyable
+{
+    explicit ScopedTextureGL(StateManagerGL *stateManager) : stateManager(stateManager) {}
+    ~ScopedTextureGL()
+    {
+        if (id != 0)
+        {
+            stateManager->deleteTexture(id);
+        }
+    }
+    StateManagerGL *stateManager;
+    GLuint id = 0;
+};
+
+struct ScopedFramebufferGL : angle::NonCopyable
+{
+    explicit ScopedFramebufferGL(StateManagerGL *stateManager) : stateManager(stateManager) {}
+    ~ScopedFramebufferGL()
+    {
+        if (id != 0)
+        {
+            stateManager->deleteFramebuffer(id);
+        }
+    }
+    StateManagerGL *stateManager;
+    GLuint id = 0;
+};
+
+bool NeedsShaderCopyForVirtualMipchain(const gl::FramebufferAttachment *readBuffer,
+                                       GLenum dstSizedInternalFormat)
+{
+    if (readBuffer == nullptr || dstSizedInternalFormat == GL_NONE)
+    {
+        return false;
+    }
+    const gl::InternalFormat *srcFormat = readBuffer->getFormat().info;
+    if (srcFormat == nullptr || srcFormat->isInt())
+    {
+        return false;
+    }
+    const gl::InternalFormat &dstFormat = gl::GetSizedInternalFormatInfo(dstSizedInternalFormat);
+    if (dstFormat.isInt())
+    {
+        return false;
+    }
+    return (dstFormat.redBits > 0 && srcFormat->redBits != dstFormat.redBits) ||
+           (dstFormat.greenBits > 0 && srcFormat->greenBits != dstFormat.greenBits) ||
+           (dstFormat.blueBits > 0 && srcFormat->blueBits != dstFormat.blueBits) ||
+           (dstFormat.alphaBits > 0 && srcFormat->alphaBits != dstFormat.alphaBits);
+}
+
 }  // anonymous namespace
 
 LUMAWorkaroundGL::LUMAWorkaroundGL() : LUMAWorkaroundGL(false, GL_NONE) {}
@@ -2014,6 +2065,15 @@ angle::Result TextureGL::handleCopyImageSelfCopyRedefine(const gl::Context *cont
         ANGLE_TRY(stateManager->setPixelUnpackBuffer(context, nullptr));
     }
 
+    // Use the source framebuffer's implementation color read type (falling back to
+    // GL_UNSIGNED_BYTE via GetCopyTexImageInternalFormatInfo if the format/type combination is
+    // not in the format table) so that unsized internal formats (e.g. GL_RGBA from a half-float
+    // or float framebuffer) resolve to the appropriate sized internal format rather than 8-bit
+    // UNORM.
+    const GLenum type = source->getImplementationColorReadType(context);
+    const gl::InternalFormat &internalFormatInfo =
+        nativegl::GetCopyTexImageInternalFormatInfo(internalFormat, type);
+
     gl::Rectangle clippedArea;
     if (!ClipRectangle(sourceArea, gl::Rectangle(0, 0, fbSize.width, fbSize.height), &clippedArea))
     {
@@ -2021,8 +2081,7 @@ angle::Result TextureGL::handleCopyImageSelfCopyRedefine(const gl::Context *cont
         if (features.virtualizeBaseLevelAndMipchain.enabled && isVirtualMipchainType())
         {
             nativegl::TexStorageFormat texStorageFormat = nativegl::GetTexStorageFormat(
-                functions, features,
-                gl::GetInternalFormatInfo(internalFormat, GL_UNSIGNED_BYTE).sizedInternalFormat);
+                functions, features, internalFormatInfo.sizedInternalFormat);
             ANGLE_TRY(allocateOrUpdateVirtualLevel(
                 context, target, level, texStorageFormat.internalFormat,
                 gl::Extents(sourceArea.width, sourceArea.height, 1)));
@@ -2051,28 +2110,52 @@ angle::Result TextureGL::handleCopyImageSelfCopyRedefine(const gl::Context *cont
     // Avoid redefining the texture before the copy, as that would invalidate the
     // source attachment. Copy through a temporary texture first.
 
-    GLuint tempTex = 0;
-    ANGLE_GL_TRY(context, functions->genTextures(1, &tempTex));
+    ScopedTextureGL tempTex(stateManager);
+    ANGLE_GL_TRY(context, functions->genTextures(1, &tempTex.id));
+    ScopedFramebufferGL tempFBO(stateManager);
+    ANGLE_GL_TRY(context, functions->genFramebuffers(1, &tempFBO.id));
 
-    // Always use a 2D temp texture to keep the attachment complete (especially for
-    // cube maps in ES, which require all faces to be defined).
-    stateManager->bindTexture(gl::TextureType::_2D, tempTex);
-    ANGLE_GL_TRY(context, functions->copyTexImage2D(GL_TEXTURE_2D, 0, internalFormat, clippedArea.x,
-                                                    clippedArea.y, clippedArea.width,
-                                                    clippedArea.height, 0));
+    const bool useVirtualMipchain =
+        features.virtualizeBaseLevelAndMipchain.enabled && isVirtualMipchainType();
+    nativegl::TexStorageFormat texStorageFormat =
+        nativegl::GetTexStorageFormat(functions, features, internalFormatInfo.sizedInternalFormat);
+    const gl::FramebufferAttachment *readBuffer = source->getReadColorAttachment();
 
-    GLuint tempFBO = 0;
-    ANGLE_GL_TRY(context, functions->genFramebuffers(1, &tempFBO));
-    stateManager->bindFramebuffer(GL_FRAMEBUFFER, tempFBO);
-    ANGLE_GL_TRY(context, functions->framebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-                                                          GL_TEXTURE_2D, tempTex, 0));
+    if (useVirtualMipchain &&
+        NeedsShaderCopyForVirtualMipchain(readBuffer, texStorageFormat.internalFormat))
+    {
+        ANGLE_TRY(allocateTexStorage(context, tempTex.id, gl::TextureType::_2D, 1,
+                                     texStorageFormat.internalFormat,
+                                     gl::Extents(clippedArea.width, clippedArea.height, 1)));
+        stateManager->bindFramebuffer(GL_FRAMEBUFFER, tempFBO.id);
+        ANGLE_GL_TRY(context, functions->framebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                                                              GL_TEXTURE_2D, tempTex.id, 0));
+        stateManager->setScissorTestEnabled(false);
+        BlitGL *blitter = GetBlitGL(context);
+        ANGLE_TRY(blitter->blitColorBufferWithShader(
+            context, source, tempFBO.id, clippedArea,
+            gl::Rectangle(0, 0, clippedArea.width, clippedArea.height), GL_NEAREST, true));
+        stateManager->bindFramebuffer(GL_FRAMEBUFFER, tempFBO.id);
+    }
+    else
+    {
+        // Always use a 2D temp texture to keep the attachment complete (especially for
+        // cube maps in ES, which require all faces to be defined).
+        stateManager->bindTexture(gl::TextureType::_2D, tempTex.id);
+        ANGLE_GL_TRY_ALWAYS_CHECK(
+            context,
+            functions->copyTexImage2D(GL_TEXTURE_2D, 0, internalFormat, clippedArea.x,
+                                      clippedArea.y, clippedArea.width, clippedArea.height, 0));
+
+        stateManager->bindFramebuffer(GL_FRAMEBUFFER, tempFBO.id);
+        ANGLE_GL_TRY(context, functions->framebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                                                              GL_TEXTURE_2D, tempTex.id, 0));
+    }
 
     // Redefine the destination texture after the temp framebuffer is set up.
-    if (features.virtualizeBaseLevelAndMipchain.enabled && isVirtualMipchainType())
+    const gl::Rectangle tempSourceArea(0, 0, clippedArea.width, clippedArea.height);
+    if (useVirtualMipchain)
     {
-        nativegl::TexStorageFormat texStorageFormat = nativegl::GetTexStorageFormat(
-            functions, features,
-            gl::GetInternalFormatInfo(internalFormat, GL_UNSIGNED_BYTE).sizedInternalFormat);
         ANGLE_TRY(
             allocateOrUpdateVirtualLevel(context, target, level, texStorageFormat.internalFormat,
                                          gl::Extents(sourceArea.width, sourceArea.height, 1)));
@@ -2084,9 +2167,11 @@ angle::Result TextureGL::handleCopyImageSelfCopyRedefine(const gl::Context *cont
                                       ToGLenum(nlt.target), nlt.level, 0, 0, sourceArea.width,
                                       sourceArea.height, initTexFormat, initTexType, zero->data()));
         }
-        ANGLE_GL_TRY(context, functions->copyTexSubImage2D(ToGLenum(nlt.target), nlt.level,
-                                                           destOffset.x, destOffset.y, 0, 0,
-                                                           clippedArea.width, clippedArea.height));
+        const gl::InternalFormat &tempSourceFormatInfo =
+            gl::GetSizedInternalFormatInfo(texStorageFormat.internalFormat);
+        ANGLE_TRY(copySubImageFromFramebuffer(context, nlt, tempSourceFormatInfo,
+                                              texStorageFormat.internalFormat, destOffset,
+                                              tempSourceArea));
     }
     else
     {
@@ -2097,15 +2182,91 @@ angle::Result TextureGL::handleCopyImageSelfCopyRedefine(const gl::Context *cont
                                   sourceArea.width, sourceArea.height, 0, initTexFormat,
                                   initTexType, zero ? zero->data() : nullptr));
 
-        ANGLE_GL_TRY(context, functions->copyTexSubImage2D(
-                                  ToGLenum(target), static_cast<GLint>(level), destOffset.x,
-                                  destOffset.y, 0, 0, clippedArea.width, clippedArea.height));
+        NativeLevelTarget nlt{mTextureID, target, static_cast<GLint>(level)};
+        ANGLE_TRY(copySubImageFromFramebuffer(context, nlt, internalFormatInfo, internalFormat,
+                                              destOffset, tempSourceArea));
     }
 
-    stateManager->deleteFramebuffer(tempFBO);
-    stateManager->deleteTexture(tempTex);
-
     return angle::Result::Continue;
+}
+
+angle::Result TextureGL::copySubImageFromFramebuffer(const gl::Context *context,
+                                                     const NativeLevelTarget &nlt,
+                                                     const gl::InternalFormat &sourceFormatInfo,
+                                                     GLenum destInternalFormat,
+                                                     const gl::Offset &destOffset,
+                                                     const gl::Rectangle &clippedArea)
+{
+    const FunctionsGL *functions      = GetFunctionsGL(context);
+    StateManagerGL *stateManager      = GetStateManagerGL(context);
+    const angle::FeaturesGL &features = GetFeaturesGL(context);
+
+    if (clippedArea.width > 0 && clippedArea.height > 0 &&
+        nativegl::ShouldUseScratchTextureForCopySubImage(functions, features, sourceFormatInfo,
+                                                         destInternalFormat))
+    {
+        // PowerVR's glCopyTexSubImage2D/3D rejects valid format-converting copies with
+        // GL_INVALID_OPERATION, whereas glCopyTexImage2D supports them. Copy the framebuffer
+        // region into a temporary 2D texture via glCopyTexImage2D and then transfer it into the
+        // destination level via glCopyImageSubData.
+        ScopedTextureGL tempTex(stateManager);
+        ANGLE_GL_TRY(context, functions->genTextures(1, &tempTex.id));
+        stateManager->bindTexture(gl::TextureType::_2D, tempTex.id);
+        ANGLE_GL_TRY(context,
+                     functions->texParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
+        ANGLE_GL_TRY(context,
+                     functions->texParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
+        ANGLE_GL_TRY_ALWAYS_CHECK(
+            context,
+            functions->copyTexImage2D(GL_TEXTURE_2D, 0, destInternalFormat, clippedArea.x,
+                                      clippedArea.y, clippedArea.width, clippedArea.height, 0));
+
+        GLenum dstCopyTarget = ToGLenum(nlt.target);
+        GLint dstZ           = destOffset.z;
+        if (gl::IsCubeMapFaceTarget(nlt.target))
+        {
+            dstCopyTarget = GL_TEXTURE_CUBE_MAP;
+            dstZ          = static_cast<GLint>(gl::CubeMapTextureTargetToFaceIndex(nlt.target));
+        }
+
+        ANGLE_GL_TRY_ALWAYS_CHECK(context, functions->copyImageSubData(
+                                               tempTex.id, GL_TEXTURE_2D, 0, 0, 0, 0, nlt.textureID,
+                                               dstCopyTarget, nlt.level, destOffset.x, destOffset.y,
+                                               dstZ, clippedArea.width, clippedArea.height, 1));
+        stateManager->bindTexture(gl::TextureTargetToType(nlt.target), nlt.textureID);
+        return angle::Result::Continue;
+    }
+
+    gl::TextureType bindType = gl::TextureTargetToType(nlt.target);
+    if (nativegl::UseTexImage2D(bindType))
+    {
+        ASSERT(destOffset.z == 0);
+        ANGLE_GL_TRY_ALWAYS_CHECK(
+            context, functions->copyTexSubImage2D(ToGLenum(nlt.target), nlt.level, destOffset.x,
+                                                  destOffset.y, clippedArea.x, clippedArea.y,
+                                                  clippedArea.width, clippedArea.height));
+    }
+    else
+    {
+        ASSERT(nativegl::UseTexImage3D(bindType));
+        ANGLE_GL_TRY_ALWAYS_CHECK(
+            context, functions->copyTexSubImage3D(
+                         ToGLenum(nlt.target), nlt.level, destOffset.x, destOffset.y, destOffset.z,
+                         clippedArea.x, clippedArea.y, clippedArea.width, clippedArea.height));
+    }
+    return angle::Result::Continue;
+}
+
+const gl::InternalFormat &TextureGL::getCopyImageInternalFormat(const gl::Context *context,
+                                                                GLenum internalFormat,
+                                                                gl::Framebuffer *source) const
+{
+    // TextureGL::copyImage allocates unsized destination internal formats using the source
+    // framebuffer's implementation color read type (e.g., preserving floating-point component types
+    // when copying from a float or half-float framebuffer in ES 2.0 / WebGL 1). Return the matching
+    // format info so TextureState's ImageDesc stays consistent with the allocated native texture.
+    return nativegl::GetCopyTexImageInternalFormatInfo(
+        internalFormat, source->getImplementationColorReadType(context));
 }
 
 angle::Result TextureGL::copyImage(const gl::Context *context,
@@ -2123,20 +2284,19 @@ angle::Result TextureGL::copyImage(const gl::Context *context,
     size_t level             = static_cast<size_t>(index.getLevelIndex());
     GLenum type              = source->getImplementationColorReadType(context);
     const gl::InternalFormat &originalInternalFormatInfo =
-        gl::GetInternalFormatInfo(internalFormat, type);
+        nativegl::GetCopyTexImageInternalFormatInfo(internalFormat, type);
     const bool useVirtualMipchain =
         features.virtualizeBaseLevelAndMipchain.enabled && isVirtualMipchainType();
     nativegl::CopyTexImageImageFormat copyTexImageFormat =
-        nativegl::GetCopyTexImageImageFormat(functions, features, internalFormat);
+        nativegl::GetCopyTexImageImageFormat(functions, features, internalFormat, type);
     const GLenum destInternalFormat =
         useVirtualMipchain
-            ? nativegl::GetTexStorageFormat(
-                  functions, features,
-                  gl::GetInternalFormatInfo(internalFormat, GL_UNSIGNED_BYTE).sizedInternalFormat)
+            ? nativegl::GetTexStorageFormat(functions, features,
+                                            originalInternalFormatInfo.sizedInternalFormat)
                   .internalFormat
             : copyTexImageFormat.internalFormat;
     const gl::InternalFormat &copyInternalFormatInfo =
-        gl::GetInternalFormatInfo(destInternalFormat, GL_UNSIGNED_BYTE);
+        nativegl::GetCopyTexImageInternalFormatInfo(destInternalFormat, type);
     nativegl::TexImageFormat initTexImageFormat =
         nativegl::GetTexImageFormat(functions, features, internalFormat,
                                     copyInternalFormatInfo.format, copyInternalFormatInfo.type);
@@ -2284,7 +2444,7 @@ angle::Result TextureGL::copyImage(const gl::Context *context,
             {
                 ANGLE_TRY(blitter->copySubImageToLUMAWorkaroundTexture(
                     context, nlt.textureID, bindType, nlt.target, levelInfo.sourceFormat, nlt.level,
-                    destOffset, clippedArea, source));
+                    destOffset, clippedArea, destInternalFormat, source));
             }
             else
             {
@@ -2298,9 +2458,18 @@ angle::Result TextureGL::copyImage(const gl::Context *context,
             ASSERT(nativegl::UseTexImage2D(bindType));
             stateManager->bindFramebuffer(GL_READ_FRAMEBUFFER,
                                           sourceFramebufferGL->getFramebufferID());
-            if (features.emulateCopyTexImage2DFromRenderbuffers.enabled && readBuffer &&
-                readBuffer->type() == GL_RENDERBUFFER)
+            const gl::InternalFormat &sourceFormatInfo = *readBuffer->getFormat().info;
+            if ((features.emulateCopyTexImage2DFromRenderbuffers.enabled && readBuffer &&
+                 readBuffer->type() == GL_RENDERBUFFER) ||
+                (useVirtualMipchain &&
+                 NeedsShaderCopyForVirtualMipchain(readBuffer, destInternalFormat)))
             {
+                // When virtualizeBaseLevelAndMipchain backs an unsized GL_RGBA/GL_RGB copy target
+                // with sized glTexStorage2D (GL_RGBA8/GL_RGB8), native glCopyTexSubImage2D rejects
+                // copies from read buffers with different channel bit widths (such as GL_RGBA4,
+                // GL_RGB5_A1, or GL_RGB565) with GL_INVALID_OPERATION. Route those copies through
+                // a shader blit instead (https://crbug.com/577343656).
+                stateManager->setScissorTestEnabled(false);
                 BlitGL *blitter = GetBlitGL(context);
                 ANGLE_TRY(blitter->blitColorBufferWithShader(
                     context, source, nlt.textureID, nlt.target, nlt.level, clippedArea,
@@ -2310,10 +2479,8 @@ angle::Result TextureGL::copyImage(const gl::Context *context,
             }
             else if (requiresInitialization || useVirtualMipchain)
             {
-                ANGLE_GL_TRY(context, functions->copyTexSubImage2D(
-                                          ToGLenum(nlt.target), nlt.level, destOffset.x,
-                                          destOffset.y, clippedArea.x, clippedArea.y,
-                                          clippedArea.width, clippedArea.height));
+                ANGLE_TRY(copySubImageFromFramebuffer(context, nlt, sourceFormatInfo,
+                                                      destInternalFormat, destOffset, clippedArea));
             }
             else
             {
@@ -2325,11 +2492,9 @@ angle::Result TextureGL::copyImage(const gl::Context *context,
                                               copyTexImageFormat.internalFormat, sourceArea.width,
                                               sourceArea.height, 0, initTexImageFormat.format,
                                               initTexImageFormat.type, nullptr));
-                    ANGLE_GL_TRY_ALWAYS_CHECK(
-                        context,
-                        functions->copyTexSubImage2D(ToGLenum(target), static_cast<GLint>(level), 0,
-                                                     0, sourceArea.x, sourceArea.y,
-                                                     sourceArea.width, sourceArea.height));
+                    ANGLE_TRY(copySubImageFromFramebuffer(context, nlt, sourceFormatInfo,
+                                                          copyTexImageFormat.internalFormat,
+                                                          gl::Offset(0, 0, 0), sourceArea));
                 }
                 else
                 {
@@ -2402,17 +2567,25 @@ angle::Result TextureGL::copySubImage(const gl::Context *context,
         BlitGL *blitter = GetBlitGL(context);
         ANGLE_TRY(blitter->copySubImageToLUMAWorkaroundTexture(
             context, nlt.textureID, bindType, nlt.target, levelInfo.sourceFormat, nlt.level,
-            clippedOffset, clippedArea, source));
+            clippedOffset, clippedArea, levelInfo.nativeInternalFormat, source));
     }
     else
     {
+        const gl::FramebufferAttachment *readBuffer = source->getReadColorAttachment();
+        const gl::InternalFormat &sourceFormatInfo  = *readBuffer->getFormat().info;
+        const bool needsVirtualMipchainShaderCopy =
+            mVirtualMipChain.has_value() &&
+            NeedsShaderCopyForVirtualMipchain(
+                readBuffer,
+                mVirtualMipChain->virtualLevels[GetLevelInfoIndex(target, level)].internalFormat);
         if (nativegl::UseTexImage2D(bindType))
         {
             ASSERT(clippedOffset.z == 0);
-            if (features.emulateCopyTexImage2DFromRenderbuffers.enabled &&
-                source->getReadColorAttachment() &&
-                source->getReadColorAttachment()->type() == GL_RENDERBUFFER)
+            if ((features.emulateCopyTexImage2DFromRenderbuffers.enabled && readBuffer &&
+                 readBuffer->type() == GL_RENDERBUFFER) ||
+                needsVirtualMipchainShaderCopy)
             {
+                stateManager->setScissorTestEnabled(false);
                 BlitGL *blitter = GetBlitGL(context);
                 ANGLE_TRY(blitter->blitColorBufferWithShader(
                     context, source, nlt.textureID, nlt.target, nlt.level, clippedArea,
@@ -2422,19 +2595,48 @@ angle::Result TextureGL::copySubImage(const gl::Context *context,
             }
             else
             {
-                ANGLE_GL_TRY(context, functions->copyTexSubImage2D(
-                                          ToGLenum(nlt.target), nlt.level, clippedOffset.x,
-                                          clippedOffset.y, clippedArea.x, clippedArea.y,
-                                          clippedArea.width, clippedArea.height));
+                ANGLE_TRY(copySubImageFromFramebuffer(context, nlt, sourceFormatInfo,
+                                                      levelInfo.nativeInternalFormat, clippedOffset,
+                                                      clippedArea));
             }
         }
         else
         {
             ASSERT(nativegl::UseTexImage3D(bindType));
-            ANGLE_GL_TRY(context, functions->copyTexSubImage3D(
-                                      ToGLenum(nlt.target), nlt.level, clippedOffset.x,
-                                      clippedOffset.y, clippedOffset.z, clippedArea.x,
-                                      clippedArea.y, clippedArea.width, clippedArea.height));
+            if (needsVirtualMipchainShaderCopy)
+            {
+                const GLenum dstInternalFormat =
+                    mVirtualMipChain->virtualLevels[GetLevelInfoIndex(target, level)]
+                        .internalFormat;
+                ScopedTextureGL tempTex(stateManager);
+                ANGLE_GL_TRY(context, functions->genTextures(1, &tempTex.id));
+                ANGLE_TRY(allocateTexStorage(
+                    context, tempTex.id, gl::TextureType::_2D, 1, dstInternalFormat,
+                    gl::Extents(clippedArea.width, clippedArea.height, 1)));
+                ScopedFramebufferGL tempFBO(stateManager);
+                ANGLE_GL_TRY(context, functions->genFramebuffers(1, &tempFBO.id));
+                stateManager->bindFramebuffer(GL_FRAMEBUFFER, tempFBO.id);
+                ANGLE_GL_TRY(context,
+                             functions->framebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                                                             GL_TEXTURE_2D, tempTex.id, 0));
+                stateManager->setScissorTestEnabled(false);
+                BlitGL *blitter = GetBlitGL(context);
+                ANGLE_TRY(blitter->blitColorBufferWithShader(
+                    context, source, tempFBO.id, clippedArea,
+                    gl::Rectangle(0, 0, clippedArea.width, clippedArea.height), GL_NEAREST, true));
+                stateManager->bindFramebuffer(framebufferTarget, tempFBO.id);
+                stateManager->bindTexture(bindType, nlt.textureID);
+                ANGLE_TRY(copySubImageFromFramebuffer(
+                    context, nlt, gl::GetSizedInternalFormatInfo(dstInternalFormat),
+                    levelInfo.nativeInternalFormat, clippedOffset,
+                    gl::Rectangle(0, 0, clippedArea.width, clippedArea.height)));
+            }
+            else
+            {
+                ANGLE_TRY(copySubImageFromFramebuffer(context, nlt, sourceFormatInfo,
+                                                      levelInfo.nativeInternalFormat, clippedOffset,
+                                                      clippedArea));
+            }
         }
     }
 

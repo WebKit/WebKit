@@ -27,6 +27,7 @@ RenderbufferVk::RenderbufferVk(const gl::RenderbufferState &state)
     : RenderbufferImpl(state),
       mOwnsImage(false),
       mImage(nullptr),
+      mMultisampledImage(VK_IMAGE_TYPE_2D),
       mImageObserverBinding(this, kRenderbufferImageSubjectIndex),
       mRenderer(nullptr)
 {}
@@ -74,7 +75,7 @@ angle::Result RenderbufferVk::setStorageImpl(const gl::Context *context,
 
     if (mImage == nullptr)
     {
-        mImage              = new vk::ImageHelper();
+        mImage              = new vk::ImageHelper(VK_IMAGE_TYPE_2D);
         mOwnsImage          = true;
         mImageObserverBinding.bind(mImage);
         mImageViews.init(mRenderer);

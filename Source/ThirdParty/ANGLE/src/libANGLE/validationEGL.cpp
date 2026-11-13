@@ -2851,16 +2851,6 @@ const Thread *GetThreadIfValid(const Thread *thread)
     return thread;
 }
 
-ScopedConstDisplayRef GetDisplayIfValid(const Display *display)
-{
-    if (!ValidateDisplayPointer(nullptr, display))
-    {
-        return ScopedConstDisplayRef();
-    }
-
-    return ScopedConstDisplayRef(*display);
-}
-
 ScopedDisplayRef GetDisplayIfValid(Display *display)
 {
     if (!ValidateDisplayPointer(nullptr, display))
@@ -2879,16 +2869,6 @@ ScopedThreadSafeDisplayRef GetThreadSafeDisplayIfValid(Display *display)
     }
 
     return ScopedThreadSafeDisplayRef(*display);
-}
-
-ScopedConstDisplayLockAndRef GetDisplayAndLockIfValid(const Display *display)
-{
-    if (!ValidateDisplayPointer(nullptr, display))
-    {
-        return ScopedConstDisplayLockAndRef();
-    }
-
-    return ScopedConstDisplayLockAndRef(*display);
 }
 
 ScopedDisplayLockAndRef GetDisplayAndLockIfValid(Display *display)
@@ -7146,6 +7126,15 @@ bool ValidateQueryString(const ValidationContext *val, const Display *dpyPacked,
         case EGL_EXTENSIONS:
         case EGL_VENDOR:
         case EGL_VERSION:
+            break;
+        case EGL_RENDERER_STRING_ANGLE:
+        case EGL_ANGLE_VERSION_STRING_ANGLE:
+            if (!dpyPacked->getExtensions().queryRendererStringsANGLE)
+            {
+                val->setError(EGL_BAD_PARAMETER,
+                              "EGL_ANGLE_query_renderer_strings is not supported.");
+                return false;
+            }
             break;
         default:
             val->setError(EGL_BAD_PARAMETER, "Invalid query <name>");

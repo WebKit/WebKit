@@ -42,6 +42,7 @@ class ShCompileTest : public testing::Test
         ShCompileOptions options    = {};
         options.objectCode          = true;
         options.initOutputVariables = true;
+        options.outputDebugInfo     = true;
 
         bool success                  = sh::Compile(mCompiler, shaderStrings, stringCount, options);
         const std::string &compileLog = sh::GetInfoLog(mCompiler);
@@ -206,6 +207,7 @@ TEST_F(ShCompileTest, DecimalSepLocale)
 
             ShCompileOptions compileOptions = {};
             compileOptions.objectCode       = true;
+            compileOptions.outputDebugInfo  = true;
 
             // std::locale::global() must be used instead of setlocale() to affect new streams'
             // default locale

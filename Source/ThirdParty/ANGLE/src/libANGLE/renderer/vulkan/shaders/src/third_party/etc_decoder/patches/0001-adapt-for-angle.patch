@@ -1,0 +1,250 @@
+Adapt the ETC2 decode shader for ANGLE's EtcToBc.comp
+
+Turns upstream's standalone compute shader into a header that
+EtcToBc.comp includes (README.chromium, Local Modifications):
+- Drop the shader's own extension, layout, bindings, push constants,
+  build_coord(), flip_endian() and main().
+- Move the decode logic into ivec4 DecodeRGB(), with punchthrough as
+  an inout parameter.
+- Add an R11 macro path for EAC R11 (signed and unsigned) decode.
+- Rename ALPHA_BITS to alphaBits, and make the int/uint conversions
+  explicit.
+
+From 836cc5e2ce ("Vulkan: add etc to bc compute transcoding").
+
+diff --git a/src/etc_decoder.h b/src/etc_decoder.h
+index 65d2cc5a79..80ff34d57e 100644
+--- a/src/etc_decoder.h
++++ b/src/etc_decoder.h
+@@ -19,42 +19,7 @@
+  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+  */
+-
+-#extension GL_EXT_samplerless_texture_functions : require
+-layout(local_size_x = 4, local_size_y = 4, local_size_z = 4) in;
+-
+-layout(set = 0, binding = 0, rgba8ui) writeonly uniform uimage2D uOutput;
+-layout(set = 0, binding = 1) uniform utexture2D uInput;
+-
+-layout(constant_id = 0) const int ALPHA_BITS = 0;
+-
+-layout(push_constant) uniform Registers
+-{
+-    ivec2 resolution;
+-} registers;
+-
+-ivec2 build_coord()
+-{
+-    ivec2 base = ivec2(gl_WorkGroupID.xy) * 8;
+-    base.x += 4 * (int(gl_LocalInvocationID.z) & 1);
+-    base.y += 2 * (int(gl_LocalInvocationID.z) & 2);
+-    base += ivec2(gl_LocalInvocationID.xy);
+-    return base;
+-}
+-
+-uint flip_endian(uint v)
+-{
+-    uvec4 words = uvec4(v) >> uvec4(0, 8, 16, 24);
+-    words &= 0xffu;
+-    return (words.x << 24u) | (words.y << 16u) | (words.z << 8u) | (words.w << 0u);
+-}
+-
+-uvec2 flip_endian(uvec2 v)
+-{
+-    return uvec2(flip_endian(v.y), flip_endian(v.x));
+-}
+-
+-const ivec2 etc1_color_modifier_table[8] = ivec2[](
++ const ivec2 etc1_color_modifier_table[8] = ivec2[](
+     ivec2(2, 8),
+     ivec2(5, 17),
+     ivec2(9, 29),
+@@ -85,63 +50,48 @@ const ivec4 etc2_alpha_modifier_table[16] = ivec4[](
+ 
+ const int etc2_distance_table[8] = int[](3, 6, 11, 16, 23, 32, 41, 64);
+ 
+-uint decode_etc2_alpha(uvec2 payload, int linear_pixel)
++int decode_etc2_alpha(uvec2 payload, int linear_pixel)
+ {
+     int bit_offset = 45 - 3 * linear_pixel;
++#if R11
++    int base = isSigned !=0 ? bitfieldExtract(int(payload.y), 24, 8) : int(bitfieldExtract(payload.y, 24, 8));
++#else
+     int base = int(bitfieldExtract(payload.y, 24, 8));
++#endif
+     int multiplier = int(bitfieldExtract(payload.y, 20, 4));
+     int table = int(bitfieldExtract(payload.y, 16, 4));
+ 
+     int lsb_index = int(bitfieldExtract(payload[bit_offset >> 5], bit_offset & 31, 2));
+     bit_offset += 2;
+-    int msb = int((payload[bit_offset >> 5] >> (bit_offset & 31)) & 1);
++    int msb = int((payload[bit_offset >> 5] >> (bit_offset & 31)) & 1u);
+     int mod = etc2_alpha_modifier_table[table][lsb_index] ^ (msb - 1);
++#if R11
++    int a = base * 8 + 4;
++    a += multiplier != 0 ? mod * multiplier * 8 : mod;
++    int minValue = isSigned !=0 ? -1023: 0;
++    int maxValue = isSigned !=0 ? 1023 : 2047;
++    a = clamp(a, minValue, maxValue);
++    float scale = isSigned !=0 ? 127.0f : 255.0f;
++    return int(a/float(maxValue) * scale + 0.5f);
++#else
+     int a = base + mod * multiplier;
+     return clamp(a, 0, 0xff);
++#endif
+ }
+ 
+-void main()
+-{
+-    ivec2 coord = build_coord();
+-    if (any(greaterThanEqual(coord, registers.resolution)))
+-        return;
+-
+-    ivec2 tile_coord = coord >> 2;
+-    ivec2 pixel_coord = coord & 3;
+-    int linear_pixel = 4 * pixel_coord.x + pixel_coord.y;
+-    uvec4 payload = texelFetch(uInput, tile_coord, 0);
+-
+-    uvec2 color_payload;
+-    uint alpha_result;
+-    bool punchthrough;
+-    if (ALPHA_BITS == 8)
+-    {
+-        uvec2 alpha_payload = flip_endian(payload.xy);
+-        alpha_result = decode_etc2_alpha(alpha_payload, linear_pixel);
+-        color_payload = flip_endian(payload.zw);
+-    }
+-    else
+-    {
+-        color_payload = flip_endian(payload.xy);
+-        alpha_result = 0xffu;
+-    }
+-
+-    uvec3 rgb_result;
++ ivec4 DecodeRGB(ivec2 pixel_coord, uvec2 color_payload, int linear_pixel, inout bool punchthrough) {
++    int alpha_result = 0xff;
++    ivec3 rgb_result;
+     ivec3 base_rgb;
+     uint flip = color_payload.y & 1u;
+-    uint subblock = (pixel_coord[flip] & 2u) >> 1u;
++    uint subblock = uint((pixel_coord[flip] & 2) >> 1);
+     bool etc1_compat = false;
+ 
+-    if (ALPHA_BITS == 1)
+-        punchthrough = (color_payload.y & 2u) == 0u;
+-    else
+-        punchthrough = false;
+-
+-    if (ALPHA_BITS != 1 && (color_payload.y & 2u) == 0u)
++    if (alphaBits != 1 && (color_payload.y & 2u) == 0u)
+     {
+         // Individual mode (ETC1)
+         etc1_compat = true;
+-        base_rgb = ivec3(color_payload.yyy >> (uvec3(28, 20, 12) - 4 * subblock));
++        base_rgb = ivec3(color_payload.yyy >> (uvec3(28, 20, 12) - 4u * subblock));
+         base_rgb &= 0xf;
+         base_rgb *= 0x11;
+     }
+@@ -158,7 +108,7 @@ void main()
+         int g1 = g + gd;
+         int b1 = b + bd;
+ 
+-        if (uint(r1) > 31)
++        if (uint(r1) > 31u) // T mode
+         {
+             int r1 = int(bitfieldExtract(color_payload.y, 56 - 32, 2)) |
+                     (int(bitfieldExtract(color_payload.y, 59 - 32, 2)) << 2);
+@@ -180,17 +130,17 @@ void main()
+ 
+             if (index == 0)
+             {
+-                rgb_result = uvec3(r1, g1, b1);
+-                rgb_result *= 0x11u;
++                rgb_result = ivec3(r1, g1, b1);
++                rgb_result *= 0x11;
+             }
+             else
+             {
+                 int mod = 2 - index;
+                 ivec3 rgb = ivec3(r2, g2, b2) * 0x11 + mod * dist;
+-                rgb_result = clamp(rgb, ivec3(0), ivec3(255));
++                rgb_result = ivec3(clamp(rgb, ivec3(0), ivec3(255)));
+             }
+         }
+-        else if (uint(g1) > 31)
++        else if (uint(g1) > 31u) // H mode
+         {
+             int r1 = int(bitfieldExtract(color_payload.y, 59 - 32, 4));
+             int g1 = (int(bitfieldExtract(color_payload.y, 56 - 32, 3)) << 1) |
+@@ -202,7 +152,7 @@ void main()
+             int b2 = int(bitfieldExtract(color_payload.y, 35 - 32, 4));
+             uint da = color_payload.y & 4u;
+             uint db = color_payload.y & 1u;
+-            uint d = da + 2 * db;
++            uint d = da + 2u * db;
+             d += uint((r1 * 0x10000 + g1 * 0x100 + b1) >= (r2 * 0x10000 + g2 * 0x100 + b2));
+             int dist = etc2_distance_table[d];
+             int msb = int((color_payload.x >> (15 + linear_pixel)) & 2u);
+@@ -215,9 +165,9 @@ void main()
+             base *= 0x11;
+             int mod = 1 - 2 * lsb;
+             base += mod * dist;
+-            rgb_result = clamp(base, ivec3(0), ivec3(0xff));
++            rgb_result = ivec3(clamp(base, ivec3(0), ivec3(0xff)));
+         }
+-        else if (uint(b1) > 31)
++        else if (uint(b1) > 31u) // plane mode
+         {
+             // Planar mode
+             int r = int(bitfieldExtract(color_payload.y, 57 - 32, 6));
+@@ -247,14 +197,16 @@ void main()
+             ivec3 rgb = ivec3(r, g, b);
+             ivec3 dx = ivec3(rh, gh, bh) - rgb;
+             ivec3 dy = ivec3(rv, gv, bv) - rgb;
+-            dx *= pixel_coord.x;
+-            dy *= pixel_coord.y;
++            dx *= int(pixel_coord.x);
++            dy *= int(pixel_coord.y);
+             rgb = rgb + ((dx + dy + 2) >> 2);
+             rgb = clamp(rgb, ivec3(0), ivec3(255));
+-            rgb_result = rgb;
++            rgb_result = ivec3(rgb);
++
+             punchthrough = false;
++
+         }
+-        else
++        else // diff mode
+         {
+             // Differential mode (ETC1)
+             etc1_compat = true;
+@@ -269,21 +221,23 @@ void main()
+         int msb = int((color_payload.x >> (15 + linear_pixel)) & 2u);
+         int lsb = int((color_payload.x >> linear_pixel) & 1u);
+         int sgn = 1 - msb;
++
+         if (punchthrough)
+         {
+             sgn *= lsb;
+             punchthrough = (msb + lsb) == 2;
+         }
++
+         int offset = etc1_color_modifier_table[etc1_table_index][lsb] * sgn;
+         base_rgb = clamp(base_rgb + offset, ivec3(0), ivec3(255));
+-        rgb_result = base_rgb;
++        rgb_result = ivec3(base_rgb);
+     }
+ 
+-    if (ALPHA_BITS == 1 && punchthrough)
++    if (alphaBits == 1 && punchthrough)
+     {
+-        rgb_result = uvec3(0);
++        rgb_result = ivec3(0);
+         alpha_result = 0;
+     }
+ 
+-    imageStore(uOutput, coord, uvec4(rgb_result, alpha_result));
++    return ivec4(rgb_result.r, rgb_result.g, rgb_result.b, alpha_result);
+ }
+\ No newline at end of file

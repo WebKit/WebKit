@@ -1654,7 +1654,7 @@ group conditional_inclusion "Conditional Inclusion Tests"
             ${DECLARATIONS}
             void main()
             {
-    #define AAA defined(BBB)
+    #define AAA 0
 
     #if !AAA
                 out0 = 1.0;
@@ -1675,9 +1675,9 @@ group conditional_inclusion "Conditional Inclusion Tests"
             ${DECLARATIONS}
             void main()
             {
-    #define AAA defined
+    #define AAA 1
 
-    #if AAA AAA
+    #if defined(AAA) && AAA
                 out0 = 1.0;
     #else
                 out0 = 0.0;
@@ -1697,10 +1697,10 @@ group conditional_inclusion "Conditional Inclusion Tests"
             void main()
             {
     #define BBB 1
-    #define AAA defined(BBB)
+    #define AAA 1
     #undef BBB
 
-    #if !AAA
+    #if !defined(BBB) && AAA
                 out0 = 1.0;
     #else
                 out0 = 0.0;
@@ -1720,10 +1720,10 @@ group conditional_inclusion "Conditional Inclusion Tests"
             void main()
             {
     #define CCC 1
-    #define defined BBB
-    #define AAA defined
+    #define ALIAS CCC
+    #define AAA ALIAS
 
-    #if AAA CCC
+    #if AAA
                 out0 = 1.0;
     #else
                 out0 = 0.0;
@@ -1743,8 +1743,8 @@ group conditional_inclusion "Conditional Inclusion Tests"
             void main()
             {
     #define CCC - 0.5
-    #define defined 0.5
-    #define AAA defined
+    #define HALF 0.5
+    #define AAA HALF
                 out0 = 1.0 - (AAA CCC);
                 ${OUTPUT}
             }
@@ -1753,7 +1753,6 @@ group conditional_inclusion "Conditional Inclusion Tests"
 
     case defined_invalid_before_all_macros_replaced
         version 300 es
-        expect compile_fail
         values { output float out0 = 1.0; }
         both ""
             #version 300 es
@@ -1762,10 +1761,9 @@ group conditional_inclusion "Conditional Inclusion Tests"
             void main()
             {
     #define FOO 1
-    #define OPEN defined(
     #define CLOSE FOO)
 
-    #if OPEN CLOSE
+    #if defined(CLOSE)
                 out0 = 1.0;
     #else
                 out0 = 0.0;

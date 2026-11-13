@@ -963,10 +963,10 @@ void SetDirtyBitExtIfStateDifferent(const T &a,
     SetDirtyBitIfStateDifferent(a.clipDepthMode, b.clipDepthMode, bits,
                                 gl::state::DIRTY_BIT_CLIP_CONTROL);
     SetDirtyBitIfStateDifferent(a.blendColor, b.blendColor, bits, gl::state::DIRTY_BIT_BLEND_COLOR);
-    SetDirtyBitIfStateDifferent(a.blendState.getAllEnabledMask(), b.blendState.getAllEnabledMask(),
-                                bits, gl::state::DIRTY_BIT_COLOR_MASK);
+    SetDirtyBitIfStateDifferent(a.blendState.getEnabledMask(), b.blendState.getEnabledMask(), bits,
+                                gl::state::DIRTY_BIT_BLEND_ENABLED);
     SetDirtyBitIfStateDifferent(a.blendState.getColorMaskBits(), b.blendState.getColorMaskBits(),
-                                bits, gl::state::DIRTY_BIT_BLEND_ENABLED);
+                                bits, gl::state::DIRTY_BIT_COLOR_MASK);
     SetDirtyBitIfStateDifferent(a.blendState.getSrcColorBits(), b.blendState.getSrcColorBits(),
                                 bits, gl::state::DIRTY_BIT_BLEND_FUNCS);
     SetDirtyBitIfStateDifferent(a.blendState.getDstColorBits(), b.blendState.getDstColorBits(),

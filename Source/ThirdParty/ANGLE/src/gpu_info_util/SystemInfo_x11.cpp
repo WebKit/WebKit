@@ -11,8 +11,8 @@
 #include <X11/Xlib.h>
 
 #include "common/debug.h"
-#include "third_party/libXNVCtrl/NVCtrl.h"
-#include "third_party/libXNVCtrl/NVCtrlLib.h"
+#include "third_party/libxnvctrl/src/NVCtrl.h"
+#include "third_party/libxnvctrl/src/NVCtrlLib.h"
 
 #if !defined(GPU_INFO_USE_X11)
 #    error SystemInfo_x11.cpp compiled without GPU_INFO_USE_X11

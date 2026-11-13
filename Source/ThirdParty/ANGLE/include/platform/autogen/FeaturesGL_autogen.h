@@ -272,6 +272,12 @@ struct FeaturesGL : FeatureSetBase
         &members,
     };
 
+    FeatureInfo useScratchTextureForConvertingCopySubImage = {
+        "useScratchTextureForConvertingCopySubImage",
+        FeatureCategory::OpenGLWorkarounds,
+        &members,
+    };
+
     FeatureInfo recreateTextureOnTexImage3dDepthIncrease = {
         "recreateTextureOnTexImage3dDepthIncrease",
         FeatureCategory::OpenGLWorkarounds,

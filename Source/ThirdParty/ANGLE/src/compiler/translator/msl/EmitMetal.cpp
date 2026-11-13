@@ -139,6 +139,7 @@ class GenMetalTraverser : public TIntermTraverser
 
     void emitNameOf(const TField &object);
     void emitNameOf(const TSymbol &object);
+    void emitNameOf(const TVariable &object);
     void emitBlockNameOf(const TSymbol &object);
     void emitNameOf(const VarDecl &object);
 
@@ -190,6 +191,7 @@ class GenMetalTraverser : public TIntermTraverser
     const PipelineStructs &mPipelineStructs;
     SymbolEnv &mSymbolEnv;
     IdGen &mIdGen;
+    const ShCompileOptions &mCompileOptions;
     int mIndentLevel                  = -1;
     int mLastIndentationPos           = -1;
     int mOpenPointerParenCount        = 0;
@@ -226,6 +228,7 @@ GenMetalTraverser::GenMetalTraverser(const TCompiler &compiler,
       mPipelineStructs(pipelineStructs),
       mSymbolEnv(symbolEnv),
       mIdGen(idGen),
+      mCompileOptions(compileOptions),
       mMainUniformBufferIndex(compileOptions.metal.defaultUniformsBindingIndex),
       mDriverUniformsBindingIndex(compileOptions.metal.driverUniformsBindingIndex),
       mUBOArgumentBufferBindingIndex(compileOptions.metal.UBOArgumentBufferBindingIndex),
@@ -932,10 +935,27 @@ void GenMetalTraverser::emitNameOf(const TField &object)
 
 void GenMetalTraverser::emitNameOf(const TSymbol &object)
 {
+    ASSERT(mRenamedSymbols.find(&object) == mRenamedSymbols.end());
+    EmitName(mOut, Name(object), kUserVariableNamePrefix);
+}
+
+void GenMetalTraverser::emitNameOf(const TVariable &object)
+{
     auto it = mRenamedSymbols.find(&object);
     if (it == mRenamedSymbols.end())
     {
-        EmitName(mOut, Name(object), kUserVariableNamePrefix);
+        // If this is a private variable and we're not interested in retaining debug info, use a
+        // temp name.
+        if (!mCompileOptions.outputDebugInfo && object.symbolType() == SymbolType::UserDefined &&
+            IsPrivate(object.getType().getQualifier()))
+        {
+            EmitName(mOut, Name(object.getTempName(), SymbolType::AngleInternal),
+                     kUserVariableNamePrefix);
+        }
+        else
+        {
+            EmitName(mOut, Name(object), kUserVariableNamePrefix);
+        }
     }
     else
     {

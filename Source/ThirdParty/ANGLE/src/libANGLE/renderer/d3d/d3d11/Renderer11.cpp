@@ -1603,14 +1603,12 @@ egl::Error Renderer11::getD3DTextureInfo(const egl::Config *configuration,
     }
     else if (desc.Format == DXGI_FORMAT_Y410 || desc.Format == DXGI_FORMAT_Y210)
     {
-        // Packed 10-bit YUV is sample-only: the texture keeps its native DXGI
-        // format and is sampled through the documented view alias
-        // (see GetPackedYUVFormat), exposed as GL_RGB10_A2 (Y410) or
-        // GL_RGBA16_EXT (Y210, half width).
+        // Packed 10-bit YUV keeps its native DXGI format and is sampled
+        // through its aliased view. Y410 can additionally be rendered to through
+        // its aliased R10G10B10A2_UNORM view.
         if (configuration)
         {
-            // Pbuffers require a renderable surface; packed YUV has no
-            // renderable view.
+            // ANGLE creates no packed YUV surfaces of its own.
             return egl::Error(EGL_BAD_PARAMETER, "Packed YUV textures are not valid for pbuffers.");
         }
 
@@ -2722,9 +2720,29 @@ angle::Result Renderer11::copyTexture(const gl::Context *context,
     ASSERT(destStorage11);
 
     // Check for fast path where a CopySubresourceRegion can be used.
-    if (unpackPremultiplyAlpha == unpackUnmultiplyAlpha && !unpackFlipY &&
-        sourceImageDesc.format.info->sizedInternalFormat ==
-            destStorage11->getFormatSet().internalFormat)
+    bool useCopySubresourceRegion = unpackPremultiplyAlpha == unpackUnmultiplyAlpha &&
+                                    !unpackFlipY &&
+                                    sourceImageDesc.format.info->sizedInternalFormat ==
+                                        destStorage11->getFormatSet().internalFormat;
+
+    // Packed YUV images (Y410/Y210) share the internal format of their RGBA view alias but keep a
+    // DXGI format that CopySubresourceRegion can't convert, so copies to or from them use the
+    // shader path. Check the resources: the EGL image storage's format set comes from the internal
+    // format.
+    if (useCopySubresourceRegion && srcTarget == gl::TextureTarget::_2D)
+    {
+        gl::ImageIndex sourceIndex = gl::ImageIndex::MakeFromTarget(srcTarget, sourceLevel, 1);
+        const TextureHelper11 *sourceResource = nullptr;
+        UINT sourceSubresource                = 0;
+        ANGLE_TRY(GetTextureD3DResourceFromStorageOrImage(context, sourceD3D, sourceIndex,
+                                                          &sourceResource, &sourceSubresource));
+        const TextureHelper11 *destResource = nullptr;
+        ANGLE_TRY(destStorage11->getResource(context, &destResource));
+        useCopySubresourceRegion = !d3d11::IsPackedYUVFormat(sourceResource->getFormat()) &&
+                                   !d3d11::IsPackedYUVFormat(destResource->getFormat());
+    }
+
+    if (useCopySubresourceRegion)
     {
         const TextureHelper11 *destResource = nullptr;
         ANGLE_TRY(destStorage11->getResource(context, &destResource));
@@ -3783,6 +3801,12 @@ angle::Result Renderer11::blitRenderbufferRect(const gl::Context *context,
     bool partialDSBlit =
         (nativeFormat.depthBits > 0 && depthBlit) != (nativeFormat.stencilBits > 0 && stencilBlit);
 
+    // Packed YUV images (Y410) share the format ID of their RGBA view alias but keep a DXGI format
+    // that ResolveSubresource and CopySubresourceRegion can't convert, so blits to or from them go
+    // through the shader path.
+    const bool packedYUV = d3d11::IsPackedYUVFormat(readRenderTarget11->getFormatSet().texFormat) ||
+                           d3d11::IsPackedYUVFormat(drawRenderTarget11->getFormatSet().texFormat);
+
     // Fast path: resolve a multisampled source straight into the destination.
     //
     // ResolveSubresource covers an entire subresource and cannot offset, scale or flip, so this
@@ -3795,7 +3819,7 @@ angle::Result Renderer11::blitRenderbufferRect(const gl::Context *context,
         !drawRenderTarget->isMultisampled() &&
         readRenderTarget11->getFormatSet().formatID ==
             drawRenderTarget11->getFormatSet().formatID &&
-        !readRenderTarget11->getTexture().is3D() && !drawTexture.is3D())
+        !packedYUV && !readRenderTarget11->getTexture().is3D() && !drawTexture.is3D())
     {
         ASSERT(!outOfBounds && !reversalRequired && !colorMaskingNeeded);
         ASSERT(!depthBlit && !stencilBlit && !partialDSBlit);
@@ -3853,7 +3877,7 @@ angle::Result Renderer11::blitRenderbufferRect(const gl::Context *context,
     if (drawRenderTarget->getSamples() == readRenderTarget->getSamples() &&
         readRenderTarget11->getFormatSet().formatID ==
             drawRenderTarget11->getFormatSet().formatID &&
-        !stretchRequired && !outOfBounds && !reversalRequired && !partialDSBlit &&
+        !packedYUV && !stretchRequired && !outOfBounds && !reversalRequired && !partialDSBlit &&
         !colorMaskingNeeded && (!(depthBlit || stencilBlit) || wholeBufferCopy))
     {
         UINT dstX = drawRect.x;

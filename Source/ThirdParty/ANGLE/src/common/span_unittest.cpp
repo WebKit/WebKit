@@ -36,6 +36,25 @@ class FakeRange
     const unsigned int *data() { return kSpanData; }
 };
 
+// Detects whether `Dst::copy_from(Src)` is a viable call.
+template <typename Dst, typename Src, typename = void>
+struct CanCopyFrom : std::false_type
+{};
+
+template <typename Dst, typename Src>
+struct CanCopyFrom<Dst,
+                   Src,
+                   std::void_t<decltype(std::declval<Dst>().copy_from(std::declval<Src>()))>>
+    : std::true_type
+{};
+
+// Spans of every extent are spans; containers are not.
+static_assert(internal::IsSpan<Span<int>>::value);
+static_assert(internal::IsSpan<Span<int, 4>>::value);
+static_assert(!internal::IsSpan<std::vector<int>>::value);
+// Spans with a custom pointer type (e.g. raw_ptr) are recognized too.
+static_assert(internal::IsSpan<Span<int, dynamic_extent, int *const>>::value);
+
 // Test that comparing spans work
 TEST(SpanTest, Comparison)
 {
@@ -580,6 +599,8 @@ TEST(SpanTest, Helpers)
         // Containers are allowed.
         static_assert(std::is_invocable_v<decltype(&FixedSpan::copy_from<std::vector<int>>),
                                           FixedSpan, const std::vector<int> &>);
+        // Fixed sources of a different extent are rejected.
+        static_assert(!CanCopyFrom<FixedSpan, const Span<int, 3> &>::value);
     }
 
     // Test to_fixed_extent.

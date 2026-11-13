@@ -638,6 +638,88 @@ TEST_P(IndexBufferOffsetTest, DrawWithDifferentCountsSameOffset)
     EXPECT_GL_NO_ERROR();
 }
 
+// Test that transitioning an element array buffer from GL_STATIC_DRAW to GL_DYNAMIC_DRAW
+// without an intervening draw does not leave a stale static index buffer that gets reused across
+// different index types (GL_UNSIGNED_SHORT followed by GL_UNSIGNED_BYTE).
+TEST_P(IndexBufferOffsetTest, StaticToDynamicDifferentIndexTypes)
+{
+    // 18-byte index buffer:
+    // - Offset 0 (3 GLushort): {0, 1, 2} (upper-left triangle)
+    // - Offset 6 (3 GLubyte):  {1, 2, 3} (lower-right triangle)
+    // - Offset 12 (3 GLushort, at 2 * 6): {0, 0, 0} (degenerate triangle)
+    const GLubyte indexData[18] = {
+        0, 0, 1, 0, 2, 0,  // bytes 0..5
+        1, 2, 3, 0, 0, 0,  // bytes 6..11
+        0, 0, 0, 0, 0, 0,  // bytes 12..17
+    };
+
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indexData), nullptr, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indexData), indexData, GL_DYNAMIC_DRAW);
+
+    glUseProgram(mProgram);
+
+    glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
+    glVertexAttribPointer(mPositionAttributeLocation, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(mPositionAttributeLocation);
+
+    glUniform4f(mColorUniformLocation, 1.0f, 0.0f, 0.0f, 1.0f);
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, reinterpret_cast<const void *>(0));
+
+    glUniform4f(mColorUniformLocation, 0.0f, 1.0f, 0.0f, 1.0f);
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_BYTE, reinterpret_cast<const void *>(6));
+
+    // Check the upper-left triangle (red) and lower-right triangle (green).
+    EXPECT_PIXEL_COLOR_EQ(0, getWindowHeight() / 4, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() - 1, getWindowHeight() - 1, GLColor::green);
+
+    EXPECT_GL_NO_ERROR();
+}
+
+// Test that toggling GL_PRIMITIVE_RESTART_FIXED_INDEX invalidates the cached static index buffer
+// for GL_UNSIGNED_BYTE indices so 0xFF is properly re-translated between 0xFFFF and 255.
+TEST_P(IndexBufferOffsetTestES3, StaticUInt8PrimitiveRestartToggle)
+{
+    std::vector<Vector2> vertices(256, Vector2(0.0f, 0.0f));
+    vertices[0]   = Vector2(-1.0f, -1.0f);
+    vertices[1]   = Vector2(-1.0f, 1.0f);
+    vertices[2]   = Vector2(1.0f, -1.0f);
+    vertices[255] = Vector2(1.0f, 1.0f);
+
+    GLBuffer vertexBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vector2), vertices.data(),
+                 GL_STATIC_DRAW);
+
+    const GLubyte indexData[] = {0, 1, 2, 1, 2, 255};
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indexData), indexData, GL_STATIC_DRAW);
+
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glUseProgram(mProgram);
+    glVertexAttribPointer(mPositionAttributeLocation, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(mPositionAttributeLocation);
+
+    // First draw with primitive restart enabled populates the static index buffer, translating
+    // 255 (0xFF) to 0xFFFF.
+    glEnable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
+    glUniform4f(mColorUniformLocation, 1.0f, 0.0f, 0.0f, 1.0f);
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_BYTE, reinterpret_cast<const void *>(0));
+
+    // Second draw with primitive restart disabled must treat 255 as vertex index 255, not 0xFFFF.
+    glDisable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
+    glUniform4f(mColorUniformLocation, 0.0f, 1.0f, 0.0f, 1.0f);
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_BYTE, reinterpret_cast<const void *>(3));
+
+    EXPECT_PIXEL_COLOR_EQ(0, getWindowHeight() / 4, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() - 1, getWindowHeight() - 1, GLColor::green);
+
+    EXPECT_GL_NO_ERROR();
+}
+
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(IndexBufferOffsetTest,
                                        ES3_VULKAN().disable(Feature::SupportsIndexTypeUint8));
 

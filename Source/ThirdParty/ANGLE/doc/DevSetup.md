@@ -117,9 +117,9 @@ from earlier steps. Ninja automatically calls GN to regenerate the build
 files on any configuration change. `autoninja` automatically specifies a
 thread count to `ninja` based on your system configuration.
 
-### Building with Reclient (Google employees only)
+### Building with Remote Execution (Google employees only)
 
-Reclient is the recommended distributed compiler service to build ANGLE faster.
+Siso with Remote Execution is the recommended distributed compiler service to build ANGLE faster.
 
 Step 1. Follow [Setup remote execution](https://g3doc.corp.google.com/company/teams/chrome/linux_build_instructions.md?cl=head#setup-remote-execution)
 to download the required configuration, and complete the authentication.
@@ -159,7 +159,7 @@ gcloud auth login
 
 If asked for a project ID, enter "0".
 
-Step 2. Enable the usage of reclient by adding below content in GN arg:
+Step 2. Enable remote execution by adding below content in GN arg:
 
 ```
 use_remoteexec = true

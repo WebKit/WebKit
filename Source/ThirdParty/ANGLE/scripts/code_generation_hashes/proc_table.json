@@ -1,12 +1,12 @@
 {
   "scripts/egl_angle_ext.xml":
-    "ad031ef02420989f9c4fb5bb1247e845",
+    "71cb3874ec6601a17cebae24c3e4d283",
   "scripts/gen_proc_table.py":
     "637cfd72ee67e6c12bff49cf3eba409e",
   "scripts/gl_angle_ext.xml":
     "fc346145012b6744a27199a3210f6f88",
   "scripts/registry_xml.py":
-    "f08436820f54c6120c2865cd9374316b",
+    "8faabf303cf5ec00e7aa6864ea10ca38",
   "src/libGLESv2/egl_stubs_getprocaddress_autogen.cpp":
     "f1c3c1bca2d07910d1a4234a7635bc32",
   "src/libGLESv2/proc_table_cl_autogen.cpp":

@@ -766,6 +766,26 @@ uint8_t GetCullDistanceArraySize(const ShHandle handle)
     return compiler->getCullDistanceArraySize();
 }
 
+uint8_t GetInputClipDistanceArraySize(const ShHandle handle)
+{
+    ASSERT(handle);
+    TShHandleBase *base = static_cast<TShHandleBase *>(handle);
+    TCompiler *compiler = base->getAsCompiler();
+    ASSERT(compiler);
+
+    return compiler->getInputClipDistanceArraySize();
+}
+
+uint8_t GetInputCullDistanceArraySize(const ShHandle handle)
+{
+    ASSERT(handle);
+    TShHandleBase *base = static_cast<TShHandleBase *>(handle);
+    TCompiler *compiler = base->getAsCompiler();
+    ASSERT(compiler);
+
+    return compiler->getInputCullDistanceArraySize();
+}
+
 uint32_t GetMetadataFlags(const ShHandle handle)
 {
     ASSERT(handle);

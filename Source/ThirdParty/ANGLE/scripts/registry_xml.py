@@ -367,6 +367,7 @@ supported_egl_extensions = [
     "EGL_ANGLE_power_preference",
     "EGL_ANGLE_prepare_swap_buffers",
     "EGL_ANGLE_program_cache_control",
+    "EGL_ANGLE_query_renderer_strings",
     "EGL_ANGLE_query_surface_pointer",
     "EGL_ANGLE_stream_producer_d3d_texture",
     "EGL_ANGLE_surface_d3d_texture_2d_share_handle",

@@ -118,6 +118,27 @@ class StaticIndexBufferInterface : public IndexBufferInterface
     angle::Result reserveBufferSpace(const gl::Context *context,
                                      unsigned int size,
                                      gl::DrawElementsType indexType) override;
+
+    gl::DrawElementsType getSrcIndexType() const { return mSrcIndexType; }
+    void setSrcIndexType(gl::DrawElementsType srcIndexType) { mSrcIndexType = srcIndexType; }
+
+    bool isPrimitiveRestartFixedIndexEnabled() const { return mPrimitiveRestartFixedIndexEnabled; }
+    void setPrimitiveRestartFixedIndexEnabled(bool enabled)
+    {
+        mPrimitiveRestartFixedIndexEnabled = enabled;
+    }
+
+    bool matchesIndexData(gl::DrawElementsType srcType,
+                          gl::DrawElementsType dstType,
+                          bool primitiveRestartFixedIndexEnabled) const
+    {
+        return getIndexType() == dstType && mSrcIndexType == srcType &&
+               mPrimitiveRestartFixedIndexEnabled == primitiveRestartFixedIndexEnabled;
+    }
+
+  private:
+    gl::DrawElementsType mSrcIndexType;
+    bool mPrimitiveRestartFixedIndexEnabled;
 };
 
 }  // namespace rx

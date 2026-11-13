@@ -738,7 +738,10 @@ template <typename T>
 class [[nodiscard]] RendererScoped final : angle::NonCopyable
 {
   public:
-    RendererScoped(Renderer *renderer) : mRenderer(renderer) {}
+    template <typename... Args>
+    RendererScoped(Renderer *renderer, Args... args)
+        : mRenderer(renderer), mVar(std::forward<Args>(args)...)
+    {}
     ~RendererScoped() { mVar.release(mRenderer); }
 
     const T &get() const { return mVar; }

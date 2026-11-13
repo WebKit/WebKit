@@ -73,7 +73,7 @@ layout(push_constant) uniform imagInfo {
     uint isEacRg;
 };
 
-#include "third_party/etc_decoder/etc_decoder.h"
+#include "third_party/etc_decoder/src/etc_decoder.h"
 
 ivec2 build_coord()
 {

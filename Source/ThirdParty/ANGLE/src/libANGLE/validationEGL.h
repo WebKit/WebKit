@@ -71,10 +71,8 @@ bool ValidateSync(const ValidationContext *val, const ThreadSafeDisplay *display
 
 // Return the requested object only if it is valid (otherwise nullptr)
 const Thread *GetThreadIfValid(const Thread *thread);
-ScopedConstDisplayRef GetDisplayIfValid(const Display *display);
 ScopedDisplayRef GetDisplayIfValid(Display *display);
 ScopedThreadSafeDisplayRef GetThreadSafeDisplayIfValid(Display *display);
-ScopedConstDisplayLockAndRef GetDisplayAndLockIfValid(const Display *display);
 ScopedDisplayLockAndRef GetDisplayAndLockIfValid(Display *display);
 ScopedSurfaceRef GetSurfaceRefIfValid(const ThreadSafeDisplay *display, SurfaceID surfaceID);
 ScopedSurfaceLockAndRef GetSurfaceIfValid(const ThreadSafeDisplay *display, SurfaceID surfaceID);

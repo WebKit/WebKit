@@ -721,6 +721,9 @@ struct DisplayExtensions
     // EGL_ANGLE_memory_usage_report
     bool memoryUsageReportANGLE = false;
 
+    // EGL_ANGLE_query_renderer_strings
+    bool queryRendererStringsANGLE = false;
+
     // EGL_EXT_surface_compression
     bool surfaceCompressionEXT = false;
 

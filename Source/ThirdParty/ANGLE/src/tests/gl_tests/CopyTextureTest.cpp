@@ -3263,6 +3263,15 @@ TEST_P(CopyTextureTestES3, CopyBetweenMips)
 
     ASSERT_GL_NO_ERROR();
 
+    // CopyTextureCHROMIUM redefines the destination level and is not allowed between mips of the
+    // same texture.
+    glCopyTextureCHROMIUM(texture, 1, GL_TEXTURE_2D, texture, 0, GL_RGBA, GL_UNSIGNED_BYTE, false,
+                          false, false);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    glCopyTextureCHROMIUM(texture, 0, GL_TEXTURE_2D, texture, 1, GL_RGBA, GL_UNSIGNED_BYTE, false,
+                          false, false);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
     // Copy from mip 0 to mip 1.  The level is not redefined, so a direct copy can potentially be
     // done.
     glCopySubTextureCHROMIUM(texture, 0, GL_TEXTURE_2D, texture, 1, 0, 0, 1, 1, 2, 2, false, false,
@@ -5367,22 +5376,26 @@ TEST_P(CopyTextureYUVTest, HintsRequireYUVFormat)
 #endif
 }
 
-ANGLE_INSTANTIATE_TEST_ES2(CopyTextureTest);
-ANGLE_INSTANTIATE_TEST_COMBINE_7(CopyTextureVariationsTest,
-                                 CopyTextureVariationsTestPrint,
-                                 testing::ValuesIn(kCopyTextureVariationsSrcFormats),
-                                 testing::ValuesIn(kCopyTextureVariationsDstFormats),
-                                 testing::Bool(),  // flipY
-                                 testing::Bool(),  // premultiplyAlpha
-                                 testing::Bool(),  // unmultiplyAlpha
-                                 testing::ValuesIn(kMesaYFlips),
-                                 testing::Values(CopyTexCS::None),  // colorspace (N/A for non-YUV)
-                                 ES2_D3D11(),
-                                 ES2_OPENGL(),
-                                 ES2_OPENGLES(),
-                                 ES2_VULKAN(),
-                                 ES2_METAL(),
-                                 ES2_WEBGPU());
+ANGLE_INSTANTIATE_TEST_ES2_AND(
+    CopyTextureTest,
+    ES2_VULKAN_SWIFTSHADER().enable(Feature::ForceRenderableFallbackFormat));
+ANGLE_INSTANTIATE_TEST_COMBINE_7(
+    CopyTextureVariationsTest,
+    CopyTextureVariationsTestPrint,
+    testing::ValuesIn(kCopyTextureVariationsSrcFormats),
+    testing::ValuesIn(kCopyTextureVariationsDstFormats),
+    testing::Bool(),  // flipY
+    testing::Bool(),  // premultiplyAlpha
+    testing::Bool(),  // unmultiplyAlpha
+    testing::ValuesIn(kMesaYFlips),
+    testing::Values(CopyTexCS::None),  // colorspace (N/A for non-YUV)
+    ES2_D3D11(),
+    ES2_OPENGL(),
+    ES2_OPENGLES(),
+    ES2_VULKAN(),
+    ES2_METAL(),
+    ES2_WEBGPU(),
+    ES2_VULKAN_SWIFTSHADER().enable(Feature::ForceRenderableFallbackFormat));
 
 // YUV-source variant: Metal-only, RGBA destination, alpha ops off, all colorspaces.  Platform and
 // parameter restrictions are expressed by the instantiation lists rather than runtime skips.
@@ -5421,13 +5434,16 @@ ANGLE_INSTANTIATE_TEST_COMBINE_7(CopyTextureRectangleVariationsTest,
                                  ES2_VULKAN(),
                                  ES2_METAL(),
                                  ES2_WEBGPU());
-ANGLE_INSTANTIATE_TEST_ES2(CopyTextureTestWebGL);
+ANGLE_INSTANTIATE_TEST_ES2_AND(
+    CopyTextureTestWebGL,
+    ES2_VULKAN_SWIFTSHADER().enable(Feature::ForceRenderableFallbackFormat));
 ANGLE_INSTANTIATE_TEST(CopyTextureTestDest,
                        ES2_D3D11(),
                        ES2_OPENGL(),
                        ES2_OPENGLES(),
                        ES2_VULKAN(),
-                       ES2_METAL());
+                       ES2_METAL(),
+                       ES2_VULKAN_SWIFTSHADER().enable(Feature::ForceRenderableFallbackFormat));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(CopyTextureYUVOrientationTest);
 ANGLE_INSTANTIATE_TEST(CopyTextureYUVOrientationTest, ES2_METAL());
@@ -5436,5 +5452,7 @@ GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(CopyTextureYUVTest);
 ANGLE_INSTANTIATE_TEST(CopyTextureYUVTest, ES2_METAL(), ES3_METAL());
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(CopyTextureTestES3);
-ANGLE_INSTANTIATE_TEST_ES3(CopyTextureTestES3);
+ANGLE_INSTANTIATE_TEST_ES3_AND(
+    CopyTextureTestES3,
+    ES3_VULKAN_SWIFTSHADER().enable(Feature::ForceRenderableFallbackFormat));
 }  // namespace angle

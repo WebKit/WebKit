@@ -40,18 +40,23 @@ ImmutableString Str(rust::Str str)
 ImmutableString Str(const SymbolName &name)
 {
     constexpr uint32_t kNoId = 0xFFFF'FFFF;
+    constexpr uint32_t kAppendExtraChars = 1 + 11;  // underscore + 32-bit number
     const bool appendId      = name.id != kNoId;
-    const uint32_t appendExtraChars = appendId ? 1 + 11 : 0;  // underscore + 32-bit number
-    ImmutableStringBuilder builder(name.name.length() + appendExtraChars);
+    const uint32_t appendExtraChars      = appendId ? kAppendExtraChars : 0;
+    // Hash length is kSHA1Length, and every byte is written as two hex characters
+    constexpr uint32_t kHashChars = 2 * angle::base::kSHA1Length;
+    ImmutableStringBuilder builder(std::max<size_t>(name.name.length(), kHashChars) +
+                                   appendExtraChars);
     // If appending ID and the name is too long, cut off the end of the name.  The ID makes it
     // unique anyway.
     //
     // Note: this is technically not true for global structs, which get appended _0 instead of _id
     // because they might need to match between shaders.  If two structs have a very long name and
     // they differ only in the last characters, this could cause a name collision, so long names are
-    // hashed instead.
-    if (appendId && name.id == 0 &&
-        name.name.length() > kESSLMaxIdentifierLength - appendExtraChars)
+    // hashed instead; any name longer than the hash length itself risks collision, if unhashed,
+    // with a hashed name.
+    static_assert(kHashChars < kESSLMaxIdentifierLength - kAppendExtraChars);
+    if (appendId && name.id == 0 && name.name.length() > kHashChars)
     {
         angle::base::SecureHashAlgorithm hasher;
         hasher.Init();

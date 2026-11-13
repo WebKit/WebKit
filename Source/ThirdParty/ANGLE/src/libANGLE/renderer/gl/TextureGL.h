@@ -102,6 +102,9 @@ class TextureGL : public TextureImpl
                                         size_t imageSize,
                                         const uint8_t *pixels) override;
 
+    const gl::InternalFormat &getCopyImageInternalFormat(const gl::Context *context,
+                                                         GLenum internalFormat,
+                                                         gl::Framebuffer *source) const override;
     angle::Result copyImage(const gl::Context *context,
                             const gl::ImageIndex &index,
                             const gl::Rectangle &sourceArea,
@@ -446,6 +449,12 @@ class TextureGL : public TextureImpl
                                                   bool outside,
                                                   const gl::ImageIndex &destIndex,
                                                   gl::Framebuffer *source);
+    angle::Result copySubImageFromFramebuffer(const gl::Context *context,
+                                              const NativeLevelTarget &nlt,
+                                              const gl::InternalFormat &sourceFormatInfo,
+                                              GLenum destInternalFormat,
+                                              const gl::Offset &destOffset,
+                                              const gl::Rectangle &clippedArea);
 
     std::vector<LevelInfoGL> mLevelInfo;
 

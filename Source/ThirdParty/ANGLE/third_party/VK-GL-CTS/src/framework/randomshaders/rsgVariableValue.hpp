@@ -511,29 +511,29 @@ public:
 
     ValueAccess getMin(void)
     {
-        return ValueAccess(m_type, getMinPtr());
+        return ValueAccess(m_type, m_min.data());
     }
     ValueAccess getMax(void)
     {
-        return ValueAccess(m_type, getMaxPtr());
+        return ValueAccess(m_type, m_max.data());
     }
 
     ConstValueAccess getMin(void) const
     {
-        return ConstValueAccess(m_type, getMinPtr());
+        return ConstValueAccess(m_type, m_min.data());
     }
     ConstValueAccess getMax(void) const
     {
-        return ConstValueAccess(m_type, getMaxPtr());
+        return ConstValueAccess(m_type, m_max.data());
     }
 
     ValueRangeAccess asAccess(void)
     {
-        return ValueRangeAccess(m_type, getMinPtr(), getMaxPtr());
+        return ValueRangeAccess(m_type, m_min.data(), m_max.data());
     }
     ConstValueRangeAccess asAccess(void) const
     {
-        return ConstValueRangeAccess(m_type, getMinPtr(), getMaxPtr());
+        return ConstValueRangeAccess(m_type, m_min.data(), m_max.data());
     }
 
     operator ConstValueRangeAccess(void) const
@@ -550,24 +550,6 @@ public:
     static void computeIntersection(ValueRange &dst, const ConstValueRangeAccess &a, const ConstValueRangeAccess &b);
 
 private:
-    const Scalar *getMinPtr(void) const
-    {
-        return m_min.empty() ? nullptr : &m_min[0];
-    }
-    const Scalar *getMaxPtr(void) const
-    {
-        return m_max.empty() ? nullptr : &m_max[0];
-    }
-
-    Scalar *getMinPtr(void)
-    {
-        return m_min.empty() ? nullptr : &m_min[0];
-    }
-    Scalar *getMaxPtr(void)
-    {
-        return m_max.empty() ? nullptr : &m_max[0];
-    }
-
     VariableType m_type;
     std::vector<Scalar> m_min;
     std::vector<Scalar> m_max;

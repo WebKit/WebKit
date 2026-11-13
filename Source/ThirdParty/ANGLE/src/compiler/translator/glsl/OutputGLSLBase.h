@@ -33,6 +33,7 @@ class TOutputGLSLBase : public TIntermTraverser
     // otherwise return the hashed name. Has special handling for internal names and built-ins,
     // which are not hashed.
     ImmutableString hashName(const TSymbol *symbol);
+    ImmutableString hashVariableName(const TVariable *variable);
     ImmutableString hashBlockName(const TSymbol *symbol);
 
   protected:

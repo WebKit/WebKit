@@ -233,6 +233,7 @@ angle_test("angle_unittests") {
     ":angle_test_expectations",
     "$angle_root:angle_static",
     "$angle_root:libfeature_support",
+    "$angle_root/util:angle_test_blob_cache",
     "$angle_root/util:angle_util_static",
   ]
 
@@ -331,6 +332,7 @@ if (is_win || is_linux || is_chromeos || is_android || is_fuchsia || is_apple) {
       "$angle_root:angle_gl_enum_utils",
       "$angle_root:angle_image_util",
       "$angle_root:translator",
+      "$angle_root/util:angle_test_blob_cache",
     ]
 
     if (angle_enable_cl) {

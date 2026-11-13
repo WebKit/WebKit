@@ -9,10 +9,10 @@
         'type': 'static_library',
         'sources':
         [
-            'NVCtrl.c',
-            'NVCtrl.h',
-            'NVCtrlLib.h',
-            'nv_control.h',
+            'src/NVCtrl.c',
+            'src/NVCtrl.h',
+            'src/NVCtrlLib.h',
+            'src/nv_control.h',
         ],
     }],
 }

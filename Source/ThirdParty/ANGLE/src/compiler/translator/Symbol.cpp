@@ -73,6 +73,11 @@ ImmutableString TSymbol::name() const
     // This can be called for nameless function parameters in HLSL.
     ASSERT(mSymbolType == SymbolType::AngleInternal ||
            (mSymbolType == SymbolType::Empty && isVariable()));
+    return getTempName();
+}
+
+ImmutableString TSymbol::getTempName() const
+{
     int uniqueId = mUniqueId.get();
     ImmutableStringBuilder symbolNameOut(sizeof(uniqueId) * 2u + 1u);
     symbolNameOut << 's';

@@ -209,15 +209,30 @@ def upgrade_single_trace(args, trace_binary, trace, out_path, no_overwrite, c_so
     metadata = json_data['TraceMetadata']
     logging.debug('Read metadata: %s' % str(metadata))
 
-    max_steps = min(args.limit, num_frames) if args.limit else num_frames
+    # First (1-based) frame of the original trace to include in the new trace.
+    start_frame = args.start
+    if start_frame < 1 or start_frame > num_frames:
+        logging.error('Start frame %d is out of range for "%s" (1-%d)' %
+                      (start_frame, trace, num_frames))
+        return False
 
-    # We start tracing from frame 2. --retrace-mode issues a Swap() after Setup() so we can
-    # accurately re-trace the MEC.
+    # Last frame of the original trace to include in the new trace.
+    remaining_frames = num_frames - start_frame + 1
+    end_frame = start_frame - 1 + (
+        min(args.limit, remaining_frames) if args.limit else remaining_frames)
+
+    # Replay the original trace up to and including the last frame we want to capture.
+    max_steps = end_frame
+
+    # --retrace-mode issues a Swap() after Setup(), so capture frame N corresponds to frame N-1 of
+    # the original trace. With the default start frame of 1, we start tracing from frame 2 so we
+    # can accurately re-trace the MEC. With a later start frame, the MEC captures the state at the
+    # end of the frame preceding start_frame.
     additional_env = {
         'ANGLE_CAPTURE_LABEL': trace,
         'ANGLE_CAPTURE_OUT_DIR': trace_path,
-        'ANGLE_CAPTURE_FRAME_START': '2',
-        'ANGLE_CAPTURE_FRAME_END': str(max_steps + 1),
+        'ANGLE_CAPTURE_FRAME_START': str(start_frame + 1),
+        'ANGLE_CAPTURE_FRAME_END': str(end_frame + 1),
     }
     if args.validation:
         additional_env['ANGLE_CAPTURE_VALIDATION'] = '1'
@@ -708,6 +723,15 @@ def main():
         help='Merge detected interleaved attributes (if any).',
         action='store_true')
     add_upgrade_args(upgrade_parser)
+    upgrade_parser.add_argument(
+        '-s',
+        '--start',
+        '--start-frame',
+        type=int,
+        default=1,
+        help='First frame (1-based) of the original trace to include in the new trace. Frames '
+        'before it are replayed and folded into Setup via mid-execution capture. Combine with '
+        '--limit to set the number of frames captured from this point. Defaults to 1.')
     upgrade_parser.add_argument(
         '--show-test-stdout', help='Log test output.', action='store_true', default=False)
 

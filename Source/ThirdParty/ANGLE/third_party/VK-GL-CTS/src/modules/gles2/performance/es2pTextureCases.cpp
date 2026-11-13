@@ -76,7 +76,7 @@ Texture2DRenderCase::~Texture2DRenderCase(void)
 
 static inline int roundDownToPowerOfTwo(int val)
 {
-    DE_ASSERT(val >= 0);
+    DE_ASSERT(val > 0);
     int l0 = deClz32(val);
     return val & ~((1 << (31 - l0)) - 1);
 }

@@ -65,6 +65,7 @@ class BlitGL : angle::NonCopyable
                                                       size_t level,
                                                       const gl::Offset &destOffset,
                                                       const gl::Rectangle &sourceArea,
+                                                      GLenum internalFormat,
                                                       gl::Framebuffer *source);
 
     angle::Result blitColorBufferWithShader(const gl::Context *context,

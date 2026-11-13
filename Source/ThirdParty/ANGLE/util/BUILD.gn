@@ -313,6 +313,23 @@ if (angle_has_frame_capture) {
   }
 }
 
+# A disk-backed EGL_ANDROID_blob_cache for tests, modelled on Android's.
+angle_source_set("angle_test_blob_cache") {
+  testonly = true
+  sources = [
+    "test_blob_cache.cpp",
+    "test_blob_cache.h",
+  ]
+  public_deps = [ "$angle_root:includes" ]
+  deps = [
+    "$angle_root:angle_common",
+    "$angle_root:angle_compression",
+  ]
+
+  # Expose util include path so tests can include "util/test_blob_cache.h".
+  public_configs = [ ":angle_util_config" ]
+}
+
 config("angle_util_config") {
   # Force users to include "util/header.h" instead of just "header.h".
   include_dirs = [ ".." ]

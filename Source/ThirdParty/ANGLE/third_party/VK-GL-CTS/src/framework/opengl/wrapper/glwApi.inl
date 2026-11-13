@@ -1,10 +1,11 @@
 /* WARNING: This is auto-generated file. Do not modify, since changes will
  * be lost! Modify the generating script instead.
  *
- * Generated from Khronos GL API description (gl.xml) revision 7d0cb181dace7461bc4f26650fec71efeacc18a5.
+ * Generated from Khronos GL API description (gl.xml) revision 6af574a14089ccfee87efe230ebcdd8742859813.
  */
 #define			glActiveShaderProgram								glwActiveShaderProgram
 #define			glActiveTexture										glwActiveTexture
+#define			glAddClientPointerRangeMESA							glwAddClientPointerRangeMESA
 #define			glAttachShader										glwAttachShader
 #define			glBeginConditionalRender							glwBeginConditionalRender
 #define			glBeginQuery										glwBeginQuery
@@ -646,6 +647,7 @@
 #define			glReadBuffer										glwReadBuffer
 #define			glReadPixels										glwReadPixels
 #define			glReadnPixels										glwReadnPixels
+#define			glReleaseClientPointerRangeMESA						glwReleaseClientPointerRangeMESA
 #define			glReleaseShaderCompiler								glwReleaseShaderCompiler
 #define			glRenderGpuMaskNV									glwRenderGpuMaskNV
 #define			glRenderbufferStorage								glwRenderbufferStorage
@@ -916,6 +918,7 @@
 #define			glWaitSync											glwWaitSync
 void			glwActiveShaderProgram								(GLuint pipeline, GLuint program);
 void			glwActiveTexture									(GLenum texture);
+void			glwAddClientPointerRangeMESA						(void *addr, GLsizeiptr size);
 void			glwAttachShader										(GLuint program, GLuint shader);
 void			glwBeginConditionalRender							(GLuint id, GLenum mode);
 void			glwBeginQuery										(GLenum target, GLuint id);
@@ -1557,6 +1560,7 @@ void			glwQueryCounter										(GLuint id, GLenum target);
 void			glwReadBuffer										(GLenum src);
 void			glwReadPixels										(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, void *pixels);
 void			glwReadnPixels										(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLsizei bufSize, void *data);
+void*			glwReleaseClientPointerRangeMESA					(GLbitfield flags, GLsizeiptr *size);
 void			glwReleaseShaderCompiler							();
 void			glwRenderGpuMaskNV									(GLbitfield mask);
 void			glwRenderbufferStorage								(GLenum target, GLenum internalformat, GLsizei width, GLsizei height);

@@ -231,6 +231,12 @@ struct FrontendFeatures : FeatureSetBase
         &members,
     };
 
+    FeatureInfo retainShaderDebugInfo = {
+        "retainShaderDebugInfo",
+        FeatureCategory::FrontendFeatures,
+        &members,
+    };
+
     FeatureInfo limitMaxBufferBytesTo1MB = {
         "limitMaxBufferBytesTo1MB",
         FeatureCategory::FrontendFeatures,

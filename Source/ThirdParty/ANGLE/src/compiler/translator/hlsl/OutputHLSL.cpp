@@ -590,8 +590,8 @@ void OutputHLSL::writeReferencedVaryings(TInfoSinkBase &out) const
 
         // Program linking depends on this exact format
         out << "static " << InterpolationString(type.getQualifier()) << " " << TypeString(type)
-            << " " << DecorateVariableIfNeeded(*varying.second) << ArrayString(type) << " = "
-            << zeroInitializer(type) << ";\n";
+            << " " << DecorateVariableIfNeeded(*varying.second, DebugNames::Retain)
+            << ArrayString(type) << " = " << zeroInitializer(type) << ";\n";
     }
 }
 
@@ -1159,7 +1159,7 @@ void OutputHLSL::visitSymbol(TIntermSymbol *node)
                 mReferencedUniforms[uniqueId.get()] = &variable;
             }
 
-            out << DecorateVariableIfNeeded(variable);
+            out << DecorateVariableIfNeeded(variable, DebugNames::Retain);
         }
         else if (qualifier == EvqBuffer)
         {
@@ -1173,7 +1173,7 @@ void OutputHLSL::visitSymbol(TIntermSymbol *node)
         else if (IsVarying(qualifier))
         {
             mReferencedVaryings[uniqueId.get()] = &variable;
-            out << DecorateVariableIfNeeded(variable);
+            out << DecorateVariableIfNeeded(variable, DebugNames::Retain);
         }
         else if (qualifier == EvqFragmentOut)
         {
@@ -1271,7 +1271,8 @@ void OutputHLSL::visitSymbol(TIntermSymbol *node)
         }
         else
         {
-            out << DecorateVariableIfNeeded(variable);
+            out << DecorateVariableIfNeeded(
+                variable, mCompileOptions.outputDebugInfo ? DebugNames::Retain : DebugNames::Drop);
         }
     }
 }
@@ -2656,7 +2657,8 @@ void OutputHLSL::writeParameter(const TVariable *param, TInfoSinkBase &out)
     const TType &type    = param->getType();
     TQualifier qualifier = type.getQualifier();
 
-    TString nameStr = DecorateVariableIfNeeded(*param);
+    TString nameStr = DecorateVariableIfNeeded(
+        *param, mCompileOptions.outputDebugInfo ? DebugNames::Retain : DebugNames::Drop);
     ASSERT(nameStr != "");  // HLSL demands named arguments, also for prototypes
 
     if (IsSampler(type.getBasicType()))

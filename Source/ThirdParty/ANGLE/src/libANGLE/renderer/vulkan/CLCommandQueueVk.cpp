@@ -14,6 +14,7 @@
 #include "libANGLE/renderer/vulkan/CLMemoryVk.h"
 #include "libANGLE/renderer/vulkan/CLProgramVk.h"
 #include "libANGLE/renderer/vulkan/CLSamplerVk.h"
+#include "libANGLE/renderer/vulkan/ContextVk.h"
 #include "libANGLE/renderer/vulkan/cl_types.h"
 #include "libANGLE/renderer/vulkan/clspv_utils.h"
 #include "libANGLE/renderer/vulkan/vk_cache_utils.h"
@@ -1678,9 +1679,9 @@ angle::Result CLCommandQueueVk::addMemoryDependencies(const cl::Memory *clMem,
     if (cl::IsImageType(clMem->getType()) && !cl::Is1DImageBuffer(clMem->getType()))
     {
         CLImageVk &vkMem = clMem->getImpl<CLImageVk>();
-        mComputePassCommands->imageWrite(mContext, gl::OwnerLevel(0), gl::OwnerLayer(0), 1,
-                                         vkMem.getImage().getAspectFlags(),
-                                         vk::ImageAccess::ComputeShaderWrite, &vkMem.getImage());
+        mComputePassCommands->imageWrite(
+            mContext, gl::OwnerLevel(0), gl::OwnerLayer(0), 1, vkMem.getImage().getAspectFlags(),
+            vk::ImageAccess::ComputeShaderWrite, &vkMem.getImage(), kNoMemoryBarrierBits);
     }
     if (needsBarrier)
     {

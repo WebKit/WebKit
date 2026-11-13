@@ -154,7 +154,7 @@ def main():
 
     angle_test_util.Initialize('angle_end2end_tests')
 
-    test_name = 'CapturedTest*/ES3_Vulkan'
+    test_name = 'CapturedTest*/ES3_Vulkan*'
     had_error = False
     try:
         if not run_test(args, test_name, args.overwrite_expected):

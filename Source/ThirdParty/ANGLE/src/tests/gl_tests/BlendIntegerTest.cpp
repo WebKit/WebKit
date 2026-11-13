@@ -6,7 +6,7 @@
 
 #include <array>
 
-#include "common/unsafe_buffers.h"
+#include "common/span.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 
@@ -26,7 +26,7 @@ class BlendIntegerTest : public ANGLETest<>
     }
 
     template <typename T, GLuint components>
-    void compareValue(const T *value, const char *name, GLenum attachment)
+    void compareValue(Span<const T, 4> value, const char *name, GLenum attachment)
     {
         std::array<T, 4> pixel;
         glReadBuffer(attachment);
@@ -34,14 +34,12 @@ class BlendIntegerTest : public ANGLETest<>
                      std::is_same<T, int32_t>::value ? GL_INT : GL_UNSIGNED_INT, pixel.data());
         for (size_t componentIdx = 0; componentIdx < components; componentIdx++)
         {
-            ANGLE_UNSAFE_TODO(EXPECT_EQ(value[componentIdx], pixel[componentIdx]))
+            EXPECT_EQ(value[componentIdx], pixel[componentIdx])
                 << " componentIdx=" << componentIdx << std::endl
                 << " " << name << "[0]=" << value[0] << " pixel[0]=" << pixel[0] << std::endl
-                << " " << name << "[1]=" << ANGLE_UNSAFE_TODO(value[1]) << " pixel[1]=" << pixel[1]
-                << std::endl
-                << " " << name << "[2]=" << ANGLE_UNSAFE_TODO(value[2]) << " pixel[2]=" << pixel[2]
-                << std::endl
-                << " " << name << "[3]=" << ANGLE_UNSAFE_TODO(value[3]) << " pixel[3]=" << pixel[3];
+                << " " << name << "[1]=" << value[1] << " pixel[1]=" << pixel[1] << std::endl
+                << " " << name << "[2]=" << value[2] << " pixel[2]=" << pixel[2] << std::endl
+                << " " << name << "[3]=" << value[3] << " pixel[3]=" << pixel[3];
         }
     }
 

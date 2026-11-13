@@ -20,6 +20,7 @@ class UnfoldShortCircuitASTTest : public MatchOutputCodeTest
     {
         ShCompileOptions defaultCompileOptions   = {};
         defaultCompileOptions.unfoldShortCircuit = true;
+        defaultCompileOptions.outputDebugInfo    = true;
         setDefaultCompileOptions(defaultCompileOptions);
     }
 };

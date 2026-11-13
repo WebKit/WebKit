@@ -640,7 +640,8 @@ GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(AdvancedBlendTest);
 ANGLE_INSTANTIATE_TEST_ES3(AdvancedBlendTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(AdvancedBlendMultisampleTest);
-ANGLE_INSTANTIATE_TEST_ES3(AdvancedBlendMultisampleTest);
+ANGLE_INSTANTIATE_TEST_ES3_AND(AdvancedBlendMultisampleTest,
+                               ES3_VULKAN().disable(Feature::SupportsBlendOperationAdvanced));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(AdvancedBlendTestES32);
 ANGLE_INSTANTIATE_TEST_ES32(AdvancedBlendTestES32);

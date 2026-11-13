@@ -495,7 +495,7 @@ constexpr uint8_t kEtcToBc_comp_00000000[] = {
 //     uint isEacRg;
 // };
 //
-// #line 1 "shaders/src/third_party/etc_decoder/etc_decoder.h"
+// #line 1 "shaders/src/third_party/etc_decoder/src/etc_decoder.h"
 //
 //  const ivec2 etc1_color_modifier_table[8] = ivec2[] (
 //     ivec2(2, 8),

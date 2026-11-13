@@ -85,7 +85,6 @@ SYNCED_VARIABLES = {
 SYNCED_CIPD_DEPS = {
     'buildtools/linux64',
     'buildtools/mac',
-    'buildtools/reclient',
     'buildtools/win',
     'third_party/android_build_tools/aapt2/cipd',
     'third_party/android_build_tools/bazel_tools/cipd',
@@ -93,7 +92,6 @@ SYNCED_CIPD_DEPS = {
     'third_party/android_build_tools/error_prone_javac/cipd',
     'third_party/android_build_tools/lint/cipd',
     'third_party/android_build_tools/manifest_merger/cipd',
-    'third_party/android_build_tools/nullaway/cipd',
     'third_party/android_sdk/public',
     'third_party/android_system_sdk/cipd',
     'third_party/fuchsia-sdk/sdk',

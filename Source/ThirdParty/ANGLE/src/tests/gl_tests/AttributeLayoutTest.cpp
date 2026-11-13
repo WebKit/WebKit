@@ -12,7 +12,7 @@
 
 #include <array>
 #include <vector>
-#include "common/unsafe_buffers.h"
+#include "common/span.h"
 
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
@@ -51,7 +51,7 @@ class VertexData
 {
   public:
     VertexData(int dimension,
-               const double *data,
+               Span<const double> data,
                unsigned offset,
                unsigned stride,
                unsigned numVertices)
@@ -65,13 +65,13 @@ class VertexData
     unsigned getNumVertices() const { return mNumVertices; }
     double getValue(unsigned vertexNumber, int component) const
     {
-        return ANGLE_UNSAFE_TODO(mData[mOffset + mStride * vertexNumber + component]);
+        return mData[mOffset + mStride * vertexNumber + component];
     }
 
   private:
     unsigned mNumVertices;
     int mDimension;
-    const double *mData;
+    Span<const double> mData;
     // offset and stride in doubles
     unsigned mOffset;
     unsigned mStride;
@@ -83,22 +83,22 @@ class Container
   public:
     static constexpr size_t kSize = 1024;
 
-    void open(void) { ANGLE_UNSAFE_TODO(memset(mMemory, 0xff, kSize)); }
-    void *getDestination(size_t offset) { return ANGLE_UNSAFE_TODO(mMemory + offset); }
+    void open(void) { mMemory.fill(static_cast<char>(0xff)); }
+    Span<char> getDestination(size_t offset) { return Span(mMemory).subspan(offset); }
     virtual void close(void) {}
     virtual ~Container() {}
     virtual const char *getAddress() = 0;
     virtual GLuint getBuffer()       = 0;
 
   protected:
-    char mMemory[kSize];
+    std::array<char, kSize> mMemory;
 };
 
 // Vertex attribute data in client memory.
 class Memory : public Container
 {
   public:
-    const char *getAddress() override { return mMemory; }
+    const char *getAddress() override { return mMemory.data(); }
     GLuint getBuffer() override { return 0; }
 };
 
@@ -109,7 +109,7 @@ class Buffer : public Container
     void close(void) override
     {
         glBindBuffer(GL_ARRAY_BUFFER, mBuffer);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(mMemory), mMemory, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, mMemory.size(), mMemory.data(), GL_STATIC_DRAW);
     }
 
     const char *getAddress() override { return nullptr; }
@@ -171,7 +171,7 @@ struct Attrib
     bool inClientMemory() const { return mContainer->getAddress() != nullptr; }
     const char *getContainerOffset() const
     {
-        return inClientMemory() ? ANGLE_UNSAFE_TODO(mContainer->getAddress() + mOffset)
+        return inClientMemory() ? mContainer->getDestination(mOffset).data()
                                 : reinterpret_cast<const char *>(mOffset);
     }
 
@@ -179,7 +179,7 @@ struct Attrib
     unsigned mOffset;
     unsigned mStride;
     const VertexData &mData;
-    void (*mStore)(double value, void *dest);
+    void (*mStore)(double value, Span<char> dest);
     GLenum mGLType;
     GLboolean mNormalized;
     GLboolean mPureInteger = GL_FALSE;
@@ -192,10 +192,10 @@ struct Attrib
 
 // Change type and store.
 template <class T>
-void Store(double value, void *dest)
+void Store(double value, Span<char> dest)
 {
     T v = static_cast<T>(value);
-    ANGLE_UNSAFE_TODO(memcpy(dest, &v, sizeof(v)));
+    as_writable_bytes(dest.first(sizeof(v))).copy_from(byte_span_from_ref(v));
 }
 
 // Function object that makes Attrib structs according to a vertex format.
@@ -562,50 +562,38 @@ constexpr double kVertexData[] = {
 };
 // clang-format on
 
+// Reads four T values from the start of `data` and returns them as a ResType.
+template <typename ResType, typename T>
+ResType ReadRefValue(Span<const char> data)
+{
+    std::array<T, 4> values;
+    as_writable_bytes(Span(values)).copy_from(as_bytes(data.first(sizeof(values))));
+    return ResType(values[0], values[1], values[2], values[3]);
+}
+
 template <class ResType>
-ResType GetRefValue(const void *data, GLenum glType)
+ResType GetRefValue(Span<const char> data, GLenum glType)
 {
     switch (glType)
     {
         case GL_BYTE:
-        {
-            const int8_t *p = reinterpret_cast<const int8_t *>(data);
-            return ANGLE_UNSAFE_TODO(ResType(p[0], p[1], p[2], p[3]));
-        }
+            return ReadRefValue<ResType, int8_t>(data);
         case GL_SHORT:
         case GL_HALF_FLOAT:
-        {
-            const int16_t *p = reinterpret_cast<const int16_t *>(data);
-            return ANGLE_UNSAFE_TODO(ResType(p[0], p[1], p[2], p[3]));
-        }
+            return ReadRefValue<ResType, int16_t>(data);
         case GL_INT:
         case GL_FIXED:
-        {
-            const int32_t *p = reinterpret_cast<const int32_t *>(data);
-            return ANGLE_UNSAFE_TODO(ResType(p[0], p[1], p[2], p[3]));
-        }
+            return ReadRefValue<ResType, int32_t>(data);
         case GL_UNSIGNED_BYTE:
-        {
-            const uint8_t *p = reinterpret_cast<const uint8_t *>(data);
-            return ANGLE_UNSAFE_TODO(ResType(p[0], p[1], p[2], p[3]));
-        }
+            return ReadRefValue<ResType, uint8_t>(data);
         case GL_UNSIGNED_SHORT:
-        {
-            const uint16_t *p = reinterpret_cast<const uint16_t *>(data);
-            return ANGLE_UNSAFE_TODO(ResType(p[0], p[1], p[2], p[3]));
-        }
+            return ReadRefValue<ResType, uint16_t>(data);
         case GL_FLOAT:
         case GL_UNSIGNED_INT:
-        {
-            const uint32_t *p = reinterpret_cast<const uint32_t *>(data);
-            return ANGLE_UNSAFE_TODO(ResType(p[0], p[1], p[2], p[3]));
-        }
+            return ReadRefValue<ResType, uint32_t>(data);
         default:
-        {
             ASSERT(0);
-            const uint32_t *p = reinterpret_cast<const uint32_t *>(data);
-            return ANGLE_UNSAFE_TODO(ResType(p[0], p[1], p[2], p[3]));
-        }
+            return ReadRefValue<ResType, uint32_t>(data);
     }
 }
 

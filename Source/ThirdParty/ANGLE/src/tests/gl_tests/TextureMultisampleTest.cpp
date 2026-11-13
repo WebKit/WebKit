@@ -1432,10 +1432,10 @@ TEST_P(TextureSampleShadingTest, Basic)
     glEnable(GL_SAMPLE_SHADING_OES);
     glMinSampleShadingOES(1.0f);
 
-    ANGLE_GL_PROGRAM(gradientProgram, essl31_shaders::vs::Passthrough(),
-                     essl31_shaders::fs::RedGreenGradient());
+    ANGLE_GL_PROGRAM(gradientProgram, essl1_shaders::vs::Passthrough(),
+                     essl1_shaders::fs::RedGreenGradient());
     glViewport(0, 0, kSize, kSize);
-    drawQuad(gradientProgram, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    drawQuad(gradientProgram, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
     ASSERT_GL_NO_ERROR();
 
     // Create a buffer for verification.

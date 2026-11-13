@@ -10803,6 +10803,444 @@ void main()
     EXPECT_PIXEL_RECT_EQ(1, 1, w - 1, h - 1, GLColor::green);
 }
 
+// Tests state change for GL_SAMPLE_COVERAGE.
+TEST_P(StateChangeTestES3, SampleCoverageEnable)
+{
+    constexpr char kVS[] = R"(#version 300 es
+void main()
+{
+    vec2 pos = vec2(0.0);
+    switch (gl_VertexID) {
+        case 0: pos = vec2(-1.0, -1.0); break;
+        case 1: pos = vec2(3.0, -1.0); break;
+        case 2: pos = vec2(-1.0, 3.0); break;
+    };
+    gl_Position = vec4(pos, 0.0, 1.0);
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+precision mediump float;
+uniform vec4 colorIn;
+out vec4 colorOut;
+void main()
+{
+    colorOut = colorIn;
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+    const GLint colorLoc = glGetUniformLocation(program, "colorIn");
+    ASSERT_NE(-1, colorLoc);
+
+    // Setup a multisampled framebuffer.  Draw three times with additive blending, and 0.5 coverage.
+    //
+    // * Transparent red with sample coverage enabled: Adds red to half of the samples
+    // * Transparent green with sample coverage disabled: Adds green
+    // * Transparent blue with sample coverage enabled: Adds blue to half of the samples
+    //
+    // Then clear alpha to 1 with a color mask while sample coverage is enabled.  That should not
+    // affect the clear and alpha channels should be cleared for all samples.
+    GLFramebuffer msaaFBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+
+    constexpr uint32_t kWidth  = 89;
+    constexpr uint32_t kHeight = 91;
+
+    GLRenderbuffer msaaRenderbuffer;
+    glBindRenderbuffer(GL_RENDERBUFFER, msaaRenderbuffer);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_RGBA8, kWidth, kHeight);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
+                              msaaRenderbuffer);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    glViewport(0, 0, kWidth, kHeight);
+
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+    glSampleCoverage(0.5, false);
+
+    // Transparent red
+    glEnable(GL_SAMPLE_COVERAGE);
+    glUniform4f(colorLoc, 1.0, 0.0, 0.0, 0.0);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Transparent green
+    glDisable(GL_SAMPLE_COVERAGE);
+    glUniform4f(colorLoc, 0.0, 1.0, 0.0, 0.0);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Transparent blue
+    glEnable(GL_SAMPLE_COVERAGE);
+    glUniform4f(colorLoc, 0.0, 0.0, 1.0, 0.0);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Clear alpha while sample coverage is enabled
+    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_TRUE);
+    glClearColor(0, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Resolve and verify the results.
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo);
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kWidth, kHeight);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_DRAW_FRAMEBUFFER);
+
+    glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(127, 255, 127, 255), 1);
+    EXPECT_PIXEL_COLOR_NEAR(kWidth - 1, kHeight - 1, GLColor(127, 255, 127, 255), 1);
+}
+
+// Tests state change for glSampleCoverage.
+TEST_P(StateChangeTestES3, SampleCoverage)
+{
+    constexpr char kVS[] = R"(#version 300 es
+void main()
+{
+    vec2 pos = vec2(0.0);
+    switch (gl_VertexID) {
+        case 0: pos = vec2(-1.0, -1.0); break;
+        case 1: pos = vec2(3.0, -1.0); break;
+        case 2: pos = vec2(-1.0, 3.0); break;
+    };
+    gl_Position = vec4(pos, 0.0, 1.0);
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+precision mediump float;
+uniform vec4 colorIn;
+out vec4 colorOut;
+void main()
+{
+    colorOut = colorIn;
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+    const GLint colorLoc = glGetUniformLocation(program, "colorIn");
+    ASSERT_NE(-1, colorLoc);
+
+    // Setup a multisampled framebuffer.  Draw three times with additive blending and sample
+    // coverage enabled.
+    //
+    // * Transparent red with sample coverage (0.25, false): Adds red to a quarter of the samples
+    // * Transparent green with sample coverage (0.25, true): Adds green to three quarters of the
+    //   samples
+    // * Transparent blue with sample coverage (0.5, true): Adds blue to half of the samples
+    //
+    // Then clear alpha to 1 with a color mask while sample coverage is enabled.  That should not
+    // affect the clear and alpha channels should be cleared for all samples.
+    GLFramebuffer msaaFBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+
+    constexpr uint32_t kWidth  = 89;
+    constexpr uint32_t kHeight = 91;
+
+    GLRenderbuffer msaaRenderbuffer;
+    glBindRenderbuffer(GL_RENDERBUFFER, msaaRenderbuffer);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_RGBA8, kWidth, kHeight);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
+                              msaaRenderbuffer);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    glViewport(0, 0, kWidth, kHeight);
+
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+    glEnable(GL_SAMPLE_COVERAGE);
+
+    // Transparent red
+    glSampleCoverage(0.25, false);
+    glUniform4f(colorLoc, 1.0, 0.0, 0.0, 0.0);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Transparent green
+    glSampleCoverage(0.25, true);
+    glUniform4f(colorLoc, 0.0, 1.0, 0.0, 0.0);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Transparent blue
+    glSampleCoverage(0.5, true);
+    glUniform4f(colorLoc, 0.0, 0.0, 1.0, 0.0);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Clear alpha while sample coverage is enabled
+    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_TRUE);
+    glClearColor(0, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Resolve and verify the results.
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo);
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kWidth, kHeight);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_DRAW_FRAMEBUFFER);
+
+    glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(63, 191, 127, 255), 1);
+    EXPECT_PIXEL_COLOR_NEAR(kWidth - 1, kHeight - 1, GLColor(63, 191, 127, 255), 1);
+}
+
+// Tests state change for GL_SAMPLE_MASK.
+TEST_P(StateChangeTestES3, SampleMaskEnable)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_OES_sample_variables"));
+    const bool isES31 = isAtLeastClientVersion(3, 1);
+    ANGLE_SKIP_TEST_IF(!isES31 && !EnsureGLExtensionEnabled("GL_ANGLE_texture_multisample"));
+
+    constexpr char kVS[] = R"(#version 300 es
+void main()
+{
+    vec2 pos = vec2(0.0);
+    switch (gl_VertexID) {
+        case 0: pos = vec2(-1.0, -1.0); break;
+        case 1: pos = vec2(3.0, -1.0); break;
+        case 2: pos = vec2(-1.0, 3.0); break;
+    };
+    gl_Position = vec4(pos, 0.0, 1.0);
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+#extension GL_OES_sample_variables : require
+
+precision mediump float;
+uniform vec4 colorIn;
+out vec4 colorOut;
+void main()
+{
+    colorOut = colorIn * float(gl_SampleID * gl_SampleID) / 9.0;
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+    const GLint colorLoc = glGetUniformLocation(program, "colorIn");
+    ASSERT_NE(-1, colorLoc);
+
+    // Setup a multisampled framebuffer.  Draw three times with additive blending, and 0xA sample
+    // mask.
+    //
+    // * Transparent red with sample mask enabled: Adds 1/9 and 9/9 red to samples 1 and 3
+    //   respectively.
+    // * Transparent green with sample mask disabled: Adds 0/9, 1/9, 4/9 and 9/9 green to samples 0
+    //   through 3 respectively.
+    // * Transparent blue with sample mask enabled: Adds 1/9 and 9/9 blue to samples 1 and 3
+    //   respectively.
+    //
+    // Then clear alpha to 1 with a color mask while sample mask is enabled.  That should not
+    // affect the clear and alpha channels should be cleared for all samples.
+    GLFramebuffer msaaFBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+
+    constexpr uint32_t kWidth  = 89;
+    constexpr uint32_t kHeight = 91;
+
+    GLRenderbuffer msaaRenderbuffer;
+    glBindRenderbuffer(GL_RENDERBUFFER, msaaRenderbuffer);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_RGBA8, kWidth, kHeight);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
+                              msaaRenderbuffer);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    glViewport(0, 0, kWidth, kHeight);
+
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+    if (isES31)
+    {
+        glSampleMaski(0, 0xA);
+    }
+    else
+    {
+        glSampleMaskiANGLE(0, 0xA);
+    }
+
+    // Transparent red
+    glEnable(GL_SAMPLE_MASK);
+    glUniform4f(colorLoc, 1.0, 0.0, 0.0, 0.0);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Transparent green
+    glDisable(GL_SAMPLE_MASK);
+    glUniform4f(colorLoc, 0.0, 1.0, 0.0, 0.0);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Transparent blue
+    glEnable(GL_SAMPLE_MASK);
+    glUniform4f(colorLoc, 0.0, 0.0, 1.0, 0.0);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Clear alpha while sample mask is enabled
+    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_TRUE);
+    glClearColor(0, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Resolve and verify the results.
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo);
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kWidth, kHeight);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_DRAW_FRAMEBUFFER);
+
+    glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(71, 99, 71, 255), 2);
+    EXPECT_PIXEL_COLOR_NEAR(kWidth - 1, kHeight - 1, GLColor(71, 99, 71, 255), 2);
+}
+
+// Tests state change for glSampleMaski.
+TEST_P(StateChangeTestES3, SampleMask)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_OES_sample_variables"));
+    const bool isES31 = isAtLeastClientVersion(3, 1);
+    ANGLE_SKIP_TEST_IF(!isES31 && !EnsureGLExtensionEnabled("GL_ANGLE_texture_multisample"));
+
+    constexpr char kVS[] = R"(#version 300 es
+void main()
+{
+    vec2 pos = vec2(0.0);
+    switch (gl_VertexID) {
+        case 0: pos = vec2(-1.0, -1.0); break;
+        case 1: pos = vec2(3.0, -1.0); break;
+        case 2: pos = vec2(-1.0, 3.0); break;
+    };
+    gl_Position = vec4(pos, 0.0, 1.0);
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+#extension GL_OES_sample_variables : require
+
+precision mediump float;
+uniform vec4 colorIn;
+out vec4 colorOut;
+void main()
+{
+    colorOut = colorIn * float(gl_SampleID * gl_SampleID + 1) / 10.0;
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+    const GLint colorLoc = glGetUniformLocation(program, "colorIn");
+    ASSERT_NE(-1, colorLoc);
+
+    // Setup a multisampled framebuffer.  Draw three times with additive blending, and sample mask
+    // enabled.
+    //
+    // * Transparent red with sample mask 0xA: Adds 2/10 and 10/10 red to samples 1 and 3
+    //   respectively.
+    // * Transparent green with sample mask 0x7: Adds 1/10, 2/10, 5/10 green to samples 0, 1 and 2
+    //   respectively.
+    // * Transparent blue with sample mask 0x9: Adds 1/10 and 10/10 blue to samples 1 and 3
+    //   respectively.
+    //
+    // Then clear alpha to 1 with a color mask while sample mask is enabled.  That should not
+    // affect the clear and alpha channels should be cleared for all samples.
+    GLFramebuffer msaaFBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+
+    constexpr uint32_t kWidth  = 89;
+    constexpr uint32_t kHeight = 91;
+
+    GLRenderbuffer msaaRenderbuffer;
+    glBindRenderbuffer(GL_RENDERBUFFER, msaaRenderbuffer);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_RGBA8, kWidth, kHeight);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
+                              msaaRenderbuffer);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    glViewport(0, 0, kWidth, kHeight);
+
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+    glEnable(GL_SAMPLE_MASK);
+
+    // Transparent red
+    if (isES31)
+    {
+        glSampleMaski(0, 0xA);
+    }
+    else
+    {
+        glSampleMaskiANGLE(0, 0xA);
+    }
+    glUniform4f(colorLoc, 1.0, 0.0, 0.0, 0.0);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Transparent green
+    if (isES31)
+    {
+        glSampleMaski(0, 0x7);
+    }
+    else
+    {
+        glSampleMaskiANGLE(0, 0x7);
+    }
+    glUniform4f(colorLoc, 0.0, 1.0, 0.0, 0.0);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Transparent blue
+    if (isES31)
+    {
+        glSampleMaski(0, 0x9);
+    }
+    else
+    {
+        glSampleMaskiANGLE(0, 0x9);
+    }
+    glUniform4f(colorLoc, 0.0, 0.0, 1.0, 0.0);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Clear alpha while sample mask is enabled
+    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_TRUE);
+    glClearColor(0, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Resolve and verify the results.
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo);
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kWidth, kHeight);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_DRAW_FRAMEBUFFER);
+
+    glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(77, 51, 70, 255), 2);
+    EXPECT_PIXEL_COLOR_NEAR(kWidth - 1, kHeight - 1, GLColor(77, 51, 70, 255), 2);
+}
+
 // Tests state change for GL_PATCH_VERTICES and glPatchParameteri.
 TEST_P(StateChangeTestES31, PatchVertices)
 {
@@ -10932,7 +11370,7 @@ void main()
 }
 
 // Tests state change for GL_SAMPLE_ALPHA_TO_COVERAGE.
-TEST_P(StateChangeTestES31, AlphaToCoverageEnable)
+TEST_P(StateChangeTestES3, AlphaToCoverageEnable)
 {
     constexpr char kVS[] = R"(#version 300 es
 void main()
@@ -10972,11 +11410,11 @@ void main()
     constexpr uint32_t kWidth  = 89;
     constexpr uint32_t kHeight = 91;
 
-    GLTexture msaaTexture;
-    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, msaaTexture);
-    glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8, kWidth, kHeight, false);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE,
-                           msaaTexture, 0);
+    GLRenderbuffer msaaRenderbuffer;
+    glBindRenderbuffer(GL_RENDERBUFFER, msaaRenderbuffer);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_RGBA8, kWidth, kHeight);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
+                              msaaRenderbuffer);
     ASSERT_GL_NO_ERROR();
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
@@ -11024,7 +11462,7 @@ void main()
 }
 
 // Tests state change for GL_SAMPLE_ALPHA_TO_ONE_EXT.
-TEST_P(StateChangeTestES31, AlphaToOneEnable)
+TEST_P(StateChangeTestES3, AlphaToOneEnable)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_multisample_compatibility"));
 
@@ -11067,11 +11505,11 @@ void main()
     constexpr uint32_t kWidth  = 89;
     constexpr uint32_t kHeight = 91;
 
-    GLTexture msaaTexture;
-    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, msaaTexture);
-    glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8, kWidth, kHeight, false);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE,
-                           msaaTexture, 0);
+    GLRenderbuffer msaaRenderbuffer;
+    glBindRenderbuffer(GL_RENDERBUFFER, msaaRenderbuffer);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_RGBA8, kWidth, kHeight);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
+                              msaaRenderbuffer);
     ASSERT_GL_NO_ERROR();
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
@@ -12553,6 +12991,7 @@ ANGLE_INSTANTIATE_TEST_ES3_AND(
         .disable(Feature::SupportsExtendedDynamicState)
         .disable(Feature::SupportsExtendedDynamicState2),
     ES3_VULKAN().disable(Feature::SupportsExtendedDynamicState2),
+    ES3_VULKAN().disable(Feature::SupportsExtendedDynamicState3),
     ES3_VULKAN()
         .disable(Feature::SupportsExtendedDynamicState2)
         .disable(Feature::SupportsGraphicsPipelineLibrary),
@@ -12567,6 +13006,7 @@ ANGLE_INSTANTIATE_TEST_ES31_AND(
         .disable(Feature::SupportsExtendedDynamicState)
         .disable(Feature::SupportsExtendedDynamicState2),
     ES31_VULKAN().disable(Feature::SupportsExtendedDynamicState2),
+    ES31_VULKAN().disable(Feature::SupportsExtendedDynamicState3),
     ES31_VULKAN()
         .disable(Feature::SupportsExtendedDynamicState2)
         .disable(Feature::SupportsGraphicsPipelineLibrary),

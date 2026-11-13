@@ -2,7 +2,7 @@
   "doc/ExtensionSupport.md":
     "1088913994cecb05694ab4301ff90a69",
   "scripts/egl_angle_ext.xml":
-    "ad031ef02420989f9c4fb5bb1247e845",
+    "71cb3874ec6601a17cebae24c3e4d283",
   "scripts/extension_data/intel_630_linux.json":
     "3b86832de6a7095f4617e273cba6d45e",
   "scripts/extension_data/intel_630_win10.json":
@@ -22,7 +22,7 @@
   "scripts/gl_angle_ext.xml":
     "fc346145012b6744a27199a3210f6f88",
   "scripts/registry_xml.py":
-    "f08436820f54c6120c2865cd9374316b",
+    "8faabf303cf5ec00e7aa6864ea10ca38",
   "src/libANGLE/gen_extensions.py":
     "b633607f7ec8333cd64234e5e10af145",
   "src/libANGLE/gles_extensions_autogen.cpp":

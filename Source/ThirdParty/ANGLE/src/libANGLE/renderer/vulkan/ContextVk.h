@@ -78,6 +78,7 @@ enum class SurfaceAncillaryColorBehavior
     InvalidateOnPresent,
 };
 
+static constexpr GLbitfield kNoMemoryBarrierBits = 0;
 static constexpr GLbitfield kBufferMemoryBarrierBits =
     GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT | GL_ELEMENT_ARRAY_BARRIER_BIT | GL_UNIFORM_BARRIER_BIT |
     GL_COMMAND_BARRIER_BIT | GL_PIXEL_BUFFER_BARRIER_BIT | GL_BUFFER_UPDATE_BARRIER_BIT |
@@ -550,7 +551,7 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     {
         ASSERT(mRenderPassCommands->started());
         mRenderPassCommands->imageWrite(this, level, layerStart, layerCount, aspectFlags,
-                                        imageAccess, image);
+                                        imageAccess, image, kNoMemoryBarrierBits);
     }
 
     void onColorDraw(gl::OwnerLevel level,
@@ -1026,6 +1027,7 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
         DIRTY_BIT_DYNAMIC_DEPTH_CLIP_NEGATIVE_ONE_TO_ONE,
         DIRTY_BIT_DYNAMIC_LOGIC_OP_ENABLE,
         DIRTY_BIT_DYNAMIC_POLYGON_MODE,
+        DIRTY_BIT_DYNAMIC_SAMPLE_MASK,
         // - In VK_KHR_fragment_shading_rate
         DIRTY_BIT_DYNAMIC_FRAGMENT_SHADING_RATE,
 
@@ -1135,6 +1137,8 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     static_assert(DIRTY_BIT_DYNAMIC_LOGIC_OP_ENABLE > DIRTY_BIT_RENDER_PASS,
                   "Render pass using dirty bit must be handled after the render pass dirty bit");
     static_assert(DIRTY_BIT_DYNAMIC_POLYGON_MODE > DIRTY_BIT_RENDER_PASS,
+                  "Render pass using dirty bit must be handled after the render pass dirty bit");
+    static_assert(DIRTY_BIT_DYNAMIC_SAMPLE_MASK > DIRTY_BIT_RENDER_PASS,
                   "Render pass using dirty bit must be handled after the render pass dirty bit");
     static_assert(DIRTY_BIT_DYNAMIC_FRAGMENT_SHADING_RATE > DIRTY_BIT_RENDER_PASS,
                   "Render pass using dirty bit must be handled after the render pass dirty bit");
@@ -1363,6 +1367,8 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
                                                           DirtyBits dirtyBitMask);
     angle::Result handleDirtyGraphicsDynamicPolygonMode(DirtyBits::Iterator *dirtyBitsIterator,
                                                         DirtyBits dirtyBitMask);
+    angle::Result handleDirtyGraphicsDynamicSampleMask(DirtyBits::Iterator *dirtyBitsIterator,
+                                                       DirtyBits dirtyBitMask);
     angle::Result handleDirtyGraphicsDynamicFragmentShadingRate(
         DirtyBits::Iterator *dirtyBitsIterator,
         DirtyBits dirtyBitMask);
@@ -1522,6 +1528,7 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     vk::PipelineHelper *mCurrentGraphicsPipelineShaders;
     vk::PipelineHelper *mCurrentComputePipeline;
     gl::PrimitiveMode mCurrentDrawMode;
+    uint32_t mCurrentRasterizationSamples;
 
     WindowSurfaceVk *mCurrentWindowSurface;
     // Records the current rotation of the surface (draw/read) framebuffer, derived from
@@ -1757,6 +1764,7 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
         vk::ImageHelper image;
         vk::ImageView view;
         vk::ImageOrBufferViewSerial serial;
+        NullStorageImageEntry() : image(VK_IMAGE_TYPE_2D) {}
     };
     angle::HashMap<GLenum, std::unique_ptr<NullStorageImageEntry>> mNullStorageImages;
 

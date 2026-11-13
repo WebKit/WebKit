@@ -5860,7 +5860,7 @@ impl<Container: InstructionContainer> Builder<Container> {
         result: TypedRegisterId,
         value: TypedId,
     ) -> TypedId {
-        debug_assert_ne!(value.id, Id::Register(result.id));
+        debug_assert!(value.id != Id::Register(result.id));
         match (value.id, self.container.get_last_instruction_result_register_mut()) {
             (Id::Register(value), Some(last_result)) if value == *last_result => {
                 ir_meta.replace_instruction(result.id, value);

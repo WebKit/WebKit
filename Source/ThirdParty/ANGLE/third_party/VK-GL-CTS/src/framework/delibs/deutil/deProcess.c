@@ -115,6 +115,9 @@ static void execProcess(const char *commandLine, const char *workingDirectory, i
     if (!cmdLine || !argList)
         die(statusPipe, "Command line parsing failed (out of memory)");
 
+    if (cmdLine->numArgs <= 0)
+        die(statusPipe, "Empty command line");
+
     if (workingDirectory && chdir(workingDirectory) != 0)
         dieLastError(statusPipe, "chdir() failed");
 

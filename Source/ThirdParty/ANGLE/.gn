@@ -22,6 +22,14 @@ script_executable = "//third_party/cpython3/host/bin/python3"
 # "gn check" or "gn gen --check".
 # check_targets = [ "*" ]
 
+# Exceptions to strict header include checking, which is enabled by default
+# on all targets after crrev.com/c/8603473 / crbug.com/555455099.
+check_includes_strict_exceptions = [
+  {
+    includer = "//*"
+  },
+]
+
 # These are the list of GN files that run exec_script. This allowlist exists
 # to force additional review for new uses of exec_script, which is strongly
 # discouraged except for gypi_to_gn calls.

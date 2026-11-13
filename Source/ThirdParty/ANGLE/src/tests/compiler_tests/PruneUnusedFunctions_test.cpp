@@ -26,6 +26,7 @@ class PruneUnusedFunctionsTest : public MatchOutputCodeTest
     void compile(const std::string &shaderString)
     {
         ShCompileOptions compileOptions = {};
+        compileOptions.outputDebugInfo  = true;
 
         MatchOutputCodeTest::compile(shaderString, compileOptions);
     }

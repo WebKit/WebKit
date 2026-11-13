@@ -1,0 +1,126 @@
+Name
+
+    ANGLE_query_renderer_strings
+
+Name Strings
+
+    EGL_ANGLE_query_renderer_strings
+
+Contributors
+
+    Zhenyao Mo, Google
+
+Contacts
+
+    Zhenyao Mo, Google (zmo 'at' chromium 'dot' org)
+
+Status
+
+    Draft
+
+Version
+
+    Version 1, 2026-10-29
+
+Number
+
+    EGL Extension XXX
+
+Extension Type
+
+    EGL display extension
+
+Dependencies
+
+    This extension is written against the wording of the EGL 1.5
+    specification.
+
+Overview
+
+    ANGLE builds the strings returned by glGetString(GL_RENDERER) and
+    glGetString(GL_VERSION) mostly from information about the underlying
+    device and the ANGLE build, none of which depends on a particular GL
+    context. Applications that only need these strings (for example, to
+    report or match on GPU information) otherwise have to create a surface
+    and a context and make them current just to query them.
+
+    This extension allows these strings to be queried from an initialized
+    EGLDisplay with eglQueryString, without creating a context.
+
+New Types
+
+    None
+
+New Procedures and Functions
+
+    None
+
+New Tokens
+
+    Accepted as the <name> parameter of eglQueryString:
+
+        EGL_RENDERER_STRING_ANGLE                   0x34F9
+        EGL_ANGLE_VERSION_STRING_ANGLE              0x34FA
+
+Additions to the EGL 1.5 Specification
+
+    Add the following to section 3.3 "EGL Queries", after the description
+    of EGL_VERSION:
+
+    "If the EGL_ANGLE_query_renderer_strings extension is supported,
+    <name> may also be:
+
+      * EGL_RENDERER_STRING_ANGLE, which returns the string that
+        glGetString(GL_RENDERER) returns for an OpenGL ES context created
+        on <dpy> without the EGL_CONTEXT_WEBGL_COMPATIBILITY_ANGLE
+        attribute set to EGL_TRUE.
+
+        Example strings returned by actual drivers:
+
+          D3D11 backend:
+            "ANGLE (NVIDIA, NVIDIA GeForce GTX 1660 (0x00002184) Direct3D11 vs_5_0 ps_5_0, D3D11-31.0.15.4601)"
+
+          Metal backend:
+            "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Pro, Version 26.7.1 (Build 25G241))"
+
+          OpenGL ES backend:
+            "ANGLE (ARM, Mali-G710, OpenGL ES 3.2 v1.r54p3-00eac0.1848e3b066182d5bb5a345ab256f13ee)"
+
+          Vulkan backend:
+            "ANGLE (ARM, Vulkan 1.4.343 (Mali-G710 (0xA8620000)), Mali-G710-54.3.0)"
+
+      * EGL_ANGLE_VERSION_STRING_ANGLE, which returns the ANGLE implementation
+        version. This is the <version> part of the
+        "OpenGL ES <major>.<minor> (ANGLE <version>)" string that
+        glGetString(GL_VERSION) returns for an OpenGL ES <major>.<minor>
+        context created on <dpy>."
+
+Errors
+
+    If EGL_ANGLE_query_renderer_strings is not supported, passing
+    EGL_RENDERER_STRING_ANGLE or EGL_ANGLE_VERSION_STRING_ANGLE as <name> to
+    eglQueryString generates EGL_BAD_PARAMETER.
+
+    As with other display queries, passing EGL_NO_DISPLAY or an
+    uninitialized display generates EGL_BAD_DISPLAY or
+    EGL_NOT_INITIALIZED respectively.
+
+Issues
+
+    1) Why not return the full GL_VERSION string?
+
+       RESOLVED: GL_VERSION depends on the client version of the context,
+       which is not known when querying a display. The client version is
+       chosen by the application, so it can build the full string from
+       EGL_ANGLE_VERSION_STRING_ANGLE.
+
+    2) WebGL contexts report a shorter GL_RENDERER string, without the full
+       driver version. Which one is returned?
+
+       RESOLVED: The non-WebGL string, which contains the full driver
+       version.
+
+Revision History
+
+    Version 1, 2026-10-29 (Zhenyao Mo)
+      - Initial draft

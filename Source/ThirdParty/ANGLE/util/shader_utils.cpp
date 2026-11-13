@@ -563,6 +563,18 @@ void main()
 })";
 }
 
+// A shader that renders a simple gradient of red to green. Needs varying v_position.
+const char *RedGreenGradient()
+{
+    return R"(precision highp float;
+varying vec4 v_position;
+
+void main()
+{
+    gl_FragColor = vec4(v_position.xy * 0.5 + vec2(0.5), 0.0, 1.0);
+})";
+}
+
 }  // namespace fs
 }  // namespace essl1_shaders
 
@@ -805,20 +817,6 @@ out vec4 my_FragColor;
 void main()
 {
     my_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
-})";
-}
-
-// A shader that renders a simple gradient of red to green. Needs varying v_position.
-const char *RedGreenGradient()
-{
-    return R"(#version 310 es
-precision highp float;
-in vec4 v_position;
-out vec4 my_FragColor;
-
-void main()
-{
-    my_FragColor = vec4(v_position.xy * 0.5 + vec2(0.5), 0.0, 1.0);
 })";
 }
 
