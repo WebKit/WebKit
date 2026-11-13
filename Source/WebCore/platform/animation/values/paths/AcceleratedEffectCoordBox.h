@@ -38,6 +38,7 @@ enum class AcceleratedEffectCoordBox : uint8_t {
     MarginBox,
     PaddingBox,
     BorderBox,
+    HalfBorderBox,
     FillBox,
     StrokeBox,
     ViewBox

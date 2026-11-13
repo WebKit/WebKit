@@ -88,6 +88,12 @@ static LayoutSize computeLogicalBoxSize(const RenderBox& renderer, bool isHorizo
         break;
     case CSSBoxType::BorderBox:
         break;
+    case CSSBoxType::HalfBorderBox:
+        if (isHorizontalWritingMode)
+            size.shrink(renderer.horizontalBorderExtent() / 2, renderer.verticalBorderExtent() / 2);
+        else
+            size.shrink(renderer.verticalBorderExtent() / 2, renderer.horizontalBorderExtent() / 2);
+        break;
     case CSSBoxType::PaddingBox:
         if (isHorizontalWritingMode)
             size.shrink(renderer.horizontalBorderExtent(), renderer.verticalBorderExtent());
@@ -143,6 +149,8 @@ static LayoutUnit logicalTopOffset(const RenderBox& renderer)
         return -renderer.marginBefore(renderer.containingBlock()->writingMode());
     case CSSBoxType::BorderBox:
         return 0_lu;
+    case CSSBoxType::HalfBorderBox:
+        return borderBeforeInWritingMode(renderer, renderer.containingBlock()->writingMode()) / 2;
     case CSSBoxType::PaddingBox:
         return borderBeforeInWritingMode(renderer, renderer.containingBlock()->writingMode());
     case CSSBoxType::ContentBox:
@@ -199,6 +207,8 @@ static LayoutUnit logicalLeftOffset(const RenderBox& renderer)
         return isHorizontal ? -renderer.marginLeft() : -renderer.marginTop();
     case CSSBoxType::BorderBox:
         return 0_lu;
+    case CSSBoxType::HalfBorderBox:
+        return (isHorizontal ? renderer.borderLeft() : renderer.borderTop()) / 2;
     case CSSBoxType::PaddingBox:
         return isHorizontal ? renderer.borderLeft() : renderer.borderTop();
     case CSSBoxType::ContentBox:

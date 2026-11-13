@@ -1019,6 +1019,7 @@ verso
 
 // CSS Shapes
 margin-box
+half-border-box
 
 // clip-path
 stroke-box
