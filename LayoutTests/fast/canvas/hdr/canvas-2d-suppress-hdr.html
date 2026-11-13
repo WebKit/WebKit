@@ -1,0 +1,59 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SupportHDRDisplayEnabled=true CSSConstrainedDynamicRangeLimitEnabled=true CanvasColorTypeEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<canvas id="noLimitCanvas" style="dynamic-range-limit: no-limit"></canvas>
+<canvas id="standardCanvas" style="dynamic-range-limit: standard"></canvas>
+<canvas id="standardToneMappingCanvas" style="dynamic-range-limit: no-limit"></canvas>
+<script>
+description("Tests that suppressing HDR on the page limits the effective dynamic-range-limit of 2D canvas contexts to \"constrained\", like for video, without changing whether they are HDR.");
+
+if (window.internals)
+    internals.setScreenContentsFormatsForTesting(["RGBA8", "RGBA16F"]);
+
+function verify(id, expectedValue, expectedIsHDR)
+{
+    shouldBe(`internals.getContextEffectiveDynamicRangeLimitValue(${id})`, expectedValue);
+    shouldBe(`internals.isCanvasContextHDR(${id})`, `${expectedIsHDR}`);
+}
+
+function verifyAll(suppressed)
+{
+    // While suppressed, "no-limit" is limited to "constrained" (0.5), which still allows some headroom.
+    verify("noLimitCanvas", suppressed ? "0.5" : "1.0", true);
+    verify("standardCanvas", "0.0", false);
+    verify("standardToneMappingCanvas", suppressed ? "0.5" : "1.0", false);
+}
+
+if (!window.internals)
+    testFailed("This test requires window.internals.");
+else {
+    document.body.offsetHeight;
+    for (const id of ["noLimitCanvas", "standardCanvas"])
+        document.getElementById(id).getContext("2d", { colorType: "float16", toneMapping: { mode: "extended" } });
+    standardToneMappingCanvas.getContext("2d", { colorType: "float16", toneMapping: { mode: "standard" } });
+
+    debug("\n- HDR not suppressed");
+    verifyAll(false);
+
+    debug("\n- HDR suppressed");
+    internals.setPageShouldSuppressHDR(true);
+    verifyAll(true);
+
+    debug("\n- A context created while HDR is suppressed");
+    window.laterCanvas = document.createElement("canvas");
+    document.body.append(laterCanvas);
+    laterCanvas.offsetHeight;
+    laterCanvas.getContext("2d", { colorType: "float16", toneMapping: { mode: "extended" } });
+    verify("laterCanvas", "0.5", true);
+
+    debug("\n- HDR no longer suppressed");
+    internals.setPageShouldSuppressHDR(false);
+    verifyAll(false);
+    verify("laterCanvas", "1.0", true);
+}
+</script>
+</body>
+</html>

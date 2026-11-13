@@ -465,14 +465,15 @@ CanvasRenderingContext2D* HTMLCanvasElement::createContext2d(const String& type,
     if (!m_context)
         return nullptr;
 
-#if ENABLE(PIXEL_FORMAT_RGBA16F) && HAVE(SUPPORT_HDR_DISPLAY)
-    if (protect(m_context.get())->isHDR())
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    Ref context = *m_context;
+    // Set the dynamic range limit first, isHDR() depends on it.
+    context->setDynamicRangeLimit(m_dynamicRangeLimit);
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    if (context->isHDR())
         protect(document())->setHasHDRContent();
 #endif
-
-#if ENABLE(PIXEL_FORMAT_RGBA16F)
-    protect(m_context.get())->setDynamicRangeLimit(m_dynamicRangeLimit);
-#endif
+#endif // ENABLE(PIXEL_FORMAT_RGBA16F)
 
 #if USE(CA) || USE(SKIA)
     // Need to make sure a RenderLayer and compositing layer get created for the Canvas.

@@ -1,0 +1,77 @@
+Tests pairs of sibling canvases with different settings: whether a canvas is presented in HDR must not depend on the other one. Each HDR canvas should have its own HDR layer, and no other layer, in particular not their enclosing layer, should draw HDR content.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+- Canvases in the root layer
+unorm8 extended + unorm8 extended
+PASS hdrLayerCount() is 0
+unorm8 extended + float16 standard
+PASS hdrLayerCount() is 0
+unorm8 extended + float16 extended
+PASS hdrLayerCount() is 1
+unorm8 extended + float16 extended, dynamic-range-limit: standard
+PASS hdrLayerCount() is 0
+float16 standard + unorm8 extended
+PASS hdrLayerCount() is 0
+float16 standard + float16 standard
+PASS hdrLayerCount() is 0
+float16 standard + float16 extended
+PASS hdrLayerCount() is 1
+float16 standard + float16 extended, dynamic-range-limit: standard
+PASS hdrLayerCount() is 0
+float16 extended + unorm8 extended
+PASS hdrLayerCount() is 1
+float16 extended + float16 standard
+PASS hdrLayerCount() is 1
+float16 extended + float16 extended
+PASS hdrLayerCount() is 2
+float16 extended + float16 extended, dynamic-range-limit: standard
+PASS hdrLayerCount() is 1
+float16 extended, dynamic-range-limit: standard + unorm8 extended
+PASS hdrLayerCount() is 0
+float16 extended, dynamic-range-limit: standard + float16 standard
+PASS hdrLayerCount() is 0
+float16 extended, dynamic-range-limit: standard + float16 extended
+PASS hdrLayerCount() is 1
+float16 extended, dynamic-range-limit: standard + float16 extended, dynamic-range-limit: standard
+PASS hdrLayerCount() is 0
+
+- Canvases in a composited div
+unorm8 extended + unorm8 extended
+PASS hdrLayerCount() is 0
+unorm8 extended + float16 standard
+PASS hdrLayerCount() is 0
+unorm8 extended + float16 extended
+PASS hdrLayerCount() is 1
+unorm8 extended + float16 extended, dynamic-range-limit: standard
+PASS hdrLayerCount() is 0
+float16 standard + unorm8 extended
+PASS hdrLayerCount() is 0
+float16 standard + float16 standard
+PASS hdrLayerCount() is 0
+float16 standard + float16 extended
+PASS hdrLayerCount() is 1
+float16 standard + float16 extended, dynamic-range-limit: standard
+PASS hdrLayerCount() is 0
+float16 extended + unorm8 extended
+PASS hdrLayerCount() is 1
+float16 extended + float16 standard
+PASS hdrLayerCount() is 1
+float16 extended + float16 extended
+PASS hdrLayerCount() is 2
+float16 extended + float16 extended, dynamic-range-limit: standard
+PASS hdrLayerCount() is 1
+float16 extended, dynamic-range-limit: standard + unorm8 extended
+PASS hdrLayerCount() is 0
+float16 extended, dynamic-range-limit: standard + float16 standard
+PASS hdrLayerCount() is 0
+float16 extended, dynamic-range-limit: standard + float16 extended
+PASS hdrLayerCount() is 1
+float16 extended, dynamic-range-limit: standard + float16 extended, dynamic-range-limit: standard
+PASS hdrLayerCount() is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

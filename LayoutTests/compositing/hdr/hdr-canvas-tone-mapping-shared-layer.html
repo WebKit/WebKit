@@ -1,0 +1,31 @@
+<!-- webkit-test-runner [ CanvasColorTypeEnabled=true ] -->
+<style>
+    canvas {
+        border: 1px solid black;
+    }
+</style>
+<body>
+    <pre id="layers">Layer tree goes here in DRT</pre>
+    <!-- Not positioned, so that the canvases would otherwise all be painted into the same enclosing layer. -->
+    <canvas id="standardCanvas"></canvas>
+    <canvas id="extendedCanvas"></canvas>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        if (window.internals)
+            internals.setScreenContentsFormatsForTesting(["RGBA8", "RGBA16F"]);
+
+        // A "standard" canvas is presented in SDR: it does not need its own layer, and its enclosing layer must not draw HDR content.
+        let standardContext = document.getElementById("standardCanvas").getContext("2d", { colorType: "float16", toneMapping: { mode: "standard" } });
+        standardContext.fillStyle = "green";
+        standardContext.fillRect(0, 0, 100, 100);
+
+        // An "extended" canvas must get its own HDR layer, rather than making its enclosing layer, and so the "standard" canvas, HDR.
+        let extendedContext = document.getElementById("extendedCanvas").getContext("2d", { colorType: "float16", toneMapping: { mode: "extended" } });
+        extendedContext.fillStyle = "green";
+        extendedContext.fillRect(0, 0, 100, 100);
+
+        document.getElementById("layers").textContent = internals.layerTreeAsText(document);
+    </script>
+</body>

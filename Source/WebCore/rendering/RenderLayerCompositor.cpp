@@ -4037,8 +4037,17 @@ bool RenderLayerCompositor::requiresCompositingForCanvas(RenderLayerModelObject&
     if (compositingStrategy == CanvasAsLayerContents)
         return true;
 
-    if (m_compositingPolicy == CompositingPolicy::Normal)
+    if (m_compositingPolicy == CompositingPolicy::Normal) {
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+        // An HDR canvas painted into its enclosing layer would make that whole layer HDR, and so would
+        // also show other content painted into it (e.g. canvases with "standard" tone mapping) in HDR.
+        if (compositingStrategy == CanvasPaintedToEnclosingLayer) {
+            if (RefPtr renderingContext = downcast<HTMLCanvasElement>(renderer.element())->renderingContext(); renderingContext && renderingContext->isHDR())
+                return true;
+        }
+#endif
         return compositingStrategy == CanvasPaintedToLayer && isCanvasLargeEnoughOrHDRToForceCompositing;
+    }
 
     return false;
 }

@@ -1,0 +1,73 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CanvasColorTypeEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<style>
+    canvas {
+        border: 1px solid black;
+    }
+    .composited {
+        will-change: transform;
+    }
+</style>
+</head>
+<body>
+<div id="container"></div>
+<script>
+description("Tests pairs of sibling canvases with different settings: whether a canvas is presented in HDR must not depend on the other one. Each HDR canvas should have its own HDR layer, and no other layer, in particular not their enclosing layer, should draw HDR content.");
+
+if (window.internals)
+    internals.setScreenContentsFormatsForTesting(["RGBA8", "RGBA16F"]);
+
+const configurations = [
+    { name: "unorm8 extended", colorType: "unorm8", toneMappingMode: "extended", dynamicRangeLimit: "no-limit", isHDR: false },
+    { name: "float16 standard", colorType: "float16", toneMappingMode: "standard", dynamicRangeLimit: "no-limit", isHDR: false },
+    { name: "float16 extended", colorType: "float16", toneMappingMode: "extended", dynamicRangeLimit: "no-limit", isHDR: true },
+    { name: "float16 extended, dynamic-range-limit: standard", colorType: "float16", toneMappingMode: "extended", dynamicRangeLimit: "standard", isHDR: false },
+];
+
+// Where the canvases would be painted if they had no layer of their own.
+const enclosingLayers = [
+    { name: "the root layer", className: "" },
+    { name: "a composited div", className: "composited" },
+];
+
+function createCanvas(parent, configuration)
+{
+    const canvas = document.createElement("canvas");
+    canvas.style.setProperty("dynamic-range-limit", configuration.dynamicRangeLimit);
+    parent.append(canvas);
+    canvas.offsetHeight;
+    const context = canvas.getContext("2d", { colorType: configuration.colorType, toneMapping: { mode: configuration.toneMappingMode } });
+    context.fillStyle = "green";
+    context.fillRect(0, 0, 100, 100);
+}
+
+function hdrLayerCount()
+{
+    return (internals.layerTreeAsText(document).match(/\(drawsHDRContent 1\)/g) || []).length;
+}
+
+if (!window.internals)
+    testFailed("This test requires window.internals.");
+else {
+    const container = document.getElementById("container");
+    for (const enclosingLayer of enclosingLayers) {
+        debug(`\n- Canvases in ${enclosingLayer.name}`);
+        for (const first of configurations) {
+            for (const second of configurations) {
+                debug(`${first.name} + ${second.name}`);
+                const parent = document.createElement("div");
+                parent.className = enclosingLayer.className;
+                container.append(parent);
+                createCanvas(parent, first);
+                createCanvas(parent, second);
+                shouldBe("hdrLayerCount()", `${first.isHDR + second.isHDR}`);
+                parent.remove();
+            }
+        }
+    }
+}
+</script>
+</body>
+</html>

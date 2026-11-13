@@ -1,0 +1,134 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SupportHDRDisplayEnabled=true CSSConstrainedDynamicRangeLimitEnabled=true CanvasColorTypeEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<div id="container"></div>
+<script>
+description("Tests whether a 2D canvas context is HDR, for all combinations of colorType, toneMapping.mode and dynamic-range-limit, and when the dynamic-range-limit changes.");
+
+if (window.internals)
+    internals.setScreenContentsFormatsForTesting(["RGBA8", "RGBA16F"]);
+
+const constrainedSupported = CSS.supports("dynamic-range-limit", "constrained");
+
+const colorTypes = [undefined, "unorm8", "float16"];
+const toneMappingModes = [undefined, "standard", "extended"];
+const dynamicRangeLimits = [undefined, "no-limit", "constrained", "standard"];
+
+// Only a float16 canvas can store EDR values, only "extended" tone mapping shows them, and a "standard"
+// dynamic-range-limit limits the displayed headroom to none.
+function expectedIsHDR(colorType, toneMappingMode, dynamicRangeLimit)
+{
+    return colorType === "float16" && toneMappingMode === "extended" && dynamicRangeLimit !== "standard";
+}
+
+function contextSettings(colorType, toneMappingMode)
+{
+    const settings = { };
+    if (colorType)
+        settings.colorType = colorType;
+    if (toneMappingMode)
+        settings.toneMapping = { mode: toneMappingMode };
+    return settings;
+}
+
+function createCanvas(parent, colorType, toneMappingMode, dynamicRangeLimit)
+{
+    const canvas = document.createElement("canvas");
+    if (dynamicRangeLimit)
+        canvas.style.setProperty("dynamic-range-limit", dynamicRangeLimit);
+    parent.append(canvas);
+    canvas.offsetHeight;
+    canvas.getContext("2d", contextSettings(colorType, toneMappingMode));
+    return canvas;
+}
+
+function setDynamicRangeLimit(element, dynamicRangeLimit)
+{
+    if (dynamicRangeLimit)
+        element.style.setProperty("dynamic-range-limit", dynamicRangeLimit);
+    else
+        element.style.removeProperty("dynamic-range-limit");
+    element.offsetHeight;
+}
+
+function describe(colorType, toneMappingMode, dynamicRangeLimit)
+{
+    return `colorType: ${colorType ?? "(default)"}, toneMapping.mode: ${toneMappingMode ?? "(default)"}, dynamic-range-limit: ${dynamicRangeLimit ?? "(default)"}`;
+}
+
+if (!window.internals)
+    testFailed("This test requires window.internals.");
+else {
+    debug("\n- All combinations");
+    const container = document.getElementById("container");
+    for (const colorType of colorTypes) {
+        for (const toneMappingMode of toneMappingModes) {
+            for (const dynamicRangeLimit of dynamicRangeLimits) {
+                if (dynamicRangeLimit === "constrained" && !constrainedSupported)
+                    continue;
+                debug(describe(colorType, toneMappingMode, dynamicRangeLimit));
+                window.canvas = createCanvas(container, colorType, toneMappingMode, dynamicRangeLimit);
+                shouldBe("internals.isCanvasContextHDR(canvas)", `${expectedIsHDR(colorType, toneMappingMode, dynamicRangeLimit)}`);
+            }
+        }
+    }
+
+    debug("\n- The dynamic-range-limit of an \"extended\" canvas changes after the context exists");
+    window.liveCanvas = createCanvas(container, "float16", "extended", undefined);
+    shouldBeTrue("internals.isCanvasContextHDR(liveCanvas)");
+    setDynamicRangeLimit(liveCanvas, "standard");
+    shouldBeFalse("internals.isCanvasContextHDR(liveCanvas)");
+    setDynamicRangeLimit(liveCanvas, "no-limit");
+    shouldBeTrue("internals.isCanvasContextHDR(liveCanvas)");
+    setDynamicRangeLimit(liveCanvas, "standard");
+    shouldBeFalse("internals.isCanvasContextHDR(liveCanvas)");
+    if (constrainedSupported) {
+        setDynamicRangeLimit(liveCanvas, "constrained");
+        shouldBeTrue("internals.isCanvasContextHDR(liveCanvas)");
+    }
+    setDynamicRangeLimit(liveCanvas, undefined);
+    shouldBeTrue("internals.isCanvasContextHDR(liveCanvas)");
+
+    debug("\n- The dynamic-range-limit of a \"standard\" canvas changes after the context exists");
+    window.liveStandardCanvas = createCanvas(container, "float16", "standard", "standard");
+    shouldBeFalse("internals.isCanvasContextHDR(liveStandardCanvas)");
+    setDynamicRangeLimit(liveStandardCanvas, "no-limit");
+    shouldBeFalse("internals.isCanvasContextHDR(liveStandardCanvas)");
+
+    debug("\n- The dynamic-range-limit is inherited from an ancestor");
+    window.ancestor = document.createElement("div");
+    ancestor.style.setProperty("dynamic-range-limit", "standard");
+    container.append(ancestor);
+    window.inheritingCanvas = createCanvas(ancestor, "float16", "extended", undefined);
+    shouldBeEqualToString("getComputedStyle(inheritingCanvas)['dynamic-range-limit']", "standard");
+    shouldBeFalse("internals.isCanvasContextHDR(inheritingCanvas)");
+    setDynamicRangeLimit(ancestor, "no-limit");
+    shouldBeEqualToString("getComputedStyle(inheritingCanvas)['dynamic-range-limit']", "no-limit");
+    shouldBeTrue("internals.isCanvasContextHDR(inheritingCanvas)");
+    setDynamicRangeLimit(ancestor, "standard");
+    shouldBeFalse("internals.isCanvasContextHDR(inheritingCanvas)");
+
+    debug("\n- A canvas without a context");
+    window.contextlessCanvas = document.createElement("canvas");
+    shouldThrowErrorName("internals.isCanvasContextHDR(contextlessCanvas)", "InvalidStateError");
+
+    debug("\n- \"standard\" tone mapping only affects how the canvas is displayed, not the values it stores");
+    // An HDR green, well outside [0, 1] and exactly representable in float16.
+    window.hdrGreen = 2.5;
+    for (const toneMappingMode of ["standard", "extended"]) {
+        const context = document.createElement("canvas").getContext("2d", contextSettings("float16", toneMappingMode));
+        const imageData = context.createImageData(1, 1, { pixelFormat: "rgba-float16" });
+        imageData.data[1] = hdrGreen;
+        imageData.data[3] = 1;
+        context.putImageData(imageData, 0, 0);
+        window[`${toneMappingMode}Green`] = context.getImageData(0, 0, 1, 1, { pixelFormat: "rgba-float16" }).data[1];
+    }
+    shouldBe("standardGreen", "hdrGreen");
+    shouldBe("extendedGreen", "hdrGreen");
+}
+</script>
+</body>
+</html>

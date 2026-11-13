@@ -52,6 +52,7 @@
 #include "CachedImage.h"
 #include "CachedMatchFinder.h"
 #include "CanvasBase.h"
+#include "CanvasRenderingContext.h"
 #include "CertificateInfo.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
@@ -5453,6 +5454,18 @@ ExceptionOr<double> Internals::getContextEffectiveDynamicRangeLimitValue(const H
     if (value.has_value())
         return *value;
     return Exception { ExceptionCode::InvalidStateError };
+}
+
+ExceptionOr<bool> Internals::isCanvasContextHDR(const HTMLCanvasElement& canvas)
+{
+    RefPtr context = canvas.renderingContext();
+    if (!context)
+        return Exception { ExceptionCode::InvalidStateError };
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    return context->isHDR();
+#else
+    return false;
+#endif
 }
 
 ExceptionOr<void> Internals::setPageShouldSuppressHDR(bool shouldSuppressHDR)

@@ -1,0 +1,109 @@
+Tests whether a 2D canvas context is HDR, for all combinations of colorType, toneMapping.mode and dynamic-range-limit, and when the dynamic-range-limit changes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+- All combinations
+colorType: (default), toneMapping.mode: (default), dynamic-range-limit: (default)
+PASS internals.isCanvasContextHDR(canvas) is false
+colorType: (default), toneMapping.mode: (default), dynamic-range-limit: no-limit
+PASS internals.isCanvasContextHDR(canvas) is false
+colorType: (default), toneMapping.mode: (default), dynamic-range-limit: constrained
+PASS internals.isCanvasContextHDR(canvas) is false
+colorType: (default), toneMapping.mode: (default), dynamic-range-limit: standard
+PASS internals.isCanvasContextHDR(canvas) is false
+colorType: (default), toneMapping.mode: standard, dynamic-range-limit: (default)
+PASS internals.isCanvasContextHDR(canvas) is false
+colorType: (default), toneMapping.mode: standard, dynamic-range-limit: no-limit
+PASS internals.isCanvasContextHDR(canvas) is false
+colorType: (default), toneMapping.mode: standard, dynamic-range-limit: constrained
+PASS internals.isCanvasContextHDR(canvas) is false
+colorType: (default), toneMapping.mode: standard, dynamic-range-limit: standard
+PASS internals.isCanvasContextHDR(canvas) is false
+colorType: (default), toneMapping.mode: extended, dynamic-range-limit: (default)
+PASS internals.isCanvasContextHDR(canvas) is false
+colorType: (default), toneMapping.mode: extended, dynamic-range-limit: no-limit
+PASS internals.isCanvasContextHDR(canvas) is false
+colorType: (default), toneMapping.mode: extended, dynamic-range-limit: constrained
+PASS internals.isCanvasContextHDR(canvas) is false
+colorType: (default), toneMapping.mode: extended, dynamic-range-limit: standard
+PASS internals.isCanvasContextHDR(canvas) is false
+colorType: unorm8, toneMapping.mode: (default), dynamic-range-limit: (default)
+PASS internals.isCanvasContextHDR(canvas) is false
+colorType: unorm8, toneMapping.mode: (default), dynamic-range-limit: no-limit
+PASS internals.isCanvasContextHDR(canvas) is false
+colorType: unorm8, toneMapping.mode: (default), dynamic-range-limit: constrained
+PASS internals.isCanvasContextHDR(canvas) is false
+colorType: unorm8, toneMapping.mode: (default), dynamic-range-limit: standard
+PASS internals.isCanvasContextHDR(canvas) is false
+colorType: unorm8, toneMapping.mode: standard, dynamic-range-limit: (default)
+PASS internals.isCanvasContextHDR(canvas) is false
+colorType: unorm8, toneMapping.mode: standard, dynamic-range-limit: no-limit
+PASS internals.isCanvasContextHDR(canvas) is false
+colorType: unorm8, toneMapping.mode: standard, dynamic-range-limit: constrained
+PASS internals.isCanvasContextHDR(canvas) is false
+colorType: unorm8, toneMapping.mode: standard, dynamic-range-limit: standard
+PASS internals.isCanvasContextHDR(canvas) is false
+colorType: unorm8, toneMapping.mode: extended, dynamic-range-limit: (default)
+PASS internals.isCanvasContextHDR(canvas) is false
+colorType: unorm8, toneMapping.mode: extended, dynamic-range-limit: no-limit
+PASS internals.isCanvasContextHDR(canvas) is false
+colorType: unorm8, toneMapping.mode: extended, dynamic-range-limit: constrained
+PASS internals.isCanvasContextHDR(canvas) is false
+colorType: unorm8, toneMapping.mode: extended, dynamic-range-limit: standard
+PASS internals.isCanvasContextHDR(canvas) is false
+colorType: float16, toneMapping.mode: (default), dynamic-range-limit: (default)
+PASS internals.isCanvasContextHDR(canvas) is false
+colorType: float16, toneMapping.mode: (default), dynamic-range-limit: no-limit
+PASS internals.isCanvasContextHDR(canvas) is false
+colorType: float16, toneMapping.mode: (default), dynamic-range-limit: constrained
+PASS internals.isCanvasContextHDR(canvas) is false
+colorType: float16, toneMapping.mode: (default), dynamic-range-limit: standard
+PASS internals.isCanvasContextHDR(canvas) is false
+colorType: float16, toneMapping.mode: standard, dynamic-range-limit: (default)
+PASS internals.isCanvasContextHDR(canvas) is false
+colorType: float16, toneMapping.mode: standard, dynamic-range-limit: no-limit
+PASS internals.isCanvasContextHDR(canvas) is false
+colorType: float16, toneMapping.mode: standard, dynamic-range-limit: constrained
+PASS internals.isCanvasContextHDR(canvas) is false
+colorType: float16, toneMapping.mode: standard, dynamic-range-limit: standard
+PASS internals.isCanvasContextHDR(canvas) is false
+colorType: float16, toneMapping.mode: extended, dynamic-range-limit: (default)
+PASS internals.isCanvasContextHDR(canvas) is true
+colorType: float16, toneMapping.mode: extended, dynamic-range-limit: no-limit
+PASS internals.isCanvasContextHDR(canvas) is true
+colorType: float16, toneMapping.mode: extended, dynamic-range-limit: constrained
+PASS internals.isCanvasContextHDR(canvas) is true
+colorType: float16, toneMapping.mode: extended, dynamic-range-limit: standard
+PASS internals.isCanvasContextHDR(canvas) is false
+
+- The dynamic-range-limit of an "extended" canvas changes after the context exists
+PASS internals.isCanvasContextHDR(liveCanvas) is true
+PASS internals.isCanvasContextHDR(liveCanvas) is false
+PASS internals.isCanvasContextHDR(liveCanvas) is true
+PASS internals.isCanvasContextHDR(liveCanvas) is false
+PASS internals.isCanvasContextHDR(liveCanvas) is true
+PASS internals.isCanvasContextHDR(liveCanvas) is true
+
+- The dynamic-range-limit of a "standard" canvas changes after the context exists
+PASS internals.isCanvasContextHDR(liveStandardCanvas) is false
+PASS internals.isCanvasContextHDR(liveStandardCanvas) is false
+
+- The dynamic-range-limit is inherited from an ancestor
+PASS getComputedStyle(inheritingCanvas)['dynamic-range-limit'] is "standard"
+PASS internals.isCanvasContextHDR(inheritingCanvas) is false
+PASS getComputedStyle(inheritingCanvas)['dynamic-range-limit'] is "no-limit"
+PASS internals.isCanvasContextHDR(inheritingCanvas) is true
+PASS internals.isCanvasContextHDR(inheritingCanvas) is false
+
+- A canvas without a context
+PASS internals.isCanvasContextHDR(contextlessCanvas) threw exception InvalidStateError: The object is in an invalid state..
+
+- "standard" tone mapping only affects how the canvas is displayed, not the values it stores
+PASS standardGreen is hdrGreen
+PASS extendedGreen is hdrGreen
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,83 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CanvasColorTypeEnabled=true CSSConstrainedDynamicRangeLimitEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<style>
+    canvas {
+        border: 1px solid black;
+    }
+</style>
+</head>
+<body>
+<!-- Not positioned, so that the canvases would otherwise all be painted into the same enclosing layer. -->
+<canvas id="standardCanvas"></canvas>
+<canvas id="extendedCanvas"></canvas>
+<div id="ancestor"><canvas id="inheritingCanvas"></canvas></div>
+<script>
+description("Tests that the layers of \"extended\" tone mapping canvases are updated when their dynamic-range-limit changes, without making their enclosing layer HDR. Only an HDR canvas's own layer should draw HDR content.");
+
+if (window.internals)
+    internals.setScreenContentsFormatsForTesting(["RGBA8", "RGBA16F"]);
+
+const constrainedSupported = CSS.supports("dynamic-range-limit", "constrained");
+
+function fill(id, toneMappingMode)
+{
+    const context = document.getElementById(id).getContext("2d", { colorType: "float16", toneMapping: { mode: toneMappingMode } });
+    context.fillStyle = "green";
+    context.fillRect(0, 0, 100, 100);
+}
+
+function hdrLayerCount()
+{
+    return (internals.layerTreeAsText(document).match(/\(drawsHDRContent 1\)/g) || []).length;
+}
+
+function setDynamicRangeLimit(id, dynamicRangeLimit)
+{
+    const element = document.getElementById(id);
+    if (dynamicRangeLimit)
+        element.style.setProperty("dynamic-range-limit", dynamicRangeLimit);
+    else
+        element.style.removeProperty("dynamic-range-limit");
+}
+
+if (!window.internals)
+    testFailed("This test requires window.internals.");
+else {
+    fill("standardCanvas", "standard");
+    fill("extendedCanvas", "extended");
+    fill("inheritingCanvas", "extended");
+
+    debug("\n- Initially, both \"extended\" canvases have their own HDR layer");
+    shouldBe("hdrLayerCount()", "2");
+
+    debug("\n- dynamic-range-limit: standard on an \"extended\" canvas");
+    setDynamicRangeLimit("extendedCanvas", "standard");
+    shouldBe("hdrLayerCount()", "1");
+
+    if (constrainedSupported) {
+        debug("\n- dynamic-range-limit: constrained on an \"extended\" canvas");
+        setDynamicRangeLimit("extendedCanvas", "constrained");
+        shouldBe("hdrLayerCount()", "2");
+        setDynamicRangeLimit("extendedCanvas", "standard");
+        shouldBe("hdrLayerCount()", "1");
+    }
+
+    debug("\n- dynamic-range-limit: standard inherited by an \"extended\" canvas");
+    setDynamicRangeLimit("ancestor", "standard");
+    shouldBe("hdrLayerCount()", "0");
+
+    debug("\n- dynamic-range-limit: no-limit on a \"standard\" canvas");
+    setDynamicRangeLimit("standardCanvas", "no-limit");
+    shouldBe("hdrLayerCount()", "0");
+
+    debug("\n- Back to the initial dynamic-range-limits");
+    setDynamicRangeLimit("extendedCanvas", undefined);
+    shouldBe("hdrLayerCount()", "1");
+    setDynamicRangeLimit("ancestor", undefined);
+    shouldBe("hdrLayerCount()", "2");
+}
+</script>
+</body>
+</html>

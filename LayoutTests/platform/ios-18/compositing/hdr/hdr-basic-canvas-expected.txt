@@ -5,8 +5,13 @@
     (GraphicsLayer
       (bounds 800.00 600.00)
       (contentsOpaque 1)
-      (drawsHDRContent 1)
-      (children 2
+      (children 3
+        (GraphicsLayer
+          (position 8.00 36.00)
+          (bounds 302.00 152.00)
+          (drawsContent 1)
+          (drawsHDRContent 1)
+        )
         (GraphicsLayer
           (bounds 800.00 600.00)
           (children 1
@@ -16,8 +21,13 @@
               (children 1
                 (GraphicsLayer
                   (bounds 302.00 152.00)
-                  (drawsContent 1)
-                  (drawsHDRContent 1)
+                  (children 1
+                    (GraphicsLayer
+                      (bounds 302.00 152.00)
+                      (drawsContent 1)
+                      (drawsHDRContent 1)
+                    )
+                  )
                 )
               )
             )

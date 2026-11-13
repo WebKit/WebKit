@@ -938,6 +938,7 @@ public:
 #endif
 #endif
     ExceptionOr<double> getContextEffectiveDynamicRangeLimitValue(const HTMLCanvasElement&);
+    ExceptionOr<bool> isCanvasContextHDR(const HTMLCanvasElement&);
 
     ExceptionOr<void> setPageShouldSuppressHDR(bool);
 
