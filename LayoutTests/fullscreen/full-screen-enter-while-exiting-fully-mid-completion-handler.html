@@ -34,7 +34,7 @@
 
         await waitFor(target2, 'fullscreenerror');
 
-        testRunner.finishFullscreenExit();
+        await testRunner.finishFullscreenExit();
         await testRunner.updatePresentation();
 
         internals.withUserGesture(() => { run('target2.requestFullscreen()'); });
