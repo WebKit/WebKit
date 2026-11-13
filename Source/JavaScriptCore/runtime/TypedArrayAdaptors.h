@@ -98,24 +98,13 @@ struct IntegralTypedArrayAdaptor {
         return static_cast<Type>(value);
     }
 
-    static std::optional<Type> toNativeFromUint32WithoutCoercion(uint32_t value)
-    {
-        if (value > static_cast<uint32_t>(maxValue))
-            return std::nullopt;
-
-        return static_cast<Type>(value);
-    }
-
     static std::optional<Type> toNativeFromDoubleWithoutCoercion(double value)
     {
-        Type integer = static_cast<Type>(value);
+        Type integer = static_cast<Type>(truncateDoubleToInt64(value));
         if (static_cast<double>(integer) != value)
             return std::nullopt;
 
-        if (value < 0)
-            return toNativeFromInt32WithoutCoercion(static_cast<int32_t>(value));
-        
-        return toNativeFromUint32WithoutCoercion(static_cast<uint32_t>(value));
+        return integer;
     }
 };
 
@@ -336,11 +325,7 @@ struct Uint8ClampedAdaptor {
 
     static std::optional<Type> toNativeFromDoubleWithoutCoercion(double value)
     {
-        uint8_t integer = static_cast<uint8_t>(value);
-        if (static_cast<double>(integer) != value)
-            return std::nullopt;
-
-        return integer;
+        return Uint8Adaptor::toNativeFromDoubleWithoutCoercion(value);
     }
 
 private:
