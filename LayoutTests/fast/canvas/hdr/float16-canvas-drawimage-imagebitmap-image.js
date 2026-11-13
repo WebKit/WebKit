@@ -19,7 +19,7 @@ const componentsPerPixel = 4;
 const canvasSize = 4;
 const drawSize = canvasSize / 2;
 
-const hdrImageURL = "../../images/resources/gainmap-red-green-gray-stripes-64x64.jpg";
+const hdrImageURL = "../../images/resources/gainmap-red-green-gray-stripes-256x256.jpg";
 const sdrImageURL = "../../images/resources/green-400x400.png";
 
 // The maximum component value that an SDR (unorm8) buffer can represent, plus a small allowance
