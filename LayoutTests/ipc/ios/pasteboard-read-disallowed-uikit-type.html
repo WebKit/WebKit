@@ -36,7 +36,7 @@ if (!window.IPC) {
     }
     done();
 } else {
-    import("./coreipc.js").then(({ CoreIPC }) => {
+    import("../coreipc.js").then(({ CoreIPC }) => {
         // Seed the general pasteboard so that on iOS [UIPasteboard numberOfItems] > 0 and the
         // disallowed-type gate is what produces the empty result, not the empty-pasteboard early return.
         if (IPC.messages.WebPasteboardProxy_WriteStringToPasteboard) {
