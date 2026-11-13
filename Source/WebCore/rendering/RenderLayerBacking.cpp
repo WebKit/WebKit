@@ -1779,7 +1779,13 @@ LayoutRect RenderLayerBacking::computeParentGraphicsLayerRect(const RenderLayer*
         LayoutRect ancestorCompositedBounds = ancestorBacking->compositedBounds();
         LayoutRect scrollContainerBox = scrollContainerLayerBox(*ancestorRenderBox);
         ScrollOffset scrollOffset = scrollableArea->scrollOffset();
-        parentGraphicsLayerRect = LayoutRect((scrollContainerBox.location() - toLayoutSize(ancestorCompositedBounds.location()) - toLayoutSize(scrollOffset)), scrollContainerBox.size());
+        auto scrolledContentsLocation = scrollContainerBox.location() - toLayoutSize(ancestorCompositedBounds.location());
+        if (!ancestorBacking->hasClippingLayer()) {
+            // Match the pixel-snapped position of the ancestor's scroll container layer (see updateGeometry()).
+            auto scrollContainerOffset = computeOffsetFromAncestorGraphicsLayer(compositedAncestor, scrollContainerBox.location(), pixelSnappingScaleFactor());
+            scrolledContentsLocation = snappedGraphicsLayer(scrollContainerOffset, scrollContainerBox.size(), protect(renderer())).m_snappedRect.location();
+        }
+        parentGraphicsLayerRect = LayoutRect(scrolledContentsLocation - toLayoutSize(scrollOffset), scrollContainerBox.size());
     }
 
     return parentGraphicsLayerRect;
@@ -1989,8 +1995,17 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
         LayoutRect scrollContainerBox = scrollContainerLayerBox(downcast<RenderBox>(renderer));
         LayoutRect parentLayerBounds = clippingLayer() ? scrollContainerBox : compositedBounds();
 
-        // FIXME: need to do some pixel snapping here.
-        scrollContainerLayer->setPosition(FloatPoint(scrollContainerBox.location() - parentLayerBounds.location()));
+        auto unsnappedScrollContainerPosition = scrollContainerBox.location() - parentLayerBounds.location();
+        LayoutSize scrollContainerSnapOffset;
+        if (!clippingLayer()) {
+            // Snap the same way the clipping layers of descendants are snapped (see updateClippingStackLayerGeometry()),
+            // so that content clipped by this layer and content clipped by those layers agree on the first device pixel row.
+            // The scrolled contents must not move along with the clip, so the offset from the renderer absorbs the snap.
+            auto scrollContainerOffsetFromGraphicsLayer = toLayoutSize(scrollContainerBox.location()) + rendererOffset.fromPrimaryGraphicsLayer();
+            auto snappedScrollContainerPosition = snappedGraphicsLayer(scrollContainerOffsetFromGraphicsLayer, scrollContainerBox.size(), renderer).m_snappedRect.location();
+            scrollContainerSnapOffset = snappedScrollContainerPosition - toLayoutPoint(unsnappedScrollContainerPosition);
+        }
+        scrollContainerLayer->setPosition(FloatPoint(toLayoutPoint(unsnappedScrollContainerPosition + scrollContainerSnapOffset)));
         scrollContainerLayer->setSize(roundedIntSize(LayoutSize(scrollContainerBox.width(), scrollContainerBox.height())));
 
         CheckedPtr scrollableArea = owningLayer->scrollableArea();
@@ -2000,7 +2015,7 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
         updateScrollOffset(scrollOffset);
 
         FloatSize oldScrollingLayerOffset = scrollContainerLayer->offsetFromRenderer();
-        scrollContainerLayer->setOffsetFromRenderer(toFloatSize(scrollContainerBox.location()));
+        scrollContainerLayer->setOffsetFromRenderer(toLayoutSize(scrollContainerBox.location()) + scrollContainerSnapOffset);
 
         bool paddingBoxOffsetChanged = oldScrollingLayerOffset != scrollContainerLayer->offsetFromRenderer();
 
@@ -2012,7 +2027,7 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
 
         scrolledContentsLayer->setSize(scrollSize);
         scrolledContentsLayer->setScrollOffset(scrollOffset, GraphicsLayer::ShouldSetNeedsDisplay::DoNotSet);
-        scrolledContentsLayer->setOffsetFromRenderer(toLayoutSize(scrollContainerBox.location()), GraphicsLayer::ShouldSetNeedsDisplay::DoNotSet);
+        scrolledContentsLayer->setOffsetFromRenderer(toLayoutSize(scrollContainerBox.location()) + scrollContainerSnapOffset, GraphicsLayer::ShouldSetNeedsDisplay::DoNotSet);
         
         adjustTiledBackingCoverage();
     }
