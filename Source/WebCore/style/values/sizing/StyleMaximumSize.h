@@ -33,7 +33,7 @@ namespace Style {
 //
 // What is actually implemented is:
 //
-// <'max-width'>/<'max-height'> = none | <length-percentage [0,∞]> | stretch | min-content | max-content | fit-content | stretch(<length-percentage [0,∞]>) | <calc-size()> | intrinsic | min-intrinsic
+// <'max-width'>/<'max-height'> = none | <length-percentage [0,∞]> | stretch | min-content | max-content | fit-content | stretch(<length-percentage [0,∞]>) | fit-content(<length-percentage [0,∞]>) | <calc-size()> | intrinsic | min-intrinsic
 //
 // MISSING:
 //    stretch(<length-percentage [0,∞]>)

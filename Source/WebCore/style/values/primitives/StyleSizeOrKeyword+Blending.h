@@ -81,9 +81,10 @@ template<SizeOrKeywordDerived StyleType> struct Blending<StyleType> : NumericOrK
     }
 
 private:
+    // fit-content() answers to the fit-content keyword, but calc-size(fit-content, size) would drop its argument.
     static bool isBareKeyword(const StyleType& value)
     {
-        return !WTF::holdsAlternative<CalcSize>(value) && !WTF::holdsAlternative<Numeric>(value);
+        return !WTF::holdsAlternative<CalcSize>(value) && !WTF::holdsAlternative<Numeric>(value) && !value.isFitContentFunction();
     }
 
     // A calc-size() on either side always interpolates this way. `allow-keywords` extends it to a bare
@@ -111,6 +112,9 @@ private:
 
         if (WTF::holdsAlternative<Numeric>(value))
             return PreparedCalcSize { CSS::Keyword::Any { }, Calculation::Tree { .root = copyCalculation(get<Numeric>(value)) } };
+
+        if (value.isFitContentFunction())
+            return { };
 
         return WTF::switchOn(value,
             [&]<CSSValueID Id>(const Constant<Id>& keyword) -> std::optional<PreparedCalcSize> {

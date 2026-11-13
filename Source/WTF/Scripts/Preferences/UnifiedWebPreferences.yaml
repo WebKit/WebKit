@@ -960,6 +960,14 @@ CSSFieldSizingEnabled:
   humanReadableDescription: "Enable field-sizing CSS property"
   defaultValue: true
 
+CSSFitContentFunctionEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "CSS fit-content() sizing function"
+  humanReadableDescription: "Enable support for CSS fit-content() in the sizing properties"
+  defaultValue: false
+
 CSSFlexWrapBalanceEnabled:
   type: bool
   status: testable

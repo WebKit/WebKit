@@ -30,7 +30,7 @@
 namespace WebCore {
 namespace Style {
 
-// Base for the sizing properties, which accept `calc-size()` and `stretch()` in addition to a
+// Base for the sizing properties, which accept `calc-size()`, `stretch()` and `fit-content()` in addition to a
 // <length-percentage> and their keywords. Being a distinct base keeps the handling of those off the
 // other <length-percentage>-or-keyword types.
 template<CSS::SpecificKeyword... Ks>
@@ -46,6 +46,10 @@ struct SizeOrKeyword : PrimitiveNumericOrKeywordOrOptionalCalcSize<LengthPercent
     // A stretch() is its argument with the bit that it sizes the margin box rather than the box selected by box-sizing,
     // so it answers to its argument as well (isSpecified(), isFixed() and so on): only resolving the size tells them apart.
     ALWAYS_INLINE bool isStretchFunction() const { return this->template holdsAlternative<typename NumericOrKeyword::StretchFunction>(); }
+
+    // A fit-content() answers to isFitContent() as well, since only resolving the size tells it apart.
+    ALWAYS_INLINE bool isFitContentFunction() const { return this->template holdsAlternative<typename NumericOrKeyword::FitContentFunction>(); }
+    ALWAYS_INLINE typename NumericOrKeyword::Numeric fitContentArgument() const { return NumericOrKeyword::fitContentArgument(); }
 
     // Specified because a calc-size() resolves to a length, unless its basis is a keyword, in which
     // case it behaves as that keyword.

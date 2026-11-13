@@ -120,6 +120,7 @@ CSSParserContext::CSSParserContext(const Settings& settings)
     , cssRubyDisplayTypesEnabled { settings.cssRubyDisplayTypesInAuthorStylesEnabled() }
     , cssTreeCountingFunctionsEnabled { settings.cssTreeCountingFunctionsEnabled() }
     , cssCalcSizeFunctionEnabled { settings.cssCalcSizeFunctionEnabled() }
+    , cssFitContentFunctionEnabled { settings.cssFitContentFunctionEnabled() }
     , cssStretchFunctionEnabled { settings.cssStretchFunctionEnabled() }
     , cssURLModifiersEnabled { settings.cssURLModifiersEnabled() }
     , cssURLIntegrityModifierEnabled { settings.cssURLIntegrityModifierEnabled() }
@@ -178,6 +179,7 @@ void add(Hasher& hasher, const CSSParserContext& context)
         context.cssRubyDisplayTypesEnabled,
         context.cssTreeCountingFunctionsEnabled,
         context.cssCalcSizeFunctionEnabled,
+        context.cssFitContentFunctionEnabled,
         context.cssStretchFunctionEnabled,
         context.cssURLModifiersEnabled,
         context.cssURLIntegrityModifierEnabled,

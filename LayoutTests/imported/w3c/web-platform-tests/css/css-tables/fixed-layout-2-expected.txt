@@ -67,6 +67,10 @@ Table-layout:fixed does apply to width:calc-size(calc-size(any, 10px + 100%), si
 
 calc-size(calc-size(any, 10px + 100%), size)
 This should be a 50x50 cyan square:
+Table-layout:fixed does apply to width:fit-content(0) tables
+
+fit-content(0)
+This should be a 50x50 cyan square:
 Table-layout:fixed does apply to width:stretch tables
 
 stretch
@@ -115,6 +119,7 @@ PASS fit-content
 PASS calc-size(fit-content, size)
 PASS calc-size(any, 10px + 100%)
 PASS calc-size(calc-size(any, 10px + 100%), size)
+PASS fit-content(0)
 PASS stretch
 PASS calc-size(stretch, size)
 PASS -webkit-fill-available

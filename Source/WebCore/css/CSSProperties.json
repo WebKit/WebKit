@@ -11099,7 +11099,7 @@
                 "computed-style-storage-path": ["m_nonInheritedData", "miscData", "flexibleBox"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::FlexBasis",
-                "parser-grammar": "auto | content | <width-or-height-keyword> | <calc-size> | <stretch-size> | <length-percentage [0,inf]>"
+                "parser-grammar": "auto | content | <width-or-height-keyword> | <calc-size> | <fit-content-size> | <stretch-size> | <length-percentage [0,inf]>"
             },
             "specification": {
                 "category": "css-flexbox",
@@ -15483,6 +15483,14 @@
                 "url": "https://drafts.csswg.org/css-values-5/#calc-size"
             }
         },
+        "<fit-content-size>": {
+            "grammar": "fit-content( <length-percentage [0,inf]> )@(settings-flag=cssFitContentFunctionEnabled)",
+            "exported": true,
+            "specification": {
+                "category": "css-sizing",
+                "url": "https://drafts.csswg.org/css-sizing-4/#funcdef-width-fit-content"
+            }
+        },
         "<stretch-size>": {
             "grammar": "stretch( <length-percentage [0,inf]> )@(settings-flag=cssStretchFunctionEnabled)",
             "exported": true,
@@ -15492,7 +15500,7 @@
             }
         },
         "<width-or-height>": {
-            "grammar":  "auto | <width-or-height-keyword> | <calc-size> | <stretch-size> | <length-percentage [0,inf] anchor-size=allowed>",
+            "grammar":  "auto | <width-or-height-keyword> | <calc-size> | <fit-content-size> | <stretch-size> | <length-percentage [0,inf] anchor-size=allowed>",
             "exported": true,
             "comment": "Doesn't match current specification",
             "specification": {
@@ -15501,7 +15509,7 @@
             }
         },
         "<max-width-or-height>": {
-            "grammar": "none | <width-or-height-keyword> | <calc-size> | <stretch-size> | <length-percentage [0,inf] anchor-size=allowed>",
+            "grammar": "none | <width-or-height-keyword> | <calc-size> | <fit-content-size> | <stretch-size> | <length-percentage [0,inf] anchor-size=allowed>",
             "comment": "Doesn't match current specification",
             "specification": {
                 "category": "css-sizing",

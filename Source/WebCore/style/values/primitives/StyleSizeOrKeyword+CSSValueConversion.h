@@ -105,19 +105,19 @@ auto convertCalcSizeForCSSValueConversion(ConversionState& conversionState, cons
     return convertKeywordIDForCSSValueConversion<StyleType>(parameters.basisKeyword());
 }
 
-// MARK: - stretch() conversion
+// MARK: - stretch() and fit-content() conversion
 
-inline RefPtr<const CSSPrimitiveValue> stretchFunctionArgument(const CSSValue& value)
+inline RefPtr<const CSSPrimitiveValue> sizingFunctionArgument(const CSSValue& value, CSSValueID name)
 {
     RefPtr function = dynamicDowncast<CSSFunctionValue>(value);
-    if (!function || function->name() != CSSValueID::Stretch || function->size() != 1)
+    if (!function || function->name() != name || function->size() != 1)
         return nullptr;
     return dynamicDowncast<CSSPrimitiveValue>((*function)[0]);
 }
 
 // MARK: - Conversion
 
-// Only the CSSValue overloads need calc-size() and stretch() handling.
+// Only the CSSValue overloads need calc-size(), stretch() and fit-content() handling.
 template<SizeOrKeywordDerived StyleType> struct CSSValueConversion<StyleType> : NumericOrKeywordCSSValueConversion<StyleType> {
     using Base = NumericOrKeywordCSSValueConversion<StyleType>;
     using Base::operator();
@@ -128,10 +128,17 @@ template<SizeOrKeywordDerived StyleType> struct CSSValueConversion<StyleType> : 
         if (RefPtr calcSizeValue = dynamicDowncast<CSSCalcSizeValue>(value))
             return convertCalcSizeForCSSValueConversion<StyleType>(conversionData, calcSizeValue->calcSize()->parameters, std::forward<Rest>(rest)...).value_or(invalidValue());
 
-        if (RefPtr argument = stretchFunctionArgument(value)) {
+        if (RefPtr argument = sizingFunctionArgument(value, CSSValueID::Stretch)) {
             auto convertedArgument = convertPrimitiveNumericOrKeywordFromCSSValue<StyleType>(conversionData, *argument, std::forward<Rest>(rest)...);
             if (auto numeric = convertedArgument ? convertedArgument->tryNumeric() : std::nullopt)
                 return StyleType { typename StyleType::StretchFunction { WTF::move(*numeric) } };
+            return invalidValue();
+        }
+
+        if (RefPtr argument = sizingFunctionArgument(value, CSSValueID::FitContent)) {
+            auto convertedArgument = convertPrimitiveNumericOrKeywordFromCSSValue<StyleType>(conversionData, *argument, std::forward<Rest>(rest)...);
+            if (auto numeric = convertedArgument ? convertedArgument->tryNumeric() : std::nullopt)
+                return StyleType { typename StyleType::FitContentFunction { WTF::move(*numeric) } };
             return invalidValue();
         }
 
@@ -147,9 +154,16 @@ template<SizeOrKeywordDerived StyleType> struct CSSValueConversion<StyleType> : 
             return invalidValue();
         }
 
-        if (RefPtr argument = stretchFunctionArgument(value)) {
+        if (RefPtr argument = sizingFunctionArgument(value, CSSValueID::Stretch)) {
             if (auto numeric = convertPrimitiveNumericOrKeywordFromCSSValue<StyleType>(state, *argument, std::forward<Rest>(rest)...).tryNumeric())
                 return StyleType { typename StyleType::StretchFunction { WTF::move(*numeric) } };
+            state.setCurrentPropertyInvalidAtComputedValueTime();
+            return invalidValue();
+        }
+
+        if (RefPtr argument = sizingFunctionArgument(value, CSSValueID::FitContent)) {
+            if (auto numeric = convertPrimitiveNumericOrKeywordFromCSSValue<StyleType>(state, *argument, std::forward<Rest>(rest)...).tryNumeric())
+                return StyleType { typename StyleType::FitContentFunction { WTF::move(*numeric) } };
             state.setCurrentPropertyInvalidAtComputedValueTime();
             return invalidValue();
         }

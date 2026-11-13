@@ -37,6 +37,8 @@ std::optional<PreferredSize> FlexBasis::tryPreferredSize() const
 
     if (isCalcSize())
         return PreferredSize { get<typename NumericOrKeyword::CalcSize>() };
+    if (isFitContentFunction())
+        return PreferredSize { get<FitContentFunction>() };
     // Copying the numeric value whole keeps its stretch() and quirk bits, which switchOn() doesn't hand over.
     if (auto numeric = tryNumeric())
         return PreferredSize { WTF::move(*numeric) };
