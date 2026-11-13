@@ -217,7 +217,6 @@
 #include "PlatformGraphicsContext.h"
 #include "Position.h"
 #include "ProcessIdentity.h"
-#include "ProcessSwapDisposition.h"
 #include "PushSubscriptionIdentifier.h"
 #include "PushSubscriptionOwner.h"
 #include "ScriptTrackingPrivacyCategory.h"

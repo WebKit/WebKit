@@ -106,7 +106,6 @@
 #include <WebCore/PlatformMediaSessionManager.h>
 #include <WebCore/PlatformScreen.h>
 #include <WebCore/ProcessIdentifier.h>
-#include <WebCore/ProcessSwapDisposition.h>
 #include <WebCore/ProcessWarming.h>
 #include <WebCore/QuirkTable.h>
 #include <WebCore/RegistrableDomain.h>
@@ -1346,7 +1345,7 @@ void WebProcessPool::disconnectProcess(WebProcessProxy& process)
 #endif
 }
 
-Ref<WebProcessProxy> WebProcessPool::processForSite(WebsiteDataStore& websiteDataStore, WebProcessProxy::IsolatedProcessType isolatedProcessType, const std::optional<Site>& site, const std::optional<Site>& mainFrameSite, WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, const API::PageConfiguration& pageConfiguration, ProcessSwapDisposition processSwapDisposition, ProcessCrossOriginIsolation crossOriginIsolation, const std::optional<SecurityOriginData>& coopOrigin, WebProcessProxy* reusableProvisionalProcess, const std::optional<SecurityOriginData>& cachedCOOPProcessOrigin)
+Ref<WebProcessProxy> WebProcessPool::processForSite(WebsiteDataStore& websiteDataStore, WebProcessProxy::IsolatedProcessType isolatedProcessType, const std::optional<Site>& site, const std::optional<Site>& mainFrameSite, WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, const API::PageConfiguration& pageConfiguration, ProcessCrossOriginIsolation crossOriginIsolation, const std::optional<ProcessForCOOPSwitch>& coopSwitch, WebProcessProxy* reusableProvisionalProcess, const std::optional<SecurityOriginData>& cachedCOOPProcessOrigin)
 {
     // Reusable processes are never isolated.
     bool canReuseAnExistingProcess = crossOriginIsolation == ProcessCrossOriginIsolation::None;
@@ -1368,8 +1367,8 @@ Ref<WebProcessProxy> WebProcessPool::processForSite(WebsiteDataStore& websiteDat
             } else
                 WEBPROCESSPOOL_RELEASE_LOG(ProcessSwapping, "processForSite: discarding the shared process since it contains a domain that needs to be isolated (process=%p, PID=%i)", process.get(), process->processID());
         }
-    } else if (canReuseAnExistingProcess && site && !site->isEmpty() && processSwapDisposition != ProcessSwapDisposition::COOP) {
-        // We don't reuse cached processess because the process cache is per site, whereas COOP swaps are based on origin.
+    } else if (canReuseAnExistingProcess && site && !site->isEmpty() && !coopSwitch) {
+        // A browsing context group switch's process is keyed by origin, see ProcessForCOOPSwitch.
         if (RefPtr process = webProcessCache().takeProcess(*site, isolatedProcessType, mainFrameSite, websiteDataStore, lockdownMode, enhancedSecurity, pageConfiguration)) {
             WEBPROCESSPOOL_RELEASE_LOG(ProcessSwapping, "processForSite: Using WebProcess from WebProcess cache (process=%p, PID=%i)", process.get(), process->processID());
             ASSERT(m_processes.containsIf([&](auto& item) { return item.ptr() == process; }));
@@ -1382,8 +1381,8 @@ Ref<WebProcessProxy> WebProcessPool::processForSite(WebsiteDataStore& websiteDat
             ASSERT(m_processes.containsIf([&](auto& item) { return item.ptr() == process; }));
             return process.releaseNonNull();
         }
-    } else if (canReuseAnExistingProcess && processSwapDisposition == ProcessSwapDisposition::COOP && coopOrigin) {
-        if (RefPtr process = webProcessCache().takeCOOPProcess(*coopOrigin, websiteDataStore, lockdownMode, enhancedSecurity, pageConfiguration)) {
+    } else if (canReuseAnExistingProcess && coopSwitch && coopSwitch->origin) {
+        if (RefPtr process = webProcessCache().takeCOOPProcess(*coopSwitch->origin, websiteDataStore, lockdownMode, enhancedSecurity, pageConfiguration)) {
             WEBPROCESSPOOL_RELEASE_LOG(ProcessSwapping, "processForSite: Using COOP WebProcess from WebProcess cache (process=%p, PID=%i)", process.get(), process->processID());
             ASSERT(m_processes.containsIf([&](auto& item) { return item.ptr() == process; }));
             return process.releaseNonNull();
@@ -1391,7 +1390,7 @@ Ref<WebProcessProxy> WebProcessPool::processForSite(WebsiteDataStore& websiteDat
     }
 
     if (canReuseAnExistingProcess && cachedCOOPProcessOrigin) {
-        ASSERT(processSwapDisposition != ProcessSwapDisposition::COOP);
+        ASSERT(!coopSwitch);
         if (RefPtr process = webProcessCache().takeCOOPProcess(*cachedCOOPProcessOrigin, websiteDataStore, lockdownMode, enhancedSecurity, pageConfiguration)) {
             WEBPROCESSPOOL_RELEASE_LOG(ProcessSwapping, "processForSite: Using COOP WebProcess from WebProcess cache before the browsing context group switch (process=%p, PID=%i)", process.get(), process->processID());
             ASSERT(m_processes.containsIf([&](auto& item) { return item.ptr() == process; }));
@@ -1401,10 +1400,10 @@ Ref<WebProcessProxy> WebProcessPool::processForSite(WebsiteDataStore& websiteDat
     }
 
     auto updateWebProcessCacheEligibilityForCOOPSwap = [&](WebProcessProxy& process) {
-        if (processSwapDisposition != ProcessSwapDisposition::COOP)
+        if (!coopSwitch)
             return;
-        if (coopOrigin)
-            process.setCOOPCacheOrigin(*coopOrigin);
+        if (coopSwitch->origin)
+            process.setCOOPCacheOrigin(*coopSwitch->origin);
         else
             process.setIneligbleForWebProcessCache();
     };
@@ -1640,7 +1639,7 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
         }
     } else {
         WEBPROCESSPOOL_RELEASE_LOG(Process, "createWebPage: Not delaying WebProcess launch");
-        process = processForSite(protect(pageConfiguration->websiteDataStore()), WebProcessProxy::IsolatedProcessType::MainFrame, std::nullopt, std::nullopt, lockdownMode, enhancedSecurity, pageConfiguration, WebCore::ProcessSwapDisposition::None, processCrossOriginIsolationForBrowsingContextGroup(crossOriginMode));
+        process = processForSite(protect(pageConfiguration->websiteDataStore()), WebProcessProxy::IsolatedProcessType::MainFrame, std::nullopt, std::nullopt, lockdownMode, enhancedSecurity, pageConfiguration, processCrossOriginIsolationForBrowsingContextGroup(crossOriginMode));
     }
 
     Ref userContentController = pageConfiguration->userContentController();
@@ -2615,7 +2614,7 @@ void WebProcessPool::prepareProcessForNavigation(Ref<WebProcessProxy>&& process,
         if (process->state() == AuxiliaryProcessProxy::State::Terminated && previousAttemptsCount < maximumNumberOfAttempts) {
             // The destination process crashed during the IPC to the network process, use a new process.
             ASSERT(isolatedProcessType != WebProcessProxy::IsolatedProcessType::Shared);
-            Ref fallbackProcess = processForSite(dataStore, isolatedProcessType, site, mainFrameSite, lockdownMode, enhancedSecurity, page->configuration(), WebCore::ProcessSwapDisposition::None, processCrossOriginIsolationForBrowsingContextGroup(browsingContextGroup->crossOriginMode()));
+            Ref fallbackProcess = processForSite(dataStore, isolatedProcessType, site, mainFrameSite, lockdownMode, enhancedSecurity, page->configuration(), processCrossOriginIsolationForBrowsingContextGroup(browsingContextGroup->crossOriginMode()));
             prepareProcessForNavigation(WTF::move(fallbackProcess), page, nullptr, reason, isolatedProcessType, site, mainFrameSite, navigation, lockdownMode, enhancedSecurity, loadedWebArchive, WTF::move(dataStore), browsingContextGroup, sourceProcess, WTF::move(completionHandler), previousAttemptsCount + 1);
             return;
         }
@@ -2644,7 +2643,7 @@ std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral> WebPr
 
     auto createNewProcess = [&] () -> Ref<WebProcessProxy> {
         ASSERT(isolatedProcessType != WebProcessProxy::IsolatedProcessType::Shared);
-        return processForSite(dataStore, isolatedProcessType, targetSite, mainFrameSite, lockdownMode, enhancedSecurity, pageConfiguration, WebCore::ProcessSwapDisposition::None, processCrossOriginIsolationForBrowsingContextGroup(crossOriginMode));
+        return processForSite(dataStore, isolatedProcessType, targetSite, mainFrameSite, lockdownMode, enhancedSecurity, pageConfiguration, processCrossOriginIsolationForBrowsingContextGroup(crossOriginMode));
     };
 
     if (usesSingleWebProcess())
@@ -2749,7 +2748,7 @@ std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral> WebPr
                 return { WTF::move(originatorProcess), nullptr, "Frame is navigating to a data: URL with the Document-Isolation-Policy of another process. Switching to process that originated navigation."_s };
             // The originator's process belongs to its own site, which a main frame can't join.
             auto crossOriginIsolation = originatorProcess->isDocumentIsolationPolicyProcess() ? ProcessCrossOriginIsolation::DocumentIsolationPolicy : ProcessCrossOriginIsolation::None;
-            return { processForSite(dataStore, isolatedProcessType, targetSite, mainFrameSite, lockdownMode, enhancedSecurity, pageConfiguration, WebCore::ProcessSwapDisposition::None, crossOriginIsolation), nullptr, "Main frame is navigating to a data: URL with the Document-Isolation-Policy of another process"_s };
+            return { processForSite(dataStore, isolatedProcessType, targetSite, mainFrameSite, lockdownMode, enhancedSecurity, pageConfiguration, crossOriginIsolation), nullptr, "Main frame is navigating to a data: URL with the Document-Isolation-Policy of another process"_s };
         }
     }
 
@@ -2872,7 +2871,7 @@ std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral> WebPr
     }
 
     if (frame.isMainFrame() && isolatedProcessType == WebProcessProxy::IsolatedProcessType::MainFrame && !navigation.targetItem() && crossOriginMode == CrossOriginMode::Shared && targetURL.protocolIsInHTTPFamily()) {
-        Ref process = processForSite(dataStore, isolatedProcessType, targetSite, mainFrameSite, lockdownMode, enhancedSecurity, pageConfiguration, WebCore::ProcessSwapDisposition::None, ProcessCrossOriginIsolation::None, std::nullopt, nullptr, SecurityOriginData::fromURL(targetURL));
+        Ref process = processForSite(dataStore, isolatedProcessType, targetSite, mainFrameSite, lockdownMode, enhancedSecurity, pageConfiguration, ProcessCrossOriginIsolation::None, std::nullopt, nullptr, SecurityOriginData::fromURL(targetURL));
         if (process->isCOOPCacheOriginUnconfirmed())
             reason = "Using cached COOP process for the target origin"_s;
         return { WTF::move(process), nullptr, reason };

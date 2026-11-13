@@ -106,7 +106,6 @@ enum class LockBackForwardList : bool;
 enum class FromDownloadAttribute : bool { No , Yes };
 enum class IsSameDocumentNavigation : bool { No, Yes };
 enum class ShouldGoToHistoryItem : uint8_t { No, Yes, ItemUnknown };
-enum class ProcessSwapDisposition : uint8_t;
 enum class IFrameUnloadReason : bool { ResourceMonitor, MemoryMonitor };
 
 struct BackForwardFrameItemIdentifierType;

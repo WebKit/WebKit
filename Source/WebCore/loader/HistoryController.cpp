@@ -52,7 +52,6 @@
 #include "Navigation.h"
 #include "NavigationScheduler.h"
 #include "Page.h"
-#include "ProcessSwapDisposition.h"
 #include "ScrollingCoordinator.h"
 #include "SerializedScriptValue.h"
 #include "Settings.h"
