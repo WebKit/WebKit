@@ -72,6 +72,7 @@ WEBCORE_EXPORT UniqueRef<MediaSamplesBlock> samplesBlockFromCMSampleBuffer(CMSam
 
 RetainPtr<CFArrayRef> compressedAlphaData(CMSampleBufferRef);
 bool hasSeparateAlphaStream(CMFormatDescriptionRef);
+RetainPtr<CMFormatDescriptionRef> createFormatDescriptionWithAlpha(CVPixelBufferRef);
 
 WEBCORE_EXPORT void attachColorSpaceToPixelBuffer(const PlatformVideoColorSpace&, CVPixelBufferRef);
 

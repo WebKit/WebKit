@@ -71,6 +71,7 @@ struct VP8FrameHeader {
 };
 
 std::optional<VP8FrameHeader> parseVP8FrameHeader(std::span<const uint8_t>);
+bool vpxFrameIsKeyframe(uint32_t codec, std::span<const uint8_t> frameData);
 
 class VP9TestingOverrides {
 public:

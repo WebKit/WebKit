@@ -58,37 +58,11 @@
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
-#if ENABLE(VP9)
-#import <webm/common/vp9_header_parser.h>
-#endif
-
 #import "CoreVideoSoftLink.h"
 #import "VideoToolboxSoftLink.h"
 #import <pal/cf/CoreMediaSoftLink.h>
 
 namespace WebCore {
-
-#if ENABLE(VP9)
-static bool vpxFrameIsKeyframe(FourCharCode codec, std::span<const uint8_t> frameData)
-{
-    if (frameData.empty())
-        return false;
-
-    if (codec == 'vp09') {
-        vp9_parser::Vp9HeaderParser parser;
-        if (!parser.ParseUncompressedHeader(frameData.data(), frameData.size()))
-            return false;
-        return parser.key();
-    }
-
-    if (codec == 'vp08') {
-        auto header = parseVP8FrameHeader(frameData);
-        return header && header->keyframe;
-    }
-
-    return false;
-}
-#endif
 
 static RetainPtr<CMSampleBufferRef> createAlphaSampleBuffer(CFArrayRef alphaDatas, CMSampleBufferRef colorSample)
 {
@@ -151,26 +125,6 @@ static RetainPtr<CMSampleBufferRef> createAlphaSampleBuffer(CFArrayRef alphaData
     }
 
     return sampleBuffer;
-}
-
-static RetainPtr<CMFormatDescriptionRef> createFormatDescriptionWithAlpha(CVPixelBufferRef pixelBuffer)
-{
-    CMVideoFormatDescriptionRef rawDescription = nullptr;
-    if (PAL::CMVideoFormatDescriptionCreateForImageBuffer(kCFAllocatorDefault, pixelBuffer, &rawDescription) != noErr)
-        return nullptr;
-    RetainPtr description = adoptCF(rawDescription);
-
-    RetainPtr sourceExtensions = PAL::CMFormatDescriptionGetExtensions(description);
-    RetainPtr extensions = adoptCF(CFDictionaryCreateMutableCopy(kCFAllocatorDefault, 0, sourceExtensions));
-    if (!extensions)
-        return description;
-    CFDictionarySetValue(extensions, PAL::kCMFormatDescriptionExtension_ContainsAlphaChannel, kCFBooleanTrue);
-    CFDictionarySetValue(extensions, PAL::kCMFormatDescriptionExtension_AlphaChannelMode, PAL::kCMFormatDescriptionAlphaChannelMode_StraightAlpha);
-
-    rawDescription = nullptr;
-    if (PAL::CMVideoFormatDescriptionCreate(kCFAllocatorDefault, CVPixelBufferGetPixelFormatType(pixelBuffer), CVPixelBufferGetWidth(pixelBuffer), CVPixelBufferGetHeight(pixelBuffer), extensions, &rawDescription) != noErr)
-        return description;
-    return adoptCF(rawDescription);
 }
 
 static RetainPtr<CMSampleBufferRef> createSampleBufferWithPixelBuffer(CVPixelBufferRef pixelBuffer, CMSampleBufferRef sourceSampleBuffer, CMFormatDescriptionRef description)

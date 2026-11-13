@@ -59,6 +59,8 @@ private:
     IntSize presentationSize() const final { return m_size; }
     uint32_t pixelFormat() const final { return m_videoPixelFormat; }
     CVPixelBufferRef pixelBuffer() const final;
+    bool copyToI420(std::span<uint8_t>) final;
+    bool copyLumaPlane(std::span<uint8_t>) final;
 
     Ref<VideoFrame> clone() final;
 

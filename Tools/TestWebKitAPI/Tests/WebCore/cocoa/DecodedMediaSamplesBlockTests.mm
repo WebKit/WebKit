@@ -63,7 +63,7 @@ static Ref<AudioInfo> makeDecodedAudioInfo(uint32_t channels, AudioSampleFormat 
     });
 }
 
-static Ref<VideoInfo> makeDecodedVideoInfo(FloatSize size, std::optional<VideoPixelFormat> pixelFormat = VideoPixelFormat::I420)
+static Ref<VideoInfo> makeDecodedVideoInfo(FloatSize size, std::optional<VideoPixelFormat> pixelFormat = VideoPixelFormat::I420, bool isFullRange = false)
 {
     return VideoInfo::create({
         {
@@ -72,6 +72,7 @@ static Ref<VideoInfo> makeDecodedVideoInfo(FloatSize size, std::optional<VideoPi
             .size = size,
             .displaySize = size,
             .bitDepth = 8,
+            .colorSpace = { .fullRange = isFullRange },
             .pixelFormat = pixelFormat
         }
     });
@@ -410,6 +411,115 @@ TEST(DecodedMediaSamplesBlock, VideoRejectsInvalidData)
     EXPECT_FALSE(!!toCMSampleBuffer(MediaSamplesBlock { unsupported.ptr(), WTF::move(items) }));
 }
 
+static uint8_t alphaPattern(size_t column, size_t row)
+{
+    return static_cast<uint8_t>(column * 7 + row * 3);
+}
+
+// Luma is y, both chroma planes are 128 and the alpha follows alphaPattern().
+static MediaSamplesBlock::MediaSampleItem makeI420AItem(size_t width, size_t height, uint8_t y)
+{
+    size_t chromaSize = ((width + 1) / 2) * ((height + 1) / 2);
+    Vector<uint8_t> bytes(FillWith { }, width * height, y);
+    bytes.appendUsingFunctor(2 * chromaSize, [](size_t) {
+        return 128;
+    });
+    for (size_t row = 0; row < height; ++row) {
+        for (size_t column = 0; column < width; ++column)
+            bytes.append(alphaPattern(column, row));
+    }
+    return {
+        .presentationTime = MediaTime::zeroTime(),
+        .duration = MediaTime(1, 30),
+        .data = SharedBuffer::create(WTF::move(bytes)),
+        .flags = MediaSample::IsSync
+    };
+}
+
+static uint16_t tenBitSample(const uint8_t* row, size_t index)
+{
+    return (row[2 * index] | (row[2 * index + 1] << 8)) >> 6;
+}
+
+static void checkI420AFrame(size_t width, size_t height, bool isFullRange)
+{
+    Ref info = makeDecodedVideoInfo(FloatSize(static_cast<float>(width), static_cast<float>(height)), VideoPixelFormat::I420A, isFullRange);
+    MediaSamplesBlock::SamplesVector items;
+    items.append(makeI420AItem(width, height, 255));
+    auto result = toCMSampleBuffer(MediaSamplesBlock { info.ptr(), WTF::move(items) });
+    ASSERT_TRUE(!!result);
+    RetainPtr sampleBuffer = *result;
+
+    CVImageBufferRef imageBuffer = PAL::CMSampleBufferGetImageBuffer(sampleBuffer.get());
+    ASSERT_NE(nullptr, imageBuffer);
+    EXPECT_EQ(width, CVPixelBufferGetWidth(imageBuffer));
+    EXPECT_EQ(height, CVPixelBufferGetHeight(imageBuffer));
+    EXPECT_EQ(isFullRange ? static_cast<OSType>('x0a8') : static_cast<OSType>(kCVPixelFormatType_420YpCbCr8VideoRange_8A_TriPlanar), CVPixelBufferGetPixelFormatType(imageBuffer));
+    EXPECT_TRUE(CFEqual(kCVImageBufferAlphaChannelMode_StraightAlpha, CVBufferGetAttachment(imageBuffer, kCVImageBufferAlphaChannelModeKey, nullptr)));
+
+    CMVideoFormatDescriptionRef description = PAL::CMSampleBufferGetFormatDescription(sampleBuffer.get());
+    ASSERT_NE(nullptr, description);
+    EXPECT_EQ(CVPixelBufferGetPixelFormatType(imageBuffer), PAL::CMFormatDescriptionGetMediaSubType(description));
+    EXPECT_EQ(kCFBooleanTrue, PAL::CMFormatDescriptionGetExtension(description, PAL::kCMFormatDescriptionExtension_ContainsAlphaChannel));
+    EXPECT_TRUE(CFEqual(PAL::kCMFormatDescriptionAlphaChannelMode_StraightAlpha, PAL::CMFormatDescriptionGetExtension(description, PAL::kCMFormatDescriptionExtension_AlphaChannelMode)));
+
+    ASSERT_EQ(kCVReturnSuccess, CVPixelBufferLockBaseAddress(imageBuffer, kCVPixelBufferLock_ReadOnly));
+    auto unlock = makeScopeExit([&] {
+        CVPixelBufferUnlockBaseAddress(imageBuffer, kCVPixelBufferLock_ReadOnly);
+    });
+
+    auto* luma = static_cast<const uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(imageBuffer, 0));
+    size_t lumaStride = CVPixelBufferGetBytesPerRowOfPlane(imageBuffer, 0);
+    auto* chroma = static_cast<const uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(imageBuffer, 1));
+    size_t chromaStride = CVPixelBufferGetBytesPerRowOfPlane(imageBuffer, 1);
+    size_t chromaWidth = (width + 1) / 2;
+    size_t chromaHeight = (height + 1) / 2;
+    for (size_t row = 0; row < height; ++row) {
+        for (size_t column = 0; column < width; ++column) {
+            if (isFullRange)
+                ASSERT_EQ(940, tenBitSample(luma + row * lumaStride, column));
+            else
+                ASSERT_EQ(255, luma[row * lumaStride + column]);
+        }
+    }
+    for (size_t row = 0; row < chromaHeight; ++row) {
+        for (size_t column = 0; column < 2 * chromaWidth; ++column) {
+            if (isFullRange)
+                ASSERT_EQ(512, tenBitSample(chroma + row * chromaStride, column));
+            else
+                ASSERT_EQ(128, chroma[row * chromaStride + column]);
+        }
+    }
+
+    auto* alpha = static_cast<const uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(imageBuffer, 2));
+    size_t alphaStride = CVPixelBufferGetBytesPerRowOfPlane(imageBuffer, 2);
+    for (size_t row = 0; row < height; ++row) {
+        for (size_t column = 0; column < width; ++column)
+            ASSERT_EQ(alphaPattern(column, row), alpha[row * alphaStride + column]);
+    }
+}
+
+TEST(DecodedMediaSamplesBlock, VideoWithAlphaToCMSampleBuffer)
+{
+    checkI420AFrame(64, 48, false);
+    checkI420AFrame(33, 17, false);
+}
+
+TEST(DecodedMediaSamplesBlock, VideoWithAlphaFullRangeToCMSampleBuffer)
+{
+    checkI420AFrame(64, 48, true);
+    checkI420AFrame(33, 17, true);
+}
+
+TEST(DecodedMediaSamplesBlock, VideoWithAlphaRejectsInvalidData)
+{
+    // The data must hold the alpha plane.
+    Ref info = makeDecodedVideoInfo(FloatSize(16, 16), VideoPixelFormat::I420A);
+    MediaSamplesBlock::SamplesVector items;
+    items.append(makeI420Item(MediaTime::zeroTime(), 16, 16, 0, 0, 0));
+    EXPECT_FALSE(!!toCMSampleBuffer(MediaSamplesBlock { info.ptr(), WTF::move(items) }));
+}
+
 TEST(DecodedMediaSamplesBlock, VideoFormatDescriptionFromTrackInfo)
 {
     Ref info = makeDecodedVideoInfo(FloatSize(64, 48));
@@ -418,6 +528,19 @@ TEST(DecodedMediaSamplesBlock, VideoFormatDescriptionFromTrackInfo)
     EXPECT_EQ(static_cast<FourCharCode>(kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange), PAL::CMFormatDescriptionGetMediaSubType(description.get()));
 
     EXPECT_EQ(nullptr, createFormatDescriptionFromTrackInfo(makeDecodedVideoInfo(FloatSize(64, 48), VideoPixelFormat::I422).get()).get());
+}
+
+TEST(DecodedMediaSamplesBlock, VideoWithAlphaFormatDescriptionFromTrackInfo)
+{
+    for (bool isFullRange : { false, true }) {
+        RetainPtr description = createFormatDescriptionFromTrackInfo(makeDecodedVideoInfo(FloatSize(64, 48), VideoPixelFormat::I420A, isFullRange).get());
+        ASSERT_NE(nullptr, description.get());
+        EXPECT_EQ(isFullRange ? static_cast<FourCharCode>('x0a8') : static_cast<FourCharCode>(kCVPixelFormatType_420YpCbCr8VideoRange_8A_TriPlanar), PAL::CMFormatDescriptionGetMediaSubType(description.get()));
+        EXPECT_EQ(kCFBooleanTrue, PAL::CMFormatDescriptionGetExtension(description.get(), PAL::kCMFormatDescriptionExtension_ContainsAlphaChannel));
+        EXPECT_TRUE(CFEqual(PAL::kCMFormatDescriptionAlphaChannelMode_StraightAlpha, PAL::CMFormatDescriptionGetExtension(description.get(), PAL::kCMFormatDescriptionExtension_AlphaChannelMode)));
+        // The pixel data is always video range.
+        EXPECT_EQ(nullptr, PAL::CMFormatDescriptionGetExtension(description.get(), PAL::kCMFormatDescriptionExtension_FullRangeVideo));
+    }
 }
 
 } // namespace TestWebKitAPI

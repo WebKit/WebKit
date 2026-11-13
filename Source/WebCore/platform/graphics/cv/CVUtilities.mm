@@ -317,6 +317,13 @@ bool isPixelFormatWithAlphaPlane(OSType format)
     return std::ranges::find(alphaPlanePixelFormats, format) != alphaPlanePixelFormats.end();
 }
 
+std::optional<int> bitDepthOfPixelFormatWithAlphaPlane(OSType format)
+{
+    if (!isPixelFormatWithAlphaPlane(format))
+        return { };
+    return format == pixelFormat420YpCbCr10VideoRange8ATriPlanar || format == pixelFormat422YpCbCr10VideoRange8ATriPlanar ? 10 : 8;
+}
+
 // ITU-T H.273 full to video range scaling.
 template<size_t levels>
 static constexpr std::array<uint16_t, levels> fullToTenBitVideoRangeTable(bool isChroma)
@@ -360,6 +367,23 @@ static void copyRow(std::span<uint8_t> destination, std::span<const uint8_t> sou
     auto sourceSamples = source.first(sampleCount);
     for (size_t index = 0; index < sampleCount; ++index)
         destinationSamples[index] = table[sourceSamples[index]];
+}
+
+static void copyInterleavedChromaRow(std::span<uint8_t> destination, std::span<const uint8_t> u, std::span<const uint8_t> v, bool widenToTenBitVideoRange)
+{
+    if (!widenToTenBitVideoRange) {
+        auto samples = destination.first(2 * u.size());
+        for (size_t x = 0; x < u.size(); ++x) {
+            samples[2 * x] = u[x];
+            samples[2 * x + 1] = v[x];
+        }
+        return;
+    }
+    auto samples = spanReinterpretCast<uint16_t>(destination.first(4 * u.size()));
+    for (size_t x = 0; x < u.size(); ++x) {
+        samples[2 * x] = eightBitFullToTenBitVideoChroma[u[x]];
+        samples[2 * x + 1] = eightBitFullToTenBitVideoChroma[v[x]];
+    }
 }
 
 static bool copyAlphaPlane(std::span<uint8_t> destination, size_t destinationBytesPerRow, CVPixelBufferRef alphaBuffer, size_t width, size_t height)
@@ -448,6 +472,60 @@ std::expected<RetainPtr<CVPixelBufferRef>, CVReturn> createPixelBufferWithAlpha(
     return output;
 }
 
+bool copyI420ToPixelBuffer(std::span<const uint8_t> source, size_t width, size_t height, CVPixelBufferRef destination)
+{
+    auto format = CVPixelBufferGetPixelFormatType(destination);
+    bool hasAlpha = format == kCVPixelFormatType_420YpCbCr8VideoRange_8A_TriPlanar || format == pixelFormat420YpCbCr10VideoRange8ATriPlanar;
+    if (!hasAlpha && format != kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange && format != kCVPixelFormatType_420YpCbCr8BiPlanarFullRange)
+        return false;
+    YCbCrBiPlanarLayout layout { .isFullRange = format == pixelFormat420YpCbCr10VideoRange8ATriPlanar };
+
+    size_t chromaWidth = (width + 1) / 2;
+    size_t chromaHeight = (height + 1) / 2;
+    size_t lumaSize = width * height;
+    size_t chromaSize = chromaWidth * chromaHeight;
+    if (!width || !height || CVPixelBufferGetWidth(destination) != width || CVPixelBufferGetHeight(destination) != height
+        || source.size() != lumaSize + 2 * chromaSize + (hasAlpha ? lumaSize : 0))
+        return false;
+
+    PixelBufferLock destinationLock { destination, 0 };
+    if (!destinationLock)
+        return false;
+
+    size_t sampleBytes = layout.isFullRange ? 2 : 1;
+    auto lumaDestination = CVPixelBufferGetSpanOfPlane(destination, 0);
+    size_t lumaBytesPerRow = CVPixelBufferGetBytesPerRowOfPlane(destination, 0);
+    auto chromaDestination = CVPixelBufferGetSpanOfPlane(destination, 1);
+    size_t chromaBytesPerRow = CVPixelBufferGetBytesPerRowOfPlane(destination, 1);
+    if (lumaBytesPerRow < width * sampleBytes || lumaDestination.size() < height * lumaBytesPerRow
+        || chromaBytesPerRow < 2 * chromaWidth * sampleBytes || chromaDestination.size() < chromaHeight * chromaBytesPerRow)
+        return false;
+
+    auto lumaSource = source.first(lumaSize);
+    auto uSource = source.subspan(lumaSize, chromaSize);
+    auto vSource = source.subspan(lumaSize + chromaSize, chromaSize);
+
+    for (size_t y = 0; y < height; ++y)
+        copyRow(lumaDestination.subspan(y * lumaBytesPerRow), lumaSource.subspan(y * width, width), width, layout, false);
+
+    for (size_t y = 0; y < chromaHeight; ++y)
+        copyInterleavedChromaRow(chromaDestination.subspan(y * chromaBytesPerRow), uSource.subspan(y * chromaWidth, chromaWidth), vSource.subspan(y * chromaWidth, chromaWidth), layout.isFullRange);
+
+    if (!hasAlpha)
+        return true;
+
+    auto alphaDestination = CVPixelBufferGetSpanOfPlane(destination, 2);
+    size_t alphaBytesPerRow = CVPixelBufferGetBytesPerRowOfPlane(destination, 2);
+    if (alphaBytesPerRow < width || alphaDestination.size() < height * alphaBytesPerRow)
+        return false;
+    auto alphaSource = source.subspan(lumaSize + 2 * chromaSize, lumaSize);
+    for (size_t y = 0; y < height; ++y)
+        memcpySpan(alphaDestination.subspan(y * alphaBytesPerRow, width), alphaSource.subspan(y * width, width));
+
+    setStraightAlpha(destination);
+    return true;
+}
+
 bool copyAlphaIntoAlphaPlane(CVPixelBufferRef destination, CVPixelBufferRef alphaBuffer)
 {
     if (!destination || !alphaBuffer || !isPixelFormatWithAlphaPlane(CVPixelBufferGetPixelFormatType(destination)))
@@ -475,6 +553,27 @@ bool copyAlphaIntoAlphaPlane(CVPixelBufferRef destination, CVPixelBufferRef alph
     }
 
     setStraightAlpha(destination);
+    return true;
+}
+
+bool copyAlphaFromLumaPlane(CVPixelBufferRef alphaBuffer, std::span<uint8_t> destination, size_t destinationBytesPerRow)
+{
+    if (!alphaBuffer)
+        return false;
+
+    size_t width = CVPixelBufferGetWidth(alphaBuffer);
+    size_t height = CVPixelBufferGetHeight(alphaBuffer);
+    if (!width || !height || destinationBytesPerRow < width || destination.size() < (height - 1) * destinationBytesPerRow + width)
+        return false;
+
+    PixelBufferLock alphaLock { alphaBuffer, kCVPixelBufferLock_ReadOnly };
+    if (!alphaLock)
+        return false;
+
+    if (!copyAlphaPlane(destination, destinationBytesPerRow, alphaBuffer, width, height)) {
+        RELEASE_LOG_ERROR(Media, "copyAlphaFromLumaPlane: unsupported alpha format %" PUBLIC_LOG_STRING, FourCC(CVPixelBufferGetPixelFormatType(alphaBuffer)).string().data());
+        return false;
+    }
     return true;
 }
 

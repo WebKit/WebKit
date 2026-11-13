@@ -129,6 +129,11 @@ public:
     using CopyCallback = CompletionHandler<void(std::optional<Vector<PlaneLayout>>&&)>;
     void copyTo(std::span<uint8_t>, VideoPixelFormat, ColorSpace, Vector<ComputedPlaneLayout>&&, CopyCallback&&);
 
+    // Only I420 and I420A are supported, tightly packed.
+    static std::optional<size_t> planarBufferSize(IntSize, VideoPixelFormat);
+    // The I420A alpha plane is alphaFrame's luma, or opaque if alphaFrame is null or can't be read.
+    bool copyToPlanarBuffer(std::span<uint8_t> destination, VideoPixelFormat, VideoFrame* alphaFrame);
+
     virtual IntSize presentationSize() const = 0;
     virtual uint32_t pixelFormat() const = 0;
     virtual bool isEncoded() const { return false; }
@@ -163,6 +168,10 @@ protected:
     WEBCORE_EXPORT VideoFrame(MediaTime presentationTime, bool isMirrored, Rotation, PlatformVideoColorSpace&& = { });
 
     void initializePresentationTime(MediaTime);
+
+    // Both copy tightly packed 8-bit planes into a destination sized for the frame.
+    WEBCORE_EXPORT virtual bool copyToI420(std::span<uint8_t>);
+    WEBCORE_EXPORT virtual bool copyLumaPlane(std::span<uint8_t>);
 
 private:
     virtual Ref<VideoFrame> clone() = 0;

@@ -83,8 +83,11 @@ private:
     Ref<DecodePromise> decodeOnQueue(MediaSamplesBlock&&);
     Ref<DecodePromise> drainOnQueue();
     Ref<MediaPromise> flushOnQueue();
+    Ref<GenericPromise> flushDecoders();
     void didDecodeAudio(Ref<PlatformRawAudioData>&&);
     void didDecodeVideo(Ref<VideoFrame>&&, int64_t sequence);
+    void didDecodeAlpha(Ref<VideoFrame>&&, int64_t sequence);
+    void emitDecodedVideo(int64_t firstSequence, int64_t endSequence);
     void didFailDecoding();
     PlatformMediaError decodingError() const;
     Ref<DecodePromise> settleWithPendingOutput(bool succeeded, uint32_t generation);
@@ -96,23 +99,23 @@ private:
     const Filters m_filters;
     RefPtr<AudioDecoder> m_audioDecoder WTF_GUARDED_BY_CAPABILITY(m_queue.get());
     RefPtr<VideoDecoder> m_videoDecoder WTF_GUARDED_BY_CAPABILITY(m_queue.get());
+    RefPtr<VideoDecoder> m_alphaDecoder WTF_GUARDED_BY_CAPABILITY(m_queue.get());
     struct InFlightFrame {
         WTF_MAKE_STRUCT_TZONE_ALLOCATED(InFlightFrame);
         MediaSamplesBlock::MediaSampleItem metadata;
-        // The first sequence of the block the frame was decoded from.
-        int64_t blockSequence { 0 };
+        RefPtr<VideoFrame> colorFrame { };
+        RefPtr<VideoFrame> alphaFrame { };
     };
     HashMap<int64_t, UniqueRef<InFlightFrame>, DefaultHash<int64_t>, WTF::SignedWithZeroKeyHashTraits<int64_t>> m_inFlight WTF_GUARDED_BY_CAPABILITY(m_queue.get());
     int64_t m_nextSequence WTF_GUARDED_BY_CAPABILITY(m_queue.get()) { 0 };
     Vector<MediaSamplesBlock> m_completedOutput WTF_GUARDED_BY_CAPABILITY(m_queue.get());
-    // The block the last frame in m_completedOutput was decoded from.
-    std::optional<int64_t> m_lastOutputBlockSequence WTF_GUARDED_BY_CAPABILITY(m_queue.get());
     MediaSamplesBlock::SamplesVector m_pendingOutput WTF_GUARDED_BY_CAPABILITY(m_queue.get());
     Deque<std::pair<MediaTime, MediaTime>> m_trimmedRanges WTF_GUARDED_BY_CAPABILITY(m_queue.get());
     RefPtr<GenericPromise> m_lastOperation WTF_GUARDED_BY_CAPABILITY(m_queue.get());
     uint32_t m_generation WTF_GUARDED_BY_CAPABILITY(m_queue.get()) { 0 };
     std::optional<PlatformMediaError> m_error WTF_GUARDED_BY_CAPABILITY(m_queue.get());
     bool m_needsSyncSample WTF_GUARDED_BY_CAPABILITY(m_queue.get()) { true };
+    bool m_needsAlphaKeyframe WTF_GUARDED_BY_CAPABILITY(m_queue.get()) { true };
     std::optional<bool> m_discontinuity WTF_GUARDED_BY_CAPABILITY(m_queue.get());
 };
 

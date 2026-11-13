@@ -82,6 +82,42 @@ CVPixelBufferRef VideoFrameLibWebRTC::pixelBuffer() const
     return m_pixelBuffer.get();
 }
 
+static void copyPlane(std::span<uint8_t> destination, size_t width, size_t height, const uint8_t* source, int sourceStride)
+{
+    size_t stride = sourceStride;
+    auto sourcePlane = unsafeMakeSpan(source, (height - 1) * stride + width);
+    for (size_t y = 0; y < height; ++y)
+        memcpySpan(destination.subspan(y * width, width), sourcePlane.subspan(y * stride, width));
+}
+
+bool VideoFrameLibWebRTC::copyToI420(std::span<uint8_t> destination)
+{
+    if (m_buffer->type() != webrtc::VideoFrameBuffer::Type::kI420)
+        return VideoFrame::copyToI420(destination);
+
+    auto* buffer = m_buffer->GetI420();
+    size_t width = buffer->width();
+    size_t height = buffer->height();
+    size_t chromaWidth = (width + 1) / 2;
+    size_t chromaHeight = (height + 1) / 2;
+    size_t lumaSize = width * height;
+    size_t chromaSize = chromaWidth * chromaHeight;
+    copyPlane(destination, width, height, buffer->DataY(), buffer->StrideY());
+    copyPlane(destination.subspan(lumaSize), chromaWidth, chromaHeight, buffer->DataU(), buffer->StrideU());
+    copyPlane(destination.subspan(lumaSize + chromaSize), chromaWidth, chromaHeight, buffer->DataV(), buffer->StrideV());
+    return true;
+}
+
+bool VideoFrameLibWebRTC::copyLumaPlane(std::span<uint8_t> destination)
+{
+    if (m_buffer->type() != webrtc::VideoFrameBuffer::Type::kI420)
+        return VideoFrame::copyLumaPlane(destination);
+
+    auto* buffer = m_buffer->GetI420();
+    copyPlane(destination, buffer->width(), buffer->height(), buffer->DataY(), buffer->StrideY());
+    return true;
+}
+
 Ref<VideoFrame> VideoFrameLibWebRTC::clone()
 {
     Locker locker { m_pixelBufferLock };

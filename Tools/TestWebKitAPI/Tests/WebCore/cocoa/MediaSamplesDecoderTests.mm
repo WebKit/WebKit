@@ -863,6 +863,22 @@ static DecodedVideo decodeVideoBlocks(MediaSamplesDecoder& decoder, Vector<Uniqu
 
 static constexpr auto vp8ContentType = "video/webm; codecs=vp8"_s;
 
+// The I420A alpha plane follows the Y, U and V planes.
+static uint8_t alphaAt(const Vector<uint8_t>& frame, const FloatSize& size, size_t x, size_t y)
+{
+    size_t width = size.width();
+    size_t height = size.height();
+    size_t alphaOffset = width * height + 2 * ((width + 1) / 2) * ((height + 1) / 2);
+    return frame[alphaOffset + y * width + x];
+}
+
+static size_t i420AFrameSize(const FloatSize& size)
+{
+    size_t width = size.width();
+    size_t height = size.height();
+    return 2 * width * height + 2 * ((width + 1) / 2) * ((height + 1) / 2);
+}
+
 #if ENABLE(VP9)
 class ScopedVP9HardwareDecoder {
 public:
@@ -1034,11 +1050,10 @@ TEST(MediaSamplesDecoder, DecodeVP8SizeChangeWithoutNewTrackInfo)
     auto decoded = decodeVideoBlocks(decoder, blocks);
     ASSERT_EQ(decoded.frames.size(), decoded.inputPresentationTimes.size());
 
-    for (size_t i = 0; i < decoded.frames.size(); ++i) {
-        size_t width = decoded.outputSizes[i].width();
-        size_t height = decoded.outputSizes[i].height();
-        EXPECT_EQ(decoded.frames[i].size(), width * height + 2 * ((width + 1) / 2) * ((height + 1) / 2));
-    }
+    // The file carries an opaque alpha stream, so the output is I420A.
+    ASSERT_TRUE(downcast<VideoInfo>(*firstInfo).hasSeparateAlphaStream());
+    for (size_t i = 0; i < decoded.frames.size(); ++i)
+        EXPECT_EQ(decoded.frames[i].size(), i420AFrameSize(decoded.outputSizes[i]));
     EXPECT_TRUE(decoded.outputSizes.contains(FloatSize { 400, 300 }));
     EXPECT_TRUE(decoded.outputSizes.contains(FloatSize { 200, 150 }));
 }
@@ -1748,6 +1763,149 @@ TEST(PacedMediaSamplesDecoder, DecodeRejectsChangedFormat)
     ASSERT_FALSE(result);
     EXPECT_EQ(result.error(), PlatformMediaError::InvalidState);
 }
+
+struct ExpectedAlpha {
+    size_t x;
+    size_t y;
+    uint8_t alpha;
+};
+
+static void testDecodeAlpha(Vector<UniqueRef<MediaSamplesBlock>>&& blocks, FloatSize expectedSize, std::initializer_list<ExpectedAlpha> expectedAlphas)
+{
+    ASSERT_FALSE(blocks.isEmpty());
+    RefPtr inputInfo = dynamicDowncast<VideoInfo>(blocks[0]->info());
+    ASSERT_TRUE(inputInfo);
+    ASSERT_TRUE(inputInfo->hasSeparateAlphaStream());
+    ASSERT_TRUE(MediaSamplesDecoder::canDecode(*inputInfo, allowedFilters));
+
+    Ref decoder = createDecoder(*inputInfo);
+    auto decoded = decodeVideoBlocks(decoder, blocks);
+    RefPtr info = dynamicDowncast<VideoInfo>(decoded.outputInfo);
+    ASSERT_TRUE(info);
+    EXPECT_EQ(info->pixelFormat(), VideoPixelFormat::I420A);
+    EXPECT_EQ(info->size(), expectedSize);
+
+    ASSERT_EQ(decoded.frames.size(), decoded.inputPresentationTimes.size());
+    for (auto& frame : decoded.frames)
+        EXPECT_EQ(frame.size(), i420AFrameSize(info->size()));
+
+    auto& frame = decoded.frames.last();
+    for (auto [x, y, alpha] : expectedAlphas)
+        EXPECT_NEAR(alphaAt(frame, info->size(), x, y), alpha, 3) << "at " << x << "," << y;
+}
+
+// The video is one colour in four vertical stripes at 0, 10%, 50% and 100% opacity.
+static void testDecodeAlphaStripes(Vector<UniqueRef<MediaSamplesBlock>>&& blocks)
+{
+    testDecodeAlpha(WTF::move(blocks), FloatSize(200, 200), { { 25, 100, 0 }, { 75, 100, 26 }, { 125, 100, 128 }, { 175, 100, 255 } });
+}
+
+TEST(MediaSamplesDecoder, DecodeVP8WithAlpha)
+{
+    if (!isVPXDecodingAvailable())
+        GTEST_SKIP() << "VPx software decoding is not available";
+
+    testDecodeAlphaStripes(parseWebMVideoFile(@"video-with-alpha-vp8", vp8ContentType));
+}
+
+TEST(MediaSamplesDecoder, CanContinueWithRejectsChangedAlpha)
+{
+    if (!isVPXDecodingAvailable())
+        GTEST_SKIP() << "VPx software decoding is not available";
+
+    auto blocks = parseWebMVideoFile(@"video-with-alpha-vp8", vp8ContentType);
+    ASSERT_FALSE(blocks.isEmpty());
+    auto& original = downcast<VideoInfo>(*blocks[0]->info());
+    ASSERT_TRUE(original.hasSeparateAlphaStream());
+
+    Ref decoder = createDecoder(original);
+    EXPECT_TRUE(decoder->canContinueWith(original));
+
+    auto data = original.toVideoInfoData();
+    data.second.hasSeparateAlphaStream = false;
+    EXPECT_FALSE(decoder->canContinueWith(VideoInfo::create(WTF::move(data))));
+}
+
+#if ENABLE(VP9)
+static constexpr auto vp9ContentType = "video/webm; codecs=vp09.00.10.08"_s;
+
+// The WebM parser may only expose VP9 tracks when a hardware decoder is reported.
+static Vector<UniqueRef<MediaSamplesBlock>> parseWebMVP9File(NSString *resourceName)
+{
+    ScopedVP9HardwareDecoder hardwareDecoder { true };
+    return parseWebMVideoFile(resourceName, vp9ContentType);
+}
+
+TEST(MediaSamplesDecoder, DecodeVP9WithAlpha)
+{
+    if (!isVPXDecodingAvailable())
+        GTEST_SKIP() << "VPx software decoding is not available";
+
+    // Opaque at the top, stripes at 50%, 0 and 100% opacity at the bottom.
+    auto blocks = parseWebMVP9File(@"vp9-alpha-420-bt709-videorange");
+    ScopedVP9HardwareDecoder noHardwareDecoder { false };
+    testDecodeAlpha(WTF::move(blocks), FloatSize(320, 192), { { 160, 50, 255 }, { 80, 160, 129 }, { 144, 160, 0 }, { 208, 160, 255 }, { 272, 160, 129 } });
+}
+
+TEST(MediaSamplesDecoder, DecodeVP9WithAlphaFullRange)
+{
+    if (!isVPXDecodingAvailable())
+        GTEST_SKIP() << "VPx software decoding is not available";
+
+    auto blocks = parseWebMVP9File(@"video-with-alpha-full-range");
+    ScopedVP9HardwareDecoder noHardwareDecoder { false };
+    testDecodeAlphaStripes(WTF::move(blocks));
+}
+
+// Colour keyframes are at 0s, 1s and 2s, alpha keyframes only at 0s and 1.5s. The video is transparent on the left
+// half and opaque on the right.
+TEST(MediaSamplesDecoder, DecodeAlphaMisalignedKeyframes)
+{
+    if (!isVPXDecodingAvailable())
+        GTEST_SKIP() << "VPx software decoding is not available";
+
+    auto blocks = splitIntoSingleItemBlocks(parseWebMVP9File(@"video-with-alpha-misaligned-keyframes"));
+    ScopedVP9HardwareDecoder noHardwareDecoder { false };
+    ASSERT_FALSE(blocks.isEmpty());
+    RefPtr inputInfo = blocks[0]->info();
+    ASSERT_TRUE(inputInfo);
+
+    // Start at the colour keyframe at 1s, where the alpha frame is a delta.
+    auto start = std::ranges::find_if(blocks, [](auto& block) {
+        return block->isSync() && block->first().presentationTime >= MediaTime(1, 1);
+    });
+    ASSERT_NE(start, blocks.end());
+
+    Ref decoder = createDecoder(*inputInfo);
+    size_t opaqueFrames = 0;
+    size_t transparentFrames = 0;
+    for (auto iterator = start; iterator != blocks.end(); ++iterator) {
+        auto time = (*iterator)->first().presentationTime;
+        auto promise = decoder->decode(WTF::move(iterator->get()));
+        auto result = settle(promise.get());
+        ASSERT_TRUE(result);
+        for (auto& output : *result) {
+            auto size = downcast<VideoInfo>(*output.info()).size();
+            EXPECT_EQ(downcast<VideoInfo>(*output.info()).pixelFormat(), VideoPixelFormat::I420A);
+            for (auto& item : output) {
+                Vector<uint8_t> frame(item.data->makeContiguous()->span());
+                ASSERT_EQ(frame.size(), i420AFrameSize(size));
+                EXPECT_GT(alphaAt(frame, size, 120, 60), 224);
+                if (time < MediaTime(3, 2)) {
+                    // The alpha frames are deltas whose keyframe wasn't decoded: the frame is opaque.
+                    EXPECT_EQ(alphaAt(frame, size, 40, 60), 255);
+                    ++opaqueFrames;
+                } else {
+                    EXPECT_LT(alphaAt(frame, size, 40, 60), 32);
+                    ++transparentFrames;
+                }
+            }
+        }
+    }
+    EXPECT_GT(opaqueFrames, 0u);
+    EXPECT_GT(transparentFrames, 0u);
+}
+#endif
 
 } // namespace TestWebKitAPI
 
