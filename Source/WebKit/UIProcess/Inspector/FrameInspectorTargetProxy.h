@@ -28,6 +28,7 @@
 #include "InspectorTargetProxy.h"
 #include <JavaScriptCore/InspectorTarget.h>
 #include <WebCore/FrameIdentifier.h>
+#include <WebCore/ProcessIdentifier.h>
 #include <memory>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
@@ -46,6 +47,8 @@ public:
     FrameInspectorTargetProxy(WebCore::FrameIdentifier, WebProcessProxy&, bool isProvisional);
     ~FrameInspectorTargetProxy();
 
+    WebCore::ProcessIdentifier processID() const { return m_processID; }
+
     void didCommitProvisionalTarget() override;
     bool isProvisional() const override;
 
@@ -56,13 +59,14 @@ public:
 private:
     WeakRef<WebProcessProxy> m_targetProcess;
     WebCore::FrameIdentifier m_frameID;
+    WebCore::ProcessIdentifier m_processID;
     bool m_isProvisional { false };
 };
 
 } // namespace WebKit
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::FrameInspectorTargetProxy)
-static bool isType(const WebKit::FrameInspectorTargetProxy& target)
+static bool isType(const WebKit::InspectorTargetProxy& target)
 {
     return target.type() == Inspector::InspectorTargetType::Frame;
 }

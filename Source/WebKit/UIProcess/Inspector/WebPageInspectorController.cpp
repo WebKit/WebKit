@@ -51,8 +51,13 @@
 #include <JavaScriptCore/InspectorFrontendRouter.h>
 #include <JavaScriptCore/InspectorTargetAgent.h>
 #include <wtf/Assertions.h>
+#include <wtf/Borrow.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
+#include <wtf/RefPtr.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/TypeCasts.h>
+#include <wtf/Vector.h>
 
 namespace WebKit {
 
@@ -449,6 +454,23 @@ void WebPageInspectorController::processDidTerminate(WebProcessProxy& process)
 {
     if (m_debuggerPauseCoordinator)
         CheckedPtr { m_debuggerPauseCoordinator }->processDidTerminate(process);
+
+    if (!shouldManageFrameTargets())
+        return;
+
+    // A frame can outlive its process, but its target in that process can never answer again. Compare process
+    // identifiers, because the process of a stale target may already be destroyed.
+    // When a remote process exits, its paused provisional frame targets are already gone: the provisional frame is
+    // canceled before this runs, and willDestroyProvisionalFrame resumes its target before removing it.
+    // FIXME <https://webkit.org/b/331366>: When the main frame's process exits, frames are detached from the page
+    // before their provisional frames are destroyed, so willDestroyProvisionalFrame never resumes their paused targets.
+    Vector<String> targetIDs;
+    for (auto& [targetID, target] : m_targets) {
+        if (CheckedPtr frameTarget = dynamicDowncast<FrameInspectorTargetProxy>(*target); frameTarget && frameTarget->processID() == process.coreProcessIdentifier())
+            targetIDs.append(targetID);
+    }
+    for (auto& targetID : borrow(targetIDs))
+        removeTarget(targetID);
 }
 
 void WebPageInspectorController::didCreateFrame(WebFrameProxy& frame)
