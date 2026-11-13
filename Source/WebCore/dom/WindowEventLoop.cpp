@@ -60,15 +60,15 @@ static String agentClusterKeyOrNullIfUnique(const SecurityOrigin& origin)
 {
     auto computeKey = [&] {
         // https://html.spec.whatwg.org/multipage/webappapis.html#obtain-agent-cluster-key
-        if (origin.isOpaque())
-            return origin.toString();
+        if (auto opaqueOriginIdentifier = origin.data().opaqueOriginIdentifier())
+            return makeString("null:"_s, *opaqueOriginIdentifier);
         RegistrableDomain registrableDomain { origin.data() };
         if (registrableDomain.isEmpty())
-            return origin.toString();
+            return origin.toRawString();
         return makeString(origin.protocol(), "://"_s, registrableDomain.string());
     };
     auto key = computeKey();
-    if (key.isEmpty() || key == "null"_s)
+    if (key.isEmpty())
         return { };
     return key;
 }

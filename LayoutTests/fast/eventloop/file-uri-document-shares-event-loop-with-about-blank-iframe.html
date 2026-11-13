@@ -1,0 +1,30 @@
+<!DOCTYPE html><!-- webkit-test-runner [ AllowFileAccessFromFileURLs=false AllowUniversalAccessFromFileURLs=false ] -->
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description('This tests that a file URI document shares its event loop with its about:blank iframe when file URI documents cannot access each other.');
+
+if (!window.internals)
+    testFailed('This test relies on window.internals');
+else {
+    jsTestIsAsync = true;
+    logs = [];
+
+    frame = document.createElement('iframe');
+    document.body.appendChild(frame);
+
+    frame.contentWindow.queueMicrotask(() => logs.push('1'));
+    queueMicrotask(() => logs.push('2'));
+    frame.contentWindow.queueMicrotask(() => logs.push('3'));
+    queueMicrotask(() => {
+        shouldBeEqualToString('logs.join(", ")', '1, 2, 3');
+        shouldBeTrue('internals.hasSameEventLoopAs(frame.contentWindow)');
+        finishJSTest();
+    });
+}
+</script>
+</body>
+</html>

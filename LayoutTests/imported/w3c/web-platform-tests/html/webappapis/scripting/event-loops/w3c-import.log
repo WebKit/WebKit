@@ -14,7 +14,9 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/event-loops/document-without-browsing-context.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/event-loops/fully_active_document.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/event-loops/microtask_after_raf.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/event-loops/microtask_after_script.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/event-loops/opaque-origin-same-agent.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/event-loops/task_microtask_ordering.html

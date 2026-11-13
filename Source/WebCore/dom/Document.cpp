@@ -9217,7 +9217,10 @@ WindowEventLoop& Document::windowEventLoop()
 {
     ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     if (!m_eventLoop) [[unlikely]] {
-        m_eventLoop = WindowEventLoop::eventLoopForSecurityOrigin(protect(securityOrigin()));
+        if (RefPtr contextDocument = m_contextDocument)
+            m_eventLoop = contextDocument->windowEventLoop();
+        else
+            m_eventLoop = WindowEventLoop::eventLoopForSecurityOrigin(protect(securityOrigin()));
         protect(m_eventLoop)->addAssociatedContext(*this);
     }
     return *m_eventLoop;
