@@ -99,7 +99,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteLayerTreeDrawingAreaProxy);
 
 RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy(WebPageProxy& pageProxy, WebProcessProxy& webProcessProxy)
     : DrawingAreaProxy(pageProxy, webProcessProxy)
-    , m_remoteLayerTreeHost(makeUnique<RemoteLayerTreeHost>(*this))
+    , m_remoteLayerTreeHost(makeUnique<RemoteLayerTreeHost>(*this, RemoteLayerTreeHost::Role::Primary))
     , m_webPageProxyProcessState(webProcessProxy)
 {
     // We don't want to pool surfaces in the UI process.
@@ -743,8 +743,7 @@ void RemoteLayerTreeDrawingAreaProxy::updateDebugIndicator(IntSize contentsSize,
 
 void RemoteLayerTreeDrawingAreaProxy::initializeDebugIndicator()
 {
-    lazyInitialize(m_debugIndicatorLayerTreeHost, makeUnique<RemoteLayerTreeHost>(*this));
-    m_debugIndicatorLayerTreeHost->setIsDebugLayerTreeHost(true);
+    lazyInitialize(m_debugIndicatorLayerTreeHost, makeUnique<RemoteLayerTreeHost>(*this, RemoteLayerTreeHost::Role::DebugIndicator));
 
     lazyInitialize(m_tileMapHostLayer, adoptNS([[CALayer alloc] init]));
     [m_tileMapHostLayer setName:@"Tile map host"];

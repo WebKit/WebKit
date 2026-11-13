@@ -29,6 +29,7 @@
 
 #include "RemoteScrollingCoordinatorProxy.h"
 #include <wtf/TZoneMalloc.h>
+#include <wtf/ThreadSafeWeakHashSet.h>
 
 #if ENABLE(THREADED_ANIMATIONS)
 #import "RemoteMonotonicTimelineRegistry.h"
@@ -140,7 +141,7 @@ private:
 #endif
 
 #if ENABLE(THREADED_ANIMATIONS)
-    HashSet<WebCore::PlatformLayerIdentifier> m_animatedNodeLayerIDs;
+    ThreadSafeWeakHashSet<RemoteLayerTreeNode> m_animatedNodes;
     std::unique_ptr<RemoteMonotonicTimelineRegistry> m_monotonicTimelineRegistry;
 #endif
 };
