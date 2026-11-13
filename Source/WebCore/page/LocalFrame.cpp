@@ -828,6 +828,9 @@ void LocalFrame::injectUserScriptImmediately(DOMWrapperWorld& world, const UserS
     if (!page)
         return;
 
+    if (script.pageID() && script.pageID() != page->identifier())
+        return;
+
     if (script.injectedFrames() == UserContentInjectedFrames::InjectInTopFrameOnly && !isMainFrame())
         return;
 
@@ -851,6 +854,10 @@ void LocalFrame::injectUserScriptImmediately(DOMWrapperWorld& world, const UserS
     }
 
     if (!UserContentURLPattern::matchesPatterns(url, script.allowlist(), script.blocklist()))
+        return;
+
+    // We may attempt to add the same script more than once, so ensure it's only added once per document in a world.
+    if (!document->recordInjectedUserScript(world, script))
         return;
 
     page->setHasInjectedUserScript();

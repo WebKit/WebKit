@@ -173,49 +173,6 @@ using WTF::WeakPtr;
 }
 @end
 
-@interface _WKWebExtensionSidebarWebView : WKWebView
-@end
-
-@implementation _WKWebExtensionSidebarWebView {
-    WeakPtr<WebExtensionSidebar> _webExtensionSidebar;
-}
-
-- (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *) configuration webExtensionSidebar:(WebExtensionSidebar&)sidebar
-{
-    if (!(self = [super initWithFrame:frame configuration:configuration]))
-        return nil;
-
-    _webExtensionSidebar = sidebar;
-
-    return self;
-}
-
-- (void)mouseDown:(NSEvent *)event
-{
-    if (RefPtr sidebar = _webExtensionSidebar.get())
-        sidebar->didReceiveUserInteraction();
-
-    [super mouseDown:event];
-}
-
-- (void)rightMouseDown:(NSEvent *)event
-{
-    if (RefPtr sidebar = _webExtensionSidebar.get())
-        sidebar->didReceiveUserInteraction();
-
-    [super rightMouseDown:event];
-}
-
-- (void)otherMouseDown:(NSEvent *)event
-{
-    if (RefPtr sidebar = _webExtensionSidebar.get())
-        sidebar->didReceiveUserInteraction();
-
-    [super otherMouseDown:event];
-}
-
-@end
-
 namespace WebKit {
 
 static NSString * const fallbackPath = @"about:blank";
@@ -533,7 +490,7 @@ WKWebView *WebExtensionSidebar::webView()
         return m_webView.get();
 
     auto *webViewConfiguration = context->webViewConfiguration(WebExtensionContext::WebViewPurpose::Sidebar);
-    m_webView = [[_WKWebExtensionSidebarWebView alloc] initWithFrame:CGRectZero configuration:webViewConfiguration webExtensionSidebar:*this];
+    m_webView = [[WKWebView alloc] initWithFrame:CGRectZero configuration:webViewConfiguration];
     m_webView.get().inspectable = context->isInspectable();
     m_webView.get().accessibilityLabel = title().createNSString().get();
     m_webViewDelegate = [[_WKWebExtensionSidebarWebViewDelegate alloc] initWithWebExtensionSidebar:*this];

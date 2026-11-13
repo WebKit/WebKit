@@ -75,6 +75,7 @@
 #include <wtf/WeakHashMap.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakListHashSet.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/AtomStringHash.h>
 
 #if ENABLE(IOS_TOUCH_EVENTS)
@@ -274,6 +275,7 @@ class TextResourceDecoder;
 class TransformSource;
 class TreeWalker;
 class UndoManager;
+class UserScript;
 class ValidationMessage;
 class VisibilityChangeClient;
 class ViewTransition;
@@ -754,6 +756,9 @@ public:
     NODELETE const Style::CustomPropertyRegistry& customPropertyRegistry() const;
     NODELETE const CSSCounterStyleRegistry& counterStyleRegistry() const;
     NODELETE CSSCounterStyleRegistry& counterStyleRegistry();
+    // Returns true the first time a user script with this world, URL and source is recorded for this document.
+    // The match patterns and page ID are not part of the identity, so a page-scoped copy and a wider copy of the same script count as one.
+    bool recordInjectedUserScript(const DOMWrapperWorld&, const UserScript&);
 
     WEBCORE_EXPORT const CSSParserContext& cssParserContext() const LIFETIME_BOUND;
     void invalidateCachedCSSParserContext();
@@ -2480,6 +2485,7 @@ private:
 
     const UniqueRef<Style::DocumentScope> m_styleScope;
     const std::unique_ptr<ExtensionStyleSheets> m_extensionStyleSheets;
+    std::unique_ptr<SingleThreadWeakHashMap<DOMWrapperWorld, HashSet<std::pair<String, String>>>> m_injectedUserScripts;
     const RefPtr<StyleSheetList> m_styleSheetList;
 
     std::unique_ptr<FormController> m_formController;

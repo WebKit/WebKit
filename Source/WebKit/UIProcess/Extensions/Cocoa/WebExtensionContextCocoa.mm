@@ -87,6 +87,7 @@
 #import "WebsiteDataFetchOption.h"
 #import "WebsiteDataRecord.h"
 #import "WebsiteDataStore.h"
+#import "_WKWebExtensionContext.h"
 #import "_WKWebExtensionDeclarativeNetRequestRule.h"
 #import "_WKWebExtensionDeclarativeNetRequestTranslator.h"
 #import <UniformTypeIdentifiers/UTType.h>
@@ -353,7 +354,7 @@ std::expected<bool, RefPtr<API::Error>> WebExtensionContext::unload()
     unloadOffscreenWebView();
 #endif
 
-    removeInjectedContent();
+    removeAllInjectedContent();
 
     invalidateStorage();
     unloadDeclarativeNetRequestState();
@@ -665,6 +666,42 @@ void WebExtensionContext::permissionsDidChange(PermissionNotification notificati
     }).get());
 }
 
+void WebExtensionContext::temporaryPermissionMatchPatternsDidChange(PermissionNotification notification, const MatchPatternSet& matchPatterns, WebExtensionTab& tab)
+{
+    if (matchPatterns.isEmpty())
+        return;
+
+    clearCachedPermissionStates();
+
+    if (isLoaded()) {
+        // From within it's trusted contexts, an extension with activeTab can make requests to an origin that the grant covers.
+        updateCORSDisablingPatternsOnAllExtensionPages();
+
+        if (notification == PermissionNotification::PermissionMatchPatternsWereGranted)
+            firePermissionsEventListenerIfNecessary(WebExtensionEventListenerType::PermissionsOnAdded, { }, matchPatterns);
+        else if (notification == PermissionNotification::GrantedPermissionMatchPatternsWereRemoved)
+            firePermissionsEventListenerIfNecessary(WebExtensionEventListenerType::PermissionsOnRemoved, { }, matchPatterns);
+    }
+
+    postPermissionMatchPatternsNotification(notification, matchPatterns, &tab);
+}
+
+void WebExtensionContext::postPermissionMatchPatternsNotification(PermissionNotification notification, const MatchPatternSet& matchPatterns, WebExtensionTab* tab)
+{
+    auto notificationName = permissionNotification(notification).createNSString();
+    RetainPtr<WKWebExtensionTab> tabDelegate;
+    if (tab)
+        tabDelegate = tab->delegate();
+
+    dispatch_async(mainDispatchQueueSingleton(), makeBlockPtr([this, protectedThis = Ref { *this }, notificationName, matchPatterns, tabDelegate] {
+        RetainPtr userInfo = adoptNS([[NSMutableDictionary alloc] initWithObjectsAndKeys:toAPI(matchPatterns), WKWebExtensionContextNotificationUserInfoKeyMatchPatterns, nil]);
+        if (tabDelegate)
+            [userInfo setObject:tabDelegate.get() forKey:_WKWebExtensionContextNotificationUserInfoKeyTab];
+
+        [NSNotificationCenter.defaultCenter postNotificationName:notificationName.get() object:wrapper() userInfo:userInfo.get()];
+    }).get());
+}
+
 void WebExtensionContext::permissionsDidChange(PermissionNotification notification, const MatchPatternSet& matchPatterns)
 {
     if (matchPatterns.isEmpty())
@@ -694,10 +731,7 @@ void WebExtensionContext::permissionsDidChange(PermissionNotification notificati
         }
     }
 
-    auto notificationName = permissionNotification(notification).createNSString();
-    dispatch_async(mainDispatchQueueSingleton(), makeBlockPtr([this, protectedThis = Ref { *this }, notificationName, matchPatterns] {
-        [NSNotificationCenter.defaultCenter postNotificationName:notificationName.get() object:wrapper() userInfo:@{ WKWebExtensionContextNotificationUserInfoKeyMatchPatterns: toAPI(matchPatterns) }];
-    }).get());
+    postPermissionMatchPatternsNotification(notification, matchPatterns);
 }
 
 void WebExtensionContext::requestPermissionMatchPatterns(const MatchPatternSet& requestedMatchPatterns, RefPtr<WebExtensionTab> tab, CompletionHandler<void(MatchPatternSet&&, MatchPatternSet&&, WallTime expirationDate)>&& completionHandler, GrantOnCompletion grantOnCompletion, OptionSet<PermissionStateOptions> options)
@@ -1475,6 +1509,7 @@ void WebExtensionContext::didCloseTab(WebExtensionTab& tab, WindowIsClosing wind
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebExtensionContextAdditions.h>)
     additionsDidCloseTab(tab);
 #endif
+    removeInjectedContent(tab);
 
     if (!isLoaded() || !tab.extensionHasAccess() || suppressEvents == SuppressEvents::Yes)
         return;
@@ -2411,6 +2446,30 @@ void WebExtensionContext::addItemsToContextMenu(WebPageProxy& page, const Contex
 }
 #endif
 
+void WebExtensionContext::addInjectedContent(const InjectedContentVector& injectedContents, WebExtensionTab& tab, WebExtensionMatchPattern& pattern)
+{
+    RetainPtr webView = tab.webView();
+    if (!webView)
+        return;
+
+    RefPtr page = webView->_page;
+    if (!page)
+        return;
+
+    TabInjectionTarget injectionTarget { tab.identifier(), *page };
+    addInjectedContent(injectedContents, pattern, injectionTarget);
+}
+
+void WebExtensionContext::addTemporaryInjectedContent(const InjectedContentVector& injectedContents)
+{
+    // Registering or updating scripts only adds content for the granted patterns, which don't include a tab's temporary
+    // activeTab pattern, so add the content for each tab with a temporary grant.
+    for (Ref tab : openTabs()) {
+        if (RefPtr pattern = tab->temporaryPermissionMatchPattern())
+            addInjectedContent(injectedContents, tab, *pattern);
+    }
+}
+
 void WebExtensionContext::userGesturePerformed(WebExtensionTab& tab)
 {
     ASSERT(isLoaded());
@@ -2449,13 +2508,18 @@ void WebExtensionContext::userGesturePerformed(WebExtensionTab& tab)
     // on any navigation between different hosts.
     ASSERT(!tab.temporaryPermissionMatchPattern());
 
-    // Grant the tab a temporary permission to access to a pattern matching the current URL.
-    RefPtr pattern = WebExtensionMatchPattern::getOrCreate(currentURL);
+    // Grant the tab a temporary permission to access to a pattern matching the current URL, excluding subdomains.
+    RefPtr pattern = WebExtensionMatchPattern::getOrCreate(currentURL, { WebExtensionMatchPattern::CreateOptions::MatchAllPaths });
+    if (!pattern)
+        return;
+
     tab.setTemporaryPermissionMatchPattern(pattern.copyRef());
 
-    // FIXME: <https://webkit.org/b/279287> permissionsDidChange should include a tab parameter for this use-case
-    if (pattern)
-        permissionsDidChange(PermissionNotification::PermissionMatchPatternsWereGranted, MatchPatternSet { *pattern });
+    // Notify the app that a temporary grant was given for the tab.
+    temporaryPermissionMatchPatternsDidChange(PermissionNotification::PermissionMatchPatternsWereGranted, MatchPatternSet { *pattern }, tab);
+
+    // Inject the content scripts into this tab only.
+    addInjectedContent(injectedContents(), tab, *pattern);
 
     // Fire the updated event now that the extension has permission to see the URL and title.
     didChangeTabProperties(tab, { WebExtensionTab::ChangedProperties::URL, WebExtensionTab::ChangedProperties::Title });
@@ -2481,9 +2545,11 @@ void WebExtensionContext::clearUserGesture(WebExtensionTab& tab)
     tab.setActiveUserGesture(false);
     tab.setTemporaryPermissionMatchPattern(nullptr);
 
-    // FIXME: <https://webkit.org/b/279287> permissionsDidChange should include a tab parameter for this use-case
+    removeInjectedContent(tab);
+
+    // Notify the app that the extension lost access to the tab.
     if (oldTemporaryPermissionMatchPattern)
-        permissionsDidChange(PermissionNotification::GrantedPermissionMatchPatternsWereRemoved, MatchPatternSet { *oldTemporaryPermissionMatchPattern });
+        temporaryPermissionMatchPatternsDidChange(PermissionNotification::GrantedPermissionMatchPatternsWereRemoved, MatchPatternSet { *oldTemporaryPermissionMatchPattern }, tab);
 }
 
 std::optional<WebCore::PageIdentifier> WebExtensionContext::backgroundPageIdentifier(WebProcessProxy& destinationProcess) const

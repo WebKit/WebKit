@@ -354,6 +354,7 @@
 #include "UndoManager.h"
 #include "UserGestureIndicator.h"
 #include "UserMediaController.h"
+#include "UserScript.h"
 #include "VTTCue.h"
 #include "ValidationMessage.h"
 #include "ValidationMessageClient.h"
@@ -1106,6 +1107,18 @@ CachedResourceLoader& Document::ensureCachedResourceLoader()
     }());
     m_cachedResourceLoader->setDocument(this);
     return *m_cachedResourceLoader;
+}
+
+bool Document::recordInjectedUserScript(const DOMWrapperWorld& world, const UserScript& script)
+{
+    // Most documents never run a user script, so only create this when one does.
+    if (!m_injectedUserScripts)
+        m_injectedUserScripts = makeUnique<SingleThreadWeakHashMap<DOMWrapperWorld, HashSet<std::pair<String, String>>>>();
+
+    // The URL alone is not enough, since clients can give several scripts the same one (e.g. about:blank).
+    return m_injectedUserScripts->ensure(world, [] {
+        return HashSet<std::pair<String, String>> { };
+    }).iterator->value.add({ script.url().string(), script.source() }).isNewEntry;
 }
 
 ExtensionStyleSheets& Document::ensureExtensionStyleSheets()
