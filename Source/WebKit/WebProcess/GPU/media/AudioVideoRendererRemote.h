@@ -34,6 +34,7 @@
 #include "VideoLayerRemote.h"
 #include "WorkQueueMessageReceiver.h"
 #include <WebCore/AudioVideoRenderer.h>
+#include <WebCore/FourCC.h>
 #include <WebCore/HTMLMediaElementIdentifier.h>
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/MediaSampleConverter.h>
@@ -282,6 +283,9 @@ private:
     TrackState* trackStateIfExists(TrackIdentifier) LIFETIME_BOUND;
     TrackState* trackStateIfCurrent(TrackIdentifier, uint64_t generation) LIFETIME_BOUND;
     TrackState& setTrackState(TrackIdentifier, UniqueRef<TrackState>&&) LIFETIME_BOUND;
+    std::unique_ptr<TrackState> takeTrackState(TrackIdentifier);
+    bool isVideoTrack(TrackIdentifier) const;
+    template<typename Function> void forEachTrackState(NOESCAPE const Function&);
     TrackState& trackStateForFormat(TrackIdentifier, Ref<const WebCore::TrackInfo>&&, bool isProtected) LIFETIME_BOUND;
     TrackState& createTrackState(TrackIdentifier, Ref<const WebCore::TrackInfo>&&, bool isProtected) LIFETIME_BOUND;
     TrackState& replaceDecodingTrackState(TrackIdentifier, Ref<const WebCore::TrackInfo>&&, bool isProtected, uint64_t generation) LIFETIME_BOUND;
@@ -349,11 +353,15 @@ private:
     HashMap<TrackIdentifier, std::unique_ptr<RequestPromise::AutoRejectProducer>> m_requestMediaDataWhenReadyDataPromises WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     HashMap<TrackIdentifier, Function<void(TrackIdentifier, const MediaTime&)>> m_trackNeedsReenqueuingCallbacks WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     HashMap<TrackIdentifier, WebCore::MediaSampleConverter> m_mediaSampleConverters WTF_GUARDED_BY_CAPABILITY(queueSingleton());
-    HashMap<TrackIdentifier, UniqueRef<TrackState>> m_trackStates WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+    HashMap<TrackIdentifier, UniqueRef<TrackState>> m_audioTrackStates WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+    // Only a single video track can be active at a time.
+    std::optional<TrackIdentifier> m_videoTrackIdentifier WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+    std::unique_ptr<TrackState> m_videoTrackState WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     uint64_t m_nextTrackStateGeneration WTF_GUARDED_BY_CAPABILITY(queueSingleton()) { 0 };
     // The format last sent to the GPU process for each track.
     HashMap<TrackIdentifier, Ref<const WebCore::TrackInfo>> m_lastSentInfos WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     const bool m_audioDecodingInContentProcess;
+    const Vector<WebCore::FourCC> m_videoCodecsDecodedInContentProcess;
 
     WebCore::HostingContext m_layerHostingContext WTF_GUARDED_BY_LOCK(m_lock);
     WebCore::FloatSize m_naturalSize WTF_GUARDED_BY_LOCK(m_lock);

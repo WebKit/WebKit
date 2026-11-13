@@ -4347,6 +4347,12 @@ MediaVideoCodecIDsAllowedInLockdownMode:
   excludeFrom: [ WebKitLegacy, WebCore ]
   defaultValue: '"avc1,zavc,qavc,cavc"_str'
 
+MediaVideoCodecIDsDecodedInContentProcess:
+  type: String
+  status: embedder
+  excludeFrom: [ WebKitLegacy, WebCore ]
+  defaultValue: '"vp08"_str'
+
 MetaViewportInteractiveWidgetEnabled:
   type: bool
   status: stable
@@ -7001,6 +7007,15 @@ VideoRendererUseDecompressionSessionForProtected:
     "PLATFORM(VISION)" : true
     default: false
     WebKitLegacy: false
+  sharedPreferenceForWebProcess: true
+
+VideoSoftwareDecodingInContentProcessEnabled:
+  type: bool
+  status: testable
+  category: media
+  humanReadableName: "Video software decoding in content process"
+  humanReadableDescription: "Decode the video codecs listed in MediaVideoCodecIDsDecodedInContentProcess in software in the content process and send the decoded frames to the GPU process"
+  defaultValue: false
   sharedPreferenceForWebProcess: true
 
 ViewGestureDebuggingEnabled:

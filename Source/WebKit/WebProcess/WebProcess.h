@@ -46,6 +46,7 @@
 #include <WebCore/ActivityState.h>
 #include <WebCore/BackForwardFrameItemIdentifier.h>
 #include <WebCore/CaptionUserPreferences.h>
+#include <WebCore/FourCC.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/MediaSessionIdentifier.h>
 #include <WebCore/PageIdentifier.h>
@@ -310,6 +311,10 @@ public:
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const { return m_sharedPreferencesForWebProcess; }
     const SharedPreferencesForWebProcess& sharedPreferencesForWebProcessValue() const LIFETIME_BOUND { return m_sharedPreferencesForWebProcess; }
     void updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess sharedPreferencesForWebProcess) { m_sharedPreferencesForWebProcess = WTF::move(sharedPreferencesForWebProcess); }
+
+#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
+    const Vector<WebCore::FourCC>& videoCodecsDecodedInContentProcess() const LIFETIME_BOUND { return m_videoCodecsDecodedInContentProcess; }
+#endif
 
 #if ENABLE(GPU_PROCESS)
     GPUProcessConnection& ensureGPUProcessConnection();
@@ -1028,6 +1033,9 @@ private:
     bool m_mediaPlaybackEnabled { false };
 
     SharedPreferencesForWebProcess m_sharedPreferencesForWebProcess;
+#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
+    Vector<WebCore::FourCC> m_videoCodecsDecodedInContentProcess;
+#endif
 
 #if ENABLE(NOTIFY_BLOCKING)
     HashMap<String, int> m_notifyTokens;
