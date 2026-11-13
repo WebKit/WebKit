@@ -29,6 +29,7 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 #include <wtf/Platform.h>
+#include <wtf/SwiftBridging.h>
 
 #if PLATFORM(COCOA)
 
@@ -39,7 +40,8 @@ namespace WTF {
 class MachSendRight {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(MachSendRight);
 public:
-    WTF_EXPORT_PRIVATE static MachSendRight adopt(mach_port_t);
+    // Not for use from safe Swift: the caller must own the send right being adopted.
+    WTF_EXPORT_PRIVATE SWIFT_UNSAFE static MachSendRight adopt(mach_port_t);
     WTF_EXPORT_PRIVATE static MachSendRight create(mach_port_t);
     WTF_EXPORT_PRIVATE static MachSendRight createFromReceiveRight(mach_port_t);
 
@@ -62,7 +64,8 @@ private:
     mach_port_t m_port { MACH_PORT_NULL };
 };
 
-WTF_EXPORT_PRIVATE void deallocateSendRightSafely(mach_port_t);
+// Not for use from safe Swift: the caller must own the send right.
+WTF_EXPORT_PRIVATE SWIFT_UNSAFE void deallocateSendRightSafely(mach_port_t);
 
 }
 

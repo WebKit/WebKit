@@ -29,7 +29,7 @@
 namespace WTF {
 
 template<typename T, typename PtrTraits, typename RefDerefTraits> class RefPtr;
-template<typename T, typename PtrTraits = RawPtrTraits<T>, typename RefDerefTraits = DefaultRefDerefTraits<T>> RefPtr<T, PtrTraits, RefDerefTraits> adoptRef(T*);
+template<typename T, typename PtrTraits = RawPtrTraits<T>, typename RefDerefTraits = DefaultRefDerefTraits<T>> SWIFT_UNSAFE RefPtr<T, PtrTraits, RefDerefTraits> adoptRef(T*);
 
 /**
  * @brief RefPtr is a nullable intrusive reference-counting smart pointer.

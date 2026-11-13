@@ -43,7 +43,7 @@ class DeferrableRefCountedBase {
     static constexpr uint32_t normalIncrement = 2;
 
 public:
-    void ref() const
+    SWIFT_UNSAFE void ref() const
     {
         m_refCount += normalIncrement;
     }
@@ -97,7 +97,7 @@ template<typename T>
 class DeferrableRefCounted : public DeferrableRefCountedBase {
     WTF_MAKE_NONCOPYABLE(DeferrableRefCounted); WTF_DEPRECATED_MAKE_FAST_ALLOCATED(DeferrableRefCounted);
 public:
-    void deref() const
+    SWIFT_UNSAFE void deref() const
     {
         // T derives from DeferrableRefCounted<T> (CRTP), so this is always a T.
         if (derefBase())
@@ -114,7 +114,7 @@ public:
     }
 
 #if defined(__swift__) && ENABLE(SWIFT_BASE_CLASS_ANNOTATIONS)
-    void swiftRef() const
+    SWIFT_UNSAFE void swiftRef() const
     {
         ref();
     }

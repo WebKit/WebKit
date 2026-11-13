@@ -38,7 +38,7 @@ class WTF_EMPTY_BASE_CLASS ThreadSafeRefCountedBase {
     WTF_MAKE_NONCOPYABLE(ThreadSafeRefCountedBase);
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ThreadSafeRefCountedBase);
 public:
-    void ref() const
+    SWIFT_UNSAFE void ref() const
     {
         m_refCountDebugger.willRef(m_refCount.load(std::memory_order_relaxed));
         m_refCount.fetch_add(1, std::memory_order_relaxed);
@@ -83,7 +83,7 @@ private:
 
 template<class T, DestructionThread destructionThread = DestructionThread::Any> class ThreadSafeRefCounted : public ThreadSafeRefCountedBase {
 public:
-    void deref() const
+    SWIFT_UNSAFE void deref() const
     {
         if (!derefBase())
             return;
@@ -104,7 +104,7 @@ public:
     }
 
 #if defined(__swift__) && ENABLE(SWIFT_BASE_CLASS_ANNOTATIONS)
-    void swiftRef() const
+    SWIFT_UNSAFE void swiftRef() const
     {
         ref();
     }

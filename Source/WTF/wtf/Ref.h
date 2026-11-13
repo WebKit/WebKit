@@ -70,7 +70,7 @@ template<typename T>
 concept CanUseDefaultRefDerefTraits = !std::is_void_v<T> && (HasRefPtrMemberFunctions<T> || !DefaultRefDerefTraits<T>::isDefaultImplementation);
 
 template<typename T, typename PtrTraits, typename RefDerefTraits> class Ref;
-template<typename T, typename PtrTraits = RawPtrTraits<T>, typename RefDerefTraits = DefaultRefDerefTraits<T>> Ref<T, PtrTraits, RefDerefTraits> adoptRef(T&);
+template<typename T, typename PtrTraits = RawPtrTraits<T>, typename RefDerefTraits = DefaultRefDerefTraits<T>> SWIFT_UNSAFE Ref<T, PtrTraits, RefDerefTraits> adoptRef(T&);
 
 /**
  * @brief Ref is the non-nullable variant of RefPtr.
