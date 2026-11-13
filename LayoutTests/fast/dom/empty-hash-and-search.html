@@ -32,9 +32,6 @@ if (window.location.toString().charAt(window.location.toString().length - 1) != 
         window.location += "?#";
 
 } else { // Added "?#" and reloaded.
-    var link1 = document.getElementById("link1");
-    var link2 = document.getElementById("link2");
-    var out = document.getElementById("out");
     out.innerHTML = "<br>"
                   + "location.hash: " + location.hash + "<br>"
                   + "link1.hash: " + link1.hash + "<br>"
