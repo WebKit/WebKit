@@ -299,7 +299,7 @@ public:
 
     LayoutSize subpixelOffsetFromRenderer() const { return m_subpixelOffsetFromRenderer; }
 
-#if ENABLE(SPATIAL_PORTAL) && !HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+#if ENABLE(SPATIAL_PORTAL)
     SpatialPortalController* hostingSpatialPortalController() const;
     void updateHostedPromotedChildren();
 #endif
@@ -442,8 +442,6 @@ private:
     void updateOpacity(const Style::ComputedStyle&);
 #if ENABLE(SPATIAL_PORTAL)
     void configureSpatialPortalLayer(SpatialPortalController&);
-#endif
-#if ENABLE(SPATIAL_PORTAL) && !HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
     void updatePortalPromotedChildren(SpatialPortalController&);
     void updateIsHostedInSpatialPortalScene();
     SpatialPortalController* promotedChildPortalController() const;

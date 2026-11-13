@@ -129,7 +129,7 @@ void RemoteImageBufferSet::endPrepareForDisplay(RenderingUpdateID renderingUpdat
 }
 
 #if HAVE(IOSURFACE)
-RemoteImageBufferSet::ExternalReadResult RemoteImageBufferSet::frontBufferSurfaceForExternalRead(const Vector<uint64_t>& alreadyMappedBuffers)
+auto RemoteImageBufferSet::frontBufferSendRightForExternalRead(const Vector<uint64_t>& alreadyMappedBuffers) -> ExternalReadSendRight
 {
     assertIsCurrent(workQueue());
 
@@ -147,7 +147,7 @@ RemoteImageBufferSet::ExternalReadResult RemoteImageBufferSet::frontBufferSurfac
     frontBuffer->flushDrawingContext();
 
     if (alreadyMappedBuffers.contains(bufferIdentifier))
-        return { nullptr, bufferIdentifier };
+        return { std::nullopt, bufferIdentifier };
 
     auto* sharing = dynamicDowncast<ImageBufferBackendHandleSharing>(frontBuffer->toBackendSharing());
     if (!sharing)
@@ -161,11 +161,27 @@ RemoteImageBufferSet::ExternalReadResult RemoteImageBufferSet::frontBufferSurfac
     if (!sendRight)
         return { };
 
+    return { WTF::move(*sendRight), bufferIdentifier };
+}
+
+RemoteImageBufferSet::ExternalReadResult RemoteImageBufferSet::frontBufferSurfaceForExternalRead(const Vector<uint64_t>& alreadyMappedBuffers)
+{
+    auto [sendRight, bufferIdentifier, isBusy] = frontBufferSendRightForExternalRead(alreadyMappedBuffers);
+    if (!sendRight)
+        return { nullptr, bufferIdentifier, isBusy };
+
     RetainPtr surface = adoptCF(IOSurfaceLookupFromMachPort(sendRight->sendRight()));
     if (!surface)
         return { };
 
     return { WTF::move(surface), bufferIdentifier };
+}
+#endif
+
+#if ENABLE(MODEL_PROCESS) && ENABLE(SPATIAL_PORTAL)
+void RemoteImageBufferSet::frontBufferForExternalRead(CompletionHandler<void(std::optional<MachSendRight>&&)>&& completionHandler)
+{
+    completionHandler(frontBufferSendRightForExternalRead({ }).sendRight);
 }
 #endif
 

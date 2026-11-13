@@ -4845,7 +4845,7 @@ Ref<HitTestingTransformState> RenderLayer::createLocalTransformState(RenderLayer
     }
     offset += translationOffset;
 
-#if ENABLE(SPATIAL_PORTAL) && !HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+#if ENABLE(SPATIAL_PORTAL)
     if (auto projection = hostedPortalContentProjection(containerTransformState ? *containerLayer : *rootLayer))
         transformState->applyTransform(*projection);
 #endif
@@ -4861,7 +4861,7 @@ Ref<HitTestingTransformState> RenderLayer::createLocalTransformState(RenderLayer
     return transformState.releaseNonNull();
 }
 
-#if ENABLE(SPATIAL_PORTAL) && !HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+#if ENABLE(SPATIAL_PORTAL)
 bool RenderLayer::isHostedInSpatialPortalScene() const
 {
     return m_backing && m_backing->hostingSpatialPortalController();
@@ -4992,7 +4992,7 @@ RenderLayer::HitLayer RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLa
     // The natural thing would be to keep HitTestingTransformState on the stack, but it's big, so we heap-allocate.
 
     bool hasTransform = transform();
-#if ENABLE(SPATIAL_PORTAL) && !HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+#if ENABLE(SPATIAL_PORTAL)
     hasTransform = hasTransform || isHostedInSpatialPortalScene();
 #endif
 
@@ -5320,7 +5320,7 @@ RenderLayer::HitLayer RenderLayer::hitTestList(LayerList layerIterator, RenderLa
         HitTestResult tempResult(result.hitTestLocation());
         auto hitLayer = childLayer->hitTestLayer(rootLayer, this, request, tempResult, hitTestRect, hitTestLocation, false, transformStateForChild, zOffsetForDescendants);
 
-#if ENABLE(SPATIAL_PORTAL) && !HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+#if ENABLE(SPATIAL_PORTAL)
         if (hitLayer.layer && !depthSortDescendants && !request.resultIsElementList() && childLayer->isHostedInSpatialPortalScene()) {
             if (auto frontmost = hitTestFrontmostHostedChild(rootLayer, request, tempResult, hitTestRect, hitTestLocation, transformStateForChild); frontmost.layer)
                 hitLayer = frontmost;
@@ -5352,7 +5352,7 @@ RenderLayer::HitLayer RenderLayer::hitTestList(LayerList layerIterator, RenderLa
     return resultLayer;
 }
 
-#if ENABLE(SPATIAL_PORTAL) && !HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+#if ENABLE(SPATIAL_PORTAL)
 RenderLayer::HitLayer RenderLayer::hitTestFrontmostHostedChild(RenderLayer* rootLayer, const HitTestRequest& request, HitTestResult& result, const LayoutRect& hitTestRect, const HitTestLocation& hitTestLocation, const HitTestingTransformState* transformState)
 {
     static constexpr double coplanarTolerance = 0.01;

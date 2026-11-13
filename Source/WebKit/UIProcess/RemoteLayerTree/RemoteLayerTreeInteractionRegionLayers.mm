@@ -124,7 +124,7 @@ static void configureLayerAsGuard(CALayer *layer, NSString *groupName)
     layer.remoteEffects = @[ group ];
 }
 
-static RetainPtr<NSString> interactionRegionGroupNameForRegion(const WebCore::PlatformLayerIdentifier& layerID, const WebCore::InteractionRegion& interactionRegion)
+static RetainPtr<NSString> interactionRegionGroupNameForRegion(const WebCore::InteractionRegion& interactionRegion)
 {
     return makeString("WKInteractionRegion-"_s, interactionRegion.nodeIdentifier.toUInt64()).createNSString();
 }
@@ -224,8 +224,13 @@ void updateLayersForInteractionRegions(RemoteLayerTreeNode& node, RemoteLayerTre
         return;
     }
 
-    CALayer *container = node.ensureInteractionRegionsContainer();
+    // A layer without a visible rect shows none of its regions.
+    auto visibleRect = node.visibleRect();
+    updateLayersForInteractionRegions(node.ensureInteractionRegionsContainer(), node.eventRegion().interactionRegions(), visibleRect ? *visibleRect : FloatRect { }, host);
+}
 
+void updateLayersForInteractionRegions(CALayer *container, const Vector<WebCore::InteractionRegion>& interactionRegions, const FloatRect& visibleRect, RemoteLayerTreeHost* host)
+{
     HashMap<std::pair<IntRect, InteractionRegion::Type>, RetainPtr<CALayer>> existingLayers;
     HashMap<std::pair<UInt64, InteractionRegion::Type>, RetainPtr<CALayer>> reusableLayers;
     for (CALayer *sublayer in container.sublayers) {
@@ -250,12 +255,12 @@ void updateLayersForInteractionRegions(RemoteLayerTreeNode& node, RemoteLayerTre
         bool didReuseLayerBasedOnRect { false };
     };
     Vector<RegionLayer> regionLayers;
-    regionLayers.reserveInitialCapacity(node.eventRegion().interactionRegions().size());
+    regionLayers.reserveInitialCapacity(interactionRegions.size());
 
     HashSet<std::pair<IntRect, InteractionRegion::Type>>dedupeSet;
-    for (const WebCore::InteractionRegion& region : node.eventRegion().interactionRegions()) {
+    for (const WebCore::InteractionRegion& region : interactionRegions) {
         auto rect = region.rectInLayerCoordinates;
-        if (!node.visibleRect() || !node.visibleRect()->intersects(rect))
+        if (!visibleRect.intersects(rect))
             continue;
 
         auto key = std::make_pair(enclosingIntRect(rect), region.type);
@@ -281,7 +286,7 @@ void updateLayersForInteractionRegions(RemoteLayerTreeNode& node, RemoteLayerTre
 
             bool shouldReconfigureRemoteEffect = didReuseLayerBasedOnRect && layerIdentifier != region.nodeIdentifier.toUInt64();
             if (shouldReconfigureRemoteEffect)
-                configureRemoteEffect(regionLayer.get(), region.type, interactionRegionGroupNameForRegion(node.layerID(), region).get());
+                configureRemoteEffect(regionLayer.get(), region.type, interactionRegionGroupNameForRegion(region).get());
         }
 
         regionLayers.append({ region, WTF::move(regionLayer), didReuseLayerBasedOnRect });
@@ -297,7 +302,7 @@ void updateLayersForInteractionRegions(RemoteLayerTreeNode& node, RemoteLayerTre
     NSUInteger insertionPoint = 0;
     for (auto& [region, regionLayer, didReuseLayerBasedOnRect] : regionLayers) {
         if (!regionLayer) {
-            RetainPtr interactionRegionGroupName = interactionRegionGroupNameForRegion(node.layerID(), region);
+            RetainPtr interactionRegionGroupName = interactionRegionGroupNameForRegion(region);
             if (host && region.type == InteractionRegion::Type::Interaction)
                 regionLayer = host->takeInteractionRegionGlowLayer();
 

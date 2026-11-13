@@ -1,0 +1,152 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ] -->
+<html>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../resources/spatial-portal-utils.js"></script>
+<style>
+    body {
+        margin: 0;
+    }
+    .portal {
+        spatial: portal;
+        position: relative;
+        width: 400px;
+        height: 300px;
+    }
+    .content {
+        position: absolute;
+        inset: 0;
+        transform-style: preserve-3d;
+    }
+    button {
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        border: 0;
+        background-color: rgb(60, 140, 70);
+    }
+    .card {
+        position: absolute;
+        transform-style: preserve-3d;
+        background-color: rgb(70, 70, 140);
+    }
+</style>
+<body>
+<script>
+'use strict';
+
+// visionOS draws the portal scene for the viewer's own eyes, so hit testing assumes a viewer 1 m in front of the
+// portal, at the 1360 points per meter the model process lays the scene out with.
+const viewerDistance = 1360;
+
+const createContent = (test, { portalTransform, contentTransform } = {}) => {
+    const portal = createPortal(test, { portalTransform });
+    const content = document.createElement("div");
+    content.className = "content";
+    if (contentTransform)
+        content.style.transform = contentTransform;
+    const button = document.createElement("button");
+    button.style.left = "320px";
+    button.style.top = "220px";
+    content.appendChild(button);
+    portal.appendChild(content);
+    return { portal, button };
+};
+
+const sceneProjection = (portal, sceneTransform) => {
+    const rect = portal.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const perspective = new DOMMatrix([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, -1 / viewerDistance, 0, 0, 0, 1]);
+    return new DOMMatrix().translate(centerX, centerY).multiply(perspective).multiply(sceneTransform).translate(-centerX, -centerY);
+};
+
+const project = (matrix, x, y, z = 0) => {
+    const point = matrix.transformPoint(new DOMPoint(x, y, z, 1));
+    return { x: point.x / point.w, y: point.y / point.w };
+};
+
+const elementAt = ({ x, y }) => document.elementFromPoint(Math.round(x), Math.round(y));
+
+promise_test(async test => {
+    const { portal, button } = createContent(test, { contentTransform: `translateZ(${-viewerDistance}px)` });
+    await waitForHostedPromotedChildren(portal, 1);
+
+    const rect = button.getBoundingClientRect();
+    const projection = sceneProjection(portal, new DOMMatrix());
+    const center = project(projection, rect.left + rect.width / 2, rect.top + rect.height / 2, -viewerDistance);
+
+    assert_equals(elementAt(center), button, "the button is hit where the scene draws it");
+    assert_not_equals(elementAt({ x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 }), button, "the button is not hit where it would be without depth");
+}, "A hosted child behind the portal is hit where the scene draws it");
+
+promise_test(async test => {
+    const { portal, button } = createContent(test, { portalTransform: "auto rotate3d(0, 1, 0, 40deg)" });
+    await waitForHostedPromotedChildren(portal, 1);
+
+    const rect = button.getBoundingClientRect();
+    const projection = sceneProjection(portal, new DOMMatrix().rotateAxisAngle(0, 1, 0, 40));
+    const center = project(projection, rect.left + rect.width / 2, rect.top + rect.height / 2);
+
+    assert_equals(elementAt(center), button, "the button is hit where the scene draws it");
+    assert_not_equals(elementAt({ x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 }), button, "the button is not hit where it would be without the portal-transform");
+}, "A hosted child of a portal with a portal-transform is hit where the scene draws it");
+
+promise_test(async test => {
+    const { portal, button } = createContent(test, { portalTransform: "auto rotate3d(0, 1, 0, 40deg)" });
+    button.parentElement.style.opacity = "0.5";
+    await new Promise(resolve => setTimeout(resolve, 500));
+    assert_equals(internals.numberOfHostedPromotedChildrenInSpatialPortal(portal), 0);
+
+    const rect = button.getBoundingClientRect();
+    assert_equals(elementAt({ x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 }), button);
+}, "A promoted child that stays flat is hit where its box is");
+
+const appendCard = (portal, { left, top, width, height, transform }) => {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.style.left = `${left}px`;
+    card.style.top = `${top}px`;
+    card.style.width = `${width}px`;
+    card.style.height = `${height}px`;
+    if (transform)
+        card.style.transform = transform;
+    portal.appendChild(card);
+    return card;
+};
+
+const portalCenter = portal => {
+    const rect = portal.getBoundingClientRect();
+    return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+};
+
+promise_test(async test => {
+    const portal = createPortal(test);
+    const front = appendCard(portal, { left: 150, top: 100, width: 100, height: 100, transform: "translateZ(60px)" });
+    appendCard(portal, { left: 50, top: 50, width: 300, height: 200 });
+    await waitForHostedPromotedChildren(portal, 2);
+
+    assert_equals(elementAt(portalCenter(portal)), front);
+}, "A hosted child in front of another one is hit even when it comes first in paint order");
+
+promise_test(async test => {
+    const portal = createPortal(test);
+    const front = appendCard(portal, { left: 50, top: 50, width: 300, height: 200 });
+    appendCard(portal, { left: 150, top: 100, width: 100, height: 100, transform: "translateZ(-60px)" });
+    await waitForHostedPromotedChildren(portal, 2);
+
+    assert_equals(elementAt(portalCenter(portal)), front);
+}, "A hosted child behind another one is not hit even when it comes last in paint order");
+
+promise_test(async test => {
+    const portal = createPortal(test);
+    appendCard(portal, { left: 50, top: 50, width: 300, height: 200 });
+    const last = appendCard(portal, { left: 150, top: 100, width: 100, height: 100 });
+    await waitForHostedPromotedChildren(portal, 2);
+
+    assert_equals(elementAt(portalCenter(portal)), last);
+}, "Hosted children in the same plane are hit in paint order");
+</script>
+</body>
+</html>

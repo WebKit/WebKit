@@ -1330,7 +1330,7 @@ private:
         const LayoutRect& hitTestRect, const HitTestLocation&,
         const HitTestingTransformState* containerTransformState,
         const LayoutSize& translationOffset = LayoutSize()) const;
-#if ENABLE(SPATIAL_PORTAL) && !HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+#if ENABLE(SPATIAL_PORTAL)
     bool isHostedInSpatialPortalScene() const;
     std::optional<TransformationMatrix> hostedPortalContentProjection(const RenderLayer& space) const;
     HitLayer hitTestFrontmostHostedChild(RenderLayer* rootLayer, const HitTestRequest&, HitTestResult&,

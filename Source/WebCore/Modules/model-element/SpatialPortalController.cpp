@@ -685,7 +685,6 @@ static RenderLayer* layerForNode(NodeIdentifier nodeID)
 
 void SpatialPortalController::hostedPromotedChildrenDidChange()
 {
-#if !HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
     RefPtr element = m_portalElement;
     CheckedPtr renderer = element ? dynamicDowncast<RenderLayerModelObject>(element->renderer()) : nullptr;
     if (!renderer || renderer->renderTreeBeingDestroyed() || !renderer->isComposited())
@@ -693,7 +692,6 @@ void SpatialPortalController::hostedPromotedChildrenDidChange()
 
     if (auto* backing = renderer->layer()->backing())
         backing->updateHostedPromotedChildren();
-#endif
 }
 
 void SpatialPortalController::promotedChildDidPaint()
@@ -701,6 +699,14 @@ void SpatialPortalController::promotedChildDidPaint()
     if (RefPtr player = m_modelPlayer)
         player->portalPromotedChildDidPaint();
 }
+
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+void SpatialPortalController::promotedChildEventRegionDidChange()
+{
+    if (RefPtr player = m_modelPlayer)
+        player->portalPromotedChildEventRegionDidChange();
+}
+#endif
 
 static TransformationMatrix rotationOf(const TransformationMatrix& transform)
 {
@@ -710,10 +716,21 @@ static TransformationMatrix rotationOf(const TransformationMatrix& transform)
     return TransformationMatrix::fromQuaternion(decomposition.quaternion);
 }
 
+// The distance, in CSS pixels, from the portal's center to the viewer that hosted content is projected for.
+static constexpr double hostedContentViewerDistance()
+{
+#if PLATFORM(VISION)
+    // visionOS draws the scene for the viewer's real eyes, which a hit test can't know, so this assumes a viewer
+    // 1 m in front of the portal, at the 1360 points per meter the model process lays the scene out with.
+    return 1 * 1360;
+#else
+    // The GPU process camera, 0.5 m in front of the portal.
+    return 0.5 * CSS::pixelsPerCm * 100;
+#endif
+}
+
 TransformationMatrix SpatialPortalController::hostedContentProjection() const
 {
-    static constexpr double viewerDistance = 0.5 * CSS::pixelsPerCm * 100;
-
     RefPtr element = m_portalElement;
     CheckedPtr portalBox = element ? dynamicDowncast<RenderBox>(element->renderer()) : nullptr;
     if (!portalBox)
@@ -729,7 +746,7 @@ TransformationMatrix SpatialPortalController::hostedContentProjection() const
     auto center = FloatRect { portalBox->paddingBoxRect() }.center();
     TransformationMatrix projection;
     projection.translate(center.x(), center.y());
-    projection.applyPerspective(viewerDistance);
+    projection.applyPerspective(hostedContentViewerDistance());
     projection.scaleNonUniform(1, -1);
     projection.multiply(orbit);
     projection.multiply(m_portalTransform.transformAfterAuto);

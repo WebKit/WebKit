@@ -722,7 +722,7 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
 #endif
     updateBackdropRoot();
     updateScreenCaptureProtection();
-#if ENABLE(SPATIAL_PORTAL) && !HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+#if ENABLE(SPATIAL_PORTAL)
     updateIsHostedInSpatialPortalScene();
 #endif
     updateBlendMode(style);
@@ -1334,7 +1334,7 @@ void RenderLayerBacking::updateAllowsBackingStoreDetaching(bool allowDetachingFo
     };
 
     if (!m_owningLayer.behavesAsFixed()) {
-#if ENABLE(SPATIAL_PORTAL) && !HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+#if ENABLE(SPATIAL_PORTAL)
         setAllowsBackingStoreDetaching(!RenderLayerCompositor::promotedSpatialPortalChildForLayer(m_owningLayer));
 #else
         setAllowsBackingStoreDetaching(true);
@@ -1845,7 +1845,7 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
 #endif
     updateBackdropRoot();
     updateScreenCaptureProtection();
-#if ENABLE(SPATIAL_PORTAL) && !HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+#if ENABLE(SPATIAL_PORTAL)
     updateIsHostedInSpatialPortalScene();
 #endif
     updateBlendMode(style);
@@ -2212,7 +2212,7 @@ void RenderLayerBacking::updateAfterDescendants()
             layerForScrollCorner->setUserInteractionEnabled(userInteractive);
     }
 
-#if ENABLE(SPATIAL_PORTAL) && !HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+#if ENABLE(SPATIAL_PORTAL)
     if (RefPtr element = renderer().element()) {
         if (CheckedPtr controller = element->spatialPortalController())
             updatePortalPromotedChildren(*controller);
@@ -2229,9 +2229,7 @@ void RenderLayerBacking::configureSpatialPortalLayer(SpatialPortalController& co
     controller.configureGraphicsLayer(protect(*m_graphicsLayer), portalBackgroundColor);
     controller.sizeMayHaveChanged();
 }
-#endif
 
-#if ENABLE(SPATIAL_PORTAL) && !HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
 static bool collectPortalHostedLayers(RenderLayer& promotedChild, NodeIdentifier rootNodeID, RenderLayer& layer, const FloatPoint& childOriginInPortal, Vector<PortalPromotedChild>& children)
 {
     if (auto* backing = layer.backing()) {
@@ -2823,6 +2821,12 @@ void RenderLayerBacking::updateEventRegion()
         eventRegionContext->copyInteractionRegionsToEventRegion(renderer().document().settings().interactionRegionMinimumCornerRadius());
         m_systemPreviewBadgeLayer->setEventRegion(WTF::move(eventRegion));
     }
+#endif
+
+#if ENABLE(SPATIAL_PORTAL) && ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    // A portal scene draws the layers of promoted children, and so their interaction regions too.
+    if (CheckedPtr controller = promotedChildPortalController())
+        controller->promotedChildEventRegionDidChange();
 #endif
 
     setNeedsEventRegionUpdate(false);
@@ -4078,7 +4082,7 @@ bool RenderLayerBacking::isSimpleContainerCompositingLayer(PaintedContentsInfo& 
     if (m_owningLayer.isRenderViewLayer())
         return false;
 
-#if ENABLE(SPATIAL_PORTAL) && !HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+#if ENABLE(SPATIAL_PORTAL)
     if ((RenderLayerCompositor::isSpatialPortal(renderer()) || RenderLayerCompositor::promotedSpatialPortalChildForLayer(m_owningLayer)) && rendererBackgroundColor().isVisible())
         return false;
 #endif
@@ -4270,7 +4274,7 @@ bool RenderLayerBacking::isDirectlyCompositedImage() const
     if (auto* viewTransitionCapture = dynamicDowncast<RenderViewTransitionCapture>(renderer()); viewTransitionCapture && viewTransitionCapture->displayOnlyImage())
         return true;
 
-#if ENABLE(SPATIAL_PORTAL) && !HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+#if ENABLE(SPATIAL_PORTAL)
     if (RenderLayerCompositor::promotedSpatialPortalChildForLayer(m_owningLayer))
         return false;
 #endif
@@ -4342,7 +4346,7 @@ bool RenderLayerBacking::isUnscaledBitmapOnly() const
     if (!is<RenderImage>(renderer()) && !is<RenderHTMLCanvas>(renderer()))
         return false;
 
-#if ENABLE(SPATIAL_PORTAL) && !HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+#if ENABLE(SPATIAL_PORTAL)
     if (RenderLayerCompositor::promotedSpatialPortalChildForLayer(m_owningLayer))
         return false;
 #endif
@@ -5212,7 +5216,7 @@ void RenderLayerBacking::paintContents(const GraphicsLayer& graphicsLayer, Graph
 
         paintIntoLayer(&graphicsLayer, context, dirtyRect, behavior);
 
-#if ENABLE(SPATIAL_PORTAL) && !HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+#if ENABLE(SPATIAL_PORTAL)
         if (&graphicsLayer == m_graphicsLayer.get()) {
             if (CheckedPtr controller = promotedChildPortalController())
                 controller->promotedChildDidPaint();
@@ -5967,7 +5971,7 @@ void RenderLayerBacking::setNeedsFixedContainerEdgesUpdateIfNeeded()
 
 OptionSet<ContentsFormat> RenderLayerBacking::screenContentsFormats() const
 {
-#if ENABLE(SPATIAL_PORTAL) && !HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+#if ENABLE(SPATIAL_PORTAL)
     if (RenderLayerCompositor::promotedSpatialPortalChildForLayer(m_owningLayer))
         return { ContentsFormat::RGBA8 };
 #endif

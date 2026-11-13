@@ -179,6 +179,9 @@ public:
     virtual void setAnchor(NodeIdentifier, std::optional<NodeIdentifier> anchorNode, const String& placement);
     virtual void setPortalPromotedChildren(const Vector<PortalPromotedChild>&);
     virtual void portalPromotedChildDidPaint();
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    virtual void portalPromotedChildEventRegionDidChange();
+#endif
     virtual bool hostsPortalPromotedChild(NodeIdentifier) const;
 #endif
 

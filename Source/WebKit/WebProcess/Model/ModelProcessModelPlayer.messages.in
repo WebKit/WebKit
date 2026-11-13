@@ -35,6 +35,7 @@ messages -> ModelProcessModelPlayer {
     DidUpdateEntityTransform(WebCore::NodeIdentifier nodeID, WebCore::TransformationMatrix transform)
 #if ENABLE(SPATIAL_PORTAL)
     [EnabledBy=SpatialPortalEnabled] DidUpdatePortalTransform(WebCore::TransformationMatrix transform)
+    [EnabledBy=SpatialPortalEnabled] DidUpdateDisplayedPortalChildren(Vector<WebCore::NodeIdentifier> rootNodeIDs)
 #endif
 #if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
     [EnabledBy=SpatialPortalEnabled] DidUpdateVolumetricHitSphere(WebCore::FloatPoint3D center, float radius)

@@ -1730,6 +1730,7 @@ def headers_for_type(type, for_implementation_file=False):
         'WebCore::PluginInfo': ['<WebCore/PluginData.h>'],
         'WebCore::PolicyAction': ['<WebCore/FrameLoaderTypes.h>'],
         'WebCore::PortalActionKind': ['<WebCore/PortalAction.h>'],
+        'WebCore::PortalHostedLayer': ['<WebCore/PortalTransform.h>'],
         'WebCore::NonSerializedDataIdentifier': ['<WebCore/NonSerializedDataIdentifier.h>'],
         'WebCore::PreserveResolution': ['<WebCore/ImageBufferBackend.h>'],
         'WebCore::ProcessIdentifier': ['<WebCore/ProcessIdentifier.h>'],

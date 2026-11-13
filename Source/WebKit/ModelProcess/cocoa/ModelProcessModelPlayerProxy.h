@@ -82,6 +82,7 @@ public:
 #include <WebCore/TransformationMatrix.h>
 #include <simd/simd.h>
 #include <wtf/HashMap.h>
+#include <wtf/MachSendRight.h>
 #include <wtf/Markable.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RunLoop.h>
@@ -90,12 +91,14 @@ public:
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
+OBJC_CLASS CALayer;
 OBJC_CLASS WKModelProcessModelLayer;
 OBJC_CLASS WKModelProcessModelPlayerProxyObjCAdapter;
 OBJC_CLASS WKRKEntity;
 OBJC_CLASS WKStageModeInteractionDriver;
 
 namespace WebCore {
+class IOSurface;
 class Model;
 class REModel;
 class REModelLoader;
@@ -180,6 +183,8 @@ public:
     void setPortalTransform(const WebCore::UsedPortalTransform&) final;
     void setPortalAction(WebCore::PortalActionKind) final;
     void setAnchor(WebCore::NodeIdentifier, std::optional<WebCore::NodeIdentifier> anchorNode, const String& placement) final;
+    void setPortalHostedLayers(Vector<WebCore::PortalHostedLayer>&&);
+    void setPortalHostedLayerContents(WebCore::NodeIdentifier, MachSendRight&&);
 #endif
     void setStageMode(WebCore::StageModeOperation) final;
     void beginStageModeTransform(const WebCore::TransformationMatrix&) final;
@@ -205,6 +210,10 @@ public:
     void disableUnloadDelayForTesting() { m_unloadDelayDisabledForTesting = true; }
     void sceneGraphAsTextForTesting(std::optional<WebCore::NodeIdentifier> rootNode, Vector<std::pair<WebCore::NodeIdentifier, String>>&& modelLabels, const WebCore::ModelSceneGraphAsTextOptions&, CompletionHandler<void(String&&)>&&) final;
     static uint64_t objectCountForTesting() { return gObjectCountForTesting; }
+
+#if ENABLE(SPATIAL_PORTAL)
+    static constexpr size_t maximumPortalHostedLayers = 256;
+#endif
 
 private:
     ModelProcessModelPlayerProxy(ModelProcessModelPlayerManagerProxy&, WebCore::ModelPlayerIdentifier, Ref<IPC::Connection>&&, const std::optional<String>&, std::optional<int>, std::optional<int>);
@@ -267,6 +276,8 @@ private:
     RESRT childEntityTransformSRT(const TrackedModel&) const;
     float anchorPlacementScale(const TrackedModel&) const;
     void updateAnchorParenting();
+    void updatePortalSceneLayerGeometry();
+    void updateDisplayedPortalChildren();
 #endif
     void applyDefaultIBL();
     void removeIBL();
@@ -334,7 +345,7 @@ private:
 
     float m_pitch { 0 };
 
-    RESRT m_transformSRT; // SRT=Scaling/Rotation/Translation. This is stricter than a WebCore::TransformationMatrix.
+    RESRT m_transformSRT { RESRTIdentity() }; // SRT=Scaling/Rotation/Translation. This is stricter than a WebCore::TransformationMatrix.
     bool m_transformNeedsUpdateAfterNextLayout { false };
     bool m_entityTransformSetByScript { false };
 
@@ -345,6 +356,22 @@ private:
     WebCore::UsedPortalTransform m_portalTransform;
     WebCore::PortalActionKind m_portalAction { WebCore::PortalActionKind::None };
     bool m_isSpatialPortal { false };
+
+    // Ends the use of a front buffer that a portal scene layer showed.
+    struct PortalSceneLayerContentsDeleter {
+        void operator()(WebCore::IOSurface*) const;
+    };
+
+    // A layer of a promoted child, drawn in the portal scene as a separated layer that shows its front buffer.
+    struct PortalSceneLayer {
+        WebCore::PortalHostedLayer hostedLayer;
+        RetainPtr<CALayer> layer;
+        // The front buffer the layer shows, kept in use so that the GPU process paints later frames into another one.
+        std::unique_ptr<WebCore::IOSurface, PortalSceneLayerContentsDeleter> contents;
+    };
+    Vector<PortalSceneLayer> m_portalSceneLayers;
+    RetainPtr<CALayer> m_portalSceneLayerContainer;
+    Vector<WebCore::NodeIdentifier> m_displayedPortalChildren;
 #endif
 
     // For interactions
