@@ -26,6 +26,7 @@ if (DEVELOPER_MODE)
     WEBKIT_GENERATE_ENTITLEMENTS(testdfg USING ../Scripts/process-entitlements.sh)
     if (ENABLE_JAVASCRIPTCORE_TOOLS)
         WEBKIT_GENERATE_ENTITLEMENTS(testLibJSCTools USING ../Scripts/process-entitlements.sh)
+        WEBKIT_GENERATE_ENTITLEMENTS(testLibJSCToolsHelper USING ../Scripts/process-entitlements.sh)
     endif ()
 
     target_link_options(testmasm PRIVATE "LINKER:-weak_framework,BrowserEngineCore")

@@ -31,13 +31,20 @@
 #include "LibJSCToolsTestUtilities.h"
 
 #include <JavaScriptCore/CorpseAddress.h>
+#include <JavaScriptCore/CorpseProcess.h>
 #include <JavaScriptCore/CorpseSnapshot.h>
 #include <JavaScriptCore/CorpseSymbol.h>
 #include <dlfcn.h>
+#include <errno.h>
+#include <limits.h>
+#include <mach-o/dyld.h>
 #include <mach/mach.h>
+#include <spawn.h>
 #include <stdlib.h>
+#include <string>
 #include <unistd.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/RefPtr.h>
 #include <wtf/WTFConfig.h>
 
 // Exists in this binary but is not exported, so an exports trie cannot see it.
@@ -48,8 +55,64 @@ int jscToolsTestHiddenGlobal = 42;
 namespace JSCToolsTest {
 
 using JSC::Corpse::Address;
+using JSC::Corpse::Process;
 using JSC::Corpse::Snapshot;
 using JSC::Corpse::Symbol;
+
+static std::string helperPath()
+{
+    char buffer[PATH_MAX];
+    uint32_t size = sizeof buffer;
+    if (_NSGetExecutablePath(buffer, &size))
+        return { };
+    std::string path(buffer);
+    size_t slash = path.find_last_of('/');
+    if (slash == std::string::npos)
+        return { };
+    return path.substr(0, slash + 1) + "testLibJSCToolsHelper";
+}
+
+// By design testLibJSCToolsHelper does NOT link WTF and JSC so that a symbol lookup
+// in it will not find g_config. We want to wait for it to reach its main() before commencing
+// with taking a snapshot for the test. A snapshot taken too early could miss images dyld
+// has yet to load, and hence, may pass the test with a false negative on the symbol load.
+static pid_t spawnChildWithoutJavaScriptCore()
+{
+    std::string helper = helperPath();
+    if (helper.empty())
+        return 0;
+
+    int readyPipe[2];
+    if (pipe(readyPipe))
+        return 0;
+
+    posix_spawn_file_actions_t actions;
+    posix_spawn_file_actions_init(&actions);
+    posix_spawn_file_actions_adddup2(&actions, readyPipe[1], STDOUT_FILENO);
+    posix_spawn_file_actions_addclose(&actions, readyPipe[0]);
+    posix_spawn_file_actions_addclose(&actions, readyPipe[1]);
+
+    char* const arguments[] = { const_cast<char*>(helper.c_str()), nullptr };
+    pid_t child = 0;
+    int spawnError = posix_spawn(&child, helper.c_str(), &actions, nullptr, arguments, nullptr);
+    posix_spawn_file_actions_destroy(&actions);
+    // Closed here so a child that dies before notifying reads as EOF rather than blocking.
+    close(readyPipe[1]);
+    if (spawnError) {
+        close(readyPipe[0]);
+        return 0;
+    }
+
+    char ready = 0;
+    ssize_t bytesRead;
+    while ((bytesRead = read(readyPipe[0], &ready, 1)) < 0 && errno == EINTR) { }
+    close(readyPipe[0]);
+    if (bytesRead != 1) {
+        killChild(child);
+        return 0;
+    }
+    return child;
+}
 
 // A symbol resolved out of a corpse of this very process must land on the same
 // address this process would use, because the corpse is a copy of this address
@@ -74,6 +137,25 @@ void testSymbol()
         TEST_ASSERT(found, "a symbol exported by JavaScriptCore is found");
         TEST_ASSERT_HEX_EQ(found.toMachVMAddress(), expected,
             "g_config resolves to the address this process uses for it");
+    }
+    {
+        // Process w/o JavaScriptCore should not have a g_config.
+        pid_t child = spawnChildWithoutJavaScriptCore();
+        TEST_ASSERT(child, "a child without JavaScriptCore could be spawned");
+        if (child) {
+            RefPtr<Process> process = Process::create(child);
+            TEST_ASSERT(process->attach(), "attaching to a process without JavaScriptCore succeeds");
+            if (process->isAttached()) {
+                Snapshot childSnapshot(process);
+                TEST_ASSERT(childSnapshot.isValid(), "a snapshot of that process is valid");
+                // Every process loads libSystem. So "tolower" should be in the findable set of symbols.
+                TEST_ASSERT(childSnapshot.symbol("tolower"),
+                    "a shared cache symbol is found in a process without JavaScriptCore");
+                TEST_ASSERT(!childSnapshot.symbol("g_config"),
+                    "a process without JavaScriptCore exports no g_config");
+            }
+            killChild(child);
+        }
     }
     {
         // A function in the shared cache, where __LINKEDIT is shared between images

@@ -30,10 +30,13 @@
 
 #include <JavaScriptCore/CorpseProcess.h>
 #include <JavaScriptCore/CorpseSnapshot.h>
+#include <errno.h>
 #include <mach/mach.h>
 #include <mach/mach_vm.h>
 #include <pthread.h>
+#include <signal.h>
 #include <string>
+#include <sys/wait.h>
 #include <unistd.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/StdLibExtras.h>
@@ -110,6 +113,13 @@ unsigned machPortSendRightCount(mach_port_t port)
     }
     RELEASE_ASSERT(result == KERN_SUCCESS);
     return refs; // Can still be 0 (which still means no send right).
+}
+
+void killChild(pid_t child)
+{
+    kill(child, SIGKILL);
+    int status = 0;
+    while (waitpid(child, &status, 0) < 0 && errno == EINTR) { }
 }
 
 SelfSnapshot::SelfSnapshot()
