@@ -193,6 +193,60 @@ extension MacTouchSupportTests.Embedded {
         #expect(contentOffset.value != initialContentOffset)
     }
 
+    @Test(
+        .bug("rdar://181172720")
+    )
+    func dragOverSliderInWebViewInsideEnclosingScrollViewDragsSliderInsteadOfScrolling() async throws {
+        // Mirrors players which draw the scrubber with plain elements marked up as an ARIA slider, and handle
+        // it with mouse events (listening for moves on the window once the drag starts). The slider is
+        // vertical, so that dragging it moves along the axis the enclosing scroll view would otherwise scroll.
+        let html = """
+            <body style='margin:0;'>
+                <div id="slider" role="slider" aria-orientation="vertical" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"
+                     style="margin: 150px auto 0; width: 40px; height: 300px; background-color: red;"></div>
+                <script>
+                    window.sliderEvents = [];
+                    document.getElementById("slider").addEventListener("mousedown", event => {
+                        window.sliderEvents.push(event.type);
+                        event.preventDefault();
+                        window.addEventListener("mousemove", event => window.sliderEvents.push(event.type), true);
+                        window.addEventListener("mouseup", event => window.sliderEvents.push(event.type), true);
+                    });
+                </script>
+            </body>
+            """
+
+        try await page.load(html: html).wait()
+        await page.waitForNextPresentationUpdate()
+
+        let slider = try await screenBounds(ofElementWithID: "slider")
+        let startPoint = CGPoint(x: slider.midX, y: slider.minY + slider.height * 0.75)
+        let endPoint = CGPoint(x: slider.midX, y: slider.minY + slider.height * 0.25)
+
+        let initialContentOffset = contentOffset.value
+
+        await recap.play { composer in
+            composer.drag(withStart: startPoint, end: endPoint, duration: 0.5)
+            composer.advanceTime(0.1)
+            composer.liftUpAtAllActivePoints()
+        }
+
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        let events = try await page.callJavaScript(returning: [String].self) {
+            """
+            return window.sliderEvents;
+            """
+        }
+
+        // The page should get the drag, rather than the enclosing scroll view scrolling it away.
+        #expect(events.first == "mousedown")
+        #expect(events.contains("mousemove"))
+        #expect(events.last == "mouseup")
+        #expect(contentOffset.value == initialContentOffset)
+    }
+
     @Test
     func doubleTappingSelectsWordWhenScrolledToTopWithObscuredContentInset() async throws {
         let html = """

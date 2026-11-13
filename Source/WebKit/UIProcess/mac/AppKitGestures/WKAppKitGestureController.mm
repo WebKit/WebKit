@@ -155,6 +155,12 @@ static bool prefersDirectManipulation(const WebKit::InteractionInformationAtPosi
     return prefersInteraction;
 }
 
+static BOOL isBuiltInScrollViewPanGestureRecognizer(NSGestureRecognizer *recognizer)
+{
+    static Class scrollViewPanGestureClass = NSClassFromString(@"NSScrollViewPanGestureRecognizer");
+    return [recognizer isKindOfClass:scrollViewPanGestureClass];
+}
+
 static bool representsSecondaryClickableElement(const WebKit::InteractionInformationAtPosition& info)
 {
     if (prefersDirectManipulation(info))
@@ -428,6 +434,8 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     RetainPtr<NSGestureRecognizer> _textSelectionDragGesture;
     RetainPtr<WKDeferringGestureRecognizer> _dragDeferringGestureRecognizer;
 
+    RetainPtr<WKDeferringGestureRecognizer> _enclosingScrollViewPanDeferringGestureRecognizer;
+
     bool _isMomentumActive;
     bool _lastPanWheelEventWasHandledByViewGestureController;
     bool _caughtDeceleratingScroll;
@@ -569,6 +577,8 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     [self setUpDragPressGestureRecognizer];
     [self setUpDragDeferringGestureRecognizer];
 
+    [self setUpEnclosingScrollViewPanDeferringGestureRecognizer];
+
     [self setUpImageAnalysisGestureRecognizer];
     [self setUpImageAnalysisDeferringGestureRecognizers];
 
@@ -656,6 +666,14 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     [_dragDeferringGestureRecognizer setName:@"WKDragDeferringGesture"];
 }
 
+- (void)setUpEnclosingScrollViewPanDeferringGestureRecognizer
+{
+    _enclosingScrollViewPanDeferringGestureRecognizer = adoptNS([[WKDeferringGestureRecognizer alloc] initWithDeferringGestureDelegate:self]);
+    [_enclosingScrollViewPanDeferringGestureRecognizer setAllowedTouchTypes:NSTouchTypeMaskDirect];
+    [_enclosingScrollViewPanDeferringGestureRecognizer setDelegate:self];
+    [_enclosingScrollViewPanDeferringGestureRecognizer setName:@"WKEnclosingScrollViewPanDeferringGesture"];
+}
+
 - (void)setUpImageAnalysisGestureRecognizer
 {
     _imageAnalysisGestureRecognizer = adoptNS([[WKPressGestureRecognizer alloc] initWithTarget:self action:@selector(imageAnalysisGestureRecognized:)]);
@@ -716,6 +734,8 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     [webView addGestureRecognizer:_dragPressGestureRecognizer.get()];
     [webView addGestureRecognizer:_dragDeferringGestureRecognizer.get()];
 
+    [webView addGestureRecognizer:_enclosingScrollViewPanDeferringGestureRecognizer.get()];
+
     [webView addGestureRecognizer:_imageAnalysisGestureRecognizer.get()];
     [webView addGestureRecognizer:_imageAnalysisTextSelectionDeferringGestureRecognizer.get()];
     [webView addGestureRecognizer:_imageAnalysisDragAndContextMenuDeferringGestureRecognizer.get()];
@@ -772,6 +792,7 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
 
     [_dragPressGestureRecognizer setShouldBeArchived:NO];
     [_dragDeferringGestureRecognizer setShouldBeArchived:NO];
+    [_enclosingScrollViewPanDeferringGestureRecognizer setShouldBeArchived:NO];
 
     [_imageAnalysisGestureRecognizer setShouldBeArchived:NO];
     [_imageAnalysisTextSelectionDeferringGestureRecognizer setShouldBeArchived:NO];
@@ -1645,6 +1666,15 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     if (deferringGestureRecognizer == _imageAnalysisDragAndContextMenuDeferringGestureRecognizer)
         return gestureRecognizer == _dragPressGestureRecognizer || gestureRecognizer == _secondaryClickGestureRecognizer;
 
+    // Defer panning any scroll view that encloses the web view so that we can delegate to direct-manipulation elements if needed.
+    if (deferringGestureRecognizer == _enclosingScrollViewPanDeferringGestureRecognizer) {
+        if (!isBuiltInScrollViewPanGestureRecognizer(gestureRecognizer))
+            return NO;
+
+        RetainPtr scrollView = dynamic_objc_cast<NSScrollView>(gestureRecognizer.view);
+        return scrollView && [webView isDescendantOf:scrollView];
+    }
+
     for (NSGestureRecognizer *textSelectionGesture in [[webView textSelectionManager] gesturesForFailureRequirements]) {
         if (gestureRecognizer == textSelectionGesture)
             return YES;
@@ -1661,6 +1691,14 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
     if (deferringGestureRecognizer == _imageAnalysisTextSelectionDeferringGestureRecognizer || deferringGestureRecognizer == _imageAnalysisDragAndContextMenuDeferringGestureRecognizer)
         _imageAnalysisDeferralState = WebKit::ImageAnalysisDeferralState::Undecided;
+
+    if (deferringGestureRecognizer == _enclosingScrollViewPanDeferringGestureRecognizer) {
+        if (![webView enclosingScrollView] || ![webView _protectedPage]->hasRunningProcess())
+            return NO;
+
+        if (_caughtDeceleratingScroll)
+            return NO;
+    }
 
     // An event that catches a decelerating scroll only stops the scroll (and may continue it as a new pan),
     // so it must never begin a text selection or any other deferred gesture, no matter how long it's held
@@ -1689,15 +1727,18 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
     auto request = [self _positionInformationRequestAtLocation:locationInView];
     _positionInformationManager->doAfterUpdate(request, [weakSelf = WeakObjCPtr<WKAppKitGestureController>(self), weakDeferring = WeakObjCPtr<WKDeferringGestureRecognizer>(deferringGestureRecognizer), isInScrollbar](const auto& optionalInfo) {
-        if (!optionalInfo)
-            return;
-
-        const auto& info = *optionalInfo;
-
         RetainPtr strongSelf = weakSelf.get();
         RetainPtr strongDeferring = weakDeferring.get();
         if (!strongSelf || !strongDeferring)
             return;
+
+        if (!optionalInfo) {
+            if (strongDeferring == strongSelf->_enclosingScrollViewPanDeferringGestureRecognizer && [strongDeferring state] == NSGestureRecognizerStatePossible)
+                [strongDeferring endDeferralShouldPreventGestures:NO];
+            return;
+        }
+
+        const auto& info = *optionalInfo;
 
         RetainPtr webView = strongSelf->_view.get();
         if (!webView)
@@ -1766,6 +1807,14 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
                 WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "Resolved deferral: isSelectable=%d prefersDirectManipulation=%d (selectability=%hhu overEditableContent=%d)", isSelectable, prefersManipulation, static_cast<uint8_t>(info.selectability), info.isOverEditableContent);
 
                 return (!isSelectable || prefersManipulation) && !overLiveTextImage;
+            }
+
+            if (strongDeferring == strongSelf->_enclosingScrollViewPanDeferringGestureRecognizer) {
+                const auto prefersManipulation = prefersDirectManipulation(info);
+
+                WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "deferral resolved: enclosing scroll view pan yields to content=%d", prefersManipulation);
+
+                return prefersManipulation;
             }
 
             RELEASE_ASSERT_NOT_REACHED();
@@ -2748,12 +2797,6 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 #pragma mark - NSGestureRecognizerDelegate
 
-static BOOL isBuiltInScrollViewPanGestureRecognizer(NSGestureRecognizer *recognizer)
-{
-    static Class scrollViewPanGestureClass = NSClassFromString(@"NSScrollViewPanGestureRecognizer");
-    return [recognizer isKindOfClass:scrollViewPanGestureClass];
-}
-
 static inline bool isBuiltInScrollViewMagnificationGestureRecognizer(NSGestureRecognizer *gesture)
 {
     return [gesture isKindOfClass:NSMagnificationGestureRecognizer.class] && gesture._isScrollGestureRecognizer;
@@ -2791,7 +2834,19 @@ static NSPoint startLocationInView(NSPanGestureRecognizer *gesture, NSView *view
             return YES;
     }
 
+    // An enclosing scroll view pan can report that it "began" even while being deferred,
+    // so let mouse tracking recognize simultaneously until we have a deferral decision.
+    if ([self _isEnclosingScrollViewPanHeldByDeferral:gesture])
+        return YES;
+
     return NO;
+}
+
+- (BOOL)_isEnclosingScrollViewPanHeldByDeferral:(NSGestureRecognizer *)gesture
+{
+    auto deferralState = [_enclosingScrollViewPanDeferringGestureRecognizer state];
+    return (deferralState == NSGestureRecognizerStatePossible || deferralState == NSGestureRecognizerStateEnded)
+        && [self deferringGestureRecognizer:_enclosingScrollViewPanDeferringGestureRecognizer shouldDeferOtherGestureRecognizer:gesture];
 }
 
 - (BOOL)gestureRecognizer:(NSGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(NSGestureRecognizer *)otherGestureRecognizer
