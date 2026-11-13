@@ -57,8 +57,7 @@ private:
     static Vector<UsedMargins> computeInlineMargins(const PlacedGridItems&);
     static Vector<UsedMargins> computeBlockMargins(const PlacedGridItems&);
 
-    BorderBoxPositions performInlineAxisSelfAlignment(const PlacedGridItems&, const Vector<UsedMargins>&, const UsedInlineSizes&, const Vector<LayoutUnit>& gridAreasInlineSizeList, const Vector<std::optional<LayoutUnit>>& baselineAlignedMarginBoxPositions);
-    BorderBoxPositions performBlockAxisSelfAlignment(const PlacedGridItems&, const Vector<UsedMargins>&, const UsedBlockSizes&, const Vector<LayoutUnit>& gridAreasBlockSizeList, const Vector<std::optional<LayoutUnit>>& baselineAlignedMarginBoxPositions);
+    BorderBoxPositions performSelfAlignment(const PlacedGridItems&, LogicalBoxAxis alignmentAxis, const Vector<UsedMargins>&, const Vector<LayoutUnit>& borderBoxSizes, const Vector<LayoutUnit>& gridAreaSizes, const Vector<std::optional<LayoutUnit>>& baselineAlignedMarginBoxPositions);
 
     const GridFormattingContext& formattingContext() const LIFETIME_BOUND { return m_gridFormattingContext; }
 
