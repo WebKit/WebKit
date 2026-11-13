@@ -33,6 +33,7 @@ messages -> WebFrame {
     DidAddHistoryItemToBackForwardItem(WebCore::BackForwardFrameItemIdentifier frameItemID, WebCore::BackForwardItemIdentifier itemID)
     FindFocusableElementDescendingIntoRemoteFrame(enum:uint8_t WebCore::FocusDirection direction, struct WebCore::FocusEventData focusEventData, enum:bool WebCore::ShouldFocusElement shouldFocusElement) -> (enum:bool WebCore::FoundElementInRemoteFrame foundElement)
     FindFocusableElementContinuingFromFrame(enum:uint8_t WebCore::FocusDirection direction, WebCore::FrameIdentifier frameIdentifer, struct WebCore::FocusEventData focusEventData, enum:bool WebCore::ShouldFocusElement shouldFocusElement)
+    ScrollRectToVisibleContinuingFromFrame(WebCore::FrameIdentifier childFrameID, WebCore::IntRect rectInChildFrameView, struct WebCore::ScrollRectToVisibleOptions options)
     TakeSnapshotOfNode(WebCore::JSHandleIdentifier identifier) -> (std::optional<WebCore::ShareableBitmapHandle> snapshot);
 
     ConnectInspector(Inspector::FrontendChannel::ConnectionType connectionType)

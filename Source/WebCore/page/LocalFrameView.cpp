@@ -96,6 +96,7 @@
 #include "ProgressTracker.h"
 #include "Quirks.h"
 #include "RemoteFrame.h"
+#include "RemoteFrameClient.h"
 #include "RenderAncestorIterator.h"
 #include "RenderBoxInlines.h"
 #include "RenderElementInlines.h"
@@ -3659,6 +3660,8 @@ bool LocalFrameView::scrollRectToVisible(const LayoutRect& absoluteRect, const R
     RefPtr ownerElement = frameView->m_frame->document() ? frameView->m_frame->document()->ownerElement() : nullptr;
     if (ownerElement && ownerElement->renderer())
         frameView->scrollRectToVisibleInChildView(adjustedRect, isFixed, adjustedOptions, ownerElement.get());
+    else if (is<RemoteFrame>(frameView->m_frame->tree().parent()))
+        frameView->scrollRectToVisibleInChildView(adjustedRect, isFixed, adjustedOptions, nullptr);
     else
         frameView->scrollRectToVisibleInTopLevelView(adjustedRect, isFixed, adjustedOptions);
     return true;
@@ -3705,7 +3708,7 @@ void LocalFrameView::scrollRectToVisibleInChildView(const LayoutRect& absoluteRe
     // simulate padding the scroll container. This rectangle is passed up the tree of scrolling elements to
     // ensure that the padding on this scroll container is maintained.
     auto targetRect = absoluteRect;
-    RefPtr element = ownerElement->contentDocument() ? ownerElement->contentDocument()->documentElement() : nullptr;
+    RefPtr element = m_frame->document() ? m_frame->document()->documentElement() : nullptr;
     if (CheckedPtr renderer = element ? element->renderBox() : nullptr)
         targetRect.expand(renderer->scrollPaddingForViewportRect(viewRect));
 
@@ -3723,9 +3726,43 @@ void LocalFrameView::scrollRectToVisibleInChildView(const LayoutRect& absoluteRe
     if (options.shouldAllowCrossOriginScrolling == ShouldAllowCrossOriginScrolling::No && !safeToPropagateScrollToParent())
         return;
 
+    if (!ownerElement) {
+        scrollRectToVisibleInRemoteParent(contentsToView(enclosingIntRect(targetRect)), options);
+        return;
+    }
+
     // FIXME: ideally need to determine if this <iframe> is inside position:fixed.
     if (CheckedPtr ownerRenderer = ownerElement->renderer())
         scrollRectToVisible(contentsToContainingViewContents(enclosingIntRect(targetRect)), *ownerRenderer, false /* insideFixed */, options);
+}
+
+void LocalFrameView::scrollRectToVisibleInRemoteParent(const IntRect& rectInFrameView, const ScrollRectToVisibleOptions& options)
+{
+    RefPtr remoteParent = dynamicDowncast<RemoteFrame>(m_frame->tree().parent());
+    if (!remoteParent)
+        return;
+
+    auto parentOptions = options;
+    parentOptions.visibilityCheckRect = std::nullopt;
+    remoteParent->client().scrollRectToVisibleContinuingFromFrame(m_frame->frameID(), rectInFrameView, parentOptions);
+}
+
+void LocalFrameView::scrollRectToVisibleContinuingFromChildFrame(Frame& childFrame, const IntRect& rectInChildFrameView, const ScrollRectToVisibleOptions& options)
+{
+    if (childFrame.tree().parent() != m_frame.ptr())
+        return;
+
+    RefPtr ownerElement = childFrame.ownerElement();
+    RefPtr childView = childFrame.virtualView();
+    if (!ownerElement || !childView)
+        return;
+
+    CheckedPtr ownerRenderer = ownerElement->renderer();
+    if (!ownerRenderer)
+        return;
+
+    auto rectInContents = viewToContents(childView->convertToContainingView(rectInChildFrameView));
+    scrollRectToVisible(rectInContents, *ownerRenderer, false /* insideFixed */, options);
 }
 
 void LocalFrameView::scrollRectToVisibleInTopLevelView(const LayoutRect& absoluteRect, EnumSet<BoxAxis> isFixed, const ScrollRectToVisibleOptions& options)

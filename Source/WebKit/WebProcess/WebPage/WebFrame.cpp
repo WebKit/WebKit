@@ -129,6 +129,7 @@
 #include <WebCore/RemoteFrame.h>
 #include <WebCore/RemoteFrameView.h>
 #include <WebCore/RemoteUserInputEventData.h>
+#include <WebCore/RenderLayer.h>
 #include <WebCore/RenderLayerCompositor.h>
 #include <WebCore/RenderTreeAsText.h>
 #include <WebCore/RenderView.h>
@@ -1865,6 +1866,21 @@ void WebFrame::findFocusableElementContinuingFromFrame(WebCore::FocusDirection d
         if (RefPtr page = localFrame->page())
             page->focusController().findFocusableElementContinuingFromFrame(direction, frameID, focusEventData, *localFrame, shouldFocusElement);
     }
+}
+
+void WebFrame::scrollRectToVisibleContinuingFromFrame(WebCore::FrameIdentifier childFrameID, const WebCore::IntRect& rectInChildFrameView, const WebCore::ScrollRectToVisibleOptions& options)
+{
+    RefPtr localFrame = coreLocalFrame();
+    if (!localFrame)
+        return;
+
+    RefPtr childWebFrame = WebFrame::webFrame(childFrameID);
+    RefPtr childFrame = childWebFrame ? childWebFrame->coreFrame() : nullptr;
+    if (!childFrame)
+        return;
+
+    if (RefPtr view = localFrame->view())
+        view->scrollRectToVisibleContinuingFromChildFrame(*childFrame, rectInChildFrameView, options);
 }
 
 static RefPtr<Node> nodeFromJSHandleIdentifier(JSHandleIdentifier identifier)

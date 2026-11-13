@@ -285,6 +285,7 @@ public:
     void updateLayerPositionsAfterOverflowScroll(RenderLayer&);
     void updateCompositingLayersAfterScrolling() final;
     static WEBCORE_EXPORT bool scrollRectToVisible(const LayoutRect& absoluteRect, const RenderObject&, bool insideFixed, const ScrollRectToVisibleOptions&);
+    WEBCORE_EXPORT void scrollRectToVisibleContinuingFromChildFrame(Frame& childFrame, const IntRect& rectInChildFrameView, const ScrollRectToVisibleOptions&);
 
     bool requestStartKeyboardScrollAnimation(const KeyboardScroll&) final;
     bool requestStopKeyboardScrollAnimation(bool immediate) final;
@@ -1015,6 +1016,7 @@ private:
     static MonotonicTime sCurrentPaintTimeStamp; // used for detecting decoded resource thrash in the cache
 
     void scrollRectToVisibleInChildView(const LayoutRect& absoluteRect, EnumSet<BoxAxis> isFixed, const ScrollRectToVisibleOptions&, const HTMLFrameOwnerElement*);
+    void scrollRectToVisibleInRemoteParent(const IntRect& rectInFrameView, const ScrollRectToVisibleOptions&);
     void scrollRectToVisibleInTopLevelView(const LayoutRect& absoluteRect, EnumSet<BoxAxis> isFixed, const ScrollRectToVisibleOptions&);
     LayoutRect getPossiblyFixedRectToExpose(const LayoutRect& visibleRect, const LayoutRect& exposeRect, EnumSet<BoxAxis> isFixed, const ScrollAlignment& alignX, const ScrollAlignment& alignY) const;
     LayoutRect getPossiblyFixedRectToExpose(const LayoutRect& visibleRect, const LayoutRect& exposeRect, bool isFixed, const ScrollAlignment& alignX, const ScrollAlignment& alignY) const;

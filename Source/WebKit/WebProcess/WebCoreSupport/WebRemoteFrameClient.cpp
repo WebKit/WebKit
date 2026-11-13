@@ -46,6 +46,7 @@
 #include <WebCore/PolicyChecker.h>
 #include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/RemoteFrame.h>
+#include <WebCore/RenderLayer.h>
 #include <WebCore/Settings.h>
 #include <WebCore/UserGestureIndicator.h>
 #include <wtf/Borrow.h>
@@ -322,6 +323,11 @@ void WebRemoteFrameClient::findFocusableElementDescendingIntoRemoteFrame(WebCore
 void WebRemoteFrameClient::findFocusableElementContinuingFromFrame(WebCore::FocusDirection direction, WebCore::FrameIdentifier frameID, const WebCore::FocusEventData& focusEventData, WebCore::ShouldFocusElement shouldFocusElement)
 {
     m_frame->send(Messages::WebFrameProxy::FindFocusableElementContinuingFromFrame(direction, frameID, focusEventData, shouldFocusElement));
+}
+
+void WebRemoteFrameClient::scrollRectToVisibleContinuingFromFrame(WebCore::FrameIdentifier childFrameID, const WebCore::IntRect& rectInChildFrameView, const WebCore::ScrollRectToVisibleOptions& options)
+{
+    m_frame->send(Messages::WebFrameProxy::ScrollRectToVisibleContinuingFromFrame(childFrameID, rectInChildFrameView, options));
 }
 
 void WebRemoteFrameClient::dispatchCrossOriginBeforeUnloadCheck(const WebCore::SecurityOriginData& navigatingFrameOrigin)

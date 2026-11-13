@@ -72,6 +72,7 @@ private:
     void addResourceTimingFromChild(WebCore::ResourceTiming&&) final;
     void findFocusableElementDescendingIntoRemoteFrame(WebCore::FocusDirection, const WebCore::FocusEventData&, WebCore::ShouldFocusElement, CompletionHandler<void(WebCore::FoundElementInRemoteFrame)>&&) final;
     void findFocusableElementContinuingFromFrame(WebCore::FocusDirection, WebCore::FrameIdentifier, const WebCore::FocusEventData&, WebCore::ShouldFocusElement) final;
+    void scrollRectToVisibleContinuingFromFrame(WebCore::FrameIdentifier, const WebCore::IntRect&, const WebCore::ScrollRectToVisibleOptions&) final;
     void dispatchCrossOriginBeforeUnloadCheck(const WebCore::SecurityOriginData& navigatingFrameOrigin) final;
 
     void broadcastFrameTreeSyncDataToOtherProcesses(WebCore::FrameTreeSyncSerializationData&&) final;

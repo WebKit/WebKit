@@ -29,4 +29,5 @@ messages -> WebFrameProxy {
     [EnabledBy=SiteIsolationEnabled] DidChangeCSPOriginsThatUpgradeInsecureNavigations(IPC::Untrusted<HashSet<WebCore::SecurityOriginData>> cspOriginsThatUpgradeInsecureNavigations)
     [EnabledBy=SiteIsolationEnabled] FindFocusableElementDescendingIntoRemoteFrame(enum:uint8_t WebCore::FocusDirection direction, struct WebCore::FocusEventData focusEventData, enum:bool WebCore::ShouldFocusElement shouldFocusElement) -> (enum:bool WebCore::FoundElementInRemoteFrame foundElement)
     [EnabledBy=SiteIsolationEnabled] FindFocusableElementContinuingFromFrame(enum:uint8_t WebCore::FocusDirection direction, WebCore::FrameIdentifier frameIdentifer, struct WebCore::FocusEventData focusEventData, enum:bool WebCore::ShouldFocusElement shouldFocusElement)
+    [EnabledBy=SiteIsolationEnabled] ScrollRectToVisibleContinuingFromFrame(WebCore::FrameIdentifier childFrameID, WebCore::IntRect rectInChildFrameView, struct WebCore::ScrollRectToVisibleOptions options)
 }

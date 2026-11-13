@@ -93,6 +93,7 @@ enum class ShouldFocusElement : bool;
 
 struct FocusEventData;
 struct GlobalWindowIdentifier;
+struct ScrollRectToVisibleOptions;
 
 struct JSHandleIdentifierType;
 using WebProcessJSHandleIdentifier = ObjectIdentifier<JSHandleIdentifierType>;
@@ -337,6 +338,7 @@ private:
 
     void findFocusableElementDescendingIntoRemoteFrame(WebCore::FocusDirection, const WebCore::FocusEventData&, WebCore::ShouldFocusElement, CompletionHandler<void(WebCore::FoundElementInRemoteFrame)>&&);
     void findFocusableElementContinuingFromFrame(WebCore::FocusDirection, WebCore::FrameIdentifier, const WebCore::FocusEventData&, WebCore::ShouldFocusElement);
+    void scrollRectToVisibleContinuingFromFrame(WebCore::FrameIdentifier, const WebCore::IntRect&, const WebCore::ScrollRectToVisibleOptions&);
 
     CheckedRef<FrameInspectorTarget> ensureInspectorTarget();
 

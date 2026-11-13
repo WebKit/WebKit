@@ -50,3 +50,61 @@ enum class WebCore::ScrollbarOverlayStyle : uint8_t {
     Dark,
     Light,
 };
+
+header: <WebCore/ScrollTypes.h>
+enum class WebCore::SelectionRevealMode : uint8_t {
+    Reveal,
+    RevealUpToMainFrame,
+    DelegateMainFrameScroll,
+    DoNotReveal,
+};
+
+header: <WebCore/ScrollAlignment.h>
+[Nested] enum class WebCore::ScrollAlignment::Behavior : uint8_t {
+    NoScroll,
+    AlignCenter,
+    AlignTop,
+    AlignBottom,
+    AlignLeft,
+    AlignRight,
+    AlignToClosestEdge,
+};
+
+struct WebCore::ScrollAlignment {
+    WebCore::ScrollAlignment::Behavior m_rectVisible;
+    WebCore::ScrollAlignment::Behavior m_rectHidden;
+    WebCore::ScrollAlignment::Behavior m_rectPartial;
+    bool m_enableLegacyHorizontalVisibilityThreshold;
+};
+
+header: <WebCore/ScrollBehavior.h>
+enum class WebCore::ScrollBehavior : uint8_t {
+    Auto,
+    Instant,
+    Smooth,
+};
+
+enum class WebCore::OnlyAllowForwardScrolling : bool;
+
+header: <WebCore/Element.h>
+enum class WebCore::AllowScrollingOverflowHidden : bool;
+
+header: <WebCore/ScrollIntoViewContainer.h>
+enum class WebCore::ScrollIntoViewContainer : bool;
+
+header: <WebCore/RenderLayer.h>
+enum class WebCore::ShouldAllowCrossOriginScrolling : bool;
+enum class WebCore::SkipScrollingTargetElement : bool;
+
+[CustomHeader] struct WebCore::ScrollRectToVisibleOptions {
+    WebCore::SelectionRevealMode revealMode;
+    WebCore::ScrollAlignment alignX;
+    WebCore::ScrollAlignment alignY;
+    WebCore::ShouldAllowCrossOriginScrolling shouldAllowCrossOriginScrolling;
+    WebCore::ScrollBehavior behavior;
+    WebCore::OnlyAllowForwardScrolling onlyAllowForwardScrolling;
+    WebCore::AllowScrollingOverflowHidden allowScrollingOverflowHidden;
+    std::optional<WebCore::LayoutRect> visibilityCheckRect;
+    WebCore::SkipScrollingTargetElement skipScrollingTargetElement;
+    WebCore::ScrollIntoViewContainer container;
+};

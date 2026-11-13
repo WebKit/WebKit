@@ -80,6 +80,7 @@ struct FrameIdentifierType;
 struct JSHandleIdentifierType;
 struct NavigationIdentifierType;
 struct NodeIdentifierType;
+struct ScrollRectToVisibleOptions;
 
 enum class FocusDirection : uint8_t;
 enum class FoundElementInRemoteFrame : bool;
@@ -312,6 +313,7 @@ public:
     void didChangeCSPOriginsThatUpgradeInsecureNavigations(IPC::Connection&, IPC::Untrusted<HashSet<WebCore::SecurityOriginData>>&&);
     void findFocusableElementDescendingIntoRemoteFrame(WebCore::FocusDirection, const WebCore::FocusEventData&, WebCore::ShouldFocusElement, CompletionHandler<void(WebCore::FoundElementInRemoteFrame)>&&);
     void findFocusableElementContinuingFromFrame(WebCore::FocusDirection, WebCore::FrameIdentifier, const WebCore::FocusEventData&, WebCore::ShouldFocusElement);
+    void scrollRectToVisibleContinuingFromFrame(WebCore::FrameIdentifier, const WebCore::IntRect&, const WebCore::ScrollRectToVisibleOptions&);
 
     std::optional<WebCore::DocumentSecurityPolicy> documentSecurityPolicy() const { return m_documentSecurityPolicy; }
 

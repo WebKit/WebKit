@@ -49,6 +49,7 @@ enum class ShouldFocusElement : bool;
 struct AccessibilityRemoteToken;
 struct FocusEventData;
 struct MessageWithMessagePorts;
+struct ScrollRectToVisibleOptions;
 struct UserGestureTokenData;
 
 class RemoteFrameClient : public FrameLoaderClient {
@@ -76,6 +77,7 @@ public:
     virtual void addResourceTimingFromChild(ResourceTiming&&) = 0;
     virtual void findFocusableElementDescendingIntoRemoteFrame(FocusDirection, const FocusEventData&, ShouldFocusElement, CompletionHandler<void(FoundElementInRemoteFrame)>&&) = 0;
     virtual void findFocusableElementContinuingFromFrame(FocusDirection, WebCore::FrameIdentifier, const FocusEventData&, ShouldFocusElement) = 0;
+    virtual void scrollRectToVisibleContinuingFromFrame(FrameIdentifier childFrameID, const IntRect& rectInChildFrameView, const ScrollRectToVisibleOptions&) = 0;
     virtual void dispatchCrossOriginBeforeUnloadCheck(const SecurityOriginData& navigatingFrameOrigin) = 0;
 
     virtual bool isWebRemoteFrameClient() const { return false; }
