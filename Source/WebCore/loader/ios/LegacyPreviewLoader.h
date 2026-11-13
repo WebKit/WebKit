@@ -49,6 +49,9 @@ public:
     bool didReceiveResponse(const ResourceResponse&);
     bool didReceiveData(const SharedBuffer&);
     bool didFinishLoading();
+#if USE(QUICK_LOOK)
+    void didFinishQuickLookLoading(URL&& temporaryQuickLookFileURL);
+#endif
     void didFail();
 
     WEBCORE_EXPORT static void setClientForTesting(RefPtr<LegacyPreviewLoaderClient>&&);

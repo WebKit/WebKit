@@ -31,6 +31,9 @@ messages -> WebResourceLoader {
     DidReceiveResponse(WebCore::ResourceResponse response, enum:bool WebKit::PrivateRelayed privateRelayed, bool needsContinueDidReceiveResponseMessage, std::optional<WebCore::NetworkLoadMetrics> optionalNetworkLoadMetrics)
     DidReceiveData(IPC::SharedBufferReference data, uint64_t bytesTransferredOverNetwork)
     DidFinishResourceLoad(WebCore::NetworkLoadMetrics networkLoadMetrics)
+#if USE(QUICK_LOOK)
+    DidFinishQuickLookResourceLoad(URL temporaryQuickLookFileURL, WebKit::SandboxExtensionHandle handle)
+#endif
     DidFailResourceLoad(WebCore::ResourceError error)
     DidFailServiceWorkerLoad(WebCore::ResourceError error)
     ServiceWorkerDidNotHandle()

@@ -836,6 +836,14 @@ void SubresourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLoadMe
     releaseResources();
 }
 
+#if USE(QUICK_LOOK)
+void SubresourceLoader::didFinishQuickLookLoading(URL&& temporaryQuickLookFileURL)
+{
+    if (m_previewLoader)
+        m_previewLoader->didFinishQuickLookLoading(WTF::move(temporaryQuickLookFileURL));
+}
+#endif
+
 void SubresourceLoader::didFail(const ResourceError& error)
 {
     SUBRESOURCELOADER_RELEASE_LOG(SubResourceLoaderDidFail, static_cast<int>(error.type()), error.errorCode());

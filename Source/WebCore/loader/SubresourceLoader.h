@@ -77,6 +77,9 @@ public:
     void didReceiveResponse(ResourceResponse&&, CompletionHandler<void()>&& policyCompletionHandler) final;
     void didReceiveBuffer(const FragmentedSharedBuffer&, long long encodedDataLength, DataPayloadType) final;
     void didFinishLoading(const NetworkLoadMetrics&) final;
+#if USE(QUICK_LOOK)
+    void didFinishQuickLookLoading(URL&& temporaryQuickLookFileURL) final;
+#endif
     void didFail(const ResourceError&) final;
     void willCancel(const ResourceError&) final;
     void didCancel(LoadWillContinueInAnotherProcess) final;

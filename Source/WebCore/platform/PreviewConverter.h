@@ -82,6 +82,8 @@ public:
     void finishUpdating();
     void updateMainResource();
 
+    void receivedTemporaryFileURL(URL&&);
+
     bool hasClient(PreviewConverterClient&) const;
     void addClient(PreviewConverterClient&);
     void removeClient(PreviewConverterClient&);
@@ -105,8 +107,9 @@ private:
     void replayToClient(PreviewConverterClient&);
 
     void platformAppend(const SharedBufferDataView&);
-    void platformFailedAppending();
-    void platformFinishedAppending();
+    void platformFailedUpdating();
+    void platformFinishedUpdating();
+    void platformReceivedTemporaryFileURL(URL&&);
     void platformUnlockWithPassword(const String&);
 
     // PreviewPlatformDelegate

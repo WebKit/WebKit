@@ -398,6 +398,15 @@ void WebResourceLoader::didFinishResourceLoad(NetworkLoadMetrics&& networkLoadMe
     coreLoader->didFinishLoading(networkLoadMetrics);
 }
 
+#if USE(QUICK_LOOK)
+void WebResourceLoader::didFinishQuickLookResourceLoad(URL&& temporaryQuickLookFileURL, SandboxExtension::Handle&& sandboxExtension)
+{
+    SandboxExtension::consumePermanently(sandboxExtension);
+    RefPtr coreLoader = m_coreLoader;
+    coreLoader->didFinishQuickLookLoading(WTF::move(temporaryQuickLookFileURL));
+}
+#endif // USE(QUICK_LOOK)
+
 void WebResourceLoader::didFailServiceWorkerLoad(const ResourceError& error)
 {
     RefPtr coreLoader = m_coreLoader;
