@@ -1,0 +1,109 @@
+Tests that breakpoints on event listeners in a cross-origin iframe pause in the frame target, and are kept apart from page listeners with the same id.
+
+Main Button
+
+== Running test suite: SiteIsolation.DOMDebugger.EventListenerBreakpoint
+-- Running test case: SiteIsolation.DOMDebugger.EventListenerBreakpoint.Setup
+PASS: Should find the cross-origin frame target.
+PASS: Frame target should have a document.
+PASS: Should find #main-button in the page.
+PASS: #frame-button should belong to the frame target.
+PASS: Page listener should be the page handler.
+PASS: Frame listener should be the frame handler.
+PASS: The two listeners should have the same id.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.EventListenerBreakpoint.Supported
+PASS: Page listener should support breakpoints.
+PASS: Frame listener should support breakpoints.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.EventListenerBreakpoint.FrameListener
+Setting breakpoint on "frameButtonClicked"...
+PASS: Should register a breakpoint for the frame listener.
+PASS: Should not register a breakpoint for the page listener with the same id.
+Clicking the frame button...
+PASS: Should pause once.
+PASS: Should pause in the frame target that ran the listener.
+PASS: Pause reason should be "listener".
+PASS: Top call frame should be "frameButtonClicked".
+PASS: Pause data should carry the listener's id.
+PASS: Pause data frameTarget should be true.
+PASS: Pause data should resolve to the breakpoint of that listener.
+Clicking the page button...
+PASS: Should not pause for the page listener with the same id.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.EventListenerBreakpoint.PageListener
+Setting breakpoint on "mainButtonClicked"...
+PASS: Should register a breakpoint for the page listener.
+PASS: Should not register a breakpoint for the frame listener with the same id.
+Clicking the frame button...
+PASS: Should not pause for the frame listener with the same id.
+Clicking the page button...
+PASS: Should pause once.
+PASS: Pause reason should be "listener".
+PASS: Top call frame should be "mainButtonClicked".
+PASS: Pause data should carry the listener's id.
+PASS: Pause data frameTarget should be false.
+PASS: Pause data should resolve to the breakpoint of that listener.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.EventListenerBreakpoint.RemoveFrameKeepsPage
+Setting breakpoint on "mainButtonClicked"...
+Setting breakpoint on "frameButtonClicked"...
+PASS: Page listener should have a breakpoint.
+PASS: Frame listener should have a breakpoint.
+PASS: The two breakpoints should be different.
+PASS: Should have two listener breakpoints.
+Removing breakpoint on "frameButtonClicked"...
+PASS: Frame listener should have no breakpoint.
+PASS: Page listener should keep its breakpoint.
+Clicking the frame button...
+PASS: Should not pause for the removed frame breakpoint.
+Clicking the page button...
+PASS: Should still pause for the page breakpoint.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.EventListenerBreakpoint.Disabled
+Setting breakpoint on "frameButtonClicked"...
+PASS: Should register a breakpoint for the frame listener.
+Disabling the breakpoint...
+PASS: Should not pause for a disabled breakpoint.
+Enabling the breakpoint...
+PASS: Should pause for an enabled breakpoint.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.EventListenerBreakpoint.Condition
+Setting breakpoint on "frameButtonClicked"...
+PASS: Should register a breakpoint for the frame listener.
+Setting condition "window.frameCondition"...
+PASS: Should not pause while the condition is false in the frame.
+PASS: Should pause while the condition is true in the frame.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.EventListenerBreakpoint.WindowListener
+PASS: Should find the frame window's listener.
+Setting breakpoint on "frameWindowHandler"...
+PASS: Should register a breakpoint for the window listener.
+Dispatching an event on the frame's window...
+PASS: Should pause once.
+PASS: Should pause in the frame target that ran the listener.
+PASS: Pause reason should be "listener".
+PASS: Top call frame should be "frameWindowHandler".
+PASS: Pause data should carry the listener's id.
+PASS: Pause data frameTarget should be true.
+PASS: Pause data should resolve to the breakpoint of that listener.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.EventListenerBreakpoint.FrameReload
+Setting breakpoint on "mainButtonClicked"...
+Setting breakpoint on "frameButtonClicked"...
+PASS: Should register a breakpoint for the frame listener.
+Reloading the frame...
+PASS: Should remove the frame listener's breakpoint.
+PASS: Frame listener should have no breakpoint.
+PASS: Page listener should keep its breakpoint.
+PASS: Should have one listener breakpoint left.
+-- Running test teardown.
+

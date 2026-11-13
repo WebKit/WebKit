@@ -1,0 +1,46 @@
+Tests DOM.setBreakpointForEventListener and DOM.removeBreakpointForEventListener on a cross-origin frame target.
+
+
+
+== Running test suite: SiteIsolation.DOM.BreakpointForEventListener
+-- Running test case: SiteIsolation.DOM.BreakpointForEventListener.Setup
+PASS: Should find the cross-origin frame target.
+PASS: Node should have one listener.
+
+-- Running test case: SiteIsolation.DOM.BreakpointForEventListener.CommandAvailability
+PASS: Frame target should support DOM.setBreakpointForEventListener.
+PASS: Frame target should support options for DOM.setBreakpointForEventListener.
+PASS: Frame target should support DOM.removeBreakpointForEventListener.
+
+-- Running test case: SiteIsolation.DOM.BreakpointForEventListener.SetAndRemove
+PASS: Listener should not have a breakpoint.
+Setting breakpoint...
+PASS: Listener should have a breakpoint.
+Setting breakpoint again...
+PASS: Should produce an exception.
+Error: Breakpoint for given eventListenerId already exists
+Removing breakpoint...
+PASS: Listener should not have a breakpoint after removal.
+Removing breakpoint again...
+PASS: Should produce an exception.
+Error: Breakpoint for given eventListenerId missing
+
+-- Running test case: SiteIsolation.DOM.BreakpointForEventListener.ReaddedListener
+Setting breakpoint...
+PASS: Listener should have a breakpoint.
+Removing the listener and adding it again...
+PASS: Should not pause for the listener added again.
+PASS: Listener added again should get a new id.
+PASS: Listener added again should not have a breakpoint.
+Removing breakpoint for the old id...
+PASS: Should produce an exception.
+Error: Missing event listener for given eventListenerId
+
+-- Running test case: SiteIsolation.DOM.BreakpointForEventListener.Invalid
+Setting breakpoint for an invalid listener id...
+PASS: Should produce an exception.
+Error: Missing event listener for given eventListenerId
+Removing breakpoint for an invalid listener id...
+PASS: Should produce an exception.
+Error: Missing event listener for given eventListenerId
+

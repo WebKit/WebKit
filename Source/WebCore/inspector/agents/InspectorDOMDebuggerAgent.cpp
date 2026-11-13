@@ -35,6 +35,7 @@
 #include "Document.h"
 #include "Event.h"
 #include "EventTarget.h"
+#include "FrameDOMAgent.h"
 #include "FrameDebuggerAgent.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameInspectorController.h"
@@ -312,6 +313,24 @@ static JSC::JSGlobalObject* globalObjectFor(ScriptExecutionContext& scriptExecut
     return scriptExecutionContext.globalObject();
 }
 
+// FIXME: <https://webkit.org/b/323034> A main frame listener can have a breakpoint in both agents, and only the frame agent's applies.
+static RefPtr<JSC::Breakpoint> breakpointForEventListener(InstrumentingAgents& agents, Event& event, const RegisteredEventListener& registeredEventListener, bool* matchedPageDOMAgent = nullptr)
+{
+    Ref currentTarget = *event.currentTarget();
+    if (CheckedPtr frameDOMAgent = agents.persistentFrameDOMAgent()) {
+        if (auto breakpoint = frameDOMAgent->breakpointForEventListener(currentTarget, event.type(), registeredEventListener.callback(), registeredEventListener.useCapture()))
+            return breakpoint;
+    }
+    if (CheckedPtr domAgent = agents.persistentDOMAgent()) {
+        if (auto breakpoint = domAgent->breakpointForEventListener(currentTarget, event.type(), registeredEventListener.callback(), registeredEventListener.useCapture())) {
+            if (matchedPageDOMAgent)
+                *matchedPageDOMAgent = true;
+            return breakpoint;
+        }
+    }
+    return nullptr;
+}
+
 void InspectorDOMDebuggerAgent::willHandleEvent(ScriptExecutionContext& scriptExecutionContext, Event& event, const RegisteredEventListener& registeredEventListener)
 {
     // `event.target()->scriptExecutionContext()` can change between `willHandleEvent` and `didHandleEvent`. The passed
@@ -334,7 +353,7 @@ void InspectorDOMDebuggerAgent::willHandleEvent(ScriptExecutionContext& scriptEx
         return;
 
     Ref agents = m_instrumentingAgents.get();
-    CheckedPtr domAgent = agents->persistentDOMAgent();
+    bool matchedPageDOMAgent = false;
 
     auto breakpoint = m_pauseOnAllListenersBreakpoint;
     if (!breakpoint) {
@@ -346,18 +365,27 @@ void InspectorDOMDebuggerAgent::willHandleEvent(ScriptExecutionContext& scriptEx
             }
         }
     }
-    if (!breakpoint && domAgent)
-        breakpoint = domAgent->breakpointForEventListener(*protect(event.currentTarget()), event.type(), registeredEventListener.callback(), registeredEventListener.useCapture());
+    if (!breakpoint)
+        breakpoint = breakpointForEventListener(agents, event, registeredEventListener, &matchedPageDOMAgent);
     if (!breakpoint)
         return;
 
     Ref<JSON::Object> eventData = JSON::Object::create();
     eventData->setString("eventName"_s, event.type());
-    if (domAgent) {
-        int eventListenerId = domAgent->idForEventListener(*protect(event.currentTarget()), event.type(), registeredEventListener.callback(), registeredEventListener.useCapture());
+    Ref currentTarget = *event.currentTarget();
+    Inspector::Protocol::DOM::EventListenerId eventListenerId = 0;
+    CheckedPtr frameDOMAgent = matchedPageDOMAgent ? nullptr : agents->persistentFrameDOMAgent();
+    if (frameDOMAgent) {
+        eventListenerId = frameDOMAgent->idForEventListener(currentTarget, event.type(), registeredEventListener.callback(), registeredEventListener.useCapture());
         if (eventListenerId)
-            eventData->setInteger("eventListenerId"_s, eventListenerId);
+            eventData->setBoolean("frameTarget"_s, true);
     }
+    if (!eventListenerId) {
+        if (CheckedPtr domAgent = agents->persistentDOMAgent())
+            eventListenerId = domAgent->idForEventListener(currentTarget, event.type(), registeredEventListener.callback(), registeredEventListener.useCapture());
+    }
+    if (eventListenerId)
+        eventData->setInteger("eventListenerId"_s, eventListenerId);
 
     debuggerAgent->schedulePauseForSpecialBreakpoint(*breakpoint, Inspector::DebuggerFrontendDispatcher::Reason::Listener, WTF::move(eventData));
 }
@@ -400,8 +428,7 @@ void InspectorDOMDebuggerAgent::didHandleEvent(ScriptExecutionContext& scriptExe
     }
     if (!breakpoint) {
         Ref agents = m_instrumentingAgents.get();
-        if (CheckedPtr domAgent = agents->persistentDOMAgent())
-            breakpoint = domAgent->breakpointForEventListener(*protect(event.currentTarget()), event.type(), registeredEventListener.callback(), registeredEventListener.useCapture());
+        breakpoint = breakpointForEventListener(agents, event, registeredEventListener);
     }
     if (!breakpoint)
         return;

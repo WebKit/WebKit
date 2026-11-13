@@ -619,6 +619,8 @@ void InspectorInstrumentation::didAddEventListenerImpl(InstrumentingAgents& inst
 {
     if (CheckedPtr webDebuggerAgent = instrumentingAgents.enabledWebDebuggerAgent())
         webDebuggerAgent->didAddEventListener(target, eventType, listener, capture);
+    if (CheckedPtr frameDOMAgent = instrumentingAgents.persistentFrameDOMAgent())
+        frameDOMAgent->didAddEventListener(target, eventType, listener, capture);
     if (CheckedPtr domAgent = instrumentingAgents.persistentDOMAgent())
         domAgent->didAddEventListener(target);
     if (CheckedPtr cssAgent = instrumentingAgents.enabledCSSAgent())
