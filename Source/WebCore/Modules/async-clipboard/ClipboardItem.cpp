@@ -33,7 +33,9 @@
 #include "CommonAtomStrings.h"
 #include "ContextDestructionObserverInlines.h"
 #include "ExceptionOr.h"
+#include "JSDOMPromiseDeferred.h"
 #include "Navigator.h"
+#include "ParsedContentType.h"
 #include "PasteboardCustomData.h"
 #include "PasteboardItemInfo.h"
 #include "Settings.h"
@@ -66,6 +68,14 @@ NODELETE static ClipboardItem::PresentationStyle clipboardItemPresentationStyle(
 // and suffix (after stripping out `"web "`) passes the parsing a MIME type check.
 // https://w3c.github.io/clipboard-apis/#optional-data-types
 // https://webkit.org/b/280664
+static bool isValidClipboardItemType(const String& type)
+{
+    // Custom formats are not validated yet, see above.
+    if (type.startsWith("web "_s))
+        return true;
+    return type == type.trim(isASCIIWhitespaceWithoutFF<char16_t>) && isValidContentType(type);
+}
+
 ClipboardItem::ClipboardItem(Vector<KeyValuePair<String, Ref<DOMPromise>>>&& items, const Options& options)
     : m_dataSource(makeUniqueRef<ClipboardItemBindingsDataSource>(*this, WTF::move(items)))
     , m_presentationStyle(options.presentationStyle)
@@ -84,6 +94,10 @@ ExceptionOr<Ref<ClipboardItem>> ClipboardItem::create(Vector<KeyValuePair<String
 {
     if (data.isEmpty())
         return Exception { ExceptionCode::TypeError, "ClipboardItem() can not be an empty array: {}"_s };
+    for (auto& item : data) {
+        if (!isValidClipboardItemType(item.key))
+            return Exception { ExceptionCode::TypeError, makeString("ClipboardItem() has an invalid type: "_s, item.key) };
+    }
     return adoptRef(*new ClipboardItem(WTF::move(data), options));
 }
 
@@ -99,6 +113,11 @@ Vector<String> ClipboardItem::types() const
 
 void ClipboardItem::getType(const String& type, Ref<DeferredPromise>&& promise)
 {
+    if (!isValidClipboardItemType(type)) {
+        promise->reject(ExceptionCode::TypeError);
+        return;
+    }
+
     m_dataSource->getType(type, WTF::move(promise));
 }
 

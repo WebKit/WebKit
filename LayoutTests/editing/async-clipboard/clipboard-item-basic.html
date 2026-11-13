@@ -147,17 +147,17 @@
                         setTimeout(reject, 50);
                     }).catch(() => { }),
                     "image/png" : Promise.reject(imageBlob()).catch(() => { }),
-                    "🤔🤔🤔" : Promise.resolve("מקור השם עברית"),
-                    "מקור השם עברית" : Promise.resolve("🤔🤔🤔")
+                    "web 🤔🤔🤔" : Promise.resolve("מקור השם עברית"),
+                    "web מקור השם עברית" : Promise.resolve("🤔🤔🤔")
                 });
 
                 await doWithoutExpectingException(async () => {
-                    shouldBeEqualToString("commaSeparated(item.types)", "text/plain, text/html, image/png, 🤔🤔🤔, מקור השם עברית");
+                    shouldBeEqualToString("commaSeparated(item.types)", "text/plain, text/html, image/png, web 🤔🤔🤔, web מקור השם עברית");
                     text = await loadText(await item.getType("text/plain"));
                     shouldBeEqualToString("text", "謝謝");
-                    customText1 = await loadText(await item.getType("🤔🤔🤔"));
+                    customText1 = await loadText(await item.getType("web 🤔🤔🤔"));
                     shouldBeEqualToString("customText1", "מקור השם עברית");
-                    customText2 = await loadText(await item.getType("מקור השם עברית"));
+                    customText2 = await loadText(await item.getType("web מקור השם עברית"));
                     shouldBeEqualToString("customText2", "🤔🤔🤔");
                 });
 
@@ -172,7 +172,7 @@
 
             await (async function() {
                 item = tryToCreateClipboardItem({
-                    "!@#$%" : Promise.resolve(-2),
+                    "web !@#$%" : Promise.resolve(-2),
                     "image/png" : Promise.resolve(new Image),
                     "text/html" : Promise.resolve(null),
                     "text/uri-list" : Promise.resolve(undefined),
@@ -180,12 +180,12 @@
                 });
 
                 await doWithoutExpectingException(async () => {
-                    shouldBeEqualToString("commaSeparated(item.types)", "!@#$%, image/png, text/html, text/uri-list, text/plain");
+                    shouldBeEqualToString("commaSeparated(item.types)", "web !@#$%, image/png, text/html, text/uri-list, text/plain");
                 });
 
                 await doExpectingException(async () => {
-                    await item.getType("!@#$%");
-                }, "calling getType('!@#$%')");
+                    await item.getType("web !@#$%");
+                }, "calling getType('web !@#$%')");
 
                 await doExpectingException(async () => {
                     await item.getType("image/png");
