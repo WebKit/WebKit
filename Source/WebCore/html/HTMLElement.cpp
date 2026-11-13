@@ -56,6 +56,7 @@
 #include "EventListener.h"
 #include "EventLoop.h"
 #include "EventNames.h"
+#include "FormListedElement.h"
 #include "FrameLoader.h"
 #include "HTMLBRElement.h"
 #include "HTMLButtonElement.h"
@@ -456,6 +457,25 @@ void HTMLElement::removingSteps(RemovalType removalType, ContainerNode& oldParen
         hidePopoverInternal(FocusPreviousElement::No, FireEvents::No);
 
     StyledElement::removingSteps(removalType, oldParentOfRemovedTree);
+}
+
+void HTMLElement::movingSteps(MovingType movingType, ContainerNode& oldParent, Node& subtreeRoot)
+{
+    StyledElement::movingSteps(movingType, oldParent, subtreeRoot);
+
+    RefPtr formAssociatedElement = asFormAssociatedElement();
+    if (!formAssociatedElement)
+        return;
+
+    RefPtr listedElement = formAssociatedElement->isFormListedElement() ? asFormListedElement() : nullptr;
+    if (listedElement && movingType.didInsertIntoNewTreeScope)
+        listedElement->formAttributeTreeScopeChanged();
+
+    bool hasFormAttribute = listedElement && hasAttributeWithoutSynchronization(formAttr);
+    if (RefPtr form = formAssociatedElement->form(); form && !hasFormAttribute && subtreeRoot.isShadowIncludingInclusiveAncestorOf(*form))
+        return;
+
+    formAssociatedElement->resetFormOwner(FallbackToCurrentForm::No);
 }
 
 static Ref<DocumentFragment> textToFragment(Document& document, const String& text)

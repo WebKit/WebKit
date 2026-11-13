@@ -3440,9 +3440,9 @@ void Element::removingSteps(RemovalType removalType, ContainerNode& oldParentOfR
     }
 }
 
-void Element::movingSteps(MovingType movingType, ContainerNode& oldParent)
+void Element::movingSteps(MovingType movingType, ContainerNode& oldParent, Node& subtreeRoot)
 {
-    ContainerNode::movingSteps(movingType, oldParent);
+    ContainerNode::movingSteps(movingType, oldParent, subtreeRoot);
 
     RefPtr htmlDocument = dynamicDowncast<HTMLDocument>(document());
     if (movingType.didRemoveFromOldTreeScope) {

@@ -52,7 +52,7 @@ private:
 
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) final;
     void removingSteps(RemovalType, ContainerNode& oldParentOfRemovedTree) final;
-    void movingSteps(MovingType, ContainerNode& oldParent) final;
+    void movingSteps(MovingType, ContainerNode& oldParent, Node& subtreeRoot) final;
 
     const AtomString& formControlType() const;
     bool isFocusable() const final;

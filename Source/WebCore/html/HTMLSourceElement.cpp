@@ -123,9 +123,9 @@ void HTMLSourceElement::removingSteps(RemovalType removalType, ContainerNode& ol
     }
 }
 
-void HTMLSourceElement::movingSteps(MovingType movingType, ContainerNode& oldParent)
+void HTMLSourceElement::movingSteps(MovingType movingType, ContainerNode& oldParent, Node& subtreeRoot)
 {
-    HTMLElement::movingSteps(movingType, oldParent);
+    HTMLElement::movingSteps(movingType, oldParent, subtreeRoot);
 
     if (!movingType.isSubtreeRoot)
         return;
