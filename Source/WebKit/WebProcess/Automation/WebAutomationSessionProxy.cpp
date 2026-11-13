@@ -499,6 +499,33 @@ std::expected<Ref<WebCore::Element>, String> WebAutomationSessionProxy::elementF
     return Ref { elementWrapper->wrapped() };
 }
 
+RefPtr<WebCore::Node> WebAutomationSessionProxy::nodeForNodeHandle(WebFrame& frame, const String& nodeHandle)
+{
+    JSGlobalContextRef context = frame.jsContext();
+    auto* scriptObject = this->scriptObject(context);
+    if (!scriptObject)
+        return nullptr;
+
+    JSValueRef functionArguments[] = {
+        toJSValue(context, nodeHandle)
+    };
+    JSValueRef exception = nullptr;
+
+    JSValueRef result = callPropertyFunction(context, scriptObject, "nodeForSharedId"_s, std::size(functionArguments), functionArguments, &exception);
+    if (exception)
+        return nullptr;
+
+    JSObjectRef object = JSValueToObject(context, result, nullptr);
+    if (!object)
+        return nullptr;
+
+    auto nodeWrapper = dynamicDowncast<WebCore::JSNode>(toJS(object));
+    if (!nodeWrapper)
+        return nullptr;
+
+    return &nodeWrapper->wrapped();
+}
+
 WebCore::AccessibilityObject* WebAutomationSessionProxy::getAccessibilityObjectForNode(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String nodeHandle, String& errorType)
 {
     RefPtr page = WebProcess::singleton().webPage(pageID);
@@ -938,7 +965,7 @@ static WebCore::FloatPoint convertPointFromFrameClientToMainFrameView(WebCore::L
     return frameView->convertToRootViewAcrossIsolatedFrames(clientPoint);
 }
 
-void WebAutomationSessionProxy::computeElementLayout(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String nodeHandle, bool scrollIntoViewIfNeeded, CoordinateSystem coordinateSystem, CompletionHandler<void(std::optional<String>, WebCore::FloatRect, std::optional<WebCore::IntPoint>, bool)>&& completionHandler)
+void WebAutomationSessionProxy::computeElementLayout(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String nodeHandle, bool scrollIntoViewIfNeeded, CoordinateSystem coordinateSystem, bool isSharedReference, CompletionHandler<void(std::optional<String>, WebCore::FloatRect, std::optional<WebCore::IntPoint>, bool)>&& completionHandler)
 {
     RefPtr page = WebProcess::singleton().webPage(pageID);
     if (!page) {
@@ -956,18 +983,33 @@ void WebAutomationSessionProxy::computeElementLayout(WebCore::PageIdentifier pag
         return;
     }
 
-    if (!isValidNodeHandle(nodeHandle)) {
-        String invalidNodeIdentifierErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InvalidNodeIdentifier);
-        completionHandler(invalidNodeIdentifierErrorType, { }, std::nullopt, false);
-        return;
-    }
+    RefPtr<WebCore::Element> resolvedElement;
+    if (isSharedReference) {
+        RefPtr node = nodeForNodeHandle(*frame, nodeHandle);
+        if (!node) {
+            completionHandler(Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::NodeNotFound), { }, std::nullopt, false);
+            return;
+        }
+        resolvedElement = dynamicDowncast<WebCore::Element>(*node);
+        if (!resolvedElement) {
+            completionHandler(Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::NodeIsNotAnElement), { }, std::nullopt, false);
+            return;
+        }
+    } else {
+        if (!isValidNodeHandle(nodeHandle)) {
+            String invalidNodeIdentifierErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InvalidNodeIdentifier);
+            completionHandler(invalidNodeIdentifierErrorType, { }, std::nullopt, false);
+            return;
+        }
 
-    auto coreElementOrError = elementForNodeHandle(*frame, nodeHandle);
-    if (!coreElementOrError) {
-        completionHandler(coreElementOrError.error(), { }, std::nullopt, false);
-        return;
+        auto coreElementOrError = elementForNodeHandle(*frame, nodeHandle);
+        if (!coreElementOrError) {
+            completionHandler(coreElementOrError.error(), { }, std::nullopt, false);
+            return;
+        }
+        resolvedElement = WTF::move(*coreElementOrError);
     }
-    Ref coreElement = WTF::move(*coreElementOrError);
+    Ref coreElement = resolvedElement.releaseNonNull();
 
     RefPtr containerElement = containerElementForElement(coreElement.get());
     if (scrollIntoViewIfNeeded && containerElement) {

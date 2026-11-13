@@ -2186,10 +2186,10 @@ NODELETE static std::optional<CoordinateSystem> protocolStringToCoordinateSystem
 // frame's process hit tests when the click is dispatched. Force a presentation update in every
 // process first. Each one broadcasts its geometry before acknowledging the update, so the frame's
 // process receives it ahead of ComputeElementLayout.
-static void sendComputeElementLayout(WebPageProxy& page, std::optional<WebCore::FrameIdentifier> frameID, const Inspector::Protocol::Automation::NodeHandle& nodeHandle, bool scrollIntoViewIfNeeded, CoordinateSystem coordinateSystem, WTF::CompletionHandler<void(std::optional<String>&&, WebCore::FloatRect&&, std::optional<WebCore::IntPoint>&&, bool)>&& completionHandler)
+static void sendComputeElementLayout(WebPageProxy& page, std::optional<WebCore::FrameIdentifier> frameID, const Inspector::Protocol::Automation::NodeHandle& nodeHandle, bool scrollIntoViewIfNeeded, CoordinateSystem coordinateSystem, bool isSharedReference, WTF::CompletionHandler<void(std::optional<String>&&, WebCore::FloatRect&&, std::optional<WebCore::IntPoint>&&, bool)>&& completionHandler)
 {
-    auto send = [page = protect(page), frameID, nodeHandle, scrollIntoViewIfNeeded, coordinateSystem, completionHandler = WTF::move(completionHandler)] mutable {
-        page->sendWithAsyncReplyToProcessContainingFrameWithoutDestinationIdentifier(frameID, Messages::WebAutomationSessionProxy::ComputeElementLayout(page->webPageIDInProcessForFrame(frameID), frameID, nodeHandle, scrollIntoViewIfNeeded, coordinateSystem), WTF::move(completionHandler));
+    auto send = [page = protect(page), frameID, nodeHandle, scrollIntoViewIfNeeded, coordinateSystem, isSharedReference, completionHandler = WTF::move(completionHandler)] mutable {
+        page->sendWithAsyncReplyToProcessContainingFrameWithoutDestinationIdentifier(frameID, Messages::WebAutomationSessionProxy::ComputeElementLayout(page->webPageIDInProcessForFrame(frameID), frameID, nodeHandle, scrollIntoViewIfNeeded, coordinateSystem, isSharedReference), WTF::move(completionHandler));
     };
 
     RefPtr frame = WebFrameProxy::webFrame(frameID);
@@ -2243,7 +2243,7 @@ void WebAutomationSession::computeElementLayout(const Inspector::Protocol::Autom
     };
 
     bool scrollIntoViewIfNeeded = optionalScrollIntoViewIfNeeded && *optionalScrollIntoViewIfNeeded;
-    sendComputeElementLayout(*page, frameID, nodeHandle, scrollIntoViewIfNeeded, *coordinateSystem, WTF::move(completionHandler));
+    sendComputeElementLayout(*page, frameID, nodeHandle, scrollIntoViewIfNeeded, *coordinateSystem, false, WTF::move(completionHandler));
 }
 
 void WebAutomationSession::getComputedRole(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle, const Inspector::Protocol::Automation::FrameHandle& frameHandle, const Inspector::Protocol::Automation::NodeHandle& nodeHandle, CommandCallback<String>&& callback)
@@ -2992,7 +2992,7 @@ void WebAutomationSession::runBidiInteractionSequence(WebPageProxy& page, std::o
         }
 
         // FIXME: Refresh the viewport when an earlier action in the sequence scrolls or re-lays out the page. <https://webkit.org/b/329451>
-        protectedThis->runInteractionSequence(*page, frameID, WTF::move(keyFrames), inputSources, SimulatedInputRunOptions { SimulatedInputViewport { viewport->location(), viewport->size() }, true }, WTF::move(completionHandler));
+        protectedThis->runInteractionSequence(*page, frameID, WTF::move(keyFrames), inputSources, SimulatedInputRunOptions { .viewport = SimulatedInputViewport { viewport->location(), viewport->size() }, .interpolatePointerMoves = true, .elementOriginsAreSharedReferences = true }, WTF::move(completionHandler));
     };
 
     auto send = [page = protect(page), frameID, didGetFrameViewportHandler = WTF::move(didGetFrameViewportHandler)] mutable {
@@ -3009,7 +3009,7 @@ void WebAutomationSession::runBidiInteractionSequence(WebPageProxy& page, std::o
 #endif // ENABLE(WEBDRIVER_BIDI)
 
 // MARK: SimulatedInputDispatcher::Client API
-void WebAutomationSession::viewportInViewCenterPointOfElement(WebPageProxy& page, std::optional<FrameIdentifier> frameID, const Inspector::Protocol::Automation::NodeHandle& nodeHandle, Function<void(std::optional<WebCore::IntPoint>, std::optional<AutomationCommandError>)>&& completionHandler)
+void WebAutomationSession::viewportInViewCenterPointOfElement(WebPageProxy& page, std::optional<FrameIdentifier> frameID, const Inspector::Protocol::Automation::NodeHandle& nodeHandle, bool isSharedReference, Function<void(std::optional<WebCore::IntPoint>, std::optional<AutomationCommandError>)>&& completionHandler)
 {
     WTF::CompletionHandler<void(std::optional<String>&&, WebCore::FloatRect&&, std::optional<WebCore::IntPoint>&&, bool)> didComputeElementLayoutHandler = [completionHandler = WTF::move(completionHandler)](std::optional<String>&& optionalError, WebCore::FloatRect&&, std::optional<WebCore::IntPoint>&& inViewCenterPoint, bool) mutable {
         if (optionalError) {
@@ -3028,7 +3028,7 @@ void WebAutomationSession::viewportInViewCenterPointOfElement(WebPageProxy& page
         completionHandler(inViewCenterPoint, std::nullopt);
     };
 
-    sendComputeElementLayout(page, frameID, nodeHandle, false, CoordinateSystem::LayoutViewport, WTF::move(didComputeElementLayoutHandler));
+    sendComputeElementLayout(page, frameID, nodeHandle, false, CoordinateSystem::LayoutViewport, isSharedReference, WTF::move(didComputeElementLayoutHandler));
 }
 
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
