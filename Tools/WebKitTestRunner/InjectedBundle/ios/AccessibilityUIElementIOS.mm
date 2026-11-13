@@ -122,6 +122,7 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (NSArray<NSString *> *)accessibilitySpeechHint;
 - (BOOL)_accessibilityIsStrongPasswordField;
 - (CGRect)accessibilityVisibleContentRect;
+- (BOOL)_accessibilityScrollToVisible;
 - (NSString *)accessibilityTextualContext;
 - (NSString *)accessibilityRoleDescription;
 - (BOOL)accessibilityHasPopup;
@@ -1138,6 +1139,7 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElementIOS::verticalScrollbar() co
 
 void AccessibilityUIElementIOS::scrollToMakeVisible()
 {
+    [m_element _accessibilityScrollToVisible];
 }
 
 void AccessibilityUIElementIOS::scrollToGlobalPoint(int x, int y)

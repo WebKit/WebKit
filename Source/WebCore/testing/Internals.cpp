@@ -4586,6 +4586,16 @@ float Internals::obscuredContentInsetTop()
     return protect(document->page())->obscuredContentInsets().top();
 }
 
+ExceptionOr<void> Internals::setSoftwareKeyboardHeight(float height)
+{
+    RefPtr document = contextDocument();
+    if (!document || !document->view())
+        return Exception { ExceptionCode::InvalidAccessError };
+
+    protect(document->view())->setSoftwareKeyboardHeightForTesting(height > 0 ? std::optional { LayoutUnit { height } } : std::nullopt);
+    return { };
+}
+
 void Internals::setFullscreenInsets(FullscreenInsets insets)
 {
     RefPtr contextDocument = this->contextDocument();

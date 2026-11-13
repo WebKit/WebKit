@@ -985,6 +985,9 @@ enum LayerType {
 
     float obscuredContentInsetTop();
 
+    // Covers the bottom of the view with a fake software keyboard; 0 removes it.
+    undefined setSoftwareKeyboardHeight(unrestricted float height);
+
     undefined setFullscreenInsets(FullscreenInsets insets);
     undefined setFullscreenAutoHideDuration(double duration);
 
