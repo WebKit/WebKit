@@ -134,6 +134,7 @@ public:
 
 #if HAVE(SCREEN_CAPTURE_KIT)
     void promptForGetDisplayMedia(WebCore::DisplayCapturePromptType, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
+    void selectWindowForCapture(uint32_t windowID, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
     void cancelGetDisplayMediaPrompt();
 #endif
 
