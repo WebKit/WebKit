@@ -1,0 +1,11 @@
+
+PASS Default unicodeRange should use uppercase hex
+PASS Single codepoint with hex letters should be uppercase
+PASS Range with hex letters should be uppercase
+PASS Lowercase hex input should serialize as uppercase
+PASS Mixed numeric and hex letters should uppercase the letters
+PASS All hex letter digits should be uppercase
+PASS Wildcard range should serialize as interval with uppercase hex
+PASS Setting unicodeRange after construction should serialize as uppercase
+PASS Codepoint hex digits are ASCII case-insensitive
+
