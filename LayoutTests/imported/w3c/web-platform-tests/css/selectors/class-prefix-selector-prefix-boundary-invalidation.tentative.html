@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Selectors: class prefix selector invalidation follows the prefix matching rules</title>
+<link rel="author" title="Tim Nguyen" href="https://github.com/nt1m">
+<link rel="help" href="https://drafts.csswg.org/selectors-5/#class-prefix">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+  #nested.foo-* { color: rgb(1, 2, 3); }
+  #nested.foo-bar-* { background-color: rgb(4, 5, 6); }
+  #double-hyphen.foo-* { color: rgb(7, 8, 9); }
+  #double-hyphen.foo--* { background-color: rgb(10, 11, 12); }
+  #bare-prefix.foo-* { color: rgb(13, 14, 15); }
+  #swap.foo-* { color: rgb(16, 17, 18); }
+  #swap.bar-* { background-color: rgb(19, 20, 21); }
+  #non-latin1.日本-* { color: rgb(22, 23, 24); }
+  #case.foo-* { color: rgb(25, 26, 27); }
+</style>
+<div id="nested"></div>
+<div id="double-hyphen"></div>
+<div id="bare-prefix"></div>
+<div id="swap"></div>
+<div id="non-latin1"></div>
+<div id="case"></div>
+<script>
+const black = 'rgb(0, 0, 0)';
+const transparent = 'rgba(0, 0, 0, 0)';
+
+function color(element) {
+  return getComputedStyle(element).color;
+}
+
+function backgroundColor(element) {
+  return getComputedStyle(element).backgroundColor;
+}
+
+test(() => {
+  const element = document.getElementById('nested');
+
+  element.className = 'foo-bar-baz';
+  assert_equals(color(element), 'rgb(1, 2, 3)', '"foo-bar-baz" matches .foo-*');
+  assert_equals(backgroundColor(element), 'rgb(4, 5, 6)', '"foo-bar-baz" matches .foo-bar-*');
+
+  element.className = 'foo-bar';
+  assert_equals(color(element), 'rgb(1, 2, 3)', '"foo-bar" matches .foo-*');
+  assert_equals(backgroundColor(element), transparent, '"foo-bar" does not match .foo-bar-*');
+
+  element.className = 'foo-bar-';
+  assert_equals(color(element), 'rgb(1, 2, 3)', '"foo-bar-" matches .foo-*');
+  assert_equals(backgroundColor(element), transparent, '"foo-bar-" does not match .foo-bar-*');
+
+  element.className = '';
+  assert_equals(color(element), black);
+  assert_equals(backgroundColor(element), transparent);
+}, 'a class name invalidates every prefix selector it matches, and only those');
+
+test(() => {
+  const element = document.getElementById('double-hyphen');
+
+  element.className = 'foo--x';
+  assert_equals(color(element), black, '"foo--x" does not match .foo-*');
+  assert_equals(backgroundColor(element), 'rgb(10, 11, 12)', '"foo--x" matches .foo--*');
+
+  element.className = 'foo-x';
+  assert_equals(color(element), 'rgb(7, 8, 9)', '"foo-x" matches .foo-*');
+  assert_equals(backgroundColor(element), transparent, '"foo-x" does not match .foo--*');
+
+  element.className = 'foo--x';
+  assert_equals(color(element), black);
+  assert_equals(backgroundColor(element), 'rgb(10, 11, 12)');
+
+  element.className = '';
+  assert_equals(color(element), black);
+  assert_equals(backgroundColor(element), transparent);
+}, 'switching between a single and a double hyphen after the prefix invalidates both prefix selectors');
+
+test(() => {
+  const element = document.getElementById('bare-prefix');
+
+  element.className = 'foo-';
+  assert_equals(color(element), black, '"foo-" does not match .foo-*');
+
+  element.className = 'foo- foo-x';
+  assert_equals(color(element), 'rgb(13, 14, 15)');
+
+  element.className = 'foo-';
+  assert_equals(color(element), black);
+}, 'a class name equal to the prefix never matches, before or after a class change');
+
+test(() => {
+  const element = document.getElementById('swap');
+
+  element.className = 'foo-a';
+  assert_equals(color(element), 'rgb(16, 17, 18)');
+  assert_equals(backgroundColor(element), transparent);
+
+  element.className = 'foo-b bar-a';
+  assert_equals(color(element), 'rgb(16, 17, 18)', 'still matches .foo-* via "foo-b"');
+  assert_equals(backgroundColor(element), 'rgb(19, 20, 21)');
+
+  element.className = 'bar-a foo-b';
+  assert_equals(color(element), 'rgb(16, 17, 18)', 'reordering classes keeps matching .foo-*');
+  assert_equals(backgroundColor(element), 'rgb(19, 20, 21)', 'reordering classes keeps matching .bar-*');
+
+  element.className = 'bar-b';
+  assert_equals(color(element), black);
+  assert_equals(backgroundColor(element), 'rgb(19, 20, 21)');
+
+  element.className = '';
+  assert_equals(color(element), black);
+  assert_equals(backgroundColor(element), transparent);
+}, 'replacing one matching class by another in a single mutation keeps the prefix selector matching');
+
+test(() => {
+  const element = document.getElementById('non-latin1');
+
+  element.classList.add('日本-x');
+  assert_equals(color(element), 'rgb(22, 23, 24)');
+
+  element.classList.remove('日本-x');
+  assert_equals(color(element), black);
+}, 'class prefix selectors with non-Latin-1 characters are invalidated');
+
+test(() => {
+  const element = document.getElementById('case');
+
+  element.className = 'FOO-x';
+  assert_equals(color(element), black, '"FOO-x" does not match .foo-* in no-quirks mode');
+
+  element.className = 'foo-x';
+  assert_equals(color(element), 'rgb(25, 26, 27)');
+
+  element.className = 'Foo-x';
+  assert_equals(color(element), black);
+}, 'class prefix selector invalidation is case-sensitive in no-quirks mode');
+</script>

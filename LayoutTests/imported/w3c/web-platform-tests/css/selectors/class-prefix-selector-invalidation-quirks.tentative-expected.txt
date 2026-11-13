@@ -1,0 +1,5 @@
+
+PASS this test runs in quirks mode
+PASS .foo-* is invalidated when a class matching it case-insensitively is added or removed in quirks mode
+PASS .FOO-* never starts matching after a class change in quirks mode
+

@@ -24,6 +24,7 @@
 #include <WebCore/CSSSelectorEnums.h>
 #include <WebCore/QualifiedName.h>
 #include <WebCore/RenderStyleConstants.h>
+#include <WebCore/SpaceSplitString.h>
 #include <wtf/FixedVector.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Variant.h>
@@ -132,6 +133,10 @@ public:
 
     // Maps from the selector pseudo-element type to the style type. Only pseudo-elements that are not element-backed have a type in style.
     NODELETE static std::optional<PseudoElementType> stylePseudoElementTypeFor(PseudoElement);
+
+    static bool classNameMatchesPrefix(StringView className, StringView prefix);
+    static bool hasClassNameMatchingPrefix(const SpaceSplitString& classNames, StringView prefix);
+
     static bool isPseudoClassEnabled(PseudoClass, const CSSSelectorParserContext&);
     static bool isPseudoElementEnabled(PseudoElement, StringView, const CSSSelectorParserContext&);
     static std::optional<PseudoElement> parsePseudoElementName(StringView, const CSSSelectorParserContext&);
@@ -510,6 +515,27 @@ inline void CSSSelector::setRelation(Relation relation)
 inline void CSSSelector::setMatch(Match match)
 {
     m_match = std::to_underlying(match);
+}
+
+// A class name matches a prefix (e.g. ".foo-*") if it starts with the prefix, has at least
+// one character beyond it, and that character isn't also a hyphen.
+// https://drafts.csswg.org/selectors-5/#class-prefix
+inline bool CSSSelector::classNameMatchesPrefix(StringView className, StringView prefix)
+{
+    if (className.length() <= prefix.length())
+        return false;
+    if (!className.startsWith(prefix))
+        return false;
+    return className[prefix.length()] != '-';
+}
+
+inline bool CSSSelector::hasClassNameMatchingPrefix(const SpaceSplitString& classNames, StringView prefix)
+{
+    for (auto& className : classNames) {
+        if (classNameMatchesPrefix(className, prefix))
+            return true;
+    }
+    return false;
 }
 
 } // namespace WebCore
