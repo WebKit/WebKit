@@ -284,6 +284,75 @@ struct SiteIsolationPolicyDecisionTests {
         }
     }
 
+    enum NextDocument: String, CaseIterable, Sendable, CustomTestStringConvertible {
+        case sameSite
+        case crossSiteSuspendedPageControl
+
+        var url: String {
+            switch self {
+            case .sameSite: "https://example.com/second"
+            case .crossSiteSuspendedPageControl: "https://w3.org/next"
+            }
+        }
+
+        var testDescription: String { rawValue }
+    }
+
+    @Test(arguments: NextDocument.allCases)
+    func goingBackAfterCancelledGoBackRestoresFromBackForwardCache(nextDocument: NextDocument) async throws {
+        var server = try HTTPServer(protocol: .httpsProxy) {
+            Route("/first") {
+                "<iframe src='https://webkit.org/frame'></iframe>"
+            }
+
+            Route("/frame") {
+                "frame"
+            }
+
+            Route("/second") {
+                "second"
+            }
+
+            Route("/next") {
+                "next"
+            }
+        }
+
+        try await server.run { serverConfiguration in
+            let configuration = Self.configuration(serverConfiguration, backForwardCacheEnabled: true)
+            let (webView, navigationDelegate) = siteIsolatedWebViewAndDelegate(configuration: configuration)
+
+            webView.load(URLRequest(url: try #require(URL(string: "https://example.com/first"))))
+            try await navigationDelegate.waitForDidFinishNavigation()
+            try await waitForFrameTrees(of: webView, Self.pageWithChildFrameTrees)
+            let childFrame = try #require(await webView.firstChildFrame)
+            try await webView.callJavaScript { "window.marker = 'cached'" }
+            try await webView.callJavaScript(in: childFrame) { "window.marker = 'cached'" }
+
+            webView.load(URLRequest(url: try #require(URL(string: nextDocument.url))))
+            try await navigationDelegate.waitForDidFinishNavigation()
+
+            let decisions = HeldNavigationActionDecisions(forPath: "/first", of: navigationDelegate)
+            webView.goBack()
+            try await decisions.next()(.cancel)
+            let urlAfterCancel = try await webView.callJavaScript(returning: String.self) { "return location.href" }
+            #expect(urlAfterCancel == nextDocument.url)
+
+            webView.goBack()
+            try await decisions.next()(.allow)
+            try await navigationDelegate.waitForDidFinishNavigation()
+            #expect(webView.url?.absoluteString == "https://example.com/first")
+            let mainFrameMarker = try await Self.marker(in: webView)
+            #expect(mainFrameMarker == "cached")
+
+            try await waitForFrameTrees(of: webView, Self.pageWithChildFrameTrees)
+            let restoredChildFrame = try #require(await webView.firstChildFrame)
+            let childFrameMarker = try await Self.marker(in: webView, frame: restoredChildFrame)
+            #expect(childFrameMarker == "cached")
+            #expect(restoredChildFrame._processIdentifier == childFrame._processIdentifier)
+        }
+    }
+
     // MARK: Helpers
 
     private static let pageWithChildFrameTrees: FrameTreesInProcesses = [
@@ -302,6 +371,10 @@ struct SiteIsolationPolicyDecisionTests {
             configuration.processPool = .withBackForwardCacheDisabled()
         }
         return configuration
+    }
+
+    private static func marker(in webView: WKWebView, frame: WKFrameInfo? = nil) async throws -> String {
+        try await webView.callJavaScript(returning: String.self, in: frame) { "return window.marker ?? 'reloaded'" }
     }
 }
 
