@@ -1,0 +1,6 @@
+
+PASS Transferring a port from a closed port detaches it (transfer sequence)
+PASS Transferring a port from a closed port detaches it (StructuredSerializeOptions)
+PASS Transferring both ports of a channel from a closed port detaches both
+PASS Transferring a port and an ArrayBuffer from a closed port detaches both
+
