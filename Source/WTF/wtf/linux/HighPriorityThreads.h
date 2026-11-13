@@ -19,7 +19,6 @@
 
 #pragma once
 
-#include <wtf/CanMakeWeakPtr.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/ThreadGroup.h>
 
@@ -33,15 +32,11 @@ typedef struct _GDBusProxy GDBusProxy;
 
 namespace WTF {
 
-class HighPriorityThreads : public CanMakeWeakPtr<HighPriorityThreads> {
+class HighPriorityThreads {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(HighPriorityThreads);
     friend class LazyNeverDestroyed<HighPriorityThreads>;
 public:
     WTF_EXPORT_PRIVATE static HighPriorityThreads& singleton();
-
-    // Do nothing since this is a singleton.
-    void ref() const { }
-    void deref() const { }
 
     void registerThread(Thread&);
 
