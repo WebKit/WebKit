@@ -29,16 +29,19 @@
 
 #if HAVE(APPKIT_GESTURES_SUPPORT)
 
-#import "IdentifierTypes.h"
-#import "RemoteLayerTreeNode.h"
-#import "RemoteScrollingTreeCocoa.h"
 #import "WKDeferringGestureRecognizer.h"
-#import "WebPageProxy.h"
-#import "WebMouseEvent.h"
 #import <AppKit/NSGestureRecognizer.h>
 #import <wtf/Forward.h>
 #import <wtf/ObjectIdentifier.h>
 #import <wtf/Vector.h>
+
+#if !__has_feature(modules)
+#import "IdentifierTypes.h"
+#import "RemoteLayerTreeNode.h"
+#import "RemoteScrollingTreeCocoa.h"
+#import "WebMouseEvent.h"
+#import "WebPageProxy.h"
+#endif
 
 namespace WebCore {
 class Color;
@@ -54,6 +57,8 @@ struct InteractionInformationAtPosition;
 OBJC_CLASS NSPanGestureRecognizer;
 OBJC_CLASS WKClickHighlightController;
 OBJC_CLASS WKWebView;
+
+#if !__has_feature(modules)
 
 namespace WebKit {
 using ClickIdentifier = TapIdentifier;
@@ -73,6 +78,8 @@ static inline BOOL isSystemWindowResizeGestureRecognizer(NSGestureRecognizer *ge
 {
     return [gestureRecognizer.name isEqualToString:@"NSThemeFrame.panTouchGestureRecognizer"];
 }
+
+#endif // !__has_feature(modules)
 
 NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
