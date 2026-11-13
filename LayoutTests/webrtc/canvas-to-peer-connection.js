@@ -101,3 +101,49 @@ async function testCanvasToPeerConnection(t, subcase)
         await drawAndValidate(subcase, canvas, video, i, `iteration: ${i}`);
 }
 
+async function drawAndCheckColorSpace(t, subcase, canvas, video, counter, expectedColorSpace)
+{
+    // First change canvas width and wait for width change to clear previous frames.
+    canvas.width = canvas.width + 500;
+    canvas.height = canvas.height + 500;
+
+    let counter1 = counter;
+    let id = setInterval(() => { subcase.draw(subcase, canvas, counter1++)}, 100);
+    await waitForVideoFrameSize(video, canvas.width, canvas.height);
+    clearInterval(id);
+
+    // Get back canvas size to normal and wait for width change to get test frames.
+    canvas.width = canvas.width - 500;
+    canvas.height = canvas.height - 500;
+    id = setInterval(() => { subcase.draw(subcase, canvas, counter)}, 100);
+    subcase.draw(subcase, canvas, counter);
+    await waitForVideoFrameSize(video, canvas.width, canvas.height);
+    clearInterval(id);
+
+    const frame = new VideoFrame(video);
+    t.add_cleanup(() => frame.close());
+    assert_equals(frame.colorSpace.primaries, expectedColorSpace.primaries, "primaries");
+    assert_equals(frame.colorSpace.transfer, expectedColorSpace.transfer, "transfer");
+    assert_equals(frame.colorSpace.matrix, expectedColorSpace.matrix, "matrix");
+}
+
+async function testCanvasToPeerConnectionAndCheckColorSpace(t, subcase) {
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    debuge.appendChild(canvas);
+    const localStream = canvas.captureStream();
+    const remoteStream = await createLocalPeerConnectionStream(localStream);
+
+    const video = document.createElement("video");
+    video.autoplay = true;
+    video.controls = true;
+    debuge.appendChild(video);
+    t.add_cleanup(async () => debuge.removeChild(video));
+    video.srcObject = remoteStream;
+
+    const expectedColorSpace = { primaries: "bt709", transfer: "iec61966-2-1", matrix: "bt709" };
+    for (let i = 0; i < 5; ++i)
+        await drawAndCheckColorSpace(t, subcase, canvas, video, 1, expectedColorSpace);
+}
+

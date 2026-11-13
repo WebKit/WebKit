@@ -90,7 +90,7 @@ void RealtimeOutgoingVideoSourceCocoa::videoFrameAvailable(VideoFrame& videoFram
     auto colorSpace = [&] {
         if (auto pixelFormat = convertVideoFramePixelFormat(videoFrame.pixelFormat(), true)) {
             if (isRGBVideoPixelFormat(*pixelFormat))
-                return srgbColorSpace();
+                return srgbAsBT709YUVColorSpace();
         }
         return videoFrame.colorSpace();
     }();

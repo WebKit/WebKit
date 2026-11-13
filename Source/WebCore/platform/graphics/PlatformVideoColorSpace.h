@@ -54,6 +54,17 @@ inline PlatformVideoColorSpace srgbColorSpace()
     return {
         .primaries = PlatformVideoColorPrimaries::Bt709,
         .transfer = PlatformVideoTransferCharacteristics::Iec6196621,
+        .matrix = PlatformVideoMatrixCoefficients::Rgb,
+        .fullRange = true
+    };
+}
+
+// Variant of srgbColorSpace for Cocoa platforms.
+inline PlatformVideoColorSpace srgbAsBT709YUVColorSpace()
+{
+    return {
+        .primaries = PlatformVideoColorPrimaries::Bt709,
+        .transfer = PlatformVideoTransferCharacteristics::Iec6196621,
         .matrix = PlatformVideoMatrixCoefficients::Bt709,
         .fullRange = true
     };

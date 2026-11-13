@@ -2925,6 +2925,8 @@ http/wpt/webrtc/rtcNetworkInterface.html [ Skip ]
 # Fails when using two textures.
 webkit.org/b/258296 webrtc/canvas-to-peer-connection.html [ Failure Timeout ]
 
+webrtc/canvas-to-peer-connection-check-colorspace.html [ Failure ]
+
 # The MediaStream implementation is not completed yet
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-ice.html [ Timeout ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-inspect-offer-bundlePolicy-bundle-only.html [ Failure ]

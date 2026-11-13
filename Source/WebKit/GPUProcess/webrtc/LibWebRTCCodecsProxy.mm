@@ -457,7 +457,7 @@ void LibWebRTCCodecsProxy::encodeFrame(VideoEncoderIdentifier identifier, Shared
     }
 
     if (CVPixelBufferGetPixelFormatType(pixelBuffer.get()) == kCVPixelFormatType_32BGRA) {
-        sharedVideoFrame.colorSpace = srgbColorSpace();
+        sharedVideoFrame.colorSpace = srgbAsBT709YUVColorSpace();
         if (!m_pixelBufferConformer)
             lazyInitialize(m_pixelBufferConformer, makeUnique<WebCore::PixelBufferConformerCV>((__bridge CFDictionaryRef)@{ (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_420YpCbCr8BiPlanarFullRange) }));
         pixelBuffer = m_pixelBufferConformer->convert(pixelBuffer.get());
