@@ -3891,15 +3891,14 @@ void Element::childrenChanged(const ChildChange& change)
             }
             if (!allInsertedElementsAreTreatedAsNeutralCharacter)
                 updateEffectiveTextDirection();
-        } else {
-            // No light DOM dir=auto ancestor, but this element may be slotted
-            // into a dir=auto slot whose direction depends on slotted content.
-            for (Ref ancestor : composedTreeAncestors(*this)) {
-                if (auto* slot = dynamicDowncast<HTMLSlotElement>(ancestor.get())) {
-                    if (slot->selfOrPrecedingNodesAffectDirAuto())
-                        slot->updateEffectiveTextDirection();
-                    break;
-                }
+        }
+
+        // This element may be slotted into a dir=auto slot whose direction depends on slotted content.
+        for (Ref ancestor : composedTreeAncestors(*this)) {
+            if (RefPtr slot = dynamicDowncast<HTMLSlotElement>(ancestor)) {
+                if (slot->selfOrPrecedingNodesAffectDirAuto())
+                    slot->updateEffectiveTextDirection();
+                break;
             }
         }
     }

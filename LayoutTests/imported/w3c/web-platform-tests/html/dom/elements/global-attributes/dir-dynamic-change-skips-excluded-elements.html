@@ -1,0 +1,130 @@
+<!doctype html>
+<title>HTML Test: dynamic dir changes do not override elements with their own directionality</title>
+<meta charset="UTF-8">
+<link rel="help" href="https://html.spec.whatwg.org/multipage/dom.html#the-directionality">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="dir-shadow-utils.js"></script>
+
+<div></div>
+
+<script>
+
+test(() => {
+  let [tree, shadow] = setup_tree(`
+    <div>
+      <div id="root" dir="ltr"></div>
+    </div>
+  `, `
+    <span dir="ltr"><b></b></span>
+  `);
+  let span = shadow.querySelector("span");
+  let b = shadow.querySelector("b");
+  assert_equals(html_direction(span), "ltr");
+  assert_equals(html_direction(b), "ltr");
+  tree.querySelector("#root").dir = "rtl";
+  assert_equals(html_direction(span), "ltr");
+  assert_equals(html_direction(b), "ltr");
+  tree.remove();
+}, "Changing host dir does not override shadow root child with dir=ltr");
+
+test(() => {
+  let [tree, shadow] = setup_tree(`
+    <div>
+      <div id="root" dir="ltr"></div>
+    </div>
+  `, `
+    <p dir="auto">abc<b></b></p>
+  `);
+  let p = shadow.querySelector("p");
+  let b = shadow.querySelector("b");
+  assert_equals(html_direction(p), "ltr");
+  assert_equals(html_direction(b), "ltr");
+  tree.querySelector("#root").dir = "rtl";
+  assert_equals(html_direction(p), "ltr");
+  assert_equals(html_direction(b), "ltr");
+  tree.remove();
+}, "Changing host dir does not override shadow root child with dir=auto");
+
+test(() => {
+  let [tree, shadow] = setup_tree(`
+    <div>
+      <div id="root" dir="ltr"></div>
+    </div>
+  `, `
+    <bdi>abc<b></b></bdi>
+  `);
+  let bdi = shadow.querySelector("bdi");
+  let b = shadow.querySelector("b");
+  assert_equals(html_direction(bdi), "ltr");
+  assert_equals(html_direction(b), "ltr");
+  tree.querySelector("#root").dir = "rtl";
+  assert_equals(html_direction(bdi), "ltr");
+  assert_equals(html_direction(b), "ltr");
+  tree.remove();
+}, "Changing host dir does not override shadow root child bdi");
+
+test(() => {
+  let [tree, shadow] = setup_tree(`
+    <div>
+      <div id="root" dir="ltr"></div>
+    </div>
+  `, `
+    <input type="tel">
+  `);
+  let input = shadow.querySelector("input");
+  assert_equals(html_direction(input), "ltr");
+  tree.querySelector("#root").dir = "rtl";
+  assert_equals(html_direction(input), "ltr");
+  tree.remove();
+}, "Changing host dir does not override shadow root child input type=tel");
+
+test(() => {
+  let tree = setup_tree(`
+    <div dir="ltr">
+      <input type="tel">
+      <span><input type="tel"></span>
+    </div>
+  `);
+  let inputs = tree.querySelectorAll("input");
+  for (let input of inputs)
+    assert_equals(html_direction(input), "ltr");
+  tree.dir = "rtl";
+  for (let input of inputs)
+    assert_equals(html_direction(input), "ltr");
+  tree.remove();
+}, "Changing ancestor dir does not override descendant input type=tel");
+
+test(() => {
+  let tree = setup_tree(`
+    <div dir="auto">
+      <span>abc</span>
+      <input type="tel">
+    </div>
+  `);
+  let input = tree.querySelector("input");
+  assert_equals(html_direction(tree), "ltr");
+  assert_equals(html_direction(input), "ltr");
+  tree.querySelector("span").textContent = "א";
+  assert_equals(html_direction(tree), "rtl");
+  assert_equals(html_direction(input), "ltr");
+  tree.remove();
+}, "Changing dir=auto ancestor direction does not override descendant input type=tel");
+
+test(() => {
+  let [tree, shadow] = setup_tree(`
+    <div>
+      <div id="root" dir="ltr"></div>
+    </div>
+  `, `
+    <div><input type="tel"></div>
+  `);
+  let input = shadow.querySelector("input");
+  assert_equals(html_direction(input), "ltr");
+  tree.querySelector("#root").dir = "rtl";
+  assert_equals(html_direction(shadow.querySelector("div")), "rtl");
+  assert_equals(html_direction(input), "ltr");
+  tree.remove();
+}, "Changing host dir does not override input type=tel deeper in the shadow tree");
+
+</script>

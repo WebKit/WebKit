@@ -1,0 +1,9 @@
+
+PASS Changing host dir does not override shadow root child with dir=ltr
+PASS Changing host dir does not override shadow root child with dir=auto
+PASS Changing host dir does not override shadow root child bdi
+PASS Changing host dir does not override shadow root child input type=tel
+PASS Changing ancestor dir does not override descendant input type=tel
+PASS Changing dir=auto ancestor direction does not override descendant input type=tel
+PASS Changing host dir does not override input type=tel deeper in the shadow tree
+
