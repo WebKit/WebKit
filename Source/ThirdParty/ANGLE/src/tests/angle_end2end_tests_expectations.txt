@@ -2580,7 +2580,6 @@
 42266907 WGPU : BlitFramebufferTest.NonZeroBaseDestination* = SKIP
 42266907 WGPU : BlitFramebufferTest.NonZeroBaseSourceStencil/* = SKIP
 42266907 WGPU : BlitFramebufferTest.NonZeroBaseSource/* = SKIP
-42266907 WGPU : BlitFramebufferTest.BlitSRGBToRGBOversizedSourceArea/* = SKIP
 42266907 WGPU : BlitFramebufferTest.drawBlitAndDrawAgain/* = SKIP
 42266907 WGPU : BlitFramebufferTest.scissorDrawBlitAndDrawAgain/* = SKIP
 42266907 WGPU : BlitFramebufferTest.FlippedBlits/* = SKIP
@@ -3068,6 +3067,14 @@
 
 // webkit.org/b/317381
 0 METAL : HardenedContextTest.RenderingFeedbackLoopWithStencilOnlyANGLE/* = SKIP
+
+// The Metal backend's GL_NEAREST blits take the wrong texel at exact edges between source texels
+// from the default framebuffer, whose rows are stored flipped, and for scales that aren't
+// representable as floats, like 37/6. https://bugs.webkit.org/show_bug.cgi?id=329546
+329546 METAL : BlitFramebufferTest.NearestBlitsAtTexelEdges/* = SKIP
+
+// Metal rounds half-pixel clip edges away from zero. https://bugs.webkit.org/show_bug.cgi?id=329559
+329559 METAL : BlitFramebufferTest.BlitsWithHalfPixelClipEdges/* = SKIP
 
 // webkit.org/b/319849
 0 METAL : ClipDistanceAPPLETest.OneClipDistance/* = SKIP
