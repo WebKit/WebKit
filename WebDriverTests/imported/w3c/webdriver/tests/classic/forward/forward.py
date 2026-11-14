@@ -2,6 +2,7 @@ import pytest
 from webdriver import error
 
 from tests.support.classic.asserts import assert_error, assert_success
+from tests.support.sync import Poll
 
 
 def forward(session):
@@ -172,6 +173,37 @@ def test_history_pushstate(session, inline):
 
     assert session.url == "{}#pushstate".format(pushstate_page)
     assert session.execute_script("return history.state;") == {"foo": "bar"}
+
+
+def test_history_pushstate_without_user_activation(session, inline):
+    page = inline("<p>page</p>")
+
+    session.url = page
+    session.execute_script("history.pushState(null, '', '#first');")
+    session.execute_script("history.pushState(null, '', '#second');")
+    session.execute_script("history.go(-2);")
+    Poll(session, message="history.go(-2) did not go back").until(lambda s: s.url == page)
+
+    response = forward(session)
+    assert_success(response)
+
+    assert session.url == "{}#first".format(page)
+
+
+def test_navigation_from_script_without_user_activation(session, inline):
+    first_page = inline("<p>first</p>")
+    second_page = inline("<p>second</p>")
+
+    session.url = first_page
+    session.execute_script("window.location.href = arguments[0];", args=[second_page])
+    Poll(session, message="The second page did not load").until(lambda s: s.url == second_page)
+    session.execute_script("history.back();")
+    Poll(session, message="history.back() did not go back").until(lambda s: s.url == first_page)
+
+    response = forward(session)
+    assert_success(response)
+
+    assert session.url == second_page
 
 
 def test_removed_iframe(session, url, inline):
