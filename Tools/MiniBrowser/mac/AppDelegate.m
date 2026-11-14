@@ -356,8 +356,10 @@ static NSNumber *_currentBadge;
         _WKProcessPoolConfiguration *processConfiguration = [[_WKProcessPoolConfiguration alloc] init];
         if (_settingsController.perWindowWebProcessesDisabled)
             processConfiguration.usesSingleWebProcess = YES;
-        else
+        else {
             processConfiguration.usesWebProcessCache = YES;
+            processConfiguration.prewarmsProcessesAutomatically = YES;
+        }
 
         configuration.processPool = [[WKProcessPool alloc] _initWithConfiguration:processConfiguration];
 #pragma clang diagnostic pop
