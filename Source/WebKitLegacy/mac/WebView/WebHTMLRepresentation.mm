@@ -340,7 +340,7 @@ static RefPtr<WebCore::HTMLInputElement> inputElementFromDOMElement(DOMElement* 
         return nil;
 
     WebCore::ScriptDisallowedScope::InMainThread scriptDisallowedScope;
-    auto result = createNSArray(formElement->unsafeListedElements(), [] (auto& weakElement) -> DOMElement * {
+    auto result = createNSArray(formElement->unsafeListedElements(), [](auto& weakElement) -> RetainPtr<DOMElement> {
         RefPtr coreElement { weakElement.get() };
         if (!coreElement || !coreElement->asFormListedElement()->isEnumeratable()) // Skip option elements, other duds
             return nil;
