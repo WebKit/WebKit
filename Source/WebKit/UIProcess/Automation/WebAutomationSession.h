@@ -409,6 +409,14 @@ private:
     void evaluateJavaScriptFunction(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, const String& function, Ref<JSON::Array>&& arguments, std::optional<bool>&& expectsImplicitCallbackArgument, std::optional<bool>&& forceUserGesture, std::optional<double>&& callbackTimeout, UserPromptEndsEvaluation, Inspector::CommandCallback<String>&&);
     void waitForNavigationToCompleteOnPage(WebPageProxy&, Inspector::Protocol::Automation::PageLoadStrategy, Seconds, Inspector::CommandCallback<void>&&, RefPtr<API::Navigation>&& = nullptr, SameDocumentNavigation = SameDocumentNavigation::No);
     void waitForHistoryTraversalToComplete(WebPageProxy&, Inspector::Protocol::Automation::PageLoadStrategy, Seconds, Inspector::CommandCallback<void>&&, RefPtr<API::Navigation>&&);
+    // Traverses the session history by a delta, as history.go() does: unlike the Back and Forward buttons, it doesn't
+    // skip the entries that script added without user interaction.
+    void traverseHistoryByDelta(WebPageProxy&, int delta, Inspector::Protocol::Automation::PageLoadStrategy, Seconds, Inspector::CommandCallback<void>&&);
+    // A traversal that keeps the main frame's entry loads documents in subframes only, which the page's navigation and
+    // load state don't cover, so it waits until the page and each of its frames have finished loading.
+    void waitForPageAndFramesToFinishLoading(WebPageProxy&, Inspector::Protocol::Automation::PageLoadStrategy, Seconds, Inspector::CommandCallback<void>&&);
+    void schedulePageAndFramesLoadCheck();
+    void respondToPendingPageAndFramesLoadCallbacksWithSuccess(WebPageProxyIdentifier);
     bool hasPendingNavigationCallbacks() const;
     // A caller that has just started a load in the frame passes LoadStarted::Yes: the frame's load state does not
     // change until the web process reports the load, so without it the wait would complete at once.
@@ -571,6 +579,8 @@ private:
     HashMap<WebPageProxyIdentifier, Vector<PendingPageNavigationCallback>> m_pendingEagerNavigationInBrowsingContextCallbacksPerPage;
     HashMap<WebCore::FrameIdentifier, Vector<Inspector::CommandCallback<void>>> m_pendingNormalNavigationInBrowsingContextCallbacksPerFrame;
     HashMap<WebCore::FrameIdentifier, Vector<Inspector::CommandCallback<void>>> m_pendingEagerNavigationInBrowsingContextCallbacksPerFrame;
+    HashMap<WebPageProxyIdentifier, Vector<PendingPageNavigationCallback>> m_pendingPageAndFramesLoadCallbacksPerPage;
+    bool m_pageAndFramesLoadCheckIsScheduled { false };
     HashMap<WebPageProxyIdentifier, Inspector::CommandCallback<void>> m_pendingInspectorCallbacksPerPage;
 #if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
     HashMap<WebPageProxyIdentifier, Inspector::CommandCallback<void>> m_pendingKeyboardEventsFlushedCallbacksPerPage;
