@@ -57,7 +57,7 @@ Ref<DrawingAreaProxyCoordinatedGraphics> DrawingAreaProxyCoordinatedGraphics::cr
 
 DrawingAreaProxyCoordinatedGraphics::DrawingAreaProxyCoordinatedGraphics(WebPageProxy& webPageProxy, WebProcessProxy& webProcessProxy)
     : DrawingAreaProxy(webPageProxy, webProcessProxy)
-#if !PLATFORM(WPE) && !PLATFORM(GTK)
+#if !USE(ACCELERATED_SURFACE)
     , m_discardBackingStoreTimer(RunLoop::currentSingleton(), "DrawingAreaProxyCoordinatedGraphics::DiscardBackingStoreTimer"_s, this, &DrawingAreaProxyCoordinatedGraphics::discardBackingStore)
 #endif
 {
@@ -70,7 +70,7 @@ DrawingAreaProxyCoordinatedGraphics::~DrawingAreaProxyCoordinatedGraphics()
         exitAcceleratedCompositingMode();
 }
 
-#if !PLATFORM(WPE) && !PLATFORM(GTK)
+#if !USE(ACCELERATED_SURFACE)
 void DrawingAreaProxyCoordinatedGraphics::paint(PlatformPaintContextPtr cr, const IntRect& rect, Region& unpaintedRegion)
 {
     unpaintedRegion = rect;
@@ -177,7 +177,7 @@ void DrawingAreaProxyCoordinatedGraphics::deviceScaleFactorDidChange(CompletionH
 
 void DrawingAreaProxyCoordinatedGraphics::setBackingStoreIsDiscardable(bool isBackingStoreDiscardable)
 {
-#if !PLATFORM(WPE) && !PLATFORM(GTK)
+#if !USE(ACCELERATED_SURFACE)
     if (m_isBackingStoreDiscardable == isBackingStoreDiscardable)
         return;
 
@@ -206,7 +206,7 @@ void DrawingAreaProxyCoordinatedGraphics::enterAcceleratedCompositingMode(uint64
     enterAcceleratedCompositingMode(layerTreeContext);
 }
 
-#if !PLATFORM(WPE) && !PLATFORM(GTK)
+#if !USE(ACCELERATED_SURFACE)
 void DrawingAreaProxyCoordinatedGraphics::update(uint64_t, UpdateInfo&& updateInfo)
 {
     if (m_isWaitingForDidUpdateGeometry && updateInfo.viewSize != m_lastSentSize) {
@@ -249,7 +249,7 @@ void DrawingAreaProxyCoordinatedGraphics::enterAcceleratedCompositingMode(const 
         updateAcceleratedCompositingMode(layerTreeContext);
         return;
     }
-#if !PLATFORM(WPE) && !PLATFORM(GTK)
+#if !USE(ACCELERATED_SURFACE)
     m_backingStore = nullptr;
 #endif
     m_layerTreeContext = layerTreeContext;
@@ -307,7 +307,7 @@ void DrawingAreaProxyCoordinatedGraphics::didUpdateGeometry()
         sendUpdateGeometry();
 }
 
-#if !PLATFORM(WPE) && !PLATFORM(GTK)
+#if !USE(ACCELERATED_SURFACE)
 void DrawingAreaProxyCoordinatedGraphics::discardBackingStoreSoon()
 {
     if (!m_backingStore || !m_isBackingStoreDiscardable || m_discardBackingStoreTimer.isActive())

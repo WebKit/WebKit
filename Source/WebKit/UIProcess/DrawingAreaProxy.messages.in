@@ -32,7 +32,7 @@ messages -> DrawingAreaProxy {
 #endif
     DispatchPresentationCallbacksAfterFlushingLayers(Vector<IPC::AsyncReplyID> callbackIDs);
 
-#if !PLATFORM(WPE) && !PLATFORM(GTK) && (USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER))
+#if !USE(ACCELERATED_SURFACE) && (USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER))
     Update(uint64_t stateID, struct WebKit::UpdateInfo updateInfo) CanDispatchOutOfOrder
     ExitAcceleratedCompositingMode(uint64_t backingStoreStateID, struct WebKit::UpdateInfo updateInfo)
 #endif

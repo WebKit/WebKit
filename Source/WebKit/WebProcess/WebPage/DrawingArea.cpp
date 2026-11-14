@@ -44,7 +44,7 @@
 #if PLATFORM(COCOA)
 #include "RemoteLayerTreeDrawingAreaMac.h"
 #elif USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
-#if PLATFORM(GTK) || PLATFORM(WPE)
+#if USE(ACCELERATED_SURFACE)
 #include "DrawingAreaCoordinatedGraphicsGLib.h"
 #else
 #include "DrawingAreaCoordinatedGraphics.h"

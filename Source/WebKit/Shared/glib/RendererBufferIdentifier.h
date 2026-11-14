@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if PLATFORM(GTK) || PLATFORM(WPE)
+#if USE(ACCELERATED_SURFACE)
 
 #include <wtf/ObjectIdentifier.h>
 
@@ -36,4 +36,4 @@ using RendererBufferIdentifier = AtomicObjectIdentifier<RendererBufferIdentifier
 
 } // namespace WebKit
 
-#endif // PLATFORM(GTK) || PLATFORM(WPE)
+#endif // USE(ACCELERATED_SURFACE)

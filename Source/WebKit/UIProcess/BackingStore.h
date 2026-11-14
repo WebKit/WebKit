@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if !PLATFORM(WPE) && !PLATFORM(GTK)
+#if !USE(ACCELERATED_SURFACE)
 
 #include <WebCore/IntSize.h>
 #include <WebCore/PlatformImage.h>
@@ -85,4 +85,4 @@ private:
 
 } // namespace WebKit
 
-#endif // !PLATFORM(WPE) && !PLATFORM(GTK)
+#endif // !USE(ACCELERATED_SURFACE)

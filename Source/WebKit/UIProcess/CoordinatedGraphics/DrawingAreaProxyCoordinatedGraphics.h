@@ -33,7 +33,7 @@
 #include <wtf/RunLoop.h>
 #include <wtf/TZoneMalloc.h>
 
-#if !PLATFORM(WPE) && !PLATFORM(GTK)
+#if !USE(ACCELERATED_SURFACE)
 #include "BackingStore.h"
 #endif
 
@@ -54,7 +54,7 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-#if !PLATFORM(WPE) && !PLATFORM(GTK)
+#if !USE(ACCELERATED_SURFACE)
     void paint(PlatformPaintContextPtr, const WebCore::IntRect&, WebCore::Region& unpaintedRegion);
 #endif
 
@@ -82,7 +82,7 @@ private:
 
     // IPC message handlers
     void enterAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&) override;
-#if !PLATFORM(WPE) && !PLATFORM(GTK)
+#if !USE(ACCELERATED_SURFACE)
     void update(uint64_t backingStoreStateID, UpdateInfo&&) override;
     void exitAcceleratedCompositingMode(uint64_t backingStoreStateID, UpdateInfo&&) override;
 #endif
@@ -99,7 +99,7 @@ private:
     void sendUpdateGeometry();
     void didUpdateGeometry();
 
-#if !PLATFORM(WPE) && !PLATFORM(GTK)
+#if !USE(ACCELERATED_SURFACE)
     bool forceUpdateIfNeeded();
     void incorporateUpdate(UpdateInfo&&);
     void discardBackingStoreSoon();
@@ -132,7 +132,7 @@ private:
     WebCore::IntSize m_lastSentSize;
 
 
-#if !PLATFORM(WPE) && !PLATFORM(GTK)
+#if !USE(ACCELERATED_SURFACE)
     bool m_isBackingStoreDiscardable { true };
     bool m_inForceUpdate { false };
     std::unique_ptr<BackingStore> m_backingStore;
