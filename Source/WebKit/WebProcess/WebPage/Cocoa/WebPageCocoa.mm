@@ -2535,11 +2535,6 @@ bool WebPage::isSpeaking()
 bool WebPage::shouldAllowSingleClickToChangeSelection(WebCore::Node& targetNode, const WebCore::VisibleSelection& newSelection, WebCore::MouseEventInputSource inputSource)
 {
 #if !PLATFORM(MAC) || HAVE(APPKIT_GESTURES_SUPPORT)
-#if HAVE(APPKIT_GESTURES_SUPPORT)
-    if (!m_page->settings().useAppKitGestures())
-        return true;
-#endif
-
     if (RefPtr editableRoot = newSelection.rootEditableElement(); editableRoot && editableRoot == targetNode.rootEditableElement()) {
         // FIXME: This logic should be made consistent for both macOS and iOS.
 #if PLATFORM(MAC)
@@ -3986,7 +3981,7 @@ void WebPage::completeSyntheticClick(std::optional<WebCore::FrameIdentifier> fra
 #if HAVE(APPKIT_GESTURES_SUPPORT)
     RefPtr<HTMLImageElement> imageThatMayZoomInPlace;
     Vector<String> imageZoomStateBeforeClick;
-    if (m_page->settings().useAppKitGestures() && !m_elementHoverActivatedByClick) {
+    if (!m_elementHoverActivatedByClick) {
         imageThatMayZoomInPlace = imageThatMayZoomInPlaceAtPointInRootView(*localRootFrame, roundedAdjustedPoint);
         if (imageThatMayZoomInPlace)
             imageZoomStateBeforeClick = zoomStateForImage(*imageThatMayZoomInPlace);

@@ -303,27 +303,6 @@ extension MacTouchSupportTests.Basic {
     }
 
     @Test
-    func singleTapWithoutPointerTrackingDerivesPointerEventsFromMouseEvents() async throws {
-        page.setWebFeature("UseAppKitGesturesForPointerEvents", enabled: false)
-        try await loadHTML()
-
-        let expectedEvents: [DOMEventType] = [.pointerdown, .mousedown, .pointerup, .mouseup, .click]
-        try await page.callJavaScript(JavaScriptMessages.InstallEventLog(in: "div", for: expectedEvents))
-
-        let toBounds = try await screenBoundsOfText("to")
-
-        await recap.play { composer in
-            composer.humanTap(at: toBounds.center, for: .seconds(0.05))
-        }
-
-        await page.waitForPendingMouseEvents()
-        await page.waitForNextPresentationUpdate()
-
-        let actual = try await page.callJavaScript(JavaScriptMessages.EventLog())
-        #expect(actual.map(\.type) == expectedEvents)
-    }
-
-    @Test
     func touchAndHoldInSubframeReportsPointerEventsSpanningTheHold() async throws {
         try await page.load(html: subframeHostMarkup).wait()
 
@@ -588,7 +567,6 @@ extension MacTouchSupportTests.Basic {
 
     @Test
     func untrackedTwoFingerDragOnManipulationSurfaceStillReportsPointerMovement() async throws {
-        page.setWebFeature("UseAppKitGesturesForGestureEvents", enabled: true)
         try await loadLongPressSurface()
 
         let surfaceBounds = try await screenBounds(ofElementWithID: "surface")
@@ -3398,12 +3376,9 @@ extension MacTouchSupportTests.Basic {
     }
 
     @Test(
-        .bug("https://webkit.org/b/325570", "Dragging over a zoomed product image scrolls the page instead of panning the image"),
-        arguments: [true, false]
+        .bug("https://webkit.org/b/325570", "Dragging over a zoomed product image scrolls the page instead of panning the image")
     )
-    func dragInsideHoverZoomOpenedByTapPansZoom(pointerTracking: Bool) async throws {
-        page.setWebFeature("UseAppKitGesturesForPointerEvents", enabled: pointerTracking)
-
+    func dragInsideHoverZoomOpenedByTapPansZoom() async throws {
         let html = """
             <body style="margin: 0; height: 4000px;">
                 <div id="source" style="position: absolute; left: 100px; top: 100px; width: 300px; height: 300px; background: linear-gradient(red, blue);"></div>
@@ -4056,12 +4031,9 @@ extension MacTouchSupportTests.Basic {
     }
 
     @Test(
-        .bug("https://webkit.org/b/319256", "Trackpad swiping between spaces should not trigger back navigation"),
-        arguments: [false, true]
+        .bug("https://webkit.org/b/319256", "Trackpad swiping between spaces should not trigger back navigation")
     )
-    func twoFingerHorizontalSwipeDoesNotTriggerBackNavigation(gesturesForGestureEvents: Bool) async throws {
-        page.setWebFeature("UseAppKitGesturesForGestureEvents", enabled: gesturesForGestureEvents)
-
+    func twoFingerHorizontalSwipeDoesNotTriggerBackNavigation() async throws {
         // Establish a back-forward history entry so that a "swipe back" gesture would have somewhere to navigate to.
         try await page.load(URL(string: "about:blank?1")).wait()
 
@@ -4580,8 +4552,6 @@ extension MacTouchSupportTests.Basic {
         .bug("https://webkit.org/b/321650", "Certain diagonal scrolls should be able to bypass directional locking")
     )
     func diagonalTwoFingerSwipeScrollsBothAxes() async throws {
-        page.setWebFeature("UseAppKitGesturesForGestureEvents", enabled: true)
-
         try await loadScrollableGrid()
         await page.waitForNextPresentationUpdate()
 

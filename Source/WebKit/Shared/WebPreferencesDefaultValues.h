@@ -110,7 +110,6 @@ bool defaultScrollAnimatorEnabled();
 bool defaultPassiveWheelListenersAsDefaultOnDocument();
 bool defaultWheelEventGesturesBecomeNonBlocking();
 bool defaultAppleMailPaginationQuirkEnabled();
-bool defaultUseAppKitGestures();
 bool defaultTextInputClientSelectionUpdatesEnabled();
 #endif
 

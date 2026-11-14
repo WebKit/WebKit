@@ -612,9 +612,6 @@ enum class PanAxis : uint8_t {
     if ([gesture numberOfTouchesRequired] <= 1)
         return YES;
 
-    if (!protect([webView _protectedPage]->preferences())->useAppKitGesturesForGestureEvents())
-        return NO;
-
     // If the web content permits panning, the pan GR will win.
     // This multi-touch tracking recognizer covers the remaining case, where
     // the content has opted out of panning. Web apps typically depend on
@@ -726,11 +723,7 @@ static char touchThatCaughtDeceleratingScrollKey;
 {
     // FIXME: Strictly, this should be `2` when allowsMagnification == YES and the min/max zoom
     // scales are different, c.f. -[UIScrollView _updatePanGestureConfiguration] for prior art.
-    auto maximumNumberOfTouches = 0;
-    if (RetainPtr webView = _view.get(); webView && protect([webView _protectedPage]->preferences())->useAppKitGesturesForGestureEvents())
-        maximumNumberOfTouches = 2;
-
-    [gesture setMaximumNumberOfTouches:maximumNumberOfTouches];
+    [gesture setMaximumNumberOfTouches:2];
     [gesture setAllowedTouchTypes:NSTouchTypeMaskDirect];
     [gesture setButtonMask:0];
 }
@@ -1164,21 +1157,7 @@ static BOOL isCatchingDeceleratingScroll(NSGestureRecognizer *scrollViewPanGestu
     if (!webView)
         return;
 
-    bool gestureEnabled = protect([webView _protectedPage]->preferences())->useAppKitGestures();
-
-    if (gesture == _imageAnalysisGestureRecognizer)
-        gestureEnabled = gestureEnabled && WebKit::isLiveTextAvailableAndEnabled();
-
-    if (gesture == _pointerTrackingGestureRecognizer)
-        gestureEnabled = gestureEnabled && protect([webView _protectedPage]->preferences())->useAppKitGesturesForPointerEvents();
-
-    bool gestureEventRecognizersEnabled = gestureEnabled && protect([webView _protectedPage]->preferences())->useAppKitGesturesForGestureEvents();
-    if (gesture == _magnificationGestureRecognizer)
-        gestureEnabled = gestureEventRecognizersEnabled;
-#if ENABLE(MAC_GESTURE_EVENTS)
-    if (gesture == _rotationGestureRecognizer)
-        gestureEnabled = gestureEventRecognizersEnabled;
-#endif
+    bool gestureEnabled = gesture != _imageAnalysisGestureRecognizer || WebKit::isLiveTextAvailableAndEnabled();
 
     WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG([webView _protectedPage]->logIdentifier(), "%@ setEnabled:%d", gestureLogDescription(gesture), static_cast<int>(gestureEnabled));
     [gesture setEnabled:gestureEnabled];

@@ -114,12 +114,9 @@ extension MacTouchSupportTests.RefreshControl {
     }
 
     @Test(
-        .bug("https://webkit.org/b/322154", "App exposé gesture should not trigger pull to refresh"),
-        arguments: [false, true]
+        .bug("https://webkit.org/b/322154", "App exposé gesture should not trigger pull to refresh")
     )
-    func twoFingerSwipeDownDoesNotTriggerRefresh(gesturesForGestureEvents: Bool) async throws {
-        page.setWebFeature("UseAppKitGesturesForGestureEvents", enabled: gesturesForGestureEvents)
-
+    func twoFingerSwipeDownDoesNotTriggerRefresh() async throws {
         try await loadTallPage()
         await page.waitForNextPresentationUpdate()
 

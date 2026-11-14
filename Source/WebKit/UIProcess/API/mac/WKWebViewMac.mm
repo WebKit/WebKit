@@ -262,12 +262,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 #if HAVE(APPKIT_GESTURES_SUPPORT)
 - (_NSMouseEmulationGestureConfig)_gestureRecognizersViewConfigForMouseEmulation
 {
-    if (!_page)
-        return 0;
-
-    if (!protect(_page->preferences())->useAppKitGesturesForGestureEvents())
-        return _NSMouseEmulationViewHandlesMagnify | _NSMouseEmulationViewHandlesRotate;
-
     return 0;
 }
 

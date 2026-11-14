@@ -54,11 +54,7 @@ extension WKTextSelectionController {
     }
 
     func addTextSelectionManager() {
-        guard let view, let page = view._protectedPage().get() else {
-            return
-        }
-
-        guard page.preferences().useAppKitGestures() else {
+        guard let view else {
             return
         }
 
