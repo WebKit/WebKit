@@ -3,14 +3,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGContainer {g} at (33,222) size 651x143
-      RenderSVGText {text} at (82,133) size 296x21 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 160x21
-          chunk 1 (middle anchor) text run 1 at (82.84,150.00) startOffset 0 endOffset 19 width 159.44: "dirRTL ubOverride \""
-        RenderSVGTSpan {tspan} at (159,0) size 124x21
-          RenderSVGInlineText {#text} at (159,0) size 124x21
-            chunk 1 (middle anchor) text run 1 at (242.28,150.00) startOffset 0 endOffset 17 width 123.50 RTL: "\x{646}\x{634}\x{627}\x{637} \x{627}\x{644}\x{62A}\x{62F}\x{648}\x{64A}\x{644}\x{60C} W3C"
-        RenderSVGInlineText {#text} at (282,0) size 12x21
-          chunk 1 (middle anchor) text run 1 at (365.77,150.00) startOffset 0 endOffset 2 width 11.39: "\"!"
+      RenderSVGText {text} at (83,133) size 294x21 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 159x21
+          chunk 1 (middle anchor) text run 1 at (83.33,150.00) startOffset 0 endOffset 19 width 158.45: "dirRTL ubOverride \""
+        RenderSVGTSpan {tspan} at (158,0) size 124x21
+          RenderSVGInlineText {#text} at (158,0) size 124x21
+            chunk 1 (middle anchor) text run 1 at (241.78,150.00) startOffset 0 endOffset 17 width 123.50 RTL: "\x{646}\x{634}\x{627}\x{637} \x{627}\x{644}\x{62A}\x{62F}\x{648}\x{64A}\x{644}\x{60C} W3C"
+        RenderSVGInlineText {#text} at (281,0) size 12x21
+          chunk 1 (middle anchor) text run 1 at (365.28,150.00) startOffset 0 endOffset 2 width 11.39: "\"!"
       RenderSVGText {text} at (20,170) size 85x13 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 85x12
           chunk 1 text run 1 at (20.00,180.00) startOffset 0 endOffset 18 width 84.49: "Reference graphic:"

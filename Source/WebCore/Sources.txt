@@ -3236,7 +3236,6 @@ rendering/svg/SVGTextBoxPainter.cpp @header:RenderStyleGetters
 rendering/svg/SVGTextLayoutAlgorithm.cpp @header:RenderStyleGetters
 rendering/svg/SVGTextLayoutEngineBaseline.cpp @header:RenderStyleGetters
 rendering/svg/SVGTextLayoutEngineSpacing.cpp
-rendering/svg/SVGTextMetrics.cpp @header:RenderStyleGetters
 rendering/svg/SVGTextQuery.cpp @header:RenderStyleGetters
 rendering/svg/legacy/LegacyRenderSVGContainer.cpp @header:RenderStyleGetters
 rendering/svg/legacy/LegacyRenderSVGEllipse.cpp @header:RenderStyleGetters

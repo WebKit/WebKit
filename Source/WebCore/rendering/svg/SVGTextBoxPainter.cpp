@@ -622,9 +622,9 @@ void SVGTextBoxPainter::paintText(const Style::ComputedStyle& style, const Style
         paintTextWithShadows(style, textRun, fragment, endPosition, fragment.length);
 }
 
-TextRun constructTextRun(StringView text, TextDirection direction, const Style::ComputedStyle& style, const SVGTextFragment& fragment)
+TextRun constructTextRun(StringView text, TextDirection direction, const Style::ComputedStyle& style)
 {
-    TextRun run(text.substring(fragment.characterOffset, fragment.length),
+    TextRun run(text,
         0, /* xPos, only relevant with allowTabs=true */
         0, /* padding, only relevant for justified text, not relevant for SVG */
         ExpansionBehavior::allowRightOnly(),
@@ -634,6 +634,11 @@ TextRun constructTextRun(StringView text, TextDirection direction, const Style::
     // We handle letter & word spacing ourselves.
     run.disableSpacing();
     return run;
+}
+
+TextRun constructTextRun(StringView text, TextDirection direction, const Style::ComputedStyle& style, const SVGTextFragment& fragment)
+{
+    return constructTextRun(text.substring(fragment.characterOffset, fragment.length), direction, style);
 }
 
 std::pair<unsigned, unsigned> SVGTextBoxPainter::selectionStartEnd() const

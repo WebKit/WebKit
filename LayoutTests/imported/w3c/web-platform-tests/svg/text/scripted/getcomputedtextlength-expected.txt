@@ -1,0 +1,17 @@
+ABC
+ABCD
+ABC
+ABC
+ABC
+A BC
+
+PASS The sum of the advances
+PASS The positions of the characters do not count
+PASS Letter spacing counts
+PASS Word spacing counts
+PASS The characters of a tspan
+PASS Vertical text
+PASS No characters
+PASS An element that is not rendered
+PASS The same as getSubStringLength() of all characters
+

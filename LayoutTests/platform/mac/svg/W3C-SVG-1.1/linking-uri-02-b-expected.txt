@@ -46,9 +46,9 @@ layer at (0,0) size 480x360
         RenderSVGInlineText {#text} at (0,0) size 45x18
           chunk 1 text run 1 at (355.00,295.00) startOffset 0 endOffset 7 width 44.44: "Ellipse"
       RenderSVGRect {rect} at (294,215) size 152x84 [stroke={[type=SOLID] [color=#000000]}] [x=295.00] [y=216.00] [width=150.00] [height=82.00]
-      RenderSVGText {text} at (315,204) size 111x13 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 111x12
-          chunk 1 text run 1 at (315.00,214.00) startOffset 0 endOffset 27 width 110.26: "viewBox, should fill frame."
+      RenderSVGText {text} at (315,204) size 110x13 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 110x12
+          chunk 1 text run 1 at (315.00,214.00) startOffset 0 endOffset 27 width 109.71: "viewBox, should fill frame."
       RenderSVGEllipse {circle} at (49,32) size 72x72 [fill={[type=SOLID] [color=#FFFF00]}] [cx=85.00] [cy=68.00] [r=36.00]
       RenderSVGText {text} at (70,102) size 40x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 40x18
@@ -65,9 +65,9 @@ layer at (0,0) size 480x360
         RenderSVGInlineText {#text} at (0,0) size 54x18
           chunk 1 text run 1 at (65.00,295.00) startOffset 0 endOffset 7 width 53.34: "Polygon"
       RenderSVGRect {rect} at (35,207) size 102x91 [stroke={[type=SOLID] [color=#000000]}] [x=36.00] [y=208.00] [width=100.00] [height=89.00]
-      RenderSVGText {text} at (46,187) size 78x13 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 78x12
-          chunk 1 text run 1 at (46.00,197.00) startOffset 0 endOffset 18 width 77.20: "viewTarget, should"
+      RenderSVGText {text} at (46,187) size 77x13 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 77x12
+          chunk 1 text run 1 at (46.00,197.00) startOffset 0 endOffset 18 width 76.33: "viewTarget, should"
       RenderSVGText {text} at (46,196) size 72x13 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 72x12
           chunk 1 text run 1 at (46.00,206.00) startOffset 0 endOffset 17 width 71.39: "highlight polygon"

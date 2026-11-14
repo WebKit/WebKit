@@ -1,0 +1,5 @@
+fia
+fia
+
+PASS The dx of the second character of a ligature moves the characters after it
+

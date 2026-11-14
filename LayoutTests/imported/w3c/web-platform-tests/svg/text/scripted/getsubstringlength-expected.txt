@@ -1,0 +1,13 @@
+ABCD
+ABCD
+AB CD
+fi
+fi
+
+PASS The sum of the advances of the characters in the range
+PASS The range ends at the last character
+PASS A character index past the end throws
+PASS Letter spacing after a character counts
+PASS Word spacing after a space counts
+PASS A ligature counts for its first character
+

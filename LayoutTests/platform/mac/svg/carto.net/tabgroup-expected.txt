@@ -64,8 +64,8 @@ layer at (0,0) size 800x600
           RenderSVGPath {path} at (120,257) size 52x29 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M 145 5 L 150 0 L 204 0 L 209 5 L 209 35 L 145 35 Z"]
           RenderSVGText {text} at (122,1) size 56x34 contains 1 chunk(s)
             RenderSVGTSpan {tspan} at (11,0) size 32x17
-              RenderSVGInlineText {#text} at (11,0) size 32x17
-                chunk 1 (middle anchor) text run 1 at (134.16,15.00) startOffset 0 endOffset 4 width 31.68: "Your"
+              RenderSVGInlineText {#text} at (11,0) size 31x17
+                chunk 1 (middle anchor) text run 1 at (134.85,15.00) startOffset 0 endOffset 4 width 30.31: "Your"
             RenderSVGTSpan {tspan} at (0,16) size 55x18
               RenderSVGInlineText {#text} at (0,16) size 55x17
                 chunk 1 (middle anchor) text run 1 at (122.90,31.50) startOffset 0 endOffset 7 width 54.20: "Account"

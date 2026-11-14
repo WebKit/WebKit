@@ -8017,9 +8017,6 @@ webkit.org/b/286884 imported/w3c/web-platform-tests/css/CSS2/floats/zero-width-f
 imported/w3c/web-platform-tests/css/CSS2/floats/float-nowrap-hyphen-rewind-1.html [ ImageOnlyFailure ]
 [ Debug ] imported/w3c/web-platform-tests/css/CSS2/floats/line-pushed-by-floats-crash.html [ Skip ]
 
-# This test is flaky. Resizing the window exposures the failure
-webkit.org/b/288689 svg/text/bidi-text-query.svg [ Skip ]
-
 imported/w3c/web-platform-tests/css/css-align/abspos/align-items-static-position.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-align/abspos/align-self-static-position-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-align/abspos/align-self-static-position-002.html [ ImageOnlyFailure ]

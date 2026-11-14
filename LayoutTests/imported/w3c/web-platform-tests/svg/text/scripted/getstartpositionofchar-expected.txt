@@ -4,9 +4,9 @@ ABC
 ABC
 ABC
 
-FAIL vertical-rl assert_equals: expected 113 but got 103
-FAIL vertical-lr assert_equals: expected 113 but got 103
-FAIL sideways-rl assert_equals: expected 113 but got 103
-FAIL sideways-lr assert_equals: expected 97 but got 107
+PASS vertical-rl
+PASS vertical-lr
+PASS sideways-rl
+FAIL sideways-lr assert_equals: expected 100 but got 120
 PASS tspan
 

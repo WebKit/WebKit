@@ -9,8 +9,8 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (224,12) size 32x23 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 32x23
         chunk 1 (middle anchor) text run 1 at (224.44,30.00) startOffset 0 endOffset 3 width 31.11: "min"
-    RenderSVGContainer {g} at (77,62) size 280x217 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,50.00)}]
-      RenderSVGContainer {g} at (77,82) size 143x197 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,45.00)}]
+    RenderSVGContainer {g} at (78,62) size 279x217 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,50.00)}]
+      RenderSVGContainer {g} at (78,82) size 142x197 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,45.00)}]
         RenderSVGText {text} at (-85,-13) size 85x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 85x16
             chunk 1 (end anchor) text run 1 at (-84.38,0.00) startOffset 0 endOffset 14 width 84.38: "no min / media"
@@ -26,12 +26,12 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (-94,87) size 94x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 94x16
             chunk 1 (end anchor) text run 1 at (-93.03,100.00) startOffset 0 endOffset 16 width 93.03: "min < repeat dur"
-        RenderSVGText {text} at (-143,112) size 143x17 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 143x16
-            chunk 1 (end anchor) text run 1 at (-142.01,125.00) startOffset 0 endOffset 24 width 142.01: "min > repeat dur, remove"
-        RenderSVGText {text} at (-135,167) size 135x17 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 135x16
-            chunk 1 (end anchor) text run 1 at (-134.21,180.00) startOffset 0 endOffset 24 width 134.21: "min > repeat dur, freeze"
+        RenderSVGText {text} at (-142,112) size 142x17 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 142x16
+            chunk 1 (end anchor) text run 1 at (-141.46,125.00) startOffset 0 endOffset 24 width 141.46: "min > repeat dur, remove"
+        RenderSVGText {text} at (-134,167) size 134x17 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 134x16
+            chunk 1 (end anchor) text run 1 at (-133.66,180.00) startOffset 0 endOffset 24 width 133.66: "min > repeat dur, freeze"
       RenderSVGContainer {g} at (234,62) size 111x197 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,25.00)}]
         RenderSVGText {text} at (-12,-13) size 24x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 24x16

@@ -1,0 +1,7 @@
+text
+text
+curved text
+
+PASS getSubStringLength() on characters positioned one by one
+PASS getCharNumAtPosition() on text on a curved path
+

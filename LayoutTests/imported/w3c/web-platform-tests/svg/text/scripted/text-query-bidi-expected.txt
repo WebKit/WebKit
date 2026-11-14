@@ -1,0 +1,83 @@
+שלום עולם
+שלום עולם
+שלום עולם
+שלום עולם
+שלום עולם
+abc שלום def
+abc שלום def
+abc שלום def
+abc שלום def
+abc שלום def
+שלום abc עולם
+שלום abc עולם
+שלום abc עולם
+שלום abc עולם
+שלום abc עולם
+שלום abc עולם
+שלום abc עולם
+שלום abc עולם
+שלום abc עולם
+שלום abc עולם
+שלום עולם
+שלום עולם
+שלום עולם
+שלום עולם
+שלום עולם
+abc שלום def
+abc שלום def
+abc שלום def
+abc שלום def
+abc שלום def
+שלום abc עולם
+שלום abc עולם
+שלום abc עולם
+שלום abc עולם
+שלום abc עולם
+שלום abc עולם
+שלום abc עולם
+שלום abc עולם
+שלום abc עולם
+שלום abc עולם
+ שלום עולםשלום עולםשלום עולםשלום עולםשלום עולםabc שלום defabc שלום defabc שלום defabc שלום defabc שלום defשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום עולםשלום עולםשלום עולםשלום עולםשלום עולםabc שלום defabc שלום defabc שלום defabc שלום defabc שלום defשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולם
+
+PASS getExtentOfChar() on Hebrew in ltr text
+PASS getStartPositionOfChar() and getEndPositionOfChar() on Hebrew in ltr text
+PASS getSubStringLength() on Hebrew in ltr text
+PASS getCharNumAtPosition() on Hebrew in ltr text
+PASS getRotationOfChar() on Hebrew in ltr text
+PASS getExtentOfChar() on Latin, then Hebrew in ltr text
+PASS getStartPositionOfChar() and getEndPositionOfChar() on Latin, then Hebrew in ltr text
+PASS getSubStringLength() on Latin, then Hebrew in ltr text
+PASS getCharNumAtPosition() on Latin, then Hebrew in ltr text
+PASS getRotationOfChar() on Latin, then Hebrew in ltr text
+PASS getExtentOfChar() on Hebrew, then Latin in ltr text
+PASS getStartPositionOfChar() and getEndPositionOfChar() on Hebrew, then Latin in ltr text
+PASS getSubStringLength() on Hebrew, then Latin in ltr text
+PASS getCharNumAtPosition() on Hebrew, then Latin in ltr text
+PASS getRotationOfChar() on Hebrew, then Latin in ltr text
+PASS getExtentOfChar() on Hebrew and Latin in a tspan in ltr text
+PASS getStartPositionOfChar() and getEndPositionOfChar() on Hebrew and Latin in a tspan in ltr text
+PASS getSubStringLength() on Hebrew and Latin in a tspan in ltr text
+PASS getCharNumAtPosition() on Hebrew and Latin in a tspan in ltr text
+PASS getRotationOfChar() on Hebrew and Latin in a tspan in ltr text
+PASS getExtentOfChar() on Hebrew in rtl text
+PASS getStartPositionOfChar() and getEndPositionOfChar() on Hebrew in rtl text
+PASS getSubStringLength() on Hebrew in rtl text
+PASS getCharNumAtPosition() on Hebrew in rtl text
+PASS getRotationOfChar() on Hebrew in rtl text
+PASS getExtentOfChar() on Latin, then Hebrew in rtl text
+PASS getStartPositionOfChar() and getEndPositionOfChar() on Latin, then Hebrew in rtl text
+PASS getSubStringLength() on Latin, then Hebrew in rtl text
+PASS getCharNumAtPosition() on Latin, then Hebrew in rtl text
+PASS getRotationOfChar() on Latin, then Hebrew in rtl text
+PASS getExtentOfChar() on Hebrew, then Latin in rtl text
+PASS getStartPositionOfChar() and getEndPositionOfChar() on Hebrew, then Latin in rtl text
+PASS getSubStringLength() on Hebrew, then Latin in rtl text
+PASS getCharNumAtPosition() on Hebrew, then Latin in rtl text
+PASS getRotationOfChar() on Hebrew, then Latin in rtl text
+PASS getExtentOfChar() on Hebrew and Latin in a tspan in rtl text
+PASS getStartPositionOfChar() and getEndPositionOfChar() on Hebrew and Latin in a tspan in rtl text
+PASS getSubStringLength() on Hebrew and Latin in a tspan in rtl text
+PASS getCharNumAtPosition() on Hebrew and Latin in a tspan in rtl text
+PASS getRotationOfChar() on Hebrew and Latin in a tspan in rtl text
+

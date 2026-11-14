@@ -22,9 +22,9 @@ layer at (0,0) size 480x360
           RenderSVGRect {rect} at (0,0) size 4x4 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
       RenderSVGContainer {g} at (20,80) size 420x164 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,120.00)}]
         RenderSVGContainer {g} at (20,80) size 420x44
-          RenderSVGText {text} at (0,-13) size 167x17 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 167x16
-              chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 30 width 166.39: "horiz-origin-x unspecified (0)"
+          RenderSVGText {text} at (0,-13) size 166x17 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 166x16
+              chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 30 width 165.62: "horiz-origin-x unspecified (0)"
           RenderSVGContainer {use} at (256,80) size 8x44 [transform={m=((1.00,0.00)(0.00,1.00)) t=(240.00,0.00)}]
             RenderSVGContainer {g} at (256,80) size 8x44
               RenderSVGPath {line} at (259,80) size 2x40 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-40.00]

@@ -12,13 +12,13 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (30,86) size 137x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 137x18
           chunk 1 text run 1 at (30.00,100.00) startOffset 0 endOffset 21 width 136.34: "Character references:"
-      RenderSVGText {text} at (90,116) size 181x18 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 181x18
-          chunk 1 text run 1 at (90.00,130.00) startOffset 0 endOffset 24 width 180.08: "A hexadecimal (&#x41)= A"
-      RenderSVGText {text} at (90,146) size 142x18 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 142x18
-          chunk 1 text run 1 at (90.00,160.00) startOffset 0 endOffset 10 width 70.20: "A decimal "
-          chunk 1 text run 1 at (160.20,160.00) startOffset 0 endOffset 9 width 71.68: "(&#65)= A"
+      RenderSVGText {text} at (90,116) size 180x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 180x18
+          chunk 1 text run 1 at (90.00,130.00) startOffset 0 endOffset 24 width 179.20: "A hexadecimal (&#x41)= A"
+      RenderSVGText {text} at (90,146) size 141x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 141x18
+          chunk 1 text run 1 at (90.00,160.00) startOffset 0 endOffset 10 width 69.32: "A decimal "
+          chunk 1 text run 1 at (159.32,160.00) startOffset 0 endOffset 9 width 71.68: "(&#65)= A"
       RenderSVGText {text} at (30,186) size 114x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 114x18
           chunk 1 text run 1 at (30.00,200.00) startOffset 0 endOffset 18 width 113.27: "Entity references:"

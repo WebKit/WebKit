@@ -1,0 +1,14 @@
+ABC
+אבג
+ABC
+Wil
+ABC
+ABC
+
+PASS Left to right text
+PASS Right to left text
+PASS Rotated glyphs
+PASS Sideways glyphs in vertical text
+PASS Upright glyphs in vertical text
+PASS Rotated glyphs in vertical text
+
