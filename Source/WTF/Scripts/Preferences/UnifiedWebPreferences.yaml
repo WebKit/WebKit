@@ -4895,11 +4895,15 @@ PasswordEchoEnabled:
 
 PasswordFieldScreenCaptureProtectionEnabled:
   type: bool
-  status: unstable
+  status: internal
   category: html
   humanReadableName: "Password field screen capture protection"
   humanReadableDescription: "Hide password fields from screenshots, screen sharing and screen recording"
-  defaultValue: false
+  defaultValue:
+    default: false
+    WebKit:
+      "PLATFORM(IOS_FAMILY)": true
+      default: false
 
 PeerConnectionEnabled:
   type: bool

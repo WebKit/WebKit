@@ -28,6 +28,17 @@
         (interaction (160,744) width=120 height=60),
         (interaction (160,844) width=120 height=60)])
       )
+      (children 1
+        (GraphicsLayer
+          (position 170.00 667.50)
+          (bounds 100.00 13.00)
+          (drawsContent 1)
+          (hidesFromScreenCapture 1)
+          (event region
+            (rect (0,0) width=100 height=13)
+          )
+        )
+      )
     )
   )
 )
