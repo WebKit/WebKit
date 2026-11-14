@@ -99,6 +99,7 @@ public:
     void cancelPendingSessionForDevice(const CaptureDevice&);
 
     WEBCORE_EXPORT void promptForGetDisplayMedia(DisplayCapturePromptType, CompletionHandler<void(std::optional<CaptureDevice>)>&&);
+    WEBCORE_EXPORT void selectWindowForCapture(uint32_t windowID, CompletionHandler<void(std::optional<CaptureDevice>)>&&);
     WEBCORE_EXPORT void cancelGetDisplayMediaPrompt();
 
 private:

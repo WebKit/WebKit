@@ -157,6 +157,54 @@ void ScreenCaptureKitSharingSessionManager::cancelGetDisplayMediaPrompt()
         cancelPicking();
 }
 
+void ScreenCaptureKitSharingSessionManager::selectWindowForCapture(uint32_t windowID, CompletionHandler<void(std::optional<CaptureDevice>)>&& completionHandler)
+{
+#if HAVE(WINDOW_CAPTURE)
+    ASSERT(isMainThread());
+    ASSERT(isAvailable());
+    ASSERT(!m_completionHandler);
+
+    m_completionHandler = WTF::move(completionHandler);
+
+    RELEASE_LOG(WebRTC, "ScreenCaptureKitSharingSessionManager::selectWindowForCapture");
+
+    auto lookupBlock = makeBlockPtr([weakThis = WeakPtr { *this }, windowID](SCShareableContent *content, NSError *error) mutable {
+        callOnMainThread([weakThis = WTF::move(weakThis), windowID, content = retainPtr(content), error = retainPtr(error)] {
+            RefPtr protectedThis = weakThis;
+            if (!protectedThis)
+                return;
+
+            protectedThis->completeDeviceSelection([&] -> RetainPtr<SCContentFilter> {
+                if (error || !content) {
+                    RELEASE_LOG_ERROR(WebRTC, "ScreenCaptureKitSharingSessionManager::selectWindowForCapture - SCShareableContent failed.");
+                    return nullptr;
+                }
+
+                RetainPtr<SCWindow> targetWindow;
+                for (SCWindow *window in [content windows]) {
+                    if ([window windowID] == windowID) {
+                        targetWindow = window;
+                        break;
+                    }
+                }
+
+                if (!targetWindow) {
+                    RELEASE_LOG_ERROR(WebRTC, "ScreenCaptureKitSharingSessionManager::selectWindowForCapture - window %u not found.", static_cast<unsigned>(windowID));
+                    return nullptr;
+                }
+
+                return adoptNS([PAL::allocSCContentFilterInstance() initWithDesktopIndependentWindow:targetWindow]);
+            }());
+        });
+    });
+
+    [PAL::getSCShareableContentClassSingleton() getShareableContentExcludingDesktopWindows:YES onScreenWindowsOnly:NO completionHandler:lookupBlock.get()];
+#else
+    UNUSED_PARAM(windowID);
+    completionHandler(std::nullopt);
+#endif
+}
+
 void ScreenCaptureKitSharingSessionManager::cancelPicking()
 {
     ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());

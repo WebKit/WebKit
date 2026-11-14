@@ -85,6 +85,7 @@ messages -> GPUProcess : AuxiliaryProcess {
 #if HAVE(SCREEN_CAPTURE_KIT)
     PromptForGetDisplayMedia(enum:uint8_t WebCore::DisplayCapturePromptType type) -> (std::optional<WebCore::CaptureDevice> device)
     CancelGetDisplayMediaPrompt()
+    SelectWindowForCapture(uint32_t windowID) -> (std::optional<WebCore::CaptureDevice> device)
 #endif
 
 #if PLATFORM(MAC)
