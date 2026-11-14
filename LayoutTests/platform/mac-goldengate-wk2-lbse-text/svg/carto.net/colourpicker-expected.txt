@@ -162,7 +162,7 @@ layer at (0,0) size 800x600
         RenderSVGRect {rect} at (2,2) size 110x20 [fill={[type=SOLID] [color=#696969]}] [x=511.00] [y=443.00] [width=110.00] [height=20.00]
         RenderSVGRect {rect} at (1,1) size 110x20 [fill={[type=SOLID] [color=#DCDCDC]}] [x=510.00] [y=442.00] [width=110.00] [height=20.00]
         RenderSVGText {text} at (7,5) size 98x14 contains 1 chunk(s)
-          RenderSVGTSpan {tspan} at (0,0) size 97x14
+          RenderSVGInline {tspan} at (0,0) size 97x14
             RenderSVGInlineText {#text} at (0,0) size 97x14
               chunk 1 (middle anchor) text run 1 at (516.65,457.40) startOffset 0 endOffset 17 width 96.70: "Hide ColourPicker"
       RenderSVGTransformableContainer {g} at (10,300) size 112x22
@@ -170,7 +170,7 @@ layer at (0,0) size 800x600
         RenderSVGRect {rect} at (2,2) size 110x20 [fill={[type=SOLID] [color=#696969]}] [x=511.00] [y=471.00] [width=110.00] [height=20.00]
         RenderSVGRect {rect} at (1,1) size 110x20 [fill={[type=SOLID] [color=#DCDCDC]}] [x=510.00] [y=470.00] [width=110.00] [height=20.00]
         RenderSVGText {text} at (13,5) size 86x14 contains 1 chunk(s)
-          RenderSVGTSpan {tspan} at (0,0) size 86x14
+          RenderSVGInline {tspan} at (0,0) size 86x14
             RenderSVGInlineText {#text} at (0,0) size 86x14
               chunk 1 (middle anchor) text run 1 at (522.32,485.40) startOffset 0 endOffset 15 width 85.37: "Set Random Fill"
       RenderSVGTransformableContainer {g} at (10,328) size 112x22
@@ -178,7 +178,7 @@ layer at (0,0) size 800x600
         RenderSVGRect {rect} at (2,2) size 110x20 [fill={[type=SOLID] [color=#696969]}] [x=511.00] [y=499.00] [width=110.00] [height=20.00]
         RenderSVGRect {rect} at (1,1) size 110x20 [fill={[type=SOLID] [color=#DCDCDC]}] [x=510.00] [y=498.00] [width=110.00] [height=20.00]
         RenderSVGText {text} at (3,5) size 106x14 contains 1 chunk(s)
-          RenderSVGTSpan {tspan} at (0,0) size 105x14
+          RenderSVGInline {tspan} at (0,0) size 105x14
             RenderSVGInlineText {#text} at (0,0) size 105x14
               chunk 1 (middle anchor) text run 1 at (512.64,513.40) startOffset 0 endOffset 17 width 104.72: "Set Random Stroke"
       RenderSVGTransformableContainer {g} at (0,0) size 182x22
@@ -186,7 +186,7 @@ layer at (0,0) size 800x600
         RenderSVGRect {rect} at (2,2) size 180x20 [fill={[type=SOLID] [color=#696969]}] [x=501.00] [y=171.00] [width=180.00] [height=20.00]
         RenderSVGRect {rect} at (1,1) size 180x20 [fill={[type=SOLID] [color=#DCDCDC]}] [x=500.00] [y=170.00] [width=180.00] [height=20.00]
         RenderSVGText {text} at (6,5) size 170x14 contains 1 chunk(s)
-          RenderSVGTSpan {tspan} at (0,0) size 170x14
+          RenderSVGInline {tspan} at (0,0) size 170x14
             RenderSVGInlineText {#text} at (0,0) size 170x14
               chunk 1 (middle anchor) text run 1 at (505.30,185.40) startOffset 0 endOffset 29 width 169.39: "Randomly Resize Colour Picker"
       RenderSVGTransformableContainer {g} at (185,0) size 182x22
@@ -194,7 +194,7 @@ layer at (0,0) size 800x600
         RenderSVGRect {rect} at (2,2) size 180x20 [fill={[type=SOLID] [color=#696969]}] [x=686.00] [y=171.00] [width=180.00] [height=20.00]
         RenderSVGRect {rect} at (1,1) size 180x20 [fill={[type=SOLID] [color=#DCDCDC]}] [x=685.00] [y=170.00] [width=180.00] [height=20.00]
         RenderSVGText {text} at (9,5) size 164x14 contains 1 chunk(s)
-          RenderSVGTSpan {tspan} at (0,0) size 163x14
+          RenderSVGInline {tspan} at (0,0) size 163x14
             RenderSVGInlineText {#text} at (0,0) size 163x14
               chunk 1 (middle anchor) text run 1 at (693.97,185.40) startOffset 0 endOffset 27 width 162.06: "Randomly Move Colour Picker"
     RenderSVGTransformableContainer {g} at (459,498) size 27x18
@@ -202,7 +202,7 @@ layer at (0,0) size 800x600
       RenderSVGRect {rect} at (2,2) size 25x16 [fill={[type=SOLID] [color=#696969]}] [x=461.00] [y=500.00] [width=25.00] [height=16.00]
       RenderSVGRect {rect} at (1,1) size 25x16 [fill={[type=SOLID] [color=#DCDCDC]}] [x=460.00] [y=499.00] [width=25.00] [height=16.00]
       RenderSVGText {text} at (4,3) size 19x14 contains 1 chunk(s)
-        RenderSVGTSpan {tspan} at (0,0) size 18x14
+        RenderSVGInline {tspan} at (0,0) size 18x14
           RenderSVGInlineText {#text} at (0,0) size 18x14
             chunk 1 (middle anchor) text run 1 at (463.83,512.40) startOffset 0 endOffset 2 width 17.34: "OK"
 layer at (0,0) size 1024x768 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
@@ -255,7 +255,7 @@ layer at (0,0) size 1024x768 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderSVGText {text} at (500,305) size 312x38 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 291x18
         chunk 1 text run 1 at (500.00,320.00) startOffset 0 endOffset 41 width 290.80: "This colourPicker has a callBack function"
-      RenderSVGTSpan {tspan} at (0,19) size 312x19
+      RenderSVGInline {tspan} at (0,19) size 312x19
         RenderSVGInlineText {#text} at (0,19) size 312x18
           chunk 1 text run 1 at (500.00,339.20) startOffset 0 endOffset 42 width 311.33: "attached that changes the background color"
     RenderSVGTransformableContainer {g} at (0,0) size 1024x768
