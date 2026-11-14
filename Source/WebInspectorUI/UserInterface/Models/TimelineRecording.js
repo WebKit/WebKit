@@ -209,6 +209,14 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
 
     capturingStopped(endTime)
     {
+        // Capturing has stopped, so add the records that still wait for a process to report.
+        for (let timeline of this._timelines.values()) {
+            if (timeline instanceof WI.ProcessSampleTimeline) {
+                for (let record of timeline.flushProcessRecords(WI.targets))
+                    this.addRecord(record);
+            }
+        }
+
         this._discontinuityStartTime = endTime;
     }
 
