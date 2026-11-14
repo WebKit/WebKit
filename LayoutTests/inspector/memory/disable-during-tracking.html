@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+function test()
+{
+    let suite = ProtocolTest.createAsyncSuite("Memory.DisableDuringTracking");
+
+    // The frontend does not always enable the Memory domain, so the test has to enable it itself.
+    // A rejected "already enabled" error is fine.
+    function ensureMemoryDomainEnabled()
+    {
+        return InspectorProtocol.awaitCommand({method: "Memory.enable"}).catch(() => {});
+    }
+
+    suite.addTestCase({
+        name: "Memory.DisableDuringTracking.SendsTrackingComplete",
+        test(resolve, reject) {
+            let startTime;
+
+            ensureMemoryDomainEnabled().then(() => {
+                InspectorProtocol.awaitEvent({event: "Memory.trackingStart"}).then((messageObject) => {
+                    ProtocolTest.log("Memory.trackingStart");
+                    ProtocolTest.expectThat(typeof messageObject.params.timestamp === "number", "Should have a timestamp when starting.");
+                    startTime = messageObject.params.timestamp;
+                    InspectorProtocol.sendCommand("Memory.disable", {});
+                });
+
+                InspectorProtocol.awaitEvent({event: "Memory.trackingComplete"}).then((messageObject) => {
+                    ProtocolTest.log("Memory.trackingComplete");
+                    ProtocolTest.expectThat(typeof messageObject.params.timestamp === "number", "Should have a timestamp when completing.");
+                    ProtocolTest.expectThat(messageObject.params.timestamp >= startTime, "Complete timestamp should not precede the start timestamp.");
+                    resolve();
+                });
+
+                InspectorProtocol.sendCommand("Memory.startTracking", {});
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "Memory.DisableDuringTracking.NotTrackingDoesNotSendTrackingComplete",
+        test(resolve, reject) {
+            let sawTrackingComplete = false;
+            let listener = (messageObject) => {
+                sawTrackingComplete = true;
+            };
+            InspectorProtocol.addEventListener("Memory.trackingComplete", listener);
+
+            ensureMemoryDomainEnabled().then(() => {
+                return InspectorProtocol.awaitCommand({method: "Memory.disable"});
+            }).then(() => {
+                ProtocolTest.expectThat(!sawTrackingComplete, "Should not send trackingComplete when not tracking.");
+                InspectorProtocol.removeEventListener("Memory.trackingComplete", listener);
+                resolve();
+            }).catch((error) => reject(error));
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that Memory.disable while tracking sends trackingComplete, and that it does not send trackingComplete when not tracking.</p>
+</body>
+</html>
