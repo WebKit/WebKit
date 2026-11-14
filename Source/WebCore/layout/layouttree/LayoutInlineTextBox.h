@@ -52,7 +52,7 @@ public:
     struct CombinedText {
         WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(CombinedText);
 
-        FontCascade font;
+        UniqueRef<FontCascade> font;
         float width { 0 };
         float ascent { 0 };
         float descent { 0 };

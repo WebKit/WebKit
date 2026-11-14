@@ -30,6 +30,7 @@
 #include <WebCore/GlyphBuffer.h>
 #include <optional>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 
 // "X11/X.h" defines Complex to 0 and conflicts
@@ -89,18 +90,21 @@ public:
 
 enum class ForTextEmphasis : bool { No, Yes };
 
-class FontCascade final : public CanMakeWeakPtr<FontCascade>, public CanMakeCheckedPtr<FontCascade, WTF::DefaultedOperatorEqual::No, WTF::CheckedPtrDeleteCheckException::Yes> {
-    WTF_MAKE_TZONE_ALLOCATED(FontCascade);
+class FontCascade final : public CanMakeWeakPtr<FontCascade>, public CanMakeCheckedPtr<FontCascade> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(FontCascade, WEBCORE_EXPORT);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FontCascade);
 public:
-    WEBCORE_EXPORT FontCascade();
-    WEBCORE_EXPORT FontCascade(FontCascadeDescription&&);
-    WEBCORE_EXPORT FontCascade(FontCascadeDescription&&, const FontCascade&);
-    // This constructor is only used if the platform wants to start with a native font.
-    WEBCORE_EXPORT FontCascade(const FontPlatformData&, FontSmoothingMode = FontSmoothingMode::Auto);
+    static UniqueRef<FontCascade> create() { return UniqueRef { *new FontCascade }; }
+    static UniqueRef<FontCascade> create(FontCascadeDescription&& description) { return UniqueRef { *new FontCascade(WTF::move(description)) }; }
+    static UniqueRef<FontCascade> create(FontCascadeDescription&& description, const FontCascade& other) { return UniqueRef { *new FontCascade(WTF::move(description), other) }; }
+    // This is only used if the platform wants to start with a native font.
+    static UniqueRef<FontCascade> create(const FontPlatformData& platformData, FontSmoothingMode smoothingMode = FontSmoothingMode::Auto) { return UniqueRef { *new FontCascade(platformData, smoothingMode) }; }
 
-    WEBCORE_EXPORT FontCascade(const FontCascade&);
+    UniqueRef<FontCascade> clone() const { return UniqueRef { *new FontCascade(*this) }; }
     WEBCORE_EXPORT FontCascade& operator=(const FontCascade&);
+
+    // Equivalent to assigning FontCascade::create(WTF::move(description), *this) to this object.
+    WEBCORE_EXPORT void setFontDescription(FontCascadeDescription&&);
 
     WEBCORE_EXPORT ~FontCascade();
 
@@ -213,6 +217,11 @@ public:
     void drawGlyphBuffer(GraphicsContext&, const GlyphBuffer&, FloatPoint&, CustomFontNotReadyAction) const;
 
 private:
+    WEBCORE_EXPORT FontCascade();
+    WEBCORE_EXPORT FontCascade(FontCascadeDescription&&);
+    WEBCORE_EXPORT FontCascade(FontCascadeDescription&&, const FontCascade&);
+    WEBCORE_EXPORT FontCascade(const FontPlatformData&, FontSmoothingMode);
+    WEBCORE_EXPORT FontCascade(const FontCascade&);
 
     TextShapingResult layoutSimpleText(const TextRun&, unsigned from, unsigned to, ForTextEmphasis = ForTextEmphasis::No) const;
     void drawEmphasisMarks(GraphicsContext&, const GlyphBuffer&, const AtomString&, const FloatPoint&) const;
@@ -349,6 +358,8 @@ private:
 bool shouldSynthesizeSmallCaps(bool, const Font*, char32_t, std::optional<char32_t>, FontVariantCaps, bool);
 std::optional<char32_t> capitalized(char32_t);
 inline char32_t mirrorCharacterIfNeeded(char32_t); // Defined in FontCascadeInlines.h
+
+inline bool operator==(const UniqueRef<FontCascade>& a, const UniqueRef<FontCascade>& b) { return a.get() == b.get(); }
 
 WTF::TextStream& operator<<(WTF::TextStream&, const FontCascade&);
 

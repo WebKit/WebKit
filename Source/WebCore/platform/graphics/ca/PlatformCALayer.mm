@@ -89,10 +89,10 @@ void PlatformCALayer::drawRepaintIndicator(GraphicsContext& graphicsContext, Pla
     fontDescription.setComputedSize(fontSize);
     fontDescription.setUsedSize(fontSize);
 
-    FontCascade cascade(WTF::move(fontDescription));
-    cascade.update(nullptr);
+    UniqueRef cascade = FontCascade::create(WTF::move(fontDescription));
+    cascade->update(nullptr);
 
-    float textWidth = cascade.width(textRun);
+    float textWidth = cascade->width(textRun);
 
     auto backgroundColor = customBackgroundColor.isValid() ? customBackgroundColor : defaultBackgroundColor;
 

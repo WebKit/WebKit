@@ -87,11 +87,11 @@ TEST(FontCascadeTest, EqualityWithNullFonts)
     description.setOneFamily("Times"_s);
     description.setUsedSize(16);
 
-    FontCascade a(FontCascadeDescription { description });
-    FontCascade b(FontCascadeDescription { description });
+    UniqueRef a = FontCascade::create(FontCascadeDescription { description });
+    UniqueRef b = FontCascade::create(FontCascadeDescription { description });
 
     // Both have null m_fonts (update() not called). They should be equal.
-    EXPECT_TRUE(a == b);
+    EXPECT_TRUE(a.get() == b.get());
 }
 
 // Testing characterRangeCodePath for non-surrogate codepoints
@@ -170,10 +170,10 @@ TEST(FontCascadeTest, PurgeInactiveFontDataClearsShapedTextCache)
     FontCascadeDescription description;
     description.setOneFamily("Times"_s);
     description.setUsedSize(16);
-    FontCascade font(WTF::move(description));
-    font.update();
+    UniqueRef font = FontCascade::create(WTF::move(description));
+    font->update();
 
-    RefPtr fonts = font.fonts();
+    RefPtr fonts = font->fonts();
     ASSERT_TRUE(fonts);
 
     fonts->shapedTextCache().add("hello world"_str, makeUnique<TextShapingResultAndDisplayList>());
@@ -191,8 +191,8 @@ TEST(FontCascadeTest, ComplexTextRetainsSystemFallbackFonts)
     FontCascadeDescription description;
     description.setOneFamily("Times"_s);
     description.setUsedSize(16);
-    FontCascade fontCascade(WTF::move(description));
-    fontCascade.update();
+    UniqueRef fontCascade = FontCascade::create(WTF::move(description));
+    fontCascade->update();
 
     // Complex-script characters Times cannot render, forcing Core Text system fallbacks.
     static constexpr std::array<char16_t, 8> characters { 0x06D8, 0x092D, 0x0B40, 0x0F96, 0x0DBD, 0x0EAF, 0xA86C, 0x0ACF };
@@ -201,7 +201,7 @@ TEST(FontCascadeTest, ComplexTextRetainsSystemFallbackFonts)
 
     // Shaping the run collects the system fallback fonts Core Text used.
     SingleThreadWeakHashSet<const Font> fallbackFonts;
-    fontCascade.width(run, &fallbackFonts);
+    fontCascade->width(run, &fallbackFonts);
 
     // Each fallback font must be retained beyond FontCache's own reference, so a purge cannot reclaim it.
     bool hasUsedFallbackFont = false;
@@ -226,30 +226,30 @@ TEST(FontCascadeTest, SyntheticBoldMeasuresTheSameOnBothSimpleTextPaths)
     FontCascadeDescription description;
     description.setOneFamily("Times"_s);
     description.setUsedSize(fontSize);
-    FontCascade unboldedFontCascade(WTF::move(description));
-    unboldedFontCascade.update();
+    UniqueRef unboldedFontCascade = FontCascade::create(WTF::move(description));
+    unboldedFontCascade->update();
 
     // The same font, flagged the way the font cache flags a bold weight in a family that has no bold face.
-    FontPlatformData syntheticBoldPlatformData(RetainPtr { unboldedFontCascade.primaryFont().platformData().ctFont() }, fontSize, true);
-    FontCascade fontCascade(syntheticBoldPlatformData);
+    FontPlatformData syntheticBoldPlatformData(RetainPtr { unboldedFontCascade->primaryFont().platformData().ctFont() }, fontSize, true);
+    UniqueRef fontCascade = FontCascade::create(syntheticBoldPlatformData);
 
     // Otherwise the run would not be emboldened at all and the expectations below would hold trivially.
-    EXPECT_GT(fontCascade.primaryFont().syntheticBoldOffset(), 0);
+    EXPECT_GT(fontCascade->primaryFont().syntheticBoldOffset(), 0);
 
     String text = "the quick brown fox"_str;
     TextRun run { text };
-    ASSERT_NE(fontCascade.codePath(run), CodePath::Complex);
+    ASSERT_NE(fontCascade->codePath(run), CodePath::Complex);
 
     // Both measuring functions memoize into the same cache, so it has to be cleared between them.
-    fontCascade.fonts()->glyphGeometryCache().clear();
-    auto simplifiedWidth = fontCascade.widthForTextUsingSimplifiedMeasuring(text);
-    fontCascade.fonts()->glyphGeometryCache().clear();
-    auto generalWidth = fontCascade.width(run);
+    fontCascade->fonts()->glyphGeometryCache().clear();
+    auto simplifiedWidth = fontCascade->widthForTextUsingSimplifiedMeasuring(text);
+    fontCascade->fonts()->glyphGeometryCache().clear();
+    auto generalWidth = fontCascade->width(run);
     EXPECT_NEAR(simplifiedWidth, generalWidth, 0.0001);
 
     // Both paths must also land on the width of the very same glyphs measured without synthetic bold.
-    unboldedFontCascade.fonts()->glyphGeometryCache().clear();
-    EXPECT_NEAR(simplifiedWidth, unboldedFontCascade.width(run), 0.0001);
+    unboldedFontCascade->fonts()->glyphGeometryCache().clear();
+    EXPECT_NEAR(simplifiedWidth, unboldedFontCascade->width(run), 0.0001);
 }
 #endif
 }

@@ -46,7 +46,7 @@ public:
 
 private:
     static Color borderColor();
-    static FontCascade makeFont();
+    static UniqueRef<FontCascade> makeFont();
 
     FloatSize size() const;
     std::pair<float, float> textVerticalBounds(const FontCascade&) const;

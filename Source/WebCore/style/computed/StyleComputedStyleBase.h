@@ -674,7 +674,7 @@ public:
     inline const FontCascade& fontCascade() const;
     NODELETE const FontCascade& fontCascadeOutOfLine() const;
     WEBCORE_EXPORT FontCascade& mutableFontCascadeWithoutUpdate();
-    void setFontCascade(FontCascade&&);
+    void setFontCascade(const FontCascade&);
 
     NODELETE WEBCORE_EXPORT const FontCascadeDescription& fontDescription() const;
     WEBCORE_EXPORT FontCascadeDescription& mutableFontDescriptionWithoutUpdate();

@@ -60,9 +60,9 @@ public:
     }
 
     TextLayout(RenderText& text, const FontCascade& fontCascade, float xPos)
-        : m_fontCascade(fontCascade)
+        : m_fontCascade(fontCascade.clone())
         , m_run(constructTextRun(text, xPos))
-        , m_controller(makeUniqueRef<ComplexTextController>(m_fontCascade, m_run, true))
+        , m_controller(makeUniqueRef<ComplexTextController>(m_fontCascade.get(), m_run, true))
     {
     }
 
@@ -70,8 +70,8 @@ public:
     {
         m_controller->advance(from, 0, GlyphIterationStyle::ByWholeGlyphs, fallbackFonts);
         float beforeWidth = m_controller->runWidthSoFar();
-        if (m_fontCascade.wordSpacing() && from && FontCascade::treatAsSpace(m_run[from]))
-            beforeWidth += m_fontCascade.wordSpacing();
+        if (m_fontCascade->wordSpacing() && from && FontCascade::treatAsSpace(m_run[from]))
+            beforeWidth += m_fontCascade->wordSpacing();
         m_controller->advance(from + len, 0, GlyphIterationStyle::ByWholeGlyphs, fallbackFonts);
         float afterWidth = m_controller->runWidthSoFar();
         return afterWidth - beforeWidth;
@@ -86,7 +86,7 @@ private:
     }
 
     // ComplexTextController has only a reference to its FontCascade so it must be kept alive here.
-    FontCascade m_fontCascade;
+    const UniqueRef<FontCascade> m_fontCascade;
     TextRun m_run;
     const UniqueRef<ComplexTextController> m_controller;
 };

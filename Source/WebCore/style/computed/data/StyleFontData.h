@@ -50,7 +50,7 @@ public:
 
     LetterSpacing letterSpacing;
     WordSpacing wordSpacing;
-    FontCascade fontCascade;
+    const UniqueRef<FontCascade> fontCascade;
 
 private:
     FontData();

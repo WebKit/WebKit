@@ -3192,7 +3192,7 @@ static void adjustInputElementButtonStyleForVectorBasedControls(Style::ComputedS
 #endif
 
     // Enforce the width and set the box-sizing to content-box to not conflict with the padding.
-    FontCascade font = style.fontCascade();
+    CheckedRef font = style.fontCascade();
 
     float estimatedMaximumWidth = localizedDateCache().estimatedMaximumWidthForDateType(dateType, font, RenderThemeMeasureTextClientForVectorBasedControls(font, style));
 

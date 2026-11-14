@@ -279,8 +279,8 @@ static ResolvedFontSize fontSizeFromUnresolvedFontSize(const CSSPropertyParserHe
                             };
                         },
                         [&](CSS::LengthUnit lengthUnit) -> ResolvedFontSize {
-                            auto fontCascade = FontCascade(FontCascadeDescription(fontDescription));
-                            fontCascade.update(context->cssFontSelector());
+                            UniqueRef fontCascade = FontCascade::create(FontCascadeDescription(fontDescription));
+                            fontCascade->update(context->cssFontSelector());
 
                             // FIXME: Passing null for the RenderView parameter means that vw and vh units will evaluate to
                             //        zero and vmin and vmax units will evaluate as if they were px units.
@@ -296,7 +296,7 @@ static ResolvedFontSize fontSizeFromUnresolvedFontSize(const CSSPropertyParserHe
                             RefPtr document = dynamicDowncast<Document>(context);
                             CheckedPtr rootFontCascade = rootFontCascadeForRootFontUnits(context);
                             return {
-                                .size = static_cast<float>(Style::resolveLength(lengthPercentage.value, lengthUnit, CSSPropertyID::FontSize, fontCascade, rootFontCascade ? *rootFontCascade : fontCascade, document ? document->renderView() : nullptr)),
+                                .size = static_cast<float>(Style::resolveLength(lengthPercentage.value, lengthUnit, CSSPropertyID::FontSize, fontCascade.get(), rootFontCascade ? *rootFontCascade : fontCascade.get(), document ? document->renderView() : nullptr)),
                                 .keyword = CSSValueID::Invalid
                             };
                         }
@@ -389,7 +389,7 @@ const FontCascade* rootFontCascadeForRootFontUnits(ScriptExecutionContext& conte
 
 // MARK: - Unresolved Font Shorthand Resolution
 
-std::optional<FontCascade> resolveForUnresolvedFont(const CSSPropertyParserHelpers::UnresolvedFont& unresolvedFont, FontCascadeDescription&& fontDescription, ScriptExecutionContext& context)
+std::unique_ptr<FontCascade> resolveForUnresolvedFont(const CSSPropertyParserHelpers::UnresolvedFont& unresolvedFont, FontCascadeDescription&& fontDescription, ScriptExecutionContext& context)
 {
     Ref protectedContext = context;
 
@@ -409,7 +409,7 @@ std::optional<FontCascade> resolveForUnresolvedFont(const CSSPropertyParserHelpe
 
     auto resolvedFamily = fontFamilyFromUnresolvedFontFamily(unresolvedFont.family, protectedContext);
     if (resolvedFamily.families.isEmpty())
-        return std::nullopt;
+        return nullptr;
     fontDescription.setFamilies(resolvedFamily.families);
     fontDescription.setHasAuthorSpecifiedNonGenericPrimaryFont(resolvedFamily.hasAuthorSpecifiedNonGenericPrimaryFont);
 
@@ -444,9 +444,9 @@ std::optional<FontCascade> resolveForUnresolvedFont(const CSSPropertyParserHelpe
     // As there is no line-height on FontCascade, there's no need to resolve it, even
     // though there is line-height information on CSSPropertyParserHelpers::UnresolvedFont.
 
-    auto fontCascade = FontCascade(WTF::move(fontDescription));
-    fontCascade.update(protectedContext->cssFontSelector());
-    return fontCascade;
+    UniqueRef fontCascade = FontCascade::create(WTF::move(fontDescription));
+    fontCascade->update(protectedContext->cssFontSelector());
+    return fontCascade.moveToUniquePtr();
 }
 
 }

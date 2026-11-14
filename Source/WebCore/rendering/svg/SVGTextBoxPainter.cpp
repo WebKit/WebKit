@@ -440,19 +440,19 @@ void SVGTextBoxPainter::paintDecorationWithStyle(Style::TextDecorationLine decor
     auto& decorationStyle = decorationRenderer.style();
 
     float scalingFactor = 1;
-    FontCascade scaledFont;
+    std::unique_ptr<FontCascade> scaledFont;
     RenderSVGInlineText::computeNewScaledFontForStyle(decorationRenderer, decorationStyle, scalingFactor, scaledFont);
     ASSERT(scalingFactor);
 
     // The initial y value refers to overline position.
-    float thickness = thicknessForDecoration(decoration, scaledFont);
+    float thickness = thicknessForDecoration(decoration, *scaledFont);
 
     if (fragment.width <= 0 && thickness <= 0)
         return;
 
     FloatPoint decorationOrigin(fragment.x, fragment.y);
     float width = fragment.width;
-    const FontMetrics& scaledFontMetrics = scaledFont.metricsOfPrimaryFont();
+    const FontMetrics& scaledFontMetrics = scaledFont->metricsOfPrimaryFont();
 
     GraphicsContextStateSaver stateSaver(context);
     if (scalingFactor != 1) {
