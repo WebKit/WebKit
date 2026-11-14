@@ -2044,7 +2044,7 @@ bool ElementTargetingController::resetVisibilityAdjustments(const Vector<Targete
     m_repeatedAdjustmentClientRegion = { };
     m_adjustmentClientRegion = { };
 
-    if (changed && !m_adjustedElements.isEmptyIgnoringNullReferences()) {
+    if (changed && !m_adjustedElements.computeIsEmpty()) {
         document->updateLayoutIgnorePendingStylesheets();
         auto viewportArea = m_viewportSizeForVisibilityAdjustment.area();
         for (Ref element : m_adjustedElements) {

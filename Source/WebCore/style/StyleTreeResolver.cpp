@@ -1705,7 +1705,7 @@ std::unique_ptr<Update> TreeResolver::resolve()
         return { };
 
     // Ensure we do at least one interleaved layout as any style change may affect existing anchor positions.
-    if (!m_didFirstInterleavedLayout && !m_document->styleScope().anchorPositionedToAnchorMap().isEmptyIgnoringNullReferences())
+    if (!m_didFirstInterleavedLayout && !m_document->styleScope().anchorPositionedToAnchorMap().computeIsEmpty())
         m_needsInterleavedLayout = true;
 
     Adjuster::propagateToDocumentElementAndInitialContainingBlock(*m_update, m_document);

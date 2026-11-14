@@ -166,7 +166,7 @@ void HIDGamepadProvider::closeAndUnscheduleManager()
 
 void HIDGamepadProvider::startMonitoringGamepads(GamepadProviderClient& client)
 {
-    bool shouldOpenAndScheduleManager = m_clients.isEmptyIgnoringNullReferences();
+    bool shouldOpenAndScheduleManager = m_clients.computeIsEmpty();
 
     ASSERT(!m_clients.contains(client));
     m_clients.add(client);
@@ -178,7 +178,7 @@ void HIDGamepadProvider::stopMonitoringGamepads(GamepadProviderClient& client)
 {
     ASSERT(m_clients.contains(client));
 
-    bool shouldCloseAndUnscheduleManager = m_clients.remove(client) && m_clients.isEmptyIgnoringNullReferences();
+    bool shouldCloseAndUnscheduleManager = m_clients.remove(client) && m_clients.computeIsEmpty();
 
     if (shouldCloseAndUnscheduleManager)
         closeAndUnscheduleManager();

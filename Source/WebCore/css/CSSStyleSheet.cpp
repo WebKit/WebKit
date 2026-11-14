@@ -629,7 +629,7 @@ bool CSSStyleSheet::isDetached() const
     assertIsOwnerThread();
     return !m_ownerNode
         && !m_ownerRule
-        && m_adoptingTreeScopes.isEmptyIgnoringNullReferences();
+        && m_adoptingTreeScopes.computeIsEmpty();
 }
 
 Document* CSSStyleSheet::constructorDocument() const

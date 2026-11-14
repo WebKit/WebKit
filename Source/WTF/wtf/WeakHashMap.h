@@ -331,17 +331,6 @@ public:
 
     unsigned capacity() const { return m_map.capacity(); }
 
-    bool isEmptyIgnoringNullReferences() const
-    {
-        if (m_map.isEmpty())
-            return true;
-
-        auto onlyContainsNullReferences = begin() == end();
-        if (onlyContainsNullReferences) [[unlikely]]
-            const_cast<WeakHashMap&>(*this).clear();
-        return onlyContainsNullReferences;
-    }
-
     bool hasNullReferences() const
     {
         unsigned count = 0;
@@ -359,11 +348,25 @@ public:
         return result;
     }
 
-    unsigned computeSize() const
+    unsigned computeSize() const { return m_map.computeSize(); }
+    unsigned computeSize()
     {
-        const_cast<WeakHashMap&>(*this).removeNullReferences();
-        return m_map.size();
+        unsigned result = m_map.computeSize();
+        cleanupHappened();
+        return result;
     }
+
+    bool computeIsEmpty() const { return m_map.computeIsEmpty(); }
+    bool computeIsEmpty()
+    {
+        bool result = m_map.computeIsEmpty();
+        cleanupHappened();
+        return result;
+    }
+
+    // FIXME: Update Apple-internal code to stop calling these, then remove them.
+    bool isEmptyIgnoringNullReferences() const { return computeIsEmpty(); }
+    bool isEmptyIgnoringNullReferences() { return computeIsEmpty(); }
 
     NEVER_INLINE void removeNullReferences()
     {

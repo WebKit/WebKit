@@ -64,7 +64,7 @@ void WebBackForwardCache::deref() const
 
 inline void WebBackForwardCache::removeOldestEntry()
 {
-    ASSERT(!m_itemsWithCachedPage.isEmptyIgnoringNullReferences());
+    ASSERT(!m_itemsWithCachedPage.computeIsEmpty());
     if (RefPtr item = m_itemsWithCachedPage.tryTakeFirst())
         item->setBackForwardCacheEntry(nullptr);
 }

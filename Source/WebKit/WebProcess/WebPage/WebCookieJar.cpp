@@ -429,7 +429,7 @@ void WebCookieJar::removeChangeListener(const String& host, const WebCore::Cooki
         return;
 
     it->value.remove(listener);
-    if (!it->value.isEmptyIgnoringNullReferences())
+    if (!it->value.computeIsEmpty())
         return;
 
     m_changeListeners.remove(it);

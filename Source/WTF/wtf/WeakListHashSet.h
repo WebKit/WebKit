@@ -308,26 +308,20 @@ public:
 
     unsigned capacity() const { return m_set.capacity(); }
 
-    // Reclaims null references as a side effect, so this must not be called concurrently. Callers
-    // that may race with each other (e.g. GC marker threads) must use
-    // isEmptyIgnoringNullReferencesWithoutCleanup() instead.
-    bool isEmptyIgnoringNullReferences() const
+    unsigned computeSize() const { return m_set.computeSize(); }
+    unsigned computeSize()
     {
-        if (m_set.isEmpty())
-            return true;
-
-        auto onlyContainsNullReferences = begin() == end();
-        if (onlyContainsNullReferences) [[unlikely]]
-            const_cast<WeakListHashSet&>(*this).clear();
-        return onlyContainsNullReferences;
+        unsigned result = m_set.computeSize();
+        cleanupHappened();
+        return result;
     }
 
-    bool isEmptyIgnoringNullReferencesWithoutCleanup() const
+    bool computeIsEmpty() const { return m_set.computeIsEmpty(); }
+    bool computeIsEmpty()
     {
-        if (m_set.isEmpty())
-            return true;
-
-        return begin() == end();
+        bool result = m_set.computeIsEmpty();
+        cleanupHappened();
+        return result;
     }
 
     bool hasNullReferences() const
@@ -344,12 +338,6 @@ public:
         else
             cleanupHappened();
         return result;
-    }
-
-    unsigned computeSize() const
-    {
-        const_cast<WeakListHashSet&>(*this).removeNullReferences();
-        return m_set.size();
     }
 
     void checkConsistency() { } // To be implemented.

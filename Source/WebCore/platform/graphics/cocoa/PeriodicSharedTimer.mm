@@ -82,7 +82,7 @@ void PeriodicSharedTimer::removeClient(Client& client)
 {
     Locker locker { m_activeLock };
     m_clients.remove(client);
-    if (!m_clients.isEmptyIgnoringNullReferences())
+    if (!m_clients.computeIsEmpty())
         return;
     if (!m_active)
         return;

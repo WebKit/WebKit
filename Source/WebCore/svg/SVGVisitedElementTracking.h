@@ -34,7 +34,7 @@ public:
     {
     }
 
-    bool isEmpty() const { return m_visitedElements.isEmptyIgnoringNullReferences(); }
+    bool isEmpty() const { return m_visitedElements.computeIsEmpty(); }
     bool isVisiting(const SVGElement& element) { return m_visitedElements.contains(element); }
 
     class Scope {

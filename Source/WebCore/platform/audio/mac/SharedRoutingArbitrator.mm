@@ -150,7 +150,7 @@ void SharedRoutingArbitrator::endRoutingArbitrationForToken(const SharedRoutingA
 
     m_tokens.remove(token);
 
-    if (!m_tokens.isEmptyIgnoringNullReferences())
+    if (!m_tokens.computeIsEmpty())
         return;
 
     for (auto& callback : m_enqueuedCallbacks)

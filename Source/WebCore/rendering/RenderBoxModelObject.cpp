@@ -977,7 +977,7 @@ public:
         }).iterator->value;
 
         auto isNewEntry = false;
-        if (!is<RenderView>(containingBlock) || descendants->isEmptyIgnoringNullReferences())
+        if (!is<RenderView>(containingBlock) || descendants->computeIsEmpty())
             isNewEntry = descendants->add(outOfFlowDescendant).isNewEntry;
         else if (outOfFlowDescendant.isFixedPositioned() || isInTopLayerOrBackdrop(outOfFlowDescendant.style(), outOfFlowDescendant.element()))
             isNewEntry = descendants->appendOrMoveToLast(outOfFlowDescendant).isNewEntry;
@@ -1020,7 +1020,7 @@ public:
         ASSERT(descendants->contains(const_cast<RenderBox&>(outOfFlowDescendant)));
 
         descendants->remove(const_cast<RenderBox&>(outOfFlowDescendant));
-        if (descendants->isEmptyIgnoringNullReferences())
+        if (descendants->computeIsEmpty())
             m_descendantsMap.remove(descendantsIterator);
     }
 

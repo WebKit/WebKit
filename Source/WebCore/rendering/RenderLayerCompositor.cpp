@@ -1177,7 +1177,7 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
 #endif
 
     if (updateRoot->hasDescendantNeedingUpdateBackingOrHierarchyTraversal() || updateRoot->needsUpdateBackingOrHierarchyTraversal()) {
-        ASSERT(m_layersWithUnresolvedRelations.isEmptyIgnoringNullReferences());
+        ASSERT(m_layersWithUnresolvedRelations.computeIsEmpty());
         ScrollingTreeState scrollingTreeState;
         scrollingTreeState.hasParent = true;
 
@@ -6233,7 +6233,7 @@ std::optional<ScrollingNodeID> RenderLayerCompositor::updateScrollingNodeForPosi
 
 void RenderLayerCompositor::resolveScrollingTreeRelationships()
 {
-    if (m_layersWithUnresolvedRelations.isEmptyIgnoringNullReferences())
+    if (m_layersWithUnresolvedRelations.computeIsEmpty())
         return;
 
     RefPtr scrollingCoordinator = this->scrollingCoordinator();

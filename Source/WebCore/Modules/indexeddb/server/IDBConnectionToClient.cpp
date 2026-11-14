@@ -213,7 +213,7 @@ void IDBConnectionToClient::connectionToClientClosed()
         connection.connectionClosedFromClient();
     });
 
-    ASSERT(m_databaseConnections.isEmptyIgnoringNullReferences());
+    ASSERT(m_databaseConnections.computeIsEmpty());
 }
 
 void IDBConnectionToClient::setClientSuspended(bool isSuspended)

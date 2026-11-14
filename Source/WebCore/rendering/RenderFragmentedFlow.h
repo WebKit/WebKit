@@ -81,12 +81,12 @@ public:
 
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 
-    bool hasFragments() const { return !m_fragmentList.isEmptyIgnoringNullReferences(); }
+    bool hasFragments() const { return !m_fragmentList.computeIsEmpty(); }
     virtual void fragmentChangedWritingMode(RenderFragmentContainer*) { }
 
     void validateFragments();
     void invalidateFragments(MarkingBehavior = MarkingBehavior::ContainingBlockChain);
-    bool hasValidFragmentInfo() const { return !m_fragmentsInvalidated && !m_fragmentList.isEmptyIgnoringNullReferences(); }
+    bool hasValidFragmentInfo() const { return !m_fragmentsInvalidated && !m_fragmentList.computeIsEmpty(); }
     
     // Called when a descendant box's layout is finished and it has been positioned within its container.
     virtual void fragmentedFlowDescendantBoxLaidOut(RenderBox*) { }

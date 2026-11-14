@@ -1571,7 +1571,7 @@ void NetworkProcessProxy::removeSession(WebsiteDataStore& websiteDataStore, Comp
     if (completionHandler)
         completionHandler({ });
 
-    if (m_websiteDataStores.isEmptyIgnoringNullReferences())
+    if (m_websiteDataStores.computeIsEmpty())
         defaultNetworkProcess() = nullptr;
 }
 

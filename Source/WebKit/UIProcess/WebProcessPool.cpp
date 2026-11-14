@@ -402,7 +402,7 @@ WebProcessPool::~WebProcessPool()
     platformInvalidateContext();
 
 #if ENABLE(GAMEPAD)
-    if (!m_processesUsingGamepads.isEmptyIgnoringNullReferences())
+    if (!m_processesUsingGamepads.computeIsEmpty())
         UIGamepadProvider::singleton().processPoolStoppedUsingGamepads(*this);
 #endif
 
@@ -1817,7 +1817,7 @@ void WebProcessPool::reclaimIdleProcesses()
             prewarmedProcess->shutDown();
     }
 
-    ASSERT(m_prewarmedProcesses.isEmptyIgnoringNullReferences());
+    ASSERT(m_prewarmedProcesses.computeIsEmpty());
 }
 
 void WebProcessPool::handleMemoryPressureWarning(Critical)
@@ -2228,7 +2228,7 @@ void WebProcessPool::startedUsingGamepads(IPC::Connection& connection)
     if (!proxy)
         return;
 
-    bool wereAnyProcessesUsingGamepads = !m_processesUsingGamepads.isEmptyIgnoringNullReferences();
+    bool wereAnyProcessesUsingGamepads = !m_processesUsingGamepads.computeIsEmpty();
     if (!wereAnyProcessesUsingGamepads)
         UIGamepadProvider::singleton().processPoolStartedUsingGamepads(*this);
 
@@ -2263,12 +2263,12 @@ void WebProcessPool::stopGamepadEffects(unsigned gamepadIndex, const String& gam
 
 void WebProcessPool::processStoppedUsingGamepads(WebProcessProxy& process)
 {
-    bool wereAnyProcessesUsingGamepads = !m_processesUsingGamepads.isEmptyIgnoringNullReferences();
+    bool wereAnyProcessesUsingGamepads = !m_processesUsingGamepads.computeIsEmpty();
 
     ASSERT(m_processesUsingGamepads.contains(process));
     m_processesUsingGamepads.remove(process);
 
-    if (wereAnyProcessesUsingGamepads && m_processesUsingGamepads.isEmptyIgnoringNullReferences())
+    if (wereAnyProcessesUsingGamepads && m_processesUsingGamepads.computeIsEmpty())
         UIGamepadProvider::singleton().processPoolStoppedUsingGamepads(*this);
 }
 

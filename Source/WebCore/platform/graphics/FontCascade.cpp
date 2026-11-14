@@ -337,7 +337,7 @@ float FontCascade::width(const TextRun& run, SingleThreadWeakHashSet<const Font>
         fallbackFonts = &localFallbackFonts;
 
     float result = width(codePathToUse, run, fallbackFonts, glyphOverflow);
-    bool hasFallbackFonts = !fallbackFonts->isEmptyIgnoringNullReferences();
+    bool hasFallbackFonts = !fallbackFonts->computeIsEmpty();
 
     if (cacheEntry) {
         if (!hasFallbackFonts || canUseFallbackFontCacheEntry) {

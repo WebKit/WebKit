@@ -108,7 +108,7 @@ inline Ref<Document> Document::create(const Settings& settings, const URL& url)
 
 bool Document::hasNodeIterators() const
 {
-    return !m_nodeIterators.isEmptyIgnoringNullReferences();
+    return !m_nodeIterators.computeIsEmpty();
 }
 
 inline void Document::invalidateAccessKeyCache()

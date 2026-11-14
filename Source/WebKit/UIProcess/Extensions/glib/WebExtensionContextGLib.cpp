@@ -379,7 +379,7 @@ void WebExtensionContext::unloadBackgroundContentIfPossible()
     }
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
-    if (!m_inspectorContextMap.isEmptyIgnoringNullReferences()) {
+    if (!m_inspectorContextMap.computeIsEmpty()) {
         scheduleBackgroundContentToUnload();
         RELEASE_LOG_DEBUG(Extensions, "Not unloading background content because an inspector background page is open");
         return;

@@ -76,8 +76,8 @@ public:
     NODELETE TrackedRendererListHashSet* percentHeightDescendants() const LIFETIME_BOUND;
     bool hasPercentHeightDescendants() const
     {
-        auto* renderers = percentHeightDescendants();
-        return renderers && !renderers->isEmptyIgnoringNullReferences();
+        const auto* renderers = percentHeightDescendants();
+        return renderers && !renderers->computeIsEmpty();
     }
     NODELETE static bool hasPercentHeightContainerMap();
     static void clearPercentHeightDescendantsFrom(RenderBox&);

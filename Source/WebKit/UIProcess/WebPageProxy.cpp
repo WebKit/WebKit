@@ -13209,7 +13209,7 @@ void WebPageProxy::showPage()
 
 bool WebPageProxy::hasOpenedPage() const
 {
-    return !internals().m_openedPages.isEmptyIgnoringNullReferences();
+    return !internals().m_openedPages.computeIsEmpty();
 }
 
 bool WebPageProxy::shouldReuseMainFrameOnProcessSwap(const BrowsingContextGroup& targetGroup) const
@@ -23119,7 +23119,7 @@ void WebPageProxy::updateDefaultSpatialTrackingLabel()
 void WebPageProxy::addNowPlayingMetadataObserver(const NowPlayingMetadataObserver& observer)
 {
     ASSERT(!m_nowPlayingMetadataObservers.contains(observer));
-    if (m_nowPlayingMetadataObservers.isEmptyIgnoringNullReferences())
+    if (m_nowPlayingMetadataObservers.computeIsEmpty())
         send(Messages::WebPage::StartObservingNowPlayingMetadata());
     m_nowPlayingMetadataObservers.add(observer);
 }
@@ -23128,7 +23128,7 @@ void WebPageProxy::removeNowPlayingMetadataObserver(const NowPlayingMetadataObse
 {
     ASSERT(m_nowPlayingMetadataObservers.contains(observer));
     m_nowPlayingMetadataObservers.remove(observer);
-    if (m_nowPlayingMetadataObservers.isEmptyIgnoringNullReferences())
+    if (m_nowPlayingMetadataObservers.computeIsEmpty())
         send(Messages::WebPage::StopObservingNowPlayingMetadata());
 }
 

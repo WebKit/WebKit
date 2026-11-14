@@ -45,7 +45,7 @@ public:
     NODELETE RenderMultiColumnSet* firstMultiColumnSet() const;
     NODELETE RenderMultiColumnSet* lastMultiColumnSet() const;
     NODELETE RenderBox* firstColumnSetOrSpanner() const;
-    bool hasColumnSpanner() const { return !m_spannerMap.isEmptyIgnoringNullReferences(); }
+    bool hasColumnSpanner() const { return !m_spannerMap.computeIsEmpty(); }
     NODELETE static RenderBox* nextColumnSetOrSpannerSiblingOf(const RenderBox*);
     NODELETE static RenderBox* previousColumnSetOrSpannerSiblingOf(const RenderBox*);
 

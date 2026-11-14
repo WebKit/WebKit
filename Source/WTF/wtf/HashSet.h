@@ -89,7 +89,9 @@ public:
 
     // Useful when the key type is WeakPtr
     size_t computeSize() const requires (ValueTraits::hasIsWeakNullValueFunction);
-    bool isEmptyIgnoringNullReferences() const requires (ValueTraits::hasIsWeakNullValueFunction);
+    size_t computeSize() requires (ValueTraits::hasIsWeakNullValueFunction);
+    bool computeIsEmpty() const requires (ValueTraits::hasIsWeakNullValueFunction);
+    bool computeIsEmpty() requires (ValueTraits::hasIsWeakNullValueFunction);
     void removeWeakNullEntries() requires (ValueTraits::hasIsWeakNullValueFunction);
 
     void reserveInitialCapacity(unsigned keyCount) { m_impl.reserveInitialCapacity(keyCount); }
@@ -299,9 +301,21 @@ inline size_t HashSet<T, U, V, W>::computeSize() const requires (ValueTraits::ha
 }
 
 template<typename T, typename U, typename V, typename W>
-inline bool HashSet<T, U, V, W>::isEmptyIgnoringNullReferences() const requires (ValueTraits::hasIsWeakNullValueFunction)
+inline size_t HashSet<T, U, V, W>::computeSize() requires (ValueTraits::hasIsWeakNullValueFunction)
 {
-    return m_impl.isEmptyIgnoringNullReferences();
+    return m_impl.computeSize();
+}
+
+template<typename T, typename U, typename V, typename W>
+inline bool HashSet<T, U, V, W>::computeIsEmpty() const requires (ValueTraits::hasIsWeakNullValueFunction)
+{
+    return m_impl.computeIsEmpty();
+}
+
+template<typename T, typename U, typename V, typename W>
+inline bool HashSet<T, U, V, W>::computeIsEmpty() requires (ValueTraits::hasIsWeakNullValueFunction)
+{
+    return m_impl.computeIsEmpty();
 }
 
 template<typename T, typename U, typename V, typename W>

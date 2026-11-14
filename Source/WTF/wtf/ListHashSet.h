@@ -188,7 +188,9 @@ public:
 
     // Useful when the key type is WeakPtr
     size_t computeSize() const requires (ValueTraits::hasIsWeakNullValueFunction);
-    bool isEmptyIgnoringNullReferences() const requires (ValueTraits::hasIsWeakNullValueFunction);
+    size_t computeSize() requires (ValueTraits::hasIsWeakNullValueFunction);
+    bool computeIsEmpty() const requires (ValueTraits::hasIsWeakNullValueFunction);
+    bool computeIsEmpty() requires (ValueTraits::hasIsWeakNullValueFunction);
     void removeWeakNullEntries() requires (ValueTraits::hasIsWeakNullValueFunction);
 
     // Overloads for smart pointer values that take the raw pointer type as the parameter.
@@ -843,9 +845,21 @@ inline size_t ListHashSet<T, U>::computeSize() const requires (ValueTraits::hasI
 }
 
 template<typename T, typename U>
-inline bool ListHashSet<T, U>::isEmptyIgnoringNullReferences() const requires (ValueTraits::hasIsWeakNullValueFunction)
+inline size_t ListHashSet<T, U>::computeSize() requires (ValueTraits::hasIsWeakNullValueFunction)
 {
-    return m_impl.isEmptyIgnoringNullReferences();
+    return m_impl.computeSize();
+}
+
+template<typename T, typename U>
+inline bool ListHashSet<T, U>::computeIsEmpty() const requires (ValueTraits::hasIsWeakNullValueFunction)
+{
+    return m_impl.computeIsEmpty();
+}
+
+template<typename T, typename U>
+inline bool ListHashSet<T, U>::computeIsEmpty() requires (ValueTraits::hasIsWeakNullValueFunction)
+{
+    return m_impl.computeIsEmpty();
 }
 
 template<typename T, typename U>

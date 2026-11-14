@@ -43,7 +43,7 @@ PageLoadState::PageLoadState(WebPageProxy& webPageProxy)
 
 PageLoadState::~PageLoadState()
 {
-    ASSERT(m_observers.isEmptyIgnoringNullReferences());
+    ASSERT(m_observers.computeIsEmpty());
 }
 
 PageLoadState::Transaction::Transaction(PageLoadState& pageLoadState)

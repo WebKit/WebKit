@@ -119,7 +119,7 @@ void LegacyRenderSVGResourceContainer::markAllClientsForInvalidationIfNeeded(Inv
 {
     // FIXME: Style invalidation should either be a pre-layout task or this function
     // should never get called while in layout. See webkit.org/b/208903.
-    if ((m_clients.isEmptyIgnoringNullReferences() && m_clientLayers.isEmptyIgnoringNullReferences()) || m_isInvalidating)
+    if ((m_clients.computeIsEmpty() && m_clientLayers.computeIsEmpty()) || m_isInvalidating)
         return;
 
     SetForScope isInvalidating(m_isInvalidating, true);
@@ -149,7 +149,7 @@ void LegacyRenderSVGResourceContainer::markAllClientsForInvalidationIfNeeded(Inv
 
 void LegacyRenderSVGResourceContainer::markAllClientLayersForInvalidation()
 {
-    if (m_clientLayers.isEmptyIgnoringNullReferences())
+    if (m_clientLayers.computeIsEmpty())
         return;
 
     Ref document = (*m_clientLayers.begin())->renderer().document();
@@ -172,7 +172,7 @@ void LegacyRenderSVGResourceContainer::markAllClientLayersForInvalidation()
 
 void LegacyRenderSVGResourceContainer::markClientForInvalidation(RenderObject& client, InvalidationMode mode)
 {
-    ASSERT(!m_clients.isEmptyIgnoringNullReferences() || !client.style().clipPath().isNone());
+    ASSERT(!m_clients.computeIsEmpty() || !client.style().clipPath().isNone());
 
     switch (mode) {
     case LayoutAndBoundariesInvalidation:

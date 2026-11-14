@@ -644,8 +644,10 @@ static_assert(std::is_trivial_v<StatusBytes>);
 
         // Useful when the key type is WeakPtr
         size_t computeSize() const requires (KeyTraits::hasIsWeakNullValueFunction);
-        bool isEmptyIgnoringNullReferences() const requires (KeyTraits::hasIsWeakNullValueFunction);
-        void removeWeakNullEntries() const requires (KeyTraits::hasIsWeakNullValueFunction);
+        size_t computeSize() requires (KeyTraits::hasIsWeakNullValueFunction);
+        bool computeIsEmpty() const requires (KeyTraits::hasIsWeakNullValueFunction);
+        bool computeIsEmpty() requires (KeyTraits::hasIsWeakNullValueFunction);
+        void removeWeakNullEntries() requires (KeyTraits::hasIsWeakNullValueFunction);
 
         template<size_t inlineCapacity>
         Vector<TakeType, inlineCapacity> takeIf(NOESCAPE const Invocable<bool(const ValueType&)> auto&);
@@ -1179,21 +1181,38 @@ static_assert(std::is_trivial_v<StatusBytes>);
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, typename Malloc>
     inline size_t HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, Malloc>::computeSize() const requires (KeyTraits::hasIsWeakNullValueFunction)
     {
+        size_t size = 0;
+        for (auto& _ : *this)
+            ++size;
+        return size;
+    }
+
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, typename Malloc>
+    inline size_t HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, Malloc>::computeSize() requires (KeyTraits::hasIsWeakNullValueFunction)
+    {
         removeWeakNullEntries();
         return size();
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, typename Malloc>
-    inline bool HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, Malloc>::isEmptyIgnoringNullReferences() const requires (KeyTraits::hasIsWeakNullValueFunction)
+    inline bool HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, Malloc>::computeIsEmpty() const requires (KeyTraits::hasIsWeakNullValueFunction)
     {
-        // FIXME: We should probably return isEmpty() || !computeSize() here to avoid pathological weak null iteration in an empty table.
-        return isEmpty() || begin() == end(); // Iterators skip weak null
+        return !computeSize();
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, typename Malloc>
-    inline void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, Malloc>::removeWeakNullEntries() const requires (KeyTraits::hasIsWeakNullValueFunction)
+    inline bool HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, Malloc>::computeIsEmpty() requires (KeyTraits::hasIsWeakNullValueFunction)
     {
-        const_cast<HashTable&>(*this).removeIf([](ValueType&) {
+        if (computeSize())
+            return false;
+        clear();
+        return true;
+    }
+
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, typename Malloc>
+    inline void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, Malloc>::removeWeakNullEntries() requires (KeyTraits::hasIsWeakNullValueFunction)
+    {
+        removeIf([](ValueType&) {
             return false;
         });
     }

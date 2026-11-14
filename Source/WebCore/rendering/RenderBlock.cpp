@@ -164,7 +164,7 @@ static void removeFromTrackedRendererMaps(RenderBox& descendant)
         auto& descendantSet = descendantsMapIterator->value;
         ASSERT(descendantSet->contains(descendant));
         descendantSet->remove(descendant);
-        if (descendantSet->isEmptyIgnoringNullReferences())
+        if (descendantSet->computeIsEmpty())
             percentHeightDescendantsMap->remove(descendantsMapIterator);
     }
 }
@@ -544,7 +544,7 @@ void RenderBlock::layout()
 
     // The size computed by the interleaved layout was only for evaluating container queries.
     // Start from the earlier size, so the layout handles a size change as usual.
-    if (auto& containers = queryContainersSkippedByInterleavedLayout(); !containers.isEmptyIgnoringNullReferences() && containers.contains(*this))
+    if (auto& containers = queryContainersSkippedByInterleavedLayout(); !containers.computeIsEmpty() && containers.contains(*this))
         setBorderBoxSize(containers.take(*this).borderBoxSizeBeforeInterleavedLayout);
 
     // Table cells call layoutBlock directly, so don't add any logic here. Put code into layoutBlock().

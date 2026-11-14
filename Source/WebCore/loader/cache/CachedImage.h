@@ -139,10 +139,10 @@ private:
         explicit CachedImageObserver(CachedImage&);
 
         // ImageObserver API
-        URL sourceUrl() const override { return !m_cachedImages.isEmptyIgnoringNullReferences() ? protect(*m_cachedImages.begin())->url() : URL(); }
-        String mimeType() const override { return !m_cachedImages.isEmptyIgnoringNullReferences() ? protect(*m_cachedImages.begin())->mimeType() : emptyString(); }
-        unsigned numberOfClients() const override { return !m_cachedImages.isEmptyIgnoringNullReferences() ? protect(*m_cachedImages.begin())->numberOfClients() : 0; }
-        long long expectedContentLength() const override { return !m_cachedImages.isEmptyIgnoringNullReferences() ? protect(*m_cachedImages.begin())->expectedContentLength() : 0; }
+        URL sourceUrl() const override { return !m_cachedImages.computeIsEmpty() ? protect(*m_cachedImages.begin())->url() : URL(); }
+        String mimeType() const override { return !m_cachedImages.computeIsEmpty() ? protect(*m_cachedImages.begin())->mimeType() : emptyString(); }
+        unsigned numberOfClients() const override { return !m_cachedImages.computeIsEmpty() ? protect(*m_cachedImages.begin())->numberOfClients() : 0; }
+        long long expectedContentLength() const override { return !m_cachedImages.computeIsEmpty() ? protect(*m_cachedImages.begin())->expectedContentLength() : 0; }
 
         void encodedDataStatusChanged(const Image&, EncodedDataStatus) final;
         void decodedSizeChanged(const Image&, long long delta) final;
@@ -155,7 +155,7 @@ private:
         void scheduleRenderingUpdate(const Image&) final;
 
         bool allowsAnimation(const Image&) const final;
-        const Settings* settings() final { return !m_cachedImages.isEmptyIgnoringNullReferences() ? (*m_cachedImages.begin()).m_settings.get() : nullptr; }
+        const Settings* settings() final { return !m_cachedImages.computeIsEmpty() ? (*m_cachedImages.begin()).m_settings.get() : nullptr; }
 
         WeakHashSet<CachedImage> m_cachedImages;
     };

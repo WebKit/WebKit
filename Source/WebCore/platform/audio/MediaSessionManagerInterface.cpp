@@ -871,7 +871,7 @@ void MediaSessionManagerInterface::removeSession(PlatformMediaSessionInterface& 
 
 bool MediaSessionManagerInterface::hasNoSession() const
 {
-    return sessions().isEmptyIgnoringNullReferences();
+    return sessions().computeIsEmpty();
 }
 
 bool MediaSessionManagerInterface::computeSupportsSeeking() const

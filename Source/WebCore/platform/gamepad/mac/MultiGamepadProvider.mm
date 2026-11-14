@@ -47,7 +47,7 @@ MultiGamepadProvider& MultiGamepadProvider::singleton()
 
 void MultiGamepadProvider::startMonitoringGamepads(GamepadProviderClient& client)
 {
-    bool monitorOtherProviders = m_clients.isEmptyIgnoringNullReferences();
+    bool monitorOtherProviders = m_clients.computeIsEmpty();
 
     ASSERT(!m_clients.contains(client));
     m_clients.add(client);
@@ -68,7 +68,7 @@ void MultiGamepadProvider::stopMonitoringGamepads(GamepadProviderClient& client)
 {
     ASSERT(m_clients.contains(client));
 
-    bool shouldStopMonitoringOtherProviders = m_clients.remove(client) && m_clients.isEmptyIgnoringNullReferences();
+    bool shouldStopMonitoringOtherProviders = m_clients.remove(client) && m_clients.computeIsEmpty();
 
     if (shouldStopMonitoringOtherProviders) {
         HIDGamepadProvider::singleton().stopMonitoringGamepads(*this);

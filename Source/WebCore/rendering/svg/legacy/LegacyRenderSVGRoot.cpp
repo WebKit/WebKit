@@ -226,7 +226,7 @@ void LegacyRenderSVGRoot::layout()
     m_isLayoutSizeChanged = needsLayout || (svgSVGElement().hasRelativeLengths() && oldSize != borderBoxSize());
     SVGRenderSupport::layoutChildren(*this, needsLayout || SVGRenderSupport::filtersForceContainerLayout(*this));
 
-    if (!m_resourcesNeedingToInvalidateClients.isEmptyIgnoringNullReferences()) {
+    if (!m_resourcesNeedingToInvalidateClients.computeIsEmpty()) {
         // Invalidate resource clients, which may mark some nodes for layout.
         for (auto& resource :  m_resourcesNeedingToInvalidateClients) {
             resource.removeAllClientsFromCacheAndMarkForInvalidation();

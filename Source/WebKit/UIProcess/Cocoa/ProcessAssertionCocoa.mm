@@ -188,7 +188,7 @@ static bool processHasActiveRunTimeLimitation()
 
 - (void)_updateBackgroundTask
 {
-    if (!_assertionsNeedingBackgroundTask.isEmptyIgnoringNullReferences() && (![self _hasBackgroundTask] || _backgroundTaskWasInvalidated)) {
+    if (!_assertionsNeedingBackgroundTask.computeIsEmpty() && (![self _hasBackgroundTask] || _backgroundTaskWasInvalidated)) {
         if (processHasActiveRunTimeLimitation()) {
             RELEASE_LOG(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager: Ignored request to start a new background task because RunningBoard has already started the expiration timer", self);
             return;
@@ -203,11 +203,11 @@ static bool processHasActiveRunTimeLimitation()
         _backgroundTaskWasInvalidated = false;
         [_backgroundTask acquireWithInvalidationHandler:nil];
         RELEASE_LOG(ProcessSuspension, "WKProcessAssertionBackgroundTaskManager: Took a FinishTaskInterruptable assertion for own process");
-    } else if (_assertionsNeedingBackgroundTask.isEmptyIgnoringNullReferences()) {
+    } else if (_assertionsNeedingBackgroundTask.computeIsEmpty()) {
         // Release the background task asynchronously because releasing the background task may destroy the ProcessThrottler and we don't
         // want it to get destroyed while in the middle of updating its assertion.
         RunLoop::mainSingleton().dispatch([self, strongSelf = retainPtr(self)] {
-            if (_assertionsNeedingBackgroundTask.isEmptyIgnoringNullReferences())
+            if (_assertionsNeedingBackgroundTask.computeIsEmpty())
                 [self _releaseBackgroundTask];
         });
     }

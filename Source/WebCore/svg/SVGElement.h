@@ -86,7 +86,7 @@ public:
 
     String title() const override;
     virtual bool supportsMarkers() const { return false; }
-    bool hasRelativeLengths() const { return m_selfHasRelativeLengths || !m_childElementsWithRelativeLengths.isEmptyIgnoringNullReferences(); }
+    bool hasRelativeLengths() const { return m_selfHasRelativeLengths || !m_childElementsWithRelativeLengths.computeIsEmpty(); }
     virtual bool needsPendingResourceHandling() const { return true; }
     NODELETE bool instanceUpdatesBlocked() const;
     NODELETE void setInstanceUpdatesBlocked(bool);

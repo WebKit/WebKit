@@ -860,7 +860,7 @@ Document::~Document()
     ASSERT(!m_disabledFieldsetElementsCount);
     ASSERT(!m_connectedDisabledFieldsetElementsCount);
     ASSERT(m_ranges.isEmpty());
-    ASSERT(m_inDocumentShadowRoots.isEmptyIgnoringNullReferences());
+    ASSERT(m_inDocumentShadowRoots.computeIsEmpty());
 
 #if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
     m_deviceMotionClient->deviceMotionControllerDestroyed();
@@ -1442,7 +1442,7 @@ void Document::addResultForSelector(ContainerNode& context, const String& select
 
 void Document::invalidateQuerySelectorResults(Node& startingNode)
 {
-    if (m_querySelectorResults.isEmptyIgnoringNullReferences())
+    if (m_querySelectorResults.computeIsEmpty())
         return;
     for (RefPtr currentNode = startingNode; currentNode; currentNode = currentNode->parentNode()) {
         if (!currentNode->hasValidQuerySelectorResults())
@@ -1454,7 +1454,7 @@ void Document::invalidateQuerySelectorResults(Node& startingNode)
 
 void Document::invalidateQuerySelectorResultsForClassAttributeChange(Node& startingNode, const SpaceSplitString& oldClasses, const SpaceSplitString& newClasses)
 {
-    if (m_querySelectorResults.isEmptyIgnoringNullReferences())
+    if (m_querySelectorResults.computeIsEmpty())
         return;
     for (RefPtr currentNode = startingNode; currentNode; currentNode = currentNode->parentNode()) {
         if (!currentNode->hasValidQuerySelectorResults())
@@ -3754,11 +3754,11 @@ void Document::willBeRemovedFromFrame()
     commonTeardown();
 
 #if ENABLE(TOUCH_EVENTS) || ENABLE(TOUCH_EVENT_REGIONS)
-    if (!m_touchEventTargets.isEmptyIgnoringNullReferences() && parentDocument())
+    if (!m_touchEventTargets.computeIsEmpty() && parentDocument())
         protect(parentDocument())->didRemoveEventTargetNode(*this);
 #endif
 
-    if (!m_wheelEventTargets.isEmptyIgnoringNullReferences() && parentDocument())
+    if (!m_wheelEventTargets.computeIsEmpty() && parentDocument())
         protect(parentDocument())->didRemoveEventTargetNode(*this);
 
     if (RefPtr mediaQueryMatcher = m_mediaQueryMatcher)
@@ -9709,7 +9709,7 @@ void Document::blockRenderingOn(Element& element, ImplicitRenderBlocking implici
 void Document::unblockRenderingOn(Element& element)
 {
     m_renderBlockingElements.remove(element);
-    if (m_renderBlockingElements.isEmptyIgnoringNullReferences())
+    if (m_renderBlockingElements.computeIsEmpty())
         removeVisualUpdatePreventedReasons(VisualUpdatesPreventedReason::RenderBlocking);
 }
 
@@ -9790,7 +9790,7 @@ void Document::wheelEventHandlersChanged(Node* node)
     UNUSED_PARAM(node);
 #endif
 
-    bool haveHandlers = !m_wheelEventTargets.isEmptyIgnoringNullReferences();
+    bool haveHandlers = !m_wheelEventTargets.computeIsEmpty();
     page->chrome().client().wheelEventHandlersChanged(haveHandlers);
 }
 
@@ -9887,13 +9887,13 @@ void Document::didRemoveEventTargetNode(Node& handler)
 {
 #if ENABLE(TOUCH_EVENTS) || ENABLE(TOUCH_EVENT_REGIONS)
     if (m_touchEventTargets.removeAll(handler)) {
-        if ((&handler == this || m_touchEventTargets.isEmptyIgnoringNullReferences()) && parentDocument())
+        if ((&handler == this || m_touchEventTargets.computeIsEmpty()) && parentDocument())
             protect(parentDocument())->didRemoveEventTargetNode(*this);
     }
 #endif
 
     if (m_wheelEventTargets.removeAll(handler)) {
-        if ((&handler == this || m_wheelEventTargets.isEmptyIgnoringNullReferences()) && parentDocument())
+        if ((&handler == this || m_wheelEventTargets.computeIsEmpty()) && parentDocument())
             protect(parentDocument())->didRemoveEventTargetNode(*this);
     }
 }
@@ -10057,10 +10057,10 @@ bool Document::hasTouchEventHandlers() const
     auto touchEventHandlerCountsIsEmpty = true;
 
 #if ENABLE(IOS_TOUCH_EVENTS) && ENABLE(TOUCH_EVENT_REGIONS)
-    touchEventHandlerCountsIsEmpty = !shouldUseTouchEventRegions() || m_touchEventHandlerCounts.isEmptyIgnoringNullReferences();
+    touchEventHandlerCountsIsEmpty = !shouldUseTouchEventRegions() || m_touchEventHandlerCounts.computeIsEmpty();
 #endif
 
-    return !m_touchEventTargets.isEmptyIgnoringNullReferences() || !touchEventHandlerCountsIsEmpty;
+    return !m_touchEventTargets.computeIsEmpty() || !touchEventHandlerCountsIsEmpty;
 }
 #endif
 
@@ -12381,7 +12381,7 @@ void Document::prepareCanvasesForDisplayOrFlushIfNeeded()
 void Document::addCanvasNeedingPreparationForDisplayOrFlush(CanvasRenderingContext& context)
 {
     if (context.hasDeferredOperations() || context.needsPreparationForDisplay()) {
-        bool shouldSchedule = m_canvasContextsToPrepare.isEmptyIgnoringNullReferences();
+        bool shouldSchedule = m_canvasContextsToPrepare.computeIsEmpty();
         m_canvasContextsToPrepare.add(context);
         context.setIsInPreparationForDisplayOrFlush(true);
         if (shouldSchedule)
@@ -12408,7 +12408,7 @@ void Document::serviceCanvasPaintEvents()
 
 void Document::requestCanvasPaintEvent(HTMLCanvasElement& canvas)
 {
-    bool shouldSchedule = m_canvasesNeedingPaintEvent.isEmptyIgnoringNullReferences();
+    bool shouldSchedule = m_canvasesNeedingPaintEvent.computeIsEmpty();
     m_canvasesNeedingPaintEvent.add(canvas);
     if (shouldSchedule)
         scheduleRenderingUpdate(RenderingUpdateStep::CanvasPaintEvent);

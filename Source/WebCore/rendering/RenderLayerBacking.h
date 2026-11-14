@@ -89,7 +89,7 @@ public:
     const InlineWeakKeyListHashSet<RenderLayer>& backingSharingLayers() const LIFETIME_BOUND { return m_backingSharingLayers; }
     void setBackingSharingLayers(InlineWeakKeyListHashSet<RenderLayer>&&);
 
-    bool hasBackingSharingLayers() const { return !m_backingSharingLayers.isEmptyIgnoringNullReferences(); }
+    bool hasBackingSharingLayers() const { return !m_backingSharingLayers.computeIsEmpty(); }
 
     void removeBackingSharingLayer(RenderLayer&, OptionSet<UpdateBackingSharingFlags>);
     void clearBackingSharingLayers(OptionSet<UpdateBackingSharingFlags>);

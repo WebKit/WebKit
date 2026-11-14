@@ -33,7 +33,7 @@ CachedResourceClient::CachedResourceClient() = default;
 
 CachedResourceClient::~CachedResourceClient()
 {
-    ASSERT(m_associatedResources.isEmptyIgnoringNullReferences());
+    ASSERT(m_associatedResources.computeIsEmpty());
 }
 
 #if ASSERT_ENABLED

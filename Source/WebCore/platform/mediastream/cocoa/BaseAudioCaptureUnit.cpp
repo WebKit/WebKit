@@ -133,7 +133,7 @@ void BaseAudioCaptureUnit::startProducingData()
 
 void BaseAudioCaptureUnit::continueStartProducingData()
 {
-    if (!m_producingCount || m_clients.isEmptyIgnoringNullReferences())
+    if (!m_producingCount || m_clients.computeIsEmpty())
         return;
 
     if (isProducingData())

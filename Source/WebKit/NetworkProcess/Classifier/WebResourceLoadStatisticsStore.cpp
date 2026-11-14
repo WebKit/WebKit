@@ -542,7 +542,7 @@ void WebResourceLoadStatisticsStore::stopListeningForStorageAccessPermissionChan
 {
     m_storageAccessPermissionChangeObservers.removeIf([&](auto& entry) {
         entry.value.remove(observer);
-        return entry.value.isEmptyIgnoringNullReferences();
+        return entry.value.computeIsEmpty();
     });
 }
 

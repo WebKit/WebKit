@@ -207,7 +207,7 @@ void WorkerOrWorkletThread::workerOrWorkletThread()
     g_main_context_pop_thread_default(mainContext.get());
 #endif
 
-    if (!m_childThreads.isEmptyIgnoringNullReferences()) {
+    if (!m_childThreads.computeIsEmpty()) {
         m_runWhenLastChildThreadIsGone = [this, protectedThis = Ref { *this }]() mutable {
             destroyWorkerGlobalScope(WTF::move(protectedThis));
         };
@@ -218,7 +218,7 @@ void WorkerOrWorkletThread::workerOrWorkletThread()
 
 void WorkerOrWorkletThread::destroyWorkerGlobalScope(Ref<WorkerOrWorkletThread>&& protectedThis)
 {
-    ASSERT(m_childThreads.isEmptyIgnoringNullReferences());
+    ASSERT(m_childThreads.computeIsEmpty());
 
     RefPtr<Thread> protector = m_thread;
 
@@ -383,7 +383,7 @@ void WorkerOrWorkletThread::addChildThread(WorkerOrWorkletThread& childThread)
 void WorkerOrWorkletThread::removeChildThread(WorkerOrWorkletThread& childThread)
 {
     m_childThreads.remove(childThread);
-    if (m_childThreads.isEmptyIgnoringNullReferences() && m_runWhenLastChildThreadIsGone)
+    if (m_childThreads.computeIsEmpty() && m_runWhenLastChildThreadIsGone)
         std::exchange(m_runWhenLastChildThreadIsGone, nullptr)();
 }
 

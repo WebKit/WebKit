@@ -228,7 +228,7 @@ void NetworkLoadScheduler::finishedPreconnectForMainResource(const URL& url, con
         return;
 
     PendingMainResourcePreconnectInfo& info = iter->value;
-    if (!info.pendingLoads.isEmptyIgnoringNullReferences()) {
+    if (!info.pendingLoads.computeIsEmpty()) {
         Ref load = info.pendingLoads.takeFirst();
         RELEASE_LOG(Network, "%p - NetworkLoadScheduler::finishedPreconnectForMainResource (error: %d) starting delayed main resource load %p; %u pending preconnects; %u total pending loads", this, static_cast<int>(error.type()), load.ptr(), info.pendingPreconnects, info.pendingLoads.computeSize());
         load->start();
@@ -241,7 +241,7 @@ void NetworkLoadScheduler::finishedPreconnectForMainResource(const URL& url, con
 void NetworkLoadScheduler::maybePrunePreconnectInfo(PendingPreconnectMap::iterator& iter)
 {
     PendingMainResourcePreconnectInfo& info = iter->value;
-    if (!info.pendingPreconnects && info.pendingLoads.isEmptyIgnoringNullReferences())
+    if (!info.pendingPreconnects && info.pendingLoads.computeIsEmpty())
         m_pendingMainResourcePreconnects.remove(iter);
 }
 

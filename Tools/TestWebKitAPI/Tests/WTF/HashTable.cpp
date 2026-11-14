@@ -561,7 +561,7 @@ TEST(WTF_HashTable, WeakNullKeys)
         for (int id : { 2, 4, 6 })
             fakeWeakTargetIsAlive[id] = false;
         EXPECT_EQ(table.size(), 10u);
-        EXPECT_FALSE(table.isEmptyIgnoringNullReferences());
+        EXPECT_FALSE(table.computeIsEmpty());
 
         unsigned visited = 0;
         for (auto& key : table) {
@@ -578,7 +578,7 @@ TEST(WTF_HashTable, WeakNullKeys)
 
         for (int id = 1; id <= 10; ++id)
             fakeWeakTargetIsAlive[id] = false;
-        EXPECT_TRUE(table.isEmptyIgnoringNullReferences());
+        EXPECT_TRUE(table.computeIsEmpty());
         EXPECT_TRUE(table.begin() == table.end());
         table.removeWeakNullEntries();
         EXPECT_TRUE(table.isEmpty());

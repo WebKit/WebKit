@@ -2507,7 +2507,7 @@ void AXObjectCache::deferReRenderedContent(Node& node)
 
 bool AXObjectCache::isReRenderedContent(const AccessibilityObject& object) const
 {
-    if (m_deferredReRenderedContent.isEmptyIgnoringNullReferences())
+    if (m_deferredReRenderedContent.computeIsEmpty())
         return false;
 
     RefPtr document = m_document.get();
@@ -8259,7 +8259,7 @@ void AXObjectCache::scheduleCacheUpdate()
 
 void AXObjectCache::updateDetectedFormErrors()
 {
-    if (m_detectedFormErrors.isEmptyIgnoringNullReferences())
+    if (m_detectedFormErrors.computeIsEmpty())
         return;
 
     Vector<Ref<Element>> fieldsWithDeadMessage;
@@ -8295,7 +8295,7 @@ void AXObjectCache::updateDetectedFormErrors()
 
 void AXObjectCache::clearDetectedErrorsForContainer(Element& container)
 {
-    if (m_detectedFormErrors.isEmptyIgnoringNullReferences())
+    if (m_detectedFormErrors.computeIsEmpty())
         return;
 
     for (Ref field : fieldsForErrorPairing(container))

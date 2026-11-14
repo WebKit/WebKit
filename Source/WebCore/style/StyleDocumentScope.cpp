@@ -408,7 +408,7 @@ bool DocumentScope::invalidateForAnchorDependencies(LayoutDependencyUpdateContex
 
     Vector<CheckedRef<Element>> anchoredElementsToInvalidate;
 
-    if (m_document->renderView()->anchors().isEmptyIgnoringNullReferences())
+    if (m_document->renderView()->anchors().computeIsEmpty())
         return false;
 
     auto anchorMap = AnchorPositionEvaluator::makeAnchorPositionedForAnchorMap(m_anchorPositionedToAnchorMap);

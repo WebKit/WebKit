@@ -51,7 +51,7 @@ NaturalDimensions GeneratedImage::naturalDimensions(const RenderElement&, const 
 
 void GeneratedImage::addClient(RenderElement& renderer)
 {
-    if (m_clients.isEmptyIgnoringNullReferences())
+    if (m_clients.computeIsEmpty())
         ref();
 
     m_clients.add(renderer);
@@ -67,7 +67,7 @@ void GeneratedImage::removeClient(RenderElement& renderer)
 
     this->didRemoveClient(renderer);
 
-    if (m_clients.isEmptyIgnoringNullReferences())
+    if (m_clients.computeIsEmpty())
         deref();
 }
 

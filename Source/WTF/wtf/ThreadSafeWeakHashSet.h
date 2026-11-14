@@ -150,7 +150,7 @@ public:
         return !wasDeleted;
     }
 
-    bool isEmptyIgnoringNullReferences() const
+    bool computeIsEmpty() const
     {
         Locker locker { m_lock };
         amortizedCleanupIfNeeded();

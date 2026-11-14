@@ -1516,7 +1516,7 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& pa
         }
 
         // Sort the dirty cells by paint order.
-        if (m_overflowingCells.isEmptyIgnoringNullReferences())
+        if (m_overflowingCells.computeIsEmpty())
             std::ranges::stable_sort(cells, compareCellPositions);
         else
             std::ranges::sort(cells, compareCellPositionsWithOverflowingCells);
@@ -1534,7 +1534,7 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& pa
         }
     };
 
-    if (!m_hasMultipleCellLevels && m_overflowingCells.isEmptyIgnoringNullReferences()) {
+    if (!m_hasMultipleCellLevels && m_overflowingCells.computeIsEmpty()) {
         if (paintInfo.phase == PaintPhase::CollapsedTableBorders)
             paintContiguousCellsWithCollapsedBorders();
         else

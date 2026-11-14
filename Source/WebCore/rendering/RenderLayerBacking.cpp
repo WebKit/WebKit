@@ -436,7 +436,7 @@ void RenderLayerBacking::setBackingSharingLayers(InlineWeakKeyListHashSet<Render
     }
 
     if (sharingLayersChanged) {
-        if (!sharingLayers.isEmptyIgnoringNullReferences())
+        if (!sharingLayers.computeIsEmpty())
             setRequiresOwnBackingStore(true);
     }
 

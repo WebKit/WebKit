@@ -305,7 +305,7 @@ RenderFragmentContainer* RenderFragmentedFlow::fragmentAtBlockOffset(const Rende
 {
     ASSERT(!m_fragmentsInvalidated);
 
-    if (m_fragmentList.isEmptyIgnoringNullReferences())
+    if (m_fragmentList.computeIsEmpty())
         return nullptr;
 
     if (m_fragmentList.computeSize() == 1 && extendLastFragment) {

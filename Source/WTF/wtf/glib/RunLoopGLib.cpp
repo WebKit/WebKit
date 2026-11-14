@@ -338,7 +338,7 @@ void RunLoop::notifyActivity(Activity activity)
 void RunLoop::notifyEvent(RunLoop::Event event, const char* name)
 {
     Locker locker { m_eventObserversLock };
-    if (m_eventObservers.isEmptyIgnoringNullReferences())
+    if (m_eventObservers.computeIsEmpty())
         return;
 
     m_eventObservers.forEach([event, name = String::fromUTF8(name)](auto& observer) {

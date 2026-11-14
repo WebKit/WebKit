@@ -287,17 +287,17 @@ void Scope::removePendingSheet(const ProcessingInstruction& processingInstructio
 
 bool Scope::hasPendingSheets() const
 {
-    return hasPendingSheetsBeforeBody() || !m_elementsInBodyWithPendingSheets.isEmptyIgnoringNullReferences();
+    return hasPendingSheetsBeforeBody() || !m_elementsInBodyWithPendingSheets.computeIsEmpty();
 }
 
 bool Scope::hasPendingSheetsBeforeBody() const
 {
-    return !m_elementsInHeadWithPendingSheets.isEmptyIgnoringNullReferences() || !m_processingInstructionsWithPendingSheets.isEmptyIgnoringNullReferences();
+    return !m_elementsInHeadWithPendingSheets.computeIsEmpty() || !m_processingInstructionsWithPendingSheets.computeIsEmpty();
 }
 
 bool Scope::hasPendingSheetsInBody() const
 {
-    return !m_elementsInBodyWithPendingSheets.isEmptyIgnoringNullReferences();
+    return !m_elementsInBodyWithPendingSheets.computeIsEmpty();
 }
 
 void Scope::didRemovePendingStylesheet()
@@ -335,7 +335,7 @@ void Scope::addStyleSheetCandidateNode(Node& node, bool createdByParser)
     // since styles outside of the body and head continue to be shunted into the head
     // (and thus can shift to end up before dynamically added DOM content that is also
     // outside the body).
-    if ((createdByParser && m_document->bodyOrFrameset()) || m_styleSheetCandidateNodes.isEmptyIgnoringNullReferences()) {
+    if ((createdByParser && m_document->bodyOrFrameset()) || m_styleSheetCandidateNodes.computeIsEmpty()) {
         m_styleSheetCandidateNodes.add(node);
         return;
     }

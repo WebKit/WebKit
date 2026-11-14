@@ -183,7 +183,7 @@ void RealtimeMediaSource::removeObserver(RealtimeMediaSourceObserver& observer)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
     m_observers.remove(observer);
-    if (m_observers.isEmptyIgnoringNullReferences())
+    if (m_observers.computeIsEmpty())
         stopBeingObserved();
 }
 

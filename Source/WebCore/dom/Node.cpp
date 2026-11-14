@@ -483,7 +483,7 @@ void Node::materializeRareData()
 void Node::clearRareData()
 {
     ASSERT(hasRareData());
-    ASSERT(!transientMutationObserverRegistry() || transientMutationObserverRegistry()->isEmptyIgnoringNullReferences());
+    ASSERT(!transientMutationObserverRegistry() || transientMutationObserverRegistry()->computeIsEmpty());
 
     m_rareDataWithBitfields.setPointer(nullptr);
 }

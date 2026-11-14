@@ -92,7 +92,7 @@ WebPreferences::WebPreferences(const WebPreferences& other)
 
 WebPreferences::~WebPreferences()
 {
-    ASSERT(m_pages.isEmptyIgnoringNullReferences());
+    ASSERT(m_pages.computeIsEmpty());
 }
 
 void WebPreferences::forceSiteIsolationAlwaysOnForTesting()

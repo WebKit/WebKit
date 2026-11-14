@@ -80,7 +80,7 @@ void GamepadProviderLibWPE::startMonitoringGamepads(GamepadProviderClient& clien
     if (!m_provider)
         return;
 
-    bool shouldOpenAndScheduleManager = m_clients.isEmptyIgnoringNullReferences();
+    bool shouldOpenAndScheduleManager = m_clients.computeIsEmpty();
 
     ASSERT(!m_clients.contains(client));
     m_clients.add(client);
@@ -107,7 +107,7 @@ void GamepadProviderLibWPE::stopMonitoringGamepads(GamepadProviderClient& client
 
     ASSERT(m_clients.contains(client));
 
-    bool shouldCloseAndUnscheduleManager = m_clients.remove(client) && m_clients.isEmptyIgnoringNullReferences();
+    bool shouldCloseAndUnscheduleManager = m_clients.remove(client) && m_clients.computeIsEmpty();
     if (!shouldCloseAndUnscheduleManager)
         return;
 

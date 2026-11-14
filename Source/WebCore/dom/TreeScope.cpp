@@ -753,7 +753,7 @@ void TreeScope::removeElementFromPendingSVGResources(SVGElement& element)
         for (auto& resource : svgResourcesMap().pendingResources) {
             auto& elements = resource.value;
             elements.remove(element);
-            if (elements.isEmptyIgnoringNullReferences())
+            if (elements.computeIsEmpty())
                 toBeRemoved.append(resource.key);
         }
 
@@ -768,7 +768,7 @@ void TreeScope::removeElementFromPendingSVGResources(SVGElement& element)
         // We remove from m_pendingResourcesForRemoval directly here because it deals with set lifetime correctly.
         svgResourcesMap().pendingResourcesForRemoval.removeIf([&](auto& resource) {
             resource.value.remove(element);
-            return resource.value.isEmptyIgnoringNullReferences();
+            return resource.value.computeIsEmpty();
         });
     }
 }
@@ -786,7 +786,7 @@ void TreeScope::markPendingSVGResourcesForRemoval(const AtomString& id)
     ASSERT(!svgResourcesMap().pendingResourcesForRemoval.contains(id));
 
     auto existing = svgResourcesMap().pendingResources.take(id);
-    if (!existing.isEmptyIgnoringNullReferences())
+    if (!existing.computeIsEmpty())
         svgResourcesMap().pendingResourcesForRemoval.add(id, WTF::move(existing));
 }
 
@@ -806,7 +806,7 @@ RefPtr<SVGElement> TreeScope::takeElementFromPendingSVGResourcesForRemovalMap(co
 
     resourceSet.remove(*firstElement);
 
-    if (resourceSet.isEmptyIgnoringNullReferences())
+    if (resourceSet.computeIsEmpty())
         svgResourcesMap().pendingResourcesForRemoval.remove(id);
 
     return firstElement;

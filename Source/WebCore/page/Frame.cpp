@@ -324,7 +324,7 @@ void Frame::detachFromAllOpenedFrames()
 
 bool Frame::hasOpenedFrames() const
 {
-    return !m_openedFrames.isEmptyIgnoringNullReferences();
+    return !m_openedFrames.computeIsEmpty();
 }
 
 void Frame::setOwnerElement(HTMLFrameOwnerElement* element)

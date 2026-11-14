@@ -193,7 +193,9 @@ public:
 
     // Useful when the key type is WeakPtr
     size_t computeSize() const requires (KeyTraits::hasIsWeakNullValueFunction);
-    bool isEmptyIgnoringNullReferences() const requires (KeyTraits::hasIsWeakNullValueFunction);
+    size_t computeSize() requires (KeyTraits::hasIsWeakNullValueFunction);
+    bool computeIsEmpty() const requires (KeyTraits::hasIsWeakNullValueFunction);
+    bool computeIsEmpty() requires (KeyTraits::hasIsWeakNullValueFunction);
     void removeWeakNullEntries() requires (KeyTraits::hasIsWeakNullValueFunction);
 
     // Alternate versions of find() / contains() / get() / remove() that find the object
@@ -599,9 +601,21 @@ inline size_t HashMap<T, U, V, KeyTraits, MappedTraits, Y, M>::computeSize() con
 }
 
 template<typename T, typename U, typename V, typename KeyTraits, typename MappedTraits, typename Y, typename M>
-inline bool HashMap<T, U, V, KeyTraits, MappedTraits, Y, M>::isEmptyIgnoringNullReferences() const requires (KeyTraits::hasIsWeakNullValueFunction)
+inline size_t HashMap<T, U, V, KeyTraits, MappedTraits, Y, M>::computeSize() requires (KeyTraits::hasIsWeakNullValueFunction)
 {
-    return m_impl.isEmptyIgnoringNullReferences();
+    return m_impl.computeSize();
+}
+
+template<typename T, typename U, typename V, typename KeyTraits, typename MappedTraits, typename Y, typename M>
+inline bool HashMap<T, U, V, KeyTraits, MappedTraits, Y, M>::computeIsEmpty() const requires (KeyTraits::hasIsWeakNullValueFunction)
+{
+    return m_impl.computeIsEmpty();
+}
+
+template<typename T, typename U, typename V, typename KeyTraits, typename MappedTraits, typename Y, typename M>
+inline bool HashMap<T, U, V, KeyTraits, MappedTraits, Y, M>::computeIsEmpty() requires (KeyTraits::hasIsWeakNullValueFunction)
+{
+    return m_impl.computeIsEmpty();
 }
 
 template<typename T, typename U, typename V, typename KeyTraits, typename MappedTraits, typename Y, typename M>

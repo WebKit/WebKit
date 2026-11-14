@@ -76,7 +76,7 @@ void WebScreenOrientationManagerProxy::setCurrentOrientation(WebCore::ScreenOrie
         return;
     m_currentOrientation = orientation;
 
-    if (m_processesNeedingChangeNotifications.isEmptyIgnoringNullReferences())
+    if (m_processesNeedingChangeNotifications.computeIsEmpty())
         return;
 
     Ref protectedPage { m_page.get() };

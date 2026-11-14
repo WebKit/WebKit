@@ -877,7 +877,7 @@ void NetworkStorageSession::stopListeningForCookieChangeNotifications(CookieChan
         ASSERT(observers.contains(observer));
         observers.remove(observer);
 
-        if (observers.isEmptyIgnoringNullReferences())
+        if (observers.computeIsEmpty())
             m_cookieChangeObservers.remove(it);
     }
 }

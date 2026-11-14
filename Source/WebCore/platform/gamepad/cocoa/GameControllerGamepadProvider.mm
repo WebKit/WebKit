@@ -251,7 +251,7 @@ void GameControllerGamepadProvider::stopMonitoringGamepads(GamepadProviderClient
     ASSERT(m_clients.contains(client));
     m_clients.remove(client);
 
-    if (!m_connectObserver || !m_clients.isEmptyIgnoringNullReferences())
+    if (!m_connectObserver || !m_clients.computeIsEmpty())
         return;
 
     [[NSNotificationCenter defaultCenter] removeObserver:m_connectObserver.get()];

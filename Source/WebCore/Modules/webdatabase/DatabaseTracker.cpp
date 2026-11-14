@@ -569,7 +569,7 @@ void DatabaseTracker::removeOpenDatabase(Database& database)
 
     LOG_WITH_STREAM(StorageAPI, stream << "Removed open Database "_s << name << " ("_s << &database << ")"_s);
 
-    if (!innerIterator->value.isEmptyIgnoringNullReferences())
+    if (!innerIterator->value.computeIsEmpty())
         return;
 
     iterator->value.remove(innerIterator);

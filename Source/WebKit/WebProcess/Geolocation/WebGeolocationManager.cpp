@@ -124,7 +124,7 @@ void WebGeolocationManager::unregisterWebPage(WebPage& page)
             protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebGeolocationManagerProxy::SetEnableHighAccuracy(registrableDomain, highAccuracyShouldBeEnabled), 0);
     }
 
-    if (pageSets.pageSet.isEmptyIgnoringNullReferences() && pageSets.highAccuracyPageSet.isEmptyIgnoringNullReferences())
+    if (pageSets.pageSet.computeIsEmpty() && pageSets.highAccuracyPageSet.computeIsEmpty())
         m_pageSets.remove(it);
 }
 
@@ -187,12 +187,12 @@ void WebGeolocationManager::didFailToDeterminePosition(const WebCore::Registrabl
 
 bool WebGeolocationManager::isUpdating(const PageSets& pageSets) const
 {
-    return !pageSets.pageSet.isEmptyIgnoringNullReferences();
+    return !pageSets.pageSet.computeIsEmpty();
 }
 
 bool WebGeolocationManager::isHighAccuracyEnabled(const PageSets& pageSets) const
 {
-    return !pageSets.highAccuracyPageSet.isEmptyIgnoringNullReferences();
+    return !pageSets.highAccuracyPageSet.computeIsEmpty();
 }
 
 #if PLATFORM(IOS_FAMILY)

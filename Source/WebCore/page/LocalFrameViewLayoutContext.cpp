@@ -312,7 +312,7 @@ void LocalFrameViewLayoutContext::performLayout(bool canDeferUpdateLayerPosition
         protect(layoutRoot)->absoluteQuads(layoutAreas);
 
         clearSubtreeLayoutRoot();
-        ASSERT(m_percentHeightIgnoreList.isEmptyIgnoringNullReferences());
+        ASSERT(m_percentHeightIgnoreList.computeIsEmpty());
 
 #if !LOG_DISABLED && ENABLE(TREE_DEBUGGING)
         auto layoutLogEnabled = [] {

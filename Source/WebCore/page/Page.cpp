@@ -5452,7 +5452,7 @@ void Page::resetImageAnalysisQueue()
 
 void Page::updateElementsWithTextRecognitionResults()
 {
-    if (m_textRecognitionResults.isEmptyIgnoringNullReferences())
+    if (m_textRecognitionResults.computeIsEmpty())
         return;
 
     m_textRecognitionResults.removeNullReferences();

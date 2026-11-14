@@ -406,7 +406,7 @@ void MemoryCache::pruneDeadResourcesToSize(unsigned targetSize)
             
         // Shrink the vector back down so we don't waste time inspecting
         // empty LRU lists on future prunes.
-        if (!m_allResources[i]->isEmptyIgnoringNullReferences())
+        if (!m_allResources[i]->computeIsEmpty())
             canShrinkLRULists = false;
         else if (canShrinkLRULists)
             m_allResources.shrink(i);

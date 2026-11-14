@@ -77,7 +77,7 @@ MediaResourceLoader::~MediaResourceLoader()
 {
     assertIsMainThread();
 
-    ASSERT(m_resources.isEmptyIgnoringNullReferences());
+    ASSERT(m_resources.computeIsEmpty());
 }
 
 void MediaResourceLoader::contextDestroyed()

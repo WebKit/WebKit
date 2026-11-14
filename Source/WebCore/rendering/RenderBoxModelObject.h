@@ -256,8 +256,8 @@ public:
     NODELETE TrackedRendererListHashSet* outOfFlowBoxes() const LIFETIME_BOUND;
     bool hasOutOfFlowBoxes() const
     {
-        auto* renderers = outOfFlowBoxes();
-        return renderers && !renderers->isEmptyIgnoringNullReferences();
+        const auto* renderers = outOfFlowBoxes();
+        return renderers && !renderers->computeIsEmpty();
     }
     void markOutOfFlowBoxesForLayout(MarkingBehavior = MarkingBehavior::ContainingBlockChain);
     void removeOutOfFlowBoxesIfNeededOnStyleChange(const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle);

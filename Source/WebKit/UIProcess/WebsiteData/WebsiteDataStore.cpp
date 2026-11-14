@@ -2282,7 +2282,7 @@ bool WebsiteDataStore::computeIsOptInCookiePartitioningEnabled() const
 {
 #if !PLATFORM(COCOA) || (defined(CFN_COOKIE_ACCEPTS_POLICY_PARTITION) && CFN_COOKIE_ACCEPTS_POLICY_PARTITION)
     // Keep the flag unchanged when all pages are gone.
-    if (m_pages.isEmptyIgnoringNullReferences() && m_cachedIsOptInCookiePartitioningEnabled)
+    if (m_pages.computeIsEmpty() && m_cachedIsOptInCookiePartitioningEnabled)
         return *m_cachedIsOptInCookiePartitioningEnabled;
 
     for (Ref page : m_pages) {

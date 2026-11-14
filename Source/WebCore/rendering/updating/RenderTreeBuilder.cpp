@@ -221,7 +221,7 @@ void RenderTreeBuilder::updateListMarkerContents()
 {
     // A marker's text is made of its list item's list-item counter value, which is only settled once the tree is done
     // changing: inserting or removing a list item renumbers every item after it.
-    while (!m_listItemsNeedingMarkerUpdate.isEmptyIgnoringNullReferences()) {
+    while (!m_listItemsNeedingMarkerUpdate.computeIsEmpty()) {
         for (auto& listItem : std::exchange(m_listItemsNeedingMarkerUpdate, { }))
             listItem.updateMarkerContent();
     }

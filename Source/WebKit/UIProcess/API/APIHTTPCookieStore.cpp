@@ -52,7 +52,7 @@ HTTPCookieStore::HTTPCookieStore(WebKit::WebsiteDataStore& websiteDataStore)
 
 HTTPCookieStore::~HTTPCookieStore()
 {
-    ASSERT(m_observers.isEmptyIgnoringNullReferences());
+    ASSERT(m_observers.computeIsEmpty());
 }
 
 #if ENABLE(APP_BOUND_DOMAINS)
@@ -207,7 +207,7 @@ void HTTPCookieStore::flushCookies(CompletionHandler<void()>&& completionHandler
 
 void HTTPCookieStore::registerObserver(HTTPCookieStoreObserver& observer)
 {
-    bool wasObserving = !m_observers.isEmptyIgnoringNullReferences();
+    bool wasObserving = !m_observers.computeIsEmpty();
     m_observers.add(observer);
     if (wasObserving)
         return;
@@ -219,7 +219,7 @@ void HTTPCookieStore::registerObserver(HTTPCookieStoreObserver& observer)
 void HTTPCookieStore::unregisterObserver(HTTPCookieStoreObserver& observer)
 {
     m_observers.remove(observer);
-    if (!m_observers.isEmptyIgnoringNullReferences())
+    if (!m_observers.computeIsEmpty())
         return;
 
     if (RefPtr networkProcess = networkProcessIfExists())

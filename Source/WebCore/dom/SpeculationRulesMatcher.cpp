@@ -134,7 +134,7 @@ static bool matches(const SpeculationRules::DocumentPredicate& predicate, Docume
 std::optional<PrefetchRule> SpeculationRulesMatcher::hasMatchingRule(Document& document, HTMLAnchorElement& anchor)
 {
     Ref speculationRules = document.speculationRules();
-    if (speculationRules->prefetchRules().isEmptyIgnoringNullReferences())
+    if (speculationRules->prefetchRules().computeIsEmpty())
         return std::nullopt;
 
     // 2.2 If descendant is not being rendered or is part of skipped contents, then continue.

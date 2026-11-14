@@ -541,7 +541,7 @@ void NetworkStorageSession::stopListeningForCookieChangeNotifications(CookieChan
         auto& observers = it->value;
         ASSERT(observers.contains(observer));
         observers.remove(observer);
-        if (observers.isEmptyIgnoringNullReferences()) {
+        if (observers.computeIsEmpty()) {
             m_cookieChangeObservers.remove(it);
             ASSERT([m_subscribedDomainsForCookieChanges containsObject:host.createNSString().get()]);
             [m_subscribedDomainsForCookieChanges removeObject:host.createNSString().get()];

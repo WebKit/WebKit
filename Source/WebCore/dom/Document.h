@@ -1671,7 +1671,7 @@ public:
 
     void didRemoveEventTargetNode(Node&);
 
-    bool hasWheelEventHandlers() const { return !m_wheelEventTargets.isEmptyIgnoringNullReferences(); }
+    bool hasWheelEventHandlers() const { return !m_wheelEventTargets.computeIsEmpty(); }
     bool mayHaveListBoxes() const { return m_mayHaveListBoxes; }
     void setMayHaveListBoxes() { m_mayHaveListBoxes = true; }
 

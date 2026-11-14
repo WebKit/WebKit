@@ -463,7 +463,7 @@ bool ContentChangeObserver::containsObservedDOMTimer(const DOMTimer& timer) cons
 
 bool ContentChangeObserver::hasObservedDOMTimer() const
 {
-    return !m_DOMTimerList.isEmptyIgnoringNullReferences();
+    return !m_DOMTimerList.computeIsEmpty();
 }
 
 void ContentChangeObserver::styleRecalcDidStart()
@@ -583,7 +583,7 @@ void ContentChangeObserver::elementDidBecomeHidden(const Element& element)
     if (!m_visibilityCandidateList.remove(element))
         return;
 //    ASSERT(hasVisibleChangeState());
-    if (m_visibilityCandidateList.isEmptyIgnoringNullReferences())
+    if (m_visibilityCandidateList.computeIsEmpty())
         setHasIndeterminateState();
 }
 
@@ -648,7 +648,7 @@ void ContentChangeObserver::setShouldObserveNextStyleRecalc(bool shouldObserve)
 
 void ContentChangeObserver::confirmVisibilityCandidates()
 {
-    if (m_visibilityCandidateList.isEmptyIgnoringNullReferences())
+    if (m_visibilityCandidateList.computeIsEmpty())
         return;
 
     protect(m_document)->updateLayout();
@@ -667,7 +667,7 @@ void ContentChangeObserver::confirmVisibilityCandidates()
         m_visibilityCandidateList.remove(candidate);
     }
 
-    if (m_visibilityCandidateList.isEmptyIgnoringNullReferences()) {
+    if (m_visibilityCandidateList.computeIsEmpty()) {
         if (!offscreenCandidates.isEmpty() && m_observedContentState == ContentChange::Visibility) {
             LOG(ContentObservation, "confirmVisibilityCandidates: every visibility candidate was outside the viewport; demoting Visibility to None.");
             setHasNoChangeState();
@@ -767,7 +767,7 @@ void ContentChangeObserver::adjustObservedState(Event event)
             return;
 
         // The fixed observation window (which is the final step in content observation) is closed and now we check if are still waiting for timers or animations to finish.
-        if (hasPendingActivity() && m_visibilityCandidateList.isEmptyIgnoringNullReferences()) {
+        if (hasPendingActivity() && m_visibilityCandidateList.computeIsEmpty()) {
             LOG(ContentObservation, "notifyClientIfNeeded: We are still waiting on some events.");
             return;
         }

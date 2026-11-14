@@ -57,7 +57,7 @@ DOMWrapperWorld::~DOMWrapperWorld()
 
 void DOMWrapperWorld::clearWrappers()
 {
-    if (!m_eventListeners.isEmptyIgnoringNullReferences()) {
+    if (!m_eventListeners.computeIsEmpty()) {
         RELEASE_LOG_ERROR(Bindings, "DOMWrapperWorld::clearWrappers() called when there were still registered event listeners");
         auto eventListeners = std::exchange(m_eventListeners, { });
         for (Ref eventListener : eventListeners)

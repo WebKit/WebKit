@@ -101,7 +101,7 @@ void WebExtensionContext::removeListener(WebCore::FrameIdentifier frameIdentifie
     for (size_t i = 0; i < removedCount; ++i)
         iterator->value.remove(*frame);
 
-    if (!iterator->value.isEmptyIgnoringNullReferences())
+    if (!iterator->value.computeIsEmpty())
         return;
 
     m_eventListenerFrames.remove(iterator);

@@ -36,7 +36,7 @@ public:
 
     ~SVGVisitedRendererTracking() = default;
 
-    bool isEmpty() const { return m_visitedRenderers.isEmptyIgnoringNullReferences(); }
+    bool isEmpty() const { return m_visitedRenderers.computeIsEmpty(); }
     bool isVisiting(const RenderElement& renderer) { return m_visitedRenderers.contains(renderer); }
 
     class Scope {

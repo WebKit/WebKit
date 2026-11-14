@@ -154,7 +154,7 @@ public:
 
     WEBCORE_EXPORT void addClient(CachedResourceClient&);
     WEBCORE_EXPORT void removeClient(CachedResourceClient&);
-    bool hasClients() const { return !m_clients.isEmptyIgnoringNullReferences() || !m_clientsAwaitingCallback.isEmptyIgnoringNullReferences(); }
+    bool hasClients() const { return !m_clients.computeIsEmpty() || !m_clientsAwaitingCallback.computeIsEmpty(); }
     bool hasClient(const CachedResourceClient& client) { return m_clients.contains(client) || m_clientsAwaitingCallback.contains(client); }
     enum class PreloadResult : uint8_t {
         PreloadNotReferenced,

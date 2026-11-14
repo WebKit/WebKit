@@ -78,7 +78,7 @@ CanvasBase::CanvasBase(IntSize size, ScriptExecutionContext& context)
 CanvasBase::~CanvasBase()
 {
     ASSERT(m_didNotifyObserversCanvasDestroyed);
-    ASSERT(m_observers.isEmptyIgnoringNullReferences());
+    ASSERT(m_observers.computeIsEmpty());
     m_canvasNoiseHashSalt = std::nullopt;
 }
 

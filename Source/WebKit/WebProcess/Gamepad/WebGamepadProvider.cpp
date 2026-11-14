@@ -122,7 +122,7 @@ void WebGamepadProvider::gamepadActivity(const Vector<std::optional<GamepadData>
 
 void WebGamepadProvider::startMonitoringGamepads(GamepadProviderClient& client)
 {
-    bool processHadGamepadClients = !m_clients.isEmptyIgnoringNullReferences();
+    bool processHadGamepadClients = !m_clients.computeIsEmpty();
 
     ASSERT(!m_clients.contains(client));
     m_clients.add(client);
@@ -135,7 +135,7 @@ void WebGamepadProvider::stopMonitoringGamepads(GamepadProviderClient& client)
 {
     ASSERT(m_clients.contains(client));
     m_clients.remove(client);
-    if (!m_clients.isEmptyIgnoringNullReferences())
+    if (!m_clients.computeIsEmpty())
         return;
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebProcessPool::StoppedUsingGamepads(), [this] {

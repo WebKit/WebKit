@@ -92,7 +92,7 @@ void GamepadProviderWPE::gamepadDisconnected(WPEGamepad* gamepad)
 
 void GamepadProviderWPE::startMonitoringGamepads(GamepadProviderClient& client)
 {
-    bool shouldCreateManager = m_clients.isEmptyIgnoringNullReferences();
+    bool shouldCreateManager = m_clients.computeIsEmpty();
 
     ASSERT(!m_clients.contains(client));
     m_clients.add(client);
@@ -126,7 +126,7 @@ void GamepadProviderWPE::stopMonitoringGamepads(GamepadProviderClient& client)
 {
     ASSERT(m_clients.contains(client));
 
-    bool shouldDestroyManager = m_clients.remove(client) && m_clients.isEmptyIgnoringNullReferences();
+    bool shouldDestroyManager = m_clients.remove(client) && m_clients.computeIsEmpty();
     if (shouldDestroyManager) {
         if (m_manager) {
             g_signal_handlers_disconnect_by_data(m_manager.get(), this);

@@ -361,7 +361,7 @@ bool mayHaveScrollSnappedBoxes(const RenderBox& scrollingElementBox)
         return false;
 
     auto& boxesWithScrollSnapPositions = scrollingElementBox.view().boxesWithScrollSnapPositions();
-    if (boxesWithScrollSnapPositions.isEmptyIgnoringNullReferences())
+    if (boxesWithScrollSnapPositions.computeIsEmpty())
         return false;
 
     return true;
@@ -371,7 +371,7 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, const Re
 {
     auto scrollSnapTypeContainer = scrollingElementStyle.scrollSnapType().tryContainer();
     const auto& boxesWithScrollSnapPositions = scrollingElementBox.view().boxesWithScrollSnapPositions();
-    if (!scrollSnapTypeContainer || boxesWithScrollSnapPositions.isEmptyIgnoringNullReferences()) {
+    if (!scrollSnapTypeContainer || boxesWithScrollSnapPositions.computeIsEmpty()) {
         scrollableArea.clearSnapOffsets();
         return;
     }

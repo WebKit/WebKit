@@ -92,7 +92,7 @@ public:
     virtual int actualSampleRate() const { return sampleRate(); }
 
     bool isRenderingAudio() const { return m_isRenderingAudio; }
-    bool hasClients() const { return !m_clients.isEmptyIgnoringNullReferences(); }
+    bool hasClients() const { return !m_clients.computeIsEmpty(); }
 
     const String& persistentIDForTesting() const { return m_capturingDevice ? m_capturingDevice->first : emptyString(); }
 

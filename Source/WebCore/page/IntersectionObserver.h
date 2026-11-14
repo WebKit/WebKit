@@ -103,7 +103,7 @@ public:
     bool hasObservationTargets() const
     {
         Locker locker { m_observationTargetsLock };
-        return !m_observationTargets.isEmptyIgnoringNullReferences();
+        return !m_observationTargets.computeIsEmpty();
     }
     NODELETE bool isObserving(const Element&) const;
 

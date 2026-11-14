@@ -183,12 +183,12 @@ void HTMLFieldSetElement::didMoveToNewDocument(Document& oldDocument, Document& 
 
 bool HTMLFieldSetElement::matchesValidPseudoClass() const
 {
-    return m_invalidDescendants.isEmptyIgnoringNullReferences();
+    return m_invalidDescendants.computeIsEmpty();
 }
 
 bool HTMLFieldSetElement::matchesInvalidPseudoClass() const
 {
-    return !m_invalidDescendants.isEmptyIgnoringNullReferences();
+    return !m_invalidDescendants.computeIsEmpty();
 }
 
 bool HTMLFieldSetElement::supportsFocus() const
@@ -225,7 +225,7 @@ void HTMLFieldSetElement::addInvalidDescendant(const HTMLElement& invalidFormCon
     ASSERT_WITH_MESSAGE(!m_invalidDescendants.contains(invalidFormControlElement), "Updating the fieldset on validity change is not an efficient operation, it should only be done when necessary.");
 
     std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
-    if (m_invalidDescendants.isEmptyIgnoringNullReferences())
+    if (m_invalidDescendants.computeIsEmpty())
         emplace(styleInvalidation, *this, { { CSSSelector::PseudoClass::Valid, false }, { CSSSelector::PseudoClass::Invalid, true } });
 
     m_invalidDescendants.add(invalidFormControlElement);

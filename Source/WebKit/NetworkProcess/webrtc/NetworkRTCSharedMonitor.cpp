@@ -55,7 +55,7 @@ void NetworkRTCSharedMonitor::addListener(NetworkRTCMonitor& monitor)
     if (m_didReceiveResults)
         monitor.onNetworksChanged(m_networkList, m_ipv4, m_ipv6);
 
-    bool shouldStart = m_observers.isEmptyIgnoringNullReferences();
+    bool shouldStart = m_observers.computeIsEmpty();
     m_observers.add(monitor);
 
     RELEASE_LOG(WebRTC, "NetworkRTCSharedMonitor::addListener shouldStart=%d didReceiveResults=%d listener=%p", shouldStart, m_didReceiveResults, &monitor);
@@ -78,7 +78,7 @@ void NetworkRTCSharedMonitor::removeListener(NetworkRTCMonitor& monitor)
 {
     m_observers.remove(monitor);
 
-    bool shouldStop = m_observers.isEmptyIgnoringNullReferences();
+    bool shouldStop = m_observers.computeIsEmpty();
 
     RELEASE_LOG(WebRTC, "NetworkRTCSharedMonitor::removeListener shouldStop=%d listener=%p", shouldStop, &monitor);
 

@@ -34,7 +34,7 @@ VisitedLinkStore::VisitedLinkStore() = default;
 
 VisitedLinkStore::~VisitedLinkStore()
 {
-    ASSERT(m_pages.isEmptyIgnoringNullReferences());
+    ASSERT(m_pages.computeIsEmpty());
 }
 
 void VisitedLinkStore::addPage(Page& page)

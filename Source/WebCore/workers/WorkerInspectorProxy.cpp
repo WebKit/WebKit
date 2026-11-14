@@ -92,7 +92,7 @@ void WorkerInspectorProxy::removeFromProxyMap()
             auto& proxiesForContext = iterator->value;
             ASSERT(proxiesForContext.contains(*this));
             proxiesForContext.remove(*this);
-            if (proxiesForContext.isEmptyIgnoringNullReferences())
+            if (proxiesForContext.computeIsEmpty())
                 proxiesPerPage().remove(iterator);
         }, [&](ScriptExecutionContextIdentifier globalScopeIdentifier) {
             Locker lock { proxiesPerWorkerGlobalScopeLock };
@@ -101,7 +101,7 @@ void WorkerInspectorProxy::removeFromProxyMap()
             auto& proxiesForContext = iterator->value;
             ASSERT(proxiesForContext.contains(*this));
             proxiesForContext.remove(*this);
-            if (proxiesForContext.isEmptyIgnoringNullReferences())
+            if (proxiesForContext.computeIsEmpty())
                 proxiesPerWorkerGlobalScope().remove(iterator);
         }
     );

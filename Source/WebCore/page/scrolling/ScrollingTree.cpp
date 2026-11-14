@@ -1307,7 +1307,7 @@ float ScrollingTree::rubberbandHyperbolicCoefficientForTesting()
 
 bool ScrollingTree::hasFixedOrSticky() const
 {
-    return !m_fixedOrStickyNodes.isEmptyIgnoringNullReferences();
+    return !m_fixedOrStickyNodes.computeIsEmpty();
 }
 
 void ScrollingTree::fixedOrStickyNodeAdded(ScrollingTreeNode& node)

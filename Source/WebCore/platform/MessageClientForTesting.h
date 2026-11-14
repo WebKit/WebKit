@@ -46,7 +46,7 @@ public:
 
     void addClient(MessageClientForTesting& client) { m_clients.add(client); }
     void removeClient(const MessageClientForTesting& client) { m_clients.remove(client); }
-    bool isEmpty() const { return m_clients.isEmptyIgnoringNullReferences(); }
+    bool isEmpty() const { return m_clients.computeIsEmpty(); }
 
     void sendInternalMessage(const MessageForTesting& message) override
     {

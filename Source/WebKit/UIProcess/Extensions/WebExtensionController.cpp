@@ -376,7 +376,7 @@ void WebExtensionController::removeWebsiteDataStore(WebsiteDataStore& dataStore)
     if (RefPtr observer = m_cookieStoreObserver)
         protect(dataStore.cookieStore())->unregisterObserver(*observer);
 
-    if (m_websiteDataStores.isEmptyIgnoringNullReferences())
+    if (m_websiteDataStores.computeIsEmpty())
         m_cookieStoreObserver = nullptr;
 }
 

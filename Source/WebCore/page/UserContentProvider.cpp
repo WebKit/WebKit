@@ -47,7 +47,7 @@ UserContentProvider::UserContentProvider() = default;
 
 UserContentProvider::~UserContentProvider()
 {
-    ASSERT(m_pages.isEmptyIgnoringNullReferences());
+    ASSERT(m_pages.computeIsEmpty());
 }
 
 void UserContentProvider::addPage(Page& page)

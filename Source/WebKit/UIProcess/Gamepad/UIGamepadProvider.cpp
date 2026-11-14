@@ -57,7 +57,7 @@ UIGamepadProvider::UIGamepadProvider()
 
 UIGamepadProvider::~UIGamepadProvider()
 {
-    if (!m_processPoolsUsingGamepads.isEmptyIgnoringNullReferences())
+    if (!m_processPoolsUsingGamepads.computeIsEmpty())
         GamepadProvider::singleton().stopMonitoringGamepads(*this);
 }
 
@@ -95,7 +95,7 @@ void UIGamepadProvider::scheduleGamepadStateSync()
     if (!m_isMonitoringGamepads || m_gamepadSyncTimer.isActive())
         return;
 
-    if (m_gamepads.isEmpty() || m_processPoolsUsingGamepads.isEmptyIgnoringNullReferences()) {
+    if (m_gamepads.isEmpty() || m_processPoolsUsingGamepads.computeIsEmpty()) {
         m_gamepadSyncTimer.stop();
         return;
     }
@@ -223,7 +223,7 @@ void UIGamepadProvider::startMonitoringGamepads()
     RELEASE_LOG(Gamepad, "UIGamepadProvider::startMonitoringGamepads - Starting gamepad monitoring");
 
     m_isMonitoringGamepads = true;
-    ASSERT(!m_processPoolsUsingGamepads.isEmptyIgnoringNullReferences());
+    ASSERT(!m_processPoolsUsingGamepads.computeIsEmpty());
     GamepadProvider::singleton().startMonitoringGamepads(*this);
 }
 
@@ -238,7 +238,7 @@ void UIGamepadProvider::stopMonitoringGamepads()
 
     m_isMonitoringGamepads = false;
 
-    ASSERT(m_processPoolsUsingGamepads.isEmptyIgnoringNullReferences());
+    ASSERT(m_processPoolsUsingGamepads.computeIsEmpty());
     GamepadProvider::singleton().stopMonitoringGamepads(*this);
 
     m_gamepads.clear();

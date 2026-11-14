@@ -673,8 +673,8 @@ void WebProcessProxy::setIsInProcessCache(bool value, WillShutDown willShutDown)
     WEBPROCESSPROXY_RELEASE_LOG(Process, "setIsInProcessCache(%d)", value);
     if (value) {
         RELEASE_ASSERT(m_pageMap.isEmpty());
-        RELEASE_ASSERT(m_suspendedPages.isEmptyIgnoringNullReferences());
-        RELEASE_ASSERT(m_provisionalPages.isEmptyIgnoringNullReferences());
+        RELEASE_ASSERT(m_suspendedPages.computeIsEmpty());
+        RELEASE_ASSERT(m_provisionalPages.computeIsEmpty());
         m_previouslyApprovedFilePaths.clear();
         m_isCOOPCacheOriginUnconfirmed = false;
     }
@@ -807,7 +807,7 @@ void WebProcessProxy::removeProvisionalPageProxy(ProvisionalPageProxy& provision
     ASSERT(m_provisionalPages.contains(provisionalPage));
     m_provisionalPages.remove(provisionalPage);
     updateRegistrationWithDataStore();
-    if (m_provisionalPages.isEmptyIgnoringNullReferences()) {
+    if (m_provisionalPages.computeIsEmpty()) {
         m_isCOOPCacheOriginUnconfirmed = false;
         if (RefPtr page = provisionalPage.page())
             reportProcessDisassociatedWithPageIfNecessary(page->identifier());
@@ -833,7 +833,7 @@ void WebProcessProxy::removeRemotePageProxy(RemotePageProxy& remotePage)
     WEBPROCESSPROXY_RELEASE_LOG(Loading, "removeRemotePageProxy: remotePage=%p", &remotePage);
     m_remotePages.remove(remotePage);
     updateRegistrationWithDataStore();
-    if (m_remotePages.isEmptyIgnoringNullReferences())
+    if (m_remotePages.computeIsEmpty())
         maybeShutDown();
 }
 
@@ -2314,9 +2314,9 @@ void WebProcessProxy::maybeShutDown()
 bool WebProcessProxy::canTerminateAuxiliaryProcess()
 {
     if (!m_pageMap.isEmpty()
-        || !m_remotePages.isEmptyIgnoringNullReferences()
-        || !m_suspendedPages.isEmptyIgnoringNullReferences()
-        || !m_provisionalPages.isEmptyIgnoringNullReferences()
+        || !m_remotePages.computeIsEmpty()
+        || !m_suspendedPages.computeIsEmpty()
+        || !m_provisionalPages.computeIsEmpty()
         || m_frameProcessCount
         || m_isInProcessCache
         || m_shutdownPreventingScopeCounter.value()) {
@@ -2648,7 +2648,7 @@ void WebProcessProxy::didDropLastAssertion()
 void WebProcessProxy::prepareToDropLastAssertion(CompletionHandler<void()>&& completionHandler)
 {
 #if !ENABLE(NON_VISIBLE_WEBPROCESS_MEMORY_CLEANUP_TIMER) && ENABLE(WEBPROCESS_CACHE)
-    if (isInProcessCache() || !m_suspendedPages.isEmptyIgnoringNullReferences() || (canTerminateAuxiliaryProcess() && canBeAddedToWebProcessCache())) {
+    if (isInProcessCache() || !m_suspendedPages.computeIsEmpty() || (canTerminateAuxiliaryProcess() && canBeAddedToWebProcessCache())) {
         // We avoid freeing caches if:
         //
         //  1. The process is already in the WebProcess cache.

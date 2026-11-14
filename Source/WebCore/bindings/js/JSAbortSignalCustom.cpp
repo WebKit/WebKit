@@ -53,7 +53,7 @@ bool JSAbortSignalOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> ha
         ASSERT(!abortSignal.hasActiveTimeoutTimer());
         if (abortSignal.hasAbortEventListener() || abortSignal.hasAbortAlgorithms()) {
             // Called on parallel GC marker threads, so this must not mutate the set.
-            if (!abortSignal.sourceSignals().isEmptyIgnoringNullReferencesWithoutCleanup()) {
+            if (!std::as_const(abortSignal.sourceSignals()).computeIsEmpty()) {
                 if (reason) [[unlikely]]
                     *reason = "Has Source Signals And Abort Event Listener Or Abort Algorithm"_s;
                 return true;

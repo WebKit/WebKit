@@ -355,7 +355,7 @@ void SVGRenderSupport::layoutChildren(RenderElement& start, bool selfNeedsLayout
     }
 
     if (!layoutSizeChanged) {
-        ASSERT(elementsThatDidNotReceiveLayout.isEmptyIgnoringNullReferences());
+        ASSERT(elementsThatDidNotReceiveLayout.computeIsEmpty());
         return;
     }
 

@@ -153,7 +153,7 @@ void GamepadManager::platformGamepadInputActivity(EventMakesGamepadsVisible even
     if (eventVisibility == EventMakesGamepadsVisible::No)
         return;
 
-    if (m_gamepadBlindNavigators.isEmptyIgnoringNullReferences() && m_gamepadBlindDOMWindows.isEmptyIgnoringNullReferences())
+    if (m_gamepadBlindNavigators.computeIsEmpty() && m_gamepadBlindDOMWindows.computeIsEmpty())
         return;
 
     for (auto& weakGamepad : GamepadProvider::singleton().platformGamepads()) {
@@ -169,7 +169,7 @@ void GamepadManager::makeGamepadVisible(PlatformGamepad& platformGamepad, WeakHa
 {
     LOG_WITH_STREAM(Gamepad, stream << "("_s << (unsigned)getpid() << ") GamepadManager::makeGamepadVisible - New gamepad '"_s << platformGamepad.id() << "' is visible"_s);
 
-    if (navigatorSet.isEmptyIgnoringNullReferences() && domWindowSet.isEmptyIgnoringNullReferences())
+    if (navigatorSet.computeIsEmpty() && domWindowSet.computeIsEmpty())
         return;
 
     for (Ref navigator : navigatorSet)
@@ -276,7 +276,7 @@ void GamepadManager::unregisterDOMWindow(LocalDOMWindow& window)
 #if PLATFORM(VISION)
 void GamepadManager::updateQuarantineStatus()
 {
-    if (m_gamepadQuarantinedNavigators.isEmptyIgnoringNullReferences() && m_gamepadQuarantinedDOMWindows.isEmptyIgnoringNullReferences())
+    if (m_gamepadQuarantinedNavigators.computeIsEmpty() && m_gamepadQuarantinedDOMWindows.computeIsEmpty())
         return;
 
     m_gamepadQuarantinedNavigators.removeIf([&](auto& navigator) {
@@ -305,7 +305,7 @@ void GamepadManager::maybeStartMonitoringGamepads()
     if (m_isMonitoringGamepads)
         return;
 
-    if (!m_navigators.isEmptyIgnoringNullReferences() || !m_domWindows.isEmptyIgnoringNullReferences()) {
+    if (!m_navigators.computeIsEmpty() || !m_domWindows.computeIsEmpty()) {
         LOG(Gamepad, "(%u) GamepadManager has %i NavigatorGamepads and %i DOMWindows registered, is starting gamepad monitoring", (unsigned)getpid(), m_navigators.computeSize(), m_domWindows.computeSize());
         m_isMonitoringGamepads = true;
         GamepadProvider::singleton().startMonitoringGamepads(*this);
@@ -317,7 +317,7 @@ void GamepadManager::maybeStopMonitoringGamepads()
     if (!m_isMonitoringGamepads)
         return;
 
-    if (m_navigators.isEmptyIgnoringNullReferences() && m_domWindows.isEmptyIgnoringNullReferences()) {
+    if (m_navigators.computeIsEmpty() && m_domWindows.computeIsEmpty()) {
         LOG(Gamepad, "(%u) GamepadManager has no NavigatorGamepads or DOMWindows registered, is stopping gamepad monitoring", (unsigned)getpid());
         m_isMonitoringGamepads = false;
         GamepadProvider::singleton().stopMonitoringGamepads(*this);

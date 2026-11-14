@@ -169,13 +169,6 @@ public:
 
     unsigned capacity() const { return m_set.capacity(); }
 
-    bool isEmptyIgnoringNullReferences() const
-    {
-        if (m_set.isEmpty())
-            return true;
-        return begin() == end();
-    }
-
     bool hasNullReferences() const
     {
         unsigned count = 0;
@@ -193,11 +186,25 @@ public:
         return result;
     }
 
-    unsigned computeSize() const
+    unsigned computeSize() const { return m_set.computeSize(); }
+    unsigned computeSize()
     {
-        const_cast<WeakHashSet&>(*this).removeNullReferences();
-        return m_set.size();
+        unsigned result = m_set.computeSize();
+        cleanupHappened();
+        return result;
     }
+
+    bool computeIsEmpty() const { return m_set.computeIsEmpty(); }
+    bool computeIsEmpty()
+    {
+        bool result = m_set.computeIsEmpty();
+        cleanupHappened();
+        return result;
+    }
+
+    // FIXME: Update Apple-internal code to stop calling these, then remove them.
+    bool isEmptyIgnoringNullReferences() const { return computeIsEmpty(); }
+    bool isEmptyIgnoringNullReferences() { return computeIsEmpty(); }
 
     void forEach(NOESCAPE const Function<void(T&)>& callback) requires HasRefPtrMemberFunctions<T>
     {

@@ -167,7 +167,7 @@ void CachedImage::addClientWaitingForAsyncDecoding(CachedImageClient& client)
     
 void CachedImage::removeAllClientsWaitingForAsyncDecoding()
 {
-    if (m_clientsWaitingForAsyncDecoding.isEmptyIgnoringNullReferences() || !hasImage())
+    if (m_clientsWaitingForAsyncDecoding.computeIsEmpty() || !hasImage())
         return;
 
     RefPtr bitmapImage = dynamicDowncast<BitmapImage>(image());
@@ -363,7 +363,7 @@ inline void CachedImage::clearImage()
     if (RefPtr imageObserver = std::exchange(m_imageObserver, nullptr)) {
         imageObserver->cachedImages().remove(*this);
 
-        if (imageObserver->cachedImages().isEmptyIgnoringNullReferences()) {
+        if (imageObserver->cachedImages().computeIsEmpty()) {
             ASSERT(imageObserver->hasOneRef());
             m_image->setImageObserver(nullptr);
         }

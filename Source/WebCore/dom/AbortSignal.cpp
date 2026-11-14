@@ -121,7 +121,7 @@ void AbortSignal::addSourceSignal(AbortSignal& signal)
         return;
     }
     ASSERT(!signal.aborted());
-    ASSERT(signal.sourceSignals().isEmptyIgnoringNullReferences());
+    ASSERT(signal.sourceSignals().computeIsEmpty());
     m_sourceSignals.add(signal);
     signal.addDependentSignal(*this);
 }
