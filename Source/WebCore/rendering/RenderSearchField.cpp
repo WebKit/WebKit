@@ -24,122 +24,34 @@
 #include "config.h"
 #include "RenderSearchField.h"
 
-#include "ContainerNodeInlines.h"
-#include "CSSFontSelector.h"
-#include "CSSValueKeywords.h"
-#include "Chrome.h"
-#include "DocumentInlines.h"
-#include "DocumentView.h"
 #include "ElementInlines.h"
-#include "Font.h"
-#include "FrameSelection.h"
 #include "HTMLInputElement.h"
-#include "HTMLNames.h"
-#include "HitTestResult.h"
-#include "LocalFrame.h"
-#include "LocalFrameView.h"
-#include "LocalizedStrings.h"
-#include "Page.h"
-#include "PopupMenu.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
-#include "RenderElementInlines.h"
-#include "RenderLayer.h"
-#include "RenderObjectInlines.h"
-#include "RenderTheme.h"
-#include "RenderView.h"
-#include "SearchInputType.h"
-#include "StyleComputedStyle+SettersInlines.h"
-#include "StyleResolver.h"
-#include "TextControlInnerElements.h"
-#include "UnicodeBidi.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
-
-using namespace HTMLNames;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSearchField);
 
 RenderSearchField::RenderSearchField(HTMLInputElement& element, Style::ComputedStyle&& style)
     : RenderTextControlSingleLine(Type::SearchField, element, WTF::move(style))
-    , m_searchPopupIsVisible(false)
-    , m_searchPopup(nullptr)
 {
     ASSERT(element.isSearchField());
     ASSERT(isRenderSearchField());
 }
 
-// Do not add any code in below destructor. Add it to willBeDestroyed() instead.
 RenderSearchField::~RenderSearchField() = default;
-
-void RenderSearchField::willBeDestroyed()
-{
-    if (RefPtr searchPopup = std::exchange(m_searchPopup, nullptr))
-        protect(searchPopup->popupMenu())->disconnectClient();
-
-    RenderTextControlSingleLine::willBeDestroyed();
-}
-
-inline HTMLElement* RenderSearchField::resultsButtonElement() const
-{
-    return protect(inputElement())->resultsButtonElement();
-}
-
-inline HTMLElement* RenderSearchField::cancelButtonElement() const
-{
-    return protect(inputElement())->cancelButtonElement();
-}
-
-void RenderSearchField::showPopup()
-{
-    if (m_searchPopupIsVisible)
-        return;
-
-    if (!m_searchPopup)
-        m_searchPopup = page().chrome().createSearchPopupMenu(downcast<SearchInputType>(*inputElement().inputType()));
-
-    Ref popup = *m_searchPopup;
-    if (!popup->enabled())
-        return;
-
-    m_searchPopupIsVisible = true;
-
-    auto recentSearches = downcast<SearchInputType>(*inputElement().inputType()).recentSearches();
-    const AtomString& name = autosaveName();
-    popup->loadRecentSearches(name, recentSearches);
-
-    // Trim the recent searches list if the maximum size has changed since we last saved.
-
-    if (static_cast<int>(recentSearches.size()) > inputElement().maxResults()) {
-        do {
-            recentSearches.removeLast();
-        } while (static_cast<int>(recentSearches.size()) > inputElement().maxResults());
-
-        popup->saveRecentSearches(name, recentSearches);
-    }
-
-    FloatPoint absTopLeft = localToAbsolute(FloatPoint(), MapCoordinatesMode::UseTransforms);
-    IntRect absBounds = absoluteBoundingBoxRectIgnoringTransforms();
-    absBounds.setLocation(roundedIntPoint(absTopLeft));
-    protect(protect(m_searchPopup)->popupMenu())->show(absBounds, protect(view().frameView()), -1);
-}
-
-void RenderSearchField::hidePopup()
-{
-    if (RefPtr searchPopup = m_searchPopup)
-        protect(searchPopup->popupMenu())->hide();
-}
 
 LayoutUnit RenderSearchField::computeControlLogicalHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const
 {
-    RefPtr resultsButton = resultsButtonElement();
+    RefPtr resultsButton = protect(inputElement())->resultsButtonElement();
     if (CheckedPtr resultsRenderer = resultsButton ? resultsButton->renderBox() : nullptr) {
         resultsRenderer->updateLogicalHeight();
         nonContentHeight = std::max(nonContentHeight, resultsRenderer->borderAndPaddingLogicalHeight() + resultsRenderer->marginLogicalHeight());
         lineHeight = std::max(lineHeight, resultsRenderer->logicalHeight());
     }
-    RefPtr cancelButton = cancelButtonElement();
+    RefPtr cancelButton = protect(inputElement())->cancelButtonElement();
     if (CheckedPtr cancelRenderer = cancelButton ? cancelButton->renderBox() : nullptr) {
         cancelRenderer->updateLogicalHeight();
         nonContentHeight = std::max(nonContentHeight, cancelRenderer->borderAndPaddingLogicalHeight() + cancelRenderer->marginLogicalHeight());
@@ -147,68 +59,6 @@ LayoutUnit RenderSearchField::computeControlLogicalHeight(LayoutUnit lineHeight,
     }
 
     return lineHeight + nonContentHeight;
-}
-    
-std::span<const RecentSearch> RenderSearchField::recentSearches()
-{
-    if (!m_searchPopup)
-        m_searchPopup = page().chrome().createSearchPopupMenu(downcast<SearchInputType>(*inputElement().inputType()));
-
-    auto& recentSearches = downcast<SearchInputType>(*inputElement().inputType().unsafeGet()).recentSearches();
-
-    const AtomString& name = autosaveName();
-    protect(m_searchPopup)->loadRecentSearches(name, recentSearches);
-
-    return recentSearches.span();
-}
-
-void RenderSearchField::updateFromElement()
-{
-    RenderTextControlSingleLine::updateFromElement();
-
-    if (cancelButtonElement())
-        updateCancelButtonVisibility();
-
-    if (m_searchPopupIsVisible)
-        protect(protect(m_searchPopup)->popupMenu())->updateFromElement();
-}
-
-void RenderSearchField::updateCancelButtonVisibility() const
-{
-    CheckedPtr cancelButtonRenderer = cancelButtonElement()->renderer();
-    if (!cancelButtonRenderer)
-        return;
-
-    CheckedRef curStyle = cancelButtonRenderer->style();
-    Visibility buttonVisibility = visibilityForCancelButton();
-    if ((cancelButtonRenderer->usedStyle().visibility() == UsedVisibility::Visible) == (buttonVisibility == Visibility::Visible))
-        return;
-
-    auto cancelButtonStyle = Style::ComputedStyle::clone(curStyle.get());
-    cancelButtonStyle.setVisibility(buttonVisibility);
-    cancelButtonRenderer->setStyle(WTF::move(cancelButtonStyle));
-}
-
-Visibility RenderSearchField::visibilityForCancelButton() const
-{
-    return (usedStyle().visibility() == UsedVisibility::Hidden || protect(inputElement())->value()->isEmpty()) ? Visibility::Hidden : Visibility::Visible;
-}
-
-const AtomString& RenderSearchField::autosaveName() const
-{
-    return inputElement().attributeWithoutSynchronization(nameAttr);
-}
-
-void RenderSearchField::updatePopup(const AtomString& name, const Vector<RecentSearch>& searchItems)
-{
-    if (!m_searchPopup)
-        m_searchPopup = page().chrome().createSearchPopupMenu(downcast<SearchInputType>(*inputElement().inputType()));
-    protect(m_searchPopup)->saveRecentSearches(name, searchItems);
-}
-
-void RenderSearchField::popupDidHide()
-{
-    m_searchPopupIsVisible = false;
 }
 
 #if PLATFORM(WIN)
@@ -247,16 +97,6 @@ LayoutUnit RenderSearchField::clientPaddingRight() const
     }
     return padding;
 }
-
-FontSelector* RenderSearchField::fontSelector() const
-{
-    return &protect(document())->fontSelector();
-}
-
-HostWindow* RenderSearchField::hostWindow() const
-{
-    return RenderTextControlSingleLine::hostWindow();
-}
 #endif
 
-}
+} // namespace WebCore
