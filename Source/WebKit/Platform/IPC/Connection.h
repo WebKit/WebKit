@@ -724,7 +724,7 @@ private:
     NODELETE bool platformHasMessageInFlight() const;
 
 #if PLATFORM(COCOA)
-    bool canSendOnCallingThread(std::optional<ThreadQOS>) const;
+    bool canSendOnCallingThread(const OutgoingMessage&, std::optional<ThreadQOS>) const;
     bool trySendOnCallingThread(OutgoingMessage&) WTF_REQUIRES_LOCK(m_sendLock);
 #endif
 

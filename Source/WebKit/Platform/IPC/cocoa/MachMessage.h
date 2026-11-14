@@ -84,6 +84,8 @@ public:
 
     bool wasReturnedFromSend() const { return m_state == State::TimedOut; }
 
+    bool hasOutOfLineBody() const { return !!m_outOfLineBody; }
+
 private:
     MachMessage(MessageName, MmapSpan<uint8_t>&& outOfLineBody);
 
