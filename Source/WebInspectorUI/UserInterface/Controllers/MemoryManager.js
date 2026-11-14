@@ -85,13 +85,13 @@ WI.MemoryManager = class MemoryManager extends WI.Object
 
     // MemoryObserver
 
-    memoryPressure(timestamp, protocolSeverity)
+    memoryPressure(target, timestamp, protocolSeverity)
     {
         if (!this._enabled)
             return;
 
         let memoryPressureEvent = WI.MemoryPressureEvent.fromPayload(timestamp, protocolSeverity);
-        this.dispatchEventToListeners(WI.MemoryManager.Event.MemoryPressure, {memoryPressureEvent});
+        this.dispatchEventToListeners(WI.MemoryManager.Event.MemoryPressure, {target, memoryPressureEvent});
     }
 };
 

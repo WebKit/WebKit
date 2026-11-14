@@ -869,14 +869,21 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
     // HeapObserver
 
+    // These return whether the report belongs to a capture that the user stopped waiting for, so that the
+    // snapshot, which is parsed asynchronously, can be skipped instead of recorded.
     heapTrackingStarted(target, timestamp)
     {
+        let abandoned = this._isTrackingDomainAbandoned(target, "Heap");
         this.capturingStarted(target, "Heap", timestamp);
+        return abandoned;
     }
 
     heapTrackingCompleted(target, timestamp)
     {
+        // Reporting the stop takes back the abandoned capture's expectation, so decide before it.
+        let abandoned = this._isTrackingDomainAbandoned(target, "Heap");
         this.capturingStopped(target, "Heap");
+        return abandoned;
     }
 
     // AnimationObserver
@@ -886,9 +893,12 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         this.capturingStarted(target, "Animation", timestamp);
     }
 
-    animationTrackingUpdated(timestamp, event)
+    animationTrackingUpdated(target, timestamp, event)
     {
         if (!this._enabled)
+            return;
+
+        if (this._isTrackingDomainAbandoned(target, "Animation"))
             return;
 
         console.assert(this.isCapturing());
@@ -1602,6 +1612,9 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             return;
 
         let {target, collection} = event.data;
+        if (this._isTrackingDomainAbandoned(target, "Heap"))
+            return;
+
         this._addRecord(new WI.ScriptTimelineRecord(target, WI.ScriptTimelineRecord.EventType.GarbageCollected, collection.startTime, collection.endTime, {
             details: collection,
         }));
@@ -1612,7 +1625,11 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         if (!this._enabled)
             return;
 
-        this._activeRecording.addMemoryPressureEvent(event.data.memoryPressureEvent);
+        let {target, memoryPressureEvent} = event.data;
+        if (this._isTrackingDomainAbandoned(target, "Memory"))
+            return;
+
+        this._activeRecording.addMemoryPressureEvent(memoryPressureEvent);
     }
 
     _handleTimelinesAutoStopSettingChanged(event)

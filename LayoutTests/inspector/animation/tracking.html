@@ -47,7 +47,7 @@ function test()
             });
 
             let didTrackingUpdate = new Promise((resolve) => {
-                WI.timelineManager.animationTrackingUpdated = (timestamp, event) => {
+                WI.timelineManager.animationTrackingUpdated = (target, timestamp, event) => {
                     // A single animation reports several state changes; only the first creates the
                     // event this test checks.
                     if (trackingUpdate)

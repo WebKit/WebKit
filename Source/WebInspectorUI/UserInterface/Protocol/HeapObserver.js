@@ -35,7 +35,10 @@ WI.HeapObserver = class HeapObserver extends InspectorBackend.Dispatcher
     trackingStart(timestamp, snapshotStringData)
     {
         // Report this before parsing the snapshot, to keep it in order with the events of other domains.
-        WI.timelineManager.heapTrackingStarted(this._target, timestamp);
+        // A snapshot of a capture that the user stopped waiting for is not parsed at all.
+        let abandoned = WI.timelineManager.heapTrackingStarted(this._target, timestamp);
+        if (abandoned)
+            return;
 
         let workerProxy = WI.HeapSnapshotWorkerProxy.singleton();
         workerProxy.createSnapshot(this._target.identifier, snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
@@ -48,7 +51,9 @@ WI.HeapObserver = class HeapObserver extends InspectorBackend.Dispatcher
     trackingComplete(timestamp, snapshotStringData)
     {
         // See `trackingStart`.
-        WI.timelineManager.heapTrackingCompleted(this._target, timestamp);
+        let abandoned = WI.timelineManager.heapTrackingCompleted(this._target, timestamp);
+        if (abandoned)
+            return;
 
         let workerProxy = WI.HeapSnapshotWorkerProxy.singleton();
         workerProxy.createSnapshot(this._target.identifier, snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {

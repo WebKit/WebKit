@@ -237,11 +237,117 @@ function test()
         },
     });
 
+    suite.addTestCase({
+        name: "Timeline.StopWaiting.HeapDropped",
+        description: "Check that the Heap snapshots and garbage collections of a capture that the user stopped waiting for are dropped.",
+        async test() {
+            // The HeapAllocations instrument tracks the Heap domain of the Worker.
+            let originalTimelineTypes = WI.timelineManager.enabledTimelineTypes;
+            WI.timelineManager.enabledTimelineTypes = originalTimelineTypes.concat(WI.TimelineRecord.Type.HeapAllocations);
+
+            // Count the snapshots that are sent to the snapshot worker proxy, keyed by target identifier.
+            let snapshotsForTargetIdentifier = new Map;
+            let originalCreateSnapshot = WI.HeapSnapshotWorkerProxy.prototype.createSnapshot;
+            WI.HeapSnapshotWorkerProxy.prototype.createSnapshot = function(targetId, snapshotStringData, callback) {
+                snapshotsForTargetIdentifier.set(targetId, (snapshotsForTargetIdentifier.get(targetId) || 0) + 1);
+                return originalCreateSnapshot.call(this, targetId, snapshotStringData, callback);
+            };
+
+            try {
+                await startCapturing();
+                // Wait for the Worker's Heap start of the first capture, whose snapshot is recorded normally.
+                await awaitTrackingEvent("capturingStarted", workerTarget, "Heap");
+                await blockWorker();
+                // The Worker is blocked, so it has reported everything that it is going to for the first capture.
+                let snapshotCountBeforeRelease = snapshotsForTargetIdentifier.get(workerTarget.identifier) || 0;
+                await stopCapturingAndStopWaiting();
+
+                // The Worker still owes the Heap stop of the first capture, so a late garbage collection from it is dropped.
+                await startCapturing(true);
+                WI.heapManager.garbageCollected(workerTarget, {startTime: 0, endTime: 1});
+                let scriptTimeline = WI.timelineManager.activeRecording.timelines.get(WI.TimelineRecord.Type.Script);
+                let garbageCollectedRecords = scriptTimeline.records.filter((record) => record.target === workerTarget && record.eventType === WI.ScriptTimelineRecord.EventType.GarbageCollected);
+                InspectorTest.expectEqual(garbageCollectedRecords.length, 0, "The garbage collections of the first capture should not be added to the new capture.");
+
+                // The Worker reports the Heap stop of the first capture, then the Heap start of the new one. Only
+                // the snapshot of the new capture's start is parsed.
+                await releaseWorker();
+                await Promise.all([
+                    awaitTrackingEvent("capturingStarted", workerTarget, "Heap"),
+                    awaitTrackingEvent("capturingStopped", workerTarget, "Heap"),
+                ]);
+                InspectorTest.expectEqual((snapshotsForTargetIdentifier.get(workerTarget.identifier) || 0) - snapshotCountBeforeRelease, 1, "Only the snapshot of the new capture should be parsed.");
+
+                let heapAllocationsTimeline = WI.timelineManager.activeRecording.timelines.get(WI.TimelineRecord.Type.HeapAllocations);
+                await new Promise((resolve) => {
+                    let listener = heapAllocationsTimeline.addEventListener(WI.Timeline.Event.RecordAdded, (event) => {
+                        let {record} = event.data;
+                        if (record.heapSnapshot.target !== workerTarget)
+                            return;
+
+                        heapAllocationsTimeline.removeEventListener(WI.Timeline.Event.RecordAdded, listener);
+                        resolve(record);
+                    });
+                });
+                InspectorTest.pass("Recorded a Heap snapshot from the Worker in the new capture.");
+
+                await stopCapturing();
+                InspectorTest.pass("The new capture stopped after the Worker stopped.");
+                expectBreakpointsDisabled(false, "Breakpoints should no longer be disabled temporarily.");
+            } finally {
+                WI.HeapSnapshotWorkerProxy.prototype.createSnapshot = originalCreateSnapshot;
+                WI.timelineManager.enabledTimelineTypes = originalTimelineTypes;
+            }
+        },
+    });
+
+    suite.addTestCase({
+        name: "Timeline.StopWaiting.AnimationDropped",
+        description: "Check that an Animation update of a capture that the user stopped waiting for is dropped.",
+        async test() {
+            // The Media instrument tracks the Animation domain of the main target.
+            let originalTimelineTypes = WI.timelineManager.enabledTimelineTypes;
+            WI.timelineManager.enabledTimelineTypes = originalTimelineTypes.concat(WI.TimelineRecord.Type.Media);
+
+            try {
+                await startCapturing();
+
+                // Abandon every target synchronously, before the main target reports that it stopped, so that its
+                // Animation domain also belongs to the abandoned capture.
+                let inactivePromise = awaitCapturingState(CapturingState.Inactive);
+                WI.timelineManager.stopCapturing();
+                WI.timelineManager.stopWaitingForTargets();
+                await inactivePromise;
+                InspectorTest.expectEqual(WI.timelineManager.capturingState, CapturingState.Inactive, "Capturing should be inactive after the user stops waiting.");
+                expectBreakpointsDisabled(false, "Breakpoints should no longer be disabled temporarily.");
+
+                // Start the next capture while the late stop of the abandoned Animation domain is still on its way.
+                const newRecording = true;
+                WI.timelineManager.startCapturing(newRecording);
+
+                WI.timelineManager.animationTrackingUpdated(WI.assumingMainTarget(), 0, {
+                    trackingAnimationId: "abandoned-capture-animation",
+                    animationName: "abandoned-capture-animation",
+                    animationState: InspectorBackend.Enum.Animation.AnimationState.Active,
+                });
+                let mediaTimeline = WI.timelineManager.activeRecording.timelines.get(WI.TimelineRecord.Type.Media);
+                InspectorTest.expectThat(!mediaTimeline.recordForTrackingAnimationId("abandoned-capture-animation"), "The Animation update of the abandoned capture should not be added.");
+
+                await awaitCapturingState(CapturingState.Active);
+                await stopCapturing();
+                InspectorTest.pass("A new capture stopped after the abandoned Animation update was dropped.");
+                expectBreakpointsDisabled(false, "Breakpoints should no longer be disabled temporarily.");
+            } finally {
+                WI.timelineManager.enabledTimelineTypes = originalTimelineTypes;
+            }
+        },
+    });
+
     suite.runTestCasesAndFinish();
 }
 </script>
 </head>
 <body onload="runTest()">
-<p>Tests that the user can stop waiting for a Worker that cannot report that Timeline capturing stopped.</p>
+<p>Tests that the user can stop waiting for a target that cannot report that Timeline capturing stopped, and that the target's late events are dropped.</p>
 </body>
 </html>
