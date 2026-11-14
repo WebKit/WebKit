@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <WebCore/AffineTransform.h>
+#include <WebCore/FloatRect.h>
 #include <WebCore/GraphicsStyle.h>
 #include <WebCore/GraphicsTypes.h>
 #include <WebCore/SourceBrush.h>
@@ -57,6 +59,10 @@ public:
         ShouldSmoothFonts           = 1 << 12,
         ShouldSubpixelQuantizeFonts = 1 << 13,
         ShadowsIgnoreTransforms     = 1 << 14,
+
+        // Not a property: ctm() is not copied, compared or serialized with the properties. The change is
+        // applied to the platform context like the property changes.
+        CTM                         = 1 << 15,
     };
     using ChangeFlags = OptionSet<Change>;
 
@@ -66,7 +72,9 @@ public:
     enum class Purpose : uint8_t {
         Initial,
         SaveRestore,
-        TransparencyLayer
+        TransparencyLayer,
+        // Restoring restores only the CTM.
+        Transform
     };
 
     WEBCORE_EXPORT GraphicsContextState(const ChangeFlags& = { }, InterpolationQuality = InterpolationQuality::Default);
@@ -87,6 +95,7 @@ public:
 
     ChangeFlags changes() const { return m_changeFlags; }
     void didApplyChanges() { m_changeFlags = { }; }
+    void didApplyChanges(ChangeFlags changes) { m_changeFlags.remove(changes); }
 
     void markChanged(ChangeFlags properties) { m_changeFlags.add(properties); }
 
@@ -163,6 +172,42 @@ public:
 
     Purpose purpose() const { return m_purpose; }
 
+    const AffineTransform& ctm() const LIFETIME_BOUND { return m_ctm; }
+    // These mark Change::CTM. The ones that return a bool return false, leaving the CTM as it is, for
+    // an operation that does not change the CTM.
+    bool scaleCTM(const FloatSize&);
+    bool rotateCTM(float angleInRadians);
+    bool translateCTM(float x, float y);
+    bool concatCTM(const AffineTransform&);
+    void setCTM(const AffineTransform& ctm)
+    {
+        m_ctm = ctm;
+        m_changeFlags.add(Change::CTM);
+    }
+    // Sets the CTM the platform context already has, without marking it changed.
+    void setAppliedCTM(const AffineTransform& ctm) { m_ctm = ctm; }
+
+    // The bounds of the clip in device space, for the contexts that track them, such as DisplayList::Recorder.
+    const FloatRect& deviceClipBounds() const LIFETIME_BOUND { return m_deviceClipBounds; }
+    void setDeviceClipBounds(const FloatRect& bounds) { m_deviceClipBounds = bounds; }
+    void intersectDeviceClipBounds(const FloatRect& bounds) { m_deviceClipBounds.intersect(bounds); }
+
+    // For DisplayList::Recorder: the properties committed to the recording since this state was saved, which
+    // are synchronized when the state is restored.
+    ChangeFlags committedChanges() const { return m_committedChanges; }
+    void setCommittedChanges(ChangeFlags changes) { m_committedChanges = changes; }
+    void addCommittedChanges(ChangeFlags changes) { m_committedChanges.add(changes); }
+
+    // Restores from the state saved for Purpose::Transform: the CTM and the purpose are restored, the
+    // properties keep their current values.
+    void restoreTransform(const GraphicsContextState& saved)
+    {
+        ASSERT(m_purpose == Purpose::Transform);
+        m_ctm = saved.m_ctm;
+        m_purpose = saved.m_purpose;
+        m_changeFlags.add(Change::CTM);
+    }
+
     WTF::TextStream& dump(WTF::TextStream&) const;
 
 private:
@@ -192,6 +237,11 @@ private:
         m_changeFlags.add(change);
     }
 
+    // The CTM, the clip bounds and the committed changes are not properties: they are not copied, compared or
+    // serialized with the properties. They are saved and restored with the state.
+    AffineTransform m_ctm;
+    FloatRect m_deviceClipBounds;
+    ChangeFlags m_committedChanges;
     SourceBrush m_fillBrush { Color::black };
     SourceBrush m_strokeBrush { Color::black };
     // Changes not appiled to the underlying platform context.

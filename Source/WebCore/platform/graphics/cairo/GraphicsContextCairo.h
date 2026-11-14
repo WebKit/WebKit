@@ -82,7 +82,8 @@ public:
     void drawFocusRing(const Vector<FloatRect>&, float outlineWidth, const Color&, float zoomFactor) final;
 
     void save(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore) final;
-    void restore(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore) final;
+    bool restore(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore) final;
+    bool restoreTransform() final;
 
     void translate(float, float) final;
     void rotate(float) final;
@@ -90,7 +91,6 @@ public:
     void scale(const FloatSize&) final;
     void concatCTM(const AffineTransform&) final;
     void setCTM(const AffineTransform&) final;
-    AffineTransform getCTM(GraphicsContext::IncludeDeviceScale) const final;
 
     void beginTransparencyLayer(float) final;
     void endTransparencyLayer() final;
@@ -120,6 +120,8 @@ private:
 
     // Transparency layers.
     Vector<float> m_layers;
+    // The CTM at the beginning of each transparency layer, which ending the layer restores.
+    Vector<AffineTransform> m_layerCTMs;
 };
 
 } // namespace WebCore

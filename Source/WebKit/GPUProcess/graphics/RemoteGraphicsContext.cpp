@@ -106,7 +106,7 @@ void RemoteGraphicsContext::save()
 
 void RemoteGraphicsContext::restore()
 {
-    context().restore();
+    MESSAGE_CHECK(context().restore());
 }
 
 void RemoteGraphicsContext::translate(float x, float y)
@@ -132,6 +132,16 @@ void RemoteGraphicsContext::setCTM(const AffineTransform& ctm)
 void RemoteGraphicsContext::concatCTM(const AffineTransform& ctm)
 {
     context().concatCTM(ctm);
+}
+
+void RemoteGraphicsContext::saveTransform()
+{
+    context().saveTransform();
+}
+
+void RemoteGraphicsContext::restoreTransform()
+{
+    MESSAGE_CHECK(context().restoreTransform());
 }
 
 void RemoteGraphicsContext::setFillPackedColor(PackedColor::RGBA color)
