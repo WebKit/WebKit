@@ -4240,7 +4240,9 @@ LayoutRange RenderBox::containingBlockRangeForPositioned(const RenderBoxModelObj
             : LayoutRange(startEdge, container.paddingBoxLogicalHeight());
     }
 
-    auto* containingBlock = dynamicDowncast<RenderBlock>(container) ? : container.containingBlock();
+    // The block that keeps this out-of-flow box: the container itself, or the nearest non-anonymous block for a container that
+    // is not a block (e.g. a positioned table section).
+    auto* containingBlock = container.nearestNonAnonymousContainingBlockIncludingSelf();
     if (!containingBlock) {
         ASSERT_NOT_REACHED();
         return { };
