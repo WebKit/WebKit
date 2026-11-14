@@ -1,0 +1,83 @@
+שלום עולם
+שלום עולם
+שלום עולם
+שלום עולם
+שלום עולם
+abc שלום def
+abc שלום def
+abc שלום def
+abc שלום def
+abc שלום def
+שלום abc עולם
+שלום abc עולם
+שלום abc עולם
+שלום abc עולם
+שלום abc עולם
+שלום abc עולם
+שלום abc עולם
+שלום abc עולם
+שלום abc עולם
+שלום abc עולם
+שלום עולם
+שלום עולם
+שלום עולם
+שלום עולם
+שלום עולם
+abc שלום def
+abc שלום def
+abc שלום def
+abc שלום def
+abc שלום def
+שלום abc עולם
+שלום abc עולם
+שלום abc עולם
+שלום abc עולם
+שלום abc עולם
+שלום abc עולם
+שלום abc עולם
+שלום abc עולם
+שלום abc עולם
+שלום abc עולם
+ שלום עולםשלום עולםשלום עולםשלום עולםשלום עולםabc שלום defabc שלום defabc שלום defabc שלום defabc שלום defשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום עולםשלום עולםשלום עולםשלום עולםשלום עולםabc שלום defabc שלום defabc שלום defabc שלום defabc שלום defשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולםשלום abc עולם
+
+FAIL getExtentOfChar() on Hebrew in ltr text assert_approx_equals: getExtentOfChar(0).x expected 125 +/- 2 but got 0
+FAIL getStartPositionOfChar() and getEndPositionOfChar() on Hebrew in ltr text assert_approx_equals: getStartPositionOfChar(0) expected 150 +/- 2 but got 0
+PASS getSubStringLength() on Hebrew in ltr text
+PASS getCharNumAtPosition() on Hebrew in ltr text
+PASS getRotationOfChar() on Hebrew in ltr text
+FAIL getExtentOfChar() on Latin, then Hebrew in ltr text assert_approx_equals: getExtentOfChar(4).x expected 114 +/- 2 but got 65.5078125
+FAIL getStartPositionOfChar() and getEndPositionOfChar() on Latin, then Hebrew in ltr text assert_approx_equals: getStartPositionOfChar(4) expected 138.62109375 +/- 2 but got 65.5078125
+FAIL getSubStringLength() on Latin, then Hebrew in ltr text assert_approx_equals: getSubStringLength() of all characters expected 199.70703125 +/- 1 but got 65.5078125
+PASS getCharNumAtPosition() on Latin, then Hebrew in ltr text
+PASS getRotationOfChar() on Latin, then Hebrew in ltr text
+FAIL getExtentOfChar() on Hebrew, then Latin in ltr text assert_approx_equals: getExtentOfChar(0).x expected 48.46484375 +/- 2 but got 0
+FAIL getStartPositionOfChar() and getEndPositionOfChar() on Hebrew, then Latin in ltr text assert_approx_equals: getStartPositionOfChar(0) expected 73.11328125 +/- 2 but got 0
+FAIL getSubStringLength() on Hebrew, then Latin in ltr text assert_approx_equals: getSubStringLength() of all characters expected 215.5078125 +/- 1 but got 73.125
+PASS getCharNumAtPosition() on Hebrew, then Latin in ltr text
+PASS getRotationOfChar() on Hebrew, then Latin in ltr text
+FAIL getExtentOfChar() on Hebrew and Latin in a tspan in ltr text assert_approx_equals: getExtentOfChar(0).x expected 47.92578125 +/- 2 but got 0
+FAIL getStartPositionOfChar() and getEndPositionOfChar() on Hebrew and Latin in a tspan in ltr text assert_approx_equals: getStartPositionOfChar(0) expected 73.12109375 +/- 2 but got 0
+FAIL getSubStringLength() on Hebrew and Latin in a tspan in ltr text assert_approx_equals: getSubStringLength() of all characters expected 215.5078125 +/- 1 but got 73.125
+PASS getCharNumAtPosition() on Hebrew and Latin in a tspan in ltr text
+PASS getRotationOfChar() on Hebrew and Latin in a tspan in ltr text
+FAIL getExtentOfChar() on Hebrew in rtl text assert_approx_equals: getExtentOfChar(0).x expected 125.38671875 +/- 2 but got 0
+FAIL getStartPositionOfChar() and getEndPositionOfChar() on Hebrew in rtl text assert_approx_equals: getStartPositionOfChar(0) expected 149.99609375 +/- 2 but got 0
+FAIL getSubStringLength() on Hebrew in rtl text assert_approx_equals: getSubStringLength() of all characters expected 150 +/- 1 but got 66.875
+PASS getCharNumAtPosition() on Hebrew in rtl text
+PASS getRotationOfChar() on Hebrew in rtl text
+FAIL getExtentOfChar() on Latin, then Hebrew in rtl text assert_approx_equals: getExtentOfChar(0).x expected 143.38671875 +/- 2 but got 0.01171875
+FAIL getStartPositionOfChar() and getEndPositionOfChar() on Latin, then Hebrew in rtl text assert_approx_equals: getStartPositionOfChar(0) expected 143.6796875 +/- 2 but got 0.01171875
+FAIL getSubStringLength() on Latin, then Hebrew in rtl text assert_approx_equals: getSubStringLength() of all characters expected 199.70703125 +/- 1 but got 51.07421875
+PASS getCharNumAtPosition() on Latin, then Hebrew in rtl text
+PASS getRotationOfChar() on Latin, then Hebrew in rtl text
+FAIL getExtentOfChar() on Hebrew, then Latin in rtl text assert_approx_equals: getExtentOfChar(0).x expected 190.8515625 +/- 2 but got 0.0078125
+FAIL getStartPositionOfChar() and getEndPositionOfChar() on Hebrew, then Latin in rtl text assert_approx_equals: getStartPositionOfChar(0) expected 215.5 +/- 2 but got 0.0078125
+FAIL getSubStringLength() on Hebrew, then Latin in rtl text assert_approx_equals: getSubStringLength() of all characters expected 215.5078125 +/- 1 but got 66.875
+PASS getCharNumAtPosition() on Hebrew, then Latin in rtl text
+PASS getRotationOfChar() on Hebrew, then Latin in rtl text
+FAIL getExtentOfChar() on Hebrew and Latin in a tspan in rtl text assert_approx_equals: getExtentOfChar(0).x expected 190.3125 +/- 2 but got 0.0078125
+FAIL getStartPositionOfChar() and getEndPositionOfChar() on Hebrew and Latin in a tspan in rtl text assert_approx_equals: getStartPositionOfChar(0) expected 215.5078125 +/- 2 but got 0.0078125
+FAIL getSubStringLength() on Hebrew and Latin in a tspan in rtl text assert_approx_equals: getSubStringLength() of all characters expected 215.5078125 +/- 1 but got 66.875
+PASS getCharNumAtPosition() on Hebrew and Latin in a tspan in rtl text
+PASS getRotationOfChar() on Hebrew and Latin in a tspan in rtl text
+
