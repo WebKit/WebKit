@@ -117,6 +117,8 @@ WI.ErrorObjectView = class ErrorObjectView extends WI.Object
         this._element.classList.add("expanded");
 
         this.update();
+
+        this.dispatchEventToListeners(WI.ErrorObjectView.Event.DisclosureChanged);
     }
 
     collapse()
@@ -126,6 +128,8 @@ WI.ErrorObjectView = class ErrorObjectView extends WI.Object
 
         this._expanded = false;
         this._element.classList.remove("expanded");
+
+        this.dispatchEventToListeners(WI.ErrorObjectView.Event.DisclosureChanged);
     }
 
     appendTitleSuffix(suffixElement)
@@ -150,5 +154,12 @@ WI.ErrorObjectView = class ErrorObjectView extends WI.Object
         let stackTrace = WI.StackTrace.fromString(this._object.target, stackString);
         let stackTraceElement = new WI.StackTraceView(stackTrace);
         this._outlineElement.appendChild(stackTraceElement);
+
+        this.dispatchEventToListeners(WI.ErrorObjectView.Event.StackChanged);
     }
+};
+
+WI.ErrorObjectView.Event = {
+    DisclosureChanged: "error-object-view-disclosure-changed",
+    StackChanged: "error-object-view-stack-changed",
 };

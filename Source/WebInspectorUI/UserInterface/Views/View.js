@@ -64,6 +64,11 @@ WI.View = class View extends WI.Object
         return WI.View._rootView;
     }
 
+    static dispatchContentResizedEvent(element)
+    {
+        element.dispatchEvent(new CustomEvent(WI.View.Event.ContentResized, {bubbles: true}));
+    }
+
     // Public
 
     get element() { return this._element; }
@@ -406,6 +411,10 @@ WI.View = class View extends WI.Object
 WI.View.LayoutReason = {
     Dirty: Symbol("layout-reason-dirty"),
     Resize: Symbol("layout-reason-resize")
+};
+
+WI.View.Event = {
+    ContentResized: "view-content-resized",
 };
 
 WI.View._rootView = null;
