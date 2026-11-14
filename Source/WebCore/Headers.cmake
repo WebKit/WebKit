@@ -1587,6 +1587,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     html/canvas/CanvasElementImage.h
     html/canvas/CanvasImageSource.h
+    html/canvas/CanvasRenderingContext.h
     html/canvas/PlaceholderRenderingContextIdentifier.h
     html/canvas/PlaceholderRenderingContextSource.h
     html/canvas/PredefinedColorSpace.h

@@ -472,6 +472,13 @@ RefPtr<NativeImage> GPUCanvasContextCocoa::surfaceBufferToNativeImage(SurfaceBuf
     return m_readDisplayBufferImage;
 }
 
+void GPUCanvasContextCocoa::clearRenderingCaches()
+{
+    m_readDisplayBuffer = nullptr;
+    m_readDisplayBufferImage = nullptr;
+    updateMemoryCost();
+}
+
 RefPtr<ImageBuffer> GPUCanvasContextCocoa::transferToImageBuffer()
 {
     RefPtr scriptExecutionContext = protect(canvasBase())->scriptExecutionContext();

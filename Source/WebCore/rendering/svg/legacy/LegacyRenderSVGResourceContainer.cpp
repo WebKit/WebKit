@@ -147,6 +147,12 @@ void LegacyRenderSVGResourceContainer::markAllClientsForInvalidationIfNeeded(Inv
     markAllClientLayersForInvalidation();
 }
 
+void LegacyRenderSVGResourceContainer::clearRenderingCaches()
+{
+    LegacyRenderSVGHiddenContainer::clearRenderingCaches();
+    removeAllClientsFromCacheAndMarkForInvalidation();
+}
+
 void LegacyRenderSVGResourceContainer::markAllClientLayersForInvalidation()
 {
     if (m_clientLayers.isEmptyIgnoringNullReferences())

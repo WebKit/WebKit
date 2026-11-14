@@ -1,0 +1,37 @@
+<!DOCTYPE html><!-- webkit-test-runner [ UseGPUProcessForDOMRenderingEnabled=true CSSMeshGradientsEnabled=true ] -->
+<title>Tiled CSS mesh gradients repaint after the GPU process crashes</title>
+<style>
+div {
+    display: inline-block;
+    width: 120px;
+    height: 120px;
+    margin: 10px;
+    background-size: 40px 40px;
+}
+</style>
+<div style="background-image: mesh-gradient(in srgb, green, blue; blue, green)"></div>
+<div style="background-image: mesh-gradient(in srgb lime, red 25% 25%, red 75% 25%; red 25% 75%, red 75% 75%)"></div>
+<div style="background-image: mesh-gradient(in srgb, green, blue; blue, green); background-size: auto"></div>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function nextFrame()
+{
+    return new Promise(resolve => requestAnimationFrame(() => resolve()));
+}
+
+window.addEventListener("load", async () => {
+    // Let the first paint reach the GPU process, then crash it. The page repaints with the
+    // same content once the connection to the new GPU process is made.
+    await nextFrame();
+    await nextFrame();
+    if (window.testRunner)
+        testRunner.terminateGPUProcess();
+    await new Promise(resolve => setTimeout(resolve, 100));
+    await nextFrame();
+    await nextFrame();
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+</script>

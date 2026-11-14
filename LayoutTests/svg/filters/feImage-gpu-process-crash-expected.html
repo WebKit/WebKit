@@ -1,0 +1,17 @@
+<!DOCTYPE html><!-- webkit-test-runner [ UseGPUProcessForDOMRenderingEnabled=true ] -->
+<svg width="300" height="150">
+    <defs>
+        <g id="source">
+            <rect width="40" height="40" fill="green"/>
+            <rect x="40" y="40" width="40" height="40" fill="blue"/>
+        </g>
+    </defs>
+    <filter id="element-image" filterUnits="userSpaceOnUse" x="10" y="10" width="130" height="130">
+        <feImage href="#source"/>
+    </filter>
+    <filter id="external-image" x="0" y="0" width="1" height="1">
+        <feImage href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Crect width='40' height='40' fill='green'/%3E%3Crect x='40' y='40' width='40' height='40' fill='blue'/%3E%3C/svg%3E" preserveAspectRatio="none"/>
+    </filter>
+    <rect x="10" y="10" width="130" height="130" filter="url(#element-image)"/>
+    <rect x="160" y="10" width="130" height="130" filter="url(#external-image)"/>
+</svg>

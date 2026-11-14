@@ -266,6 +266,12 @@ void MultiImage::resetAnimation()
         protect(m_selectedImage)->resetAnimation();
 }
 
+void MultiImage::clearRenderingCaches()
+{
+    if (m_selectedImage)
+        protect(m_selectedImage)->clearRenderingCaches();
+}
+
 DecodingMode MultiImage::decodingModeForImageDraw(const RenderBoxModelObject& renderer, const PaintInfo& paintInfo) const
 {
     if (!m_selectedImage)

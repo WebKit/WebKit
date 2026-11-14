@@ -1,0 +1,12 @@
+<!DOCTYPE html><!-- webkit-test-runner [ UseGPUProcessForDOMRenderingEnabled=true LayerBasedSVGEngineEnabled=true ] -->
+<svg width="300" height="150">
+    <mask id="luminance" maskContentUnits="objectBoundingBox">
+        <rect width="0.5" height="0.5" fill="white"/>
+        <rect x="0.5" y="0.5" width="0.5" height="0.5" fill="white"/>
+    </mask>
+    <mask id="alpha" style="mask-type: alpha" maskContentUnits="objectBoundingBox">
+        <circle cx="0.5" cy="0.5" r="0.4" fill="black"/>
+    </mask>
+    <rect x="10" y="10" width="130" height="130" fill="green" mask="url(#luminance)"/>
+    <rect x="160" y="10" width="130" height="130" fill="blue" mask="url(#alpha)"/>
+</svg>

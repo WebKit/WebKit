@@ -861,6 +861,14 @@ RefPtr<NativeImage> WebGLRenderingContextBase::surfaceBufferToNativeImage(Surfac
     return readBuffer.image;
 }
 
+void WebGLRenderingContextBase::clearRenderingCaches()
+{
+    m_readDrawingBuffer.clear();
+    m_readDisplayBuffer.clear();
+    m_generatedImageCache.clear();
+    updateMemoryCost();
+}
+
 RefPtr<ImageBuffer> WebGLRenderingContextBase::surfaceBufferToImageBuffer(SurfaceBuffer sourceBuffer)
 {
     RefPtr scriptExecutionContext = this->scriptExecutionContext();
@@ -5816,6 +5824,12 @@ RefPtr<ImageBuffer> WebGLRenderingContextBase::LRUImageBufferCache::imageBuffer(
     RefPtr<ImageBuffer> buf = m_buffers[i]->second.ptr();
     bubbleToFront(i);
     return buf;
+}
+
+void WebGLRenderingContextBase::LRUImageBufferCache::clear()
+{
+    for (auto& buffer : m_buffers)
+        buffer.reset();
 }
 
 void WebGLRenderingContextBase::LRUImageBufferCache::bubbleToFront(size_t idx)

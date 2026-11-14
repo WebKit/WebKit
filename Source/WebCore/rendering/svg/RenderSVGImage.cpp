@@ -296,6 +296,12 @@ void RenderSVGImage::notifyFinished(CachedResource& newImage, const NetworkLoadM
     RenderSVGModelObject::notifyFinished(newImage, metrics, loadWillContinueInAnotherProcess);
 }
 
+void RenderSVGImage::clearRenderingCaches()
+{
+    RenderSVGModelObject::clearRenderingCaches();
+    m_bufferedForeground = nullptr;
+}
+
 void RenderSVGImage::forEachStyleImage(NOESCAPE const ScopedLambda<void(Style::Image&)>& function)
 {
     RenderSVGModelObject::forEachStyleImage(function);

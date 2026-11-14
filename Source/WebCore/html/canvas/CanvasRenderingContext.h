@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "AnimationFrameRate.h"
-#include "CanvasBase.h"
-#include "GraphicsLayerContentsDisplayDelegate.h"
-#include "ImageBuffer.h"
-#include "ScriptWrappable.h"
+#include <WebCore/AnimationFrameRate.h>
+#include <WebCore/CanvasBase.h>
+#include <WebCore/GraphicsLayerContentsDisplayDelegate.h>
+#include <WebCore/ImageBuffer.h>
+#include <WebCore/ScriptWrappable.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/CurrentThread.h>
 #include <wtf/Forward.h>
@@ -63,6 +63,8 @@ public:
 
     NODELETE static HashSet<CanvasRenderingContext*>& instances() WTF_REQUIRES_LOCK(instancesLock());
     NODELETE static Lock& instancesLock() WTF_RETURNS_LOCK(s_instancesLock);
+    // Drops the cached renderings of the contexts of the current thread and of their canvas elements.
+    WEBCORE_EXPORT static void clearRenderingCachesForCurrentThread();
 
     NODELETE WEBCORE_EXPORT void ref() const;
     WEBCORE_EXPORT void deref() const;
@@ -104,6 +106,8 @@ public:
     // valid after the context is drawn to again. Returns nullptr only if no image can be produced,
     // for example because the canvas has no contents or an allocation failed.
     virtual RefPtr<NativeImage> surfaceBufferToNativeImage(SurfaceBuffer) = 0;
+    // Drops the copies of the surface buffers that are kept between uses, such as the image of surfaceBufferToNativeImage().
+    virtual void clearRenderingCaches() { }
     virtual bool isSurfaceBufferTransparentBlack(SurfaceBuffer) const = 0;
     virtual bool delegatesDisplay() const { return false; }
     virtual RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate();

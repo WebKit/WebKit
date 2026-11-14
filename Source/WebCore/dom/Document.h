@@ -522,6 +522,9 @@ public:
     NODELETE WEBCORE_EXPORT static DocumentsMap::ValuesIteratorRange allDocuments();
     NODELETE WEBCORE_EXPORT static DocumentsMap& allDocumentsMap();
 
+    // Drops the images and buffers that documents and main thread canvases keep between paints.
+    WEBCORE_EXPORT static void clearRenderingCachesForAllDocuments();
+
     MediaQueryMatcher& mediaQueryMatcher();
 
     using ContainerNode::ref;
@@ -849,6 +852,9 @@ public:
     WEBCORE_EXPORT void didBecomeCurrentDocumentInFrame();
     void destroyRenderTree();
     WEBCORE_EXPORT void willBeRemovedFromFrame();
+
+    // Drops the images and buffers that the renderers keep between paints.
+    void clearRenderingCaches();
 
     // Override ScriptExecutionContext methods to do additional work
     WEBCORE_EXPORT bool shouldBypassMainWorldContentSecurityPolicy() const final;

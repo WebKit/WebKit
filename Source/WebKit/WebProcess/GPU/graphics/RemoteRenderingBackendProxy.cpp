@@ -49,6 +49,7 @@
 #include "WebPage.h"
 #include "WebProcess.h"
 #include <JavaScriptCore/TypedArrayInlines.h>
+#include <WebCore/CanvasRenderingContext.h>
 #include <WebCore/FontCustomPlatformData.h>
 #include <WebCore/PixelFormat.h>
 #include <wtf/Borrow.h>
@@ -220,6 +221,10 @@ void RemoteRenderingBackendProxy::didClose(IPC::Connection&)
             continue;
         send(Messages::RemoteRenderingBackend::CreateImageBufferSet(identifier, imageBufferSet->contextIdentifier()));
     }
+
+    // The caches of the main thread are cleared when the GPU process connection closes.
+    if (!isMainRunLoop())
+        CanvasRenderingContext::clearRenderingCachesForCurrentThread();
 }
 
 void RemoteRenderingBackendProxy::didBecomeUnresponsive()

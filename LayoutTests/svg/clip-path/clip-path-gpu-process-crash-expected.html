@@ -1,0 +1,15 @@
+<!DOCTYPE html><!-- webkit-test-runner [ UseGPUProcessForDOMRenderingEnabled=true ] -->
+<svg width="300" height="150">
+    <clipPath id="two-shapes">
+        <rect x="10" y="10" width="60" height="60"/>
+        <rect x="80" y="80" width="60" height="60"/>
+    </clipPath>
+    <clipPath id="half">
+        <rect x="160" y="10" width="65" height="130"/>
+    </clipPath>
+    <clipPath id="clipped-circle">
+        <circle cx="225" cy="75" r="65" clip-path="url(#half)"/>
+    </clipPath>
+    <rect x="10" y="10" width="130" height="130" fill="green" clip-path="url(#two-shapes)"/>
+    <rect x="160" y="10" width="130" height="130" fill="blue" clip-path="url(#clipped-circle)"/>
+</svg>

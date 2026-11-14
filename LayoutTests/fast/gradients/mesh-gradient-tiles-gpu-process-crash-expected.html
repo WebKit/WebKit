@@ -1,0 +1,13 @@
+<!DOCTYPE html><!-- webkit-test-runner [ UseGPUProcessForDOMRenderingEnabled=true CSSMeshGradientsEnabled=true ] -->
+<style>
+div {
+    display: inline-block;
+    width: 120px;
+    height: 120px;
+    margin: 10px;
+    background-size: 40px 40px;
+}
+</style>
+<div style="background-image: mesh-gradient(in srgb, green, blue; blue, green)"></div>
+<div style="background-image: mesh-gradient(in srgb lime, red 25% 25%, red 75% 25%; red 25% 75%, red 75% 75%)"></div>
+<div style="background-image: mesh-gradient(in srgb, green, blue; blue, green); background-size: auto"></div>
