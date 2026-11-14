@@ -2920,11 +2920,6 @@ TextRun RenderBlock::constructTextRun(std::span<const char16_t> characters, cons
     return constructTextRun(StringView { characters }, style, expansion);
 }
 
-bool RenderBlock::hasDefiniteLogicalHeight() const
-{
-    return (bool)availableLogicalHeightForPercentageComputation();
-}
-
 bool RenderBlock::hasDefiniteLogicalHeightForPercentageResolutionFromStyle() const
 {
     // Whether a percentage or stretch block-size on a descendant resolves to a definite value against this
