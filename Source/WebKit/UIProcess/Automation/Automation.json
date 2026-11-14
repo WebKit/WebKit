@@ -415,6 +415,28 @@
             ]
         },
         {
+            "id": "WebExtensionPageType",
+            "type": "string",
+            "description": "What a web extension page is used for.",
+            "enum": [
+                "Background",
+                "Popup",
+                "Offscreen",
+                "Sidebar",
+                "Tab"
+            ]
+        },
+        {
+            "id": "WebExtensionPage",
+            "type": "object",
+            "description": "A page that belongs to a loaded web extension.",
+            "properties": [
+                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "Opaque handle for the page. Accepted wherever a browsing context handle is, such as evaluateJavaScriptFunction and sendInspectorMessage." },
+                { "name": "type", "$ref": "WebExtensionPageType", "description": "What the page is used for." },
+                { "name": "url", "type": "string", "description": "The URL loaded by the page at the time the command is handled." }
+            ]
+        },
+        {
             "id": "PermissionState",
             "type": "string",
             "spec": "https://www.w3.org/TR/permissions/#dom-permissionstate",
@@ -971,6 +993,20 @@
             "condition": "defined(WTF_PLATFORM_MAC) && WTF_PLATFORM_MAC",
             "parameters": [
                 { "name": "identifier", "type": "string", "description": "The identifier of the extension to unload." }
+            ],
+            "async": true
+        },
+        {
+            "name": "getWebExtensionPages",
+            "description": "Fetches the pages that belong to a loaded web extension, loading its background page first if it is unloaded. A service worker background is not a page, so it is not loaded or included.",
+            "platform": "macos",
+            "condition": "defined(WTF_PLATFORM_MAC) && WTF_PLATFORM_MAC",
+            "parameters": [
+                { "name": "identifier", "type": "string", "description": "The identifier of the extension." }
+            ],
+            "returns": [
+                { "name": "baseURL", "type": "string", "description": "The base URL of the extension's resources." },
+                { "name": "pages", "type": "array", "items": { "$ref": "WebExtensionPage" }, "description": "The extension's pages." }
             ],
             "async": true
         },

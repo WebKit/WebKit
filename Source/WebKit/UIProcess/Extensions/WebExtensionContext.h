@@ -709,6 +709,7 @@ public:
     void addPopupPage(WebPageProxy&, WebExtensionAction&);
 
     void enumerateExtensionPages(NOESCAPE const Function<void(WebPageProxy&, bool& stop)>&);
+    std::optional<WebViewPurpose> purposeOfExtensionPage(WebPageProxyIdentifier) const;
 
     WebViewClass *relatedWebView();
     String processDisplayName();
