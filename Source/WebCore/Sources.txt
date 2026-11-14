@@ -3114,7 +3114,6 @@ rendering/RenderListOutsideMarker.cpp @header:RenderStyleGetters @cost:8
 rendering/RenderMarquee.cpp @header:RenderStyleGetters @cost:5
 rendering/RenderMedia.cpp @header:RenderStyleGetters @cost:6
 rendering/RenderMenuList.cpp @header:RenderStyleGetters @cost:8
-rendering/RenderMeter.cpp @header:RenderStyleGetters @cost:5
 rendering/RenderModel.cpp
 rendering/RenderMultiColumnFlow.cpp @header:RenderStyleGetters @cost:5
 rendering/RenderMultiColumnSet.cpp @header:RenderStyleGetters @cost:6

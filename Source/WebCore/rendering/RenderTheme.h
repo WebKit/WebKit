@@ -51,7 +51,6 @@ class Page;
 class RenderAttachment;
 class RenderBox;
 class RenderElement;
-class RenderMeter;
 class RenderProgress;
 class Settings;
 
@@ -232,7 +231,6 @@ public:
     virtual Seconds animationDurationForProgressBar() const { return 0_s; }
     virtual IntRect progressBarRectForBounds(const RenderProgress&, const IntRect& bounds) const { return bounds; }
 
-    virtual FloatSize meterSizeForBounds(const RenderMeter&, const FloatRect&) const;
     virtual bool supportsMeter(StyleAppearance) const { return false; }
 
     // Returns the threshold distance for snapping to a slider tick mark.

@@ -25,7 +25,6 @@
 namespace WebCore {
 
 class HTMLMeterElement;
-class RenderMeter;
 
 class HTMLProgressElement;
 class RenderProgress;

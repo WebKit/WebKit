@@ -60,7 +60,6 @@
 #import "PathUtilities.h"
 #import "RenderAttachment.h"
 #import "RenderMedia.h"
-#import "RenderMeter.h"
 #import "RenderObjectInlines.h"
 #import "RenderProgress.h"
 #import "RenderSlider.h"
@@ -1297,14 +1296,25 @@ void RenderThemeMac::adjustImageControlsButtonStyle(Style::ComputedStyle& style,
 }
 #endif
 
-FloatSize RenderThemeMac::meterSizeForBounds(const RenderMeter& renderMeter, const FloatRect& bounds) const
+void RenderThemeMac::adjustMeterStyle(Style::ComputedStyle& style, const Element* element) const
 {
-    RefPtr control = const_cast<RenderMeter&>(renderMeter).ensureControlPartForRenderer();
-    if (!control)
-        return bounds.size();
+    RenderThemeCocoa::adjustMeterStyle(style, element);
 
-    auto controlStyle = extractControlStyleForRenderer(renderMeter);
-    return control->sizeForBounds(bounds, controlStyle);
+#if ENABLE(FORM_CONTROL_REFRESH)
+    if (element && element->document().settings().formControlRefreshEnabled())
+        return;
+#endif
+
+    // NSLevelIndicatorCell has a fixed intrinsic thickness, so make room for it in the block axis.
+    static const float levelIndicatorCellThickness = [] {
+        RetainPtr cell = adoptNS([[NSLevelIndicatorCell alloc] initWithLevelIndicatorStyle:NSLevelIndicatorStyleContinuousCapacity]);
+        return static_cast<float>([cell cellSizeForBounds:NSZeroRect].height);
+    }();
+
+    auto minimumBlockSize = levelIndicatorCellThickness * usedZoomForComputedStyle(style);
+    if (auto fixedValue = style.logicalMinHeight().tryFixed())
+        minimumBlockSize = std::max(minimumBlockSize, fixedValue->resolveZoom(Style::ZoomFactor::none()));
+    style.setLogicalMinHeight(Style::MinimumSize::Fixed { minimumBlockSize });
 }
 
 bool RenderThemeMac::supportsMeter(StyleAppearance appearance) const

@@ -90,7 +90,7 @@ public:
 
     bool popsMenuByArrowKeys() const final { return true; }
 
-    FloatSize meterSizeForBounds(const RenderMeter&, const FloatRect&) const final;
+    void adjustMeterStyle(Style::ComputedStyle&, const Element*) const final;
     NODELETE bool supportsMeter(StyleAppearance) const final;
 
     void createColorWellSwatchSubtree(HTMLElement&) final;

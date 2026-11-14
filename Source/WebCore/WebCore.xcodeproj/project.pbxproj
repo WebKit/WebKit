@@ -4384,7 +4384,6 @@
 		A43BF5991149290A00C643CA /* HTMLProgressElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A43BF5971149290A00C643CA /* HTMLProgressElement.h */; };
 		A43BF59D1149292800C643CA /* RenderProgress.h in Headers */ = {isa = PBXBuildFile; fileRef = A43BF59B1149292800C643CA /* RenderProgress.h */; };
 		A454424B119B3661009BE912 /* HTMLMeterElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A4544249119B3661009BE912 /* HTMLMeterElement.h */; };
-		A454424F119B3687009BE912 /* RenderMeter.h in Headers */ = {isa = PBXBuildFile; fileRef = A454424D119B3687009BE912 /* RenderMeter.h */; };
 		A456FA2711AD4A830020B420 /* LabelsNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = A456FA2511AD4A830020B420 /* LabelsNodeList.h */; };
 		A45734CF1D3AFD590190608F /* WorkerAnimationController.h in Headers */ = {isa = PBXBuildFile; fileRef = A45733CF1D3AFD590190608F /* WorkerAnimationController.h */; };
 		A4C123B1612DD272D1371C17 /* AnnexBUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 149D439536B3216FDAEEB975 /* AnnexBUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -17577,8 +17576,6 @@
 		A43BF59B1149292800C643CA /* RenderProgress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderProgress.h; sourceTree = "<group>"; };
 		A4544248119B3661009BE912 /* HTMLMeterElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLMeterElement.cpp; sourceTree = "<group>"; };
 		A4544249119B3661009BE912 /* HTMLMeterElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLMeterElement.h; sourceTree = "<group>"; };
-		A454424C119B3687009BE912 /* RenderMeter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMeter.cpp; sourceTree = "<group>"; };
-		A454424D119B3687009BE912 /* RenderMeter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMeter.h; sourceTree = "<group>"; };
 		A456FA2411AD4A830020B420 /* LabelsNodeList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LabelsNodeList.cpp; sourceTree = "<group>"; };
 		A456FA2511AD4A830020B420 /* LabelsNodeList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LabelsNodeList.h; sourceTree = "<group>"; };
 		A45732CF1C3AFD590180608F /* WorkerAnimationController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerAnimationController.cpp; sourceTree = "<group>"; };
@@ -42637,8 +42634,6 @@
 				CD4F79842EB442440031F5E4 /* RenderMediaInlines.h */,
 				ABDDFE730A5C6E6F00A3E11D /* RenderMenuList.cpp */,
 				ABDDFE740A5C6E7000A3E11D /* RenderMenuList.h */,
-				A454424C119B3687009BE912 /* RenderMeter.cpp */,
-				A454424D119B3687009BE912 /* RenderMeter.h */,
 				BCB4779825D46EFF005EF0C8 /* RenderModel.cpp */,
 				BCB4779725D46EFF005EF0C8 /* RenderModel.h */,
 				1A3586DD15264C450022A659 /* RenderMultiColumnFlow.cpp */,
@@ -48702,7 +48697,6 @@
 				E4C279590CF9741900E97B98 /* RenderMedia.h in Headers */,
 				CD4F79852EB442440031F5E4 /* RenderMediaInlines.h in Headers */,
 				ABDDFE7A0A5C6E7000A3E11D /* RenderMenuList.h in Headers */,
-				A454424F119B3687009BE912 /* RenderMeter.h in Headers */,
 				BCB4779925D46EFF005EF0C8 /* RenderModel.h in Headers */,
 				1A3586E015264C450022A659 /* RenderMultiColumnFlow.h in Headers */,
 				BCE32B9C1517C0B200F542EC /* RenderMultiColumnSet.h in Headers */,

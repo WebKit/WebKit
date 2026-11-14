@@ -55,7 +55,6 @@
 #import "RenderButton.h"
 #import "RenderElementInlines.h"
 #import "RenderMenuList.h"
-#import "RenderMeter.h"
 #import "RenderObjectInlines.h"
 #import "RenderProgress.h"
 #import "RenderSlider.h"
@@ -3542,11 +3541,9 @@ bool RenderThemeCocoa::paintMeterForVectorBasedControls(const RenderElement& ren
     if (!formControlRefreshEnabled(renderer))
         return false;
 
-    CheckedPtr renderMeter = dynamicDowncast<RenderMeter>(renderer);
-    if (!renderMeter)
+    RefPtr element = dynamicDowncast<HTMLMeterElement>(renderer.element());
+    if (!element)
         return true;
-
-    RefPtr element = renderMeter->meterElement();
 
     auto& context = paintInfo.context();
     GraphicsContextStateSaver stateSaver(context);

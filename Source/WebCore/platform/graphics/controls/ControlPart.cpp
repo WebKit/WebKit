@@ -59,16 +59,6 @@ PlatformControl* ControlPart::platformControl() const
     return m_platformControl.get();
 }
 
-FloatSize ControlPart::sizeForBounds(const FloatRect& bounds, const ControlStyle& style)
-{
-    auto platformControl = this->platformControl();
-    if (!platformControl)
-        return bounds.size();
-
-    platformControl->updateCellStates(bounds, style);
-    return platformControl->sizeForBounds(bounds, style);
-}
-
 FloatRect ControlPart::rectForBounds(const FloatRect& bounds, const ControlStyle& style)
 {
     auto platformControl = this->platformControl();
