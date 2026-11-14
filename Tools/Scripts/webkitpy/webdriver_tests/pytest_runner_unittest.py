@@ -31,7 +31,7 @@ import unittest
 # Runs a test file the way the W3C tests run, through a TestProcess, in a process of its own, so that a hang
 # can be detected. Expectations are given by subtest name.
 RUNNER = textwrap.dedent('''
-    import json, os, sys
+    import json, os, sys, types
     sys.path.insert(0, sys.argv[1])
     from webkitpy.webdriver_tests import pytest_runner
     from webkitpy.webdriver_tests.test_process import TestProcess
@@ -53,7 +53,11 @@ RUNNER = textwrap.dedent('''
     # Load only the plugins these tests need, not whatever happens to be installed.
     environment = dict(os.environ, PYTEST_DISABLE_PLUGIN_AUTOLOAD='1')
 
+    # The test files report launches of the browser through this, as the W3C tests do through their New Session commands.
+    launches = sys.modules['launches'] = types.ModuleType('launches')
+
     def run_file(path, deselected, report):
+        launches.report = report
         return pytest_runner.run(path, ['--strict-markers', '-p', 'pytest_asyncio.plugin'], timeout, environment, Expectations(), report=report, deselected=deselected)[0]
 
     restarts = []
@@ -77,7 +81,9 @@ RUNNER = textwrap.dedent('''
 PRELUDE = textwrap.dedent('''
     import asyncio
     import socket
+    import time
 
+    import launches
     import pytest
     import pytest_asyncio
 
@@ -86,6 +92,18 @@ PRELUDE = textwrap.dedent('''
 
     def block():
         _never_answers.recv(1)
+
+
+    def launch(seconds=None):
+        # Like a New Session command, which launches the browser. Without seconds, the launch never finishes.
+        launches.report(('launch', 'start'))
+        try:
+            if seconds is None:
+                block()
+            else:
+                time.sleep(seconds)
+        finally:
+            launches.report(('launch', 'end'))
 ''')
 
 TEST_TIMEOUT_SECONDS = 1
@@ -312,6 +330,54 @@ class PytestRunnerTimeoutTest(unittest.TestCase):
             def pytest_sessionfinish():
                 time.sleep(%s)
         ''' % (TEST_TIMEOUT_SECONDS * 2)), {'test_before_a_slow_finish': 'PASS'})
+
+    def test_slow_launch(self):
+        # Launching the browser doesn't count against a subtest's time. The first launch of a newly built browser can
+        # take longer than a subtest gets.
+        self.assertEqual(self.run_tests('''
+            def test_first_launch_is_slow():
+                launch(%(slow)s)
+
+
+            def test_second_launch_is_slow():
+                launch(%(slow)s)
+        ''' % {'slow': TEST_TIMEOUT_SECONDS * 2}), {'test_first_launch_is_slow': 'PASS', 'test_second_launch_is_slow': 'PASS'})
+        self.assertEqual(self.restarts, 0)
+
+    def test_slow_launch_in_fixture(self):
+        # Like the session fixture, which launches the browser in the setup of the first subtest that uses it.
+        self.assertEqual(self.run_tests('''
+            @pytest.fixture
+            def session():
+                launch(%s)
+                yield
+
+
+            def test_uses_session(session):
+                pass
+        ''' % (TEST_TIMEOUT_SECONDS * 2)), {'test_uses_session': 'PASS'})
+
+    def test_subtest_time_around_a_launch(self):
+        # After the launch, the subtest has only the time it had left before.
+        self.assertEqual(self.run_tests('''
+            def test_slow_around_a_launch():
+                time.sleep(%(most)s)
+                launch(0)
+                time.sleep(%(most)s)
+        ''' % {'most': TEST_TIMEOUT_SECONDS * 0.6}), {'test_slow_around_a_launch': 'TIMEOUT'})
+
+    def test_launch_hangs(self):
+        # A launch gets the deadline of the time outside of subtests.
+        self.assertEqual(self.run_tests('''
+            def test_launch_hangs():
+                launch()
+
+
+            def test_after():
+                launch(0)
+        '''), {'test_launch_hangs': 'TIMEOUT', 'test_after': 'PASS'})
+        self.assertIn('Timeout (>%ss)' % (TEST_TIMEOUT_SECONDS * 5.0), self.output)
+        self.assertEqual(self.restarts, 1)
 
     def test_restart_fails(self):
         # Like when the driver doesn't come back after a timeout. The rest of the test file doesn't run.

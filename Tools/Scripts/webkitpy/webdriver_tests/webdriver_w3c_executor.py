@@ -20,12 +20,11 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import http.client
+import contextlib
 import logging
 import os
 import json
 import sys
-import time
 
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.webkit_finder import WebKitFinder
@@ -124,7 +123,6 @@ class WebKitDriverBrowser(WebDriverBrowser):
 
 
 class WebDriverW3CExecutor(PytestExecutor):
-    WARM_UP_TIMEOUT_SECONDS = 120
     PYTEST_ARGS = ['--strict-markers', '-p', 'no:mozlog']
 
     def __init__(self, driver, server, env, timeout, expectations, target_platform):
@@ -159,27 +157,6 @@ class WebDriverW3CExecutor(PytestExecutor):
         do_delayed_imports()
         pytest_runner.collect(tests, self.PYTEST_ARGS)
 
-    def warm_up(self):
-        # The first launch of a newly built browser can take much longer than later ones, for example while
-        # the system checks the new executables. Start and end a session before running any tests, so that
-        # the first test doesn't time out.
-        start_time = time.monotonic()
-        connection = http.client.HTTPConnection(self.browser.host, self.browser.port, timeout=self.WARM_UP_TIMEOUT_SECONDS)
-        try:
-            connection.request('POST', '/session', json.dumps({'capabilities': {'alwaysMatch': self.capabilities}}), {'Content-Type': 'application/json'})
-            value = json.loads(connection.getresponse().read())['value']
-            if 'sessionId' not in value:
-                _log.warning('Failed to start a session before running tests: %s' % value)
-                return
-            connection.request('DELETE', '/session/%s' % value['sessionId'])
-            connection.getresponse().read()
-        except (OSError, http.client.HTTPException, ValueError, KeyError, TypeError) as error:
-            _log.warning('Failed to start a session before running tests: %s' % error)
-            return
-        finally:
-            connection.close()
-        _log.info('Started and ended a session in %.1f s before running tests' % (time.monotonic() - start_time))
-
     def teardown(self):
         if self._test_process is not None:
             self._test_process.stop()
@@ -213,8 +190,32 @@ class WebDriverW3CExecutor(PytestExecutor):
                 json.dump(config, f)
 
             env.update(WebKitDriverBrowser.test_env)
-            harness_result, _ = pytest_runner.run(test, self.PYTEST_ARGS, self._timeout, env, self._expectations, report=report, deselected=deselected)
+            with self._reporting_launches(report):
+                harness_result, _ = pytest_runner.run(test, self.PYTEST_ARGS, self._timeout, env, self._expectations, report=report, deselected=deselected)
             return harness_result
+
+    @staticmethod
+    @contextlib.contextmanager
+    def _reporting_launches(report):
+        # Runs in the test process. The driver launches the browser for each New Session command, and the tests send
+        # every command through HTTPWireProtocol.send().
+        from webdriver.transport import HTTPWireProtocol
+        send = HTTPWireProtocol.send
+
+        def send_and_report_launch(protocol, method, uri, *args, **kwargs):
+            if method != 'POST' or uri.strip('/') != 'session':
+                return send(protocol, method, uri, *args, **kwargs)
+            report(('launch', 'start'))
+            try:
+                return send(protocol, method, uri, *args, **kwargs)
+            finally:
+                report(('launch', 'end'))
+
+        HTTPWireProtocol.send = send_and_report_launch
+        try:
+            yield
+        finally:
+            HTTPWireProtocol.send = send
 
     def run(self, test):
         return self._test_process.run(test)
