@@ -88,6 +88,7 @@
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "ServiceWorkerGlobalScope.h"
+#include "Settings.h"
 #include "WebConsoleAgent.h"
 #include "WebDebuggerAgent.h"
 #include "WebGLRenderingContextBase.h"
@@ -1766,10 +1767,20 @@ void InspectorInstrumentation::willDestroyWebAnimationImpl(InstrumentingAgents& 
 }
 
 #if ENABLE(RESOURCE_USAGE)
-void InspectorInstrumentation::didHandleMemoryPressureImpl(InstrumentingAgents& instrumentingAgents, Critical critical)
+void InspectorInstrumentation::didHandleMemoryPressureImpl(InstrumentingAgents& instrumentingAgents, Page& page, Critical critical)
 {
     if (CheckedPtr memoryAgent = instrumentingAgents.enabledMemoryAgent())
         memoryAgent->didHandleMemoryPressure(critical);
+
+    // Under Site Isolation, frames have their own Memory agents, also in processes without the page target. A
+    // frame's slot does not fall back to the page's agent, so each enabled agent reports once.
+    if (!page.settings().siteIsolationEnabled())
+        return;
+
+    page.forEachLocalFrame([&](LocalFrame& frame) {
+        if (CheckedPtr memoryAgent = frame.inspectorController().instrumentingAgents().enabledMemoryAgent())
+            memoryAgent->didHandleMemoryPressure(critical);
+    });
 }
 #endif
 

@@ -161,7 +161,6 @@ class WebHeapAgent;
     DEFINE_ENABLED_INSPECTOR_AGENT(macro, Heap_Page) \
     DEFINE_ENABLED_INSPECTOR_AGENT(macro, LayerTree) \
     DEFINE_ENABLED_INSPECTOR_AGENT(macro, LayerTree_Frame) \
-    DEFINE_ENABLED_INSPECTOR_AGENT(macro, Memory) \
     DEFINE_ENABLED_INSPECTOR_AGENT(macro, Network) \
     DEFINE_ENABLED_INSPECTOR_AGENT(macro, NetworkProxy) \
     DEFINE_ENABLED_INSPECTOR_AGENT(macro, Page) \
@@ -176,6 +175,7 @@ class WebHeapAgent;
 // never fall back to its page's agents, even while empty.
 #define FOR_EACH_INSPECTOR_AGENT_WITHOUT_FALLBACK_UNDER_SITE_ISOLATION(macro) \
     DEFINE_ENABLED_INSPECTOR_AGENT(macro, Timeline) \
+    DEFINE_ENABLED_INSPECTOR_AGENT(macro, Memory) \
     DEFINE_TRACKING_INSPECTOR_AGENT(macro, Timeline) \
     DEFINE_TRACKING_INSPECTOR_AGENT(macro, Timeline_Frame) \
 
