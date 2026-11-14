@@ -43,16 +43,19 @@ function test() {
 
     function expectNoScriptRecordsFromPageTarget(recording) {
         let scriptTimeline = recording.timelines.get(WI.TimelineRecord.Type.Script);
-        // Garbage collections are reported by the page target's Heap domain.
-        let pageTargetRecords = scriptTimeline.records.filter((record) => record.target === WI.mainTarget && record.eventType !== WI.ScriptTimelineRecord.EventType.GarbageCollected);
-        InspectorTest.expectEqual(pageTargetRecords.length, 0, "No script records other than garbage collections should come from the page target.");
+        let pageTargetRecords = scriptTimeline.records.filter((record) => record.target === WI.mainTarget);
+        InspectorTest.expectEqual(pageTargetRecords.length, 0, "No script records should come from the page target.");
     }
 
     suite.addTestCase({
         name: "SiteIsolation.Timeline.FrameTargetRecords.Domain",
         description: "Frame targets should have the Timeline domain, but not auto-capture.",
         async test() {
-            mainFrameTarget = InspectorTest.mainFrameTarget;
+            // FIXME: <https://webkit.org/b/332030> Use an InspectorTest helper that waits for the main frame target,
+            // instead of matching this test's URL. InspectorTest.mainFrameTarget falls back to the page target while the
+            // frontend does not yet know the main frame target's frame.
+            mainFrameTarget = await waitForFrameTargetForURLContaining("/frame-target-records.html");
+            InspectorTest.expectNotNull(mainFrameTarget, "Should find the main frame target.");
             iframeTarget = await waitForFrameTargetForURLContaining("timeline-frame.html");
             InspectorTest.expectNotNull(iframeTarget, "Should find the cross-origin iframe target.");
             InspectorTest.expectNotEqual(iframeTarget, mainFrameTarget, "The cross-origin iframe target should not be the main frame target.");
@@ -82,6 +85,12 @@ function test() {
             InspectorTest.pass("Recorded a timer from the main frame target.");
             let iframeRecord = await iframeRecordPromise;
             InspectorTest.pass("Recorded a timer from the cross-origin iframe target.");
+
+            // Under Site Isolation, frame targets report garbage collections, not the page target.
+            let garbageCollectedRecordPromise = FrameTimelineTest.awaitScriptRecord(mainFrameTarget, WI.ScriptTimelineRecord.EventType.GarbageCollected);
+            await mainFrameTarget.HeapAgent.gc();
+            await garbageCollectedRecordPromise;
+            InspectorTest.pass("Recorded a garbage collection from the main frame target.");
 
             await FrameTimelineTest.stopCapturing();
             InspectorTest.pass("Capturing stopped.");
