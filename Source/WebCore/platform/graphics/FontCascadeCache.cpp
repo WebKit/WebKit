@@ -88,6 +88,16 @@ void FontCascadeCache::clearShapedTextCaches()
         value->fonts.get().shapedTextCache().clear();
 }
 
+void FontCascadeCache::clearShapedTextPaintDisplayLists()
+{
+    for (auto& value : m_entries.values()) {
+        value->fonts.get().shapedTextCache().forEach([](auto& shapedText) {
+            if (shapedText)
+                shapedText->paintDisplayList = nullptr;
+        });
+    }
+}
+
 void FontCascadeCache::pruneUnreferencedEntries()
 {
     m_entries.removeIf([](auto& entry) {

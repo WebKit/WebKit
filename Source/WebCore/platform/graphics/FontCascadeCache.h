@@ -263,6 +263,7 @@ public:
     void invalidate();
     void clearMeasurementCaches();
     void clearShapedTextCaches();
+    void clearShapedTextPaintDisplayLists();
     void pruneUnreferencedEntries();
     void pruneSystemFallbackFonts();
     Ref<FontCascadeFonts> retrieveOrAddCachedFonts(const FontCascadeDescription&, FontSelector*);

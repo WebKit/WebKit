@@ -131,7 +131,8 @@ RefPtr<const DisplayList::DisplayList> GlyphDisplayListCache::get(const InlineDi
         }
     }
 
-    if (RefPtr displayList = font.displayListForTextRun(context, textRun)) {
+    RefPtr displayList = box.style().textShadow().isNone() ? font.displayListForTextRunReusingShapedText(context, textRun) : font.displayListForTextRun(context, textRun);
+    if (displayList) {
         Ref entry = GlyphDisplayListCacheEntry::create(displayList.releaseNonNull(), textRun, font, context);
         Ref result = entry->displayList();
         if (canShareDisplayList(result)) {

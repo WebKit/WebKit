@@ -2075,6 +2075,8 @@ void Page::didCommitLoad()
     resetSeenPlugins();
     resetSeenMediaEngines();
 
+    FontCascadeCache::forCurrentThread().clearShapedTextPaintDisplayLists();
+
 #if ENABLE(IMAGE_ANALYSIS)
     resetTextRecognitionResults();
     resetImageAnalysisQueue();
