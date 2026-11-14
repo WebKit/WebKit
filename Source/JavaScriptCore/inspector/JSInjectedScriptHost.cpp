@@ -616,11 +616,25 @@ JSValue JSInjectedScriptHost::getInternalProperties(JSGlobalObject* globalObject
 
         Vector<JSFinalizationRegistry::LiveRegistration> liveRegistrations;
         Vector<JSFinalizationRegistry::DeadRegistration> deadRegistrations;
+
         {
             Locker locker { finalizationRegistry->cellLock() };
 
             liveRegistrations = finalizationRegistry->liveRegistrations(locker);
             deadRegistrations = finalizationRegistry->deadRegistrations(locker);
+        }
+
+        MarkedArgumentBuffer protectedValues;
+        for (auto& liveRegistration : liveRegistrations) {
+            protectedValues.appendWithCrashOnOverflow(liveRegistration.target);
+            protectedValues.appendWithCrashOnOverflow(liveRegistration.heldValue);
+            if (liveRegistration.unregisterToken)
+                protectedValues.appendWithCrashOnOverflow(liveRegistration.unregisterToken);
+        }
+        for (auto& deadRegistration : deadRegistrations) {
+            protectedValues.appendWithCrashOnOverflow(deadRegistration.heldValue);
+            if (deadRegistration.unregisterToken)
+                protectedValues.appendWithCrashOnOverflow(deadRegistration.unregisterToken);
         }
 
         unsigned liveIndex = 0;
