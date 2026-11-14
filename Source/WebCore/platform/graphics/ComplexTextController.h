@@ -26,6 +26,7 @@
 
 #include <WebCore/FloatPoint.h>
 #include <WebCore/GlyphBuffer.h>
+#include <WebCore/TextRun.h>
 #include <WebCore/TextSpacing.h>
 #include <wtf/HashSet.h>
 #include <wtf/Platform.h>
@@ -51,7 +52,6 @@ namespace WebCore {
 
 class FontCascade;
 class Font;
-class TextRun;
 
 enum class GlyphIterationStyle : bool { IncludePartialGlyphs, ByWholeGlyphs };
 
@@ -209,7 +209,7 @@ private:
     SingleThreadWeakHashSet<const Font>* m_fallbackFonts { nullptr };
 
     const CheckedRef<const FontCascade> m_fontCascade;
-    const CheckedRef<const TextRun> m_run;
+    const TextRun m_run;
 
     unsigned m_currentCharacter { 0 };
     unsigned m_end { 0 };

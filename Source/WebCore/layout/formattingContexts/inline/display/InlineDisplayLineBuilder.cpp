@@ -610,12 +610,12 @@ static void truncateBlockEllipsisForTextOverflow(InlineDisplay::Line::Ellipsis& 
     if (!isLeftToRight)
         subruns.reverse();
     StringBuilder textBuilder;
-    for (CheckedRef subrun : subruns) {
-        auto hasLineDirection = subrun->direction() == lineDirection;
+    for (auto& subrun : subruns) {
+        auto hasLineDirection = subrun.direction() == lineDirection;
         auto subrunWidth = fontCascade.width(subrun);
         // "The first character or atomic inline-level element on a line must be clipped rather than ellipsed."
         auto canFullyTruncate = !isFirstContentOnLine || !textBuilder.isEmpty();
-        auto visibleText = subrunWidth <= availableWidth ? subrun->text() : visiblePartOfTextRun(subrun->text(), subrunWidth, hasLineDirection, std::max(0.f, availableWidth), canFullyTruncate, fontCascade);
+        auto visibleText = subrunWidth <= availableWidth ? subrun.text() : visiblePartOfTextRun(subrun.text(), subrunWidth, hasLineDirection, std::max(0.f, availableWidth), canFullyTruncate, fontCascade);
         if (hasLineDirection)
             textBuilder.append(visibleText);
         else if (!visibleText.isEmpty())

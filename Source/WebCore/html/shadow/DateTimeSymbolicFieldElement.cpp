@@ -57,7 +57,7 @@ void DateTimeSymbolicFieldElement::adjustMinInlineSize(Style::ComputedStyle& sty
     float inlineSize = 0;
     for (auto& symbol : m_symbols) {
         auto textRun = RenderBlock::constructTextRun(symbol, style);
-        inlineSize = std::max(inlineSize, font->width(protect(textRun)));
+        inlineSize = std::max(inlineSize, font->width(textRun));
     }
     style.setLogicalMinWidth(Style::MinimumSize::Fixed { inlineSize / style.usedZoomForLength().value });
 }

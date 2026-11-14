@@ -31,10 +31,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(TextRun);
 
-struct ExpectedTextRunSize final : public CanMakeCheckedPtr<ExpectedTextRunSize> {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ExpectedTextRunSize);
-    WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(ExpectedTextRunSize);
-
+struct ExpectedTextRunSize final {
     String text;
     TabSize tabSize;
     float float1;

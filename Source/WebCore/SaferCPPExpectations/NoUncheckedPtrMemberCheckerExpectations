@@ -2,7 +2,6 @@ dom/CollectionIndexCache.h
 dom/Node.cpp
 dom/Node.h
 rendering/BackgroundPainter.h
-rendering/GlyphDisplayListCache.cpp
 rendering/InlineBoxPainter.h
 rendering/LayoutRepainter.h
 rendering/LogicalSelectionOffsetCaches.h

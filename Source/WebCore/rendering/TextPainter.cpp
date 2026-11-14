@@ -221,7 +221,7 @@ void TextPainter::paintTextAndEmphasisMarksIfNeeded(const TextRun& textRun, cons
     updateGraphicsContext(m_context, paintStyle, FillColorType::EmphasisMark);
     static NeverDestroyed<TextRun> objectReplacementCharacterTextRun(StringView { span(objectReplacementCharacter) });
     // Combined text gets a single emphasis mark.
-    CheckedRef emphasisMarkTextRun = m_isCombinedText ? objectReplacementCharacterTextRun.get() : textRun;
+    const TextRun& emphasisMarkTextRun = m_isCombinedText ? objectReplacementCharacterTextRun.get() : textRun;
     auto emphasisMarkTextOrigin = textOrigin;
 
     if (m_isCombinedText) {

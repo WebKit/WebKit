@@ -312,7 +312,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
     ASSERT_UNUSED(originalIndices, originalIndices.empty());
     if (!font) {
         // Create a run of missing glyphs from the primary font.
-        m_complexTextRuns.append(ComplexTextRun::create(m_fontCascade->primaryFont(), characters, stringLocation, 0, characters.size(), m_run->ltr()));
+        m_complexTextRuns.append(ComplexTextRun::create(m_fontCascade->primaryFont(), characters, stringLocation, 0, characters.size(), m_run.ltr()));
         return;
     }
 
@@ -371,12 +371,12 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
         hb_buffer_set_script(buffer.get(), findScriptForVerticalGlyphSubstitution(face.get()));
 
     for (unsigned i = 0; i < runCount; ++i) {
-        auto& run = runList[m_run->rtl() ? runCount - i - 1 : i];
+        auto& run = runList[m_run.rtl() ? runCount - i - 1 : i];
 
         if (fontPlatformData.orientation() != FontOrientation::Vertical)
             hb_buffer_set_script(buffer.get(), hb_icu_script_to_script(run.script));
-        if (!m_mayUseNaturalWritingDirection || m_run->directionalOverride())
-            hb_buffer_set_direction(buffer.get(), m_run->rtl() ? HB_DIRECTION_RTL : HB_DIRECTION_LTR);
+        if (!m_mayUseNaturalWritingDirection || m_run.directionalOverride())
+            hb_buffer_set_direction(buffer.get(), m_run.rtl() ? HB_DIRECTION_RTL : HB_DIRECTION_LTR);
         else {
             // Leaving direction to HarfBuzz to guess is *really* bad, but will do for now.
             hb_buffer_guess_segment_properties(buffer.get());

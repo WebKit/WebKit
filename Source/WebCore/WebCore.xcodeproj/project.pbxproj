@@ -2931,7 +2931,6 @@
 		722AF2DE27E1C2060078D997 /* GraphicsContextStateSaver.h in Headers */ = {isa = PBXBuildFile; fileRef = 722AF2DB27E1C2040078D997 /* GraphicsContextStateSaver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		722AF2DF27E1C2060078D997 /* GraphicsContextState.h in Headers */ = {isa = PBXBuildFile; fileRef = 722AF2DC27E1C2050078D997 /* GraphicsContextState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		722AF2E227E1C4050078D997 /* PlatformGraphicsContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 722AF2E127E1C4030078D997 /* PlatformGraphicsContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		722AF2E427E1CF130078D997 /* TextRunIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 722AF2E327E1CF110078D997 /* TextRunIterator.h */; };
 		722AF2E627E1D0A10078D997 /* CGContextStateSaver.h in Headers */ = {isa = PBXBuildFile; fileRef = 722AF2E527E1D09E0078D997 /* CGContextStateSaver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7246963B275C5FA600A9156A /* CSSFilterRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F53FB83213B1BB800C40D34 /* CSSFilterRenderer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7246963D275C614400A9156A /* FilterEffectVector.h in Headers */ = {isa = PBXBuildFile; fileRef = 7214B9B7274458FA003BE6DF /* FilterEffectVector.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -14418,7 +14417,6 @@
 		722AF2DC27E1C2050078D997 /* GraphicsContextState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsContextState.h; sourceTree = "<group>"; };
 		722AF2DD27E1C2050078D997 /* GraphicsContextState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsContextState.cpp; sourceTree = "<group>"; };
 		722AF2E127E1C4030078D997 /* PlatformGraphicsContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformGraphicsContext.h; sourceTree = "<group>"; };
-		722AF2E327E1CF110078D997 /* TextRunIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextRunIterator.h; sourceTree = "<group>"; };
 		722AF2E527E1D09E0078D997 /* CGContextStateSaver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CGContextStateSaver.h; sourceTree = "<group>"; };
 		7233A884305A0BF100EBAD2C /* RenderTreeBuilderCanvas.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = RenderTreeBuilderCanvas.h; sourceTree = "<group>"; };
 		7233A885305A0BF100EBAD2C /* RenderTreeBuilderCanvas.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeBuilderCanvas.cpp; sourceTree = "<group>"; };
@@ -37126,7 +37124,6 @@
 				376DCCE013B4F966002EBEFC /* TextRun.cpp */,
 				A824B4640E2EF2EA0081A7B7 /* TextRun.h */,
 				321111B6283AE4400067D300 /* TextRunHash.h */,
-				722AF2E327E1CF110078D997 /* TextRunIterator.h */,
 				74FAB9BF2F7B956700DBDF82 /* TextShapingResultAndDisplayList.h */,
 				CD1E7346167BC78E009A885D /* TextTrackRepresentation.cpp */,
 				CDD1E525167BA56400CE820B /* TextTrackRepresentation.h */,
@@ -50032,7 +50029,6 @@
 				93F198F608245E59001E9ABC /* TextResourceDecoder.h in Headers */,
 				A824B4650E2EF2EA0081A7B7 /* TextRun.h in Headers */,
 				321111B7283AE4410067D300 /* TextRunHash.h in Headers */,
-				722AF2E427E1CF130078D997 /* TextRunIterator.h in Headers */,
 				74FAB9C02F7B956700DBDF82 /* TextShapingResultAndDisplayList.h in Headers */,
 				4C05BAE1297AD12E004FE77D /* TextSpacing.h in Headers */,
 				9759E94014EF1CF80026A2DD /* TextTrack.h in Headers */,

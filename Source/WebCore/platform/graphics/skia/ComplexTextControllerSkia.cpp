@@ -211,7 +211,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
 
     if (!font) {
         // Create a run of missing glyphs from the primary font.
-        m_complexTextRuns.append(ComplexTextRun::create(m_fontCascade->primaryFont(), characters, stringLocation, 0, characters.size(), m_run->ltr()));
+        m_complexTextRuns.append(ComplexTextRun::create(m_fontCascade->primaryFont(), characters, stringLocation, 0, characters.size(), m_run.ltr()));
         return;
     }
 
@@ -264,8 +264,8 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
         else
             hb_buffer_set_script(buffer.get(), hb_icu_script_to_script(run.script));
 
-        if (!m_mayUseNaturalWritingDirection || m_run->directionalOverride())
-            hb_buffer_set_direction(buffer.get(), m_run->rtl() ? HB_DIRECTION_RTL : HB_DIRECTION_LTR);
+        if (!m_mayUseNaturalWritingDirection || m_run.directionalOverride())
+            hb_buffer_set_direction(buffer.get(), m_run.rtl() ? HB_DIRECTION_RTL : HB_DIRECTION_LTR);
         else
             hb_buffer_set_direction(buffer.get(), hb_script_get_horizontal_direction(hb_icu_script_to_script(run.script)));
 
@@ -275,7 +275,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
         m_complexTextRuns.append(ComplexTextRun::create(buffer.get(), *font, characters, stringLocation, run.startIndex, run.endIndex));
         hb_buffer_reset(buffer.get());
     };
-    if (m_run->ltr())
+    if (m_run.ltr())
         forEachHBRun<LTR>(characters, WTF::move(shapeFunction));
     else
         forEachHBRun<RTL>(characters, WTF::move(shapeFunction));

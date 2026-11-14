@@ -238,7 +238,7 @@ Vector<TextRun> GraphicsContext::visuallyOrderedSubruns(const TextRun& run)
 void GraphicsContext::drawBidiText(const FontCascade& font, const TextRun& run, const FloatPoint& point, FontCascade::CustomFontNotReadyAction customFontNotReadyAction)
 {
     auto currentPoint = point;
-    for (CheckedRef subrun : visuallyOrderedSubruns(run)) {
+    for (auto& subrun : visuallyOrderedSubruns(run)) {
         auto advance = font.drawText(*this, subrun, currentPoint, 0, std::nullopt, customFontNotReadyAction);
         currentPoint.move(advance);
     }

@@ -23,6 +23,7 @@
 #define WidthIterator_h
 
 #include <WebCore/GlyphBuffer.h>
+#include <WebCore/TextRun.h>
 #include <WebCore/WritingMode.h>
 #include <unicode/umachine.h>
 #include <wtf/HashSet.h>
@@ -35,7 +36,6 @@ class FontCascade;
 class FontCascadeDescription;
 class Font;
 class TextAutospace;
-class TextRun;
 struct GlyphData;
 struct GlyphIndexRange;
 struct OriginalAdvancesForCharacterTreatedAsSpace;
@@ -113,7 +113,7 @@ private:
     bool ltr() const { return m_direction == TextDirection::LTR; }
 
     const CheckedRef<const FontCascade> m_fontCascade;
-    const CheckedRef<const TextRun> m_run;
+    const TextRun m_run;
     SingleThreadWeakHashSet<const Font>* m_fallbackFonts { nullptr };
 
     std::optional<unsigned> m_lastCharacterIndex;

@@ -372,7 +372,7 @@ Path InspectorOverlayLabel::draw(GraphicsContext& context, float maximumLineWidt
         }
 
         context.setFillColor(computedContentRun.textColor);
-        context.drawText(font, protect(computedContentRun.textRun), textPosition + FloatPoint(xOffset, yOffset));
+        context.drawText(font, computedContentRun.textRun, textPosition + FloatPoint(xOffset, yOffset));
 
         xOffset += computedContentRun.computedWidth;
     }

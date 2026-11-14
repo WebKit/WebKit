@@ -1870,7 +1870,7 @@ public:
 
 private:
     unsigned m_index { 0 };
-    CheckedRef<const TextRun> m_textRun;
+    const TextRun m_textRun;
     const GlyphBuffer& m_glyphBuffer;
     Ref<const Font> m_fontData;
     AffineTransform m_translation;

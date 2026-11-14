@@ -173,7 +173,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
     ASSERT_UNUSED(originalIndices, originalIndices.empty());
     if (!font) {
         // Create a run of missing glyphs from the primary font.
-        m_complexTextRuns.append(ComplexTextRun::create(m_fontCascade->primaryFont(), cp, stringLocation, 0, cp.size(), m_run->ltr()));
+        m_complexTextRuns.append(ComplexTextRun::create(m_fontCascade->primaryFont(), cp, stringLocation, 0, cp.size(), m_run.ltr()));
         return;
     }
 
@@ -184,9 +184,9 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
         SCRIPT_STATE state { };
         control.fMergeNeutralItems = true;
         // Set up the correct direction for the run.
-        state.uBidiLevel = m_run->rtl();
+        state.uBidiLevel = m_run.rtl();
         // Lock the correct directional override.
-        state.fOverrideDirection = m_run->directionalOverride();
+        state.fOverrideDirection = m_run.directionalOverride();
 
         // ScriptItemize may write (cMaxItems + 1) SCRIPT_ITEM.
         HRESULT hr = ScriptItemize(wcharFrom(cp.data()), cp.size(), items.size() - 1, &control, &state, items.data(), &numItems);

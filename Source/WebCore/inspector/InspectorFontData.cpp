@@ -387,7 +387,7 @@ private:
     void drawBidiText(const FontCascade& font, const TextRun& run, const FloatPoint& point, FontCascade::CustomFontNotReadyAction customFontNotReadyAction = FontCascade::CustomFontNotReadyAction::DoNotPaintIfFontNotReady) final
     {
         auto currentPoint = point;
-        for (CheckedRef subrun : visuallyOrderedSubruns(run))
+        for (auto& subrun : visuallyOrderedSubruns(run))
             currentPoint.move(recordFontUsage(font, subrun, currentPoint, 0, std::nullopt, customFontNotReadyAction));
     }
 
