@@ -30,6 +30,7 @@ WI.MemoryManager = class MemoryManager extends WI.Object
         super();
 
         this._enabled = false;
+        this._enabledTargets = new Set;
     }
 
     // Agent
@@ -42,19 +43,11 @@ WI.MemoryManager = class MemoryManager extends WI.Object
 
         console.assert(domain === "Memory");
 
-        for (let target of WI.targets)
-            this.initializeTarget(target);
-    }
-
-    // Target
-
-    initializeTarget(target)
-    {
         if (!this._enabled)
             return;
 
-        if (target.hasDomain("Memory"))
-            target.MemoryAgent.enable();
+        for (let target of WI.targetManager.processLeaders)
+            this._enableTarget(target);
     }
 
     // Public
@@ -66,8 +59,11 @@ WI.MemoryManager = class MemoryManager extends WI.Object
 
         this._enabled = true;
 
-        for (let target of WI.targets)
-            this.initializeTarget(target);
+        // Memory data and memory pressure cover a whole process, so only one target per process is enabled.
+        WI.targetManager.addEventListener(WI.TargetManager.Event.ProcessLeaderChanged, this._handleProcessLeaderChanged, this);
+
+        for (let target of WI.targetManager.processLeaders)
+            this._enableTarget(target);
     }
 
     disable()
@@ -75,10 +71,13 @@ WI.MemoryManager = class MemoryManager extends WI.Object
         if (!this._enabled)
             return;
 
-        for (let target of WI.targets) {
-            if (target.hasDomain("Memory"))
+        WI.targetManager.removeEventListener(WI.TargetManager.Event.ProcessLeaderChanged, this._handleProcessLeaderChanged, this);
+
+        for (let target of this._enabledTargets) {
+            if (!target.isDestroyed)
                 target.MemoryAgent.disable();
         }
+        this._enabledTargets.clear();
 
         this._enabled = false;
     }
@@ -92,6 +91,28 @@ WI.MemoryManager = class MemoryManager extends WI.Object
 
         let memoryPressureEvent = WI.MemoryPressureEvent.fromPayload(timestamp, protocolSeverity);
         this.dispatchEventToListeners(WI.MemoryManager.Event.MemoryPressure, {memoryPressureEvent});
+    }
+
+    // Private
+
+    _enableTarget(target)
+    {
+        if (!target.hasDomain("Memory") || this._enabledTargets.has(target))
+            return;
+
+        this._enabledTargets.add(target);
+        target.MemoryAgent.enable();
+    }
+
+    _handleProcessLeaderChanged(event)
+    {
+        let {previousLeader, leader} = event.data;
+
+        if (previousLeader && this._enabledTargets.delete(previousLeader) && !previousLeader.isDestroyed)
+            previousLeader.MemoryAgent.disable();
+
+        if (leader)
+            this._enableTarget(leader);
     }
 };
 

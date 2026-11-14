@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("TargetManager.ProcessLeaders");
+
+    function fakeTarget(type, name, processIdentifier, {isProvisional, isPaused} = {}) {
+        return {type, name, processIdentifier: processIdentifier || null, isProvisional: !!isProvisional, isPaused: !!isPaused};
+    }
+
+    function page(name, processIdentifier, options) {
+        return fakeTarget(WI.TargetType.Page, name, processIdentifier, options);
+    }
+
+    function frame(name, processIdentifier, options) {
+        return fakeTarget(WI.TargetType.Frame, name, processIdentifier, options);
+    }
+
+    function expectLeader(leaders, key, expected, message) {
+        let leader = leaders.get(key);
+        InspectorTest.expectEqual(leader ? leader.name : leader, expected ? expected.name : expected, message);
+    }
+
+    // Pure function.
+
+    suite.addTestCase({
+        name: "TargetManager.ProcessLeaders.PageTargetPreferred",
+        description: "The page target leads its process, even when a frame target of that process committed first.",
+        async test() {
+            let mainFrame = frame("main frame", "1");
+            let pageTarget = page("page", "1");
+            let sameSiteFrame = frame("same-site frame", "1");
+            let leaders = WI.TargetManager.electProcessLeaders([mainFrame, pageTarget, sameSiteFrame]);
+            expectLeader(leaders, "1", pageTarget, "The page target should lead its process.");
+            InspectorTest.expectEqual(leaders.size, 1, "There should be one process.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "TargetManager.ProcessLeaders.ProvisionalNeverLeads",
+        description: "A provisional target never leads, even when it is alone in its process.",
+        async test() {
+            let provisionalPage = page("provisional page", "2", {isProvisional: true});
+            let provisionalFrame = frame("provisional frame", "2", {isProvisional: true});
+            let leaders = WI.TargetManager.electProcessLeaders([provisionalPage, provisionalFrame]);
+            InspectorTest.expectFalse(leaders.has("2"), "A process with only provisional targets should have no leader.");
+
+            let committedFrame = frame("committed frame", "3");
+            leaders = WI.TargetManager.electProcessLeaders([frame("provisional frame", "3", {isProvisional: true}), committedFrame]);
+            expectLeader(leaders, "3", committedFrame, "The committed frame target should lead, not the provisional one.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "TargetManager.ProcessLeaders.EarliestCommittedFrameTarget",
+        description: "Without a page target, the frame target that committed first leads.",
+        async test() {
+            let first = frame("first frame", "4");
+            let second = frame("second frame", "4");
+            let leaders = WI.TargetManager.electProcessLeaders([first, second]);
+            expectLeader(leaders, "4", first, "The first committed frame target should lead.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "TargetManager.ProcessLeaders.StickyWhenProvisionalFrameCommitsLater",
+        description: "A frame target created first but committed later does not take over from a live leader.",
+        async test() {
+            let createdFirst = frame("frame created first", "5", {isProvisional: true});
+            let committedFirst = frame("frame committed first", "5");
+            let leaders = WI.TargetManager.electProcessLeaders([createdFirst, committedFirst]);
+            expectLeader(leaders, "5", committedFirst, "The committed frame target should lead while the other is provisional.");
+
+            createdFirst.isProvisional = false;
+            leaders = WI.TargetManager.electProcessLeaders([committedFirst, createdFirst], leaders);
+            expectLeader(leaders, "5", committedFirst, "The leader should stay after the other frame target commits.");
+
+            leaders = WI.TargetManager.electProcessLeaders([createdFirst, committedFirst], leaders);
+            expectLeader(leaders, "5", committedFirst, "The leader should stay in any order of the other targets.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "TargetManager.ProcessLeaders.PageTargetTakesOver",
+        description: "A page target that commits into a process that a frame target leads takes over.",
+        async test() {
+            let frameTarget = frame("frame", "6");
+            let pageTarget = page("page", "6", {isProvisional: true});
+            let leaders = WI.TargetManager.electProcessLeaders([pageTarget, frameTarget]);
+            expectLeader(leaders, "6", frameTarget, "The frame target should lead while the page target is provisional.");
+
+            pageTarget.isProvisional = false;
+            leaders = WI.TargetManager.electProcessLeaders([frameTarget, pageTarget], leaders);
+            expectLeader(leaders, "6", pageTarget, "The page target should lead after it commits.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "TargetManager.ProcessLeaders.NoProcessIdentifier",
+        description: "A page target without a process identifier is a process of its own. A frame target without one does not take part.",
+        async test() {
+            let pageTarget = page("page without process identifier");
+            let frameTarget = frame("frame without process identifier");
+            let otherFrameTarget = frame("frame with process identifier", "7");
+            let leaders = WI.TargetManager.electProcessLeaders([pageTarget, frameTarget, otherFrameTarget]);
+
+            InspectorTest.expectEqual(WI.TargetManager.processKeyForTarget(pageTarget), pageTarget, "The page target should be the key of its own process.");
+            expectLeader(leaders, pageTarget, pageTarget, "The page target should lead its own process.");
+            InspectorTest.expectNull(WI.TargetManager.processKeyForTarget(frameTarget), "The frame target without a process identifier should have no process.");
+            InspectorTest.expectFalse(Array.from(leaders.values()).includes(frameTarget), "The frame target without a process identifier should not lead.");
+            expectLeader(leaders, "7", otherFrameTarget, "The frame target with a process identifier should lead its process.");
+            InspectorTest.expectEqual(leaders.size, 2, "There should be two processes.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "TargetManager.ProcessLeaders.PausedTargetCanLead",
+        description: "A target that is paused on start can lead, because samples still flow while it is paused.",
+        async test() {
+            let pausedPage = page("paused page", "8", {isPaused: true});
+            let pausedFrame = frame("paused frame", "9", {isPaused: true});
+            let leaders = WI.TargetManager.electProcessLeaders([pausedPage, pausedFrame]);
+            expectLeader(leaders, "8", pausedPage, "The paused page target should lead.");
+            expectLeader(leaders, "9", pausedFrame, "The paused frame target should lead.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "TargetManager.ProcessLeaders.LeaderRemoved",
+        description: "When the leader goes away, the next committed target of its process leads. When the last one goes away, the process has no leader.",
+        async test() {
+            let first = frame("first frame", "10");
+            let second = frame("second frame", "10");
+            let third = frame("third frame", "10");
+            let leaders = WI.TargetManager.electProcessLeaders([first, second, third]);
+            expectLeader(leaders, "10", first, "The first frame target should lead.");
+
+            leaders = WI.TargetManager.electProcessLeaders([second, third], leaders);
+            expectLeader(leaders, "10", second, "The next committed frame target should lead after the leader is removed.");
+
+            leaders = WI.TargetManager.electProcessLeaders([], leaders);
+            InspectorTest.expectFalse(leaders.has("10"), "The process should have no leader after its last target is removed.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "TargetManager.ProcessLeaders.OrphanedFrameTargets",
+        description: "Removing the page target that leads a process orphans the frame targets of that process, and nothing else.",
+        async test() {
+            let pageTarget = page("page", "11");
+            let mainFrame = frame("main frame", "11");
+            let provisionalFrame = frame("provisional frame", "11", {isProvisional: true});
+            let crossOriginFrame = frame("cross-origin frame", "12");
+            let worker = fakeTarget(WI.TargetType.Worker, "worker", "11");
+            let leaders = WI.TargetManager.electProcessLeaders([pageTarget, mainFrame, provisionalFrame, crossOriginFrame, worker]);
+
+            let orphaned = WI.TargetManager.frameTargetsOrphanedByRemovedTarget(pageTarget, [mainFrame, provisionalFrame, crossOriginFrame, worker], leaders);
+            InspectorTest.expectEqual(orphaned.map((target) => target.name).join(", "), "main frame, provisional frame", "The frame targets of the page target's process should be orphaned.");
+
+            orphaned = WI.TargetManager.frameTargetsOrphanedByRemovedTarget(crossOriginFrame, [pageTarget, mainFrame, provisionalFrame, worker], leaders);
+            InspectorTest.expectEqual(orphaned.length, 0, "Removing a frame target that leads should orphan nothing.");
+
+            let otherPageTarget = page("page that does not lead", "11");
+            orphaned = WI.TargetManager.frameTargetsOrphanedByRemovedTarget(otherPageTarget, [pageTarget, mainFrame, provisionalFrame, crossOriginFrame, worker], leaders);
+            InspectorTest.expectEqual(orphaned.length, 0, "Removing a page target that does not lead should orphan nothing.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "TargetManager.ProcessLeaders.PageSwapOverSeveralTasks",
+        description: "When the messages of a page swap are dispatched over several tasks, the frame targets of the previous page never lead its process, but a frame target added to that process later does.",
+        async test() {
+            let previousPage = page("previous page", "13");
+            let previousMainFrame = frame("previous main frame", "13");
+            let previousSubframe = frame("previous same-site frame", "13");
+            let previousCrossOriginFrame = frame("previous cross-origin frame", "14");
+            let newPage = page("new page", "15", {isProvisional: true});
+            let newMainFrame = frame("new main frame", "15", {isProvisional: true});
+            let targets = [previousPage, previousMainFrame, previousSubframe, previousCrossOriginFrame, newPage, newMainFrame];
+            let leaders = WI.TargetManager.electProcessLeaders(targets);
+            expectLeader(leaders, "13", previousPage, "The previous page target should lead its process.");
+
+            // First task: the previous page target is removed and the new one commits.
+            targets = [previousMainFrame, previousSubframe, previousCrossOriginFrame, newMainFrame, newPage];
+            let orphaned = new Set(WI.TargetManager.frameTargetsOrphanedByRemovedTarget(previousPage, targets, leaders));
+            newPage.isProvisional = false;
+            leaders = WI.TargetManager.electProcessLeaders(targets, leaders, orphaned);
+            InspectorTest.expectFalse(leaders.has("13"), "The previous page's process should have no leader while its frame targets remain.");
+            expectLeader(leaders, "15", newPage, "The new page target should lead its process.");
+            expectLeader(leaders, "14", previousCrossOriginFrame, "The cross-origin frame target should still lead its process.");
+
+            // Later task: the new main frame commits, and a frame target of the previous page is removed.
+            newMainFrame.isProvisional = false;
+            orphaned.delete(previousMainFrame);
+            targets = [previousSubframe, previousCrossOriginFrame, newPage, newMainFrame];
+            leaders = WI.TargetManager.electProcessLeaders(targets, leaders, orphaned);
+            InspectorTest.expectFalse(leaders.has("13"), "The previous page's process should still have no leader.");
+
+            // A frame of the new page loads in the previous page's process.
+            let newFrame = frame("new frame", "13");
+            targets.push(newFrame);
+            leaders = WI.TargetManager.electProcessLeaders(targets, leaders, orphaned);
+            expectLeader(leaders, "13", newFrame, "A frame target added to that process later should lead.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "TargetManager.ProcessLeaders.CancelledProvisionalPage",
+        description: "A provisional page target that is removed without committing changes nothing.",
+        async test() {
+            let pageTarget = page("page", "16");
+            let mainFrame = frame("main frame", "16");
+            let provisionalPage = page("provisional page", "17", {isProvisional: true});
+            let provisionalMainFrame = frame("provisional main frame", "17", {isProvisional: true});
+            let leaders = WI.TargetManager.electProcessLeaders([pageTarget, mainFrame, provisionalPage, provisionalMainFrame]);
+
+            let orphaned = [
+                ...WI.TargetManager.frameTargetsOrphanedByRemovedTarget(provisionalPage, [pageTarget, mainFrame, provisionalMainFrame], leaders),
+                ...WI.TargetManager.frameTargetsOrphanedByRemovedTarget(provisionalMainFrame, [pageTarget, mainFrame], leaders),
+            ];
+            InspectorTest.expectEqual(orphaned.length, 0, "Removing the provisional targets should orphan nothing.");
+
+            leaders = WI.TargetManager.electProcessLeaders([pageTarget, mainFrame], leaders, new Set(orphaned));
+            expectLeader(leaders, "16", pageTarget, "The page target should still lead its process.");
+            InspectorTest.expectFalse(leaders.has("17"), "The provisional page's process should have no leader.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "TargetManager.ProcessLeaders.WorkersDoNotTakePart",
+        description: "Worker targets never lead.",
+        async test() {
+            let pageTarget = page("page", "15");
+            let worker = fakeTarget(WI.TargetType.Worker, "worker", "15");
+            let serviceWorker = fakeTarget(WI.TargetType.ServiceWorker, "service worker");
+            let leaders = WI.TargetManager.electProcessLeaders([worker, serviceWorker, pageTarget]);
+            InspectorTest.expectNull(WI.TargetManager.processKeyForTarget(worker), "A worker target should have no process.");
+            InspectorTest.expectNull(WI.TargetManager.processKeyForTarget(serviceWorker), "A service worker target should have no process.");
+            expectLeader(leaders, "15", pageTarget, "The page target should lead its process.");
+            InspectorTest.expectEqual(leaders.size, 1, "There should be one process.");
+        }
+    });
+
+    // WI.targetManager.
+
+    let counter = 0;
+
+    function addFrameTarget(processIdentifier, {isProvisional} = {}) {
+        // Commands sent to the stub go nowhere.
+        let connection = {_sendCommandToBackendWithCallback() { }, dispatchProvisionalMessages() { }};
+        let target = new WI.FrameTarget(null, `unit-test-frame-target-${++counter}`, "Frame", connection, {isProvisional, processIdentifier});
+        WI.targetManager.addTarget(target);
+        return target;
+    }
+
+    suite.addTestCase({
+        name: "TargetManager.ProcessLeaders.ElectionAfterTargetEvents",
+        description: "WI.targetManager elects once after the targets of one task are added, committed or removed, and reports each change.",
+        async test() {
+            const processIdentifier = "unit-test-process";
+            let changes = [];
+            let listener = WI.targetManager.addEventListener(WI.TargetManager.Event.ProcessLeaderChanged, (event) => {
+                let {previousLeader, leader} = event.data;
+                if ((previousLeader || leader).processIdentifier === processIdentifier)
+                    changes.push(event.data);
+            });
+
+            function expectChanges(expected, message) {
+                let identifiers = (previousLeader, leader) => [previousLeader?.identifier ?? null, leader?.identifier ?? null];
+                InspectorTest.expectEqual(JSON.stringify(changes.map(({previousLeader, leader}) => identifiers(previousLeader, leader))), JSON.stringify(expected.map(([previousLeader, leader]) => identifiers(previousLeader, leader))), message);
+                changes = [];
+            }
+
+            let createdFirst = addFrameTarget(processIdentifier, {isProvisional: true});
+            let committedFirst = addFrameTarget(processIdentifier);
+            InspectorTest.expectNull(WI.targetManager.processLeaderForTarget(committedFirst), "The election should not run while targets are added.");
+
+            await Promise.resolve();
+            InspectorTest.expectThat(WI.targetManager.isProcessLeader(committedFirst), "The committed frame target should lead.");
+            InspectorTest.expectEqual(WI.targetManager.processLeaderForTarget(createdFirst), committedFirst, "The provisional frame target should have the committed frame target as its leader.");
+            InspectorTest.expectThat(WI.targetManager.processLeaders.includes(committedFirst), "The leaders should include the committed frame target.");
+            expectChanges([[null, committedFirst]], "There should be one change: the committed frame target leads.");
+
+            WI.targetManager.didCommitProvisionalTarget(null, "unit-test-no-previous-target", createdFirst.identifier);
+            await Promise.resolve();
+            InspectorTest.expectThat(WI.targetManager.isProcessLeader(committedFirst), "The leader should stay after the other frame target commits.");
+            expectChanges([], "There should be no change.");
+
+            WI.targetManager.removeTarget(committedFirst);
+            InspectorTest.expectFalse(WI.targetManager.isProcessLeader(committedFirst), "A removed leader should not be reported as a leader before the next election.");
+            InspectorTest.expectNull(WI.targetManager.processLeaderForTarget(createdFirst), "The process should have no leader before the next election.");
+            InspectorTest.expectFalse(WI.targetManager.processLeaders.includes(committedFirst), "The leaders should not include a removed leader.");
+
+            await Promise.resolve();
+            InspectorTest.expectThat(WI.targetManager.isProcessLeader(createdFirst), "The remaining frame target should lead after the leader is removed.");
+            expectChanges([[committedFirst, createdFirst]], "There should be one change: the remaining frame target replaces the removed leader.");
+
+            WI.targetManager.removeTarget(createdFirst);
+            await Promise.resolve();
+            InspectorTest.expectNull(WI.targetManager.processLeaderForTarget(createdFirst), "The process should have no leader after its last target is removed.");
+            expectChanges([[createdFirst, null]], "There should be one change: the process has no leader.");
+
+            WI.targetManager.removeEventListener(WI.TargetManager.Event.ProcessLeaderChanged, listener);
+        }
+    });
+
+    suite.addTestCase({
+        name: "TargetManager.ProcessLeaders.PageSwapOverSeveralTasksInTargetManager",
+        description: "A TargetManager that sees a page swap over several tasks reports no leader for the frame targets of the previous page.",
+        async test() {
+            // A separate TargetManager, so that page targets can come and go without touching WI.pageTarget.
+            let targetManager = new WI.TargetManager;
+            function addTarget(type, processIdentifier, {isProvisional} = {}) {
+                let target = {
+                    identifier: `unit-test-target-${++counter}`,
+                    type,
+                    processIdentifier,
+                    isProvisional: !!isProvisional,
+                    isDestroyed: false,
+                    destroy() { this.isDestroyed = true; },
+                };
+                targetManager.addTarget(target);
+                return target;
+            }
+
+            let changes = [];
+            targetManager.addEventListener(WI.TargetManager.Event.ProcessLeaderChanged, (event) => {
+                changes.push(event.data);
+            });
+
+            function expectChanges(expected, message) {
+                let identifiers = (previousLeader, leader) => [previousLeader?.identifier ?? null, leader?.identifier ?? null];
+                InspectorTest.expectEqual(JSON.stringify(changes.map(({previousLeader, leader}) => identifiers(previousLeader, leader))), JSON.stringify(expected.map(([previousLeader, leader]) => identifiers(previousLeader, leader))), message);
+                changes = [];
+            }
+
+            let previousPage = addTarget(WI.TargetType.Page, "a");
+            let previousMainFrame = addTarget(WI.TargetType.Frame, "a");
+            let previousSubframe = addTarget(WI.TargetType.Frame, "a");
+            await Promise.resolve();
+            expectChanges([[null, previousPage]], "The page target should lead its process.");
+
+            // First task of the swap: the previous page target is removed, and the new one is added.
+            targetManager.removeTarget(previousPage);
+            InspectorTest.expectNull(targetManager.processLeaderForTarget(previousMainFrame), "The removed page target should not be reported as the leader before the next election.");
+            InspectorTest.expectEqual(targetManager.processLeaders.length, 0, "There should be no leader before the next election.");
+            let newPage = addTarget(WI.TargetType.Page, "b");
+            await Promise.resolve();
+            expectChanges([[previousPage, null], [null, newPage]], "The previous page's process should lose its leader, and the new page target should lead its process.");
+            InspectorTest.expectNull(targetManager.processLeaderForTarget(previousMainFrame), "The previous page's process should have no leader while its frame targets remain.");
+
+            // Later task: a frame target of the previous page is removed.
+            targetManager.removeTarget(previousMainFrame);
+            await Promise.resolve();
+            expectChanges([], "Removing a frame target of the previous page should change nothing.");
+
+            // A frame of the new page loads in the previous page's process.
+            let newFrame = addTarget(WI.TargetType.Frame, "a");
+            await Promise.resolve();
+            expectChanges([[null, newFrame]], "A frame target added to that process later should lead.");
+
+            targetManager.removeTarget(previousSubframe);
+            await Promise.resolve();
+            expectChanges([], "Removing the last frame target of the previous page should change nothing.");
+
+            // A provisional page target that is removed without committing.
+            let provisionalPage = addTarget(WI.TargetType.Page, "c", {isProvisional: true});
+            await Promise.resolve();
+            targetManager.removeTarget(provisionalPage);
+            await Promise.resolve();
+            expectChanges([], "Adding and removing a provisional page target should change nothing.");
+            InspectorTest.expectThat(targetManager.isProcessLeader(newPage) && targetManager.isProcessLeader(newFrame), "The new page target and the new frame target should still lead.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests the choice of one target per process to report process-wide data, such as CPU usage and memory.</p>
+</body>
+</html>

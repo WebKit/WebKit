@@ -1,0 +1,266 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<style>
+@keyframes test {
+    to { opacity: 0; }
+}
+.animating {
+    animation: test 1s linear;
+}
+</style>
+<script>
+function navigateCrossOrigin() {
+    location.hostname = location.hostname === "127.0.0.1" ? "localhost" : "127.0.0.1";
+}
+
+function startCSSAnimation() {
+    document.body.appendChild(document.createElement("div")).className = "animating";
+}
+
+function test()
+{
+    const domains = ["CPUProfiler", "Memory", "Animation"];
+
+    function awaitEventMatching(object, eventType, predicate) {
+        return new Promise((resolve) => {
+            let listener = object.addEventListener(eventType, (event) => {
+                if (!predicate(event))
+                    return;
+
+                object.removeEventListener(eventType, listener);
+                resolve(event);
+            });
+        });
+    }
+
+    function awaitCapturingState(capturingState) {
+        return awaitEventMatching(WI.timelineManager, WI.TimelineManager.Event.CapturingStateChanged, () => WI.timelineManager.capturingState === capturingState);
+    }
+
+    // Resolves once a `trackingUpdate` event from `target` adds a record of `recordType`.
+    function awaitRecordFromTarget(observerClass, recordType, target) {
+        return new Promise((resolve) => {
+            let originalTrackingUpdate = observerClass.prototype.trackingUpdate;
+            observerClass.prototype.trackingUpdate = function(...args) {
+                let timeline = WI.timelineManager.activeRecording.timelineForRecordType(recordType);
+                let recordCount = timeline.records.length;
+                originalTrackingUpdate.apply(this, args);
+                if (this._target !== target || timeline.records.length === recordCount)
+                    return;
+
+                observerClass.prototype.trackingUpdate = originalTrackingUpdate;
+                resolve();
+            };
+        });
+    }
+
+    async function navigate({startCapturing = true, onProcessLeaderChanged} = {}) {
+        let previousPageTarget = WI.mainTarget;
+
+        let startsForTarget = new Map;
+        let originalWillStartTrackingForTarget = WI.timelineManager.willStartTrackingForTarget;
+        WI.timelineManager.willStartTrackingForTarget = function(target, domain) {
+            startsForTarget.getOrInsertComputed(target, () => []).push({domain, isProvisional: target.isProvisional, previousPageTargetIsDestroyed: previousPageTarget.isDestroyed});
+            return originalWillStartTrackingForTarget.call(this, target, domain);
+        };
+
+        let startedDomainsForTarget = new Map;
+        let originalCapturingStarted = WI.timelineManager.capturingStarted;
+        WI.timelineManager.capturingStarted = function(target, domain, ...rest) {
+            startedDomainsForTarget.getOrInsertComputed(target, () => []).push(domain);
+            return originalCapturingStarted.call(this, target, domain, ...rest);
+        };
+
+        let stoppedDomainsForTarget = new Map;
+        let originalCapturingStopped = WI.timelineManager.capturingStopped;
+        WI.timelineManager.capturingStopped = function(target, domain, ...rest) {
+            stoppedDomainsForTarget.getOrInsertComputed(target, () => []).push(domain);
+            return originalCapturingStopped.call(this, target, domain, ...rest);
+        };
+
+        let unhandledRejections = [];
+        let handleUnhandledRejection = (event) => {
+            unhandledRejections.push(event.reason);
+        };
+        window.addEventListener("unhandledrejection", handleUnhandledRejection);
+
+        let activePromise = awaitCapturingState(WI.TimelineManager.CapturingState.Active);
+        if (startCapturing) {
+            const newRecording = true;
+            WI.timelineManager.startCapturing(newRecording);
+            await activePromise;
+            InspectorTest.pass("Capturing is active.");
+        }
+
+        let navigationPromise = Promise.all([
+            awaitEventMatching(WI.targetManager, WI.TargetManager.Event.TargetAdded, (event) => event.data.target instanceof WI.PageTarget).then((event) => event.data.target),
+            awaitEventMatching(WI.targetManager, WI.TargetManager.Event.TargetRemoved, (event) => event.data.target === previousPageTarget),
+            InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad),
+        ]);
+
+        // Added after the listener of `WI.timelineManager`, so this runs after it has handled the event.
+        let siteIsolationDetectedWhenLeading = undefined;
+        let processLeaderChangedListener = WI.targetManager.addEventListener(WI.TargetManager.Event.ProcessLeaderChanged, (event) => {
+            if (event.data.leader !== WI.mainTarget || event.data.leader === previousPageTarget)
+                return;
+
+            siteIsolationDetectedWhenLeading = !!WI.networkManager.enabledPageForSiteIsolation;
+            onProcessLeaderChanged?.();
+        });
+
+        // Don't wait for the reply, since the target that would send it is being replaced.
+        previousPageTarget.RuntimeAgent.evaluate("navigateCrossOrigin()");
+        let [newPageTarget] = await navigationPromise;
+        InspectorTest.expectEqual(WI.mainTarget, newPageTarget, "The page target created by the navigation should be the main target.");
+        InspectorTest.expectTrue(siteIsolationDetectedWhenLeading, "Site Isolation should be detected before the page target created by the navigation leads its process.");
+
+        if (!startCapturing) {
+            await activePromise;
+            InspectorTest.pass("Capturing is active.");
+        }
+
+        return {
+            newPageTarget,
+            startsForTarget,
+            startedDomainsForTarget,
+            stoppedDomainsForTarget,
+            unhandledRejections,
+            restore() {
+                WI.targetManager.removeEventListener(WI.TargetManager.Event.ProcessLeaderChanged, processLeaderChangedListener);
+                window.removeEventListener("unhandledrejection", handleUnhandledRejection);
+                WI.timelineManager.willStartTrackingForTarget = originalWillStartTrackingForTarget;
+                WI.timelineManager.capturingStarted = originalCapturingStarted;
+                WI.timelineManager.capturingStopped = originalCapturingStopped;
+            },
+        };
+    }
+
+    function expectDomainsStartedAndStopped({newPageTarget, startsForTarget, startedDomainsForTarget, stoppedDomainsForTarget, unhandledRejections}, {startedByTarget} = {}) {
+        let starts = startsForTarget.get(newPageTarget) || [];
+        for (let domain of domains) {
+            let domainStarts = starts.filter((start) => start.domain === domain);
+            if (startedByTarget)
+                InspectorTest.expectLessThanOrEqual(domainStarts.length, 1, `The page target created by the navigation should be started at most once for ${domain}.`);
+            else
+                InspectorTest.expectEqual(domainStarts.length, 1, `The page target created by the navigation should be started once for ${domain}.`);
+            InspectorTest.expectThat(domainStarts.every((start) => !start.isProvisional && start.previousPageTargetIsDestroyed), `The page target created by the navigation should be started for ${domain} after it commits and the previous page target is removed.`);
+
+            let startedDomains = startedDomainsForTarget.get(newPageTarget) || [];
+            InspectorTest.expectEqual(startedDomains.filter((startedDomain) => startedDomain === domain).length, 1, `The page target created by the navigation should report once that ${domain} started.`);
+
+            let stoppedDomains = stoppedDomainsForTarget.get(newPageTarget) || [];
+            InspectorTest.expectEqual(stoppedDomains.filter((stoppedDomain) => stoppedDomain === domain).length, 1, `The page target created by the navigation should report once that ${domain} stopped.`);
+        }
+
+        InspectorTest.expectEqual(unhandledRejections.length, 0, "There should be no unhandled promise rejections.");
+        for (let reason of unhandledRejections)
+            InspectorTest.log("Unhandled rejection: " + reason);
+    }
+
+    let suite = InspectorTest.createAsyncSuite("Timeline.CrossOriginNavigation.CPUMemoryMedia");
+
+    suite.addTestCase({
+        name: "Timeline.CrossOriginNavigation.CPUMemoryMedia.RecordsFromNewPageTarget",
+        description: "Check that the CPU, Memory and Media instruments record from the page target created by a cross-origin navigation during a capture.",
+        async test() {
+            let timelineTypes = [WI.TimelineRecord.Type.CPU, WI.TimelineRecord.Type.Memory, WI.TimelineRecord.Type.Media];
+            WI.timelineManager.enabledTimelineTypes = Array.from(new Set([...WI.timelineManager.enabledTimelineTypes, ...timelineTypes]));
+
+            // Capturing reuses an empty recording, which keeps its instruments. Add the missing ones, as the Timelines tab does.
+            let recording = WI.timelineManager.activeRecording;
+            for (let type of timelineTypes) {
+                if (!recording.instruments.some((instrument) => instrument.timelineRecordType === type))
+                    recording.addInstrument(WI.Instrument.createForTimelineType(type));
+            }
+
+            let navigation = await navigate();
+            let {newPageTarget} = navigation;
+
+            await Promise.all([
+                awaitRecordFromTarget(WI.CPUProfilerObserver, WI.TimelineRecord.Type.CPU, newPageTarget),
+                awaitRecordFromTarget(WI.MemoryObserver, WI.TimelineRecord.Type.Memory, newPageTarget),
+            ]);
+            InspectorTest.pass("Recorded CPU and Memory from the page target created by the navigation.");
+
+            await Promise.all([
+                awaitRecordFromTarget(WI.AnimationObserver, WI.TimelineRecord.Type.Media, newPageTarget),
+                InspectorTest.evaluateInPage(`startCSSAnimation()`),
+            ]);
+            InspectorTest.pass("Recorded a CSS animation from the page target created by the navigation.");
+
+            let inactivePromise = awaitCapturingState(WI.TimelineManager.CapturingState.Inactive);
+            WI.timelineManager.stopCapturing();
+            await inactivePromise;
+            InspectorTest.pass("Capturing stopped.");
+
+            expectDomainsStartedAndStopped(navigation);
+            navigation.restore();
+        },
+    });
+
+    suite.addTestCase({
+        name: "Timeline.CrossOriginNavigation.CPUMemoryMedia.StopWhileStarting",
+        description: "Check that capturing finishes stopping when it stops before the page target created by a cross-origin navigation reports that it started.",
+        async test() {
+            let inactivePromise = null;
+            let navigation = await navigate({
+                onProcessLeaderChanged() {
+                    // The new page target has been asked to start, but it can't have replied yet.
+                    inactivePromise = awaitCapturingState(WI.TimelineManager.CapturingState.Inactive);
+                    WI.timelineManager.stopCapturing();
+                },
+            });
+
+            InspectorTest.expectThat(inactivePromise, "Capturing should stop when the page target created by the navigation leads its process.");
+            await inactivePromise;
+            InspectorTest.pass("Capturing stopped.");
+
+            expectDomainsStartedAndStopped(navigation);
+            navigation.restore();
+        },
+    });
+
+    suite.addTestCase({
+        name: "Timeline.CrossOriginNavigation.CPUMemoryMedia.AutoCapture",
+        description: "Check that an auto-capture started by the page target created by a cross-origin navigation records from it, and stops.",
+        async test() {
+            // Keep the auto-capture going until this test stops it.
+            let originalTimelinesAutoStop = WI.settings.timelinesAutoStop.value;
+            WI.settings.timelinesAutoStop.value = false;
+            WI.timelineManager.autoCaptureOnPageLoad = true;
+
+            const startCapturing = false;
+            let navigation = await navigate({startCapturing});
+            let {newPageTarget} = navigation;
+
+            await Promise.all([
+                awaitRecordFromTarget(WI.CPUProfilerObserver, WI.TimelineRecord.Type.CPU, newPageTarget),
+                awaitRecordFromTarget(WI.MemoryObserver, WI.TimelineRecord.Type.Memory, newPageTarget),
+            ]);
+            InspectorTest.pass("Recorded CPU and Memory from the page target created by the navigation.");
+
+            let inactivePromise = awaitCapturingState(WI.TimelineManager.CapturingState.Inactive);
+            WI.timelineManager.stopCapturing();
+            await inactivePromise;
+            InspectorTest.pass("Capturing stopped.");
+
+            const startedByTarget = true;
+            expectDomainsStartedAndStopped(navigation, {startedByTarget});
+            navigation.restore();
+
+            WI.timelineManager.autoCaptureOnPageLoad = false;
+            WI.settings.timelinesAutoStop.value = originalTimelinesAutoStop;
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that, under Site Isolation, the CPU, Memory and Media instruments record from the page target that a cross-origin navigation creates during a capture, and that capturing still stops.</p>
+</body>
+</html>

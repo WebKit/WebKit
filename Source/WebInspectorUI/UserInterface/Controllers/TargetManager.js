@@ -33,6 +33,87 @@ WI.TargetManager = class TargetManager extends WI.Object
         this._cachedTargetsList = null;
         this._seenPageTarget = false;
         this._transitionTimeoutIdentifier = undefined;
+
+        // A provisional target moves to the end when it commits.
+        this._targetsInCommitOrder = new Set;
+        this._orphanedFrameTargets = new Set;
+        this._processLeaders = new Map;
+        this._processLeaderElectionScheduled = false;
+    }
+
+    // Static
+
+    static processKeyForTarget(target)
+    {
+        switch (target.type) {
+        case WI.TargetType.Frame:
+            // COMPATIBILITY (macOS 27.3, iOS 27.3): `Target.TargetInfo.processIdentifier` did not exist yet.
+            // WebKitLegacy frame targets do not have it either. In both cases the page target covers their process.
+            return target.processIdentifier;
+
+        case WI.TargetType.ServiceWorker:
+        case WI.TargetType.WebPage:
+        case WI.TargetType.Worker:
+            return null;
+        }
+
+        // Without a process identifier, a target is a group of its own.
+        return target.processIdentifier || target;
+    }
+
+    // Chooses one target per process to report process-wide data, such as CPU usage and memory. `targets` lists the
+    // live targets, with committed targets in the order they committed. `previousLeaders` is the result of the
+    // previous call. Targets in `orphanedFrameTargets` do not lead. Returns a Map from process key to leader.
+    static electProcessLeaders(targets, previousLeaders = new Map, orphanedFrameTargets = new Set)
+    {
+        let groups = new Map;
+        for (let target of targets) {
+            if (target.isProvisional || orphanedFrameTargets.has(target))
+                continue;
+
+            let key = WI.TargetManager.processKeyForTarget(target);
+            if (key === null)
+                continue;
+
+            let group = groups.get(key);
+            if (!group) {
+                group = {pageTargets: [], frameTargets: []};
+                groups.set(key, group);
+            }
+
+            if (target.type === WI.TargetType.Frame)
+                group.frameTargets.push(target);
+            else
+                group.pageTargets.push(target);
+        }
+
+        let leaders = new Map;
+        for (let [key, {pageTargets, frameTargets}] of groups) {
+            let previousLeader = previousLeaders.get(key) || null;
+
+            // A live leader stays, unless a page target commits into a process that a frame target leads.
+            if (pageTargets.length)
+                leaders.set(key, pageTargets.includes(previousLeader) ? previousLeader : pageTargets[0]);
+            else if (frameTargets.includes(previousLeader))
+                leaders.set(key, previousLeader);
+            else
+                leaders.set(key, frameTargets[0]);
+        }
+        return leaders;
+    }
+
+    // When the page target that leads a process is removed, returns the frame targets of that process. They belong
+    // to the removed page, so they do not lead.
+    static frameTargetsOrphanedByRemovedTarget(removedTarget, targets, leaders)
+    {
+        if (removedTarget.type !== WI.TargetType.Page)
+            return [];
+
+        let key = WI.TargetManager.processKeyForTarget(removedTarget);
+        if (leaders.get(key) !== removedTarget)
+            return [];
+
+        return Array.from(targets).filter((target) => target.type === WI.TargetType.Frame && WI.TargetManager.processKeyForTarget(target) === key);
     }
 
     // Target
@@ -69,6 +150,27 @@ WI.TargetManager = class TargetManager extends WI.Object
         return Array.from(this._targets.values());
     }
 
+    get processLeaders()
+    {
+        return Array.from(this._processLeaders.values()).filter((leader) => !leader.isDestroyed);
+    }
+
+    processLeaderForTarget(target)
+    {
+        let key = WI.TargetManager.processKeyForTarget(target);
+        if (key === null)
+            return null;
+
+        // A removed leader stays in the map until the next election, so that election reports it as the previous leader.
+        let leader = this._processLeaders.get(key);
+        return leader && !leader.isDestroyed ? leader : null;
+    }
+
+    isProcessLeader(target)
+    {
+        return this.processLeaderForTarget(target) === target;
+    }
+
     targetForIdentifier(targetId)
     {
         if (!targetId)
@@ -89,6 +191,8 @@ WI.TargetManager = class TargetManager extends WI.Object
 
         this._cachedTargetsList = null;
         this._targets.set(target.identifier, target);
+        this._targetsInCommitOrder.add(target);
+        this._scheduleProcessLeaderElection();
 
         this.dispatchEventToListeners(WI.TargetManager.Event.TargetAdded, {target});
     }
@@ -100,7 +204,12 @@ WI.TargetManager = class TargetManager extends WI.Object
 
         this._cachedTargetsList = null;
         this._targets.delete(target.identifier);
+        this._targetsInCommitOrder.delete(target);
+        this._orphanedFrameTargets.delete(target);
+        for (let frameTarget of WI.TargetManager.frameTargetsOrphanedByRemovedTarget(target, this._targetsInCommitOrder, this._processLeaders))
+            this._orphanedFrameTargets.add(frameTarget);
         target.destroy();
+        this._scheduleProcessLeaderElection();
 
         this.dispatchEventToListeners(WI.TargetManager.Event.TargetRemoved, {target});
     }
@@ -153,6 +262,9 @@ WI.TargetManager = class TargetManager extends WI.Object
             return;
 
         target.didCommitProvisionalTarget();
+        this._targetsInCommitOrder.delete(target);
+        this._targetsInCommitOrder.add(target);
+        this._scheduleProcessLeaderElection();
         this._checkAndHandlePageTargetTransition(target);
         target.connection.dispatchProvisionalMessages();
 
@@ -322,10 +434,37 @@ WI.TargetManager = class TargetManager extends WI.Object
         if (WI.mainTarget.executionContext)
             WI.runtimeManager.activeExecutionContext = WI.mainTarget.executionContext;
     }
+
+    _scheduleProcessLeaderElection()
+    {
+        // Elect once per task, after its target changes. `targetCreated` initializes a target before it adds it.
+        if (this._processLeaderElectionScheduled)
+            return;
+
+        this._processLeaderElectionScheduled = true;
+        queueMicrotask(() => {
+            this._processLeaderElectionScheduled = false;
+            this._electProcessLeaders();
+        });
+    }
+
+    _electProcessLeaders()
+    {
+        let previousLeaders = this._processLeaders;
+        this._processLeaders = WI.TargetManager.electProcessLeaders(this._targetsInCommitOrder, previousLeaders, this._orphanedFrameTargets);
+
+        for (let key of new Set([...previousLeaders.keys(), ...this._processLeaders.keys()])) {
+            let previousLeader = previousLeaders.get(key) || null;
+            let leader = this._processLeaders.get(key) || null;
+            if (leader !== previousLeader)
+                this.dispatchEventToListeners(WI.TargetManager.Event.ProcessLeaderChanged, {previousLeader, leader});
+        }
+    }
 };
 
 WI.TargetManager.Event = {
     TargetAdded: "target-manager-target-added",
     TargetRemoved: "target-manager-target-removed",
     DidCommitProvisionalTarget: "target-manager-provisional-target-committed",
+    ProcessLeaderChanged: "target-manager-process-leader-changed",
 };

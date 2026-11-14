@@ -43,7 +43,17 @@ WI.CPUInstrument = class CPUInstrument extends WI.Instrument
 
     startInstrumentationForTarget(target)
     {
-        // Nothing to do, only the main target that existed when capturing started is instrumented.
+        // Nothing to do, a page target that replaces the main target is instrumented once it leads its process.
+    }
+
+    startInstrumentationForProcessLeader(target)
+    {
+        // Only the main target is instrumented.
+        if (target !== WI.mainTarget || WI.timelineManager.isTrackingDomainForTarget(target, "CPUProfiler"))
+            return;
+
+        WI.timelineManager.willStartTrackingForTarget(target, "CPUProfiler");
+        target.CPUProfilerAgent.startTracking();
     }
 
     stopInstrumentation()
