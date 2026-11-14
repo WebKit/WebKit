@@ -76,7 +76,7 @@ WK_FIXME_WARNING_CFLAGS = -Wno-unused-parameter;
 SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator xros xrsimulator;
 SUPPORTS_MACCATALYST = YES;
 
-FRAMEWORK_SEARCH_PATHS[sdk=macos*] = $(inherited) $(WK_QUOTED_OVERRIDE_FRAMEWORKS_DIR);
+FRAMEWORK_SEARCH_PATHS[sdk=macos*] = $(inherited) $(BUILT_PRODUCTS_DIR) $(WK_QUOTED_OVERRIDE_FRAMEWORKS_DIR);
 
 SDKROOT = macosx.internal;
 ADDITIONAL_SDKS = $(WK_ADDITIONAL_SDKS);
