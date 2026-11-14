@@ -1,0 +1,397 @@
+Tests that WI.CPUTimeline and WI.MemoryTimeline keep samples per process and add up the processes in their records.
+
+
+== Running test suite: ProcessSampleTimeline
+-- Running test case: ProcessSampleTimeline.CPU.SingleProcessIdentity
+The process has a target:
+PASS: Every sample should add one record right away.
+PASS: Stopping should have no record left to add.
+PASS: Should keep every sample of the process.
+PASS: Should have as many records as today.
+PASS: Every record should have today's times, values and export data.
+The process has no target:
+PASS: Every sample should add one record right away.
+PASS: Stopping should have no record left to add.
+PASS: Should keep every sample of the process.
+PASS: Should have as many records as today.
+PASS: Every record should have today's times, values and export data.
+
+-- Running test case: ProcessSampleTimeline.Memory.SingleProcessIdentity
+The process has a target:
+PASS: Every sample should add one record right away.
+PASS: Stopping should have no record left to add.
+PASS: Should keep every sample of the process.
+PASS: Should have as many records as today.
+PASS: Every record should have today's times, values and export data.
+The process has no target:
+PASS: Every sample should add one record right away.
+PASS: Stopping should have no record left to add.
+PASS: Should keep every sample of the process.
+PASS: Should have as many records as today.
+PASS: Every record should have today's times, values and export data.
+
+-- Running test case: ProcessSampleTimeline.CPU.PhaseOffset
+A sample at 10: 10 (usage 40, main 40, worker 0)
+B sample at 10.2: no record
+A sample at 10.5: no record
+B sample at 10.7: 10.5 (usage 62, main 56, worker 6)
+A sample at 11: no record
+B sample at 11.2: 11 (usage 64, main 60, worker 4)
+A sample at 11.5: no record
+Stop: 11.5 (usage 48, main 48, worker 0)
+PASS: Should not fail a frontend assertion.
+PASS: Should have one record per sample of A.
+PASS: Record should end at 10.
+PASS: Record at 10 should have usage 40.
+PASS: Record at 10 should have main thread usage 40.
+PASS: Record at 10 should have worker thread usage 0.
+PASS: Record should end at 10.5.
+PASS: Record at 10.5 should have usage 62.
+PASS: Record at 10.5 should have main thread usage 56.
+PASS: Record at 10.5 should have worker thread usage 6.
+PASS: Record should end at 11.
+PASS: Record at 11 should have usage 64.
+PASS: Record at 11 should have main thread usage 60.
+PASS: Record at 11 should have worker thread usage 4.
+PASS: Record should end at 11.5.
+PASS: Record at 11.5 should have usage 48.
+PASS: Record at 11.5 should have main thread usage 48.
+PASS: Record at 11.5 should have worker thread usage 0.
+PASS: Records should follow each other in time.
+PASS: A record that combines processes should have a main thread for each process.
+PASS: Worker threads should keep their target and process.
+PASS: A record with one process should have untagged threads.
+PASS: Should keep every sample of A.
+PASS: Should keep every sample of B.
+
+-- Running test case: ProcessSampleTimeline.CPU.OutOfOrderAcrossProcesses
+A sample at 10: 10 (usage 40, main 40, worker 0)
+B sample at 10.2: no record
+B sample at 10.7: no record
+A sample at 10.5: 10.5 (usage 62, main 56, worker 6)
+B sample at 11.2: no record
+A sample at 11: 11 (usage 64, main 60, worker 4)
+A sample at 11.5: no record
+Stop: 11.5 (usage 48, main 48, worker 0)
+PASS: Should not fail a frontend assertion.
+PASS: Should have one record per sample of A.
+PASS: Record should end at 10.
+PASS: Record at 10 should have usage 40.
+PASS: Record at 10 should have main thread usage 40.
+PASS: Record at 10 should have worker thread usage 0.
+PASS: Record should end at 10.5.
+PASS: Record at 10.5 should have usage 62.
+PASS: Record at 10.5 should have main thread usage 56.
+PASS: Record at 10.5 should have worker thread usage 6.
+PASS: Record should end at 11.
+PASS: Record at 11 should have usage 64.
+PASS: Record at 11 should have main thread usage 60.
+PASS: Record at 11 should have worker thread usage 4.
+PASS: Record should end at 11.5.
+PASS: Record at 11.5 should have usage 48.
+PASS: Record at 11.5 should have main thread usage 48.
+PASS: Record at 11.5 should have worker thread usage 0.
+PASS: Records should follow each other in time.
+
+-- Running test case: ProcessSampleTimeline.CPU.LateSamplesFromBusyProcess
+A sample at 10: 10 (usage 40, main 40, worker 0)
+B sample at 10.2: no record
+A sample at 10.5: no record
+A sample at 11: no record
+A sample at 11.5: no record
+B sample at 10.7: 10.5 (usage 62, main 56, worker 6)
+B sample at 11.2: 11 (usage 64, main 60, worker 4)
+B sample at 11.7: 11.5 (usage 60, main 60, worker 0)
+PASS: Should not fail a frontend assertion.
+PASS: Should have one record per sample of A.
+PASS: Record should end at 10.
+PASS: Record at 10 should have usage 40.
+PASS: Record at 10 should have main thread usage 40.
+PASS: Record at 10 should have worker thread usage 0.
+PASS: Record should end at 10.5.
+PASS: Record at 10.5 should have usage 62.
+PASS: Record at 10.5 should have main thread usage 56.
+PASS: Record at 10.5 should have worker thread usage 6.
+PASS: Record should end at 11.
+PASS: Record at 11 should have usage 64.
+PASS: Record at 11 should have main thread usage 60.
+PASS: Record at 11 should have worker thread usage 4.
+PASS: Record should end at 11.5.
+PASS: Record at 11.5 should have usage 60.
+PASS: Record at 11.5 should have main thread usage 60.
+PASS: Record at 11.5 should have worker thread usage 0.
+
+-- Running test case: ProcessSampleTimeline.CPU.Join
+A sample at 10: 10 (usage 40, main 40, worker 0)
+A sample at 10.5: 10.5 (usage 40, main 40, worker 0)
+A sample at 11: 11 (usage 40, main 40, worker 0)
+B sample at 11.2: no record
+A sample at 11.5: no record
+B sample at 11.7: 11.5 (usage 50, main 50, worker 0)
+A sample at 12: no record
+Stop: 12 (usage 44, main 44, worker 0)
+PASS: Should not fail a frontend assertion.
+PASS: Should have one record per sample of A.
+PASS: Record should end at 10.
+PASS: Record at 10 should have usage 40.
+PASS: Record at 10 should have main thread usage 40.
+PASS: Record at 10 should have worker thread usage 0.
+PASS: Record should end at 10.5.
+PASS: Record at 10.5 should have usage 40.
+PASS: Record at 10.5 should have main thread usage 40.
+PASS: Record at 10.5 should have worker thread usage 0.
+PASS: Record should end at 11.
+PASS: Record at 11 should have usage 40.
+PASS: Record at 11 should have main thread usage 40.
+PASS: Record at 11 should have worker thread usage 0.
+PASS: Record should end at 11.5.
+PASS: Record at 11.5 should have usage 50.
+PASS: Record at 11.5 should have main thread usage 50.
+PASS: Record at 11.5 should have worker thread usage 0.
+PASS: Record should end at 12.
+PASS: Record at 12 should have usage 44.
+PASS: Record at 12 should have main thread usage 44.
+PASS: Record at 12 should have worker thread usage 0.
+PASS: Records should follow each other in time.
+
+-- Running test case: ProcessSampleTimeline.CPU.Leave
+A sample at 10: 10 (usage 40, main 40, worker 0)
+B sample at 10.2: no record
+A sample at 10.5: no record
+B sample at 10.7: 10.5 (usage 62, main 56, worker 6)
+A sample at 11: no record
+B sample at 11.2: 11 (usage 64, main 60, worker 4)
+A sample at 11.5: no record
+The last target of B goes away.
+A sample at 12: 11.5 (usage 48, main 48, worker 0), 12 (usage 40, main 40, worker 0)
+PASS: Should not fail a frontend assertion.
+PASS: Should have one record per sample of A.
+PASS: Record should end at 10.
+PASS: Record at 10 should have usage 40.
+PASS: Record at 10 should have main thread usage 40.
+PASS: Record at 10 should have worker thread usage 0.
+PASS: Record should end at 10.5.
+PASS: Record at 10.5 should have usage 62.
+PASS: Record at 10.5 should have main thread usage 56.
+PASS: Record at 10.5 should have worker thread usage 6.
+PASS: Record should end at 11.
+PASS: Record at 11 should have usage 64.
+PASS: Record at 11 should have main thread usage 60.
+PASS: Record at 11 should have worker thread usage 4.
+PASS: Record should end at 11.5.
+PASS: Record at 11.5 should have usage 48.
+PASS: Record at 11.5 should have main thread usage 48.
+PASS: Record at 11.5 should have worker thread usage 0.
+PASS: Record should end at 12.
+PASS: Record at 12 should have usage 40.
+PASS: Record at 12 should have main thread usage 40.
+PASS: Record at 12 should have worker thread usage 0.
+PASS: Records should follow each other in time.
+
+-- Running test case: ProcessSampleTimeline.CPU.ClockProcessLeaves
+A sample at 10: 10 (usage 40, main 40, worker 0)
+B sample at 10.2: no record
+A sample at 10.5: no record
+B sample at 10.7: 10.5 (usage 62, main 56, worker 6)
+The last target of A goes away.
+B sample at 11.2: 11.2 (usage 22.857143, main 20, worker 2.857143)
+B sample at 11.7: 11.7 (usage 20, main 20, worker 0)
+PASS: Should not fail a frontend assertion.
+PASS: Should have one record per bin.
+PASS: Record should end at 10.
+PASS: Record at 10 should have usage 40.
+PASS: Record at 10 should have main thread usage 40.
+PASS: Record at 10 should have worker thread usage 0.
+PASS: Record should end at 10.5.
+PASS: Record at 10.5 should have usage 62.
+PASS: Record at 10.5 should have main thread usage 56.
+PASS: Record at 10.5 should have worker thread usage 6.
+PASS: Record should end at 11.2.
+PASS: Record at 11.2 should have usage 22.857143.
+PASS: Record at 11.2 should have main thread usage 20.
+PASS: Record at 11.2 should have worker thread usage 2.857143.
+PASS: Record should end at 11.7.
+PASS: Record at 11.7 should have usage 20.
+PASS: Record at 11.7 should have main thread usage 20.
+PASS: Record at 11.7 should have worker thread usage 0.
+PASS: Records should follow each other in time.
+
+-- Running test case: ProcessSampleTimeline.CPU.HandoverDropsStaleSamples
+A sample at 10: 10 (usage 40, main 40, worker 0)
+B sample at 10.2: no record
+A sample at 10.5: no record
+B sample at 10.7: 10.5 (usage 62, main 56, worker 6)
+Another target of B starts reporting, and the previous one delivers two more samples.
+B sample at 10.7: no record
+B sample at 10.65: no record
+A sample at 11: no record
+B sample at 11.2: 11 (usage 64, main 60, worker 4)
+PASS: Should not fail a frontend assertion.
+PASS: Should drop the samples that are not newer.
+PASS: Should have one record per sample of A.
+PASS: Record should end at 10.
+PASS: Record at 10 should have usage 40.
+PASS: Record at 10 should have main thread usage 40.
+PASS: Record at 10 should have worker thread usage 0.
+PASS: Record should end at 10.5.
+PASS: Record at 10.5 should have usage 62.
+PASS: Record at 10.5 should have main thread usage 56.
+PASS: Record at 10.5 should have worker thread usage 6.
+PASS: Record should end at 11.
+PASS: Record at 11 should have usage 64.
+PASS: Record at 11 should have main thread usage 60.
+PASS: Record at 11 should have worker thread usage 4.
+
+-- Running test case: ProcessSampleTimeline.Memory.PhaseOffsetAndZeroCategories
+A sample at 10: 10 (total 310: javascript 100, images 0, layers 10, page 200)
+B sample at 10.2: no record
+A sample at 10.5: no record
+B sample at 10.7: 10.5 (total 920: javascript 175, images 500, layers 10, page 235)
+A sample at 11: no record
+Stop: 11 (total 1040: javascript 195, images 600, layers 10, page 235)
+PASS: Should have one record per sample of A.
+PASS: Record should end at 10.
+PASS: Record at 10 should have every category in order.
+PASS: Record at 10 should have sizes 100, 0, 10, 200.
+PASS: Record at 10 should have the sum as total size.
+PASS: Record should end at 10.5.
+PASS: Record at 10.5 should have every category in order.
+PASS: Record at 10.5 should have sizes 175, 500, 10, 235.
+PASS: Record at 10.5 should have the sum as total size.
+PASS: Record should end at 11.
+PASS: Record at 11 should have every category in order.
+PASS: Record at 11 should have sizes 195, 600, 10, 235.
+PASS: Record at 11 should have the sum as total size.
+PASS: Should export the sum of every protocol category.
+PASS: Records should follow each other in time.
+
+-- Running test case: ProcessSampleTimeline.Memory.HoldLastValueWhileProcessHasTarget
+A sample at 10: 10 (total 100: javascript 100, images 0, layers 0, page 0)
+B sample at 10.2: no record
+The target that reports for B goes away, and another target of B takes over.
+A sample at 10.5: 10.5 (total 600: javascript 100, images 500, layers 0, page 0)
+A sample at 11: 11 (total 600: javascript 100, images 500, layers 0, page 0)
+B sample at 11.2: no record
+The last target of B goes away.
+A sample at 11.5: 11.5 (total 100: javascript 100, images 0, layers 0, page 0)
+PASS: B should keep its last value until another target reports, and count 0 after its last target is gone.
+A capture stops while B has a target but has not reported.
+A sample at 10: 10 (total 100: javascript 100, images 0, layers 0, page 0)
+B sample at 10.2: no record
+A sample at 10.5: no record
+Stop: 10.5 (total 600: javascript 100, images 500, layers 0, page 0)
+PASS: Stopping should add the waiting record with B's last value.
+
+-- Running test case: ProcessSampleTimeline.ReportingTargetRemovedWhileProcessHasAnotherTarget
+CPU, when B's samples end the records:
+B sample at 10: 10 (usage 40, main 40, worker 0)
+A sample at 10.2: no record
+B sample at 10.5: no record
+A sample at 10.7: 10.5 (usage 62, main 56, worker 6)
+The target that reports for A goes away. Another target of A stays.
+B sample at 11: 11 (usage 52, main 48, worker 4)
+B sample at 11.5: 11.5 (usage 40, main 40, worker 0)
+PASS: Should not fail a frontend assertion.
+PASS: Every sample of B should add a record right away.
+PASS: Should have one record per sample of B.
+PASS: Record should end at 10.
+PASS: Record at 10 should have usage 40.
+PASS: Record at 10 should have main thread usage 40.
+PASS: Record at 10 should have worker thread usage 0.
+PASS: Record should end at 10.5.
+PASS: Record at 10.5 should have usage 62.
+PASS: Record at 10.5 should have main thread usage 56.
+PASS: Record at 10.5 should have worker thread usage 6.
+PASS: Record should end at 11.
+PASS: Record at 11 should have usage 52.
+PASS: Record at 11 should have main thread usage 48.
+PASS: Record at 11 should have worker thread usage 4.
+PASS: Record should end at 11.5.
+PASS: Record at 11.5 should have usage 40.
+PASS: Record at 11.5 should have main thread usage 40.
+PASS: Record at 11.5 should have worker thread usage 0.
+PASS: Records should follow each other in time.
+CPU, when A's samples end the records:
+A sample at 10: 10 (usage 40, main 40, worker 0)
+B sample at 10.2: no record
+A sample at 10.5: no record
+B sample at 10.7: 10.5 (usage 62, main 56, worker 6)
+The target that reports for A goes away. Another target of A stays.
+B sample at 11.2: 11.2 (usage 22.857143, main 20, worker 2.857143)
+B sample at 11.7: 11.7 (usage 20, main 20, worker 0)
+PASS: Should not fail a frontend assertion.
+PASS: B's samples should end the records from then on.
+PASS: Record should end at 10.
+PASS: Record at 10 should have usage 40.
+PASS: Record at 10 should have main thread usage 40.
+PASS: Record at 10 should have worker thread usage 0.
+PASS: Record should end at 10.5.
+PASS: Record at 10.5 should have usage 62.
+PASS: Record at 10.5 should have main thread usage 56.
+PASS: Record at 10.5 should have worker thread usage 6.
+PASS: Record should end at 11.2.
+PASS: Record at 11.2 should have usage 22.857143.
+PASS: Record at 11.2 should have main thread usage 20.
+PASS: Record at 11.2 should have worker thread usage 2.857143.
+PASS: Record should end at 11.7.
+PASS: Record at 11.7 should have usage 20.
+PASS: Record at 11.7 should have main thread usage 20.
+PASS: Record at 11.7 should have worker thread usage 0.
+PASS: Records should follow each other in time.
+Memory:
+B sample at 10: 10 (total 100: javascript 100, images 0, layers 0, page 0)
+A sample at 10.2: no record
+B sample at 10.5: no record
+A sample at 10.7: 10.5 (total 600: javascript 100, images 500, layers 0, page 0)
+The target that reports for A goes away. Another target of A stays.
+B sample at 11: 11 (total 700: javascript 100, images 600, layers 0, page 0)
+B sample at 11.5: 11.5 (total 700: javascript 100, images 600, layers 0, page 0)
+The last target of A goes away.
+B sample at 12: 12 (total 100: javascript 100, images 0, layers 0, page 0)
+PASS: A should keep its last value while it has a target, and count 0 after.
+
+-- Running test case: ProcessSampleTimeline.StopFlushesWaitingRecords
+PASS: The record at 10.5 should wait for B.
+PASS: Stopping should add the waiting record.
+PASS: Record should end at 10.5.
+PASS: Record at 10.5 should have usage 44.
+PASS: Record at 10.5 should have main thread usage 44.
+PASS: Record at 10.5 should have worker thread usage 0.
+Next capture.
+PASS: A new capture should not wait for a process that has not reported in it.
+PASS: Record should end at 20.
+PASS: Record at 20 should have usage 40.
+PASS: Record at 20 should have main thread usage 40.
+PASS: Record at 20 should have worker thread usage 0.
+
+-- Running test case: ProcessSampleTimeline.Import
+PASS: Should not fail a frontend assertion.
+PASS: Should import every CPU record.
+PASS: Record should end at 10.
+PASS: Record at 10 should have usage 40.
+PASS: Record at 10 should have main thread usage 40.
+PASS: Record at 10 should have worker thread usage 0.
+PASS: Record should end at 10.5.
+PASS: Record at 10.5 should have usage 62.
+PASS: Record at 10.5 should have main thread usage 56.
+PASS: Record at 10.5 should have worker thread usage 6.
+PASS: Should import the process of each main thread.
+PASS: Imported records should not be kept per process.
+PASS: Should import every Memory record.
+PASS: Record should end at 10.
+PASS: Record at 10 should have every category in order.
+PASS: Record at 10 should have sizes 100, 0, 0, 200.
+PASS: Record at 10 should have the sum as total size.
+
+-- Running test case: ProcessSampleTimeline.CaptureWithOneProcess
+timeline-record-type-cpu:
+PASS: Samples should come from the process of the main target.
+PASS: Should have one record per sample.
+PASS: Every record should export like its sample.
+PASS: Records should follow each other in time.
+timeline-record-type-memory:
+PASS: Samples should come from the process of the main target.
+PASS: Should have one record per sample.
+PASS: Every record should export like its sample.
+PASS: Records should follow each other in time.
+

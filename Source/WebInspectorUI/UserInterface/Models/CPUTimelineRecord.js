@@ -46,7 +46,8 @@ WI.CPUTimelineRecord = class CPUTimelineRecord extends WI.TimelineRecord
 
         for (let thread of this._threads) {
             if (thread.type === InspectorBackend.Enum.CPUProfiler.ThreadInfoType.Main) {
-                console.assert(!this._mainThreadUsage, "There should only be one main thread.");
+                // A record that combines processes has a main thread for each, tagged with its process.
+                console.assert(!this._mainThreadUsage || thread.processKey, "There should only be one main thread.");
                 this._mainThreadUsage += thread.usage;
                 continue;
             }
@@ -97,6 +98,7 @@ WI.CPUTimelineRecord = class CPUTimelineRecord extends WI.TimelineRecord
 
     get timestamp() { return this._timestamp; }
     get usage() { return this._usage; }
+    get threads() { return this._threads; }
 
     get unadjustedStartTime() { return this._timestamp; }
 
