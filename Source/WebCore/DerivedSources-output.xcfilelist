@@ -3308,6 +3308,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSViewport.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSViewport.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVisibilityState.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVisibilityState.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVisibilityStateEntry.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVisibilityStateEntry.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVisitorCallback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVisitorCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVisualViewport.cpp

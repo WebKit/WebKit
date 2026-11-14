@@ -5,7 +5,7 @@ PASS didReceiveFirstContentfulPaint is false
 PASS fcpEntry.name is "first-contentful-paint"
 PASS fcpEntry.entryType is "paint"
 PASS didReceiveFirstContentfulPaint is true
-PASS performance.getEntries().length is 2
+PASS performance.getEntries().length is 3
 PASS performance.getEntriesByName("first-contentful-paint").length is 1
 PASS performance.getEntriesByName("first-contentful-paint", "paint").length is 1
 PASS performance.getEntriesByType("paint").length is 1

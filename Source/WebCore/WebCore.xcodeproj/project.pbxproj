@@ -21079,6 +21079,8 @@
 		C9D467041E60C3EB008195FB /* AutoplayEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AutoplayEvent.h; sourceTree = "<group>"; };
 		CA1635DC2072E76900E7D2CE /* ReferrerPolicy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReferrerPolicy.cpp; sourceTree = "<group>"; };
 		CA1933D52407D6400071241A /* PerformancePaintTiming.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PerformancePaintTiming.h; sourceTree = "<group>"; };
+		41FAE92311DCCD9C7CEE4E36 /* VisibilityStateEntry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VisibilityStateEntry.h; sourceTree = "<group>"; };
+		DA2342B1512D9C619802F18C /* VisibilityStateEntry.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VisibilityStateEntry.idl; sourceTree = "<group>"; };
 		CA1933D82407EDCF0071241A /* PerformancePaintTiming.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PerformancePaintTiming.idl; sourceTree = "<group>"; };
 		CA3A4AAB25416E3C006CDAE2 /* ImageResolution.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageResolution.cpp; sourceTree = "<group>"; };
 		CA3A4AAD25416E3E006CDAE2 /* ImageResolution.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageResolution.h; sourceTree = "<group>"; };
@@ -31623,6 +31625,8 @@
 				6D66568C305A760500B4BA0F /* ViewportProximityInfo.cpp */,
 				6D66568B305A75FA00B4BA0F /* ViewportProximityInfo.h */,
 				C9F4A2B817E3DC5F002A1B3E /* ViewportSegments.h */,
+				41FAE92311DCCD9C7CEE4E36 /* VisibilityStateEntry.h */,
+				DA2342B1512D9C619802F18C /* VisibilityStateEntry.idl */,
 				1AF4CEEB18BC3C1B00BC2D34 /* VisitedLinkStore.cpp */,
 				1ABA7FFF1897341200DCE9D6 /* VisitedLinkStore.h */,
 				7779BD941F3117B700C21417 /* VisualViewport.cpp */,

@@ -16,9 +16,9 @@ PASS Performance.prototype.getEntries is defined.
 PASS Performance.prototype.getEntriesByType is defined.
 PASS Performance.prototype.getEntriesByName is defined.
 PASS performance.getEntries() instanceof Array is true
-PASS performance.getEntries().length === 1 is true
-PASS performance.mark("test"); did not throw exception.
 PASS performance.getEntries().length === 2 is true
+PASS performance.mark("test"); did not throw exception.
+PASS performance.getEntries().length === 3 is true
 PASS performance.getEntries()[markIndex] instanceof PerformanceEntry is true
 PASS performance.getEntries()[markIndex].name is "test"
 PASS performance.getEntries()[markIndex].entryType is "mark"
