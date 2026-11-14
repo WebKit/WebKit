@@ -703,8 +703,10 @@
         (global-name-regex #"^_oglprof_attach_<[0-9]+>$"))
 )
 
+#if !ENABLE(BLOCKING_OF_WEBCONTENT_FILE_WRITE)
 (if (positive? (string-length (param "DARWIN_USER_CACHE_DIR")))
     (allow file-read* file-write* (subpath (param "DARWIN_USER_CACHE_DIR"))))
+#endif
 
 (if (positive? (string-length (param "DARWIN_USER_TEMP_DIR")))
     (allow file-read* file-write* (subpath (param "DARWIN_USER_TEMP_DIR"))))
