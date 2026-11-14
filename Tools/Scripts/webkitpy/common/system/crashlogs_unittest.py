@@ -22,6 +22,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import json
 import unittest
 
 from webkitcorepy import string_utils
@@ -523,3 +524,56 @@ class CrashLogsTest(unittest.TestCase):
         self.assertIsNotNone(log)
         log = crash_logs.find_newest_log("DumpRenderTree", 28530)
         self.assertIsNotNone(log)
+
+    @staticmethod
+    def _json_report(**report):
+        return '{"app_name":"WebKitTestRunner","bug_type":"309"}\n' + json.dumps(report, indent=2)
+
+    def test_crashed_thread_from_json_report(self):
+        report = self._json_report(
+            procName='WebKitTestRunner',
+            pid=17550,
+            exception={'type': 'EXC_CRASH', 'signal': 'SIGABRT'},
+            asi={'libsystem_c.dylib': ['abort() called']},
+            faultingThread=0,
+            threads=[{'triggered': True, 'queue': 'com.apple.main-thread', 'frames': [
+                {'imageOffset': 38480, 'symbol': '__pthread_kill', 'symbolLocation': 8, 'imageIndex': 0},
+                {'imageOffset': 2048, 'imageIndex': 1},
+                {'imageOffset': 1234, 'symbol': '-[WKWebView dealloc]', 'symbolLocation': 60, 'sourceFile': 'WKWebView.mm', 'sourceLine': 981, 'imageIndex': 2},
+            ]}],
+            usedImages=[{'name': 'libsystem_kernel.dylib'}, {'source': 'A'}, {'name': 'WebKit'}],
+        )
+        self.assertEqual(CrashLogs.crashed_thread(report), (
+            'WebKitTestRunner: EXC_CRASH (SIGABRT)\n'
+            'abort() called\n'
+            'Thread 0 crashed: com.apple.main-thread\n'
+            '0   libsystem_kernel.dylib  __pthread_kill\n'
+            '1   ???                     0x800\n'
+            '2   WebKit                  -[WKWebView dealloc] (WKWebView.mm:981)'
+        ))
+
+    def test_crashed_thread_with_exception_subtype(self):
+        report = self._json_report(
+            procName='com.apple.WebKit.WebContent',
+            exception={'type': 'EXC_BAD_ACCESS', 'signal': 'SIGSEGV', 'subtype': 'KERN_INVALID_ADDRESS at 0x0000000000000010'},
+            faultingThread=1,
+            threads=[
+                {'queue': 'com.apple.main-thread', 'frames': [{'imageOffset': 16, 'symbol': 'mach_msg2_trap', 'imageIndex': 0}]},
+                {'triggered': True, 'frames': [{'imageOffset': 4096, 'symbol': 'WebCore::Node::parentNode() const', 'imageIndex': 1}]},
+            ],
+            usedImages=[{'name': 'libsystem_kernel.dylib'}, {'name': 'WebCore'}],
+        )
+        self.assertEqual(CrashLogs.crashed_thread(report), (
+            'com.apple.WebKit.WebContent: EXC_BAD_ACCESS (SIGSEGV), KERN_INVALID_ADDRESS at 0x0000000000000010\n'
+            'Thread 1 crashed\n'
+            '0   WebCore  WebCore::Node::parentNode() const'
+        ))
+
+    def test_crashed_thread_from_json_report_without_threads(self):
+        self.assertIsNone(CrashLogs.crashed_thread(make_mock_ips_crash_report_darwin('DumpRenderTree', 28529)))
+
+    def test_crashed_thread_from_text_crash_log(self):
+        self.assertIsNone(CrashLogs.crashed_thread(make_mock_crash_report_darwin('DumpRenderTree', 28528)))
+
+    def test_crashed_thread_without_crash_report(self):
+        self.assertIsNone(CrashLogs.crashed_thread('No crash log found for WebKitTestRunnerApp:20057.\n'))

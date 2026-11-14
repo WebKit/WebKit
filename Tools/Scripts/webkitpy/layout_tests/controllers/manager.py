@@ -52,6 +52,7 @@ from webkitcorepy.string_utils import pluralize
 
 from webkitpy.common.net import results_database
 from webkitpy.common.iteration_compatibility import iteritems, itervalues
+from webkitpy.common.system.crashlogs import CrashLogs
 from webkitpy.layout_tests.controllers.layout_test_finder_legacy import LayoutTestFinder
 from webkitpy.layout_tests.controllers.layout_test_runner import LayoutTestRunner
 from webkitpy.layout_tests.controllers.test_result_writer import TestResultWriter
@@ -845,6 +846,7 @@ class Manager(object):
             test_expectations.IMAGE_PLUS_TEXT: ' '.join([Upload.Expectations.IMAGE, Upload.Expectations.TEXT]),
         }
 
+        logs = self._logs_to_upload(results)
         results_trie = {}
         for result in itervalues(results.results_by_name):
             if result.type == test_expectations.SKIP:
@@ -865,9 +867,46 @@ class Manager(object):
                 Upload.create_test_result(
                     expected=expected,
                     actual=FAILURE_TO_TEXT.get(result.type, Upload.Expectations.FAIL) if result.type else None,
+                    log=logs.get(result.test_name),
                     time=int(result.test_run_time * 1000),
                 ), results_trie)
         return results_trie
+
+    def _logs_to_upload(self, results):
+        logs = {}
+        for test_name in results.unexpected_results_by_name:
+            result_type = results.results_by_name[test_name].type
+            if result_type in (test_expectations.PASS, test_expectations.SKIP):
+                continue
+            output = self._failure_output(test_name, result_type)
+            if output:
+                logs[test_name] = Upload.truncate_log(output)
+        return logs
+
+    def _failure_output(self, test_name, result_type):
+        writer = TestResultWriter(self._filesystem, self._port, self._results_directory, test_name)
+        stderr = self._read_result_file(writer, TestResultWriter.FILENAME_SUFFIX_STDERR + '.txt')
+        if result_type == test_expectations.CRASH:
+            crash_log = self._read_result_file(writer, TestResultWriter.FILENAME_SUFFIX_CRASH_LOG + '.txt')
+            crashed_thread = CrashLogs.crashed_thread(crash_log) if crash_log else None
+            return '\n'.join(text for text in [stderr, crashed_thread] if text)
+        diff = self._read_result_file(writer, TestResultWriter.FILENAME_SUFFIX_DIFF + '.txt')
+        if diff:
+            return self._diff_without_file_names(diff)
+        return stderr
+
+    def _read_result_file(self, writer, modifier):
+        path = writer.output_filename(modifier)
+        if not self._filesystem.exists(path):
+            return None
+        return self._filesystem.read_binary_file(path).decode('utf-8', 'replace')
+
+    @staticmethod
+    def _diff_without_file_names(diff):
+        lines = diff.split('\n', 2)
+        if len(lines) == 3 and lines[0].startswith('--- ') and lines[1].startswith('+++ '):
+            return lines[2]
+        return diff
 
     def _save_json_files(self, summarized_results, initial_results, subdirectory=None):
         """Writes the results of the test run as JSON files into the results
