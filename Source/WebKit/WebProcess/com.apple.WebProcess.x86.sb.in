@@ -137,11 +137,13 @@
     (literal "/dev/null")
     (literal "/dev/zero"))
 
+#if !ENABLE(BLOCKING_OF_WEBCONTENT_FILE_WRITE)
 (allow file-write-data (with report) (with telemetry)
 #if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED <= 150400
     (literal "/dev/zero")
 #endif
     (literal "/dev/null"))
+#endif
 
 (allow file-read*
        file-write-data
