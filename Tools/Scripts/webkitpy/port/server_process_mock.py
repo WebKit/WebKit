@@ -32,11 +32,12 @@ from webkitcorepy import string_utils
 class MockServerProcess(object):
     _next_pid = 77
 
-    def __init__(self, port_obj=None, name=None, cmd=None, env=None, universal_newlines=False, lines=None, crashed=False, target_host=None, crash_message=None, err_lines=None):
+    def __init__(self, port_obj=None, name=None, cmd=None, env=None, universal_newlines=False, lines=None, crashed=False, target_host=None, crash_message=None, err_lines=None, returncode=None):
         self.timed_out = False
         self.lines = [string_utils.encode(line) for line in (lines or [])]
         self.err_lines = [string_utils.encode(line) for line in (err_lines or [])]
         self.crashed = crashed
+        self.returncode = returncode
         self.writes = []
         self.cmd = cmd
         self.env = env
@@ -46,6 +47,7 @@ class MockServerProcess(object):
 
     def poll(self):
         self.number_of_times_polled += 1
+        return self.returncode
 
     def write(self, bytes):
         self.writes.append(bytes)
