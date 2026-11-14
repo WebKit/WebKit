@@ -481,6 +481,7 @@ UIProcess/Cocoa/SecItemShimProxy.cpp
 UIProcess/Cocoa/SecurityFlagsControllerCocoa.mm @nonARC
 UIProcess/Cocoa/SessionStateCoding.mm @nonARC
 UIProcess/Cocoa/SystemPreviewControllerCocoa.mm @nonARC
+UIProcess/Cocoa/TabCapturePicker.mm
 UIProcess/Cocoa/TextCheckingController.mm @nonARC
 UIProcess/Cocoa/TextExtraction/WKTextExtractionUtilities.mm @nonARC
 UIProcess/Cocoa/UIDelegate.mm @nonARC @cost:3

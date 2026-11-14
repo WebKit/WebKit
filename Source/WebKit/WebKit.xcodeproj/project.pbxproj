@@ -3710,6 +3710,8 @@
 		07EF0752274593FA0066EA04 /* UserMediaPermissionRequestProxyCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserMediaPermissionRequestProxyCocoa.h; sourceTree = "<group>"; };
 		07EF07582745A8160066EA04 /* DisplayCaptureSessionManager.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DisplayCaptureSessionManager.mm; sourceTree = "<group>"; };
 		07EF07592745A8160066EA04 /* DisplayCaptureSessionManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DisplayCaptureSessionManager.h; sourceTree = "<group>"; };
+		5E7A1C3F2EA1B0C000D1A001 /* TabCapturePicker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TabCapturePicker.h; sourceTree = "<group>"; };
+		5E7A1C402EA1B0C000D1A001 /* TabCapturePicker.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TabCapturePicker.mm; sourceTree = "<group>"; };
 		07EF24BE2E309EFE004429B6 /* WebKitInternalCxx.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebKitInternalCxx.h; sourceTree = "<group>"; };
 		5E55104200000000000C000F /* SecurityFlagsForSwift.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SecurityFlagsForSwift.h; sourceTree = "<group>"; };
 		07F0337B30107D3900B69551 /* WKFastScrollTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKFastScrollTracker.swift; sourceTree = "<group>"; };
@@ -11121,6 +11123,8 @@
 				1A002D47196B345D00B9AD44 /* SessionStateCoding.h */,
 				1A002D46196B345D00B9AD44 /* SessionStateCoding.mm */,
 				3157135C2040A9B20084F9CF /* SystemPreviewControllerCocoa.mm */,
+				5E7A1C3F2EA1B0C000D1A001 /* TabCapturePicker.h */,
+				5E7A1C402EA1B0C000D1A001 /* TabCapturePicker.mm */,
 				2D0CF64C21F2A80300787566 /* TextCheckingController.h */,
 				2D0CF64B21F2A80300787566 /* TextCheckingController.mm */,
 				5C1A7E502FA0000000000001 /* TransientZoomState.h */,

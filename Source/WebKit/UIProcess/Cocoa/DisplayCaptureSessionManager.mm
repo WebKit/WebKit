@@ -31,6 +31,7 @@
 #import "APIPageConfiguration.h"
 #import "Logging.h"
 #import "MediaPermissionUtilities.h"
+#import "TabCapturePicker.h"
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
 #import "WebProcess.h"
@@ -65,31 +66,31 @@ void DisplayCaptureSessionManager::alertForGetDisplayMedia(WebPageProxy& page, c
     if (!visibleOrigin)
         visibleOrigin = applicationVisibleName();
 
-    SUPPRESS_UNRETAINED_ARG RetainPtr alertTitle = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to observe one of your windows or screens?", "Message for window and screen sharing prompt"), visibleOrigin.get()]);
-    RetainPtr<NSString> allowWindowButtonString = WEB_UI_NSSTRING(@"Allow to Share Window", "Allow window button title in window and screen sharing prompt");
-    RetainPtr<NSString> allowScreenButtonString = WEB_UI_NSSTRING(@"Allow to Share Screen", "Allow screen button title in window and screen sharing prompt");
+    SUPPRESS_UNRETAINED_ARG RetainPtr alertTitle = adoptNS([[NSString alloc] initWithFormat:@"Allow “%@” to observe a window, screen, or tab?", visibleOrigin.get()]);
+    RetainPtr<NSString> allowWindowOrScreenButtonString = WEB_UI_NSSTRING(@"Allow to Share Window or Screen", "Allow window or screen button title in window/screen/tab sharing prompt");
+    RetainPtr<NSString> allowTabButtonString = WEB_UI_NSSTRING(@"Allow to Share Tab", "Allow tab button title in window/screen/tab sharing prompt");
     RetainPtr<NSString> doNotAllowButtonString = WEB_UI_NSSTRING_KEY(@"Don’t Allow", @"Don’t Allow (window and screen sharing)", "Disallow button title in window and screen sharing prompt");
 
     RetainPtr alert = adoptNS([[NSAlert alloc] init]);
-    [alert setMessageText:alertTitle.get()];
+    [alert setMessageText:alertTitle];
 
-    RetainPtr button = [alert addButtonWithTitle:allowWindowButtonString.get()];
+    RetainPtr button = [alert addButtonWithTitle:allowWindowOrScreenButtonString];
     button.get().keyEquivalent = @"";
 
-    button = [alert addButtonWithTitle:allowScreenButtonString.get()];
+    button = [alert addButtonWithTitle:allowTabButtonString];
     button.get().keyEquivalent = @"";
 
-    button = [alert addButtonWithTitle:doNotAllowButtonString.get()];
+    button = [alert addButtonWithTitle:doNotAllowButtonString];
     button.get().keyEquivalent = @"\E";
 
     [alert beginSheetModalForWindow:retainPtr([webView window]).get() completionHandler:[completionBlock = makeBlockPtr(WTF::move(completionHandler))](NSModalResponse returnCode) {
         DisplayCaptureSessionManager::CaptureSessionType result = DisplayCaptureSessionManager::CaptureSessionType::None;
         switch (returnCode) {
         case NSAlertFirstButtonReturn:
-            result = DisplayCaptureSessionManager::CaptureSessionType::Window;
+            result = DisplayCaptureSessionManager::CaptureSessionType::WindowOrScreen;
             break;
         case NSAlertSecondButtonReturn:
-            result = DisplayCaptureSessionManager::CaptureSessionType::Screen;
+            result = DisplayCaptureSessionManager::CaptureSessionType::Tab;
             break;
         case NSAlertThirdButtonReturn:
             result = DisplayCaptureSessionManager::CaptureSessionType::None;
@@ -104,7 +105,39 @@ void DisplayCaptureSessionManager::alertForGetDisplayMedia(WebPageProxy& page, c
     UNUSED_PARAM(completionHandler);
 #endif // HAVE(WINDOW_CAPTURE)
 }
-#endif
+
+void DisplayCaptureSessionManager::showTabPicker(WebPageProxy& requestingPage, const WebCore::SecurityOriginData& origin, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&& completionHandler)
+{
+    if (RefPtr previousPicker = m_tabCapturePicker)
+        previousPicker->cancel();
+    ASSERT(!m_tabCapturePicker);
+
+    m_tabCapturePicker = TabCapturePicker::create(requestingPage, origin, [completionHandler = WTF::move(completionHandler)](auto&&) mutable {
+        DisplayCaptureSessionManager::singleton().m_tabCapturePicker = nullptr;
+        // FIXME: Implement capture of the selected tab.
+        completionHandler(std::nullopt);
+    });
+    if (RefPtr picker = m_tabCapturePicker)
+        picker->start();
+}
+
+void DisplayCaptureSessionManager::showWindowOrScreenPicker(WebPageProxy& requestingPage, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&& completionHandler)
+{
+    if (!WebCore::ScreenCaptureKitSharingSessionManager::isAvailable()) {
+        completionHandler(std::nullopt);
+        return;
+    }
+
+    if (!protect(requestingPage.preferences())->useGPUProcessForDisplayCapture()) {
+        WebCore::ScreenCaptureKitSharingSessionManager::singleton().promptForGetDisplayMedia(WebCore::DisplayCapturePromptType::UserChoose, WTF::move(completionHandler));
+        return;
+    }
+
+    Ref gpuProcess = protect(requestingPage.configuration().processPool())->ensureGPUProcess();
+    gpuProcess->updateSandboxAccess(false, false, true);
+    gpuProcess->promptForGetDisplayMedia(WebCore::DisplayCapturePromptType::UserChoose, WTF::move(completionHandler));
+}
+#endif // HAVE(SCREEN_CAPTURE_KIT)
 
 std::optional<WebCore::CaptureDevice> DisplayCaptureSessionManager::deviceSelectedForTesting(WebCore::CaptureDevice::DeviceType deviceType, unsigned indexOfDeviceSelectedForTesting)
 {
@@ -212,7 +245,7 @@ void DisplayCaptureSessionManager::promptForGetDisplayMedia(UserMediaPermissionR
         return;
     }
 
-    if (WebCore::ScreenCaptureKitSharingSessionManager::isAvailable()) {
+    if (WebCore::ScreenCaptureKitSharingSessionManager::isAvailable() && promptType != UserMediaPermissionRequestProxy::UserMediaDisplayCapturePromptType::UserChoose) {
         if (!protect(page.preferences())->useGPUProcessForDisplayCapture()) {
             WebCore::ScreenCaptureKitSharingSessionManager::singleton().promptForGetDisplayMedia(toScreenCaptureKitPromptType(promptType), WTF::move(completionHandler));
             return;
@@ -235,16 +268,24 @@ void DisplayCaptureSessionManager::promptForGetDisplayMedia(UserMediaPermissionR
     }
 
 #if HAVE(WINDOW_CAPTURE)
-    alertForGetDisplayMedia(page, origin, [this, origin, completionHandler = WTF::move(completionHandler)] (DisplayCaptureSessionManager::CaptureSessionType sessionType) mutable {
-        if (sessionType == CaptureSessionType::None) {
+    alertForGetDisplayMedia(page, origin, [this, weakPage = WeakPtr { page }, origin, completionHandler = WTF::move(completionHandler)](auto sessionType) mutable {
+        RefPtr protectedPage = weakPage;
+        if (!protectedPage) {
             completionHandler(std::nullopt);
             return;
         }
 
-        if (sessionType == CaptureSessionType::Screen)
-            showScreenPicker(origin, WTF::move(completionHandler));
-        else
-            showWindowPicker(origin, WTF::move(completionHandler));
+        switch (sessionType) {
+        case CaptureSessionType::None:
+            completionHandler(std::nullopt);
+            return;
+        case CaptureSessionType::Tab:
+            showTabPicker(*protectedPage, origin, WTF::move(completionHandler));
+            return;
+        case CaptureSessionType::WindowOrScreen:
+            showWindowOrScreenPicker(*protectedPage, WTF::move(completionHandler));
+            return;
+        }
     });
 #else
     completionHandler(std::nullopt);
@@ -257,6 +298,11 @@ void DisplayCaptureSessionManager::cancelGetDisplayMediaPrompt(WebPageProxy& pag
 {
 #if HAVE(SCREEN_CAPTURE_KIT)
     ASSERT(isAvailable());
+
+    if (RefPtr picker = m_tabCapturePicker; picker && picker->requestingPage() == &page) {
+        picker->cancel();
+        return;
+    }
 
     if (!isAvailable() || !WebCore::ScreenCaptureKitSharingSessionManager::isAvailable())
         return;

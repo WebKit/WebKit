@@ -196,11 +196,11 @@
 /* Message for requesting cross-site cookie and website data access. */
 "Allow related %@ websites to share cookies and website data?" = "Allow related %@ websites to share cookies and website data?";
 
-/* Allow screen button title in window and screen sharing prompt */
-"Allow to Share Screen" = "Allow to Share Screen";
+/* Allow tab button title in window/screen/tab sharing prompt */
+"Allow to Share Tab" = "Allow to Share Tab";
 
-/* Allow window button title in window and screen sharing prompt */
-"Allow to Share Window" = "Allow to Share Window";
+/* Allow window or screen button title in window/screen/tab sharing prompt */
+"Allow to Share Window or Screen" = "Allow to Share Window or Screen";
 
 /* Message for requesting cross-site cookie and website data access. */
 "Allow “%@” and “%@” to use cookies and website data while browsing “%@”?" = "Allow “%@” and “%@” to use cookies and website data while browsing “%@”?";
@@ -1386,6 +1386,12 @@
 
 /* Label for the set up with Apple Pay button. */
 "Set up with Apple Pay" = "Set up with Apple Pay";
+
+/* Button title in the tab capture picker to share the selected tab */
+"Share This Tab" = "Share This Tab";
+
+/* Title of the tab capture picker prompt */
+"Share this tab with “%@”?" = "Share this tab with “%@”?";
 
 /* Default name for the file created for a shared image with no explicit name. */
 "Shared Image" = "Shared Image";
