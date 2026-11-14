@@ -983,6 +983,7 @@ css/CSSFontStyleRangeValue.cpp
 css/CSSFontStyleWithAngleValue.cpp
 css/CSSFontValue.cpp
 css/CSSFontVariationValue.cpp
+css/CSSFreeformGradientValue.cpp
 css/CSSFunctionDeclarations.cpp
 css/CSSFunctionDescriptors.cpp
 css/CSSFunctionRule.cpp
@@ -1271,6 +1272,7 @@ css/values/grid/CSSGridNamedAreaMap.cpp
 css/values/grid/CSSGridSubgrid.cpp
 css/values/grid/CSSGridTemplateList.cpp
 css/values/grid/CSSGridTrackSizes.cpp
+css/values/images/CSSFreeformGradient.cpp
 css/values/images/CSSGradient.cpp
 css/values/images/CSSGradientColorInterpolationMethod.cpp
 css/values/images/CSSImageWrapper.cpp
@@ -2727,6 +2729,9 @@ platform/graphics/FontSelectionAlgorithm.cpp
 platform/graphics/FontSelector.cpp
 platform/graphics/FontTaggedSettings.cpp
 platform/graphics/FourCC.cpp
+platform/graphics/FreeformGradient.cpp
+platform/graphics/FreeformGradientRenderer.cpp
+platform/graphics/FreeformGradientRendererCPU.cpp
 platform/graphics/GeometryUtilities.cpp
 platform/graphics/Gradient.cpp
 platform/graphics/GradientColorStop.cpp
@@ -3501,6 +3506,7 @@ style/values/images/kinds/StyleCanvasImage.cpp @header:RenderStyleGetters @cost:
 style/values/images/kinds/StyleCrossfadeImage.cpp
 style/values/images/kinds/StyleCursorImage.cpp
 style/values/images/kinds/StyleFilterImage.cpp @header:RenderStyleGetters @cost:6
+style/values/images/kinds/StyleFreeformGradientImage.cpp
 style/values/images/kinds/StyleGeneratedImage.cpp @header:RenderStyleGetters @cost:6
 style/values/images/kinds/StyleGradientImage.cpp @header:RenderStyleGetters @cost:6
 style/values/images/kinds/StyleImage.cpp
@@ -3511,6 +3517,7 @@ style/values/images/kinds/StyleMultiImage.cpp
 style/values/images/kinds/StyleColorImage.cpp
 style/values/images/kinds/StyleNamedImage.cpp
 style/values/images/kinds/StylePaintImage.cpp @header:RenderStyleGetters @cost:6
+style/values/images/StyleFreeformGradient.cpp
 style/values/images/StyleGradient.cpp @header:RenderStyleGetters @cost:6
 style/values/images/StyleImageOrNone.cpp
 style/values/images/StyleImageOrientation.cpp

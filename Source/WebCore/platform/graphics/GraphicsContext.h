@@ -50,6 +50,7 @@ class AffineTransform;
 class Filter;
 class FilterResults;
 class FloatRoundedRect;
+class FreeformGradient;
 class Gradient;
 class ImageBuffer;
 class MeshGradient;
@@ -324,6 +325,7 @@ public:
     virtual void drawLinesForText(const FloatPoint& origin, float thickness, std::span<const FloatSegment> lineSegments, bool isPrinting, bool doubleLines, StrokeStyle) = 0;
     virtual void drawDotsForDocumentMarker(const FloatRect&, DocumentMarkerLineStyle) = 0;
 
+    WEBCORE_EXPORT virtual void drawFreeformGradient(FreeformGradient&, const FloatRect& destination);
     WEBCORE_EXPORT virtual void drawMeshGradient(MeshGradient&, const FloatRect& destination);
 
     // Transparency Layers

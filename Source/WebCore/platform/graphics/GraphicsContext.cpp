@@ -30,6 +30,7 @@
 #include "Filter.h"
 #include "FilterImage.h"
 #include "FloatRoundedRect.h"
+#include "FreeformGradientRendererCPU.h"
 #include "Gradient.h"
 #include "ImageBuffer.h"
 #include "ImageOrientation.h"
@@ -449,6 +450,11 @@ void GraphicsContext::drawPattern(ImageBuffer& image, const FloatRect& destRect,
 void GraphicsContext::drawControlPart(ControlPart& part, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle& style)
 {
     part.draw(*this, borderRect, deviceScaleFactor, style);
+}
+
+void GraphicsContext::drawFreeformGradient(FreeformGradient& gradient, const FloatRect& destination)
+{
+    FreeformGradientRendererCPU { }.draw(*this, gradient, destination);
 }
 
 void GraphicsContext::drawMeshGradient(MeshGradient& gradient, const FloatRect& destination)

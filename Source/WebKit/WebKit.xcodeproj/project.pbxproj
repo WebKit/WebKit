@@ -7234,6 +7234,7 @@
 		7BCF70CD2614935F00E4FB70 /* ScopedRenderingResourcesRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScopedRenderingResourcesRequest.h; sourceTree = "<group>"; };
 		7BCF70CE2614935F00E4FB70 /* ScopedWebGLRenderingResourcesRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScopedWebGLRenderingResourcesRequest.h; sourceTree = "<group>"; };
 		7BDC88012E705C5600C7A37F /* RemoteGradientIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteGradientIdentifier.h; sourceTree = "<group>"; };
+		03F28CD96992D1CE34AD0C39 /* RemoteFreeformGradientIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteFreeformGradientIdentifier.h; sourceTree = "<group>"; };
 		C7EB0619C15A81E82380DEE9 /* RemoteMeshGradientIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteMeshGradientIdentifier.h; sourceTree = "<group>"; };
 		7BDC880B2E72D80500C7A37F /* RemoteSnapshotRecorderIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteSnapshotRecorderIdentifier.h; sourceTree = "<group>"; };
 		7BDC880C2E72D80500C7A37F /* RemoteSnapshotRecorderProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteSnapshotRecorderProxy.h; sourceTree = "<group>"; };
@@ -14825,6 +14826,7 @@
 				86D1967629A4E7B50083B077 /* PrepareBackingStoreBuffersData.serialization.in */,
 				7BE005B62E5C4E050014F7CF /* RemoteDisplayListRecorderProxy.cpp */,
 				7BE005B52E5C4E050014F7CF /* RemoteDisplayListRecorderProxy.h */,
+				03F28CD96992D1CE34AD0C39 /* RemoteFreeformGradientIdentifier.h */,
 				7BDC88012E705C5600C7A37F /* RemoteGradientIdentifier.h */,
 				7B904165254AFDEA006EEB8C /* RemoteGraphicsContextGLProxy.cpp */,
 				7B904166254AFDEB006EEB8C /* RemoteGraphicsContextGLProxy.h */,

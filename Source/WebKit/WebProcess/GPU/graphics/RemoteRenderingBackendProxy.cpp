@@ -551,6 +551,18 @@ void RemoteRenderingBackendProxy::releaseGradient(RemoteGradientIdentifier ident
     send(Messages::RemoteRenderingBackend::ReleaseGradient(identifier));
 }
 
+void RemoteRenderingBackendProxy::cacheFreeformGradient(Ref<FreeformGradient>&& gradient, RemoteFreeformGradientIdentifier identifier)
+{
+    send(Messages::RemoteRenderingBackend::CacheFreeformGradient(WTF::move(gradient), identifier));
+}
+
+void RemoteRenderingBackendProxy::releaseFreeformGradient(RemoteFreeformGradientIdentifier identifier)
+{
+    if (!m_connection)
+        return;
+    send(Messages::RemoteRenderingBackend::ReleaseFreeformGradient(identifier));
+}
+
 void RemoteRenderingBackendProxy::cacheMeshGradient(Ref<MeshGradient>&& gradient, RemoteMeshGradientIdentifier identifier)
 {
     send(Messages::RemoteRenderingBackend::CacheMeshGradient(WTF::move(gradient), identifier));

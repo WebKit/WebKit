@@ -493,6 +493,17 @@ void DrawLinesForText::dump(TextStream& ts, OptionSet<AsTextFlag>) const
     ts.dumpProperty("style"_s, style());
 }
 
+void DrawFreeformGradient::apply(GraphicsContext& context) const
+{
+    context.drawFreeformGradient(m_gradient, m_destination);
+}
+
+void DrawFreeformGradient::dump(TextStream& ts, OptionSet<AsTextFlag>) const
+{
+    ts.dumpProperty("gradient"_s, gradient());
+    ts.dumpProperty("destination"_s, destination());
+}
+
 void DrawMeshGradient::apply(GraphicsContext& context) const
 {
     context.drawMeshGradient(m_gradient, m_destination);

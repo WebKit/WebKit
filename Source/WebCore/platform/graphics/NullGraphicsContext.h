@@ -121,6 +121,7 @@ private:
 
     void drawDotsForDocumentMarker(const FloatRect&, DocumentMarkerLineStyle) final { }
 
+    void drawFreeformGradient(FreeformGradient&, const FloatRect&) final { }
     void drawMeshGradient(MeshGradient&, const FloatRect&) final { }
 
     void drawFocusRing(const Path&, float, const Color&, float) final { }

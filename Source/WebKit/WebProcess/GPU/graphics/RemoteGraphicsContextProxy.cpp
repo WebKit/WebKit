@@ -475,6 +475,17 @@ void RemoteGraphicsContextProxy::drawDotsForDocumentMarker(const FloatRect& rect
     send(Messages::RemoteGraphicsContext::DrawDotsForDocumentMarker(rect, style));
 }
 
+void RemoteGraphicsContextProxy::drawFreeformGradient(FreeformGradient& gradient, const FloatRect& destination)
+{
+    auto identifier = recordResourceUse(gradient);
+    if (!identifier)
+        return;
+
+    sendPendingDrawsIfNecessary();
+    appendStateChangeItemIfNecessary();
+    send(Messages::RemoteGraphicsContext::DrawFreeformGradient(*identifier, destination));
+}
+
 void RemoteGraphicsContextProxy::drawMeshGradient(MeshGradient& gradient, const FloatRect& destination)
 {
     auto identifier = recordResourceUse(gradient);
@@ -886,6 +897,17 @@ std::optional<RemoteGradientIdentifier> RemoteGraphicsContextProxy::recordResour
     }
 
     return renderingBackend->remoteResourceCacheProxy().recordGradientUse(gradient);
+}
+
+std::optional<RemoteFreeformGradientIdentifier> RemoteGraphicsContextProxy::recordResourceUse(FreeformGradient& gradient)
+{
+    RefPtr renderingBackend = m_renderingBackend.get();
+    if (!renderingBackend) [[unlikely]] {
+        ASSERT_NOT_REACHED();
+        return std::nullopt;
+    }
+
+    return renderingBackend->remoteResourceCacheProxy().recordFreeformGradientUse(gradient);
 }
 
 std::optional<RemoteMeshGradientIdentifier> RemoteGraphicsContextProxy::recordResourceUse(MeshGradient& gradient)

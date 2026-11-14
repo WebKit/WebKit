@@ -139,6 +139,7 @@ public:
 
     void drawDotsForDocumentMarker(const FloatRect&, DocumentMarkerLineStyle) final;
 
+    void drawFreeformGradient(FreeformGradient&, const FloatRect& destination) final;
     void drawMeshGradient(MeshGradient&, const FloatRect& destination) final;
 
     void beginPage(const FloatRect&) final;

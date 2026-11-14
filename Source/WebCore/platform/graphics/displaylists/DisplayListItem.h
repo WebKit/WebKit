@@ -59,6 +59,7 @@ class DrawEllipse;
 class DrawFilteredImageBuffer;
 class DrawFocusRingPath;
 class DrawFocusRingRects;
+class DrawFreeformGradient;
 class DrawGlyphs;
 class DrawDisplayList;
 class DrawPlaceholder;
@@ -130,6 +131,7 @@ using Item = Variant
     , DrawFilteredImageBuffer
     , DrawFocusRingPath
     , DrawFocusRingRects
+    , DrawFreeformGradient
     , DrawGlyphs
     , DrawDisplayList
     , DrawPlaceholder

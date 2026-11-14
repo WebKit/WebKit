@@ -58,6 +58,7 @@
 #include "WebPageProxy.h"
 #include <WebCore/Filter.h>
 #include <WebCore/FontCustomPlatformData.h>
+#include <WebCore/FreeformGradient.h>
 #include <WebCore/Gradient.h>
 #include <WebCore/HTMLCanvasElement.h>
 #include <WebCore/MeshGradient.h>
@@ -599,6 +600,20 @@ void RemoteRenderingBackend::releaseGradient(RemoteGradientIdentifier identifier
     assertIsCurrent(workQueue());
     bool success = m_remoteResourceCache.releaseGradient(identifier);
     MESSAGE_CHECK(success, "Gradient released before being cached.");
+}
+
+void RemoteRenderingBackend::cacheFreeformGradient(Ref<FreeformGradient>&& gradient, RemoteFreeformGradientIdentifier identifier)
+{
+    assertIsCurrent(workQueue());
+    bool success = m_remoteResourceCache.cacheFreeformGradient(identifier, WTF::move(gradient));
+    MESSAGE_CHECK(success, "Freeform gradient already cached.");
+}
+
+void RemoteRenderingBackend::releaseFreeformGradient(RemoteFreeformGradientIdentifier identifier)
+{
+    assertIsCurrent(workQueue());
+    bool success = m_remoteResourceCache.releaseFreeformGradient(identifier);
+    MESSAGE_CHECK(success, "Freeform gradient released before being cached.");
 }
 
 void RemoteRenderingBackend::cacheMeshGradient(Ref<MeshGradient>&& gradient, RemoteMeshGradientIdentifier identifier)

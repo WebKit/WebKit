@@ -1386,6 +1386,7 @@ filter
 -webkit-filter
 paint
 mesh-gradient
+freeform-gradient
 
 // image-set's MIME type
 type

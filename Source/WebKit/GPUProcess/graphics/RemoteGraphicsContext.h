@@ -29,6 +29,7 @@
 
 #include "ArrayReferenceTuple.h"
 #include "RemoteDisplayListIdentifier.h"
+#include "RemoteFreeformGradientIdentifier.h"
 #include "RemoteGradientIdentifier.h"
 #include "RemoteGraphicsContextIdentifier.h"
 #include "RemoteMeshGradientIdentifier.h"
@@ -121,6 +122,7 @@ public:
     void drawLine(const WebCore::FloatPoint& point1, const WebCore::FloatPoint& point2);
     void drawLinesForText(const WebCore::FloatPoint&, float thickness, std::span<const WebCore::FloatSegment> lineSegments, bool printing, bool doubleLines, WebCore::StrokeStyle);
     void drawDotsForDocumentMarker(const WebCore::FloatRect&, const WebCore::DocumentMarkerLineStyle&);
+    void drawFreeformGradient(RemoteFreeformGradientIdentifier, const WebCore::FloatRect& destination);
     void drawMeshGradient(RemoteMeshGradientIdentifier, const WebCore::FloatRect& destination);
     void drawEllipse(const WebCore::FloatRect&);
     void drawPath(const WebCore::Path&);

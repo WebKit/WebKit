@@ -2153,6 +2153,18 @@ class WebCore::TransformOperations {
     bool isTransient();
 }
 
+header: <WebCore/FreeformGradient.h>
+[Nested, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::FreeformGradient::Stop {
+    WebCore::FloatPoint position;
+    WebCore::Color color;
+    float weight;
+};
+
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder, CreateUsing=tryCreate] class WebCore::FreeformGradient {
+    WebCore::ColorInterpolationMethod colorInterpolationMethod();
+    Vector<WebCore::FreeformGradient::Stop> stops();
+}
+
 header: <WebCore/MeshGradient.h>
 [Nested, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::MeshGradient::Point {
     WebCore::FloatPoint position;
