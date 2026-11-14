@@ -51,6 +51,9 @@ static bool isContentEligibleForNonLineBuilderMaximumWidth(const ElementBox& roo
 {
     if (inlineItemList.size() != 1 || rootBox.style().textIndent() != Style::ComputedStyle::initialTextIndent())
         return false;
+    // 'white-space-trim' may have discarded the items of the other children.
+    if (rootBox.firstChild() != rootBox.lastChild())
+        return false;
 
     auto* inlineTextItem = dynamicDowncast<InlineTextItem>(inlineItemList[0]);
     return inlineTextItem && !inlineTextItem->isWhitespace();
