@@ -1,0 +1,7 @@
+
+PASS Main crossOriginIsolated case:
+PASS Missing HTTPS:
+PASS Missing COOP:same-origin:
+PASS Report-only:
+PASS Report-only + enforced:
+

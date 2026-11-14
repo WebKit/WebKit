@@ -1,0 +1,9 @@
+
+PASS Main
+PASS script same-origin + undefined
+PASS script same-origin + anonymous
+PASS script same-origin + use-credentials
+PASS script cross-origin + undefined
+PASS script cross-origin + anonymous
+PASS script cross-origin + use-credentials
+

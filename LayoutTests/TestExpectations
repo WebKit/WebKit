@@ -1133,11 +1133,10 @@ imported/w3c/web-platform-tests/html/rendering/widgets/appearance/appearance-ani
 imported/w3c/web-platform-tests/html/rendering/widgets/appearance/appearance-transition-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/modal-dialog-selection.html [ Pass Failure ]
 
-# Cross-Origin-Embedder-Policy: credentialless is not supported.
-imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless
-imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/no-cors-omit.https.window.html [ Pass ]
+# Flaky: the test sets src before crossOrigin, and the first load can start in between.
+imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/image.https.window.html [ Skip ]
 
-# Document-Isolation-Policy requires site isolation and is partially implemented.
+# Document-Isolation-Policy requires site isolation.
 webkit.org/b/325516 imported/w3c/web-platform-tests/html/document-isolation-policy [ Skip ]
 webkit.org/b/325516 http/tests/document-isolation-policy [ Skip ]
 
