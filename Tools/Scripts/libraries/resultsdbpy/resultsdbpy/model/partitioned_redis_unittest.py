@@ -80,3 +80,18 @@ class PartitionedRedisUnittest(WaitForDockerTestCase):
             self.assertIn(key.decode('utf-8'), ['iter-a', 'iter-b'])
         for key in redis_2.scan_iter('iter*'):
             self.assertIn(key.decode('utf-8'), ['iter-c', 'iter-d'])
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis)
+    def test_sorted_set(self, redis=StrictRedis):
+        shared = redis()
+        redis_1 = PartitionedRedis(shared, self.PARTITION_1)
+        redis_2 = PartitionedRedis(shared, self.PARTITION_2)
+        redis_1.zadd('set', {'a': 1, 'b': 2, 'c': 3})
+        redis_2.zadd('set', {'d': 4})
+
+        self.assertEqual(redis_1.zrangebyscore('set', 2, '+inf', withscores=True), [(b'b', 2.0), (b'c', 3.0)])
+        self.assertEqual(redis_2.zrangebyscore('set', '-inf', '+inf'), [b'd'])
+
+        redis_1.zremrangebyscore('set', '-inf', 2)
+        self.assertEqual(redis_1.zrangebyscore('set', '-inf', '+inf'), [b'c'])
+        self.assertEqual(redis_2.zrangebyscore('set', '-inf', '+inf'), [b'd'])
