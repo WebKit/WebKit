@@ -20,11 +20,11 @@ layer at (0,0) size 450x500
               chunk 1 (vertical) text run 3 at (29.64,16.39) startOffset 2 endOffset 3 height 17.00: "x"
               chunk 1 (vertical) text run 4 at (34.53,12.92) startOffset 3 endOffset 4 height 17.00: "t"
               chunk 1 (vertical) text run 5 at (38.03,10.99) startOffset 4 endOffset 5 height 17.00: " "
-            RenderSVGTSpan {tspan} at (0,0) size 26x20
+            RenderSVGInline {tspan} at (0,0) size 26x20
               RenderSVGInlineText {#text} at (27,0) size 25x20
                 chunk 1 (vertical) text run 1 at (43.70,9.08) startOffset 0 endOffset 1 height 17.00: "o"
                 chunk 1 (vertical) text run 2 at (51.60,9.54) startOffset 1 endOffset 2 height 17.00: "n"
-            RenderSVGTSpan {tspan} at (0,0) size 42x40
+            RenderSVGInline {tspan} at (0,0) size 42x40
               RenderSVGInlineText {#text} at (41,14) size 42x40
                 chunk 1 (vertical) text run 1 at (56.90,12.32) startOffset 0 endOffset 1 height 17.00: " "
                 chunk 1 (vertical) text run 2 at (60.99,15.98) startOffset 1 endOffset 2 height 17.00: "a"
@@ -49,9 +49,9 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (13,5) size 103x34 contains 1 chunk(s)
           RenderSVGTextPath {textPath} at (0,0) size 103x34
             RenderSVGInlineText {#text} at (-13,-5) size 0x0
-            RenderSVGTSpan {tspan} at (0,0) size 1x1
+            RenderSVGInline {tspan} at (0,0) size 1x1
               RenderSVGInlineText {#text} at (-13,-5) size 0x0
-            RenderSVGTSpan {tspan} at (0,0) size 103x34
+            RenderSVGInline {tspan} at (0,0) size 103x34
               RenderSVGInlineText {#text} at (0,0) size 103x34
                 chunk 1 (middle anchor, vertical) text run 1 at (21.05,24.03) startOffset 0 endOffset 1 height 17.00: " "
                 chunk 1 (middle anchor, vertical) text run 2 at (34.11,13.19) startOffset 1 endOffset 2 height 17.00: "a"
@@ -76,9 +76,9 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (11,3) size 62x31 contains 1 chunk(s)
           RenderSVGTextPath {textPath} at (0,0) size 61x30
             RenderSVGInlineText {#text} at (-11,-3) size 0x0
-            RenderSVGTSpan {tspan} at (0,0) size 1x1
+            RenderSVGInline {tspan} at (0,0) size 1x1
               RenderSVGInlineText {#text} at (-11,-3) size 0x0
-            RenderSVGTSpan {tspan} at (0,0) size 61x30
+            RenderSVGInline {tspan} at (0,0) size 61x30
               RenderSVGInlineText {#text} at (0,0) size 61x30
                 chunk 1 (end anchor, vertical) text run 1 at (23.40,21.80) startOffset 3 endOffset 4 height 17.00: "P"
                 chunk 1 (end anchor, vertical) text run 2 at (36.90,11.56) startOffset 4 endOffset 5 height 17.00: "a"
@@ -105,11 +105,11 @@ layer at (0,0) size 450x500
               chunk 1 (vertical) text run 3 at (89.82,36.09) startOffset 2 endOffset 3 height 17.00: "x"
               chunk 1 (vertical) text run 4 at (95.77,35.70) startOffset 3 endOffset 4 height 17.00: "t"
               chunk 1 (vertical) text run 5 at (99.48,34.22) startOffset 4 endOffset 5 height 17.00: " "
-            RenderSVGTSpan {tspan} at (0,0) size 25x25
+            RenderSVGInline {tspan} at (0,0) size 25x25
               RenderSVGInlineText {#text} at (21,1) size 24x24
                 chunk 1 (vertical) text run 1 at (104.30,30.68) startOffset 0 endOffset 1 height 17.00: "o"
                 chunk 1 (vertical) text run 2 at (110.24,25.33) startOffset 1 endOffset 2 height 17.00: "n"
-            RenderSVGTSpan {tspan} at (0,0) size 29x24
+            RenderSVGInline {tspan} at (0,0) size 29x24
               RenderSVGInlineText {#text} at (41,0) size 28x24
                 chunk 1 (vertical) text run 1 at (115.14,21.87) startOffset 0 endOffset 1 height 17.00: " "
                 chunk 1 (vertical) text run 2 at (119.94,19.20) startOffset 1 endOffset 2 height 17.00: "a"
@@ -133,11 +133,11 @@ layer at (0,0) size 450x500
             RenderSVGInlineText {#text} at (0,11) size 30x24
               chunk 1 (middle anchor, vertical) text run 1 at (23.40,21.80) startOffset 3 endOffset 4 height 17.00: "t"
               chunk 1 (middle anchor, vertical) text run 2 at (36.90,11.56) startOffset 4 endOffset 5 height 17.00: " "
-            RenderSVGTSpan {tspan} at (0,0) size 35x29
+            RenderSVGInline {tspan} at (0,0) size 35x29
               RenderSVGInlineText {#text} at (32,0) size 35x29
                 chunk 1 (middle anchor, vertical) text run 1 at (53.23,10.16) startOffset 0 endOffset 1 height 17.00: "o"
                 chunk 1 (middle anchor, vertical) text run 2 at (66.14,21.06) startOffset 1 endOffset 2 height 17.00: "n"
-            RenderSVGTSpan {tspan} at (0,0) size 63x32
+            RenderSVGInline {tspan} at (0,0) size 63x32
               RenderSVGInlineText {#text} at (55,16) size 63x31
                 chunk 1 (middle anchor, vertical) text run 1 at (79.22,31.88) startOffset 0 endOffset 1 height 17.00: " "
                 chunk 1 (middle anchor, vertical) text run 2 at (95.28,35.82) startOffset 1 endOffset 2 height 17.00: "a"
@@ -164,11 +164,11 @@ layer at (0,0) size 450x500
               chunk 1 (end anchor, vertical) text run 3 at (66.67,21.57) startOffset 2 endOffset 3 height 17.00: "x"
               chunk 1 (end anchor, vertical) text run 4 at (71.09,25.64) startOffset 3 endOffset 4 height 17.00: "t"
               chunk 1 (end anchor, vertical) text run 5 at (74.14,28.21) startOffset 4 endOffset 5 height 17.00: " "
-            RenderSVGTSpan {tspan} at (0,0) size 20x22
+            RenderSVGInline {tspan} at (0,0) size 20x22
               RenderSVGInlineText {#text} at (29,12) size 20x22
                 chunk 1 (end anchor, vertical) text run 1 at (79.00,31.74) startOffset 0 endOffset 1 height 17.00: "o"
                 chunk 1 (end anchor, vertical) text run 2 at (86.15,35.26) startOffset 1 endOffset 2 height 17.00: "n"
-            RenderSVGTSpan {tspan} at (0,0) size 41x37
+            RenderSVGInline {tspan} at (0,0) size 41x37
               RenderSVGInlineText {#text} at (42,7) size 40x37
                 chunk 1 (end anchor, vertical) text run 1 at (92.05,36.21) startOffset 0 endOffset 1 height 17.00: " "
                 chunk 1 (end anchor, vertical) text run 2 at (97.42,35.17) startOffset 1 endOffset 2 height 17.00: "a"
@@ -198,10 +198,10 @@ layer at (0,0) size 450x500
               chunk 1 (vertical) text run 3 at (77.36,30.64) startOffset 2 endOffset 3 height 17.00: "x"
               chunk 1 (vertical) text run 4 at (93.08,36.16) startOffset 3 endOffset 4 height 17.00: "t"
               chunk 1 (vertical) text run 5 at (107.38,27.74) startOffset 4 endOffset 5 height 17.00: " "
-            RenderSVGTSpan {tspan} at (0,0) size 20x15
+            RenderSVGInline {tspan} at (0,0) size 20x15
               RenderSVGInlineText {#text} at (66,2) size 19x15
                 chunk 1 (vertical) text run 1 at (121.54,18.46) startOffset 0 endOffset 1 height 17.00: "o"
-            RenderSVGTSpan {tspan} at (0,0) size 1x1
+            RenderSVGInline {tspan} at (0,0) size 1x1
               RenderSVGInlineText {#text} at (-38,-1) size 0x0
           RenderSVGInlineText {#text} at (0,0) size 0x0
         RenderSVGText {text} at (35,50) size 65x13 contains 1 chunk(s)
@@ -222,11 +222,11 @@ layer at (0,0) size 450x500
               chunk 1 (middle anchor, vertical) text run 1 at (18.90,26.12) startOffset 2 endOffset 3 height 17.00: "x"
               chunk 1 (middle anchor, vertical) text run 2 at (23.22,21.96) startOffset 3 endOffset 4 height 17.00: "t"
               chunk 1 (middle anchor, vertical) text run 3 at (26.19,19.27) startOffset 4 endOffset 5 height 17.00: " "
-            RenderSVGTSpan {tspan} at (0,0) size 25x24
+            RenderSVGInline {tspan} at (0,0) size 25x24
               RenderSVGInlineText {#text} at (6,0) size 24x24
                 chunk 1 (middle anchor, vertical) text run 1 at (30.83,15.48) startOffset 0 endOffset 1 height 17.00: "o"
                 chunk 1 (middle anchor, vertical) text run 2 at (37.58,11.21) startOffset 1 endOffset 2 height 17.00: "n"
-            RenderSVGTSpan {tspan} at (0,0) size 43x37
+            RenderSVGInline {tspan} at (0,0) size 43x37
               RenderSVGInlineText {#text} at (29,7) size 42x36
                 chunk 1 (middle anchor, vertical) text run 1 at (43.21,9.18) startOffset 0 endOffset 1 height 17.00: " "
                 chunk 1 (middle anchor, vertical) text run 2 at (48.68,8.90) startOffset 1 endOffset 2 height 17.00: "a"
@@ -248,9 +248,9 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (8,5) size 32x32 contains 1 chunk(s)
           RenderSVGTextPath {textPath} at (0,0) size 32x31
             RenderSVGInlineText {#text} at (-8,-5) size 0x0
-            RenderSVGTSpan {tspan} at (0,0) size 1x1
+            RenderSVGInline {tspan} at (0,0) size 1x1
               RenderSVGInlineText {#text} at (-8,-5) size 0x0
-            RenderSVGTSpan {tspan} at (0,0) size 32x31
+            RenderSVGInline {tspan} at (0,0) size 32x31
               RenderSVGInlineText {#text} at (0,0) size 32x31
                 chunk 1 (end anchor, vertical) text run 1 at (17.12,27.88) startOffset 3 endOffset 4 height 17.00: "P"
                 chunk 1 (end anchor, vertical) text run 2 at (22.49,22.65) startOffset 4 endOffset 5 height 17.00: "a"
@@ -271,7 +271,7 @@ layer at (0,0) size 450x500
           RenderSVGPath {path} at (39,369) size 92x51 [transform={m=((0.30,0.00)(0.00,0.50)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#0000FF] [stroke width=2.00]}] [data="M 100 100 C 100 0 400 0 400 100"]
         RenderSVGText {text} at (12,3) size 117x47 contains 1 chunk(s)
           RenderSVGTextPath {textPath} at (0,0) size 116x47
-            RenderSVGTSpan {tspan} at (0,0) size 33x44
+            RenderSVGInline {tspan} at (0,0) size 33x44
               RenderSVGInlineText {#text} at (0,3) size 33x43
                 chunk 1 (vertical) text run 1 at (30.11,47.00) startOffset 0 endOffset 1 height 17.00: "s"
                 chunk 1 (vertical) text run 2 at (31.29,40.11) startOffset 1 endOffset 2 height 17.00: "u"
@@ -284,7 +284,7 @@ layer at (0,0) size 450x500
               chunk 1 (vertical) text run 3 at (58.66,14.79) startOffset 2 endOffset 3 height 17.00: "n"
               chunk 1 (vertical) text run 4 at (66.47,13.11) startOffset 3 endOffset 4 height 17.00: "d"
               chunk 1 (vertical) text run 5 at (72.45,12.55) startOffset 4 endOffset 5 height 17.00: " "
-            RenderSVGTSpan {tspan} at (0,0) size 24x21
+            RenderSVGInline {tspan} at (0,0) size 24x21
               RenderSVGInlineText {#text} at (60,8) size 23x21
                 chunk 1 (vertical) text run 1 at (77.44,12.55) startOffset 0 endOffset 1 height 17.00: "s"
                 chunk 1 (vertical) text run 2 at (84.41,13.24) startOffset 1 endOffset 2 height 17.00: "u"
@@ -312,7 +312,7 @@ layer at (0,0) size 450x500
           RenderSVGPath {path} at (329,369) size 92x51 [transform={m=((0.30,0.00)(0.00,0.50)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#0000FF] [stroke width=2.00]}] [data="M 100 100 C 100 0 400 0 400 100"]
         RenderSVGText {text} at (18,3) size 108x50 contains 1 chunk(s)
           RenderSVGTextPath {textPath} at (0,0) size 108x49
-            RenderSVGTSpan {tspan} at (0,0) size 43x47
+            RenderSVGInline {tspan} at (0,0) size 43x47
               RenderSVGInlineText {#text} at (0,0) size 43x47
                 chunk 1 (vertical) text run 1 at (30.20,46.01) startOffset 0 endOffset 1 height 17.00: "p"
                 chunk 1 (vertical) text run 2 at (31.88,38.20) startOffset 1 endOffset 2 height 17.00: "o"
@@ -328,7 +328,7 @@ layer at (0,0) size 450x500
               chunk 1 (vertical) text run 3 at (73.44,12.52) startOffset 2 endOffset 3 height 17.00: "n"
               chunk 1 (vertical) text run 4 at (81.43,12.84) startOffset 3 endOffset 4 height 17.00: "d"
               chunk 1 (vertical) text run 5 at (87.36,13.79) startOffset 4 endOffset 5 height 17.00: " "
-            RenderSVGTSpan {tspan} at (0,0) size 41x45
+            RenderSVGInline {tspan} at (0,0) size 41x45
               RenderSVGInlineText {#text} at (67,4) size 40x44
                 chunk 1 (vertical) text run 1 at (93.14,15.35) startOffset 0 endOffset 1 height 17.00: "n"
                 chunk 1 (vertical) text run 2 at (100.06,18.24) startOffset 1 endOffset 2 height 17.00: "e"

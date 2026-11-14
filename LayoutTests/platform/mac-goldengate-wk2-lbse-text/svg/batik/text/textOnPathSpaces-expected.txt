@@ -15,7 +15,7 @@ layer at (2.28,-9.56) size 898x252 backgroundClip at (0,0) size 450x500 clip at 
   RenderSVGTransformableContainer {g} at (0,0.48) size 897.72x250.98
     RenderSVGText {text} at (0,0) size 72x44 contains 1 chunk(s)
       RenderSVGTextPath {textPath} at (0,0) size 72x44
-        RenderSVGTSpan {tspan} at (0,0) size 72x44
+        RenderSVGInline {tspan} at (0,0) size 72x44
           RenderSVGInlineText {#text} at (0,0) size 72x44
             chunk 1 text run 1 at (17.76,27.25) startOffset 0 endOffset 1 width 7.78: "s"
             chunk 1 text run 2 at (23.75,21.47) startOffset 1 endOffset 2 width 8.88: "a"
@@ -34,7 +34,7 @@ layer at (10.06,-9.11) size 891x252 backgroundClip at (0,0) size 450x500 clip at
   RenderSVGTransformableContainer {g} at (7.78,0.94) size 889.94x250.53
     RenderSVGText {text} at (0,0) size 107x51 contains 1 chunk(s)
       RenderSVGTextPath {textPath} at (0,0) size 107x51
-        RenderSVGTSpan {tspan} at (0,0) size 107x51
+        RenderSVGInline {tspan} at (0,0) size 107x51
           RenderSVGInlineText {#text} at (0,0) size 107x51
             chunk 1 text run 1 at (24.98,20.34) startOffset 0 endOffset 1 width 7.78: "s"
             chunk 1 text run 2 at (42.18,9.43) startOffset 1 endOffset 2 width 8.88: "a"
@@ -56,7 +56,7 @@ layer at (2.28,-9.89) size 898x252 backgroundClip at (0,0) size 450x500 clip at 
   RenderSVGTransformableContainer {g} at (0,0.16) size 897.72x251.31
     RenderSVGText {text} at (0,0) size 105x51 contains 1 chunk(s)
       RenderSVGTextPath {textPath} at (0,0) size 105x51
-        RenderSVGTSpan {tspan} at (0,0) size 105x51
+        RenderSVGInline {tspan} at (0,0) size 105x51
           RenderSVGInlineText {#text} at (0,0) size 105x51
             chunk 1 text run 1 at (17.76,27.25) startOffset 0 endOffset 1 width 7.78: "s"
             chunk 1 text run 2 at (31.41,15.05) startOffset 1 endOffset 2 width 8.88: "a"

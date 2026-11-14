@@ -14,7 +14,7 @@ layer at (72,113) size 306x15
   RenderSVGText {text} at (26,76) size 308x16 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 83x15
       chunk 1 (middle anchor) text run 1 at (71.75,125.00) startOffset 0 endOffset 15 width 82.68: "Some text goes "
-    RenderSVGTSpan {tspan} at (0,0) size 68x15
+    RenderSVGInline {tspan} at (0,0) size 68x15
       RenderSVGInlineText {#text} at (82,0) size 68x15
         chunk 1 (middle anchor) text run 1 at (154.43,125.00) startOffset 0 endOffset 15 width 67.15 RTL: "(right to left)"
     RenderSVGInlineText {#text} at (149,0) size 157x15
@@ -23,7 +23,7 @@ layer at (153,138) size 144x15
   RenderSVGText {text} at (107,101) size 146x16 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 33x15
       chunk 1 (middle anchor) text run 1 at (152.80,150.00) startOffset 0 endOffset 5 width 32.86: "Some "
-    RenderSVGTSpan {tspan} at (0,0) size 87x15
+    RenderSVGInline {tspan} at (0,0) size 87x15
       RenderSVGInlineText {#text} at (32,0) size 86x15
         chunk 1 (middle anchor) text run 1 at (185.66,150.00) startOffset 0 endOffset 1 width 4.33 RTL: ")"
         chunk 1 (middle anchor) text run 1 at (189.99,150.00) startOffset 0 endOffset 13 width 76.90: "embedded bidi"

@@ -53,7 +53,7 @@ layer at (0,0) size 800x600
         RenderSVGRect {rect} at (2,2) size 110x20 [fill={[type=SOLID] [color=#696969]}] [x=51.00] [y=581.00] [width=110.00] [height=20.00]
         RenderSVGRect {rect} at (1,1) size 110x20 [fill={[type=SOLID] [color=#DCDCDC]}] [x=50.00] [y=580.00] [width=110.00] [height=20.00]
         RenderSVGText {text} at (18,5) size 76x14 contains 1 chunk(s)
-          RenderSVGTSpan {tspan} at (0,0) size 76x14
+          RenderSVGInline {tspan} at (0,0) size 76x14
             RenderSVGInlineText {#text} at (0,0) size 76x14
               chunk 1 (middle anchor) text run 1 at (67.32,595.40) startOffset 0 endOffset 14 width 75.36: "Hide Scrollbar"
       RenderSVGTransformableContainer {g} at (120,0) size 112x22
@@ -61,7 +61,7 @@ layer at (0,0) size 800x600
         RenderSVGRect {rect} at (2,2) size 110x20 [fill={[type=SOLID] [color=#696969]}] [x=171.00] [y=581.00] [width=110.00] [height=20.00]
         RenderSVGRect {rect} at (1,1) size 110x20 [fill={[type=SOLID] [color=#DCDCDC]}] [x=170.00] [y=580.00] [width=110.00] [height=20.00]
         RenderSVGText {text} at (8,5) size 96x14 contains 1 chunk(s)
-          RenderSVGTSpan {tspan} at (0,0) size 96x14
+          RenderSVGInline {tspan} at (0,0) size 96x14
             RenderSVGInlineText {#text} at (0,0) size 96x14
               chunk 1 (middle anchor) text run 1 at (177.32,595.40) startOffset 0 endOffset 16 width 95.37: "Remove Scrollbar"
 layer at (0,0) size 900x200 backgroundClip at (0,0) size 800x200 clip at (0,0) size 800x200

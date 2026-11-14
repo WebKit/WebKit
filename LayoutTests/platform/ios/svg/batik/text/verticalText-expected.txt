@@ -185,7 +185,7 @@ layer at (0,0) size 450x500
           chunk 1 (vertical) text run 7 at (344.94,124.99) startOffset 6 endOffset 7 height 16.61: "e"
           chunk 1 (vertical) text run 8 at (344.94,131.65) startOffset 7 endOffset 8 height 16.61: "d"
           chunk 1 (vertical) text run 9 at (344.94,139.15) startOffset 8 endOffset 9 height 16.61: " "
-        RenderSVGTSpan {tspan} at (0,67) size 49x18
+        RenderSVGInline {tspan} at (0,67) size 49x18
           RenderSVGInlineText {#text} at (0,67) size 17x49
             chunk 1 (vertical) text run 1 at (344.94,142.90) startOffset 0 endOffset 1 height 16.61: "<"
             chunk 1 (vertical) text run 2 at (344.94,151.35) startOffset 1 endOffset 2 height 16.61: "t"
@@ -214,7 +214,7 @@ layer at (0,0) size 450x500
           chunk 1 (vertical) text run 7 at (394.94,124.99) startOffset 6 endOffset 7 height 16.61: "e"
           chunk 1 (vertical) text run 8 at (394.94,131.65) startOffset 7 endOffset 8 height 16.61: "d"
           chunk 1 (vertical) text run 9 at (394.94,139.15) startOffset 8 endOffset 9 height 16.61: " "
-        RenderSVGTSpan {tspan} at (4,67) size 167x9
+        RenderSVGInline {tspan} at (4,67) size 167x9
           RenderSVGInlineText {#text} at (4,67) size 8x167
             chunk 1 (vertical) text run 1 at (394.94,142.90) startOffset 0 endOffset 1 height 16.61: "o"
             chunk 1 (vertical) text run 2 at (394.94,159.51) startOffset 1 endOffset 2 height 16.61: "r"

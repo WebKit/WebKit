@@ -24,12 +24,12 @@ layer at (90,100.08) size 202x39
   RenderSVGTransformableContainer {g} at (0,0) size 201.86x38.41
 layer at (90,100.08) size 202x38
   RenderSVGText {text} at (0,0) size 202x39 contains 1 chunk(s)
-    RenderSVGTSpan {tspan} at (0,0) size 198x19
+    RenderSVGInline {tspan} at (0,0) size 198x19
       RenderSVGInlineText {#text} at (0,0) size 198x19
         chunk 1 text run 1 at (90.00,114.80) startOffset 0 endOffset 27 width 197.41: "Lorem ipsum dolor sit amet,"
     RenderSVGInlineText {#text} at (197,0) size 5x19
       chunk 1 text run 1 at (287.41,114.80) startOffset 0 endOffset 1 width 4.45: " "
-    RenderSVGTSpan {tspan} at (0,20) size 192x19
+    RenderSVGInline {tspan} at (0,20) size 192x19
       RenderSVGInlineText {#text} at (0,20) size 192x19
         chunk 1 text run 1 at (90.00,134.80) startOffset 0 endOffset 29 width 191.21: "consectetur adipisicing elit,"
     RenderSVGInlineText {#text} at (0,0) size 0x0
@@ -37,12 +37,12 @@ layer at (139.06,100.08) size 202x39
   RenderSVGTransformableContainer {g} at (49.06,0) size 201.88x38.41
 layer at (139.06,100.08) size 202x38
   RenderSVGText {text} at (0,0) size 202x39 contains 1 chunk(s)
-    RenderSVGTSpan {tspan} at (0,0) size 198x19
+    RenderSVGInline {tspan} at (0,0) size 198x19
       RenderSVGInlineText {#text} at (0,0) size 198x19
         chunk 1 (middle anchor) text run 1 at (139.07,114.80) startOffset 0 endOffset 27 width 197.41: "Lorem ipsum dolor sit amet,"
     RenderSVGInlineText {#text} at (197,0) size 5x19
       chunk 1 (middle anchor) text run 1 at (336.48,114.80) startOffset 0 endOffset 1 width 4.45: " "
-    RenderSVGTSpan {tspan} at (5,20) size 192x19
+    RenderSVGInline {tspan} at (5,20) size 192x19
       RenderSVGInlineText {#text} at (5,20) size 192x19
         chunk 1 (middle anchor) text run 1 at (144.39,134.80) startOffset 0 endOffset 29 width 191.21: "consectetur adipisicing elit,"
     RenderSVGInlineText {#text} at (0,0) size 0x0
@@ -50,12 +50,12 @@ layer at (188.14,100.08) size 202x39
   RenderSVGTransformableContainer {g} at (98.14,0) size 201.86x38.41
 layer at (188.14,100.08) size 202x38
   RenderSVGText {text} at (0,0) size 202x39 contains 1 chunk(s)
-    RenderSVGTSpan {tspan} at (0,0) size 198x19
+    RenderSVGInline {tspan} at (0,0) size 198x19
       RenderSVGInlineText {#text} at (0,0) size 198x19
         chunk 1 (end anchor) text run 1 at (188.15,114.80) startOffset 0 endOffset 27 width 197.41: "Lorem ipsum dolor sit amet,"
     RenderSVGInlineText {#text} at (197,0) size 5x19
       chunk 1 (end anchor) text run 1 at (385.55,114.80) startOffset 0 endOffset 1 width 4.45: " "
-    RenderSVGTSpan {tspan} at (10,20) size 192x19
+    RenderSVGInline {tspan} at (10,20) size 192x19
       RenderSVGInlineText {#text} at (10,20) size 192x19
         chunk 1 (end anchor) text run 1 at (198.79,134.80) startOffset 0 endOffset 29 width 191.21: "consectetur adipisicing elit,"
     RenderSVGInlineText {#text} at (0,0) size 0x0

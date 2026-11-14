@@ -44,6 +44,7 @@
 #include "SVGElementTypeHelpers.h"
 #include "SVGGElement.h"
 #include "SVGNames.h"
+#include "SVGTSpanElement.h"
 #include "SVGTitleElement.h"
 #include "SVGUseElement.h"
 #include "TypedElementDescendantIteratorInlines.h"
@@ -391,7 +392,7 @@ AccessibilityRole AccessibilitySVGObject::determineAccessibilityRole()
         return AccessibilityRole::SVGText;
     if (m_renderer->isRenderSVGTextPath())
         return AccessibilityRole::SVGTextPath;
-    if (m_renderer->isRenderSVGTSpan())
+    if (is<SVGTSpanElement>(element))
         return AccessibilityRole::SVGTSpan;
     if (is<SVGAElement>(element)) {
         if (element->isLink() || hasClickHandler())
