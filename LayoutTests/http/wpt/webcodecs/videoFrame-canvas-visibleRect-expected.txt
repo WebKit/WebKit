@@ -1,0 +1,11 @@
+
+PASS drawImage() draws the visible rectangle
+PASS drawImage() draws the visible rectangle at the display size
+PASS drawImage() draws the source rectangle
+PASS drawImage() takes the source rectangle within the visible rectangle
+PASS drawImage() draws nothing of a source rectangle past the visible rectangle
+PASS drawImage() draws the visible rectangle of a rotated frame
+PASS createImageBitmap() crops to the source rectangle
+PASS createImageBitmap() takes the visible rectangle
+PASS createImageBitmap() takes the source rectangle within the visible rectangle
+

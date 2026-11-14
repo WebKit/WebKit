@@ -638,6 +638,22 @@ RefPtr<VideoFrame> WebCodecsVideoFrame::internalFrameForRendering(ScriptExecutio
     return frame->updateOrientation(VideoFrameRotation::None, false, VideoFrame::ShouldClone::Yes);
 }
 
+FloatRect WebCodecsVideoFrame::renderingRect(const VideoFrame& renderedFrame) const
+{
+    auto orientation = renderedFrame.orientation();
+    FloatSize codedSize = renderedFrame.presentationSize();
+    auto orientedSize = orientation.usesWidthAsHeight() ? codedSize.transposedSize() : codedSize;
+    // Where the visible rectangle lands when the frame is drawn at its own size, oriented as drawNativeImage() does.
+    FloatRect visibleRect { static_cast<float>(m_data.visibleLeft), static_cast<float>(m_data.visibleTop), static_cast<float>(m_data.visibleWidth), static_cast<float>(m_data.visibleHeight) };
+    auto orientedVisibleRect = orientation.transformFromDefault(orientedSize).mapRect(visibleRect);
+    if (orientedVisibleRect.isEmpty() || !m_data.displayWidth || !m_data.displayHeight)
+        return { { }, orientedSize };
+
+    float scaleX = m_data.displayWidth / orientedVisibleRect.width();
+    float scaleY = m_data.displayHeight / orientedVisibleRect.height();
+    return { -orientedVisibleRect.x() * scaleX, -orientedVisibleRect.y() * scaleY, orientedSize.width() * scaleX, orientedSize.height() * scaleY };
+}
+
 double WebCodecsVideoFrame::rotation() const
 {
     return m_data.internalFrame ? static_cast<double>(m_data.internalFrame->rotation()) : 0;
