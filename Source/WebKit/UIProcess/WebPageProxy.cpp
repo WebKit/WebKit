@@ -223,6 +223,7 @@
 #include <WebCore/CaptureDeviceWithCapabilities.h>
 #include <WebCore/ChromeClient.h>
 #include <WebCore/CompositionHighlight.h>
+#include <WebCore/ContentFilter.h>
 #include <WebCore/CrossSiteNavigationDataTransfer.h>
 #include <WebCore/CryptoKey.h>
 #include <WebCore/DOMPasteAccess.h>
@@ -1195,7 +1196,7 @@ ProcessID WebPageProxy::gpuProcessID() const
     return 0;
 }
 
-void WebPageProxy::addAllowedFirstPartyForCookies(WebProcessProxy& process, const WebCore::RegistrableDomain& firstPartyForCookies, LoadedWebArchive loadedWebArchive, CompletionHandler<void()>&& completionHandler)
+void WebPageProxy::addAllowedFirstPartyForCookies(WebProcessProxy& process, const WebCore::Site& firstPartyForCookies, LoadedWebArchive loadedWebArchive, CompletionHandler<void()>&& completionHandler)
 {
     Ref networkProcess = websiteDataStore().networkProcess();
     // Record that this process is now legitimately hosting a frame of this page, so the network process can validate
@@ -2619,6 +2620,7 @@ void WebPageProxy::loadAlternateHTML(Ref<WebCore::DataSegment>&& htmlData, const
 
     pageLoadState->setPendingAPIRequest(transaction, { { }, unreachableURL });
     pageLoadState->setUnreachableURL(transaction, unreachableURL);
+    pageLoadState->setBaseURL(transaction, baseURL);
 
     if (RefPtr mainFrame = m_mainFrame)
         mainFrame->setUnreachableURL(unreachableURL);
@@ -2662,7 +2664,7 @@ void WebPageProxy::loadAlternateHTML(Ref<WebCore::DataSegment>&& htmlData, const
         });
     };
 
-    addAllowedFirstPartyForCookies(process, RegistrableDomain(baseURL), LoadedWebArchive::No, WTF::move(continueLoad));
+    addAllowedFirstPartyForCookies(process, Site { baseURL }, LoadedWebArchive::No, WTF::move(continueLoad));
 }
 
 void WebPageProxy::stopLoading()
@@ -6087,7 +6089,7 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
             if (frame->isMainFrame()) {
                 Ref process { sharedProcess->process() };
                 auto shutdownPreventingScope = process->shutdownPreventingScope();
-                addAllowedFirstPartyForCookies(sharedProcess->process(), site.domain(), LoadedWebArchive::No, [
+                addAllowedFirstPartyForCookies(sharedProcess->process(), site, LoadedWebArchive::No, [
                     process = WTF::move(process),
                     shutdownPreventingScope = WTF::move(shutdownPreventingScope),
                     continueWithProcessForNavigation = WTF::move(continueWithProcessForNavigation)
@@ -6526,12 +6528,12 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
         continuation = [
             protectedThis = Ref { *this },
             continuation = WTF::move(continuation),
-            navigationDomain = RegistrableDomain(navigation.currentRequest().url()),
+            navigationSite = Site { navigation.currentRequest().url() },
             process,
             preventProcessShutdownScope = process->shutdownPreventingScope(),
             loadedWebArchive
         ] () mutable {
-            protectedThis->addAllowedFirstPartyForCookies(process, navigationDomain, loadedWebArchive, WTF::move(continuation));
+            protectedThis->addAllowedFirstPartyForCookies(process, navigationSite, loadedWebArchive, WTF::move(continuation));
         };
     }
 
@@ -8273,6 +8275,24 @@ static bool shouldPrewarmWebProcessOnProvisionalLoad()
 #endif
 }
 
+static bool isValidProvisionalLoadURL(const PageLoadState& pageLoadState, const URL& frameURL, const URL& provisionalURL)
+{
+    if (provisionalURL.isEmpty() || provisionalURL.isAboutBlank())
+        return true;
+
+    auto areURLsRelated = [](auto& url1, auto& url2) {
+        if (!url1.protocolIsInHTTPFamily())
+            return url1.protocol() == url2.protocol();
+        return WebCore::SecurityOriginData::fromURL(url1) == WebCore::SecurityOriginData::fromURL(url2);
+    };
+    return areURLsRelated(pageLoadState.pendingAPIRequestURL(), provisionalURL)
+        || areURLsRelated(frameURL, provisionalURL)
+#if ENABLE(CONTENT_FILTERING)
+        || areURLsRelated(WebCore::ContentFilter::blockedPageURL(), provisionalURL)
+#endif
+        || areURLsRelated(pageLoadState.baseURL(), provisionalURL);
+}
+
 void WebPageProxy::didStartProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& process, FrameIdentifier frameID, FrameInfoData&& frameInfo, ResourceRequest&& request, std::optional<WebCore::NavigationIdentifier> navigationID, URL&& url, URL&& unreachableURL, const UserData& userData, WallTime timestamp)
 {
     RefPtr protectedPageClient { pageClient() };
@@ -8326,6 +8346,18 @@ void WebPageProxy::didStartProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& 
     if (navigation && frame->isMainFrame() && navigation->currentRequest().url().isValid())
         MESSAGE_CHECK(process, navigation->currentRequest().url() == url);
 
+    // When navigationID is null for a main frame we don't have a Navigation
+    // object to check the URL against. To avoid URL spoofing by a compromised
+    // WebProcess, validate the URL to make sure it is related to a known URL
+    // for this view.
+    bool shouldUpdatePageLoadState = true;
+    if (!navigation && frame->isMainFrame() && navigationID == std::nullopt) {
+        if (!isValidProvisionalLoadURL(internals().pageLoadState, frame->url(), url)) {
+            WEBPAGEPROXY_RELEASE_LOG_ERROR(Loading, "didStartProvisionalLoadForFrameShared: ignoring provisional URL from WebContent because it is unexpected");
+            shouldUpdatePageLoadState = false;
+        }
+    }
+
     LOG(Loading, "WebPageProxy %" PRIu64 " in process pid %i didStartProvisionalLoadForFrame to frameID %" PRIu64 ", navigationID %" PRIu64 ", url %s", identifier().toUInt64(), process->processID(), frameID.toUInt64(), navigationID ? navigationID->toUInt64() : 0, url.string().utf8().data());
     WEBPAGEPROXY_RELEASE_LOG(Loading, "didStartProvisionalLoadForFrame: frameID=%" PRIu64 ", isMainFrame=%d", frameID.toUInt64(), frame->isMainFrame());
 
@@ -8339,7 +8371,8 @@ void WebPageProxy::didStartProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& 
         process->didStartProvisionalLoadForMainFrame(url);
         reportPageLoadResult(ResourceError { ResourceError::Type::Cancellation });
         internals().pageLoadStart = MonotonicTime::now();
-        pageLoadState->didStartProvisionalLoad(transaction, url, unreachableURL);
+        if (shouldUpdatePageLoadState)
+            pageLoadState->didStartProvisionalLoad(transaction, url, unreachableURL);
         protectedPageClient->didStartProvisionalLoadForMainFrame();
         closeOverlayedViews();
     }
@@ -10503,7 +10536,7 @@ void WebPageProxy::performProcessSwapForNavigationResponse(API::Navigation& navi
 {
     auto preventProcessShutdown = processForNavigation->shutdownPreventingScope();
 
-    auto domain = RegistrableDomain { navigation.currentRequest().url() };
+    auto site = Site { navigation.currentRequest().url() };
     auto navigationID = navigation.navigationID();
     Ref process = processForNavigation.get();
 
@@ -10531,7 +10564,7 @@ void WebPageProxy::performProcessSwapForNavigationResponse(API::Navigation& navi
         completionHandler(destinationWebProcessIdentifier);
     };
 
-    addAllowedFirstPartyForCookies(process, domain, LoadedWebArchive::No, WTF::move(addCookiesCompletionHandler));
+    addAllowedFirstPartyForCookies(process, site, LoadedWebArchive::No, WTF::move(addCookiesCompletionHandler));
 }
 
 void WebPageProxy::triggerBrowsingContextGroupSwitchForNavigation(WebCore::NavigationIdentifier navigationID, BrowsingContextGroupSwitchDecision browsingContextGroupSwitchDecision, const Site& responseSite, NetworkResourceLoadIdentifier existingNetworkResourceLoadIdentifierToResume, CompletionHandler<void(std::optional<WebCore::ProcessIdentifier> destinationWebProcess)>&& completionHandler)
