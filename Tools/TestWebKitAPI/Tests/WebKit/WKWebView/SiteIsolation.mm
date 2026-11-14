@@ -23485,6 +23485,33 @@ TEST(SiteIsolation, PrintProcessExitsWhenIdle)
 }
 
 #if PLATFORM(MAC)
+TEST(SiteIsolation, GetPDFFirstPageSizeInCrossSiteFrame)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body><iframe src='https://b.com/test.pdf'></iframe></body>"_s } },
+        { "/test.pdf"_s, pdfResponse() },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    RetainPtr uiDelegate = adoptNS([PDFPrintUIDelegate new]);
+    [webView setUIDelegate:uiDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
+
+    [webView evaluateJavaScript:@"window.print()" inFrame:[webView firstChildFrame] completionHandler:nil];
+    auto printedSize = [uiDelegate waitForPageSize];
+    EXPECT_NEAR(printedSize.height, 28.799999, .00001);
+    EXPECT_NEAR(printedSize.width, 129.600006, .00001);
+
+    __block bool receivedSize = false;
+    [webView _getPDFFirstPageSizeInFrame:[uiDelegate lastPrintedFrame] completionHandler:^(CGSize requestedSize) {
+        EXPECT_NEAR(requestedSize.height, 28.799999, .00001);
+        EXPECT_NEAR(requestedSize.width, 129.600006, .00001);
+        receivedSize = true;
+    }];
+    Util::run(&receivedSize);
+}
+
 TEST(SiteIsolation, PrintProcessIsKeptUntilPrintingEnds)
 {
     HTTPServer server({
