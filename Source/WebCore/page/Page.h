@@ -1320,7 +1320,7 @@ public:
     void opportunisticallyRunIdleCallbacks(MonotonicTime deadline);
     WEBCORE_EXPORT void performOpportunisticallyScheduledTasks(MonotonicTime deadline);
     void deleteRemovedNodesAndDetachedRenderers();
-    String ensureMediaKeysStorageDirectoryForOrigin(const SecurityOriginData&);
+    String ensureMediaKeysStorageDirectoryForOrigin(const SecurityOriginData&, std::optional<FrameIdentifier>);
     WEBCORE_EXPORT void setMediaKeysStorageDirectory(const String&);
 
     bool isWaitingForLoadToFinish() const { return m_isWaitingForLoadToFinish; }

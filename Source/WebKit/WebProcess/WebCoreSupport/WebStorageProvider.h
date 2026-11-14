@@ -25,6 +25,10 @@
 
 #pragma once
 
+#include "Logging.h"
+#include "MessageSender.h"
+#include "WebProcess.h"
+#include "WebProcessProxyMessages.h"
 #include "WebStorageConnection.h"
 #include <WebCore/StorageProvider.h>
 #include <WebCore/StorageUtilities.h>
@@ -35,8 +39,9 @@ namespace WebKit {
 class WebStorageProvider final : public WebCore::StorageProvider {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(WebStorageProvider);
 public:
-    WebStorageProvider(const String& mediaKeysStorageDirectory, FileSystem::Salt mediaKeysStorageSalt)
-        : m_mediaKeysStorageDirectory(mediaKeysStorageDirectory)
+    WebStorageProvider(WebPageProxyIdentifier webPageProxyID, const String& mediaKeysStorageDirectory, FileSystem::Salt mediaKeysStorageSalt)
+        : m_webPageProxyID(webPageProxyID)
+        , m_mediaKeysStorageDirectory(mediaKeysStorageDirectory)
         , m_mediaKeysStorageSalt(mediaKeysStorageSalt)
     {
     }
@@ -63,12 +68,28 @@ private:
         return originDirectory;
     }
 
+    String ensureMediaKeysStorageDirectoryForOrigin(const WebCore::SecurityOriginData& origin, std::optional<WebCore::FrameIdentifier> frameID) final
+    {
+        RELEASE_LOG(Media, "ensureMediaKeysStorageDirectoryForOrigin %" PRIu64, m_webPageProxyID.toUInt64());
+        if (m_mediaKeysStorageDirectory.isEmpty())
+            return emptyString();
+        if (!frameID)
+            return emptyString();
+
+        WebProcess::singleton().send(Messages::WebProcessProxy::EnsureMediaKeysStorageDirectory(*frameID));
+
+        auto originDirectoryName = WebCore::StorageUtilities::encodeSecurityOriginForFileName(m_mediaKeysStorageSalt, origin);
+        auto originDirectory = FileSystem::pathByAppendingComponent(m_mediaKeysStorageDirectory, originDirectoryName);
+        return originDirectory;
+    }
+
     void setMediaKeysStorageDirectory(const String&) final
     {
         RELEASE_ASSERT_NOT_REACHED();
     }
 
     const RefPtr<WebStorageConnection> m_connection;
+    WebPageProxyIdentifier m_webPageProxyID;
     String m_mediaKeysStorageDirectory;
     FileSystem::Salt m_mediaKeysStorageSalt;
 };

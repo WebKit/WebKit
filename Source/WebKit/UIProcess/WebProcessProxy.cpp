@@ -108,6 +108,7 @@
 #include <WebCore/SerializedCryptoKeyWrap.h>
 #include <WebCore/SerializedScriptValue.h>
 #include <WebCore/SharedMemory.h>
+#include <WebCore/StorageUtilities.h>
 #include <WebCore/SuddenTermination.h>
 #include <WebCore/WrappedCryptoKey.h>
 #include <algorithm>
@@ -4320,6 +4321,37 @@ void WebProcessProxy::commitOffscreenCanvasPlaceholderFrame(WebCore::RemotePlace
     }
 }
 #endif
+
+void WebProcessProxy::ensureMediaKeysStorageDirectory(WebCore::FrameIdentifier frameID)
+{
+    WEBPROCESSPROXY_RELEASE_LOG(Media, "ensureMediaKeysStorageDirectory: frameID = %" PRIu64, frameID.toUInt64());
+
+    RefPtr frame = WebFrameProxy::webFrame(frameID);
+    if (!frame) {
+        WEBPROCESSPROXY_RELEASE_LOG_ERROR(Media, "ensureMediaKeysStorageDirectory: frame not found");
+        return;
+    }
+    MESSAGE_CHECK(frame->process() == *this);
+    RefPtr page = frame->page();
+    if (!page) {
+        WEBPROCESSPROXY_RELEASE_LOG_ERROR(Media, "ensureMediaKeysStorageDirectory: page not found");
+        return;
+    }
+    if (page->sessionID().isEphemeral())
+        return;
+
+    Ref dataStore = page->websiteDataStore();
+    auto mediaKeysStorageSalt = dataStore->mediaKeysStorageSalt();
+    auto& resolvedDirectories = dataStore->resolvedDirectories();
+    String mediaKeysStorageDirectory = resolvedDirectories.mediaKeysStorageDirectory;
+    if (mediaKeysStorageDirectory.isEmpty())
+        return;
+    auto origin = frame->documentSecurityOriginData();
+
+    auto originDirectoryName = WebCore::StorageUtilities::encodeSecurityOriginForFileName(mediaKeysStorageSalt, origin);
+    auto originDirectory = FileSystem::pathByAppendingComponent(mediaKeysStorageDirectory, originDirectoryName);
+    WebCore::StorageUtilities::writeOriginToFile(FileSystem::pathByAppendingComponent(originDirectory, "origin"_s), WebCore::ClientOrigin { origin, origin });
+}
 
 } // namespace WebKit
 

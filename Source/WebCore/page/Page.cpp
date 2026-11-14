@@ -5684,12 +5684,12 @@ void Page::removeRootFrame(LocalFrame& frame)
     chrome().client().rootFrameRemoved(frame);
 }
 
-String Page::ensureMediaKeysStorageDirectoryForOrigin(const SecurityOriginData& origin)
+String Page::ensureMediaKeysStorageDirectoryForOrigin(const SecurityOriginData& origin, std::optional<FrameIdentifier> frameID)
 {
     if (usesEphemeralSession())
         return emptyString();
 
-    return m_storageProvider->ensureMediaKeysStorageDirectoryForOrigin(origin);
+    return m_storageProvider->ensureMediaKeysStorageDirectoryForOrigin(origin, frameID);
 }
 
 void Page::setMediaKeysStorageDirectory(const String& directory)
