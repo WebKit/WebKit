@@ -603,6 +603,12 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
         if (discontinuities.length)
             visibleEndTime = discontinuities[0].startTime;
 
+        // The last data point is extended to `visibleEndTime`, so don't let the graph
+        // show data past the end of the last received record, matching the overview graph.
+        let lastRecord = this.representedObject.records.lastValue;
+        if (lastRecord && lastRecord.endTime < visibleEndTime)
+            visibleEndTime = lastRecord.endTime;
+
         function bestThreadLayoutMax(value) {
             if (value > 100)
                 return Math.ceil(value);
