@@ -49,7 +49,6 @@ extern bool wasPrompted;
 extern bool didFinishNavigationBoolean;
 extern bool didCreateWebView;
 extern bool receivedLoadedMessage;
-extern bool receivedFullscreenChangeMessage;
 
 void resetGlobalState();
 

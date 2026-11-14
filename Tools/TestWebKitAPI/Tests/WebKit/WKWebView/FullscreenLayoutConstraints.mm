@@ -27,27 +27,12 @@
 
 #if PLATFORM(MAC)
 
-#import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
-
-@interface FullscreenStateChangeMessageHandler : NSObject <WKScriptMessageHandler>
-@end
-
-@implementation FullscreenStateChangeMessageHandler
-- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
-{
-    NSString *bodyString = (NSString *)[message body];
-    if ([bodyString isEqualToString:@"fullscreenchange"])
-        receivedFullscreenChangeMessage = true;
-    else if ([bodyString isEqualToString:@"load"])
-        receivedLoadedMessage = true;
-}
-@end
 
 namespace TestWebKitAPI {
 
@@ -56,8 +41,15 @@ TEST(Fullscreen, LayoutConstraints)
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration preferences].elementFullscreenEnabled = YES;
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
-    RetainPtr<FullscreenStateChangeMessageHandler> handler = adoptNS([[FullscreenStateChangeMessageHandler alloc] init]);
-    [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"fullscreenStateChangeHandler"];
+
+    bool receivedLoadedMessage = false;
+    bool receivedFullscreenChangeMessage = false;
+    [webView performAfterReceivingMessage:@"load" action:[&] {
+        receivedLoadedMessage = true;
+    }];
+    [webView performAfterReceivingMessage:@"fullscreenchange" action:[&] {
+        receivedFullscreenChangeMessage = true;
+    }];
 
     RetainPtr window { webView.get().hostWindow };
     webView.get().translatesAutoresizingMaskIntoConstraints = NO;

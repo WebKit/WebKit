@@ -25,7 +25,6 @@
 
 #import "config.h"
 
-#import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/cocoa/TestCocoa.h"
 #import "Helpers/cocoa/TestCocoaImageAndCocoaColor.h"
@@ -97,20 +96,6 @@
 @interface WKWebView (ObscuredContentInsets) <NSScrollViewSeparatorTrackingAdapter>
 @end
 
-@interface FullscreenChangeMessageHandler : NSObject <WKScriptMessageHandler>
-@end
-
-@implementation FullscreenChangeMessageHandler
-- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
-{
-    NSString *bodyString = (NSString *)[message body];
-    if ([bodyString isEqualToString:@"fullscreenchange"])
-        receivedFullscreenChangeMessage = true;
-    else if ([bodyString isEqualToString:@"load"])
-        receivedLoadedMessage = true;
-}
-@end
-
 #endif // PLATFORM(MAC)
 
 namespace TestWebKitAPI {
@@ -121,9 +106,16 @@ TEST(TopContentInset, Fullscreen)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration preferences].elementFullscreenEnabled = YES;
-    RetainPtr<FullscreenChangeMessageHandler> handler = adoptNS([[FullscreenChangeMessageHandler alloc] init]);
-    [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"fullscreenChangeHandler"];
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
+
+    bool receivedLoadedMessage = false;
+    bool receivedFullscreenChangeMessage = false;
+    [webView performAfterReceivingMessage:@"load" action:[&] {
+        receivedLoadedMessage = true;
+    }];
+    [webView performAfterReceivingMessage:@"fullscreenchange" action:[&] {
+        receivedFullscreenChangeMessage = true;
+    }];
     [webView _setTopContentInset:10];
     [webView _setAutomaticallyAdjustsContentInsets:NO];
 

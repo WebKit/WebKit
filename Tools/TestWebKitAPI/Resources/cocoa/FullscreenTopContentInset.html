@@ -3,10 +3,10 @@
 <head>
     <script>
         function load() {
-            window.webkit.messageHandlers.fullscreenChangeHandler.postMessage('load');
+            window.webkit.messageHandlers.testHandler.postMessage('load');
         }
         document.addEventListener('webkitfullscreenchange', function(event) {
-            window.webkit.messageHandlers.fullscreenChangeHandler.postMessage('fullscreenchange');
+            window.webkit.messageHandlers.testHandler.postMessage('fullscreenchange');
         });
         document.addEventListener('mousedown', function(event) {
             // Toggle fullscreen

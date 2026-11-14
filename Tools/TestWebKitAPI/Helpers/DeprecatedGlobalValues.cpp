@@ -43,7 +43,6 @@ bool wasPrompted { false };
 bool didFinishNavigationBoolean { false };
 bool didCreateWebView { false };
 bool receivedLoadedMessage { false };
-bool receivedFullscreenChangeMessage { false };
 
 void resetGlobalState()
 {
