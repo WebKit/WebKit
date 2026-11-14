@@ -37,6 +37,8 @@
 #include "CSSPropertyParserState.h"
 #include "CSSURLValue.h"
 #include "CSSValueKeywords.h"
+#include <wtf/HashSet.h>
+#include <wtf/text/StringHash.h>
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
@@ -86,6 +88,7 @@ std::optional<CSS::URL> consumeURLRaw(CSSParserTokenRange& range, CSS::PropertyP
                 return { };
         } else {
             CSS::URLLinkParameterList::Container linkParameters;
+            HashSet<String, ASCIICaseInsensitiveHash> unknownModifierNames;
 
             while (!args.atEnd()) {
                 switch (args.peek().functionId()) {
@@ -152,8 +155,20 @@ std::optional<CSS::URL> consumeURLRaw(CSSParserTokenRange& range, CSS::PropertyP
                     linkParameters.append(WTF::move(*parameter));
                     break;
                 }
-                default:
-                    return { };
+                default: {
+                    // Unknown <url-modifier>s are ignored. See https://github.com/w3c/csswg-drafts/issues/1603#issuecomment-467221081.
+                    // NOTE: The spec / resolution doesn't say whether an unknown <url-modifier> may be repeated but WPT expects a repeat to be invalid.
+                    auto& modifier = args.peek();
+                    if (modifier.type() != IdentToken && modifier.type() != FunctionToken)
+                        return { };
+                    if (!unknownModifierNames.add(modifier.value().toString()).isNewEntry)
+                        return { };
+                    if (modifier.type() == FunctionToken)
+                        consumeFunction(args);
+                    else
+                        args.consumeIncludingWhitespace();
+                    break;
+                }
                 }
             }
 
