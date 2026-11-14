@@ -959,6 +959,7 @@ webkit.org/b/302413 inspector/timeline/timeline-event-TimerInstall.html [ Skip ]
 # Keep these tests out of the [ Pass Timeout ] above.
 inspector/timeline/timeline-recording-multiple-targets.html [ Pass ]
 inspector/timeline/timeline-recording-stop-waiting.html [ Pass ]
+inspector/timeline/timeline-recording-stop-waiting-late-events.html [ Pass ]
 webkit.org/b/191539 http/tests/inspector/network/resource-security-connection.html [ Skip ]
 
 # Touch events are not enabled on Mac
