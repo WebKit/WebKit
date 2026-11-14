@@ -2667,6 +2667,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/WebGPUFramePacer.h
     platform/graphics/WidthIterator.h
     platform/graphics/WindRule.h
+    platform/graphics/libYUV.h
 
     platform/graphics/angle/ANGLEHeaders.h
     platform/graphics/angle/ANGLEUtilities.h
