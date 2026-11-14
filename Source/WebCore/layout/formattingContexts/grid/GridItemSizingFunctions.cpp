@@ -64,7 +64,7 @@ GridItemSizingFunctions GridItemSizingFunctions::inlineAxis(const IntegrationUti
                 },
                 [&](const CSS::Keyword::Auto&) {
                     auto gridAreaMaximumInlineSize = GridLayoutUtils::gridAreaMaximumSize(gridItem.columnStartLine(), gridItem.columnEndLine(), trackSizingFunctions, gapSize, axisConstraint);
-                    return GridLayoutUtils::automaticMinimumInlineSize(gridItem, borderAndPadding, trackSizingFunctions, { }, gridAreaMaximumInlineSize, integrationUtils, gridAreaBlockSize, gridAreaMaximumBlockSize, usedMargins);
+                    return GridLayoutUtils::automaticMinimumInlineSize(gridItem, borderAndPadding, trackSizingFunctions, { }, gridAreaMaximumInlineSize, integrationUtils, gridAreaBlockSize, gridAreaMaximumBlockSize);
                 },
                 [](const auto&) {
                     ASSERT_NOT_IMPLEMENTED_YET();
@@ -108,7 +108,7 @@ GridItemSizingFunctions GridItemSizingFunctions::blockAxis(const GridFormattingC
                 },
                 [&](const CSS::Keyword::Auto&) {
                     auto gridAreaMaximumBlockSize = GridLayoutUtils::gridAreaMaximumSize(gridItem.rowStartLine(), gridItem.rowEndLine(), trackSizingFunctions, gapSize, axisConstraint);
-                    return GridLayoutUtils::automaticMinimumBlockSize(gridItem, borderAndPadding, trackSizingFunctions, { }, gridAreaMaximumBlockSize, formattingContext, *gridAreaInlineSize, gridAreaMaximumInlineSize, usedMargins);
+                    return GridLayoutUtils::automaticMinimumBlockSize(gridItem, borderAndPadding, trackSizingFunctions, { }, gridAreaMaximumBlockSize, formattingContext, *gridAreaInlineSize, gridAreaMaximumInlineSize);
                 },
                 [](const auto&) {
                     ASSERT_NOT_IMPLEMENTED_YET();

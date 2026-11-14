@@ -254,22 +254,19 @@ std::pair<UsedInlineSizes, UsedBlockSizes> GridLayout::layoutGridItems(const Pla
         auto& gridAreaInlineSize = gridAreaSizes.inlineSizes[gridItemIndex];
         auto& gridAreaBlockSize = gridAreaSizes.blockSizes[gridItemIndex];
 
-        auto inlineMargins = GridLayoutUtils::usedMarginsForAxis(gridItem, gridItem.inlineAxisSizes());
-        auto blockMargins = GridLayoutUtils::usedMarginsForAxis(gridItem, gridItem.blockAxisSizes());
-
         auto [inlineBorderAndPadding, blockBorderAndPadding] = integrationUtils.borderAndPaddingForGridItem(gridItem.layoutBox(), gridAreaInlineSize);
 
         // A preferred aspect ratio makes the size in one axis depend on the size in the other.
         if (GridLayoutUtils::sizeDependsOnAspectRatio(gridItem)) {
             auto [inlineUsedSize, blockUsedSize] = GridLayoutUtils::usedSizesForAspectRatioItem(gridItem, columnTrackSizingFunctions, rowTrackSizingFunctions, inlineBorderAndPadding, blockBorderAndPadding,
-                gridAreaInlineSize, gridAreaBlockSize, formattingContext, inlineMargins, blockMargins);
+                gridAreaInlineSize, gridAreaBlockSize, formattingContext);
             usedInlineSizes.append(inlineUsedSize);
             usedBlockSizes.append(blockUsedSize);
             integrationUtils.layoutGridItem(gridItem.layoutBox(), inlineUsedSize, blockUsedSize, gridAreaInlineSize);
             continue;
         }
 
-        auto inlineUsedSize = GridLayoutUtils::inlineUsedSize(gridItem, columnTrackSizingFunctions, inlineBorderAndPadding, gridAreaInlineSize, integrationUtils, gridAreaBlockSize, inlineMargins);
+        auto inlineUsedSize = GridLayoutUtils::inlineUsedSize(gridItem, columnTrackSizingFunctions, inlineBorderAndPadding, gridAreaInlineSize, integrationUtils, gridAreaBlockSize);
         usedInlineSizes.append(inlineUsedSize);
 
         // When the grid item has a fit-content block height RenderGrid just calls layout on it, so
@@ -277,7 +274,7 @@ std::pair<UsedInlineSizes, UsedBlockSizes> GridLayout::layoutGridItems(const Pla
         // max-content sizes as well which is what blockUsedSize does.
         bool hasFitContentBlockSize = GridLayoutUtils::hasFitContentBlockSize(gridItem);
         if (!hasFitContentBlockSize) {
-            auto usedBlockSize = GridLayoutUtils::blockUsedSize(gridItem, rowTrackSizingFunctions, blockBorderAndPadding, gridAreaBlockSize, formattingContext, gridAreaInlineSize, blockMargins);
+            auto usedBlockSize = GridLayoutUtils::blockUsedSize(gridItem, rowTrackSizingFunctions, blockBorderAndPadding, gridAreaBlockSize, formattingContext, gridAreaInlineSize);
             integrationUtils.layoutGridItem(gridItem.layoutBox(), inlineUsedSize, usedBlockSize, gridAreaInlineSize);
             usedBlockSizes.append(usedBlockSize);
         } else {
