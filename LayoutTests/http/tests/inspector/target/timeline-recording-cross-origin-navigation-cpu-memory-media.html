@@ -1,0 +1,109 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=false ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+function navigateCrossOrigin() {
+    location.hostname = location.hostname === "127.0.0.1" ? "localhost" : "127.0.0.1";
+}
+
+function test()
+{
+    function awaitEventMatching(object, eventType, predicate) {
+        return new Promise((resolve) => {
+            let listener = object.addEventListener(eventType, (event) => {
+                if (!predicate(event))
+                    return;
+
+                object.removeEventListener(eventType, listener);
+                resolve(event);
+            });
+        });
+    }
+
+    function awaitCapturingState(capturingState) {
+        return awaitEventMatching(WI.timelineManager, WI.TimelineManager.Event.CapturingStateChanged, () => WI.timelineManager.capturingState === capturingState);
+    }
+
+    let suite = InspectorTest.createAsyncSuite("Timeline.CrossOriginNavigation.CPUMemoryMedia");
+
+    suite.addTestCase({
+        name: "Timeline.CrossOriginNavigation.CPUMemoryMedia.NewPageTargetNotStarted",
+        description: "Check that, without Site Isolation, the CPU, Memory and Media instruments do not start the page target created by a cross-origin navigation during a capture, and that capturing still stops.",
+        async test() {
+            let timelineTypes = [WI.TimelineRecord.Type.CPU, WI.TimelineRecord.Type.Memory, WI.TimelineRecord.Type.Media];
+            WI.timelineManager.enabledTimelineTypes = Array.from(new Set([...WI.timelineManager.enabledTimelineTypes, ...timelineTypes]));
+
+            // Capturing reuses an empty recording, which keeps its instruments. Add the missing ones, as the Timelines tab does.
+            let recording = WI.timelineManager.activeRecording;
+            for (let type of timelineTypes) {
+                if (!recording.instruments.some((instrument) => instrument.timelineRecordType === type))
+                    recording.addInstrument(WI.Instrument.createForTimelineType(type));
+            }
+
+            let previousPageTarget = WI.mainTarget;
+
+            let startedDomainsForTarget = new Map;
+            let originalWillStartTrackingForTarget = WI.timelineManager.willStartTrackingForTarget;
+            WI.timelineManager.willStartTrackingForTarget = function(target, domain) {
+                startedDomainsForTarget.getOrInsertComputed(target, () => []).push(domain);
+                return originalWillStartTrackingForTarget.call(this, target, domain);
+            };
+
+            let unhandledRejections = [];
+            let handleUnhandledRejection = (event) => {
+                unhandledRejections.push(event.reason);
+            };
+            window.addEventListener("unhandledrejection", handleUnhandledRejection);
+
+            let activePromise = awaitCapturingState(WI.TimelineManager.CapturingState.Active);
+            const newRecording = true;
+            WI.timelineManager.startCapturing(newRecording);
+            await activePromise;
+            InspectorTest.pass("Capturing is active.");
+
+            let startedDomains = startedDomainsForTarget.get(previousPageTarget) || [];
+            for (let domain of ["CPUProfiler", "Memory", "Animation"])
+                InspectorTest.expectThat(startedDomains.includes(domain), `The page target should be started for ${domain}.`);
+
+            let navigationPromise = Promise.all([
+                awaitEventMatching(WI.targetManager, WI.TargetManager.Event.TargetAdded, (event) => event.data.target instanceof WI.PageTarget).then((event) => event.data.target),
+                awaitEventMatching(WI.targetManager, WI.TargetManager.Event.TargetRemoved, (event) => event.data.target === previousPageTarget),
+                InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad),
+            ]);
+            // Don't wait for the reply, since the target that would send it is being replaced.
+            previousPageTarget.RuntimeAgent.evaluate("navigateCrossOrigin()");
+            let [newPageTarget] = await navigationPromise;
+            InspectorTest.expectEqual(WI.mainTarget, newPageTarget, "The page target created by the navigation should be the main target.");
+            InspectorTest.expectFalse(WI.networkManager.enabledPageForSiteIsolation, "Site Isolation should not be detected.");
+            InspectorTest.expectThat(WI.targetManager.isProcessLeader(newPageTarget), "The page target created by the navigation should lead its process.");
+
+            // FIXME: <https://webkit.org/b/331589> Start the new page target once its records use the same clock.
+            startedDomains = startedDomainsForTarget.get(newPageTarget) || [];
+            InspectorTest.expectThat(startedDomains.includes("Timeline"), "The page target created by the navigation should be started for Timeline.");
+            for (let domain of ["CPUProfiler", "Memory", "Animation"])
+                InspectorTest.expectFalse(startedDomains.includes(domain), `The page target created by the navigation should not be started for ${domain}.`);
+
+            let inactivePromise = awaitCapturingState(WI.TimelineManager.CapturingState.Inactive);
+            WI.timelineManager.stopCapturing();
+            await inactivePromise;
+            InspectorTest.pass("Capturing stopped.");
+
+            InspectorTest.expectEqual(unhandledRejections.length, 0, "There should be no unhandled promise rejections.");
+            for (let reason of unhandledRejections)
+                InspectorTest.log("Unhandled rejection: " + reason);
+
+            window.removeEventListener("unhandledrejection", handleUnhandledRejection);
+            WI.timelineManager.willStartTrackingForTarget = originalWillStartTrackingForTarget;
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that, without Site Isolation, the CPU, Memory and Media instruments do not start the page target that a cross-origin navigation creates during a capture, and that capturing still stops.</p>
+</body>
+</html>

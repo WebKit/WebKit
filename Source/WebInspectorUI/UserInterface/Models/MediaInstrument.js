@@ -48,7 +48,21 @@ WI.MediaInstrument = class MediaInstrument extends WI.Instrument
 
     startInstrumentationForTarget(target)
     {
-        // Nothing to do, only the main target that existed when capturing started is instrumented.
+        // Nothing to do, a page target that replaces the main target is instrumented once it leads its process.
+    }
+
+    startInstrumentationForProcessLeader(target)
+    {
+        // COMPATIBILITY (iOS 13): Animation domain did not exist yet.
+        if (!InspectorBackend.hasDomain("Animation"))
+            return;
+
+        // Only the main target is instrumented, because Animation tracking is page-only.
+        if (target !== WI.mainTarget || WI.timelineManager.isTrackingDomainForTarget(target, "Animation"))
+            return;
+
+        WI.timelineManager.willStartTrackingForTarget(target, "Animation");
+        target.AnimationAgent.startTracking();
     }
 
     stopInstrumentation()

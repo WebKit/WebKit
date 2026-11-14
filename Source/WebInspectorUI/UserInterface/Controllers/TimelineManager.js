@@ -23,9 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: <https://webkit.org/b/329627> The CPU, Memory and Media instruments only track the main target
-// that existed when capturing started, so they record nothing from a main target that replaces it.
-
 WI.TimelineManager = class TimelineManager extends WI.Object
 {
     constructor()
@@ -40,6 +37,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, this._handleMessageAdded, this);
 
         WI.targetManager.addEventListener(WI.TargetManager.Event.TargetRemoved, this._handleTargetRemoved, this);
+        WI.targetManager.addEventListener(WI.TargetManager.Event.ProcessLeaderChanged, this._handleProcessLeaderChanged, this);
 
         this._enabledTimelineTypesSetting = new WI.Setting("enabled-instrument-types", WI.TimelineManager.defaultTimelineTypes());
 
@@ -427,6 +425,11 @@ WI.TimelineManager = class TimelineManager extends WI.Object
     scriptProfilerIsTracking()
     {
         return this._scriptProfilerRecordsForTarget.size;
+    }
+
+    isTrackingDomainForTarget(target, domain)
+    {
+        return !!this._trackingDomainsForTarget.get(target)?.has(domain);
     }
 
     willStartTrackingForTarget(target, domain)
@@ -1706,6 +1709,26 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         // A target that was not waited for must not stop a capture that is still waiting for its starts.
         if (wasWaitedFor)
             this._stopWaitingIfPossible();
+    }
+
+    _handleProcessLeaderChanged(event)
+    {
+        if (this._capturingState !== TimelineManager.CapturingState.Starting && this._capturingState !== TimelineManager.CapturingState.Active)
+            return;
+
+        // FIXME: <https://webkit.org/b/331589> Without Site Isolation, the clock of a page target that replaces the main
+        // target restarts, so its records would land too early. Only Site Isolation shares the clock between processes.
+        if (!WI.networkManager.enabledPageForSiteIsolation)
+            return;
+
+        let {leader} = event.data;
+        if (!leader)
+            return;
+
+        // A page target that replaces the main target leads its process once it commits, which is after the previous
+        // main target was removed. Instruments that only track the main target start it then, not when it is created,
+        // so that the two never report at the same time.
+        this._activeRecording.startInstrumentationForProcessLeader(leader);
     }
 
     _handleDOMNodeDidFireEvent(event)
