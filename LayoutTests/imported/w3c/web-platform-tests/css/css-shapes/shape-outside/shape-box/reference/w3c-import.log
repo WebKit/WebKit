@@ -26,12 +26,17 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/reference/shape-outside-border-box-border-radius-010-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/reference/shape-outside-border-box-border-radius-011-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/reference/shape-outside-border-box-border-radius-012-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/reference/shape-outside-border-box-shape-margin-with-margin-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/reference/shape-outside-border-box-with-block-start-margin-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/reference/shape-outside-border-box-with-margin-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/reference/shape-outside-border-box-with-margin-right-float-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/reference/shape-outside-box-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/reference/shape-outside-box-005-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/reference/shape-outside-content-box-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/reference/shape-outside-content-box-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/reference/shape-outside-content-box-border-radius-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/reference/shape-outside-content-box-border-radius-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/reference/shape-outside-content-box-with-margin-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/reference/shape-outside-margin-box-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/reference/shape-outside-margin-box-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/reference/shape-outside-margin-box-border-radius-001-ref.html
@@ -47,3 +52,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/reference/shape-outside-padding-box-003-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/reference/shape-outside-padding-box-border-radius-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/reference/shape-outside-padding-box-border-radius-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/reference/shape-outside-padding-box-with-margin-ref.html

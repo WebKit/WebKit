@@ -42,6 +42,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/shape-outside-border-box-border-radius-011.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/shape-outside-border-box-border-radius-012-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/shape-outside-border-box-border-radius-012.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/shape-outside-border-box-oversized-float-direction.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/shape-outside-border-box-shape-margin-with-margin-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/shape-outside-border-box-shape-margin-with-margin.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/shape-outside-border-box-with-block-start-margin-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/shape-outside-border-box-with-block-start-margin.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/shape-outside-border-box-with-margin-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/shape-outside-border-box-with-margin-right-float-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/shape-outside-border-box-with-margin-right-float.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/shape-outside-border-box-with-margin.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/shape-outside-box-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/shape-outside-box-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/shape-outside-box-003-expected.html
@@ -66,6 +75,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/shape-outside-content-box-border-radius-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/shape-outside-content-box-border-radius-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/shape-outside-content-box-border-radius-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/shape-outside-content-box-with-margin-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/shape-outside-content-box-with-margin.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/shape-outside-margin-box-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/shape-outside-margin-box-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/shape-outside-margin-box-002-expected.html
@@ -96,3 +107,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/shape-outside-padding-box-border-radius-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/shape-outside-padding-box-border-radius-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/shape-outside-padding-box-border-radius-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/shape-outside-padding-box-with-margin-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/shape-outside-padding-box-with-margin.html
