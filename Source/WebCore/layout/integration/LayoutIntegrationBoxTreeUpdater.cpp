@@ -107,9 +107,9 @@ static std::unique_ptr<Layout::InlineTextBox::CombinedText> computeCombinedText(
 
     RefPtr fontSelector = style->fontCascade().fontSelector();
     auto fontFor = [&](const FontCascadeDescription& description) {
-        auto font = FontCascade { FontCascadeDescription { description }, protect(style->fontCascade()) };
-        font.update(fontSelector.copyRef());
-        font.setLetterSpacing(0);
+        UniqueRef font = FontCascade::create(FontCascadeDescription { description }, protect(style->fontCascade()));
+        font->update(fontSelector.copyRef());
+        font->setLetterSpacing(0);
         return font;
     };
 
@@ -124,7 +124,7 @@ static std::unique_ptr<Layout::InlineTextBox::CombinedText> computeCombinedText(
         run.setTabSize(!style->collapseWhiteSpace(), Style::toPlatform(style->tabSize(), style->usedZoomForLength()));
         return font.width(run, nullptr, &glyphOverflow);
     };
-    auto combinedText = [&](FontCascade&& font, float width) {
+    auto combinedText = [&](UniqueRef<FontCascade>&& font, float width) {
         return makeUnique<Layout::InlineTextBox::CombinedText>(Layout::InlineTextBox::CombinedText { WTF::move(font), width, glyphOverflow.top, glyphOverflow.bottom });
     };
 
@@ -133,7 +133,7 @@ static std::unique_ptr<Layout::InlineTextBox::CombinedText> computeCombinedText(
     // Combined text is drawn horizontally.
     description.setOrientation(FontOrientation::Horizontal);
 
-    auto horizontalFont = fontFor(description);
+    UniqueRef horizontalFont = fontFor(description);
     auto width = measure(horizontalFont);
     if (width <= emWidth)
         return combinedText(WTF::move(horizontalFont), width);
@@ -145,7 +145,7 @@ static std::unique_ptr<Layout::InlineTextBox::CombinedText> computeCombinedText(
     for (auto widthVariant : widthVariants) {
         // When modifying this, make sure to keep it in sync with FontPlatformData::isForTextCombine()!
         description.setWidthVariant(widthVariant);
-        auto compressedFont = fontFor(description);
+        UniqueRef compressedFont = fontFor(description);
         auto runWidth = measure(compressedFont);
         if (runWidth <= emWidth)
             return combinedText(WTF::move(compressedFont), runWidth);
@@ -160,7 +160,7 @@ static std::unique_ptr<Layout::InlineTextBox::CombinedText> computeCombinedText(
     float originalSize = bestFitDescription.usedSize();
     do {
         bestFitDescription.setUsedSize(originalSize * scaleFactor);
-        auto scaledFont = fontFor(bestFitDescription);
+        UniqueRef scaledFont = fontFor(bestFitDescription);
         auto runWidth = measure(scaledFont);
         if (runWidth <= emWidth)
             return combinedText(WTF::move(scaledFont), runWidth);

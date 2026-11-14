@@ -68,7 +68,7 @@ static bool canUseFastRenderer(std::span<const UniChar> buffer)
     [self getCharacters:borrow(buffer)->mutableSpan().data()];
 
     if (canUseFastRenderer(borrow(buffer)->span())) {
-        WebCore::FontCascade webCoreFont(WebCore::FontPlatformData((__bridge CTFontRef)font, [font pointSize]));
+        UniqueRef webCoreFont = WebCore::FontCascade::create(WebCore::FontPlatformData((__bridge CTFontRef)font, [font pointSize]));
         WebCore::TextRun run(StringView(spanReinterpretCast<const char16_t>(borrow(buffer)->span())));
 
         // The following is a half-assed attempt to match AppKit's rounding rules for drawAtPoint.
@@ -90,7 +90,7 @@ static bool canUseFastRenderer(std::span<const UniChar> buffer)
             CGContextScaleCTM(cgContext.get(), 1, -1);
 
         graphicsContext.setFillColor(WebCore::colorFromCocoaColor(textColor));
-        webCoreFont.drawText(graphicsContext, run, WebCore::FloatPoint(point.x, flipped ? point.y : -point.y));
+        webCoreFont->drawText(graphicsContext, run, WebCore::FloatPoint(point.x, flipped ? point.y : -point.y));
 
         if (!flipped)
             CGContextScaleCTM(cgContext.get(), 1, -1);
@@ -114,9 +114,9 @@ static bool canUseFastRenderer(std::span<const UniChar> buffer)
     [self getCharacters:borrow(buffer)->mutableSpan().data()];
 
     if (canUseFastRenderer(borrow(buffer)->span())) {
-        WebCore::FontCascade webCoreFont(WebCore::FontPlatformData((__bridge CTFontRef)font, [font pointSize]));
+        UniqueRef webCoreFont = WebCore::FontCascade::create(WebCore::FontPlatformData((__bridge CTFontRef)font, [font pointSize]));
         WebCore::TextRun run(StringView(spanReinterpretCast<const char16_t>(borrow(buffer)->span())));
-        return webCoreFont.width(run);
+        return webCoreFont->width(run);
     }
 
     return [self sizeWithAttributes:@{ NSFontAttributeName: font }].width;

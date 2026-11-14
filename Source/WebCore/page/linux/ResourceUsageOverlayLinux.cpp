@@ -77,6 +77,12 @@ class ResourceUsageOverlayPainter final : public GraphicsLayerClient {
 public:
     ResourceUsageOverlayPainter(ResourceUsageOverlay& overlay)
         : m_overlay(overlay)
+        , m_textFont(createTextFont())
+    {
+    }
+
+private:
+    static UniqueRef<FontCascade> createTextFont()
     {
         auto& systemFontDatabase = SystemFontDatabase::singleton();
         auto messageBox = SystemFontDatabase::FontShorthand::MessageBox;
@@ -84,11 +90,11 @@ public:
         fontDescription.setOneFamily(systemFontDatabase.systemFontShorthandFamily(messageBox));
         fontDescription.setWeight(systemFontDatabase.systemFontShorthandWeight(messageBox));
         fontDescription.setUsedSize(gFontSize);
-        m_textFont = FontCascade(WTF::move(fontDescription));
-        m_textFont.update(nullptr);
+        UniqueRef textFont = FontCascade::create(WTF::move(fontDescription));
+        textFont->update(nullptr);
+        return textFont;
     }
 
-private:
     void paintContents(const GraphicsLayer&, GraphicsContext& context, const FloatRect& clip, OptionSet<GraphicsLayerPaintBehavior>) override
     {
         GraphicsContextStateSaver stateSaver(context);
@@ -132,7 +138,7 @@ private:
     }
 
     ResourceUsageOverlay& m_overlay;
-    FontCascade m_textFont;
+    const UniqueRef<FontCascade> m_textFont;
 };
 
 void ResourceUsageOverlay::platformInitialize()

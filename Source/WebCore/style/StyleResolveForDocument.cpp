@@ -104,12 +104,12 @@ Style::ComputedStyle resolveForDocument(const Document& document)
         return fontDescription;
     }();
 
-    auto fontCascade = FontCascade { WTF::move(fontDescription), protect(documentStyle.fontCascade()) };
+    UniqueRef fontCascade = FontCascade::create(WTF::move(fontDescription), protect(documentStyle.fontCascade()));
 
     // We don't just call setFontDescription() because we need to provide the fontSelector to the FontCascade.
     RefPtr fontSelector = document.fontSelector();
-    fontCascade.update(WTF::move(fontSelector));
-    documentStyle.setFontCascade(WTF::move(fontCascade));
+    fontCascade->update(WTF::move(fontSelector));
+    documentStyle.setFontCascade(fontCascade);
 
     documentStyle.setDeviceScaleFactor(document.deviceScaleFactor());
 

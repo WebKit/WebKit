@@ -85,11 +85,11 @@ NSDateFormatter *LocalizedDateCache::formatterForDateType(DateComponentsType typ
 float LocalizedDateCache::estimatedMaximumWidthForDateType(DateComponentsType type, const FontCascade& font, const MeasureTextClient& measurer)
 {
     int key = static_cast<int>(type);
-    if (m_font == font) {
+    if (m_font.get() == font) {
         if (m_maxWidthMap.contains(key))
             return m_maxWidthMap.get(key);
     } else {
-        m_font = font;
+        m_font.get() = font;
         m_maxWidthMap.clear();
     }
 

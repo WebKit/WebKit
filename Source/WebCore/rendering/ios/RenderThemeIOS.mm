@@ -515,7 +515,7 @@ static void adjustInputElementButtonStyle(Style::ComputedStyle& style, const HTM
 #endif
 
     // Enforce the width and set the box-sizing to content-box to not conflict with the padding.
-    FontCascade font = style.fontCascade();
+    CheckedRef font = style.fontCascade();
 
     float maximumWidth = localizedDateCache().estimatedMaximumWidthForDateType(dateType, font, RenderThemeMeasureTextClient(font, style));
 

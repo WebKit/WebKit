@@ -227,8 +227,8 @@ void NonFastScrollableRegionOverlay::drawRect(PageOverlay& pageOverlay, Graphics
     fontDescription.setComputedSize(12);
     fontDescription.setUsedSize(12);
     fontDescription.setWeight(FontSelectionValue(500));
-    FontCascade font(WTF::move(fontDescription));
-    font.update(nullptr);
+    UniqueRef font = FontCascade::create(WTF::move(fontDescription));
+    font->update(nullptr);
 
     auto drawLegend = [&] (const Color& color, ASCIILiteral text) {
         context.setFillColor(color);
@@ -508,8 +508,8 @@ void InteractionRegionOverlay::drawSettings(GraphicsContext& context)
     fontDescription.setComputedSize(12);
     fontDescription.setUsedSize(12);
     fontDescription.setWeight(FontSelectionValue(500));
-    FontCascade font(WTF::move(fontDescription));
-    font.update(nullptr);
+    UniqueRef font = FontCascade::create(WTF::move(fontDescription));
+    font->update(nullptr);
 
     for (unsigned i = 0; i < m_settings.size(); i++) {
         const auto& setting = m_settings[i];
@@ -617,8 +617,8 @@ void InteractionRegionOverlay::drawRect(PageOverlay&, GraphicsContext& context, 
         fontDescription.setComputedSize(10);
         fontDescription.setUsedSize(10);
         fontDescription.setWeight(FontSelectionValue(500));
-        FontCascade font(WTF::move(fontDescription));
-        font.update(nullptr);
+        UniqueRef font = FontCascade::create(WTF::move(fontDescription));
+        font->update(nullptr);
 
         TextRun textRun = TextRun(region->text);
         context.setFillColor(Color::black);

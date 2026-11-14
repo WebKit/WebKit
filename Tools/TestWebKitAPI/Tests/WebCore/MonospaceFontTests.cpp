@@ -54,23 +54,23 @@ TEST(MonospaceFontsTest, EnsureMonospaceFontInvariants)
             RetainPtr fontDescriptor = static_cast<CTFontDescriptorRef>(CFArrayGetValueAtIndex(results.get(), i));
             RetainPtr ctFont = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), 16.0, nullptr));
             FontPlatformData platformData(ctFont.get(), 16.0);
-            FontCascade fontCascade(platformData);
-            if (fontCascade.canTakeFixedPitchFastContentMeasuring()) {
+            UniqueRef fontCascade = FontCascade::create(platformData);
+            if (fontCascade->canTakeFixedPitchFastContentMeasuring()) {
                 for (uint32_t character = 0; character <= UINT16_MAX; ++character) {
                     const char16_t ch = character;
                     StringView content(span(ch));
-                    if (fontCascade.codePath(TextRun(content)) == FontCascade::CodePath::Complex)
+                    if (fontCascade->codePath(TextRun(content)) == FontCascade::CodePath::Complex)
                         continue;
                     constexpr bool whitespaceIsCollapsed = false;
                     if (!WidthIterator::characterCanUseSimplifiedTextMeasuring(character, whitespaceIsCollapsed))
                         continue;
-                    auto glyphData = fontCascade.glyphDataForCharacter(character, false);
-                    if (!glyphData.isValid() || glyphData.font != &fontCascade.primaryFont())
+                    auto glyphData = fontCascade->glyphDataForCharacter(character, false);
+                    if (!glyphData.isValid() || glyphData.font != &fontCascade->primaryFont())
                         continue;
-                    fontCascade.fonts()->glyphGeometryCache().clear();
-                    float width = fontCascade.widthForSimpleTextWithFixedPitch(content, whitespaceIsCollapsed);
-                    fontCascade.fonts()->glyphGeometryCache().clear();
-                    float originalWidth = fontCascade.widthForTextUsingSimplifiedMeasuring(content);
+                    fontCascade->fonts()->glyphGeometryCache().clear();
+                    float width = fontCascade->widthForSimpleTextWithFixedPitch(content, whitespaceIsCollapsed);
+                    fontCascade->fonts()->glyphGeometryCache().clear();
+                    float originalWidth = fontCascade->widthForTextUsingSimplifiedMeasuring(content);
                     EXPECT_EQ(originalWidth , width);
                 }
                 {
@@ -79,10 +79,10 @@ TEST(MonospaceFontsTest, EnsureMonospaceFontInvariants)
                     };
                     StringView content(characters);
                     constexpr bool whitespaceIsCollapsed = false;
-                    fontCascade.fonts()->glyphGeometryCache().clear();
-                    float width = fontCascade.widthForSimpleTextWithFixedPitch(content, whitespaceIsCollapsed);
-                    fontCascade.fonts()->glyphGeometryCache().clear();
-                    float originalWidth = fontCascade.widthForTextUsingSimplifiedMeasuring(content);
+                    fontCascade->fonts()->glyphGeometryCache().clear();
+                    float width = fontCascade->widthForSimpleTextWithFixedPitch(content, whitespaceIsCollapsed);
+                    fontCascade->fonts()->glyphGeometryCache().clear();
+                    float originalWidth = fontCascade->widthForTextUsingSimplifiedMeasuring(content);
                     EXPECT_EQ(originalWidth , width);
                 }
             }

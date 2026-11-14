@@ -114,12 +114,12 @@ NODELETE HTMLSelectElement& RenderListBox::selectElement() const
     return downcast<HTMLSelectElement>(nodeForNonAnonymous());
 }
 
-static FontCascade bolder(Document& document, const FontCascade& font)
+static UniqueRef<FontCascade> bolder(Document& document, const FontCascade& font)
 {
     auto description = font.fontDescription();
     description.setWeight(description.bolderWeight());
-    FontCascade result(WTF::move(description), font);
-    result.update(&document.fontSelector());
+    UniqueRef result = FontCascade::create(WTF::move(description), font);
+    result->update(&document.fontSelector());
     return result;
 }
 
@@ -128,7 +128,7 @@ void RenderListBox::updateFromElement()
     if (m_optionsChanged) {
         float logicalWidth = 0;
         CheckedRef style = this->style();
-        std::optional<FontCascade> boldFont;
+        std::unique_ptr<FontCascade> boldFont;
         for (auto& element : protect(selectElement())->listItems()) {
             String text;
             bool isGroupLabel = false;
@@ -140,10 +140,8 @@ void RenderListBox::updateFromElement()
             }
             if (text.isEmpty())
                 continue;
-            if (isGroupLabel && !boldFont) {
-                FontCascade bolderFont = bolder(protect(document()), protect(style->fontCascade()));
-                boldFont = WTF::move(bolderFont);
-            }
+            if (isGroupLabel && !boldFont)
+                boldFont = bolder(protect(document()), protect(style->fontCascade())).moveToUniquePtr();
             CheckedRef font = isGroupLabel ? *boldFont : style->fontCascade();
             text = applyTextTransform(style, text);
             auto textRun = constructTextRun(text, style, ExpansionBehavior::allowRightOnly());
@@ -438,7 +436,7 @@ void RenderListBox::paintScrollbar(PaintInfo& paintInfo, const LayoutPoint& pain
     scrollbar.paint(paintInfo.context(), snappedIntRect(paintInfo.rect));
 }
 
-static LayoutSize itemOffsetForAlignment(TextRun textRun, const Style::ComputedStyle& elementStyle, const Style::ComputedStyle* itemStyle, FontCascade itemFont, LayoutRect itemBoundingBox)
+static LayoutSize itemOffsetForAlignment(TextRun textRun, const Style::ComputedStyle& elementStyle, const Style::ComputedStyle* itemStyle, const FontCascade& itemFont, LayoutRect itemBoundingBox)
 {
     Style::TextAlign actualAlignment = itemStyle->textAlign();
     // FIXME: Firefox doesn't respect Style::TextAlign::Justify. Should we?
@@ -511,7 +509,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
     paintInfo.context().setFillColor(textColor);
 
     TextRun textRun(itemText, 0, 0, ExpansionBehavior::allowRightOnly(), itemStyle->writingMode().bidiDirection(), isOverride(itemStyle->unicodeBidi()), true);
-    FontCascade itemFont { CheckedRef { style->fontCascade() } };
+    UniqueRef itemFont = style->fontCascade().clone();
     LayoutRect r = itemBoundingBoxRect(paintOffset, listIndex);
     r.move(itemOffsetForAlignment(textRun, style, itemStyle, itemFont, r));
 
@@ -527,10 +525,10 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
     }
 
     if (optGroupElement) {
-        auto description = itemFont.fontDescription();
+        auto description = itemFont->fontDescription();
         description.setWeight(description.bolderWeight());
-        itemFont = FontCascade(WTF::move(description), itemFont);
-        itemFont.update(&protect(document())->fontSelector());
+        itemFont = FontCascade::create(WTF::move(description), itemFont);
+        itemFont->update(&protect(document())->fontSelector());
     }
 
     // Draw the item text

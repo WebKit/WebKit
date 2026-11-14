@@ -772,14 +772,14 @@ TEST(DisplayListRecorderTest, DeconstructedEmojiGlyphsShareNativeImages)
     WebCore::FontCascadeDescription description;
     description.setOneFamily("Apple Color Emoji"_s);
     description.setUsedSize(16);
-    WebCore::FontCascade font(WTF::move(description));
-    font.update();
+    UniqueRef font = WebCore::FontCascade::create(WTF::move(description));
+    font->update();
 
     HashSet<const WebCore::NativeImage*> images;
     unsigned drawNativeImageCount = 0;
     for (unsigned i = 0; i < 2; ++i) {
         Ref recorder = WebCore::DisplayList::RecorderImpl::create({ }, { 0, 0, testContextWidth, testContextHeight }, { }, WebCore::ColorSpace::SRGB(), WebCore::DisplayList::Recorder::DrawGlyphsMode::Deconstruct);
-        font.drawText(recorder, WebCore::TextRun { String::fromUTF8("\u2B1B\u2B1C\u2B1B\u2B1C") }, { 0, 20 });
+        font->drawText(recorder, WebCore::TextRun { String::fromUTF8("\u2B1B\u2B1C\u2B1B\u2B1C") }, { 0, 20 });
         Ref displayList = recorder->takeDisplayList();
         for (auto& item : displayList->items()) {
             if (auto* drawNativeImage = std::get_if<WebCore::DisplayList::DrawNativeImage>(&item)) {

@@ -67,7 +67,7 @@ inline bool ComputedStyle::fontCascadeEqual(const ComputedStyle& other) const
 {
     return m_inheritedData.ptr() == other.m_inheritedData.ptr()
         || m_inheritedData->fontData.ptr() == other.m_inheritedData->fontData.ptr()
-        || m_inheritedData->fontData->fontCascade == other.m_inheritedData->fontData->fontCascade;
+        || m_inheritedData->fontData->fontCascade.get() == other.m_inheritedData->fontData->fontCascade.get();
 }
 
 // MARK: - Derived values

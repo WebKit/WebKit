@@ -40,13 +40,14 @@ DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(FontData);
 FontData::FontData()
     : letterSpacing(ComputedStyle::initialLetterSpacing())
     , wordSpacing(ComputedStyle::initialWordSpacing())
+    , fontCascade(FontCascade::create())
 {
 }
 
 FontData::FontData(const FontData& o)
     : letterSpacing(o.letterSpacing)
     , wordSpacing(o.wordSpacing)
-    , fontCascade(protect(o.fontCascade))
+    , fontCascade(o.fontCascade->clone())
 {
 }
 
@@ -59,14 +60,14 @@ bool FontData::operator==(const FontData& o) const
 {
     return letterSpacing == o.letterSpacing
         && wordSpacing == o.wordSpacing
-        && fontCascade == o.fontCascade;
+        && fontCascade.get() == o.fontCascade.get();
 }
 
 #if !LOG_DISABLED
 void FontData::dumpDifferences(TextStream& ts, const FontData& other) const
 {
-    if (fontCascade != other.fontCascade)
-        ts << "fontCascade differs:\n  "_s << fontCascade << "\n  "_s << other.fontCascade;
+    if (fontCascade.get() != other.fontCascade.get())
+        ts << "fontCascade differs:\n  "_s << fontCascade.get() << "\n  "_s << other.fontCascade.get();
 }
 #endif
 

@@ -40,13 +40,12 @@
 static WebCore::FontCascade& fontFromNSFont(NSFont *font)
 {
     static NeverDestroyed<RetainPtr<NSFont>> currentNSFont;
-    static NeverDestroyed<WebCore::FontCascade> currentFont;
+    static NeverDestroyed<UniqueRef<WebCore::FontCascade>> currentFont { WebCore::FontCascade::create() };
     if ([font isEqual:currentNSFont.get().get()])
-        return currentFont;
+        return currentFont.get();
     currentNSFont.get() = font;
-    WebCore::FontCascade newFont(WebCore::FontPlatformData((__bridge CTFontRef)font, [font pointSize]));
-    protect(currentFont.get()).get() = newFont;
-    return currentFont;
+    currentFont.get() = WebCore::FontCascade::create(WebCore::FontPlatformData((__bridge CTFontRef)font, [font pointSize]));
+    return currentFont.get();
 }
 
 @implementation WebStringTruncator
