@@ -180,11 +180,18 @@ class IOSInlineMediaControls extends InlineMediaControls
     _pinchGestureRecognizerStateDidChange(recognizer)
     {
         console.assert(this.visible);
-        if (recognizer.state !== GestureRecognizer.States.Recognized && recognizer.state !== GestureRecognizer.States.Changed)
+        if (recognizer.state === GestureRecognizer.States.Began) {
+            this._didRecognizePinchInGesture = false;
+            return;
+        }
+
+        if (recognizer.state !== GestureRecognizer.States.Changed || this._didRecognizePinchInGesture)
             return;
 
-        if (recognizer.scale > IOSInlineMediaControls.MinimumScaleToEnterFullscreen && this.delegate && typeof this.delegate.iOSInlineMediaControlsRecognizedPinchInGesture === "function")
+        if (recognizer.scale > IOSInlineMediaControls.MinimumScaleToEnterFullscreen && this.delegate && typeof this.delegate.iOSInlineMediaControlsRecognizedPinchInGesture === "function") {
+            this._didRecognizePinchInGesture = true;
             this.delegate.iOSInlineMediaControlsRecognizedPinchInGesture();
+        }
     }
 
     _tapGestureRecognizerStateDidChange(recognizer)
