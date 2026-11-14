@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Many elements with gradients that differ only in a color, in direction or in the visible part, repainted after a change</title>
+<link rel="match" href="repeating-linear-gradient-many-elements-expected.html">
+<style>
+    body { margin: 0; }
+    .row { display: flex; gap: 4px; margin: 4px; }
+    .row > div { width: 30px; height: 60px; flex: none; }
+    .offset > div { background-size: 100% 120px; background-position: 0 -32px; background-repeat: no-repeat; }
+</style>
+<script src="resources/many-gradients.js"></script>
+</head>
+<body>
+<!-- The same gradient is drawn by several elements, there are more distinct gradients than a
+     small cache holds, the same stops are used in two directions and with only part of the
+     gradient image visible, and some gradients change after the first paint. The reference
+     draws the same gradients with currentcolor stops, which are never cached. -->
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+const elements = createRows((color) => color);
+requestAnimationFrame(() => requestAnimationFrame(() => {
+    changeSomeGradients(elements, (color) => color);
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }));
+}));
+</script>
+</body>
+</html>

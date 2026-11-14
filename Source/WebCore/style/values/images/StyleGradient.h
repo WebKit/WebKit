@@ -382,8 +382,10 @@ using Gradient = Variant<
     FunctionNotation<CSSValueID::RepeatingConicGradient, ConicGradient>
 >;
 
-// Creates a platform gradient from the style representation.
-Ref<WebCore::Gradient> createPlatformGradient(const Gradient&, const FloatSize&, const Style::ComputedStyle&);
+// Creates a platform gradient from the style representation. A gradient that is not transient is expected
+// to be drawn many times, which lets the graphics backend cache it.
+enum class IsTransient : bool { No, Yes };
+Ref<WebCore::Gradient> createPlatformGradient(const Gradient&, const FloatSize&, const Style::ComputedStyle&, IsTransient = IsTransient::Yes);
 
 // Returns whether it caching based on the gradient's stops is allowed.
 WEBCORE_EXPORT bool stopsAreCacheable(const Gradient&);

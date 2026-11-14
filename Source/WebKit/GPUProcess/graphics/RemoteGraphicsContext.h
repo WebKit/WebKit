@@ -129,6 +129,7 @@ public:
     void fillRect(const WebCore::FloatRect&, WebCore::RequiresClipToRect);
     void fillRectWithColor(const WebCore::FloatRect&, const WebCore::Color&);
     void fillRectWithGradient(const WebCore::FloatRect&, Ref<WebCore::Gradient>&&);
+    void fillRectWithCachedGradient(const WebCore::FloatRect&, RemoteGradientIdentifier);
     void fillRectWithGradientAndSpaceTransform(const WebCore::FloatRect&, Ref<WebCore::Gradient>&&, const WebCore::AffineTransform&, WebCore::RequiresClipToRect);
     void fillCompositedRect(const WebCore::FloatRect&, const WebCore::Color&, WebCore::CompositeOperator, WebCore::BlendMode);
     void fillRoundedRect(const WebCore::FloatRoundedRect&, const WebCore::Color&, WebCore::BlendMode);

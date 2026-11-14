@@ -809,7 +809,7 @@ NODELETE static inline float horizontalEllipseRadius(const FloatSize& p, float a
 
 // MARK: - Linear create.
 
-template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(const FunctionNotation<Name, LinearGradient>& linear, const FloatSize& size, const Style::ComputedStyle& style)
+template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(const FunctionNotation<Name, LinearGradient>& linear, const FloatSize& size, const Style::ComputedStyle& style, IsTransient isTransient)
 {
     ASSERT(!size.isEmpty());
 
@@ -854,12 +854,12 @@ template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(c
     LinearGradientAdapter adapter { data };
     auto stops = computeStops(adapter, linear, style);
 
-    return WebCore::Gradient::create(WTF::move(data), linear.parameters.colorInterpolationMethod.method.value, GradientSpreadMethod::Pad, WTF::move(stops));
+    return WebCore::Gradient::create(WTF::move(data), linear.parameters.colorInterpolationMethod.method.value, GradientSpreadMethod::Pad, WTF::move(stops), isTransient == IsTransient::Yes);
 }
 
 // MARK: - Prefixed Linear create.
 
-template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(const FunctionNotation<Name, PrefixedLinearGradient>& linear, const FloatSize& size, const Style::ComputedStyle& style)
+template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(const FunctionNotation<Name, PrefixedLinearGradient>& linear, const FloatSize& size, const Style::ComputedStyle& style, IsTransient isTransient)
 {
     ASSERT(!size.isEmpty());
 
@@ -909,12 +909,12 @@ template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(c
     LinearGradientAdapter adapter { data };
     auto stops = computeStops(adapter, linear, style);
 
-    return WebCore::Gradient::create(WTF::move(data), linear.parameters.colorInterpolationMethod.method.value, GradientSpreadMethod::Pad, WTF::move(stops));
+    return WebCore::Gradient::create(WTF::move(data), linear.parameters.colorInterpolationMethod.method.value, GradientSpreadMethod::Pad, WTF::move(stops), isTransient == IsTransient::Yes);
 }
 
 // MARK: - Deprecated Linear create.
 
-template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(const FunctionNotation<Name, DeprecatedLinearGradient>& linear, const FloatSize& size, const Style::ComputedStyle& style)
+template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(const FunctionNotation<Name, DeprecatedLinearGradient>& linear, const FloatSize& size, const Style::ComputedStyle& style, IsTransient isTransient)
 {
     ASSERT(!size.isEmpty());
 
@@ -927,12 +927,12 @@ template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(c
     LinearGradientAdapter adapter { data };
     auto stops = computeStopsForDeprecatedVariants(adapter, linear, style);
 
-    return WebCore::Gradient::create(WTF::move(data), linear.parameters.colorInterpolationMethod.method.value, GradientSpreadMethod::Pad, WTF::move(stops));
+    return WebCore::Gradient::create(WTF::move(data), linear.parameters.colorInterpolationMethod.method.value, GradientSpreadMethod::Pad, WTF::move(stops), isTransient == IsTransient::Yes);
 }
 
 // MARK: - Radial create.
 
-template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(const FunctionNotation<Name, RadialGradient>& radial, const FloatSize& size, const Style::ComputedStyle& style)
+template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(const FunctionNotation<Name, RadialGradient>& radial, const FloatSize& size, const Style::ComputedStyle& style, IsTransient isTransient)
 {
     ASSERT(!size.isEmpty());
 
@@ -1024,12 +1024,12 @@ template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(c
     RadialGradientAdapter adapter { data, size };
     auto stops = computeStops(adapter, radial, style);
 
-    return WebCore::Gradient::create(WTF::move(data), radial.parameters.colorInterpolationMethod.method.value, GradientSpreadMethod::Pad, WTF::move(stops));
+    return WebCore::Gradient::create(WTF::move(data), radial.parameters.colorInterpolationMethod.method.value, GradientSpreadMethod::Pad, WTF::move(stops), isTransient == IsTransient::Yes);
 }
 
 // MARK: - Prefixed Radial create.
 
-template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(const FunctionNotation<Name, PrefixedRadialGradient>& radial, const FloatSize& size, const Style::ComputedStyle& style)
+template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(const FunctionNotation<Name, PrefixedRadialGradient>& radial, const FloatSize& size, const Style::ComputedStyle& style, IsTransient isTransient)
 {
     ASSERT(!size.isEmpty());
 
@@ -1133,12 +1133,12 @@ template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(c
     RadialGradientAdapter adapter { data, size };
     auto stops = computeStops(adapter, radial, style);
 
-    return WebCore::Gradient::create(WTF::move(data), radial.parameters.colorInterpolationMethod.method.value, GradientSpreadMethod::Pad, WTF::move(stops));
+    return WebCore::Gradient::create(WTF::move(data), radial.parameters.colorInterpolationMethod.method.value, GradientSpreadMethod::Pad, WTF::move(stops), isTransient == IsTransient::Yes);
 }
 
 // MARK: - Deprecated Radial create.
 
-template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(const FunctionNotation<Name, DeprecatedRadialGradient>& radial, const FloatSize& size, const Style::ComputedStyle& style)
+template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(const FunctionNotation<Name, DeprecatedRadialGradient>& radial, const FloatSize& size, const Style::ComputedStyle& style, IsTransient isTransient)
 {
     ASSERT(!size.isEmpty());
 
@@ -1155,12 +1155,12 @@ template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(c
     RadialGradientAdapter adapter { data, size };
     auto stops = computeStopsForDeprecatedVariants(adapter, radial, style);
 
-    return WebCore::Gradient::create(WTF::move(data), radial.parameters.colorInterpolationMethod.method.value, GradientSpreadMethod::Pad, WTF::move(stops));
+    return WebCore::Gradient::create(WTF::move(data), radial.parameters.colorInterpolationMethod.method.value, GradientSpreadMethod::Pad, WTF::move(stops), isTransient == IsTransient::Yes);
 }
 
 // MARK: - Conic create.
 
-template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(const FunctionNotation<Name, ConicGradient>& conic, const FloatSize& size, const Style::ComputedStyle& style)
+template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(const FunctionNotation<Name, ConicGradient>& conic, const FloatSize& size, const Style::ComputedStyle& style, IsTransient isTransient)
 {
     ASSERT(!size.isEmpty());
 
@@ -1177,14 +1177,14 @@ template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(c
     ConicGradientAdapter adapter;
     auto stops = computeStops(adapter, conic, style);
 
-    return WebCore::Gradient::create(WTF::move(data), conic.parameters.colorInterpolationMethod.method.value, GradientSpreadMethod::Pad, WTF::move(stops));
+    return WebCore::Gradient::create(WTF::move(data), conic.parameters.colorInterpolationMethod.method.value, GradientSpreadMethod::Pad, WTF::move(stops), isTransient == IsTransient::Yes);
 }
 
 // MARK: - createPlatformGradient
 
-Ref<WebCore::Gradient> createPlatformGradient(const Gradient& gradient, const FloatSize& size, const Style::ComputedStyle& style)
+Ref<WebCore::Gradient> createPlatformGradient(const Gradient& gradient, const FloatSize& size, const Style::ComputedStyle& style, IsTransient isTransient)
 {
-    return WTF::switchOn(gradient, [&](auto& gradient) { return createPlatformGradient(gradient, size, style); });
+    return WTF::switchOn(gradient, [&](auto& gradient) { return createPlatformGradient(gradient, size, style, isTransient); });
 }
 
 // MARK: - containsCurrentColor
