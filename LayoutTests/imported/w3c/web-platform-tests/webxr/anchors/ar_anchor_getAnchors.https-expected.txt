@@ -1,0 +1,6 @@
+
+PASS XRFrame's trackedAnchors is empty when the feature was not requested - webgl
+PASS XRFrame's trackedAnchors is empty when the feature was not requested - webgl2
+PASS XRFrame's trackedAnchors is empty when the feature was requested - webgl
+PASS XRFrame's trackedAnchors is empty when the feature was requested - webgl2
+

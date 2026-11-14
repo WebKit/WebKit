@@ -42,6 +42,14 @@
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <wtf/TZoneMallocInlines.h>
 
+#if ENABLE(WEBXR_ANCHORS)
+#include "JSDOMConvertInterface.h"
+#include "JSDOMPromiseDeferred.h"
+#include "TransformationMatrix.h"
+#include "WebXRAnchor.h"
+#include "WebXRAnchorSet.h"
+#include "WebXRRigidTransform.h"
+#endif
 #if ENABLE(WEBXR_HIT_TEST)
 #include "WebXRHitTestResult.h"
 #include "WebXRTransientInputHitTestResult.h"
@@ -444,6 +452,97 @@ ExceptionOr<Ref<WebXRPlaneSet>> WebXRFrame::detectedPlanes()
     return Ref { *m_detectedPlanes };
 }
 #endif
+
+#if ENABLE(WEBXR_ANCHORS)
+
+// https://immersive-web.github.io/anchors/#dom-xrframe-createanchor
+ExceptionOr<void> WebXRFrame::createAnchor(Document& document, const WebXRRigidTransform& pose, WebXRSpace& space, CreateAnchorPromise&& promise)
+{
+    if (!m_session->supportsFeature(PlatformXR::SessionFeature::Anchors)) {
+        promise.reject(Exception { ExceptionCode::NotSupportedError, "The anchors feature was not requested for this session"_s });
+        return { };
+    }
+
+    if (!m_active) {
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Frame is not active"_s });
+        return { };
+    }
+
+    if (m_session->ended()) {
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "The session was already ended"_s });
+        return { };
+    }
+
+    if (space.session() != m_session.ptr()) {
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Space's session does not match frame's session"_s });
+        return { };
+    }
+
+    RefPtr device = m_session->device();
+    if (!device) {
+        promise.reject(Exception { ExceptionCode::InvalidStateError });
+        return { };
+    }
+
+    auto effectiveOrigin = space.effectiveOrigin();
+    if (!effectiveOrigin) {
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Unable to determine space effective origin"_s });
+        return { };
+    }
+
+    // Let anchor native origin be a new native origin returned from the device's call to create a new anchor using pose,
+    // interpreted as if expressed relative to effective origin at the frame's time.
+    auto anchorTransform = effectiveOrigin.value() * pose.rawTransform();
+
+    TransformationMatrix::Decomposed4Type decomposed;
+    if (!anchorTransform.decompose4(decomposed)) {
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Unable to decompose anchor transform"_s });
+        return { };
+    }
+    PlatformXR::FrameData::Pose anchorPose;
+    anchorPose.position = FloatPoint3D(decomposed.translateX, decomposed.translateY, decomposed.translateZ);
+    anchorPose.orientation = {
+        static_cast<float>(decomposed.quaternion.x),
+        static_cast<float>(decomposed.quaternion.y),
+        static_cast<float>(decomposed.quaternion.z),
+        static_cast<float>(decomposed.quaternion.w)
+    };
+
+    device->createAnchor(anchorPose, [protectedSession = m_session, promise = WTF::move(promise), protectedDocument = Ref { document }](ExceptionOr<PlatformXR::AnchorIdentifier> exceptionOrIdentifier) mutable {
+        if (exceptionOrIdentifier.hasException()) {
+            promise.reject(exceptionOrIdentifier.releaseException());
+            return;
+        }
+
+        auto identifier = exceptionOrIdentifier.releaseReturnValue();
+        Ref anchor = WebXRAnchor::create(protectedDocument.get(), protectedSession.get(), identifier);
+        protectedSession->addAnchor(anchor.copyRef());
+        protectedSession->addPendingCreateAnchorPromise(identifier, WTF::move(promise));
+    });
+
+    return { };
+}
+
+// https://immersive-web.github.io/anchors/#dom-xrframe-trackedanchors
+WebXRAnchorSet& WebXRFrame::trackedAnchors()
+{
+    if (!m_trackedAnchors)
+        m_trackedAnchors = WebXRAnchorSet::create();
+    else
+        m_trackedAnchors->clear();
+
+    const auto& frameData = m_session->frameData();
+    for (auto& [identifier, anchorState] : frameData.trackedAnchors) {
+        if (anchorState.trackingState == PlatformXR::AnchorTrackingState::Stopped)
+            continue;
+        if (auto anchor = m_session->anchor(identifier))
+            m_trackedAnchors->add(anchor.releaseNonNull());
+    }
+
+    return *m_trackedAnchors;
+}
+
+#endif // ENABLE(WEBXR_ANCHORS)
 
 } // namespace WebCore
 

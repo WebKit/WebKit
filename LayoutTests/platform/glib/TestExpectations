@@ -3125,6 +3125,8 @@ webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xr_viewport_scale.http
 
 imported/w3c/web-platform-tests/webxr/exclusive_requestFrame_nolayer.https.html [ Pass ]
 
+imported/w3c/web-platform-tests/webxr/anchors/ [ Pass ]
+
 imported/w3c/web-platform-tests/webxr/hand-input/ [ Pass ]
 
 imported/w3c/web-platform-tests/webxr/hit-test [ Pass ]

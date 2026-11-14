@@ -32,6 +32,7 @@
 #include "ContextDestructionObserverInlines.h"
 #include "DOMPointReadOnly.h"
 #include "DocumentPage.h"
+#include "EventLoop.h"
 #include "EventNames.h"
 #include "JSDOMConvertInterface.h"
 #include "JSDOMPromiseDeferred.h"
@@ -40,6 +41,7 @@
 #include "JSWebXRTransientInputHitTestSource.h"
 #include "Page.h"
 #include "PlatformXR.h"
+#include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "WebCoreOpaqueRoot.h"
 #include "WebXRBoundedReferenceSpace.h"
@@ -49,6 +51,10 @@
 #include "WebXRTransientInputHitTestSource.h"
 #include "XRCompositionLayer.h"
 #include "XRFrameRequestCallback.h"
+#if ENABLE(WEBXR_ANCHORS)
+#include "JSWebXRAnchor.h"
+#include "WebXRAnchor.h"
+#endif
 #include "XRGPUProjectionLayerInit.h"
 #include "XRHitTestOptionsInit.h"
 #include "XRRenderStateInit.h"
@@ -857,6 +863,15 @@ void WebXRSession::onFrame(PlatformXR::FrameData&& frameData)
             // 6.4.Apply frame updates for frame.
             if (session.m_inputInitialized)
                 session.m_inputSources->update(now, session.m_frameData.inputSources);
+#if ENABLE(WEBXR_ANCHORS)
+            if (!session.m_pendingCreateAnchorPromises.isEmpty()) {
+                session.updateAnchors();
+                // Let the reactions of the createAnchor promises that were just resolved run before the rAF callbacks, so that they see
+                // the new anchors. Chromium does this by dispatching the rAF callbacks in a separate task after processing anchors.
+                if (RefPtr context = session.scriptExecutionContext())
+                    context->eventLoop().performMicrotaskCheckpoint(context->vm());
+            }
+#endif
 
             tracePoint(WebXRSessionFrameCallbacksStart);
             session.minimalUpdateRendering();
@@ -1110,6 +1125,150 @@ void WebXRSession::layerDestroyed(const XRCompositionLayer& layer)
     protect(m_pendingRenderState)->setLayers(layers);
 }
 #endif
+
+#if ENABLE(WEBXR_ANCHORS)
+
+void WebXRSession::addAnchor(Ref<WebXRAnchor>&& anchor)
+{
+    m_activeAnchors.set(anchor->identifier(), RefPtr<WebXRAnchor>(WTF::move(anchor)));
+}
+
+RefPtr<WebXRAnchor> WebXRSession::anchor(PlatformXR::AnchorIdentifier identifier) const
+{
+    auto it = m_activeAnchors.find(identifier);
+    if (it == m_activeAnchors.end())
+        return nullptr;
+    return it->value;
+}
+
+void WebXRSession::deleteAnchor(PlatformXR::AnchorIdentifier identifier)
+{
+    m_activeAnchors.remove(identifier);
+
+    auto handleIt = m_anchorToPersistentHandle.find(identifier);
+    if (handleIt != m_anchorToPersistentHandle.end()) {
+        m_persistentAnchors.remove(handleIt->value);
+        m_anchorToPersistentHandle.remove(handleIt);
+    }
+
+    if (RefPtr device = this->device())
+        device->deleteAnchor(identifier);
+}
+
+std::optional<String> WebXRSession::persistentHandleForAnchor(const WebXRAnchor& anchor) const
+{
+    auto it = m_anchorToPersistentHandle.find(anchor.identifier());
+    if (it == m_anchorToPersistentHandle.end())
+        return std::nullopt;
+    return it->value;
+}
+
+void WebXRSession::setPersistentHandleForAnchor(const WebXRAnchor& anchor, const String& uuid)
+{
+    m_persistentAnchors.set(uuid, anchor.identifier());
+    m_anchorToPersistentHandle.set(anchor.identifier(), uuid);
+}
+
+void WebXRSession::addPendingCreateAnchorPromise(PlatformXR::AnchorIdentifier identifier, RestorePersistentAnchorPromise&& promise)
+{
+    m_pendingCreateAnchorPromises.append({ identifier, WTF::move(promise) });
+}
+
+void WebXRSession::updateAnchors()
+{
+    auto& trackedAnchors = m_frameData.trackedAnchors;
+    m_pendingCreateAnchorPromises.removeAllMatching([this, &trackedAnchors](auto& pair) {
+        auto identifier = pair.first;
+        auto it = trackedAnchors.find(identifier);
+        if (it == trackedAnchors.end())
+            return false;
+        if (it->value.trackingState == PlatformXR::AnchorTrackingState::Stopped) {
+            pair.second.reject(Exception { ExceptionCode::OperationError });
+            return true;
+        }
+        RefPtr anchorRef = anchor(identifier);
+        if (!anchorRef)
+            return false;
+        pair.second.resolve(anchorRef.releaseNonNull());
+        return true;
+    });
+}
+
+void WebXRSession::restorePersistentAnchor(const String& uuid, RestorePersistentAnchorPromise&& promise)
+{
+    if (!m_requestedFeatures.contains(PlatformXR::SessionFeature::Anchors)) {
+        promise.reject(Exception { ExceptionCode::NotSupportedError });
+        return;
+    }
+
+    auto it = m_persistentAnchors.find(uuid);
+    if (it == m_persistentAnchors.end()) {
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Persistent anchor not found"_s });
+        return;
+    }
+
+    if (m_ended) {
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "The session was already ended"_s });
+        return;
+    }
+
+    auto identifier = it->value;
+
+    if (m_anchorsBeingRestored.contains(identifier)) {
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Anchor is already being restored"_s });
+        return;
+    }
+
+    m_anchorsBeingRestored.add(identifier);
+
+    RefPtr<WebXRAnchor> anchorRef = anchor(identifier);
+    if (!anchorRef) {
+        RefPtr document = downcast<Document>(scriptExecutionContext());
+        if (!document) {
+            m_anchorsBeingRestored.remove(identifier);
+            promise.reject(Exception { ExceptionCode::InvalidStateError });
+            return;
+        }
+        anchorRef = WebXRAnchor::create(*document, *this, identifier);
+        addAnchor(anchorRef.releaseNonNull());
+        anchorRef = anchor(identifier);
+        ASSERT(anchorRef);
+    }
+
+    m_anchorsBeingRestored.remove(identifier);
+    promise.resolve(anchorRef.releaseNonNull());
+}
+
+void WebXRSession::deletePersistentAnchor(const String& uuid, DeletePersistentAnchorPromise&& promise)
+{
+    if (m_ended) {
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "The session was already ended"_s });
+        return;
+    }
+
+    auto it = m_persistentAnchors.find(uuid);
+    if (it == m_persistentAnchors.end()) {
+        promise.reject(Exception { ExceptionCode::NotFoundError, "Persistent anchor not found"_s });
+        return;
+    }
+
+    auto identifier = it->value;
+    m_persistentAnchors.remove(it);
+    m_anchorToPersistentHandle.remove(identifier);
+
+    promise.resolve();
+}
+
+Vector<String> WebXRSession::persistentAnchors() const
+{
+    Vector<String> result;
+    result.reserveInitialCapacity(m_persistentAnchors.size());
+    for (const auto& [uuid, identifier] : m_persistentAnchors)
+        result.append(uuid);
+    return result;
+}
+
+#endif // ENABLE(WEBXR_ANCHORS)
 
 WebCoreOpaqueRoot root(WebXRSession* session)
 {

@@ -96,6 +96,14 @@ inline PlatformXR::FrameData::Pose XrPosefToPose(XrPosef pose)
     return { { pose.position.x, pose.position.y, pose.position.z }, { pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w } };
 }
 
+inline XrPosef PoseToXrPosef(const PlatformXR::FrameData::Pose& pose)
+{
+    return {
+        { pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w },
+        { pose.position.x(), pose.position.y(), pose.position.z() }
+    };
+}
+
 inline PlatformXR::FrameData::View XrViewToView(XrView view)
 {
     return { XrPosefToPose(view.pose), PlatformXR::FrameData::Fov { std::abs(view.fov.angleUp), std::abs(view.fov.angleDown), std::abs(view.fov.angleLeft), std::abs(view.fov.angleRight) } };

@@ -1841,6 +1841,8 @@ JS_BINDING_IDLS := \
     $(WebCore)/testing/SimulatedWebGLContextEvent.idl \
     $(WebCore)/testing/TypeConversions.idl \
     $(WebCore)/testing/WorkerInternals.idl \
+    $(WebCore)/testing/FakeXRAnchorCreationCallback.idl \
+    $(WebCore)/testing/FakeXRAnchorCreationParameters.idl \
     $(WebCore)/testing/FakeXRBoundsPoint.idl \
     $(WebCore)/testing/FakeXRButtonStateInit.idl \
     $(WebCore)/testing/FakeXRInputSourceInit.idl \
@@ -1848,6 +1850,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/testing/FakeXRRigidTransformInit.idl \
     $(WebCore)/testing/FakeXRViewInit.idl \
     $(WebCore)/testing/FakeXRWorldInit.idl \
+    $(WebCore)/testing/WebFakeXRAnchorController.idl \
     $(WebCore)/testing/WebFakeXRDevice.idl \
     $(WebCore)/testing/WebFakeXRInputController.idl \
     $(WebCore)/testing/WebXRTest.idl \

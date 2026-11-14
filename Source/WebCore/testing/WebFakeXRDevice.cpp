@@ -31,9 +31,15 @@
 #if ENABLE(WEBXR)
 
 #include "DOMPointReadOnly.h"
+#if ENABLE(WEBXR_ANCHORS)
+#include "FakeXRAnchorCreationCallback.h"
+#include "FakeXRAnchorCreationParameters.h"
+#endif
+#include "JSDOMPromise.h"
 #include "JSDOMPromiseDeferred.h"
 #include "WebFakeXRInputController.h"
 #include <JavaScriptCore/HeapCellInlines.h>
+#include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/MathExtras.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -290,6 +296,11 @@ void SimulatedXRDevice::frameTimerFired()
     }
 #endif
 
+#if ENABLE(WEBXR_ANCHORS)
+    for (auto& [identifier, controller] : m_anchors)
+        data.trackedAnchors.add(identifier, controller->anchorState());
+#endif
+
 #if ENABLE(WEBXR_PLANE_DETECTION)
     if (m_simulateIncompletePlaneData)
         m_simulateIncompletePlaneData = false;
@@ -342,6 +353,46 @@ void SimulatedXRDevice::deleteLayer(PlatformXR::LayerHandle handle)
         m_layers.remove(it);
     }
 }
+
+#if ENABLE(WEBXR_ANCHORS)
+void SimulatedXRDevice::setAnchorCreationCallback(RefPtr<FakeXRAnchorCreationCallback>&& callback)
+{
+    m_anchorCreationCallback = WTF::move(callback);
+}
+
+void SimulatedXRDevice::createAnchor(const PlatformXR::FrameData::Pose& pose, CompletionHandler<void(WebCore::ExceptionOr<PlatformXR::AnchorIdentifier>)>&& completionHandler)
+{
+    if (!m_anchorCreationCallback) {
+        completionHandler(WebCore::Exception { WebCore::ExceptionCode::OperationError });
+        return;
+    }
+
+    FakeXRRigidTransformInit requestedAnchorOrigin { { pose.position.x(), pose.position.y(), pose.position.z() }, { pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w } };
+    FakeXRAnchorCreationParameters parameters { WTF::move(requestedAnchorOrigin), false };
+    auto controller = WebFakeXRAnchorController::create(pose);
+    auto result = m_anchorCreationCallback->invoke(parameters, controller.get());
+    if (result.type() != CallbackResultType::Success) {
+        completionHandler(WebCore::Exception { WebCore::ExceptionCode::OperationError });
+        return;
+    }
+
+    result.releaseReturnValue()->whenSettledWithResult([protectedThis = Ref { *this }, controller = WTF::move(controller), completionHandler = WTF::move(completionHandler)](JSDOMGlobalObject* globalObject, bool isFulfilled, JSC::JSValue value) mutable {
+        if (!isFulfilled || !value.toBoolean(globalObject)) {
+            completionHandler(WebCore::Exception { WebCore::ExceptionCode::OperationError });
+            return;
+        }
+        auto identifier = PlatformXR::AnchorIdentifier::generate();
+        protectedThis->m_anchors.add(identifier, WTF::move(controller));
+        completionHandler(WTF::move(identifier));
+    });
+}
+
+void SimulatedXRDevice::deleteAnchor(PlatformXR::AnchorIdentifier identifier)
+{
+    if (auto controller = m_anchors.take(identifier))
+        controller->markAsDeleted();
+}
+#endif
 
 #if ENABLE(WEBXR_HIT_TEST)
 void SimulatedXRDevice::requestHitTestSource(const PlatformXR::HitTestOptions& options, CompletionHandler<void(WebCore::ExceptionOr<PlatformXR::HitTestSource>)>&& completionHandler)
@@ -737,6 +788,13 @@ void WebFakeXRDevice::simulateShutdown()
 {
     m_device->simulateShutdownCompleted();
 }
+
+#if ENABLE(WEBXR_ANCHORS)
+void WebFakeXRDevice::setAnchorCreationCallback(RefPtr<FakeXRAnchorCreationCallback>&& callback)
+{
+    m_device->setAnchorCreationCallback(WTF::move(callback));
+}
+#endif
 
 #if ENABLE(WEBXR_HIT_TEST) || ENABLE(WEBXR_PLANE_DETECTION)
 void WebFakeXRDevice::setWorld(const FakeXRWorldInit& world)

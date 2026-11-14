@@ -1728,9 +1728,13 @@ if (ENABLE_GAMEPAD)
 endif ()
 
 list(APPEND WebCore_NON_SVG_IDL_FILES
+    Modules/webxr/WebXRAnchor.idl
+    Modules/webxr/WebXRAnchorSet.idl
     Modules/webxr/WebXRBoundedReferenceSpace.idl
+    Modules/webxr/WebXRFrame+Anchors.idl
     Modules/webxr/WebXRFrame.idl
     Modules/webxr/WebXRHand.idl
+    Modules/webxr/WebXRHitTestResult+Anchors.idl
     Modules/webxr/WebXRHitTestResult.idl
     Modules/webxr/WebXRHitTestSource.idl
     Modules/webxr/WebXRInputSource.idl
@@ -1745,6 +1749,7 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/webxr/WebXRReferenceSpace.idl
     Modules/webxr/WebXRRenderState.idl
     Modules/webxr/WebXRRigidTransform.idl
+    Modules/webxr/WebXRSession+Anchors.idl
     Modules/webxr/WebXRSession.idl
     Modules/webxr/WebXRSpace.idl
     Modules/webxr/WebXRSystem.idl
@@ -2674,6 +2679,8 @@ list(APPEND WebCoreTestSupport_SOURCES
 
 if (ENABLE_WEBXR)
     list(APPEND WebCoreTestSupport_IDL_FILES
+        testing/FakeXRAnchorCreationCallback.idl
+        testing/FakeXRAnchorCreationParameters.idl
         testing/FakeXRBoundsPoint.idl
         testing/FakeXRButtonStateInit.idl
         testing/FakeXRJointStateInit.idl
@@ -2681,12 +2688,14 @@ if (ENABLE_WEBXR)
         testing/FakeXRRigidTransformInit.idl
         testing/FakeXRViewInit.idl
         testing/FakeXRWorldInit.idl
+        testing/WebFakeXRAnchorController.idl
         testing/WebFakeXRDevice.idl
         testing/WebFakeXRInputController.idl
         testing/WebXRTest.idl
         testing/XRSimulateUserActivationFunction.idl
     )
     list(APPEND WebCoreTestSupport_SOURCES
+        testing/WebFakeXRAnchorController.cpp
         testing/WebFakeXRDevice.cpp
         testing/WebFakeXRInputController.cpp
         testing/WebXRTest.cpp

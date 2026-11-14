@@ -282,6 +282,9 @@ bool WebXRSystem::isFeaturePermitted(PlatformXR::SessionFeature feature) const
     case PlatformXR::SessionFeature::ReferenceSpaceTypeLocalFloor:
     case PlatformXR::SessionFeature::ReferenceSpaceTypeBoundedFloor:
     case PlatformXR::SessionFeature::ReferenceSpaceTypeUnbounded:
+#if ENABLE(WEBXR_ANCHORS)
+    case PlatformXR::SessionFeature::Anchors:
+#endif
 #if ENABLE(WEBXR_HANDS)
     case PlatformXR::SessionFeature::HandTracking:
 #endif

@@ -92,6 +92,10 @@ public:
     virtual void submitFrame(WebPageProxy&) { }
 #endif
 
+#if ENABLE(WEBXR_ANCHORS)
+    virtual void createAnchor(WebPageProxy&, const PlatformXR::FrameData::Pose&, CompletionHandler<void(WebCore::ExceptionOr<PlatformXR::AnchorIdentifier>)>&& completionHandler) { completionHandler(WebCore::Exception { WebCore::ExceptionCode::NotSupportedError }); }
+    virtual void deleteAnchor(WebPageProxy&, PlatformXR::AnchorIdentifier) { }
+#endif
 #if ENABLE(WEBXR_HIT_TEST)
     virtual void requestHitTestSource(WebPageProxy&, const PlatformXR::HitTestOptions&, CompletionHandler<void(WebCore::ExceptionOr<PlatformXR::HitTestSource>)>&& completionHandler) { completionHandler(WebCore::Exception { WebCore::ExceptionCode::InvalidStateError }); }
     virtual void deleteHitTestSource(WebPageProxy&, PlatformXR::HitTestSource) { }

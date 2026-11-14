@@ -323,6 +323,7 @@ UIProcess/gtk/WebPreferencesGtk.cpp
 
 UIProcess/soup/WebProcessPoolSoup.cpp
 
+UIProcess/XR/openxr/OpenXRAnchorManager.cpp
 UIProcess/XR/openxr/OpenXRExtensions.cpp
 UIProcess/XR/openxr/OpenXRGraphicsBindingOpenGLES.cpp
 UIProcess/XR/openxr/OpenXRHitTestManager.cpp

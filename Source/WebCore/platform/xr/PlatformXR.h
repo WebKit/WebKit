@@ -49,6 +49,9 @@
 #include <wtf/MachSendRight.h>
 #endif
 
+#if ENABLE(WEBXR_ANCHORS)
+#include "XRAnchorIdentifier.h"
+#endif
 #if ENABLE(WEBXR_HIT_TEST)
 #include "XRHitTestSourceIdentifier.h"
 #include <WebCore/ExceptionOr.h>
@@ -107,6 +110,15 @@ enum class VisibilityState : uint8_t {
 using LayerHandle = int;
 
 #if ENABLE(WEBXR)
+#if ENABLE(WEBXR_ANCHORS)
+using AnchorIdentifier = WebCore::XRAnchorIdentifier;
+
+enum class AnchorTrackingState : uint8_t {
+    Stopped,
+    Paused,
+    Tracking,
+};
+#endif
 #if ENABLE(WEBXR_HIT_TEST)
 using HitTestSource = WebCore::XRHitTestSourceIdentifier;
 using TransientInputHitTestSource = WebCore::XRHitTestSourceIdentifier;
@@ -141,6 +153,9 @@ enum class SessionFeature : uint8_t {
     ReferenceSpaceTypeLocalFloor,
     ReferenceSpaceTypeBoundedFloor,
     ReferenceSpaceTypeUnbounded,
+#if ENABLE(WEBXR_ANCHORS)
+    Anchors,
+#endif
 #if ENABLE(WEBXR_HANDS)
     HandTracking,
 #endif
@@ -189,6 +204,10 @@ inline std::optional<SessionFeature> parseSessionFeatureDescriptor(StringView st
         return SessionFeature::ReferenceSpaceTypeBoundedFloor;
     if (equalLettersIgnoringASCIICase(feature, "unbounded"_s))
         return SessionFeature::ReferenceSpaceTypeUnbounded;
+#if ENABLE(WEBXR_ANCHORS)
+    if (feature == "anchors"_s)
+        return SessionFeature::Anchors;
+#endif
 #if ENABLE(WEBXR_HANDS)
     if (equalLettersIgnoringASCIICase(feature, "hand-tracking"_s))
         return SessionFeature::HandTracking;
@@ -223,6 +242,10 @@ inline String sessionFeatureDescriptor(SessionFeature sessionFeature)
         return "bounded-floor"_s;
     case SessionFeature::ReferenceSpaceTypeUnbounded:
         return "unbounded"_s;
+#if ENABLE(WEBXR_ANCHORS)
+    case SessionFeature::Anchors:
+        return "anchors"_s;
+#endif
 #if ENABLE(WEBXR_HANDS)
     case SessionFeature::HandTracking:
         return "hand-tracking"_s;
@@ -353,18 +376,28 @@ enum class PlaneSemanticLabel : uint8_t {
 };
 #endif
 
-struct FrameData {
-    struct FloatQuaternion {
-        float x { 0.0f };
-        float y { 0.0f };
-        float z { 0.0f };
-        float w { 1.0f };
-    };
+struct FloatQuaternion {
+    float x { 0.0f };
+    float y { 0.0f };
+    float z { 0.0f };
+    float w { 1.0f };
+};
 
-    struct Pose {
-        WebCore::FloatPoint3D position;
-        FloatQuaternion orientation;
-    };
+struct Pose {
+    WebCore::FloatPoint3D position;
+    FloatQuaternion orientation;
+};
+
+#if ENABLE(WEBXR_ANCHORS)
+struct AnchorState {
+    Pose pose;
+    AnchorTrackingState trackingState { AnchorTrackingState::Stopped };
+};
+#endif
+
+struct FrameData {
+    using FloatQuaternion = PlatformXR::FloatQuaternion;
+    using Pose = PlatformXR::Pose;
 
     struct Fov {
         // In radians
@@ -505,6 +538,9 @@ struct FrameData {
     StageParameters stageParameters;
     Vector<View> views;
     HashMap<LayerHandle, UniqueRef<LayerData>> layers;
+#if ENABLE(WEBXR_ANCHORS)
+    HashMap<AnchorIdentifier, AnchorState> trackedAnchors;
+#endif
 #if ENABLE(WEBXR_HIT_TEST)
     HashMap<HitTestSource, Vector<HitTestResult>> hitTestResults;
     HashMap<TransientInputHitTestSource, Vector<TransientInputHitTestResult>> transientInputHitTestResults;
@@ -626,6 +662,10 @@ public:
 #endif
     virtual void deleteLayer(LayerHandle) = 0;
 
+#if ENABLE(WEBXR_ANCHORS)
+    virtual void createAnchor(const FrameData::Pose&, CompletionHandler<void(WebCore::ExceptionOr<AnchorIdentifier>)>&&) = 0;
+    virtual void deleteAnchor(AnchorIdentifier) = 0;
+#endif
 #if ENABLE(WEBXR_HIT_TEST)
     virtual void requestHitTestSource(const HitTestOptions&, CompletionHandler<void(WebCore::ExceptionOr<HitTestSource>)>&&) = 0;
     virtual void deleteHitTestSource(HitTestSource) = 0;

@@ -7802,6 +7802,17 @@ WebTransportEnabled:
   richJavaScript: true
   disableInLockdownMode: true
 
+WebXRAnchorsModuleEnabled:
+  type: bool
+  status: testable
+  category: dom
+  humanReadableName: "WebXR Anchors Module"
+  humanReadableDescription: "Adds support for the Anchors Module for WebXR"
+  condition: ENABLE(WEBXR_ANCHORS)
+  defaultValue:
+    "PLATFORM(GTK) || PLATFORM(WPE)": true
+    default: false
+
 WebXRAugmentedRealityModuleEnabled:
   type: bool
   status: testable

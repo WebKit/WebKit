@@ -74,6 +74,10 @@ private:
     void deleteLayer(PlatformXR::LayerHandle) final;
     void submitFrame(Vector<PlatformXR::DeviceLayer>&&) final;
 
+#if ENABLE(WEBXR_ANCHORS)
+    void createAnchor(const PlatformXR::FrameData::Pose&, CompletionHandler<void(WebCore::ExceptionOr<PlatformXR::AnchorIdentifier>)>&&) final;
+    void deleteAnchor(PlatformXR::AnchorIdentifier) final;
+#endif
 #if ENABLE(WEBXR_HIT_TEST)
     void requestHitTestSource(const PlatformXR::HitTestOptions&, CompletionHandler<void(WebCore::ExceptionOr<PlatformXR::HitTestSource>)>&&) final;
     void deleteHitTestSource(PlatformXR::HitTestSource) final;

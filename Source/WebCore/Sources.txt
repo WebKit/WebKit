@@ -584,6 +584,9 @@ Modules/webtransport/WebTransportWriter.cpp
 Modules/webtransport/WorkerWebTransportSession.cpp
 Modules/webxr/NavigatorWebXR.cpp
 Modules/webxr/WebGLOpaqueTexture.cpp
+Modules/webxr/WebXRAnchor.cpp
+Modules/webxr/WebXRAnchorSet.cpp
+Modules/webxr/WebXRAnchorSpace.cpp
 Modules/webxr/WebXRBoundedReferenceSpace.cpp
 Modules/webxr/WebXRFrame.cpp
 Modules/webxr/WebXRGamepad.cpp

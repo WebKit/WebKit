@@ -178,6 +178,24 @@ void XRDeviceProxy::submitFrame(Vector<PlatformXR::DeviceLayer>&& layers)
     }
 }
 
+#if ENABLE(WEBXR_ANCHORS)
+void XRDeviceProxy::createAnchor(const PlatformXR::FrameData::Pose& pose, CompletionHandler<void(WebCore::ExceptionOr<PlatformXR::AnchorIdentifier>)>&& completionHandler)
+{
+    RefPtr xrSystem = m_xrSystem;
+    if (!xrSystem) {
+        completionHandler(WebCore::Exception { WebCore::ExceptionCode::InvalidStateError });
+        return;
+    }
+    xrSystem->createAnchor(pose, WTF::move(completionHandler));
+}
+
+void XRDeviceProxy::deleteAnchor(PlatformXR::AnchorIdentifier identifier)
+{
+    if (RefPtr xrSystem = m_xrSystem)
+        xrSystem->deleteAnchor(identifier);
+}
+#endif
+
 #if ENABLE(WEBXR_HIT_TEST)
 void XRDeviceProxy::requestHitTestSource(const PlatformXR::HitTestOptions& init, CompletionHandler<void(WebCore::ExceptionOr<PlatformXR::HitTestSource>)>&& completionHandler)
 {
