@@ -79,21 +79,20 @@ unsigned computedHeadingOffset(const Element& element)
 
 unsigned HTMLHeadingElement::level() const
 {
-    unsigned base;
-    if (hasTagName(HTMLNames::h1Tag))
-        base = 1;
-    else if (hasTagName(HTMLNames::h2Tag))
-        base = 2;
-    else if (hasTagName(HTMLNames::h3Tag))
-        base = 3;
-    else if (hasTagName(HTMLNames::h4Tag))
-        base = 4;
-    else if (hasTagName(HTMLNames::h5Tag))
-        base = 5;
-    else {
+    unsigned base = [&] {
+        if (hasTagName(HTMLNames::h1Tag))
+            return 1;
+        if (hasTagName(HTMLNames::h2Tag))
+            return 2;
+        if (hasTagName(HTMLNames::h3Tag))
+            return 3;
+        if (hasTagName(HTMLNames::h4Tag))
+            return 4;
+        if (hasTagName(HTMLNames::h5Tag))
+            return 5;
         ASSERT(hasTagName(HTMLNames::h6Tag));
-        base = 6;
-    }
+        return 6;
+    }();
     if (!document().settings().headingOffsetEnabled())
         return base;
     return std::min<unsigned>(9, base + m_effectiveHeadingOffset);
