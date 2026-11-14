@@ -13,6 +13,10 @@ PASS e.style['align-items'] = "self-start" should set the property value
 PASS e.style['align-items'] = "self-end" should set the property value
 PASS e.style['align-items'] = "flex-start" should set the property value
 PASS e.style['align-items'] = "flex-end" should set the property value
+FAIL e.style['align-items'] = "flow-start" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['align-items'] = "flow-end" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['align-items'] = "safe flow-start" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['align-items'] = "unsafe flow-end" should set the property value assert_not_equals: property should be set got disallowed value ""
 PASS e.style['align-items'] = "unsafe center" should set the property value
 PASS e.style['align-items'] = "safe self-end" should set the property value
 

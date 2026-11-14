@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/gaps/column-gap-animation-001.html
@@ -29,6 +27,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/gaps/gap-normal-used-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/gaps/gap-parsing-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/gaps/gap-parsing-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/gaps/gap-serialization-cssom.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/gaps/grid-column-gap-parsing-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/gaps/grid-gap-parsing-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/gaps/grid-row-gap-parsing-001.html

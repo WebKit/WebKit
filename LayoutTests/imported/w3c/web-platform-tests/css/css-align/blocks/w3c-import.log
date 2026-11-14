@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/WEB_FEATURES.yml
@@ -49,10 +47,22 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-dynamic-content-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-dynamic-content-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-dynamic-content.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-float-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-in-inline-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-in-inline-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-in-inline-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-overflow-000-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-overflow-000-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-overflow-000.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-simple-height-change.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-table-cell-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-table-cell-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-table-cell-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-table-cell-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-table-cell-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-table-cell-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-table-cell-005-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-table-cell-005.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-table-cell.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/justify-items-anonymous-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/justify-items-anonymous.html
@@ -60,6 +70,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/justify-self-auto-margins-1.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/justify-self-auto-margins-2-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/justify-self-auto-margins-2.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/justify-self-block-in-inline-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/justify-self-block-in-inline-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/justify-self-block-in-inline.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/justify-self-htb-ltr-htb.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/justify-self-htb-ltr-vlr.html
@@ -84,6 +96,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/justify-self-vrl-rtl-htb.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/justify-self-vrl-rtl-vlr.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/justify-self-vrl-rtl-vrl.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/justify-self-widgets-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/justify-self-widgets-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/justify-self-widgets.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/safe-justify-self-htb.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/safe-justify-self-text-align-1-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/safe-justify-self-text-align-1.html

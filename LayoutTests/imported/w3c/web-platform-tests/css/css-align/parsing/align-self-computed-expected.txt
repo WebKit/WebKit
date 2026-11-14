@@ -11,8 +11,12 @@ PASS Property align-self value 'start'
 PASS Property align-self value 'end'
 PASS Property align-self value 'self-start'
 PASS Property align-self value 'self-end'
-PASS Property align-self value 'flex-start'
-PASS Property align-self value 'flex-end'
+FAIL Property align-self value 'flex-start' assert_equals: expected "flow-start" but got "flex-start"
+FAIL Property align-self value 'flex-end' assert_equals: expected "flow-end" but got "flex-end"
+FAIL Property align-self value 'flow-start' assert_true: 'flow-start' is a supported value for align-self. expected true got false
+FAIL Property align-self value 'flow-end' assert_true: 'flow-end' is a supported value for align-self. expected true got false
+FAIL Property align-self value 'safe flow-start' assert_true: 'safe flow-start' is a supported value for align-self. expected true got false
+FAIL Property align-self value 'unsafe flow-end' assert_true: 'unsafe flow-end' is a supported value for align-self. expected true got false
 PASS Property align-self value 'unsafe center'
 PASS Property align-self value 'safe self-end'
 

@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/align-items-static-position-001-ref.tentative.html
@@ -23,6 +21,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/align-items-static-position-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/align-items-static-position-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/align-items-static-position.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/align-out-of-flow-only-content-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/align-out-of-flow-only-content-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/align-out-of-flow-only-content.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/align-self-default-overflow-htb-ltr-htb.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/align-self-default-overflow-htb-ltr-vrl.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/align-self-default-overflow-htb-rtl-htb.html
@@ -83,6 +84,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/align-self-with-flex-grid-parent-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/align-self-with-flex-grid-parent-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/align-self-with-flex-grid-parent.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/default-overflow-with-scroll.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/justify-self-default-overflow-htb-ltr-htb.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/justify-self-default-overflow-htb-ltr-vrl.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/justify-self-default-overflow-htb-rtl-htb.html
@@ -97,6 +99,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/justify-self-htb-rtl-htb.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/justify-self-htb-rtl-vlr.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/justify-self-htb-rtl-vrl.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/justify-self-static-position-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/justify-self-static-position-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/justify-self-static-position-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/justify-self-static-position-htb-ltr-htb.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/justify-self-static-position-htb-rtl-htb.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/justify-self-static-position-vlr-ltr-vlr.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/justify-self-static-position-vrl-ltr-vrl.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/justify-self-stretch-auto-margins-aspect-ratio-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/justify-self-stretch-auto-margins-aspect-ratio.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/justify-self-stretch-auto-margins-expected.xht

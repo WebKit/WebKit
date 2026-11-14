@@ -11,8 +11,12 @@ PASS Property justify-self value 'start'
 PASS Property justify-self value 'end'
 PASS Property justify-self value 'self-start'
 PASS Property justify-self value 'self-end'
-PASS Property justify-self value 'flex-start'
-PASS Property justify-self value 'flex-end'
+FAIL Property justify-self value 'flex-start' assert_equals: expected "flow-start" but got "flex-start"
+FAIL Property justify-self value 'flex-end' assert_equals: expected "flow-end" but got "flex-end"
+FAIL Property justify-self value 'flow-start' assert_true: 'flow-start' is a supported value for justify-self. expected true got false
+FAIL Property justify-self value 'flow-end' assert_true: 'flow-end' is a supported value for justify-self. expected true got false
+FAIL Property justify-self value 'safe flow-start' assert_true: 'safe flow-start' is a supported value for justify-self. expected true got false
+FAIL Property justify-self value 'unsafe flow-end' assert_true: 'unsafe flow-end' is a supported value for justify-self. expected true got false
 PASS Property justify-self value 'unsafe center'
 PASS Property justify-self value 'safe self-end'
 PASS Property justify-self value 'left'

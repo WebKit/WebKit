@@ -7,13 +7,15 @@ PASS Property place-self value 'last baseline last baseline'
 PASS Property place-self value 'center center'
 PASS Property place-self value 'start'
 PASS Property place-self value 'self-start'
-PASS Property place-self value 'flex-end'
+FAIL Property place-self value 'flex-end' assert_equals: expected "flow-end" but got "flex-end"
 PASS Property place-self value 'unsafe center'
 PASS Property place-self value 'safe self-end safe self-end'
+FAIL Property place-self value 'flow-start' assert_true: 'flow-start' is a supported value for place-self. expected true got false
+FAIL Property place-self value 'flow-start flow-end' assert_true: 'flow-start flow-end' is a supported value for place-self. expected true got false
 PASS Property place-self value 'safe normal safe normal'
 PASS Property place-self value 'unsafe normal unsafe normal'
 PASS Property place-self value 'auto last baseline'
-PASS Property place-self value 'baseline flex-end'
+FAIL Property place-self value 'baseline flex-end' assert_equals: expected "baseline flow-end" but got "baseline flex-end"
 PASS Property place-self value 'unsafe center stretch'
 PASS Property place-self value 'safe normal unsafe normal'
 PASS Property place-self value 'normal safe normal'

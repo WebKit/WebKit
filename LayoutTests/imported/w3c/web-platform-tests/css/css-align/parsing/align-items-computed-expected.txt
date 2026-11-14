@@ -10,8 +10,12 @@ PASS Property align-items value 'start'
 PASS Property align-items value 'end'
 PASS Property align-items value 'self-start'
 PASS Property align-items value 'self-end'
-PASS Property align-items value 'flex-start'
-PASS Property align-items value 'flex-end'
+FAIL Property align-items value 'flex-start' assert_equals: expected "flow-start" but got "flex-start"
+FAIL Property align-items value 'flex-end' assert_equals: expected "flow-end" but got "flex-end"
+FAIL Property align-items value 'flow-start' assert_true: 'flow-start' is a supported value for align-items. expected true got false
+FAIL Property align-items value 'flow-end' assert_true: 'flow-end' is a supported value for align-items. expected true got false
+FAIL Property align-items value 'safe flow-start' assert_true: 'safe flow-start' is a supported value for align-items. expected true got false
+FAIL Property align-items value 'unsafe flow-end' assert_true: 'unsafe flow-end' is a supported value for align-items. expected true got false
 PASS Property align-items value 'unsafe center'
 PASS Property align-items value 'safe self-end'
 

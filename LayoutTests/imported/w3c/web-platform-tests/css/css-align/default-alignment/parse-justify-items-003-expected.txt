@@ -8,15 +8,15 @@ PASS Checking justify-items: end
 PASS Checking justify-items: self-start
 PASS Checking justify-items: self-end
 PASS Checking justify-items: center
-PASS Checking justify-items: flex-start
-PASS Checking justify-items: flex-end
+FAIL Checking justify-items: flex-start assert_equals: justify-items computed style is not what is should. expected "flow-start" but got "flex-start"
+FAIL Checking justify-items: flex-end assert_equals: justify-items computed style is not what is should. expected "flow-end" but got "flex-end"
 PASS Checking justify-items: baseline
 PASS Checking justify-items: first baseline
 PASS Checking justify-items: last baseline
-PASS Checking justify-items: safe flex-end
+FAIL Checking justify-items: safe flex-end assert_equals: justify-items computed style is not what is should. expected "safe flow-end" but got "safe flex-end"
 PASS Checking justify-items: unsafe end
 PASS Checking justify-items: safe end
-PASS Checking justify-items: unsafe flex-start
+FAIL Checking justify-items: unsafe flex-start assert_equals: justify-items computed style is not what is should. expected "unsafe flow-start" but got "unsafe flex-start"
 PASS Checking justify-items: safe center
 PASS Checking justify-items: legacy left
 PASS Checking justify-items: legacy center

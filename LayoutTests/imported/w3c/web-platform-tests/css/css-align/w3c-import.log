@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/META.yml
@@ -21,5 +19,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/baseline-of-scrollable-1b.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/baseline-of-scrollable-2-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/baseline-of-scrollable-2.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/baseline-of-single-axis-scroll-container.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/flow-start-and-end-serialization.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/inheritance.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/ttwf-reftest-alignContent.html

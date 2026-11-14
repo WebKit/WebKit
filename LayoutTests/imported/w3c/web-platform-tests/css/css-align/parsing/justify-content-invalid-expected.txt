@@ -6,6 +6,9 @@ PASS e.style['justify-content'] = "center baseline" should not set the property 
 PASS e.style['justify-content'] = "first baseline" should not set the property value
 PASS e.style['justify-content'] = "first" should not set the property value
 PASS e.style['justify-content'] = "flex-start flex-end" should not set the property value
+PASS e.style['justify-content'] = "flow" should not set the property value
+PASS e.style['justify-content'] = "flow-start flow-end" should not set the property value
+PASS e.style['justify-content'] = "flow-start safe" should not set the property value
 PASS e.style['justify-content'] = "last baseline" should not set the property value
 PASS e.style['justify-content'] = "last" should not set the property value
 PASS e.style['justify-content'] = "legacy center" should not set the property value
@@ -17,6 +20,7 @@ PASS e.style['justify-content'] = "safe self-end" should not set the property va
 PASS e.style['justify-content'] = "safe" should not set the property value
 PASS e.style['justify-content'] = "self-end unsafe" should not set the property value
 PASS e.style['justify-content'] = "self-start" should not set the property value
+PASS e.style['justify-content'] = "space-between flow-end" should not set the property value
 PASS e.style['justify-content'] = "start safe" should not set the property value
 PASS e.style['justify-content'] = "unsafe" should not set the property value
 

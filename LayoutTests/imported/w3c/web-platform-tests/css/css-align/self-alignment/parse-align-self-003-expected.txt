@@ -7,14 +7,14 @@ PASS Checking align-self: end
 PASS Checking align-self: self-start
 PASS Checking align-self: self-end
 PASS Checking align-self: center
-PASS Checking align-self: flex-start
-PASS Checking align-self: flex-end
+FAIL Checking align-self: flex-start assert_equals: align-self computed style is not what is should. expected "flow-start" but got "flex-start"
+FAIL Checking align-self: flex-end assert_equals: align-self computed style is not what is should. expected "flow-end" but got "flex-end"
 PASS Checking align-self: baseline
 PASS Checking align-self: first baseline
 PASS Checking align-self: last baseline
-PASS Checking align-self: safe flex-end
+FAIL Checking align-self: safe flex-end assert_equals: align-self computed style is not what is should. expected "safe flow-end" but got "safe flex-end"
 PASS Checking align-self: unsafe end
 PASS Checking align-self: safe end
-PASS Checking align-self: unsafe flex-start
+FAIL Checking align-self: unsafe flex-start assert_equals: align-self computed style is not what is should. expected "unsafe flow-start" but got "unsafe flex-start"
 PASS Checking align-self: safe center
 

@@ -4,7 +4,11 @@ PASS e.style['justify-items'] = "baseline last" should not set the property valu
 PASS e.style['justify-items'] = "center baseline" should not set the property value
 PASS e.style['justify-items'] = "first" should not set the property value
 PASS e.style['justify-items'] = "flex-start flex-end" should not set the property value
+PASS e.style['justify-items'] = "flow" should not set the property value
+PASS e.style['justify-items'] = "flow-start flow-end" should not set the property value
+PASS e.style['justify-items'] = "flow-start safe" should not set the property value
 PASS e.style['justify-items'] = "last" should not set the property value
+PASS e.style['justify-items'] = "legacy flow-start" should not set the property value
 PASS e.style['justify-items'] = "normal baseline" should not set the property value
 PASS e.style['justify-items'] = "normal safe" should not set the property value
 PASS e.style['justify-items'] = "normal unsafe" should not set the property value
@@ -15,4 +19,5 @@ PASS e.style['justify-items'] = "space-between" should not set the property valu
 PASS e.style['justify-items'] = "space-evenly" should not set the property value
 PASS e.style['justify-items'] = "start safe" should not set the property value
 PASS e.style['justify-items'] = "unsafe" should not set the property value
+FAIL e.style['justify-items'] = "anchor-center" should not set the property value assert_equals: expected "" but got "anchor-center"
 

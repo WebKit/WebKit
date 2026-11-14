@@ -9,8 +9,12 @@ PASS Property align-content value 'stretch'
 PASS Property align-content value 'center'
 PASS Property align-content value 'start'
 PASS Property align-content value 'end'
-PASS Property align-content value 'flex-start'
-PASS Property align-content value 'flex-end'
+FAIL Property align-content value 'flex-start' assert_equals: expected "flow-start" but got "flex-start"
+FAIL Property align-content value 'flex-end' assert_equals: expected "flow-end" but got "flex-end"
+FAIL Property align-content value 'flow-start' assert_true: 'flow-start' is a supported value for align-content. expected true got false
+FAIL Property align-content value 'flow-end' assert_true: 'flow-end' is a supported value for align-content. expected true got false
+FAIL Property align-content value 'safe flow-start' assert_true: 'safe flow-start' is a supported value for align-content. expected true got false
+FAIL Property align-content value 'unsafe flow-end' assert_true: 'unsafe flow-end' is a supported value for align-content. expected true got false
 PASS Property align-content value 'unsafe end'
-PASS Property align-content value 'safe flex-start'
+FAIL Property align-content value 'safe flex-start' assert_equals: expected "safe flow-start" but got "safe flex-start"
 

@@ -1,0 +1,16 @@
+Outer
+Inner
+
+Inner
+
+Inner
+Outer
+Inner
+
+Inner
+
+Inner
+
+FAIL horizontal writing mode assert_approx_equals: The horizontal inline-axis scroller uses its content baseline. expected 84 +/- 1 but got 0
+FAIL vertical writing mode assert_approx_equals: The vertical inline-axis scroller uses its content baseline. expected 155 +/- 1 but got 30
+

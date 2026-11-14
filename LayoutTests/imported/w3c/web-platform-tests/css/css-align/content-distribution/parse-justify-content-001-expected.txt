@@ -5,15 +5,15 @@ PASS Checking justify-content: right
 PASS Checking justify-content: start
 PASS Checking justify-content: end
 PASS Checking justify-content: center
-PASS Checking justify-content: flex-start
-PASS Checking justify-content: flex-end
+FAIL Checking justify-content: flex-start assert_equals: justify-content computed style is not what is should. expected "flow-start" but got "flex-start"
+FAIL Checking justify-content: flex-end assert_equals: justify-content computed style is not what is should. expected "flow-end" but got "flex-end"
 PASS Checking justify-content: stretch
 PASS Checking justify-content: space-around
 PASS Checking justify-content: space-between
 PASS Checking justify-content: space-evenly
-PASS Checking justify-content: safe flex-end
+FAIL Checking justify-content: safe flex-end assert_equals: justify-content computed style is not what is should. expected "safe flow-end" but got "safe flex-end"
 PASS Checking justify-content: unsafe end
 PASS Checking justify-content: safe end
-PASS Checking justify-content: unsafe flex-start
+FAIL Checking justify-content: unsafe flex-start assert_equals: justify-content computed style is not what is should. expected "unsafe flow-start" but got "unsafe flex-start"
 PASS Checking justify-content: safe center
 

@@ -1,4 +1,5 @@
 
+PASS Initial value
 PASS Property place-items value 'normal'
 PASS Property place-items value 'stretch stretch'
 PASS Property place-items value 'first baseline'
@@ -6,9 +7,11 @@ PASS Property place-items value 'last baseline last baseline'
 PASS Property place-items value 'center'
 PASS Property place-items value 'end end'
 PASS Property place-items value 'self-start'
-PASS Property place-items value 'flex-end'
+FAIL Property place-items value 'flex-end' assert_equals: expected "flow-end" but got "flex-end"
 PASS Property place-items value 'unsafe center unsafe center'
 PASS Property place-items value 'safe self-end'
+FAIL Property place-items value 'flow-start' assert_true: 'flow-start' is a supported value for place-items. expected true got false
+FAIL Property place-items value 'flow-start flow-end' assert_true: 'flow-start flow-end' is a supported value for place-items. expected true got false
 PASS Property place-items value 'safe normal safe normal'
 PASS Property place-items value 'unsafe normal unsafe normal'
 PASS Property place-items value 'stretch baseline'
@@ -18,7 +21,7 @@ PASS Property place-items value 'safe normal unsafe normal'
 PASS Property place-items value 'normal safe normal'
 PASS Property place-items value 'normal right'
 PASS Property place-items value 'baseline unsafe left'
-PASS Property place-items value 'flex-end legacy'
+FAIL Property place-items value 'flex-end legacy' assert_equals: expected "flow-end legacy center" but got "flex-end legacy center"
 PASS Property place-items value 'stretch legacy left'
 PASS Property place-items value 'first baseline right legacy'
 
