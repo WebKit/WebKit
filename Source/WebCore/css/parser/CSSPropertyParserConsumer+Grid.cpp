@@ -883,9 +883,11 @@ std::optional<CSS::GridTemplateList> consumeUnresolvedGridTemplateList(CSSParser
                 if (hasConsumedAutoRepeat)
                     return std::nullopt;
                 hasConsumedAutoRepeat = true;
-            }
+                if (!state.context.gridLanesEnabled)
+                    hasConsumedNonFixed |= repeat->hasConsumedNonFixed;
+            } else
+                hasConsumedNonFixed |= repeat->hasConsumedNonFixed;
 
-            hasConsumedNonFixed |= repeat->hasConsumedNonFixed;
             trackList.value.append(Track { WTF::move(repeat->value) });
         } else if (auto track = consumeUnresolvedGridTrackOrFixedSize(range, state)) {
             hasConsumedNonFixed |= track->hasConsumedNonFixed;

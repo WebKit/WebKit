@@ -1070,6 +1070,8 @@ unsigned RenderGrid::computeAutoRepeatTracksCount(Style::GridTrackSizingDirectio
         auto& maxTrackSizingFunction = autoTrackSize.maxTrackBreadth();
         bool hasDefiniteMaxTrackSizingFunction = maxTrackSizingFunction.isLength() && !maxTrackSizingFunction.isContentSized();
         bool hasDefiniteMinTrackSizingFunction = minTrackSizingFunction.isLength() && !minTrackSizingFunction.isContentSized();
+        if (!hasDefiniteMaxTrackSizingFunction && !hasDefiniteMinTrackSizingFunction)
+            return autoRepeatTrackListLength;
 
         auto contributingTrackSize = [&] {
             if (hasDefiniteMaxTrackSizingFunction && hasDefiniteMinTrackSizingFunction)
