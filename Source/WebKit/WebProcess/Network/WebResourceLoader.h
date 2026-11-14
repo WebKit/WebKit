@@ -27,6 +27,7 @@
 
 #include "Connection.h"
 #include "MessageSender.h"
+#include "SandboxExtension.h"
 #include "ServiceWorkerTimingInfo.h"
 #include "WebPageProxyIdentifier.h"
 #include "WebResourceInterceptController.h"
@@ -93,6 +94,9 @@ private:
     void didReceiveResponse(WebCore::ResourceResponse&&, PrivateRelayed, bool needsContinueDidReceiveResponseMessage, std::optional<WebCore::NetworkLoadMetrics>&&);
     void didReceiveData(IPC::SharedBufferReference&& data, uint64_t bytesTransferredOverNetwork);
     void didFinishResourceLoad(WebCore::NetworkLoadMetrics&&);
+#if USE(QUICK_LOOK)
+    void didFinishQuickLookResourceLoad(URL&& temporaryQuickLookFileURL, SandboxExtension::Handle&&);
+#endif
     void didFailResourceLoad(const WebCore::ResourceError&);
     void didFailServiceWorkerLoad(const WebCore::ResourceError&);
     void serviceWorkerDidNotHandle();

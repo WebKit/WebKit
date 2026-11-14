@@ -232,6 +232,15 @@ selectors = [
     { name = "setDisableUpdateMask:", class = "?" },
 ]
 
+[[temporary-usage]]
+request = "TBD"
+cleanup = "TBD"
+selectors = [
+    { name = "initWithURL:uti:options:", class = "QLPreviewConverter" },
+    { name = "previewParts", class = "QLPreviewConverter" },
+]
+requires = ["ENABLE_BLOCKING_OF_WEBCONTENT_FILE_WRITE"]
+
 [[not-web-essential]]
 # This is not really a permanent exception request; it's a bug to change
 # audit-spi to stop tracking WebPrivacy as SPI and instead treat it as a

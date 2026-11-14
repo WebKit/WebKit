@@ -28,6 +28,7 @@
 
 #if ENABLE(PREVIEW_CONVERTER) && USE(QUICK_LOOK)
 
+#import "Logging.h"
 #import "PreviewConverterClient.h"
 #import "PreviewConverterProvider.h"
 #import "QuickLook.h"
@@ -88,7 +89,9 @@ PreviewConverter::PreviewConverter(const ResourceResponse& response, PreviewConv
     , m_originalResponse { response }
     , m_provider { provider }
     , m_platformDelegate { adoptNS([[WebPreviewConverterDelegate alloc] initWithDelegate:*this]) }
+#if !ENABLE(BLOCKING_OF_WEBCONTENT_FILE_WRITE)
     , m_platformConverter { adoptNS([PAL::allocQLPreviewConverterInstance() initWithConnection:nil delegate:m_platformDelegate.get() response:protect(m_originalResponse.nsURLResponse()).get() options:nil]) }
+#endif
 {
 }
 
@@ -122,19 +125,34 @@ String PreviewConverter::previewUTI() const
     return [m_platformConverter previewUTI];
 }
 
+#if !ENABLE(BLOCKING_OF_WEBCONTENT_FILE_WRITE)
 void PreviewConverter::platformAppend(const SharedBufferDataView& data)
 {
     [m_platformConverter appendData:data.createNSData().get()];
 }
+#endif // !ENABLE(BLOCKING_OF_WEBCONTENT_FILE_WRITE)
 
-void PreviewConverter::platformFinishedAppending()
+void PreviewConverter::platformFinishedUpdating()
 {
     [m_platformConverter finishedAppendingData];
 }
 
-void PreviewConverter::platformFailedAppending()
+void PreviewConverter::platformFailedUpdating()
 {
     [m_platformConverter finishConverting];
+}
+
+void PreviewConverter::platformReceivedTemporaryFileURL(URL&& temporaryFileURL)
+{
+    String uti = WebCore::UTIFromMIMEType(m_originalResponse.mimeType());
+    if (uti.startsWith("dyn."_s)) {
+        RELEASE_LOG(Process, "Got UTI %s for MIME type %s", uti.utf8(), m_originalResponse.mimeType().utf8());
+        if (m_originalResponse.mimeType() == "application/rtf")
+            uti = "public.rtf"_s;
+    }
+    m_platformConverter = adoptNS([PAL::allocQLPreviewConverterInstance() initWithURL:temporaryFileURL.createNSURL().get() uti:uti.createNSString() options:nil]);
+    QLPreviewConverterParts *parts = [m_platformConverter previewParts];
+    [parts setDelegate:m_platformDelegate.get()];
 }
 
 bool PreviewConverter::isPlatformPasswordError(const ResourceError& error) const

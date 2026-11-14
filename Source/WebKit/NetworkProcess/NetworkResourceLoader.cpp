@@ -81,6 +81,7 @@
 #include <WebCore/LinkHeader.h>
 #include <WebCore/LinkRelAttribute.h>
 #include <WebCore/LocalNetworkAccess.h>
+#include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/OriginAccessPatterns.h>
 #include <WebCore/PendingStreamState.h>
@@ -1832,6 +1833,16 @@ void NetworkResourceLoader::didFinishLoading(const NetworkLoadMetrics& originalN
     if (shouldCaptureExtraNetworkLoadMetrics())
         connection->addNetworkLoadInformationMetrics(coreIdentifier(), networkLoadMetrics);
 
+#if USE(QUICK_LOOK) && ENABLE(BLOCKING_OF_WEBCONTENT_FILE_WRITE)
+    if (isMainResource() && PreviewConverter::supportsMIMEType(m_response.mimeType())) {
+        URL temporaryQuickLookFileURL = URL::fileURLWithFileSystemPath(m_temporaryQuickLookFilename);
+        m_temporaryQuickLookFileHandle = { };
+        auto handle = SandboxExtension::createHandle(m_temporaryQuickLookFilename, SandboxExtension::Type::ReadOnly);
+        if (handle)
+            send(Messages::WebResourceLoader::DidFinishQuickLookResourceLoad(temporaryQuickLookFileURL, WTF::move(*handle)));
+    }
+#endif // USE(QUICK_LOOK) && ENABLE(BLOCKING_OF_WEBCONTENT_FILE_WRITE)
+
     if (m_cacheEntryForValidation) {
         ASSERT(m_response.httpStatusCode() == httpStatus304NotModified);
         LOG(NetworkCache, "(NetworkProcess) revalidated");
@@ -3220,6 +3231,25 @@ void NetworkResourceLoader::sendDidReceiveDataMessage(const FragmentedSharedBuff
     updateBytesTransferredOverNetwork(bytesTransferredOverNetwork);
 #endif
 
+#if USE(QUICK_LOOK) && ENABLE(BLOCKING_OF_WEBCONTENT_FILE_WRITE)
+    if (isMainResource() && PreviewConverter::supportsMIMEType(m_response.mimeType())) {
+        if (m_temporaryQuickLookFilename.isEmpty()) {
+            String extension = MIMETypeRegistry::preferredExtensionForMIMEType(m_response.mimeType());
+            String uniqueTemporaryDirectory = FileSystem::createTemporaryDirectory("QuickLook"_s);
+            removeQuickLookTemporaryFilesIfNeeded(FileSystem::parentPath(uniqueTemporaryDirectory));
+            m_temporaryQuickLookFilename = FileSystem::pathByAppendingComponent(uniqueTemporaryDirectory, m_response.url().lastPathComponent().toString());
+            m_temporaryQuickLookFileHandle = FileSystem::openFile(m_temporaryQuickLookFilename, FileSystem::FileOpenMode::ReadWrite, FileSystem::FileAccessPermission::User);
+        }
+        constexpr uint64_t maxFileSize = 1024 * 1024 * 1024;
+        auto currentSize = FileSystem::fileSize(m_temporaryQuickLookFilename);
+        if (currentSize && *currentSize > maxFileSize) {
+            m_temporaryQuickLookFileHandle = { };
+            FileSystem::deleteFile(m_temporaryQuickLookFilename);
+        } else
+            m_temporaryQuickLookFileHandle.write(buffer.copyData().span());
+    }
+#endif // USE(QUICK_LOOK) && ENABLE(BLOCKING_OF_WEBCONTENT_FILE_WRITE)
+
     // Transfer memory footprint of the buffer to the receiving WebProcess. We have to use the
     // default ledger rather than the network ledger here since the latter requires an entitlement.
     auto data = IPC::SharedBufferReference { buffer };
@@ -3268,6 +3298,34 @@ void NetworkResourceLoader::reportNetworkUsageToAllServiceWorkerClients(WebCore:
     }
 }
 #endif
+
+#if USE(QUICK_LOOK) && ENABLE(BLOCKING_OF_WEBCONTENT_FILE_WRITE)
+void NetworkResourceLoader::removeQuickLookTemporaryFilesIfNeeded(const String& path)
+{
+    uint64_t totalSize = 0;
+    FileSystem::traverseDirectory(path, [&](const String& fileName, FileSystem::FileType fileType) {
+        if (fileType == FileSystem::FileType::Directory && fileName.startsWith("QuickLook"_s)) {
+            auto size = FileSystem::directorySize(fileName);
+            if (size)
+                totalSize += *size;
+        }
+    });
+
+    constexpr uint64_t maxDirectorySize = 1024 * 1024 * 1024;
+
+    if (totalSize < maxDirectorySize)
+        return;
+
+    FileSystem::traverseDirectory(path, [&](const String& fileName, FileSystem::FileType fileType) {
+        if (fileType == FileSystem::FileType::Directory && fileName.startsWith("QuickLook"_s)) {
+            FileSystem::traverseDirectory(fileName, [&](const String& fileName, FileSystem::FileType fileType) {
+                FileSystem::deleteFile(fileName);
+            });
+            FileSystem::deleteEmptyDirectory(fileName);
+        }
+    });
+}
+#endif // USE(QUICK_LOOK) && ENABLE(BLOCKING_OF_WEBCONTENT_FILE_WRITE)
 
 } // namespace WebKit
 

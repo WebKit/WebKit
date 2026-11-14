@@ -60,7 +60,7 @@
     (internal-debugging-support))
 
 #if USE(EXTENSIONKIT)
-(allow file-read* file-write*
+(allow file-read* file-write* (with report)
     (container-subpath "tmp"))
 #endif
 
