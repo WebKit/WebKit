@@ -26,6 +26,7 @@
 #pragma once
 
 #include <utility>
+#include <wtf/ASCIICType.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -38,6 +39,10 @@ namespace NameValidation {
 
 // https://dom.spec.whatwg.org/#valid-element-name
 NODELETE bool isValidElementName(StringView);
+NODELETE constexpr bool isInvalidElementNameCharacterAfterAlphaStart(char16_t character)
+{
+    return !character || isASCIIWhitespace(character) || character == '/' || character == '>';
+}
 NODELETE bool isValidElementName(const QualifiedName&);
 
 // https://dom.spec.whatwg.org/#valid-attribute-name

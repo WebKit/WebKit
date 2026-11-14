@@ -1890,36 +1890,6 @@ Ref<Element> Document::createElement(const QualifiedName& name, bool createdByPa
     return element.releaseNonNull();
 }
 
-// https://html.spec.whatwg.org/#valid-custom-element-name
-
-struct UnicodeCodePointRange {
-    char32_t minimum;
-    char32_t maximum;
-};
-
-#if ASSERT_ENABLED
-
-NODELETE static inline bool operator<(const UnicodeCodePointRange& a, const UnicodeCodePointRange& b)
-{
-    ASSERT(a.minimum <= a.maximum);
-    ASSERT(b.minimum <= b.maximum);
-    return a.maximum < b.minimum;
-}
-
-#endif // ASSERT_ENABLED
-
-NODELETE static inline bool operator<(const UnicodeCodePointRange& a, char32_t b)
-{
-    ASSERT(a.minimum <= a.maximum);
-    return a.maximum < b;
-}
-
-NODELETE static inline bool operator<(char32_t a, const UnicodeCodePointRange& b)
-{
-    ASSERT(b.minimum <= b.maximum);
-    return a < b.minimum;
-}
-
 CustomElementRegistry* Document::effectiveGlobalCustomElementRegistry()
 {
     if (!customElementRegistry() || customElementRegistry()->isScoped())
@@ -1927,31 +1897,7 @@ CustomElementRegistry* Document::effectiveGlobalCustomElementRegistry()
     return customElementRegistry();
 }
 
-NODELETE static inline bool isPotentialCustomElementNameCharacter(char32_t character)
-{
-    static constexpr auto ranges = WTF::toArray<UnicodeCodePointRange>({
-        { '-', '.' },
-        { '0', '9' },
-        { '_', '_' },
-        { 'a', 'z' },
-        { 0xB7, 0xB7 },
-        { 0xC0, 0xD6 },
-        { 0xD8, 0xF6 },
-        { 0xF8, 0x37D },
-        { 0x37F, 0x1FFF },
-        { 0x200C, 0x200D },
-        { 0x203F, 0x2040 },
-        { 0x2070, 0x218F },
-        { 0x2C00, 0x2FEF },
-        { 0x3001, 0xD7FF },
-        { 0xF900, 0xFDCF },
-        { 0xFDF0, 0xFFFD },
-        { 0x10000, 0xEFFFF },
-    });
-
-    ASSERT(std::is_sorted(std::begin(ranges), std::end(ranges)));
-    return std::binary_search(std::begin(ranges), std::end(ranges), character);
-}
+// https://html.spec.whatwg.org/#valid-custom-element-name
 
 enum class CustomElementNameCharacterKind : uint8_t {
     Invalid,
@@ -1960,43 +1906,24 @@ enum class CustomElementNameCharacterKind : uint8_t {
     Upper,
 };
 
-NODELETE static ALWAYS_INLINE CustomElementNameCharacterKind customElementNameCharacterKind(Latin1Character character)
+// FIXME: Remove SUPPRESS_NODELETE once NoDeleteChecker stops treating local lambdas as possibly deleting (rdar://178617685).
+NODELETE SUPPRESS_NODELETE static ALWAYS_INLINE CustomElementNameCharacterKind customElementNameCharacterKind(Latin1Character character)
 {
     using Kind = CustomElementNameCharacterKind;
-    static constexpr std::array<Kind, 256> table {
-        Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid,
-        Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid,
-        Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid,
-        Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid,
-        Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid,
-        Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Hyphen,  Kind::Valid,   Kind::Invalid, // -, .
-        Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   // 0-7
-        Kind::Valid,   Kind::Valid,   Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, // 8-9
-        Kind::Invalid, Kind::Upper,   Kind::Upper,   Kind::Upper,   Kind::Upper,   Kind::Upper,   Kind::Upper,   Kind::Upper,   // @, A-G
-        Kind::Upper,   Kind::Upper,   Kind::Upper,   Kind::Upper,   Kind::Upper,   Kind::Upper,   Kind::Upper,   Kind::Upper,   // H-O
-        Kind::Upper,   Kind::Upper,   Kind::Upper,   Kind::Upper,   Kind::Upper,   Kind::Upper,   Kind::Upper,   Kind::Upper,   // P-W
-        Kind::Upper,   Kind::Upper,   Kind::Upper,   Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Valid,   // X-Z, _
-        Kind::Invalid, Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   // a-g
-        Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   // h-o
-        Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   // p-w
-        Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, // x-z
-        Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid,
-        Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid,
-        Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid,
-        Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid,
-        Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid,
-        Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid,
-        Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Valid,   // xB7
-        Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid, Kind::Invalid,
-        Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   // xC0-xC7
-        Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   // xC8-xCF
-        Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Invalid, // xD0-xD6
-        Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   // xD8-xDF
-        Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   // xE0-xE7
-        Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   // xE8-xEF
-        Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Invalid, // xF0-xF6
-        Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   Kind::Valid,   // xF8-xFF
-    };
+    static constexpr auto table = [] {
+        std::array<Kind, 256> kinds { };
+        for (unsigned codeUnit = 0; codeUnit < kinds.size(); ++codeUnit) {
+            if (isASCIIUpper(codeUnit))
+                kinds[codeUnit] = Kind::Upper;
+            else if (codeUnit == '-')
+                kinds[codeUnit] = Kind::Hyphen;
+            else if (NameValidation::isInvalidElementNameCharacterAfterAlphaStart(codeUnit))
+                kinds[codeUnit] = Kind::Invalid;
+            else
+                kinds[codeUnit] = Kind::Valid;
+        }
+        return kinds;
+    }();
     return table[character];
 }
 
@@ -2021,10 +1948,10 @@ NODELETE static ALWAYS_INLINE CustomElementNameValidationStatus validateCustomEl
             }
         }
     } else {
-        for (auto character : StringView(localName).codePoints()) {
+        for (auto character : localName.string().span16()) {
             if (isASCIIUpper(character))
                 return CustomElementNameValidationStatus::ContainsUppercaseASCIILetter;
-            if (!isPotentialCustomElementNameCharacter(character))
+            if (NameValidation::isInvalidElementNameCharacterAfterAlphaStart(character))
                 return CustomElementNameValidationStatus::ContainsDisallowedCharacter;
             if (character == '-')
                 containsHyphen = true;

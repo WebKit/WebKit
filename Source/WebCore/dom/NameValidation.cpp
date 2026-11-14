@@ -43,11 +43,6 @@ NODELETE static constexpr bool isInvalidAttributeNameCharacter(char16_t c)
     return !c || isASCIIWhitespace(c) || c == '/' || c == '>' || c == '=';
 }
 
-NODELETE static constexpr bool isInvalidElementNameCharacterAfterAlphaStart(char16_t c)
-{
-    return !c || isASCIIWhitespace(c) || c == '/' || c == '>';
-}
-
 NODELETE static constexpr bool isValidElementNameContinuationCharacter(char16_t c)
 {
     return isASCIIAlphanumeric(c) || c == '-' || c == '.' || c == ':' || c == '_' || !isASCII(c);
