@@ -960,6 +960,7 @@
 				WebCore/RegionTests.cpp,
 				WebCore/RegistrableDomain.cpp,
 				WebCore/RenderStyleChange.cpp,
+				WebCore/ResourceResponsePersistence.cpp,
 				WebCore/SampleMap.cpp,
 				WebCore/SecurityOrigin.cpp,
 				WebCore/SerializedScriptValue.cpp,
