@@ -84,7 +84,6 @@ struct CSSParserContext {
     bool cssCalcSizeFunctionEnabled : 1 { false };
     bool cssFitContentFunctionEnabled : 1 { false };
     bool cssStretchFunctionEnabled : 1 { false };
-    bool cssURLModifiersEnabled : 1 { false };
     bool cssURLIntegrityModifierEnabled : 1 { false };
     bool cssLinkParametersEnabled : 1 { false };
     bool cssAxisRelativePositionKeywordsEnabled : 1 { false };

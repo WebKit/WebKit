@@ -1385,14 +1385,6 @@ CSSURLIntegrityModifierEnabled:
   humanReadableDescription: "Enable support for CSS Values and Units Module Level 5 URL integrity() modifier"
   defaultValue: true
 
-CSSURLModifiersEnabled:
-  type: bool
-  status: stable
-  category: css
-  humanReadableName: "CSS URL Modifiers"
-  humanReadableDescription: "Enable support for CSS Values and Units Module Level 5 URL modifiers"
-  defaultValue: true
-
 CSSUnprefixedBackdropFilterEnabled:
   type: bool
   status: Backdropfilter_feature_status

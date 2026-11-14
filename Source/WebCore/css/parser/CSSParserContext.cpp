@@ -122,7 +122,6 @@ CSSParserContext::CSSParserContext(const Settings& settings)
     , cssCalcSizeFunctionEnabled { settings.cssCalcSizeFunctionEnabled() }
     , cssFitContentFunctionEnabled { settings.cssFitContentFunctionEnabled() }
     , cssStretchFunctionEnabled { settings.cssStretchFunctionEnabled() }
-    , cssURLModifiersEnabled { settings.cssURLModifiersEnabled() }
     , cssURLIntegrityModifierEnabled { settings.cssURLIntegrityModifierEnabled() }
     , cssLinkParametersEnabled { settings.cssLinkParametersEnabled() }
     , cssAxisRelativePositionKeywordsEnabled { settings.cssAxisRelativePositionKeywordsEnabled() }
@@ -181,7 +180,6 @@ void add(Hasher& hasher, const CSSParserContext& context)
         context.cssCalcSizeFunctionEnabled,
         context.cssFitContentFunctionEnabled,
         context.cssStretchFunctionEnabled,
-        context.cssURLModifiersEnabled,
         context.cssURLIntegrityModifierEnabled,
         context.cssLinkParametersEnabled,
         context.cssAxisRelativePositionKeywordsEnabled,
