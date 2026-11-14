@@ -27,16 +27,18 @@ function test() {
         InspectorTest.expectThat(startTime <= record.startTime && record.endTime <= endTime, `Record from the ${description} should be within the recording.`);
     }
 
-    function expectNoLayoutOrPaintRecordsFromPageTarget() {
-        // Style records still come from the page target, and Composite records always do.
-        const layoutAndPaintTypes = [
+    function expectNoLayoutStyleOrPaintRecordsFromPageTarget() {
+        // Composite records always come from the page target.
+        const layoutStyleAndPaintTypes = [
+            InspectorBackend.Enum.Timeline.EventType.ScheduleStyleRecalculation,
+            InspectorBackend.Enum.Timeline.EventType.RecalculateStyles,
             InspectorBackend.Enum.Timeline.EventType.InvalidateLayout,
             InspectorBackend.Enum.Timeline.EventType.ScheduleLayout,
             InspectorBackend.Enum.Timeline.EventType.Layout,
             InspectorBackend.Enum.Timeline.EventType.Paint,
         ];
-        let types = FrameTimelineTest.recordPayloadTypes(WI.mainTarget).filter((type) => layoutAndPaintTypes.includes(type));
-        InspectorTest.expectEqual(types.length, 0, "No layout or paint records should come from the page target.");
+        let types = FrameTimelineTest.recordPayloadTypes(WI.mainTarget).filter((type) => layoutStyleAndPaintTypes.includes(type));
+        InspectorTest.expectEqual(types.length, 0, "No layout, style or paint records should come from the page target.");
     }
 
     function expectNoScriptRecordsFromPageTarget(recording) {
@@ -134,7 +136,7 @@ function test() {
             await FrameTimelineTest.stopCapturing();
             InspectorTest.pass("Capturing stopped.");
 
-            expectNoLayoutOrPaintRecordsFromPageTarget();
+            expectNoLayoutStyleOrPaintRecordsFromPageTarget();
         }
     });
 
@@ -142,26 +144,40 @@ function test() {
         name: "SiteIsolation.Timeline.FrameTargetRecords.NoFallbackToPageTarget",
         description: "While a frame target's Timeline domain is enabled but not tracking, its records should not go to the page target, even when the page target is tracking.",
         async test() {
+            // Keep the page target's events away from TimelineManager, which would otherwise start the main frame
+            // target too when the page target starts.
+            let pageTargetRecordPayloads = [];
+            let originalFunctions = new Map;
+            for (let functionName of ["capturingStarted", "capturingStopped", "eventRecorded"]) {
+                let originalFunction = WI.timelineManager[functionName];
+                originalFunctions.set(functionName, originalFunction);
+                WI.timelineManager[functionName] = function(target, ...rest) {
+                    if (target !== WI.mainTarget)
+                        return originalFunction.call(this, target, ...rest);
+                    if (functionName === "eventRecorded")
+                        pageTargetRecordPayloads.push(rest[0]);
+                };
+            }
+
             FrameTimelineTest.clearTrackingEvents();
 
-            let activePromise = FrameTimelineTest.awaitCapturingState(WI.TimelineManager.CapturingState.Active);
             await WI.mainTarget.TimelineAgent.start();
-            await activePromise;
-            InspectorTest.expectFalse(FrameTimelineTest.didReportTrackingEvent("capturingStarted", mainFrameTarget), "The main frame target should not be tracking.");
 
-            let recording = WI.timelineManager.activeRecording;
             await mainFrameTarget.RuntimeAgent.evaluate.invoke({expression: "new Promise((resolve) => setTimeout(() => { timerFired(); resolve(); }))", objectGroup: "test", awaitPromise: true});
             InspectorTest.pass("A timer fired in the main frame.");
+            InspectorTest.expectFalse(FrameTimelineTest.didReportTrackingEvent("capturingStarted", mainFrameTarget), "The main frame target should not be tracking.");
 
-            // The page target sends any record before it reports that it stopped, so the check below sees them all.
-            let inactivePromise = FrameTimelineTest.awaitCapturingState(WI.TimelineManager.CapturingState.Inactive);
+            // The page target sends any record before it replies to the stop command, so the check below sees them all.
             await WI.mainTarget.TimelineAgent.stop();
-            await inactivePromise;
-            InspectorTest.pass("Capturing stopped.");
+            InspectorTest.pass("The page target stopped.");
 
-            let scriptTimeline = recording.timelines.get(WI.TimelineRecord.Type.Script);
-            let timerRecords = scriptTimeline.records.filter((record) => record.eventType === WI.ScriptTimelineRecord.EventType.TimerFired);
-            InspectorTest.expectFalse(timerRecords.some((record) => record.target === WI.mainTarget), "The page target should not record the main frame's timer.");
+            for (let [functionName, originalFunction] of originalFunctions)
+                WI.timelineManager[functionName] = originalFunction;
+
+            function containsTimerFire(recordPayload) {
+                return recordPayload.type === InspectorBackend.Enum.Timeline.EventType.TimerFire || (recordPayload.children || []).some(containsTimerFire);
+            }
+            InspectorTest.expectFalse(pageTargetRecordPayloads.some(containsTimerFire), "The page target should not record the main frame's timer.");
         }
     });
 
@@ -187,7 +203,7 @@ function test() {
             await inactivePromise;
             InspectorTest.pass("Capturing stopped.");
 
-            expectNoLayoutOrPaintRecordsFromPageTarget();
+            expectNoLayoutStyleOrPaintRecordsFromPageTarget();
         }
     });
 

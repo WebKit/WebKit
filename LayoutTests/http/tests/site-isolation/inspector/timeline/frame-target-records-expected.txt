@@ -38,17 +38,17 @@ PASS: No script records other than garbage collections should come from the page
 PASS: Recorded a layout from the cross-origin iframe target.
 PASS: Recorded a paint from the cross-origin iframe target.
 PASS: Capturing stopped.
-PASS: No layout or paint records should come from the page target.
+PASS: No layout, style or paint records should come from the page target.
 
 -- Running test case: SiteIsolation.Timeline.FrameTargetRecords.NoFallbackToPageTarget
-PASS: The main frame target should not be tracking.
 PASS: A timer fired in the main frame.
-PASS: Capturing stopped.
+PASS: The main frame target should not be tracking.
+PASS: The page target stopped.
 PASS: The page target should not record the main frame's timer.
 
 -- Running test case: SiteIsolation.Timeline.FrameTargetRecords.LayoutAndPaintNoFallbackToPageTarget
 PASS: The main frame target should not be tracking.
 PASS: Forced a layout and a repaint in the main frame.
 PASS: Capturing stopped.
-PASS: No layout or paint records should come from the page target.
+PASS: No layout, style or paint records should come from the page target.
 

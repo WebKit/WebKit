@@ -1,0 +1,15 @@
+Test that under Site Isolation, an auto-capture started by a cross-origin main frame navigation records from the main frame target of the new process.
+
+
+== Running test suite: SiteIsolation.Timeline.AutoCaptureCrossOriginNavigation
+-- Running test case: SiteIsolation.Timeline.AutoCaptureCrossOriginNavigation.NewMainFrameTarget
+PASS: The navigation started an auto-capture.
+PASS: The navigation should create a new page target.
+PASS: The page target created by the navigation should start the auto-capture.
+PASS: The navigation should create a new main frame target.
+PASS: The new main frame target started Timeline.
+PASS: The new main frame target started ScriptProfiler.
+PASS: Recorded a timer from the new main frame target.
+PASS: Capturing stopped.
+PASS: The new main frame target should report that Timeline stopped.
+

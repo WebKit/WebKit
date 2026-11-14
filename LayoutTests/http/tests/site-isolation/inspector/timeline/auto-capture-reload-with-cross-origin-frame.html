@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/frame-timeline-test-utilities.js"></script>
+<script src="resources/timeline-events.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Timeline.AutoCaptureWithCrossOriginFrame");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Timeline.AutoCaptureWithCrossOriginFrame.Reload",
+        description: "An auto-capture started by a reload should start the main frame target, which exists before the reload, and the cross-origin iframe target created by the reload.",
+        async test() {
+            // Script starts ScriptProfiler, and Layout starts Timeline.
+            WI.timelineManager.enabledTimelineTypes = [WI.TimelineRecord.Type.Script, WI.TimelineRecord.Type.Layout];
+            WI.timelineManager.autoCaptureOnPageLoad = true;
+
+            // Otherwise the auto-capture can stop on its own while the test waits for records.
+            WI.settings.timelinesAutoStop.value = false;
+
+            let mainFrameTargetBeforeReload = InspectorTest.mainFrameTarget;
+            let iframeTargetBeforeReload = await waitForFrameTargetForURLContaining("timeline-frame.html");
+            InspectorTest.expectNotNull(iframeTargetBeforeReload, "Should find the cross-origin iframe target.");
+            InspectorTest.expectFalse(WI.timelineManager.isCapturing(), "TimelineManager should not be capturing.");
+
+            FrameTimelineTest.clearTrackingEvents();
+
+            let activePromise = FrameTimelineTest.awaitCapturingState(WI.TimelineManager.CapturingState.Active);
+            await Promise.all([
+                InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad),
+                activePromise,
+                InspectorTest.reloadPage(),
+            ]);
+            InspectorTest.pass("The reload started an auto-capture.");
+
+            let mainFrameTarget = InspectorTest.mainFrameTarget;
+            InspectorTest.expectEqual(mainFrameTarget, mainFrameTargetBeforeReload, "The main frame target should be the same after the reload.");
+            let iframeTarget = await waitForFrameTargetForURLContaining("timeline-frame.html");
+            InspectorTest.expectThat(iframeTarget && iframeTarget !== iframeTargetBeforeReload, "The reload should create a new cross-origin iframe target.");
+
+            for (let [target, description] of [[mainFrameTarget, "main frame target"], [iframeTarget, "cross-origin iframe target"]]) {
+                for (let domain of ["Timeline", "ScriptProfiler"]) {
+                    await FrameTimelineTest.awaitTrackingEvent("capturingStarted", target, domain);
+                    InspectorTest.pass(`The ${description} started ${domain}.`);
+                }
+            }
+
+            let mainFrameRecordPromise = FrameTimelineTest.awaitScriptRecord(mainFrameTarget, WI.ScriptTimelineRecord.EventType.TimerFired);
+            let iframeRecordPromise = FrameTimelineTest.awaitScriptRecord(iframeTarget, WI.ScriptTimelineRecord.EventType.TimerFired);
+            await FrameTimelineTest.evaluateInTarget(mainFrameTarget, "fireTimer()");
+            await FrameTimelineTest.evaluateInTarget(iframeTarget, "fireTimer()");
+            await mainFrameRecordPromise;
+            InspectorTest.pass("Recorded a timer from the main frame target.");
+            await iframeRecordPromise;
+            InspectorTest.pass("Recorded a timer from the cross-origin iframe target.");
+
+            await FrameTimelineTest.stopCapturing();
+            InspectorTest.pass("Capturing stopped.");
+
+            for (let [target, description] of [[mainFrameTarget, "main frame target"], [iframeTarget, "cross-origin iframe target"]])
+                InspectorTest.expectThat(FrameTimelineTest.didReportTrackingEvent("capturingStopped", target), `The ${description} should report that Timeline stopped.`);
+
+            WI.timelineManager.autoCaptureOnPageLoad = false;
+            WI.settings.timelinesAutoStop.reset();
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that under Site Isolation, an auto-capture started by a reload records from the frame targets, including a cross-origin iframe.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/timeline/resources/timeline-frame.html"></iframe>
+</body>

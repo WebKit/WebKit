@@ -29,10 +29,14 @@
 #include "Document.h"
 #include "Element.h"
 #include "FloatQuad.h"
+#include "FrameDOMAgent.h"
+#include "FrameDebuggerAgent.h"
 #include "InspectorWebAgentBase.h"
 #include "InstrumentingAgents.h"
 #include "LayoutRect.h"
 #include "LocalFrameView.h"
+#include "Node.h"
+#include "NodeDocument.h"
 #include "RenderElementInlines.h"
 #include "RenderObjectInlines.h"
 #include "RenderView.h"
@@ -82,8 +86,8 @@ bool FrameTimelineAgent::shouldToggleInstrument(Inspector::Protocol::Timeline::I
 {
     // The other instruments belong to domains that frame targets do not have yet, so their getters would reach
     // the page's agents.
-    // FIXME: <https://webkit.org/b/329360> Also toggle ScriptProfiler once frame targets have that domain.
-    return instrument == Inspector::Protocol::Timeline::Instrument::Timeline;
+    return instrument == Inspector::Protocol::Timeline::Instrument::Timeline
+        || instrument == Inspector::Protocol::Timeline::Instrument::ScriptProfiler;
 }
 
 void FrameTimelineAgent::willInvalidateLayout(const RenderObject& renderer)
@@ -186,8 +190,10 @@ void FrameTimelineAgent::didPaint(RenderObject& renderer, const LayoutRect& clip
     auto* entry = lastRecordEntry();
     ASSERT(entry->type == TimelineRecordType::Paint);
 
-    auto clipQuadInMainFrameView = protect(renderer.view().frameView())->contentsToMainFrameView(renderer.localToAbsoluteQuad({ clipRect }));
-    entry->data = TimelineRecordFactory::createPaintData(clipQuadInMainFrameView);
+    // The frontend highlights the quad through this frame's target, whose overlay draws in the coordinates of
+    // this process's local root, not the main frame's, which may be in another process.
+    auto clipQuadInRootView = protect(renderer.view().frameView())->contentsToRootView(renderer.localToAbsoluteQuad({ clipRect }));
+    entry->data = TimelineRecordFactory::createPaintData(clipQuadInRootView);
 
     if (nodeId)
         TimelineRecordFactory::appendNodeId(entry->data.get(), nodeId);
@@ -205,16 +211,36 @@ void FrameTimelineAgent::didEnqueueLargestContentfulPaint(Element* element, unsi
     appendRecord(TimelineRecordFactory::createLargestContentfulPaintData(nodeIdForNode(element), area), TimelineRecordType::LargestContentfulPaint, false);
 }
 
-// FIXME: <https://webkit.org/b/329361> Push nodes through FrameDOMAgent once the frontend resolves node IDs in
-// Timeline records through the record's target.
-Inspector::Protocol::DOM::NodeId FrameTimelineAgent::nodeIdForNode(Node*) const
+WebDebuggerAgent* FrameTimelineAgent::debuggerAgentForProgrammaticCapture() const
 {
-    return 0;
+    // Only this frame's own debugger agent, so that a frame's capture never turns off the page target's breakpoints.
+    // The page never fills this slot, so the fallback to the page's agents finds nothing.
+    return protect(m_instrumentingAgents)->enabledFrameDebuggerAgent();
 }
 
-Inspector::Protocol::DOM::NodeId FrameTimelineAgent::nodeIdForDocument(Document&) const
+Inspector::Protocol::DOM::NodeId FrameTimelineAgent::nodeIdForNode(Node* node) const
 {
-    return 0;
+    if (!node)
+        return 0;
+
+    CheckedPtr domAgent = protect(m_instrumentingAgents)->persistentFrameDOMAgent();
+    if (!domAgent)
+        return 0;
+
+    // Like the page's DOM agent, push a node only once the frontend has requested its document.
+    if (!domAgent->boundNodeId(protect(node->document()).ptr()))
+        return 0;
+
+    return domAgent->pushNodePathToFrontend(node);
+}
+
+Inspector::Protocol::DOM::NodeId FrameTimelineAgent::nodeIdForDocument(Document& document) const
+{
+    CheckedPtr domAgent = protect(m_instrumentingAgents)->persistentFrameDOMAgent();
+    if (!domAgent)
+        return 0;
+
+    return domAgent->boundNodeId(&document);
 }
 
 Inspector::Protocol::DOM::NodeId FrameTimelineAgent::nodeIdForRenderer(const RenderObject& renderer) const

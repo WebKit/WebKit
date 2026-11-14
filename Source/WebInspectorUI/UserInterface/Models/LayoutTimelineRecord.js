@@ -25,13 +25,14 @@
 
 WI.LayoutTimelineRecord = class LayoutTimelineRecord extends WI.TimelineRecord
 {
-    constructor(eventType, startTime, endTime, stackTrace, sourceCodeLocation, {quad, area, domNodeOrInfo} = {})
+    constructor(eventType, startTime, endTime, stackTrace, sourceCodeLocation, {quad, area, domNodeOrInfo, target} = {})
     {
         super(WI.TimelineRecord.Type.Layout, startTime, endTime, stackTrace, sourceCodeLocation);
 
         console.assert(eventType);
         console.assert(!quad || quad instanceof WI.Quad);
         console.assert(!domNodeOrInfo || domNodeOrInfo instanceof WI.DOMNode || domNodeOrInfo.displayName, domNodeOrInfo);
+        console.assert(!target || target instanceof WI.Target, target);
 
         if (eventType in WI.LayoutTimelineRecord.EventType)
             eventType = WI.LayoutTimelineRecord.EventType[eventType];
@@ -42,6 +43,9 @@ WI.LayoutTimelineRecord = class LayoutTimelineRecord extends WI.TimelineRecord
         this._domNodeOrInfo = domNodeOrInfo;
         this._domNodeDisplayName = domNodeOrInfo?.displayName;
         this._domNodeCSSPath = domNodeOrInfo instanceof WI.DOMNode ? WI.cssPath(domNodeOrInfo, {full: true}) : domNodeOrInfo?.cssPath;
+
+        // The target that sent the record, which highlights its quad. Imported records have no target.
+        this._target = target || null;
     }
 
     // Static
@@ -119,6 +123,11 @@ WI.LayoutTimelineRecord = class LayoutTimelineRecord extends WI.TimelineRecord
     get eventType()
     {
         return this._eventType;
+    }
+
+    get target()
+    {
+        return this._target;
     }
 
     get width()

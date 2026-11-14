@@ -1,0 +1,21 @@
+Test that under Site Isolation, an auto-capture started by a reload records from the frame targets, including a cross-origin iframe.
+
+
+
+== Running test suite: SiteIsolation.Timeline.AutoCaptureWithCrossOriginFrame
+-- Running test case: SiteIsolation.Timeline.AutoCaptureWithCrossOriginFrame.Reload
+PASS: Should find the cross-origin iframe target.
+PASS: TimelineManager should not be capturing.
+PASS: The reload started an auto-capture.
+PASS: The main frame target should be the same after the reload.
+PASS: The reload should create a new cross-origin iframe target.
+PASS: The main frame target started Timeline.
+PASS: The main frame target started ScriptProfiler.
+PASS: The cross-origin iframe target started Timeline.
+PASS: The cross-origin iframe target started ScriptProfiler.
+PASS: Recorded a timer from the main frame target.
+PASS: Recorded a timer from the cross-origin iframe target.
+PASS: Capturing stopped.
+PASS: The main frame target should report that Timeline stopped.
+PASS: The cross-origin iframe target should report that Timeline stopped.
+

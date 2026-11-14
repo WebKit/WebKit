@@ -109,9 +109,19 @@ Inspector::Protocol::ErrorStringOr<void> InspectorTimelineAgent::start(std::opti
 
 Inspector::Protocol::ErrorStringOr<void> InspectorTimelineAgent::stop()
 {
-    if (tracking())
-        internalStop();
+    ASSERT(tracking() || m_pendingConsoleProfileRecords.isEmpty());
 
+    if (tracking()) {
+        // Stopping also ends the console profiles that are still open (e.g. when another target ends the capture), so
+        // that their `console.profileEnd()` does not stop a capture that is no longer running, and the next
+        // `console.profile()` starts a new one.
+        for (auto& record : m_pendingConsoleProfileRecords)
+            didCompleteRecordEntry(record);
+
+        internalStop();
+    }
+
+    m_pendingConsoleProfileRecords.clear();
     m_trackingFromFrontend = false;
 
     return { };
@@ -351,7 +361,7 @@ void InspectorTimelineAgent::startProgrammaticCapture()
     ASSERT(!tracking());
 
     // Disable breakpoints during programmatic capture.
-    if (CheckedPtr webDebuggerAgent = Ref { m_instrumentingAgents.get() }->enabledWebDebuggerAgent()) {
+    if (CheckedPtr webDebuggerAgent = debuggerAgentForProgrammaticCapture()) {
         m_programmaticCaptureRestoreBreakpointActiveValue = webDebuggerAgent->breakpointsActive();
         if (m_programmaticCaptureRestoreBreakpointActiveValue)
             std::ignore = webDebuggerAgent->setBreakpointsActive(false);
@@ -374,9 +384,14 @@ void InspectorTimelineAgent::stopProgrammaticCapture()
 
     // Re-enable breakpoints if they were enabled.
     if (m_programmaticCaptureRestoreBreakpointActiveValue) {
-        if (CheckedPtr webDebuggerAgent = Ref { m_instrumentingAgents.get() }->enabledWebDebuggerAgent())
+        if (CheckedPtr webDebuggerAgent = debuggerAgentForProgrammaticCapture())
             std::ignore = webDebuggerAgent->setBreakpointsActive(true);
     }
+}
+
+WebDebuggerAgent* InspectorTimelineAgent::debuggerAgentForProgrammaticCapture() const
+{
+    return protect(m_instrumentingAgents)->enabledWebDebuggerAgent();
 }
 
 void InspectorTimelineAgent::toggleInstruments(InstrumentState state)

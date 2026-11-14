@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/frame-timeline-test-utilities.js"></script>
+<script src="resources/timeline-events.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Timeline.AutoCaptureCrossOriginNavigation");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Timeline.AutoCaptureCrossOriginNavigation.NewMainFrameTarget",
+        description: "An auto-capture started by a cross-origin main frame navigation should start the main frame target of the new process, which exists before the auto-capture starts.",
+        async test() {
+            // Script starts ScriptProfiler, and Layout starts Timeline.
+            WI.timelineManager.enabledTimelineTypes = [WI.TimelineRecord.Type.Script, WI.TimelineRecord.Type.Layout];
+            WI.timelineManager.autoCaptureOnPageLoad = true;
+
+            // Otherwise the auto-capture can stop on its own while the test waits for records.
+            WI.settings.timelinesAutoStop.value = false;
+
+            let previousPageTarget = WI.mainTarget;
+            let previousMainFrameTarget = InspectorTest.mainFrameTarget;
+
+            let autoCaptureTargets = [];
+            let originalAutoCaptureStarted = WI.timelineManager.autoCaptureStarted;
+            WI.timelineManager.autoCaptureStarted = function(target, ...rest) {
+                autoCaptureTargets.push(target);
+                return originalAutoCaptureStarted.call(this, target, ...rest);
+            };
+
+            FrameTimelineTest.clearTrackingEvents();
+
+            let activePromise = FrameTimelineTest.awaitCapturingState(WI.TimelineManager.CapturingState.Active);
+            let loadPromise = InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad);
+            // Don't wait for the reply, since the target that would send it is being replaced.
+            previousPageTarget.RuntimeAgent.evaluate("location.hostname = 'localhost'");
+            await Promise.all([activePromise, loadPromise]);
+            InspectorTest.pass("The navigation started an auto-capture.");
+
+            WI.timelineManager.autoCaptureStarted = originalAutoCaptureStarted;
+
+            InspectorTest.expectNotEqual(WI.mainTarget, previousPageTarget, "The navigation should create a new page target.");
+            InspectorTest.expectThat(autoCaptureTargets.length === 1 && autoCaptureTargets[0] === WI.mainTarget, "The page target created by the navigation should start the auto-capture.");
+
+            let mainFrameTarget = InspectorTest.mainFrameTarget;
+            InspectorTest.expectNotEqual(mainFrameTarget, previousMainFrameTarget, "The navigation should create a new main frame target.");
+
+            // FIXME: <https://webkit.org/b/330403> The new main frame target starts only after the navigation commits,
+            // so records of the first scripts of the new document can be lost.
+            for (let domain of ["Timeline", "ScriptProfiler"]) {
+                await FrameTimelineTest.awaitTrackingEvent("capturingStarted", mainFrameTarget, domain);
+                InspectorTest.pass(`The new main frame target started ${domain}.`);
+            }
+
+            let recordPromise = FrameTimelineTest.awaitScriptRecord(mainFrameTarget, WI.ScriptTimelineRecord.EventType.TimerFired);
+            await FrameTimelineTest.evaluateInTarget(mainFrameTarget, "fireTimer()");
+            await recordPromise;
+            InspectorTest.pass("Recorded a timer from the new main frame target.");
+
+            await FrameTimelineTest.stopCapturing();
+            InspectorTest.pass("Capturing stopped.");
+            InspectorTest.expectThat(FrameTimelineTest.didReportTrackingEvent("capturingStopped", mainFrameTarget), "The new main frame target should report that Timeline stopped.");
+
+            WI.timelineManager.autoCaptureOnPageLoad = false;
+            WI.settings.timelinesAutoStop.reset();
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that under Site Isolation, an auto-capture started by a cross-origin main frame navigation records from the main frame target of the new process.</p>
+</body>

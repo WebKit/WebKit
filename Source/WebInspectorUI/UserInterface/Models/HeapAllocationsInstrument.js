@@ -39,13 +39,13 @@ WI.HeapAllocationsInstrument = class HeapAllocationsInstrument extends WI.Instru
         return WI.TimelineRecord.Type.HeapAllocations;
     }
 
-    startInstrumentation(initiatedByBackend)
+    startInstrumentation(initiatingTarget)
     {
         // FIXME: Include a "track allocations" option for this instrument.
         // FIXME: Include a periodic snapshot interval option for this instrument.
 
-        if (!initiatedByBackend) {
-            for (let target of this.#allSupportedTargets())
+        for (let target of this.#allSupportedTargets()) {
+            if (target !== initiatingTarget)
                 this.#startTrackingForTarget(target);
         }
 
