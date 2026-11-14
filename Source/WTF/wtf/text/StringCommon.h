@@ -1472,6 +1472,42 @@ ALWAYS_INLINE void copyElements(std::span<ElementType> destinationSpan, std::spa
         std::memcpy(destination, source, count); // NOLINT
 }
 
+ALWAYS_INLINE void widen4Elements(uint16_t* destination, const uint8_t* source)
+{
+    simde_uint8x8_t bytes = simde_vreinterpret_u8_u32(simde_vdup_n_u32(unalignedLoad<uint32_t>(source)));
+    simde_vst1_u16(destination, simde_vget_low_u16(simde_vmovl_u8(bytes)));
+}
+
+ALWAYS_INLINE void widen8Elements(uint16_t* destination, const uint8_t* source)
+{
+    simde_vst1q_u16(destination, simde_vmovl_u8(simde_vld1_u8(source)));
+}
+
+template<size_t maximumLength>
+ALWAYS_INLINE void copySmallMemoryWidening(uint16_t* __restrict destination, const uint8_t* __restrict source, size_t length)
+{
+    static_assert(maximumLength <= 4 * 8);
+    ASSERT(length >= 2 && length <= maximumLength);
+
+    if (length < 4) {
+        destination[0] = source[0];
+        destination[1] = source[1];
+        destination[length - 1] = source[length - 1];
+        return;
+    }
+    if (length < 8) {
+        widen4Elements(destination, source);
+        widen4Elements(destination + length - 4, source + length - 4);
+        return;
+    }
+    widen8Elements(destination, source);
+    if (length > 16) {
+        widen8Elements(destination + 8, source + 8);
+        widen8Elements(destination + length - 16, source + length - 16);
+    }
+    widen8Elements(destination + length - 8, source + length - 8);
+}
+
 inline void copyElements(std::span<uint16_t> destinationSpan, std::span<const uint8_t> sourceSpan)
 {
     ASSERT(!spansOverlap(destinationSpan, sourceSpan));
@@ -1479,6 +1515,16 @@ inline void copyElements(std::span<uint16_t> destinationSpan, std::span<const ui
     auto* __restrict destination = destinationSpan.data();
     auto* __restrict source = sourceSpan.data();
     size_t length = sourceSpan.size();
+
+    if (length == 1) {
+        *destination = *source;
+        return;
+    }
+    constexpr size_t maxInlineCopyLength = 32;
+    if (isInRange<size_t>(length, 2, maxInlineCopyLength)) {
+        copySmallMemoryWidening<maxInlineCopyLength>(destination, source, length);
+        return;
+    }
 
 #if CPU(ARM64)
     const auto* end = destination + length;
