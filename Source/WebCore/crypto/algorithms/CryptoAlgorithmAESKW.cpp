@@ -167,6 +167,11 @@ void CryptoAlgorithmAESKW::wrapKey(Ref<CryptoKey>&& key, Vector<uint8_t>&& data,
 
 void CryptoAlgorithmAESKW::unwrapKey(Ref<CryptoKey>&& key, Vector<uint8_t>&& data, VectorCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
+    // RFC 3394 requires at least three 64-bit blocks of wrapped key data.
+    if (data.size() < 24 || data.size() % 8) {
+        exceptionCallback(ExceptionCode::OperationError);
+        return;
+    }
     auto result = platformUnwrapKey(downcast<CryptoKeyAES>(key.get()), WTF::move(data));
     if (result.hasException()) {
         exceptionCallback(result.releaseException().code());
