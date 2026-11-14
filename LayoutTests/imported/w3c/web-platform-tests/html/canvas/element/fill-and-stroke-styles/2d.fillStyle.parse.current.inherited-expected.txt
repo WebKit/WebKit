@@ -1,0 +1,8 @@
+2d.fillStyle.parse.current.inherited
+currentColor should take into account color inherited from ancestor elements
+Actual output:
+Expected output:
+
+
+PASS currentColor should take into account color inherited from ancestor elements
+
