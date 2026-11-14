@@ -88,6 +88,8 @@ WI.MemoryTimelineView = class MemoryTimelineView extends WI.TimelineView
         this._didInitializeCategories = false;
         this._categoryViews = [];
         this._usageLegendSizeElementMap = new Map;
+        this._usageLegendRowElementMap = new Map;
+        this._nonzeroCategoryTypes = new Set;
 
         this._maxSize = 0;
         this._maxComparisonMaximumSizeElement = null;
@@ -140,6 +142,13 @@ WI.MemoryTimelineView = class MemoryTimelineView extends WI.TimelineView
         super.reset();
 
         this._maxSize = 0;
+
+        // Re-hide categories shown by the previous recording.
+        this._nonzeroCategoryTypes.clear();
+        for (let rowElement of this._usageLegendRowElementMap.values())
+            rowElement.classList.add("hidden");
+        for (let categoryView of this._categoryViews)
+            categoryView.element.classList.add("hidden");
 
         this.clear();
     }
@@ -429,6 +438,8 @@ WI.MemoryTimelineView = class MemoryTimelineView extends WI.TimelineView
 
             // Per-category graph.
             let categoryView = new WI.MemoryCategoryView(type, WI.MemoryTimelineView.displayNameForCategory(type));
+            // Hidden until the category first has a nonzero size.
+            categoryView.element.classList.add("hidden");
             this._categoryViews.push(categoryView);
             this.addSubview(categoryView);
             if (!lastCategoryViewElement)
@@ -439,7 +450,10 @@ WI.MemoryTimelineView = class MemoryTimelineView extends WI.TimelineView
 
             // Usage legend rows.
             let sizeElement = appendLegendRow.call(this, this._usageLegendElement, type, WI.MemoryTimelineView.displayNameForCategory(type));
+            let rowElement = sizeElement.closest(".row");
+            rowElement.classList.add("hidden");
             this._usageLegendSizeElementMap.set(type, sizeElement);
+            this._usageLegendRowElementMap.set(type, rowElement);
         }
 
         this._usageCircleChart.segments = segments;
@@ -465,6 +479,15 @@ WI.MemoryTimelineView = class MemoryTimelineView extends WI.TimelineView
     {
         if (!this._didInitializeCategories)
             this._initializeCategoryViews(memoryTimelineRecord);
+
+        for (let {type, size} of memoryTimelineRecord.categories) {
+            if (!size || this._nonzeroCategoryTypes.has(type))
+                continue;
+
+            this._nonzeroCategoryTypes.add(type);
+            this._usageLegendRowElementMap.get(type).classList.remove("hidden");
+            this._categoryViews.find((categoryView) => categoryView.category === type).element.classList.remove("hidden");
+        }
 
         this._maxSize = Math.max(this._maxSize, memoryTimelineRecord.totalSize);
     }

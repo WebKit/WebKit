@@ -1,0 +1,15 @@
+Testing that every WI.MemoryTimelineRecord has the same memory categories in the same order.
+
+
+== Running test suite: MemoryTimelineRecord
+-- Running test case: MemoryTimelineRecord.MemoryCategoriesFromProtocol.AllCategoryDataTypes
+javascript:132, images:500, layers:64, page:248
+
+-- Running test case: MemoryTimelineRecord.MemoryCategoriesFromProtocol.ZeroSizeCategories
+javascript:100, images:0, layers:0, page:200
+
+-- Running test case: MemoryTimelineRecord.CategoriesFirstAppearingInLaterRecords
+javascript:100, images:0, layers:0, page:200
+javascript:214, images:300, layers:128, page:260
+javascript:120, images:0, layers:0, page:220
+

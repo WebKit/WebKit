@@ -78,16 +78,13 @@ WI.MemoryTimelineRecord = class MemoryTimelineRecord extends WI.TimelineRecord
             }
         }
 
-        let memoryCategories = [];
-        if (javascriptSize)
-            memoryCategories.push({type: WI.MemoryCategory.Type.JavaScript, size: javascriptSize});
-        if (imagesSize)
-            memoryCategories.push({type: WI.MemoryCategory.Type.Images, size: imagesSize});
-        if (layersSize)
-            memoryCategories.push({type: WI.MemoryCategory.Type.Layers, size: layersSize});
-        if (pageSize)
-            memoryCategories.push({type: WI.MemoryCategory.Type.Page, size: pageSize});
-        return memoryCategories;
+        // Views build rows from the first record, so every record needs all four categories in this order.
+        return [
+            {type: WI.MemoryCategory.Type.JavaScript, size: javascriptSize},
+            {type: WI.MemoryCategory.Type.Images, size: imagesSize},
+            {type: WI.MemoryCategory.Type.Layers, size: layersSize},
+            {type: WI.MemoryCategory.Type.Page, size: pageSize},
+        ];
     }
 
     // Import / Export
