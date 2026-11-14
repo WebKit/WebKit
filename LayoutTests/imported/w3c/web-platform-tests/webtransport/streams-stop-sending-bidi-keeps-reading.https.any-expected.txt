@@ -1,0 +1,3 @@
+
+PASS STOP_SENDING from the server leaves the receive half of a bidirectional stream readable
+

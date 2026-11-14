@@ -1,21 +1,23 @@
 
-PASS Setting wt-available-protocols header should throw TypeError
-PASS Setting wt-available-protocols header should throw TypeError (case-insensitive)
-PASS Setting wt-available-protocols header should throw TypeError (mixed case)
-PASS Forbidden request headers should be silently dropped
-PASS Empty headers object should be accepted
-PASS Custom headers should be accepted
-PASS Multiple custom headers should be accepted
-PASS Headers as sequence of sequences should be accepted
-PASS Duplicate header names in sequence form should be accepted
-PASS Header names should be lowercased
-PASS Mixed-case duplicate header names should be lowercased and preserved
-PASS Sequence with wrong inner length should throw TypeError
-PASS Invalid header name should throw TypeError
-PASS Header value with CR/LF should throw TypeError
 PASS responseHeaders is null before the connection is established
-PASS Custom request headers are received by the server
-PASS responseHeaders exposes headers from the server CONNECT response
-PASS Forbidden response header names are not exposed in responseHeaders
+PASS responseHeaders is a Headers object after ready resolves
+PASS responseHeaders exposes server-sent response headers
+PASS responseHeaders is immutable
 PASS wt-protocol is stripped from responseHeaders
+PASS Set-Cookie is stripped from responseHeaders
+PASS headers option forwards a custom header to the server, lowercased
+PASS Forbidden request-header names are silently dropped from the headers option
+PASS An empty headers object is accepted
+PASS Invalid header name throws TypeError
+PASS Header value containing CR/LF throws TypeError
+PASS wt-available-protocols header throws TypeError
+PASS wt-available-protocols header throws TypeError (upper case)
+PASS wt-available-protocols header throws TypeError (mixed case)
+PASS HeadersInit sequence-of-sequences form sends every header
+PASS HeadersInit Headers object form sends every header
+PASS Duplicate header names in sequence form are all sent, in order
+PASS Header names differing only in case are lowercased and both sent
+PASS HeadersInit sequence with an empty inner sequence throws TypeError
+PASS HeadersInit sequence with one inner element throws TypeError
+PASS HeadersInit sequence with three inner elements throws TypeError
 

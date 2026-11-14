@@ -12,4 +12,5 @@ Properties requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/webtransport/resources/webtransport-idlharness.js
 /LayoutTests/imported/w3c/web-platform-tests/webtransport/resources/webtransport-test-helpers.sub.js

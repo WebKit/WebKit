@@ -1,0 +1,4 @@
+
+PASS WebTransport constructor should reject serverCertificateHashes value of type 'SharedArrayBuffer'
+PASS WebTransport constructor should reject serverCertificateHashes value of type 'Uint8Array(SharedArrayBuffer)'
+
