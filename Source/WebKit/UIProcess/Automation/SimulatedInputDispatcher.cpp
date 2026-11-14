@@ -324,7 +324,7 @@ void SimulatedInputDispatcher::resolveLocation(const WebCore::IntPoint& currentL
         break;
     }
     case MouseMoveOrigin::Element: {
-        m_client.viewportInViewCenterPointOfElement(protect(m_page), m_frameID, nodeHandle.value(), [destination = location.value(), completionHandler = WTF::move(completionHandler)](std::optional<WebCore::IntPoint> inViewCenterPoint, std::optional<AutomationCommandError> error) mutable {
+        m_client.viewportInViewCenterPointOfElement(protect(m_page), m_frameID, nodeHandle.value(), m_options.elementOriginsAreSharedReferences, [destination = location.value(), completionHandler = WTF::move(completionHandler)](std::optional<WebCore::IntPoint> inViewCenterPoint, std::optional<AutomationCommandError> error) mutable {
             if (error) {
                 completionHandler(std::nullopt, error);
                 return;
