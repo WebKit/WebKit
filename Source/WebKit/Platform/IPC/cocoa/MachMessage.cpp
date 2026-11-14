@@ -48,6 +48,10 @@ namespace {
 // An arbitrary message ID that does not collide with Mach notification messages.
 static constexpr mach_msg_id_t webkitMachMessageID = 0xdba0dba;
 
+// Message ID for a "continuation" message carrying a batch of inline port descriptors that would not
+// fit in the message they belong to. See MachMessage::createPortDescriptorContinuation().
+static constexpr mach_msg_id_t portDescriptorContinuationMachMessageID = 0xdba3dba;
+
 static constexpr size_t typicalMaximumAttachmentCount = 16;
 
 // Sized to fit the largest inline body plus a typical number of attachments without a heap
@@ -224,6 +228,52 @@ std::unique_ptr<MachMessage> MachMessage::create(UniqueRef<Encoder>&& encoderIn)
     return result;
 }
 
+std::unique_ptr<MachMessage> MachMessage::createPortDescriptorContinuation(Vector<Attachment>&& attachments)
+{
+    size_t attachmentCount = attachments.size();
+    ASSERT(attachmentCount && attachmentCount <= maxInlinePortDescriptorsPerMessage);
+    if (!attachmentCount || attachmentCount > maxInlinePortDescriptorsPerMessage) [[unlikely]]
+        return nullptr;
+
+    // Header, body, and one inline port descriptor per attachment; never out-of-line, always well
+    // under maxMessageSize because attachmentCount <= maxInlinePortDescriptorsPerMessage.
+    size_t messageSize = round_msg(sizeof(mach_msg_header_t) + sizeof(mach_msg_body_t)
+        + attachmentCount * sizeof(mach_msg_port_descriptor_t));
+    ASSERT(messageSize <= maxMessageSize);
+
+    void* memory = fastMalloc(sizeof(MachMessage) + messageSize);
+    std::unique_ptr<MachMessage> result { new (NotNull, memory) MachMessage { MessageName::Invalid, { } } };
+
+    auto remaining = unsafeMakeSpan(reinterpret_cast<std::byte*>(result->m_messageHeader), messageSize);
+    consumeAndReinterpretCastTo<mach_msg_header_t>(remaining) = {
+        .msgh_bits = MACH_MSGH_BITS(MACH_MSG_TYPE_COPY_SEND, 0) | MACH_MSGH_BITS_COMPLEX,
+        .msgh_size = static_cast<mach_msg_size_t>(messageSize),
+        .msgh_remote_port = MACH_PORT_NULL,
+        .msgh_local_port = MACH_PORT_NULL,
+        .msgh_voucher_port = MACH_PORT_NULL,
+        .msgh_id = portDescriptorContinuationMachMessageID
+    };
+    consumeAndReinterpretCastTo<mach_msg_body_t>(remaining) = {
+        .msgh_descriptor_count = static_cast<mach_msg_size_t>(attachmentCount)
+    };
+
+    // Written in forward order: receiveDecoder() appends them in order and reverses the accumulated set
+    // when merging it into the following message (see receiveDecoder()), which restores encoding order.
+    for (auto& attachment : attachments) {
+        mach_msg_port_descriptor_t descriptor { };
+        descriptor.name = attachment.leakSendRight();
+        descriptor.disposition = MACH_MSG_TYPE_MOVE_SEND;
+        descriptor.type = MACH_MSG_PORT_DESCRIPTOR;
+        consumeAndReinterpretCastTo<mach_msg_port_descriptor_t>(remaining) = descriptor;
+    }
+
+    // round_msg() rounded the size up, so zero any padding after the descriptors.
+    if (!remaining.empty())
+        zeroSpan(remaining);
+
+    return result;
+}
+
 MachMessage::SendResult MachMessage::send(mach_port_t destination, Timeout timeout)
 {
     RELEASE_ASSERT(m_state != State::Sent);
@@ -260,7 +310,7 @@ MachMessage::SendResult MachMessage::send(mach_port_t destination, Timeout timeo
     return result;
 }
 
-std::expected<UniqueRef<Decoder>, MachMessage::ReceiveResult> MachMessage::receiveDecoder(mach_port_t port, Timeout timeout)
+std::expected<UniqueRef<Decoder>, MachMessage::ReceiveResult> MachMessage::receiveDecoder(mach_port_t port, Vector<Attachment>& bufferedContinuationAttachments, Timeout timeout)
 {
     ASSERT(MACH_PORT_VALID(port));
     MessageBuffer buffer;
@@ -311,6 +361,47 @@ std::expected<UniqueRef<Decoder>, MachMessage::ReceiveResult> MachMessage::recei
     case webkitMachMessageID:
         break;
 
+    case portDescriptorContinuationMachMessageID: {
+        // A continuation message carries only inline port descriptors. Validate it, adopt its ports into
+        // bufferedContinuationAttachments (in received order), and ask the caller to receive again; the
+        // accumulated ports are merged into the next ordinary message below.
+        if (header->msgh_size > message.size() || header->msgh_size < sizeof(mach_msg_header_t)) [[unlikely]]
+            return makeUnexpected(ReceiveResult::InvalidMessage);
+        if (!(header->msgh_bits & MACH_MSGH_BITS_COMPLEX)) [[unlikely]]
+            return makeUnexpected(ReceiveResult::InvalidMessage);
+
+        auto remaining = message.subspan(sizeof(mach_msg_header_t), header->msgh_size - sizeof(mach_msg_header_t));
+        // Cast ok: MACH_MSGH_BITS_COMPLEX -> kernel guarantees remaining at least mach_msg_body_t.
+        auto& body = consumeAndReinterpretCastTo<mach_msg_body_t>(remaining);
+        mach_msg_size_t descriptorCount = body.msgh_descriptor_count;
+        if (!descriptorCount || descriptorCount > maxInlinePortDescriptorsPerMessage) [[unlikely]]
+            return makeUnexpected(ReceiveResult::InvalidMessage);
+
+        // A compromised sender can stream continuation messages and never send the message they belong
+        // to, making this (possibly privileged) receiver accumulate attacker-controlled send rights
+        // without bound. Cap the buffered set at the most attachments a single message may legitimately
+        // carry: a real burst never exceeds that, so this only rejects abuse. Reclaim what was buffered.
+        if (bufferedContinuationAttachments.size() + descriptorCount > maxAttachmentCount) [[unlikely]] {
+            bufferedContinuationAttachments.clear();
+            return makeUnexpected(ReceiveResult::InvalidMessage);
+        }
+
+        auto declaredSize = checkedSum<size_t>(sizeof(mach_msg_header_t) + sizeof(mach_msg_body_t), static_cast<size_t>(descriptorCount) * sizeof(mach_msg_port_descriptor_t));
+        if (declaredSize.hasOverflowed() || declaredSize > header->msgh_size) [[unlikely]]
+            return makeUnexpected(ReceiveResult::InvalidMessage);
+
+        for (; descriptorCount; --descriptorCount) {
+            // Cast ok: bounds checked by declaredSize above.
+            if (reinterpretCastSpanStartTo<const mach_msg_type_descriptor_t>(remaining).type != MACH_MSG_PORT_DESCRIPTOR) [[unlikely]]
+                return makeUnexpected(ReceiveResult::InvalidMessage);
+            auto& descriptor = consumeAndReinterpretCastTo<mach_msg_port_descriptor_t>(remaining);
+            if (descriptor.disposition != MACH_MSG_TYPE_PORT_SEND) [[unlikely]]
+                return makeUnexpected(ReceiveResult::InvalidMessage);
+            bufferedContinuationAttachments.append(Attachment { MachSendRight::adopt(std::exchange(descriptor.name, MACH_PORT_NULL)) });
+        }
+        return makeUnexpected(ReceiveResult::PortDescriptorContinuation);
+    }
+
     case MACH_NOTIFY_SEND_ONCE:
     default:
         return makeUnexpected(ReceiveResult::Notification);
@@ -323,9 +414,17 @@ std::expected<UniqueRef<Decoder>, MachMessage::ReceiveResult> MachMessage::recei
     auto remaining = message.subspan(sizeof(mach_msg_header_t), header->msgh_size - sizeof(mach_msg_header_t));
 
     std::unique_ptr<Decoder> decoder;
-    if (!(header->msgh_bits & MACH_MSGH_BITS_COMPLEX))
+    if (!(header->msgh_bits & MACH_MSGH_BITS_COMPLEX)) {
+        // A burst's continuation messages are always immediately followed by the complex message that
+        // consumes their ports, so a non-complex message arriving while ports are still buffered is a
+        // protocol violation (only a compromised sender interleaves this way). Reject it and reclaim the
+        // buffered rights rather than letting them merge into some later, unrelated message.
+        if (!bufferedContinuationAttachments.isEmpty()) [[unlikely]] {
+            bufferedContinuationAttachments.clear();
+            return makeUnexpected(ReceiveResult::InvalidMessage);
+        }
         decoder = Decoder::create(spanReinterpretCast<const uint8_t>(remaining), { });
-    else {
+    } else {
         // Cast ok: MACH_MSGH_BITS_COMPLEX -> kernel guarantees remaining at least mach_msg_body_t.
         auto& body = consumeAndReinterpretCastTo<mach_msg_body_t>(remaining);
         mach_msg_size_t descriptorCount = body.msgh_descriptor_count;
@@ -345,6 +444,32 @@ std::expected<UniqueRef<Decoder>, MachMessage::ReceiveResult> MachMessage::recei
             if (descriptor.disposition != MACH_MSG_TYPE_PORT_SEND) [[unlikely]]
                 return makeUnexpected(ReceiveResult::InvalidMessage);
             attachments.append(Attachment { MachSendRight::adopt(std::exchange(descriptor.name, MACH_PORT_NULL)) });
+        }
+
+        // Merge ports received in preceding continuation messages. They were accumulated in encoding
+        // order, while this message's own attachments were written reversed (so takeLastAttachment()
+        // yields encoding order). Reversing the buffered set and appending it keeps that invariant
+        // across the whole burst: the final decoder's attachments are the burst in reverse.
+        //
+        // Example: ports [A, B, C, D, E, F] encoded in that order, maxInlinePortDescriptorsPerMessage = 2.
+        // The send side peels batches of 2 off the front into continuation messages and leaves the
+        // remainder (<= the limit) on this message: continuations carry [A, B] then [C, D]; this message
+        // carries [E, F]. This message's own attachments were written reversed, so `attachments` is here
+        // [F, E]. bufferedContinuationAttachments were received forward: [A, B, C, D]. reverse() makes it
+        // [D, C, B, A], and appending gives [F, E, D, C, B, A]. takeLastAttachment() then yields
+        // A, B, C, D, E, F -- the original encoding order.
+        if (!bufferedContinuationAttachments.isEmpty()) {
+            // Bound the whole burst, not just the buffer: this message's own attachments plus the buffered
+            // ones must not exceed what a single message may legitimately carry. A well-behaved split keeps
+            // the total (continuations + remainder) at or below maxAttachmentCount, so this only rejects a
+            // sender that pairs a full continuation buffer with an independently large ordinary message to
+            // force a privileged receiver to hold ~2x the intended maximum of send rights. Reclaim on reject.
+            if (attachments.size() + bufferedContinuationAttachments.size() > maxAttachmentCount) [[unlikely]] {
+                bufferedContinuationAttachments.clear();
+                return makeUnexpected(ReceiveResult::InvalidMessage);
+            }
+            bufferedContinuationAttachments.reverse();
+            attachments.appendVector(std::exchange(bufferedContinuationAttachments, { }));
         }
 
         if (descriptorCount) {
@@ -374,6 +499,16 @@ std::expected<UniqueRef<Decoder>, MachMessage::ReceiveResult> MachMessage::recei
 #endif
 
     return makeUniqueRefFromNonNullUniquePtr(WTF::move(decoder));
+}
+
+std::expected<UniqueRef<Decoder>, MachMessage::ReceiveResult> MachMessage::receiveDecoder(mach_port_t port, Timeout timeout)
+{
+    // This overload's callers do not reassemble continuation bursts, so give receiveDecoder() a throwaway
+    // buffer. A continuation message is not expected here; if one arrived its ports would be dropped.
+    Vector<Attachment> unusedContinuationAttachments;
+    auto result = receiveDecoder(port, unusedContinuationAttachments, timeout);
+    ASSERT(unusedContinuationAttachments.isEmpty());
+    return result;
 }
 
 } // namespace IPC
