@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+class Foo { }
+
+class StepOutBase {
+    constructor() {
+        debugger;
+    }
+}
+
+class StepOutDerived extends StepOutBase { }
+
+function triggerStep() {
+    debugger;
+    let foo = new Foo;
+    let after = 1;
+}
+
+function triggerStepOut() {
+    let derived = new StepOutDerived;
+    let after = 1;
+}
+
+function triggerBlackboxedStep() {
+    debugger;
+    let foo = new BlackboxedStepFoo;
+    let after = 1;
+}
+
+function triggerBlackboxedStepOver() {
+    debugger;
+    let foo = new BlackboxedStepOverFoo;
+    let after = 1;
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("SymbolicBreakpoint.DefaultConstructor.Step");
+
+    function addTestCase({name, description, symbol, options, trigger, stepActions, setup, teardown}) {
+        suite.addTestCase({
+            name,
+            description,
+            async test() {
+                let breakpoint = new WI.SymbolicBreakpoint(symbol, options);
+                WI.debuggerManager.addSymbolicBreakpoint(breakpoint);
+
+                if (setup)
+                    await setup();
+
+                let steps = 0;
+                let pausedListener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.CallFramesDidChange, (event) => {
+                    let callFrame = WI.debuggerManager.activeCallFrame;
+                    if (!callFrame)
+                        return;
+
+                    let location = callFrame.sourceCodeLocation;
+                    InspectorTest.log(`PAUSE ${++steps} in ${callFrame.functionName || "(anonymous)"} at line ${location ? location.lineNumber : "(unknown)"}`);
+
+                    if (steps <= stepActions.length)
+                        WI.debuggerManager[stepActions[steps - 1]]();
+                    else
+                        WI.debuggerManager.resume();
+                });
+
+                let resumedPromise = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Resumed);
+                InspectorTest.evaluateInPage(`setTimeout(${trigger})`);
+                await resumedPromise;
+
+                InspectorTest.expectEqual(steps, stepActions.length + 1, "Should only pause where the steps stop.");
+
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.CallFramesDidChange, pausedListener);
+                breakpoint.remove();
+
+                if (teardown)
+                    await teardown();
+            },
+        });
+    }
+
+    addTestCase({
+        name: "SymbolicBreakpoint.DefaultConstructor.Step.StepOver.ConditionFalse",
+        description: "Stepping over the construction of a class should not pause in its default constructor when the symbolic breakpoint has a false condition.",
+        symbol: "Foo",
+        options: {condition: "false"},
+        trigger: "triggerStep",
+        stepActions: ["stepOver", "stepOver", "stepOver"],
+    });
+
+    addTestCase({
+        name: "SymbolicBreakpoint.DefaultConstructor.Step.StepInto.ConditionFalse",
+        description: "Stepping into the construction of a class should not pause in its default constructor when the symbolic breakpoint has a false condition.",
+        symbol: "Foo",
+        options: {condition: "false"},
+        trigger: "triggerStep",
+        stepActions: ["stepOver", "stepInto", "stepOver"],
+    });
+
+    addTestCase({
+        name: "SymbolicBreakpoint.DefaultConstructor.Step.StepInto.IgnoreCount",
+        description: "Stepping into the construction of a class should not pause in its default constructor when the symbolic breakpoint has not reached its ignore count.",
+        symbol: "Foo",
+        options: {ignoreCount: 100},
+        trigger: "triggerStep",
+        stepActions: ["stepOver", "stepInto", "stepOver"],
+    });
+
+    addTestCase({
+        name: "SymbolicBreakpoint.DefaultConstructor.Step.StepInto.ConditionFalse.BlackboxedClass",
+        description: "Stepping into the construction of a class in a script that is blackboxed by its URL should pause at the next statement when the symbolic breakpoint has a false condition.",
+        symbol: "BlackboxedStepFoo",
+        options: {condition: "false"},
+        trigger: "triggerBlackboxedStep",
+        stepActions: ["stepOver", "stepInto", "stepOver"],
+        async setup() {
+            await InspectorTest.evaluateInPage(`class BlackboxedStepFoo { } //# sourceURL=BlackboxedStepScript.js`);
+            for (let target of WI.targets) {
+                if (target.hasDomain("Debugger")) {
+                    await target.DebuggerAgent.setBlackboxBreakpointEvaluations(true);
+                    await target.DebuggerAgent.setShouldBlackboxURL("BlackboxedStepScript.js", true);
+                }
+            }
+        },
+        async teardown() {
+            for (let target of WI.targets) {
+                if (target.hasDomain("Debugger"))
+                    await target.DebuggerAgent.setShouldBlackboxURL("BlackboxedStepScript.js", false);
+            }
+        },
+    });
+
+    addTestCase({
+        name: "SymbolicBreakpoint.DefaultConstructor.Step.StepOver.ConditionFalse.BlackboxedClass",
+        description: "Stepping over the construction of a class in a script that is blackboxed by its URL should pause at the next statement when the symbolic breakpoint has a false condition.",
+        symbol: "BlackboxedStepOverFoo",
+        options: {condition: "false"},
+        trigger: "triggerBlackboxedStepOver",
+        stepActions: ["stepOver", "stepOver", "stepOver"],
+        async setup() {
+            await InspectorTest.evaluateInPage(`globalThis.BlackboxedStepOverFoo = class { } //# sourceURL=BlackboxedStepScript.js`);
+            for (let target of WI.targets) {
+                if (target.hasDomain("Debugger")) {
+                    await target.DebuggerAgent.setBlackboxBreakpointEvaluations(true);
+                    await target.DebuggerAgent.setShouldBlackboxURL("BlackboxedStepScript.js", true);
+                }
+            }
+        },
+        async teardown() {
+            for (let target of WI.targets) {
+                if (target.hasDomain("Debugger"))
+                    await target.DebuggerAgent.setShouldBlackboxURL("BlackboxedStepScript.js", false);
+            }
+        },
+    });
+
+    addTestCase({
+        name: "SymbolicBreakpoint.DefaultConstructor.Step.StepOut.ConditionFalse",
+        description: "Stepping out of a constructor that a default constructor calls should not pause in the default constructor when the symbolic breakpoint has a false condition.",
+        symbol: "StepOutDerived",
+        options: {condition: "false"},
+        trigger: "triggerStepOut",
+        stepActions: ["stepOut", "stepOver"],
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that a symbolic breakpoint on a class without a constructor that does not pause does not make a step pause in the default constructor, and keeps the step going.</p>
+</body>
+</html>

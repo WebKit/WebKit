@@ -1,0 +1,45 @@
+Tests that a symbolic breakpoint on a class without a constructor that does not pause does not make a step pause in the default constructor, and keeps the step going.
+
+
+== Running test suite: SymbolicBreakpoint.DefaultConstructor.Step
+-- Running test case: SymbolicBreakpoint.DefaultConstructor.Step.StepOver.ConditionFalse
+PAUSE 1 in triggerStep at line 16
+PAUSE 2 in triggerStep at line 17
+PAUSE 3 in triggerStep at line 18
+PAUSE 4 in triggerStep at line 19
+PASS: Should only pause where the steps stop.
+
+-- Running test case: SymbolicBreakpoint.DefaultConstructor.Step.StepInto.ConditionFalse
+PAUSE 1 in triggerStep at line 16
+PAUSE 2 in triggerStep at line 17
+PAUSE 3 in triggerStep at line 18
+PAUSE 4 in triggerStep at line 19
+PASS: Should only pause where the steps stop.
+
+-- Running test case: SymbolicBreakpoint.DefaultConstructor.Step.StepInto.IgnoreCount
+PAUSE 1 in triggerStep at line 16
+PAUSE 2 in triggerStep at line 17
+PAUSE 3 in triggerStep at line 18
+PAUSE 4 in triggerStep at line 19
+PASS: Should only pause where the steps stop.
+
+-- Running test case: SymbolicBreakpoint.DefaultConstructor.Step.StepInto.ConditionFalse.BlackboxedClass
+PAUSE 1 in triggerBlackboxedStep at line 27
+PAUSE 2 in triggerBlackboxedStep at line 28
+PAUSE 3 in triggerBlackboxedStep at line 29
+PAUSE 4 in triggerBlackboxedStep at line 30
+PASS: Should only pause where the steps stop.
+
+-- Running test case: SymbolicBreakpoint.DefaultConstructor.Step.StepOver.ConditionFalse.BlackboxedClass
+PAUSE 1 in triggerBlackboxedStepOver at line 33
+PAUSE 2 in triggerBlackboxedStepOver at line 34
+PAUSE 3 in triggerBlackboxedStepOver at line 35
+PAUSE 4 in triggerBlackboxedStepOver at line 36
+PASS: Should only pause where the steps stop.
+
+-- Running test case: SymbolicBreakpoint.DefaultConstructor.Step.StepOut.ConditionFalse
+PAUSE 1 in StepOutBase at line 9
+PAUSE 2 in triggerStepOut at line 23
+PAUSE 3 in triggerStepOut at line 24
+PASS: Should only pause where the steps stop.
+

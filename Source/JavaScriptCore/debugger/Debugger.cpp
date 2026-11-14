@@ -1045,10 +1045,16 @@ Debugger::BlackboxFlags Debugger::blackboxFlagsAtPosition(SourceID sourceID, con
     return relevantBlackboxFlags;
 }
 
-static bool isExecutingBuiltinDefaultClassConstructor(CallFrame* callFrame)
+static FunctionExecutable* builtinDefaultClassConstructorExecutable(CallFrame* callFrame)
 {
+    if (callFrame->isNativeCalleeFrame())
+        return nullptr;
+
     CodeBlock* codeBlock = callFrame->codeBlock();
-    return codeBlock && codeBlock->unlinkedCodeBlock()->isBuiltinDefaultClassConstructor();
+    if (!codeBlock || !codeBlock->unlinkedCodeBlock()->isBuiltinDefaultClassConstructor())
+        return nullptr;
+
+    return dynamicDowncast<FunctionExecutable>(codeBlock->ownerExecutable());
 }
 
 void Debugger::pauseIfNeeded(JSGlobalObject* globalObject)
@@ -1069,12 +1075,81 @@ void Debugger::pauseIfNeeded(JSGlobalObject* globalObject)
     SourceID sourceID = DebuggerCallFrame::sourceIDForCallFrame(m_currentCallFrame);
     TextPosition position = DebuggerCallFrame::positionForCallFrame(vm, m_currentCallFrame);
 
-    BlackboxFlags relevantBlackboxFlags = blackboxFlagsAtPosition(sourceID, position);
+    SourceID blackboxSourceID = sourceID;
+    TextPosition blackboxPosition = position;
+    FunctionExecutable* defaultClassConstructor = builtinDefaultClassConstructorExecutable(m_currentCallFrame);
+    bool isInDefaultClassConstructor = !!defaultClassConstructor;
+    if (isInDefaultClassConstructor) {
+        SourceCode classSource = defaultClassConstructor->classSource();
+        if (!classSource.isNull()) {
+            blackboxSourceID = classSource.provider()->asID();
+            blackboxPosition = TextPosition(classSource.firstLine(), classSource.startColumn());
+        }
+    }
+
+    BlackboxFlags relevantBlackboxFlags = blackboxFlagsAtPosition(blackboxSourceID, blackboxPosition);
     if (relevantBlackboxFlags.contains(BlackboxFlag::Ignore))
         return;
 
-    if (isExecutingBuiltinDefaultClassConstructor(m_currentCallFrame))
+    if (isInDefaultClassConstructor) {
+        // A builtin default class constructor has no script to pause in, so only a special breakpoint that was armed as it was entered can pause in it.
+        if (m_reasonForPause != PausedAtDefaultClassConstructor)
+            return;
+
+        // Only that breakpoint counts: a pending pause or an already deferred breakpoint must not be consumed in a constructor that has no script to pause in.
+        auto specialBreakpoint = m_specialBreakpoint.releaseNonNull();
+
+        if (!m_deferredBreakpoints.isEmpty()) {
+            // A deferred pause is already pending: merge into it, as pausing here would keep it from landing where it was deferred to.
+            m_deferredBreakpoints.add(WTF::move(specialBreakpoint));
+            return;
+        }
+
+        DebuggerPausedScope debuggerPausedScope(*this);
+        TemporaryPausedState pausedState(*this);
+
+        if (m_blackboxBreakpointEvaluations && relevantBlackboxFlags.contains(BlackboxFlag::Defer)) {
+            // Defer evaluating the breakpoint until after the blackboxed script, leaving a pending pause as it is, as marking it after a blackboxed script would make a false condition suppress it.
+            m_deferredBreakpoints.add(WTF::move(specialBreakpoint));
+            if (!m_pauseAtNextOpportunity) {
+                schedulePauseAtNextOpportunity();
+                m_afterBlackboxedScript = true;
+            }
+            return;
+        }
+
+        bool shouldPause = specialBreakpoint->shouldPause(*this, globalObject);
+        if (!m_currentCallFrame)
+            return;
+        if (shouldPause) {
+            evaluateBreakpointActions(specialBreakpoint, globalObject);
+            if (!m_currentCallFrame)
+                return;
+        }
+
+        if (!shouldPause || specialBreakpoint->isAutoContinue())
+            return;
+
+        if (relevantBlackboxFlags.contains(BlackboxFlag::Defer)) {
+            // Defer the pause itself until after the blackboxed script.
+            m_afterBlackboxedScript = true;
+            schedulePauseAtNextOpportunity();
+            return;
+        }
+
+        resetImmediatePauseState();
+        resetAsyncPauseState();
+        resetEventualPauseState();
+
+        handlePause(globalObject);
+        scope.releaseAssertNoException();
+
+        if (!m_pauseAtNextOpportunity && !m_pauseOnCallFrame && !m_specialBreakpoint) {
+            setSteppingMode(SteppingModeDisabled);
+            m_currentCallFrame = nullptr;
+        }
         return;
+    }
 
     bool afterBlackboxedScript = m_afterBlackboxedScript;
     bool pauseNow = false;
@@ -1387,9 +1462,16 @@ void Debugger::callEvent(CallFrame* callFrame)
     updateCallFrame(lexicalGlobalObjectForCallFrame(m_vm, callFrame), callFrame, NoPause);
 
     if (callFrame) {
+        bool hadSpecialBreakpoint = !!m_specialBreakpoint;
         dispatchFunctionToObservers([&] (Observer& observer) {
             observer.willEnter(callFrame);
         });
+        if (!hadSpecialBreakpoint && m_specialBreakpoint && builtinDefaultClassConstructorExecutable(callFrame)) {
+            // A builtin default class constructor has no statement to pause at, so a special breakpoint armed as it was entered pauses right away.
+            PauseReasonDeclaration reason(*this, PausedAtDefaultClassConstructor);
+            updateCallFrameInternal(callFrame);
+            pauseIfNeeded(lexicalGlobalObjectForCallFrame(m_vm, callFrame));
+        }
     }
 }
 
