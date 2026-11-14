@@ -34,6 +34,8 @@ https://amazon.design/
         elementSelector: #magnifierLens, :has(+ #magnifierLens)
 https://www.apple.com/
     (none)
+https://www.arbor-technology.com/
+    ShouldDisableCSSSizeShorthandQuirk
 https://as.com/
     (none)
 https://www.att.com/
@@ -379,6 +381,8 @@ https://my.playstation.com/
 https://www.premierleague.com/
     ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor
     ShouldDispatchPlayPauseEventsOnResume
+https://www.purpletie.com/
+    ShouldDisableCSSSizeShorthandQuirk
 https://www.ralphlauren.com/
     (none)
 https://www.reddit.com/
@@ -519,6 +523,10 @@ https://twitter.com/
 https://www.yahoo.com/
     NeedsYahooVolumeSliderQuirk
     ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor
+https://news.yahoo.co.jp/
+    NeedsYahooVolumeSliderQuirk
+    ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor
+    ShouldDisableCSSSizeShorthandQuirk
 https://news.ycombinator.com/
     ShouldIgnoreTextAutoSizingQuirk
 https://ycombinator.com/
