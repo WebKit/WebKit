@@ -1,0 +1,17 @@
+EXPECTED (matchMedia('(display-mode: fullscreen)').matches == 'false') OK
+EXPECTED (matchMedia('(display-mode: browser)').matches == 'true') OK
+EXPECTED (getComputedStyle(target).backgroundColor == 'rgb(255, 0, 0)') OK
+EXPECTED (currentSrcEndsWith('?browser') == 'true') OK
+EVENT(fullscreenchange)
+EXPECTED (document.fullscreenElement == '[object HTMLDivElement]') OK
+EXPECTED (matchMedia('(display-mode: fullscreen)').matches == 'true') OK
+EXPECTED (matchMedia('(display-mode: browser)').matches == 'false') OK
+EXPECTED (getComputedStyle(target).backgroundColor == 'rgb(0, 128, 0)') OK
+EXPECTED (currentSrcEndsWith('?fullscreen') == 'true') OK
+EVENT(fullscreenchange)
+EXPECTED (document.fullscreenElement == 'null') OK
+EXPECTED (matchMedia('(display-mode: fullscreen)').matches == 'false') OK
+EXPECTED (getComputedStyle(target).backgroundColor == 'rgb(255, 0, 0)') OK
+EXPECTED (currentSrcEndsWith('?browser') == 'true') OK
+END OF TEST
+
