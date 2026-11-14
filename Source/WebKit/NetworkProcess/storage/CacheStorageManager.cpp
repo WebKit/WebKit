@@ -52,13 +52,12 @@ static uint64_t nextUpdateNumber()
 
 static std::optional<Vector<std::pair<String, String>>> readCachesList(const String& cachesListDirectoryPath)
 {
-    Vector<std::pair<String, String>> result;
     if (cachesListDirectoryPath.isEmpty())
-        return result;
+        return Vector<std::pair<String, String>> { };
 
     auto cachesListFilePath = FileSystem::pathByAppendingComponent(cachesListDirectoryPath, cachesListFileName);
     if (!FileSystem::fileExists(cachesListFilePath))
-        return result;
+        return Vector<std::pair<String, String>> { };
 
     const auto cachesList = FileSystem::readEntireFile(cachesListFilePath);
     if (!cachesList)
@@ -70,7 +69,7 @@ static std::optional<Vector<std::pair<String, String>>> readCachesList(const Str
     if (!count)
         return std::nullopt;
 
-    result.reserveInitialCapacity(*count);
+    Vector<std::pair<String, String>> result(ReserveCapacityTag { }, *count);
     for (size_t index = 0; index < *count; ++index) {
         std::optional<String> name;
         decoder >> name;
