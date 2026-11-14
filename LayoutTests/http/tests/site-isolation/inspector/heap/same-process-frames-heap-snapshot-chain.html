@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/heap-test-utilities.js"></script>
+<script src="resources/heap-markers.js"></script>
+<script>
+function removeIFrame()
+{
+    document.querySelector("iframe").remove();
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Heap.SameProcessFramesSnapshotChain");
+
+    const iframeMarkerClassName = HeapTest.markerClassName("IFrameMarker");
+
+    let mainFrameTarget = null;
+    let iframeTarget = null;
+
+    async function disableAndEnableHeap(target) {
+        await target.HeapAgent.disable();
+        await target.HeapAgent.enable();
+    }
+
+    function expectOnlyNewIdentifiers(snapshot, earlierSnapshot, message) {
+        let largestEarlierIdentifier = HeapTest.nodeIdentifiers(earlierSnapshot).reduce((a, b) => Math.max(a, b));
+        // The root node always has the identifier 0.
+        let smallestIdentifier = HeapTest.nodeIdentifiers(snapshot).filter((identifier) => identifier).reduce((a, b) => Math.min(a, b));
+        InspectorTest.expectGreaterThan(smallestIdentifier, largestEarlierIdentifier, message);
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Heap.SameProcessFramesSnapshotChain.Setup",
+        description: "Find the same-origin iframe's target and create a marker in the iframe.",
+        async test() {
+            mainFrameTarget = InspectorTest.mainFrameTarget;
+            iframeTarget = await waitForFrameTargetForURLContaining("heap-frame.html");
+            InspectorTest.assert(iframeTarget, "Should find the same-origin iframe's target.");
+            await waitForExpressionInTarget(iframeTarget, "typeof createMarker === 'function'");
+            InspectorTest.expectEqual(HeapTest.processIdentifier(iframeTarget), HeapTest.processIdentifier(mainFrameTarget), "The same-origin iframe should be in the main frame's process.");
+
+            await HeapTest.evaluate(iframeTarget, `createMarker("${iframeMarkerClassName}")`);
+        },
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Heap.SameProcessFramesSnapshotChain.OtherFrameDisabled",
+        description: "Disabling Heap on one frame target should not affect the snapshots of another frame target in its process.",
+        async test() {
+            let iframeSnapshot = await HeapTest.takeSnapshot(iframeTarget);
+            await HeapTest.takeSnapshot(mainFrameTarget);
+            let [iframeMarker] = await HeapTest.instances(iframeSnapshot, iframeMarkerClassName);
+
+            await disableAndEnableHeap(mainFrameTarget);
+
+            let {preview} = await iframeTarget.HeapAgent.getPreview(iframeMarker.id);
+            InspectorTest.expectEqual(preview?.description, iframeMarkerClassName, "The iframe's target should still preview its marker.");
+
+            let nextIFrameSnapshot = await HeapTest.takeSnapshot(iframeTarget);
+            let [nextIFrameMarker] = await HeapTest.instances(nextIFrameSnapshot, iframeMarkerClassName);
+            InspectorTest.expectEqual(nextIFrameMarker?.id, iframeMarker.id, "The iframe's marker should keep its identifier in the next snapshot of the iframe's target.");
+
+            // Heap object identifiers are never reused, so this is only a sanity check.
+            let identifiers = HeapTest.nodeIdentifiers(nextIFrameSnapshot);
+            InspectorTest.expectEqual(new Set(identifiers).size, identifiers.length, "The next snapshot of the iframe's target should have no duplicate identifiers.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Heap.SameProcessFramesSnapshotChain.EnabledWithoutSnapshot",
+        description: "A frame target that has Heap enabled but has not taken a snapshot should not keep the snapshots of its process.",
+        async test() {
+            // Stop the iframe's target from using the snapshots, but keep Heap enabled on it.
+            await disableAndEnableHeap(iframeTarget);
+
+            let mainFrameSnapshot = await HeapTest.takeSnapshot(mainFrameTarget);
+            await disableAndEnableHeap(mainFrameTarget);
+
+            let iframeSnapshot = await HeapTest.takeSnapshot(iframeTarget);
+            expectOnlyNewIdentifiers(iframeSnapshot, mainFrameSnapshot, "The iframe's snapshot should only have identifiers larger than those of the earlier snapshot of the main frame.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Heap.SameProcessFramesSnapshotChain.FrameRemoved",
+        description: "A removed frame whose target took a snapshot should not keep the snapshots of its process.",
+        async test() {
+            await HeapTest.takeSnapshot(mainFrameTarget);
+            await HeapTest.takeSnapshot(iframeTarget);
+
+            let targetRemovedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetRemoved);
+            await HeapTest.evaluate(mainFrameTarget, "removeIFrame()");
+            let removedTarget = (await targetRemovedPromise).data.target;
+            InspectorTest.expectEqual(removedTarget, iframeTarget, "The iframe's target should be removed.");
+
+            let mainFrameSnapshot = await HeapTest.takeSnapshot(mainFrameTarget);
+            await disableAndEnableHeap(mainFrameTarget);
+
+            let nextMainFrameSnapshot = await HeapTest.takeSnapshot(mainFrameTarget);
+            expectOnlyNewIdentifiers(nextMainFrameSnapshot, mainFrameSnapshot, "The main frame's next snapshot should only have identifiers larger than those of its earlier snapshot.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Test that under Site Isolation, frame targets in one process share its heap snapshots until the last frame target that uses them stops.</p>
+<iframe src="resources/heap-frame.html"></iframe>
+</body>

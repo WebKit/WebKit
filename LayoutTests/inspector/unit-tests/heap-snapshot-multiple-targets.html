@@ -60,7 +60,7 @@ function test()
             workerTarget = findWorkerTarget();
 
             await InspectorTest.evaluateInPage("createMarkers()");
-            pageSnapshot1 = await takeSnapshot(WI.mainTarget);
+            pageSnapshot1 = await takeSnapshot(InspectorTest.mainFrameTarget);
             InspectorTest.expectEqual(pageSnapshot1.categories.get(markerClassName)?.objectCount, markerCount, `The first page snapshot should include ${markerCount} markers.`);
 
             await InspectorTest.evaluateInPage("removeMarkers()");
@@ -76,7 +76,7 @@ function test()
         async test() {
             let collectionEventPromise = new Promise((resolve) => {
                 let listener = workerProxy.addEventListener(WI.HeapSnapshotWorkerProxy.Event.Collection, (event) => {
-                    if (event.data.targetId !== WI.mainTarget.identifier)
+                    if (event.data.targetId !== InspectorTest.mainFrameTarget.identifier)
                         return;
 
                     workerProxy.removeEventListener(WI.HeapSnapshotWorkerProxy.Event.Collection, listener);
@@ -84,7 +84,7 @@ function test()
                 });
             });
 
-            await takeSnapshot(WI.mainTarget);
+            await takeSnapshot(InspectorTest.mainFrameTarget);
             let collectionEvent = pageCollectionEvent = await collectionEventPromise;
             InspectorTest.expectThat(collectionEvent.data.affectedSnapshots.includes(pageSnapshot1.identifier), "The collection event should affect the first page snapshot.");
 
@@ -124,7 +124,7 @@ function test()
             InspectorTest.expectEqual(importedSnapshotWithoutTarget.identifier, pageSnapshot1.identifier, "The first imported snapshot should have the same identifier as the first page snapshot.");
 
             // A snapshot of an imported recording keeps the identifier of the target it was recorded from.
-            let importedTarget = WI.ImportedTarget.import({identifier: WI.mainTarget.identifier, type: WI.mainTarget.type, name: "Imported", url: "imported"});
+            let importedTarget = WI.ImportedTarget.import({identifier: InspectorTest.mainFrameTarget.identifier, type: InspectorTest.mainFrameTarget.type, name: "Imported", url: "imported"});
             let importedSnapshotWithImportedTarget = await importSnapshot(importedTarget);
             let importedSnapshotWithImportedTarget2 = await importSnapshot(importedTarget);
 

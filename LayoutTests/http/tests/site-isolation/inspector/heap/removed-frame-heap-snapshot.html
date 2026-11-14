@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/heap-test-utilities.js"></script>
+<script src="resources/heap-markers.js"></script>
+<script>
+let removedIFrameWindow = null;
+
+function removeIFrameAndKeepItsWindow()
+{
+    let iframe = document.querySelector("iframe");
+    removedIFrameWindow = iframe.contentWindow;
+    iframe.remove();
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Heap.RemovedFrameSnapshot");
+
+    const iframeMarkerClassName = HeapTest.markerClassName("IFrameMarker");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Heap.RemovedFrameSnapshot.WindowKeptAlive",
+        description: "The objects of a removed iframe whose window is still referenced should appear in the snapshots of the frame targets in its process.",
+        async test() {
+            let mainFrameTarget = InspectorTest.mainFrameTarget;
+            let iframeTarget = await waitForFrameTargetForURLContaining("heap-frame.html");
+            InspectorTest.assert(iframeTarget, "Should find the same-origin iframe's target.");
+            await waitForExpressionInTarget(iframeTarget, "typeof createMarker === 'function'");
+            InspectorTest.expectEqual(HeapTest.processIdentifier(iframeTarget), HeapTest.processIdentifier(mainFrameTarget), "The same-origin iframe should be in the main frame's process.");
+
+            await HeapTest.evaluate(iframeTarget, `createMarker("${iframeMarkerClassName}")`);
+
+            let mainFrameSnapshot = await HeapTest.takeSnapshot(mainFrameTarget);
+            InspectorTest.expectEqual(HeapTest.objectCount(mainFrameSnapshot, iframeMarkerClassName), 0, "The main frame's snapshot should not include the iframe's marker before the iframe is removed.");
+
+            let targetRemovedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetRemoved);
+            await HeapTest.evaluate(mainFrameTarget, "removeIFrameAndKeepItsWindow()");
+            let removedTarget = (await targetRemovedPromise).data.target;
+            InspectorTest.expectEqual(removedTarget, iframeTarget, "The iframe's target should be removed.");
+
+            let afterRemovalSnapshot = await HeapTest.takeSnapshot(mainFrameTarget);
+            InspectorTest.expectEqual(HeapTest.objectCount(afterRemovalSnapshot, iframeMarkerClassName), 1, "The main frame's snapshot should include the removed iframe's marker.");
+            let [iframeMarker] = await HeapTest.instances(afterRemovalSnapshot, iframeMarkerClassName);
+            let {preview} = await mainFrameTarget.HeapAgent.getPreview(iframeMarker.id);
+            InspectorTest.expectEqual(preview?.description, iframeMarkerClassName, "The main frame's target should preview the removed iframe's marker.");
+
+            // The frontend marks an object as collected when a later snapshot of the same target doesn't include it.
+            let nextSnapshot = await HeapTest.takeSnapshot(mainFrameTarget);
+            let [nextIFrameMarker] = await HeapTest.instances(nextSnapshot, iframeMarkerClassName);
+            InspectorTest.expectEqual(nextIFrameMarker?.id, iframeMarker.id, "The main frame's next snapshot should still include the removed iframe's marker.");
+            let [iframeMarkerAfterNextSnapshot] = await HeapTest.instances(afterRemovalSnapshot, iframeMarkerClassName);
+            InspectorTest.expectEqual(iframeMarkerAfterNextSnapshot?.dead, false, "The removed iframe's marker should not be marked as collected in the earlier snapshot.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Test that under Site Isolation, the objects of a removed iframe that is still referenced appear in heap snapshots.</p>
+<iframe src="resources/heap-frame.html"></iframe>
+</body>

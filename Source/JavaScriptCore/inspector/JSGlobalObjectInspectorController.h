@@ -103,6 +103,8 @@ public:
     void frontendInitialized() final;
     WTF::Stopwatch& executionStopwatch() const final;
     JSC::Debugger* debugger() final;
+    // JSContexts in one context group share a VM.
+    bool coversGlobalObject(JSC::JSGlobalObject& globalObject) const final { return &globalObject == &m_globalObject; }
     JSC::VM& vm() final;
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)

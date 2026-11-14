@@ -33,6 +33,8 @@
 
 namespace WebCore {
 
+class Page;
+
 class PageHeapAgent final : public WebHeapAgent {
     WTF_MAKE_NONCOPYABLE(PageHeapAgent);
     WTF_MAKE_TZONE_ALLOCATED(PageHeapAgent);
@@ -45,15 +47,15 @@ public:
     Inspector::Protocol::ErrorStringOr<void> enable() override;
     Inspector::Protocol::ErrorStringOr<void> disable() override;
 
-    // JSC::HeapSnapshotBuilder::Client
-    String heapSnapshotBuilderOverrideClassName(const JSC::HeapSnapshotBuilder&, JSC::JSCell*, const String& currentClassName) override;
-    bool heapSnapshotBuilderIsElement(const JSC::HeapSnapshotBuilder&, JSC::JSCell*) override;
-
     // InspectorInstrumentation
     void mainFrameNavigated();
 
 private:
+    // InspectorHeapAgent
+    bool observesGarbageCollections() const final;
+
     WeakRef<InstrumentingAgents> m_instrumentingAgents;
+    WeakRef<Page> m_inspectedPage;
 };
 
 } // namespace WebCore

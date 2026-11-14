@@ -80,10 +80,10 @@ void FrameTimelineAgent::internalStop()
 
 bool FrameTimelineAgent::shouldToggleInstrument(Inspector::Protocol::Timeline::Instrument instrument) const
 {
-    // The other instruments belong to domains that frame targets do not have yet, so their getters would reach
-    // the page's agents.
-    // FIXME: <https://webkit.org/b/329360> Also toggle ScriptProfiler once frame targets have that domain.
-    return instrument == Inspector::Protocol::Timeline::Instrument::Timeline;
+    // Frame targets do not have the domains of the other instruments yet, so their getters would reach the page's agents.
+    // FIXME: <https://webkit.org/b/331558> Also toggle Heap, which frame targets have.
+    return instrument == Inspector::Protocol::Timeline::Instrument::Timeline
+        || instrument == Inspector::Protocol::Timeline::Instrument::ScriptProfiler;
 }
 
 void FrameTimelineAgent::willInvalidateLayout(const RenderObject& renderer)

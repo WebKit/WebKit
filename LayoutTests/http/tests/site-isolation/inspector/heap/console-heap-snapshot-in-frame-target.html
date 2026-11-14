@@ -47,19 +47,18 @@ function test()
 
     suite.addTestCase({
         name: "SiteIsolation.Heap.ConsoleHeapSnapshotInFrame.Preview",
-        description: "Previewing an object of the snapshot should fail without throwing while frame targets do not have the Heap domain.",
+        description: "Objects of the snapshot should be previewable through the main frame's target.",
         async test() {
-            // FIXME: <https://webkit.org/b/298984> Expect a preview and a remote object once frame targets have the Heap domain.
-            InspectorTest.expectFalse(mainFrameTarget.hasDomain("Heap"), "The main frame's target should not have the Heap domain.");
-
             let [node] = await new Promise((resolve) => snapshot.instancesWithClassName(markerClassName, resolve));
             InspectorTest.assert(node, "Should find the marker in the snapshot.");
 
-            let [previewError] = await new Promise((resolve) => WI.heapManager.getPreview(node, (...args) => resolve(args)));
-            InspectorTest.expectThat(previewError, "Getting a preview of the marker should fail.");
+            let [previewError, , , preview] = await new Promise((resolve) => WI.heapManager.getPreview(node, (...args) => resolve(args)));
+            InspectorTest.expectFalse(previewError, "Getting a preview of the marker should not fail.");
+            InspectorTest.expectEqual(preview?.description, markerClassName, "The preview should describe the marker.");
 
-            let [remoteObjectError] = await new Promise((resolve) => WI.heapManager.getRemoteObject(node, "test", (...args) => resolve(args)));
-            InspectorTest.expectThat(remoteObjectError, "Getting a remote object for the marker should fail.");
+            let [remoteObjectError, remoteObjectPayload] = await new Promise((resolve) => WI.heapManager.getRemoteObject(node, "test", (...args) => resolve(args)));
+            InspectorTest.expectFalse(remoteObjectError, "Getting a remote object for the marker should not fail.");
+            InspectorTest.expectEqual(remoteObjectPayload?.description, markerClassName, "The remote object should describe the marker.");
         },
     });
 
@@ -68,6 +67,6 @@ function test()
 </script>
 </head>
 <body onload="runTest()">
-<p>Testing that a heap snapshot from console.takeHeapSnapshot() in a frame does not break previews under Site Isolation.</p>
+<p>Testing that a heap snapshot from console.takeHeapSnapshot() in a frame can be previewed under Site Isolation.</p>
 </body>
 </html>

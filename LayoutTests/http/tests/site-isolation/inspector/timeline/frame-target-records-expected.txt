@@ -16,6 +16,7 @@ PASS: The page target should still have Timeline.setAutoCaptureEnabled.
 PASS: Both frame targets started tracking.
 PASS: Recorded a timer from the main frame target.
 PASS: Recorded a timer from the cross-origin iframe target.
+PASS: Recorded a garbage collection from the main frame target.
 PASS: Capturing stopped.
 PASS: The main frame target should report that Timeline stopped.
 PASS: The cross-origin iframe target should report that Timeline stopped.
@@ -23,7 +24,7 @@ PASS: Record from the main frame target should have a non-zero start time.
 PASS: Record from the main frame target should be within the recording.
 PASS: Record from the cross-origin iframe target should have a non-zero start time.
 PASS: Record from the cross-origin iframe target should be within the recording.
-PASS: No script records other than garbage collections should come from the page target.
+PASS: No script records should come from the page target.
 PASS: The Script timeline should include the main frame target.
 PASS: The Script timeline should include the cross-origin iframe target.
 
@@ -32,7 +33,7 @@ PASS: Recorded the dispatch of the test event from the cross-origin iframe targe
 PASS: Capturing stopped.
 PASS: Record from the cross-origin iframe target should have a non-zero start time.
 PASS: Record from the cross-origin iframe target should be within the recording.
-PASS: No script records other than garbage collections should come from the page target.
+PASS: No script records should come from the page target.
 
 -- Running test case: SiteIsolation.Timeline.FrameTargetRecords.LayoutAndPaint
 PASS: Recorded a layout from the cross-origin iframe target.

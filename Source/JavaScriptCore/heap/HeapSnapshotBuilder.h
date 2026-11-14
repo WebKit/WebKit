@@ -26,6 +26,7 @@
 #pragma once
 
 #include <JavaScriptCore/HeapAnalyzer.h>
+#include <JavaScriptCore/HeapProfiler.h>
 #include <JavaScriptCore/JSExportMacros.h>
 #include <functional>
 #include <wtf/CheckedPtr.h>
@@ -39,11 +40,8 @@
 namespace JSC {
 
 class ConservativeRoots;
-class HeapProfiler;
 class HeapSnapshot;
 class JSCell;
-
-typedef unsigned NodeIdentifier;
 
 struct HeapSnapshotNode {
     HeapSnapshotNode(JSCell* cell, unsigned identifier)
@@ -114,8 +112,6 @@ public:
     HeapSnapshotBuilder(HeapProfiler&, SnapshotType = SnapshotType::InspectorSnapshot);
     ~HeapSnapshotBuilder() final;
 
-    NODELETE static void resetNextAvailableObjectIdentifier();
-
     // Performs a garbage collection that builds a snapshot of all live cells.
     void buildSnapshot();
 
@@ -150,9 +146,6 @@ public:
     void setClient(Client* client) { m_client = client; }
 
 private:
-    static NodeIdentifier nextAvailableObjectIdentifier;
-    NODELETE static NodeIdentifier getNextObjectIdentifier();
-
     // Finalized snapshots are not modified during building. So searching them
     // for an existing node can be done concurrently without a lock.
     NODELETE bool previousSnapshotHasNodeForCell(JSCell*, NodeIdentifier&);

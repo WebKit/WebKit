@@ -34,9 +34,11 @@
 
 #include "CommandLineAPIHost.h"
 #include "CommonVM.h"
+#include "DOMWindow.h"
 #include "DOMWrapperWorld.h"
 #include "DebuggerSuspensionController.h"
 #include "Document.h"
+#include "DocumentPage.h"
 #include "Frame.h"
 #include "FrameDebuggerAgent.h"
 #include "FrameInspectorController.h"
@@ -56,7 +58,9 @@
 #include "InstrumentingAgents.h"
 #include "JSDOMBindingSecurity.h"
 #include "JSDOMWindow.h"
+#include "JSDOMWindowBase.h"
 #include "JSExecState.h"
+#include "JSWindowProxy.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "NodeDocument.h"
@@ -624,15 +628,26 @@ JSC::Debugger* PageInspectorController::debugger()
     return m_debugger.get();
 }
 
-void PageInspectorController::forEachDebugger(NOESCAPE const Function<void(JSC::Debugger&)>& functor)
+bool PageInspectorController::coversGlobalObject(JSC::JSGlobalObject& globalObject) const
 {
-    if (m_debugger)
-        functor(*m_debugger);
+    Ref page = m_page;
+    if (page->settings().siteIsolationEnabled()) {
+        // Under Site Isolation, each frame's samples go to its own frame target.
+        return false;
+    }
 
-    protect(m_page)->forEachLocalFrame([&](LocalFrame& frame) {
-        if (auto* frameDebugger = protect(frame.inspectorController())->debugger())
-            functor(*frameDebugger);
-    });
+    auto* window = dynamicDowncast<JSDOMWindowBase>(globalObject);
+    if (!window)
+        return false;
+
+    // See FrameInspectorController::coversGlobalObject() for why this goes through the window proxy.
+    RefPtr frame = protect(window->proxy().wrapped())->frame();
+    return frame && frame->page() == page.ptr();
+}
+
+bool PageInspectorController::takesUncoveredSamples() const
+{
+    return !m_page->settings().siteIsolationEnabled();
 }
 
 JSC::VM& PageInspectorController::vm()

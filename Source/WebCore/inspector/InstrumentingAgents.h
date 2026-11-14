@@ -139,10 +139,8 @@ class WebHeapAgent;
     DEFINE_PERSISTENT_INSPECTOR_AGENT(macro, CSS) \
     DEFINE_PERSISTENT_INSPECTOR_AGENT(macro, DOM) \
     DEFINE_PERSISTENT_INSPECTOR_AGENT(macro, DOM_Frame) \
-    DEFINE_PERSISTENT_INSPECTOR_AGENT(macro, Heap_Web) \
     DEFINE_PERSISTENT_INSPECTOR_AGENT(macro, Inspector) \
     DEFINE_PERSISTENT_INSPECTOR_AGENT(macro, Memory) \
-    DEFINE_PERSISTENT_INSPECTOR_AGENT(macro, ScriptProfiler) \
     DEFINE_PERSISTENT_INSPECTOR_AGENT(macro, Worker) \
     DEFINE_ENABLED_INSPECTOR_AGENT(macro, Animation) \
     DEFINE_ENABLED_INSPECTOR_AGENT(macro, Canvas) \
@@ -175,6 +173,8 @@ class WebHeapAgent;
 // Under Site Isolation, a frame reports these only through its own frame target, so a frame's slots for them
 // never fall back to its page's agents, even while empty.
 #define FOR_EACH_INSPECTOR_AGENT_WITHOUT_FALLBACK_UNDER_SITE_ISOLATION(macro) \
+    DEFINE_PERSISTENT_INSPECTOR_AGENT(macro, Heap_Web) \
+    DEFINE_PERSISTENT_INSPECTOR_AGENT(macro, ScriptProfiler) \
     DEFINE_ENABLED_INSPECTOR_AGENT(macro, Timeline) \
     DEFINE_TRACKING_INSPECTOR_AGENT(macro, Timeline) \
     DEFINE_TRACKING_INSPECTOR_AGENT(macro, Timeline_Frame) \

@@ -135,12 +135,12 @@ function test()
     suite.addTestCase({
         name: "HeapSnapshotProxy data",
         test(resolve, reject) {
-            HeapAgent.snapshot((error, timestamp, snapshotStringData) => {
+            InspectorTest.mainFrameTarget.HeapAgent.snapshot((error, timestamp, snapshotStringData) => {
                 InspectorTest.expectThat(!error, "Should not have an error creating a snapshot.");
                 testSnapshot = WI.TestHeapSnapshot.fromPayload(JSON.parse(snapshotStringData));
                 let workerProxy = WI.HeapSnapshotWorkerProxy.singleton();
-                workerProxy.createSnapshot(WI.mainTarget.identifier, snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
-                    snapshot = WI.HeapSnapshotProxy.deserialize(WI.mainTarget, objectId, serializedSnapshot);
+                workerProxy.createSnapshot(InspectorTest.mainFrameTarget.identifier, snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
+                    snapshot = WI.HeapSnapshotProxy.deserialize(InspectorTest.mainFrameTarget, objectId, serializedSnapshot);
                     InspectorTest.assert(testSnapshot, "Created TestHeapSnapshot");
                     InspectorTest.assert(snapshot, "Created HeapSnapshotProxy");
                     InspectorTest.expectThat(snapshot.totalSize === testSnapshot.totalSize, "Snapshots totalSize should match.");

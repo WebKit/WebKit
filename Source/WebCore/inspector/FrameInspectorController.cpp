@@ -31,6 +31,7 @@
 #include "FrameInspectorController.h"
 
 #include "CommonVM.h"
+#include "DOMWindow.h"
 #include "DocumentPage.h"
 #include "FrameAnimationAgent.h"
 #include "FrameCSSAgent.h"
@@ -41,6 +42,7 @@
 #include "FrameDOMStorageAgent.h"
 #include "FrameDebugger.h"
 #include "FrameDebuggerAgent.h"
+#include "FrameHeapAgent.h"
 #include "FrameIndexedDBAgent.h"
 #include "FrameInlines.h"
 #include "FrameLayerTreeAgent.h"
@@ -53,7 +55,10 @@
 #include "InstrumentingAgents.h"
 #include "JSDOMBindingSecurity.h"
 #include "JSDOMWindow.h"
+#include "JSDOMWindowBase.h"
 #include "JSExecState.h"
+#include "JSWindowProxy.h"
+#include "LocalFrame.h"
 #include "LocalFrameInlines.h"
 #include "Node.h"
 #include "NodeDocument.h"
@@ -197,9 +202,6 @@ void FrameInspectorController::createLazyAgents()
     // Create debugger before agents that depend on it.
     lazyInitialize(m_debugger, makeUnique<FrameDebugger>(frame.get()));
 
-    if (CheckedPtr scriptProfilerAgent = m_instrumentingAgents->persistentScriptProfilerAgent())
-        scriptProfilerAgent->installProfilingClientIfTracking(*m_debugger);
-
     auto context = frameAgentContext();
     auto debuggerAgent = makeUniqueRef<FrameDebuggerAgent>(context);
     CheckedPtr debuggerAgentPtr = debuggerAgent.ptr();
@@ -215,7 +217,13 @@ void FrameInspectorController::createLazyAgents()
     m_agents.append(makeUniqueRef<FrameRuntimeAgent>(context));
     m_agents.append(makeUniqueRef<FrameCSSAgent>(context));
     m_agents.append(makeUniqueRef<FrameCanvasAgent>(context));
+    m_agents.append(makeUniqueRef<FrameHeapAgent>(context));
     m_agents.append(makeUniqueRef<FrameLayerTreeAgent>(context));
+
+    auto scriptProfilerAgent = makeUniqueRef<InspectorScriptProfilerAgent>(context);
+    m_instrumentingAgents->setPersistentScriptProfilerAgent(protect(scriptProfilerAgent).ptr());
+    m_agents.append(WTF::move(scriptProfilerAgent));
+
     m_agents.append(makeUniqueRef<FrameTimelineAgent>(context));
     m_agents.append(makeUniqueRef<FrameAnimationAgent>(context));
     m_agents.append(makeUniqueRef<FrameWorkerAgent>(context));
@@ -338,6 +346,15 @@ Stopwatch& FrameInspectorController::executionStopwatch() const
 JSC::Debugger* FrameInspectorController::debugger()
 {
     return m_debugger.get();
+}
+
+bool FrameInspectorController::coversGlobalObject(JSC::JSGlobalObject& globalObject) const
+{
+    // A DOMWindow loses its frame when its document is detached, but its window proxy stays with the frame, so this
+    // also covers documents that the frame navigated away from, in every world. It is based on ownership rather than
+    // on the frame's debugger, which is detached while nothing observes it.
+    auto* window = dynamicDowncast<JSDOMWindowBase>(globalObject);
+    return window && protect(window->proxy().wrapped())->frame() == m_frame.ptr();
 }
 
 JSC::Debugger* FrameInspectorController::attachedDebugger() const

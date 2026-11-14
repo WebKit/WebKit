@@ -35,14 +35,54 @@
 #include "JSCJSValueInlines.h"
 #include "JSFunction.h"
 #include "VM.h"
+#include <wtf/CheckedPtr.h>
+#include <wtf/HashMap.h>
+#include <wtf/Lock.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/Stopwatch.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/Vector.h>
 
 namespace Inspector {
 
 using namespace JSC;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorHeapAgent);
+
+// A VM has one chain of heap snapshots, shared by all of its agents (for example those of several
+// inspected pages in one web process). It is only cleared once no agent whose frontend may hold its
+// identifiers is left. Agents only add themselves under the VM's JSLock, which clearHeapSnapshots()
+// also holds, so an agent can't start using the chain between the check for users and the clear.
+static Lock snapshotUsersLock;
+
+static HashMap<const VM*, Vector<CheckedPtr<InspectorHeapAgent>>>& snapshotUsersByVM() WTF_REQUIRES_LOCK(snapshotUsersLock)
+{
+    static NeverDestroyed<HashMap<const VM*, Vector<CheckedPtr<InspectorHeapAgent>>>> snapshotUsers;
+    return snapshotUsers;
+}
+
+static void addSnapshotUser(const VM& vm, InspectorHeapAgent& agent)
+{
+    Locker locker { snapshotUsersLock };
+    snapshotUsersByVM().ensure(&vm, [] {
+        return Vector<CheckedPtr<InspectorHeapAgent>> { };
+    }).iterator->value.append(&agent);
+}
+
+static void removeSnapshotUser(InspectorHeapAgent& agent)
+{
+    Locker locker { snapshotUsersLock };
+    snapshotUsersByVM().removeIf([&](auto& entry) {
+        entry.value.removeFirst(&agent);
+        return entry.value.isEmpty();
+    });
+}
+
+static bool hasSnapshotUsers(const VM& vm)
+{
+    Locker locker { snapshotUsersLock };
+    return snapshotUsersByVM().contains(&vm);
+}
 
 InspectorHeapAgent::InspectorHeapAgent(AgentContext& context)
     : InspectorAgentBase("Heap"_s)
@@ -53,7 +93,17 @@ InspectorHeapAgent::InspectorHeapAgent(AgentContext& context)
 {
 }
 
-InspectorHeapAgent::~InspectorHeapAgent() = default;
+InspectorHeapAgent::~InspectorHeapAgent()
+{
+    // Don't clear the chain here: the VM may already be gone (a worker's agents outlive its VM).
+    if (m_usesSnapshots)
+        removeSnapshotUser(*this);
+}
+
+InspectorEnvironment& InspectorHeapAgent::environment() const
+{
+    return m_environment.get();
+}
 
 void InspectorHeapAgent::didCreateFrontendAndBackend()
 {
@@ -62,6 +112,10 @@ void InspectorHeapAgent::didCreateFrontendAndBackend()
 void InspectorHeapAgent::willDestroyFrontendAndBackend(DisconnectReason)
 {
     std::ignore = disable();
+
+    // console.takeHeapSnapshot() sends snapshots even when Heap isn't enabled.
+    if (m_usesSnapshots)
+        clearHeapSnapshots();
 }
 
 Protocol::ErrorStringOr<void> InspectorHeapAgent::enable()
@@ -71,7 +125,8 @@ Protocol::ErrorStringOr<void> InspectorHeapAgent::enable()
 
     m_enabled = true;
 
-    protect(m_environment)->vm().heap.addObserver(this);
+    if (observesGarbageCollections())
+        protect(m_environment)->vm().heap.addObserver(this);
 
     return { };
 }
@@ -84,6 +139,7 @@ Protocol::ErrorStringOr<void> InspectorHeapAgent::disable()
     m_enabled = false;
     m_tracking = false;
 
+    // Nothing happens if this agent isn't an observer.
     protect(m_environment)->vm().heap.removeObserver(this);
 
     clearHeapSnapshots();
@@ -108,6 +164,13 @@ Protocol::ErrorStringOr<std::tuple<double, Protocol::Heap::HeapSnapshotData>> In
 
     HeapSnapshotBuilder snapshotBuilder(vm.ensureHeapProfiler());
     snapshotBuilder.setClient(this);
+
+    // Become a user of the VM's snapshot chain before building, so that a clear during the build's garbage
+    // collection cannot free the chain that the new snapshot links to.
+    if (!m_usesSnapshots) {
+        addSnapshotUser(vm, *this);
+        m_usesSnapshots = true;
+    }
 
     snapshotBuilder.buildSnapshot();
 
@@ -167,6 +230,12 @@ std::optional<HeapSnapshotNode> InspectorHeapAgent::nodeForHeapObjectIdentifier(
     const std::optional<HeapSnapshotNode> optionalNode = snapshot->nodeForObjectIdentifier(heapObjectIdentifier);
     if (!optionalNode) {
         errorString = "No object for identifier, it may have been collected"_s;
+        return std::nullopt;
+    }
+
+    // The VM's snapshots also hold the cells that other agents of the VM report.
+    if (!includesCell(*optionalNode->cell)) {
+        errorString = "No object for identifier in this target"_s;
         return std::nullopt;
     }
 
@@ -299,13 +368,24 @@ void InspectorHeapAgent::didGarbageCollect(CollectionScope scope)
 
 bool InspectorHeapAgent::heapSnapshotBuilderIgnoreNode(const HeapSnapshotBuilder&, JSC::JSCell* cell)
 {
-    if (const Structure* structure = cell->structure()) {
-        if (JSGlobalObject* globalObject = structure->realm()) {
-            if (!protect(m_environment)->canAccessInspectedScriptState(globalObject))
-                return true;
-        }
+    return !includesCell(*cell);
+}
+
+bool InspectorHeapAgent::includesGlobalObject(JSGlobalObject& globalObject) const
+{
+    return protect(m_environment)->canAccessInspectedScriptState(&globalObject);
+}
+
+bool InspectorHeapAgent::includesCell(JSCell& cell) const
+{
+    if (const Structure* structure = cell.structure()) {
+        if (JSGlobalObject* globalObject = structure->realm())
+            return includesGlobalObject(*globalObject);
     }
-    return false;
+
+    // FIXME: <https://webkit.org/b/331565> Every agent of a VM includes the cells that belong to no realm, such as
+    // strings, also those that only other agents' realms use.
+    return true;
 }
 
 void InspectorHeapAgent::clearHeapSnapshots()
@@ -313,10 +393,16 @@ void InspectorHeapAgent::clearHeapSnapshots()
     VM& vm = protect(m_environment)->vm();
     JSLockHolder lock(vm);
 
-    if (HeapProfiler* heapProfiler = vm.heapProfiler()) {
-        heapProfiler->clearSnapshots();
-        HeapSnapshotBuilder::resetNextAvailableObjectIdentifier();
+    if (m_usesSnapshots) {
+        removeSnapshotUser(*this);
+        m_usesSnapshots = false;
     }
+
+    if (hasSnapshotUsers(vm))
+        return;
+
+    if (HeapProfiler* heapProfiler = vm.heapProfiler())
+        heapProfiler->clearSnapshots();
 }
 
 void InspectorHeapAgent::dispatchGarbageCollectedEvent(Protocol::Heap::GarbageCollection::Type type, Seconds startTime, Seconds endTime)

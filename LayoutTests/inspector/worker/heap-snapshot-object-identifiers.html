@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/worker-utilities.js"></script>
+<script>
+let worker = new Worker("resources/worker-1.js");
+
+class PageMarker { }
+let pageMarker = new PageMarker;
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Worker.Heap.ObjectIdentifiers");
+
+    let workerTarget = null;
+
+    // Returns the identifiers of every node in a snapshot, and the identifier of the one instance of `className`.
+    function parseSnapshot(snapshotStringData, className) {
+        const nodeFieldCount = 4; // <nodeId>, <sizeInBytes>, <nodeClassNameIndex>, <flags>
+        let {nodes, nodeClassNames} = JSON.parse(snapshotStringData);
+        let identifiers = [];
+        let instanceIdentifiers = [];
+        for (let i = 0; i < nodes.length; i += nodeFieldCount) {
+            identifiers.push(nodes[i]);
+            if (nodeClassNames[nodes[i + 2]] === className)
+                instanceIdentifiers.push(nodes[i]);
+        }
+        InspectorTest.expectEqual(instanceIdentifiers.length, 1, `Snapshot should have one ${className} instance.`);
+        return {identifiers, instanceIdentifier: instanceIdentifiers[0]};
+    }
+
+    async function createWorkerMarkerAndTakeSnapshot(className) {
+        await workerTarget.RuntimeAgent.evaluate.invoke({expression: `class ${className} { }; globalThis.marker${className} = new ${className};`});
+        let {snapshotData} = await workerTarget.HeapAgent.snapshot();
+        return parseSnapshot(snapshotData, className);
+    }
+
+    async function disableAndEnablePageHeap() {
+        await InspectorTest.mainFrameTarget.HeapAgent.disable();
+        await InspectorTest.mainFrameTarget.HeapAgent.enable();
+    }
+
+    suite.addTestCase({
+        name: "Worker.Heap.ObjectIdentifiers.Setup",
+        description: "Find the Worker target and take a page snapshot.",
+        async test() {
+            workerTarget = await window.awaitTarget((target) => target.type === WI.TargetType.Worker);
+            InspectorTest.expectEqual(workerTarget.type, WI.TargetType.Worker, "Should have a Worker target.");
+
+            // Taking a page snapshot creates the page VM's heap profiler, so that disabling Heap on the page acts on it.
+            let {snapshotData} = await InspectorTest.mainFrameTarget.HeapAgent.snapshot();
+            parseSnapshot(snapshotData, "PageMarker");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Worker.Heap.ObjectIdentifiers.PageDisableDoesNotReuseWorkerIdentifiers",
+        description: "Disabling Heap on the page should not make the Worker's later snapshots reuse object identifiers.",
+        async test() {
+            await disableAndEnablePageHeap();
+            let snapshotA = await createWorkerMarkerAndTakeSnapshot("WorkerMarkerA");
+
+            await disableAndEnablePageHeap();
+            let snapshotB = await createWorkerMarkerAndTakeSnapshot("WorkerMarkerB");
+
+            InspectorTest.expectNotEqual(snapshotA.instanceIdentifier, snapshotB.instanceIdentifier, "WorkerMarkerA and WorkerMarkerB should have different identifiers.");
+            InspectorTest.expectThat(snapshotB.identifiers.includes(snapshotA.instanceIdentifier), "Second snapshot should still include WorkerMarkerA.");
+            InspectorTest.expectEqual(new Set(snapshotB.identifiers).size, snapshotB.identifiers.length, "Second snapshot should have no duplicate identifiers.");
+
+            let {preview} = await workerTarget.HeapAgent.getPreview(snapshotA.instanceIdentifier);
+            InspectorTest.expectEqual(preview?.description, "WorkerMarkerA", "Preview of the first identifier should still describe WorkerMarkerA.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Worker.Heap.ObjectIdentifiers.WorkerDisableDoesNotReuseIdentifiers",
+        description: "Clearing the Worker's own snapshots should not make its later snapshots reuse object identifiers.",
+        async test() {
+            let {snapshotData: snapshotDataBefore} = await workerTarget.HeapAgent.snapshot();
+            let snapshotBefore = parseSnapshot(snapshotDataBefore, "WorkerMarkerA");
+
+            // The Worker's agent is the only user of the Worker VM's snapshot chain, so this clears the chain.
+            await workerTarget.HeapAgent.disable();
+            await workerTarget.HeapAgent.enable();
+
+            let {snapshotData: snapshotDataAfter} = await workerTarget.HeapAgent.snapshot();
+            let snapshotAfter = parseSnapshot(snapshotDataAfter, "WorkerMarkerA");
+
+            let maximumIdentifierBefore = snapshotBefore.identifiers.reduce((a, b) => Math.max(a, b));
+            // Identifier 0 is always the <root> node.
+            let minimumIdentifierAfter = snapshotAfter.identifiers.filter((identifier) => identifier).reduce((a, b) => Math.min(a, b));
+            InspectorTest.expectGreaterThan(minimumIdentifierAfter, maximumIdentifierBefore, "Snapshot after clearing should only have new identifiers.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that heap snapshot object identifiers of a Worker are not reused when Heap is disabled on the page or on the Worker.</p>
+</body>
+</html>

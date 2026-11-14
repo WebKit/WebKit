@@ -120,6 +120,8 @@ public:
     WTF::Stopwatch& executionStopwatch() const final;
     bool executionStopwatchIsSharedAcrossProcesses() const final { return m_executionStopwatchIsShared; }
     JSC::Debugger* debugger() override;
+    bool coversGlobalObject(JSC::JSGlobalObject&) const override;
+    bool takesUncoveredSamples() const override { return false; }
     JSC::VM& vm() override;
 
 private:
