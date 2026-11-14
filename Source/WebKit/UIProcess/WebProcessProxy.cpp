@@ -135,6 +135,7 @@
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)
+#include "DefaultWebBrowserChecks.h"
 #include "RemoteObjectRegistry.h"
 #include "RemoteObjectRegistryMessages.h"
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
@@ -337,6 +338,15 @@ Vector<Ref<WebPageProxy>> WebProcessProxy::mainPages() const
 unsigned WebProcessProxy::provisionalPageCount() const
 {
     return m_provisionalPages.computeSize();
+}
+
+bool WebProcessProxy::isAllowedToUseTestOnlyBackForwardListAccess() const
+{
+#if PLATFORM(COCOA)
+    if (isRunningTest(applicationBundleIdentifier()))
+        return true;
+#endif
+    return m_allowTestOnlyIPC;
 }
 
 bool WebProcessProxy::hasVisiblePage() const

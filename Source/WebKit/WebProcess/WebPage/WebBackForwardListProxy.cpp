@@ -118,6 +118,21 @@ RefPtr<HistoryItem> WebBackForwardListProxy::itemAtIndex(int itemIndex, FrameIde
     return toHistoryItem(historyItemClient, Ref { *frameState });
 }
 
+RefPtr<HistoryItem> WebBackForwardListProxy::itemAtIndexIncludingOtherProcessesForTesting(int itemIndex)
+{
+    RefPtr page = m_page;
+    if (!page)
+        return nullptr;
+
+    auto sendResult = page->sendSync(Messages::WebBackForwardList::BackForwardItemAtIndexIncludingOtherProcessesForTesting(itemIndex));
+    auto [frameState] = sendResult.takeReplyOr(nullptr);
+    if (!frameState)
+        return nullptr;
+
+    Ref historyItemClient = page->historyItemClient();
+    return toHistoryItem(historyItemClient, Ref { *frameState });
+}
+
 unsigned WebBackForwardListProxy::backListCount() const
 {
     return cacheListCountsIfNecessary().backCount;

@@ -140,6 +140,7 @@ private:
     void backForwardGoToItem(IPC::Connection&, WebCore::BackForwardItemIdentifier);
     void backForwardAllItems(IPC::Connection&, WebCore::FrameIdentifier, CompletionHandler<void(Vector<Ref<FrameState>>&&)>&&);
     void backForwardItemAtIndexForWebContent(IPC::Connection&, int32_t delta, WebCore::FrameIdentifier, CompletionHandler<void(RefPtr<FrameState>&&)>&&);
+    void backForwardItemAtIndexIncludingOtherProcessesForTesting(IPC::Connection&, int32_t delta, CompletionHandler<void(RefPtr<FrameState>&&)>&&);
     void backForwardListContainsItem(WebCore::BackForwardItemIdentifier, CompletionHandler<void(bool)>&&);
     void backForwardListCounts(CompletionHandler<void(WebBackForwardListCounts&&)>&&);
 

@@ -44,6 +44,8 @@ public:
     NODELETE void clearCachedListCounts();
     void invalidateCachedListCounts() { m_cachedBackForwardListCounts = std::nullopt; }
 
+    RefPtr<WebCore::HistoryItem> itemAtIndexIncludingOtherProcessesForTesting(int);
+
 private:
     WebBackForwardListProxy(WebPage&);
 

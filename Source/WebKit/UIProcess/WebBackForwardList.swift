@@ -1445,6 +1445,21 @@ final class WebBackForwardList {
     }
 
     @MainActor
+    func backForwardItemAtIndexIncludingOtherProcessesForTesting(
+        connection: IPC.Connection,
+        delta: Int32
+    ) throws(InvalidMessage) -> WebKit.RefPtrFrameState {
+        try messageCheck { delta != Int32.min }
+        let process = WebKit.WebProcessProxy.fromConnection(connection)
+        try messageCheck { process.ptr().isAllowedToUseTestOnlyBackForwardListAccess() }
+
+        guard let item = entryAtDeltaFromCurrentIndex(delta: Int(delta), allowSkipping: false) else {
+            return WebKit.RefPtrFrameState()
+        }
+        return WebKit.RefPtrFrameState(item.mainFrameItem().copyFrameStateWithChildren().ptr())
+    }
+
+    @MainActor
     func backForwardListCounts(
         connection: IPC.Connection
     ) -> WebKit.WebBackForwardListCounts {
