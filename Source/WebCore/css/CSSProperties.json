@@ -13175,9 +13175,6 @@
                     "scroll-margin-bottom",
                     "scroll-margin-left"
                 ],
-                "aliases": [
-                    "scroll-snap-margin"
-                ],
                 "shorthand-pattern": "CoalescingQuad",
                 "parser-grammar-unused": "<'scroll-margin-top'>{1,4}",
                 "parser-grammar-unused-reason": "Needs support for shorthand grammars."
@@ -13192,9 +13189,6 @@
             "animation-type-comment": "Current spec animation type is 'by computed value'",
             "initial": "0px",
             "codegen-properties": {
-                "aliases": [
-                    "scroll-snap-margin-bottom"
-                ],
                 "logical-property-group": {
                     "name": "scroll-margin",
                     "resolver": "bottom"
@@ -13215,9 +13209,6 @@
             "animation-type-comment": "Current spec animation type is 'by computed value'",
             "initial": "0px",
             "codegen-properties": {
-                "aliases": [
-                    "scroll-snap-margin-left"
-                ],
                 "logical-property-group": {
                     "name": "scroll-margin",
                     "resolver": "left"
@@ -13238,9 +13229,6 @@
             "animation-type-comment": "Current spec animation type is 'by computed value'",
             "initial": "0px",
             "codegen-properties": {
-                "aliases": [
-                    "scroll-snap-margin-right"
-                ],
                 "logical-property-group": {
                     "name": "scroll-margin",
                     "resolver": "right"
@@ -13261,9 +13249,6 @@
             "animation-type-comment": "Current spec animation type is 'by computed value'",
             "initial": "0px",
             "codegen-properties": {
-                "aliases": [
-                    "scroll-snap-margin-top"
-                ],
                 "logical-property-group": {
                     "name": "scroll-margin",
                     "resolver": "top"

@@ -7,7 +7,7 @@
                 scroll-snap-type: x proximity;
                 scroll-snap-align: start end;
                 scroll-padding: 10%;
-                scroll-snap-margin: 5px 5px 10px 10px;
+                scroll-margin: 5px 5px 10px 10px;
             }
 
             .horizontalGallery {
@@ -32,42 +32,42 @@
                 scroll-snap-type: both mandatory;
                 scroll-snap-align: center;
                 scroll-padding: 20px;
-                scroll-snap-margin: 0 1px;
+                scroll-margin: 0 1px;
             }
 
             .inheritType {
                 scroll-snap-type: inherit;
                 scroll-snap-align: center;
                 scroll-padding: 20px;
-                scroll-snap-margin: 0 1px;
+                scroll-margin: 0 1px;
             }
 
             .inheritAlign {
                 scroll-snap-type: both mandatory;
                 scroll-snap-align: inherit;
                 scroll-padding: 20px;
-                scroll-snap-margin: 0 1px;
+                scroll-margin: 0 1px;
             }
 
             .inheritPadding {
                 scroll-snap-type: both mandatory;
                 scroll-snap-align: center;
                 scroll-padding: inherit;
-                scroll-snap-margin: 0 1px;
+                scroll-margin: 0 1px;
             }
 
             .inheritMargin {
                 scroll-snap-type: both mandatory;
                 scroll-snap-align: center;
                 scroll-padding: 20px;
-                scroll-snap-margin: inherit;
+                scroll-margin: inherit;
             }
 
             .inheritAll {
                 scroll-snap-type: inherit;
                 scroll-snap-align: inherit;
                 scroll-padding: inherit;
-                scroll-snap-margin: inherit;
+                scroll-margin: inherit;
             }
 
             .inheritNone { }
@@ -123,7 +123,7 @@
                     <div id="item5" class="colorBox"></div>
                 </div>
             </div>
-            <div id="inheritMargin" class="horizontalGallery inheritMargin" style="scroll-snap-margin: inherit;">
+            <div id="inheritMargin" class="horizontalGallery inheritMargin" style="scroll-margin: inherit;">
                 <div class="horizontalGalleryDrawer">
                     <div id="item0" class="colorBox"></div>
                     <div id="item1" class="colorBox"></div>
@@ -133,7 +133,7 @@
                     <div id="item5" class="colorBox"></div>
                 </div>
             </div>
-            <div id="inheritAll" class="horizontalGallery inheritAll" style="scroll-snap-type: inherit; scroll-snap-align: inherit; scroll-padding: inherit; scroll-snap-margin: inherit;">
+            <div id="inheritAll" class="horizontalGallery inheritAll" style="scroll-snap-type: inherit; scroll-snap-align: inherit; scroll-padding: inherit; scroll-margin: inherit;">
                 <div class="horizontalGalleryDrawer">
                     <div id="item0" class="colorBox"></div>
                     <div id="item1" class="colorBox"></div>
@@ -169,12 +169,12 @@
         shouldBeEmptyString("noInherit.style['scroll-padding-top']");
         shouldBeEmptyString("noInherit.style['scroll-padding-bottom']");
         shouldBeEqualToString("window.getComputedStyle(noInherit).getPropertyValue('scroll-padding')", "20px");
-        shouldBeEmptyString("noInherit.style['scroll-snap-margin']");
-        shouldBeEmptyString("noInherit.style['scroll-snap-margin-left']");
-        shouldBeEmptyString("noInherit.style['scroll-snap-margin-right']");
-        shouldBeEmptyString("noInherit.style['scroll-snap-margin-top']");
-        shouldBeEmptyString("noInherit.style['scroll-snap-margin-bottom']");
-        shouldBeEqualToString("window.getComputedStyle(noInherit).getPropertyValue('scroll-snap-margin')", "0px 1px");
+        shouldBeEmptyString("noInherit.style['scroll-margin']");
+        shouldBeEmptyString("noInherit.style['scroll-margin-left']");
+        shouldBeEmptyString("noInherit.style['scroll-margin-right']");
+        shouldBeEmptyString("noInherit.style['scroll-margin-top']");
+        shouldBeEmptyString("noInherit.style['scroll-margin-bottom']");
+        shouldBeEqualToString("window.getComputedStyle(noInherit).getPropertyValue('scroll-margin')", "0px 1px");
         debug("");
 
         var inheritType = document.getElementById('inheritType');
@@ -188,12 +188,12 @@
         shouldBeEmptyString("inheritType.style['scroll-padding-top']");
         shouldBeEmptyString("inheritType.style['scroll-padding-bottom']");
         shouldBeEqualToString("window.getComputedStyle(inheritType).getPropertyValue('scroll-padding')", "20px");
-        shouldBeEmptyString("inheritType.style['scroll-snap-margin']");
-        shouldBeEmptyString("inheritType.style['scroll-snap-margin-left']");
-        shouldBeEmptyString("inheritType.style['scroll-snap-margin-right']");
-        shouldBeEmptyString("inheritType.style['scroll-snap-margin-top']");
-        shouldBeEmptyString("inheritType.style['scroll-snap-margin-bottom']");
-        shouldBeEqualToString("window.getComputedStyle(inheritType).getPropertyValue('scroll-snap-margin')", "0px 1px");
+        shouldBeEmptyString("inheritType.style['scroll-margin']");
+        shouldBeEmptyString("inheritType.style['scroll-margin-left']");
+        shouldBeEmptyString("inheritType.style['scroll-margin-right']");
+        shouldBeEmptyString("inheritType.style['scroll-margin-top']");
+        shouldBeEmptyString("inheritType.style['scroll-margin-bottom']");
+        shouldBeEqualToString("window.getComputedStyle(inheritType).getPropertyValue('scroll-margin')", "0px 1px");
         debug("");
 
         var inheritAlign = document.getElementById('inheritAlign');
@@ -207,12 +207,12 @@
         shouldBeEmptyString("inheritAlign.style['scroll-padding-top']");
         shouldBeEmptyString("inheritAlign.style['scroll-padding-bottom']");
         shouldBeEqualToString("window.getComputedStyle(inheritAlign).getPropertyValue('scroll-padding')", "20px");
-        shouldBeEmptyString("inheritAlign.style['scroll-snap-margin']");
-        shouldBeEmptyString("inheritAlign.style['scroll-snap-margin-left']");
-        shouldBeEmptyString("inheritAlign.style['scroll-snap-margin-right']");
-        shouldBeEmptyString("inheritAlign.style['scroll-snap-margin-top']");
-        shouldBeEmptyString("inheritAlign.style['scroll-snap-margin-bottom']");
-        shouldBeEqualToString("window.getComputedStyle(inheritAlign).getPropertyValue('scroll-snap-margin')", "0px 1px");
+        shouldBeEmptyString("inheritAlign.style['scroll-margin']");
+        shouldBeEmptyString("inheritAlign.style['scroll-margin-left']");
+        shouldBeEmptyString("inheritAlign.style['scroll-margin-right']");
+        shouldBeEmptyString("inheritAlign.style['scroll-margin-top']");
+        shouldBeEmptyString("inheritAlign.style['scroll-margin-bottom']");
+        shouldBeEqualToString("window.getComputedStyle(inheritAlign).getPropertyValue('scroll-margin')", "0px 1px");
         debug("");
 
         var inheritPadding = document.getElementById('inheritPadding');
@@ -226,12 +226,12 @@
         shouldBeEqualToString("inheritPadding.style['scroll-padding-top']", "inherit");
         shouldBeEqualToString("inheritPadding.style['scroll-padding-bottom']", "inherit");
         shouldBeEqualToString("window.getComputedStyle(inheritPadding).getPropertyValue('scroll-padding')", "10%");
-        shouldBeEmptyString("inheritPadding.style['scroll-snap-margin']");
-        shouldBeEmptyString("inheritPadding.style['scroll-snap-margin-left']");
-        shouldBeEmptyString("inheritPadding.style['scroll-snap-margin-right']");
-        shouldBeEmptyString("inheritPadding.style['scroll-snap-margin-top']");
-        shouldBeEmptyString("inheritPadding.style['scroll-snap-margin-bottom']");
-        shouldBeEqualToString("window.getComputedStyle(inheritPadding).getPropertyValue('scroll-snap-margin')", "0px 1px");
+        shouldBeEmptyString("inheritPadding.style['scroll-margin']");
+        shouldBeEmptyString("inheritPadding.style['scroll-margin-left']");
+        shouldBeEmptyString("inheritPadding.style['scroll-margin-right']");
+        shouldBeEmptyString("inheritPadding.style['scroll-margin-top']");
+        shouldBeEmptyString("inheritPadding.style['scroll-margin-bottom']");
+        shouldBeEqualToString("window.getComputedStyle(inheritPadding).getPropertyValue('scroll-margin')", "0px 1px");
         debug("");
 
         var inheritMargin = document.getElementById('inheritMargin');
@@ -245,12 +245,12 @@
         shouldBeEmptyString("inheritMargin.style['scroll-padding-top']");
         shouldBeEmptyString("inheritMargin.style['scroll-padding-bottom']");
         shouldBeEqualToString("window.getComputedStyle(inheritMargin).getPropertyValue('scroll-padding')", "20px");
-        shouldBeEqualToString("inheritMargin.style['scroll-snap-margin']", "inherit");
-        shouldBeEqualToString("inheritMargin.style['scroll-snap-margin-left']", "inherit");
-        shouldBeEqualToString("inheritMargin.style['scroll-snap-margin-right']", "inherit");
-        shouldBeEqualToString("inheritMargin.style['scroll-snap-margin-top']", "inherit");
-        shouldBeEqualToString("inheritMargin.style['scroll-snap-margin-bottom']", "inherit");
-        shouldBeEqualToString("window.getComputedStyle(inheritMargin).getPropertyValue('scroll-snap-margin')", "5px 5px 10px 10px");
+        shouldBeEqualToString("inheritMargin.style['scroll-margin']", "inherit");
+        shouldBeEqualToString("inheritMargin.style['scroll-margin-left']", "inherit");
+        shouldBeEqualToString("inheritMargin.style['scroll-margin-right']", "inherit");
+        shouldBeEqualToString("inheritMargin.style['scroll-margin-top']", "inherit");
+        shouldBeEqualToString("inheritMargin.style['scroll-margin-bottom']", "inherit");
+        shouldBeEqualToString("window.getComputedStyle(inheritMargin).getPropertyValue('scroll-margin')", "5px 5px 10px 10px");
         debug("");
 
         var inheritAll = document.getElementById('inheritAll');
@@ -264,12 +264,12 @@
         shouldBeEqualToString("inheritAll.style['scroll-padding-top']", "inherit");
         shouldBeEqualToString("inheritAll.style['scroll-padding-bottom']", "inherit");
         shouldBeEqualToString("window.getComputedStyle(inheritAll).getPropertyValue('scroll-padding')", "10%");
-        shouldBeEqualToString("inheritAll.style['scroll-snap-margin']", "inherit");
-        shouldBeEqualToString("inheritAll.style['scroll-snap-margin-left']", "inherit");
-        shouldBeEqualToString("inheritAll.style['scroll-snap-margin-right']", "inherit");
-        shouldBeEqualToString("inheritAll.style['scroll-snap-margin-top']", "inherit");
-        shouldBeEqualToString("inheritAll.style['scroll-snap-margin-bottom']", "inherit");
-        shouldBeEqualToString("window.getComputedStyle(inheritAll).getPropertyValue('scroll-snap-margin')", "5px 5px 10px 10px");
+        shouldBeEqualToString("inheritAll.style['scroll-margin']", "inherit");
+        shouldBeEqualToString("inheritAll.style['scroll-margin-left']", "inherit");
+        shouldBeEqualToString("inheritAll.style['scroll-margin-right']", "inherit");
+        shouldBeEqualToString("inheritAll.style['scroll-margin-top']", "inherit");
+        shouldBeEqualToString("inheritAll.style['scroll-margin-bottom']", "inherit");
+        shouldBeEqualToString("window.getComputedStyle(inheritAll).getPropertyValue('scroll-margin')", "5px 5px 10px 10px");
         debug("");
 
         var inheritNone = document.getElementById('inheritNone');
@@ -283,12 +283,12 @@
         shouldBeEmptyString("inheritNone.style['scroll-padding-top']");
         shouldBeEmptyString("inheritNone.style['scroll-padding-bottom']");
         shouldBeEqualToString("window.getComputedStyle(inheritNone).getPropertyValue('scroll-padding')", "auto");
-        shouldBeEmptyString("inheritNone.style['scroll-snap-margin']");
-        shouldBeEmptyString("inheritNone.style['scroll-snap-margin-left']");
-        shouldBeEmptyString("inheritNone.style['scroll-snap-margin-right']");
-        shouldBeEmptyString("inheritNone.style['scroll-snap-margin-top']");
-        shouldBeEmptyString("inheritNone.style['scroll-snap-margin-bottom']");
-        shouldBeEqualToString("window.getComputedStyle(inheritNone).getPropertyValue('scroll-snap-margin')", "0px");
+        shouldBeEmptyString("inheritNone.style['scroll-margin']");
+        shouldBeEmptyString("inheritNone.style['scroll-margin-left']");
+        shouldBeEmptyString("inheritNone.style['scroll-margin-right']");
+        shouldBeEmptyString("inheritNone.style['scroll-margin-top']");
+        shouldBeEmptyString("inheritNone.style['scroll-margin-bottom']");
+        shouldBeEqualToString("window.getComputedStyle(inheritNone).getPropertyValue('scroll-margin')", "0px");
         </script>
         <script src="../../resources/js-test-post.js"></script>
     </body>

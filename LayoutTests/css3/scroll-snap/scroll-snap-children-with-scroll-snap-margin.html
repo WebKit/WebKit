@@ -33,8 +33,8 @@
 
     function deflateScrollSnapMargins(amount) {
         for (let child of document.querySelectorAll(".child")) {
-            let currentMargin = parseInt(child.style.scrollSnapMargin.replace(/px/, ""));
-            child.style.scrollSnapMargin = `${currentMargin - amount}px`;
+            let currentMargin = parseInt(child.style.scrollMargin.replace(/px/, ""));
+            child.style.scrollMargin = `${currentMargin - amount}px`;
         }
     }
 
@@ -69,7 +69,7 @@
         })
         .then(() => {
             zeroDelayTimeout(() => {
-                write("After deflating scroll-snap-margin by 10px, the offsets are: " + internals.scrollSnapOffsets(container));
+                write("After deflating scroll-margin by 10px, the offsets are: " + internals.scrollSnapOffsets(container));
                 container.scrollTop += 100;
                 container.style.width = "400px";
             });
@@ -85,12 +85,12 @@
 </head>
 <body onload=run()>
     <div id="container">
-        <div class="child" style="background-color: red;     top: 0px;    scroll-snap-margin: 10px;"></div>
-        <div class="child" style="background-color: green;   top: 720px;  scroll-snap-margin: 20px;"></div>
-        <div class="child" style="background-color: blue;    top: 1440px; scroll-snap-margin: 30px;"></div>
-        <div class="child" style="background-color: aqua;    top: 2160px; scroll-snap-margin: 40px;"></div>
-        <div class="child" style="background-color: yellow;  top: 2880px; scroll-snap-margin: 50px;"></div>
-        <div class="child" style="background-color: fuchsia; top: 3600px; scroll-snap-margin: 60px;"></div>
+        <div class="child" style="background-color: red;     top: 0px;    scroll-margin: 10px;"></div>
+        <div class="child" style="background-color: green;   top: 720px;  scroll-margin: 20px;"></div>
+        <div class="child" style="background-color: blue;    top: 1440px; scroll-margin: 30px;"></div>
+        <div class="child" style="background-color: aqua;    top: 2160px; scroll-margin: 40px;"></div>
+        <div class="child" style="background-color: yellow;  top: 2880px; scroll-margin: 50px;"></div>
+        <div class="child" style="background-color: fuchsia; top: 3600px; scroll-margin: 60px;"></div>
     </div>
     <div id="output"></div>
 </body>
