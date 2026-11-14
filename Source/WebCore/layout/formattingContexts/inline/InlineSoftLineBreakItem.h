@@ -39,6 +39,8 @@ public:
     unsigned position() const { return m_startOrPosition; }
     char16_t character() const { return inlineTextBox().content()[position()]; }
     bool isBidiParagraphStart() const { return character() != lineSeparator; }
+    // A preserved U+000A. U+2028 LINE SEPARATOR and U+2029 PARAGRAPH SEPARATOR are forced line breaks too, but not white space.
+    bool isSegmentBreak() const { return character() == newlineCharacter; }
     const InlineTextBox& inlineTextBox() const { return downcast<InlineTextBox>(layoutBox()); }
 
 private:

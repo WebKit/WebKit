@@ -193,10 +193,22 @@ NODELETE static bool isNonReplacedInlineBlock(const Box& layoutBox)
     return layoutBox.isInlineBlockBox() && !layoutBox.isReplacedBox() && !layoutBox.isIFrame();
 }
 
-NODELETE static bool isNonPreservedWhiteSpace(const InlineItem& item)
+NODELETE static bool isDocumentWhiteSpace(const InlineItem& item)
 {
-    auto* textItem = dynamicDowncast<InlineTextItem>(item);
-    return textItem && textItem->isFullyTrimmable();
+    // https://drafts.csswg.org/css-text-4/#document-white-space-characters
+    // Spaces, tabs and segment breaks, preserved or not.
+    if (auto* textItem = dynamicDowncast<InlineTextItem>(item))
+        return textItem->isWhitespace();
+    auto* softLineBreakItem = dynamicDowncast<InlineSoftLineBreakItem>(item);
+    return softLineBreakItem && softLineBreakItem->isSegmentBreak();
+}
+
+NODELETE static bool isPreservedWhiteSpace(const InlineItem& documentWhiteSpaceItem)
+{
+    ASSERT(isDocumentWhiteSpace(documentWhiteSpaceItem));
+    // A preserved segment break is a soft line break item.
+    auto* textItem = dynamicDowncast<InlineTextItem>(documentWhiteSpaceItem);
+    return !textItem || InlineTextItem::shouldPreserveSpacesAndTabs(*textItem);
 }
 
 enum class TrimDirection : bool { Forward, Backward };
@@ -226,9 +238,14 @@ static void collectWhiteSpaceToDiscardAfterEdges(const InlineItemList& inlineIte
     for (size_t step = 0; step < itemCount; ++step) {
         auto index = direction == TrimDirection::Forward ? step : itemCount - 1 - step;
         auto& item = inlineItemList[index];
-        if (isNonPreservedWhiteSpace(item)) {
-            if (isTrimmingOutsideWhiteSpace || discardInnerBoxesWithoutContent)
+        if (isDocumentWhiteSpace(item)) {
+            auto isPreserved = isPreservedWhiteSpace(item);
+            if (discardInnerBoxesWithoutContent || (isTrimmingOutsideWhiteSpace && !isPreserved)) {
                 itemsToDiscard.quickSet(index);
+                continue;
+            }
+            // discard-before / discard-after don't reach across preserved white space.
+            isTrimmingOutsideWhiteSpace &= !isPreserved;
             continue;
         }
         if (item.isInlineBoxStart() || item.isInlineBoxEnd()) {
@@ -261,11 +278,12 @@ void InlineItemsBuilder::adjustInlineItemsForWhiteSpaceTrim(InlineItemList& inli
 {
     // https://drafts.csswg.org/css-text-4/#white-space-trim
     // 'discard-before' / 'discard-after' remove the non-preserved white space immediately before the start /
-    // after the end of an element; 'discard-inner' removes the non-preserved white space at the start and end
-    // of the element's own content (i.e. immediately inside its edges). Discarding the corresponding inline
-    // items here -before line building, bidi resolution and intrinsic sizing consume them- keeps the removed
-    // white space out of every downstream computation (rendering, soft wrap opportunities and min/max-content)
-    // at once. Inline box boundaries are transparent to this adjacency, matching white space collapsing.
+    // after the end of an element; 'discard-inner' removes all white space at the start and end of the
+    // element's own content (i.e. immediately inside its edges), preserved or not. Discarding the
+    // corresponding inline items here -before line building, bidi resolution and intrinsic sizing consume
+    // them- keeps the removed white space out of every downstream computation (rendering, soft wrap
+    // opportunities and min/max-content) at once. Inline box boundaries are transparent to this adjacency,
+    // matching white space collapsing.
     ASSERT(m_hasWhiteSpaceTrim);
 
     BitVector itemsToDiscard(inlineItemList.size());
