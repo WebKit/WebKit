@@ -190,6 +190,8 @@ Shared/Cocoa/AuxiliaryProcessCocoa.mm @nonARC
 Shared/Cocoa/CodeSigning.mm @nonARC
 Shared/Cocoa/CompletionHandlerCallChecker.mm @nonARC
 Shared/Cocoa/DefaultWebBrowserChecks.mm @nonARC
+Shared/Cocoa/DigitalCredentialsPresentment.mm @nonARC
+Shared/Cocoa/DigitalCredentialsRequestValidatorBridge.mm @nonARC
 Shared/Cocoa/EnhancedSecurityLinkUtilities.mm @nonARC
 Shared/Cocoa/InteractionInformationAtPosition.mm @nonARC
 Shared/Cocoa/InteractionInformationRequest.cpp
@@ -768,7 +770,6 @@ WebProcess/cocoa/UserMediaCaptureManager.cpp
 WebProcess/cocoa/VideoPresentationManager.mm @nonARC @cost:7
 WebProcess/cocoa/WebProcessCocoa.mm @nonARC @cost:4
 
-WebProcess/cocoa/IdentityDocumentServices/DigitalCredentialsRequestValidatorBridge.mm @nonARC
 
 WebProcess/EntryPoint/Cocoa/XPCService/WebContentServiceEntryPoint.mm @nonARC
 

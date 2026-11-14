@@ -186,7 +186,11 @@ void CredentialRequestCoordinator::prepareCredentialRequests(const Document& doc
 
 void CredentialRequestCoordinator::initiateTheCredentialRequest(const Document& document, Vector<std::optional<ValidatedDigitalCredentialRequest>>&& validatedRequests, Vector<UnvalidatedDigitalCredentialRequest>&& unvalidatedRequests, RefPtr<AbortSignal> signal)
 {
-    auto requestDataAndRawRequests = DigitalCredentialsRequestDataBuilder::build(WTF::move(validatedRequests), document, WTF::move(unvalidatedRequests));
+    DigitalCredentialsSecurityOriginData origins {
+        .topOrigin = document.topOrigin().data(),
+        .documentOrigin = document.securityOrigin().data(),
+    };
+    auto requestDataAndRawRequests = DigitalCredentialsRequestDataBuilder::build(WTF::move(validatedRequests), origins, WTF::move(unvalidatedRequests));
     if (requestDataAndRawRequests.hasException())
         return rejectTheCredentialRequestWith(requestDataAndRawRequests.releaseException());
 

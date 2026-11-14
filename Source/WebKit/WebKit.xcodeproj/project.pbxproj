@@ -1519,6 +1519,7 @@
 		579F1BFC23C811CF00C7D4B4 /* APIWebAuthenticationAssertionResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 579F1BFA23C811CF00C7D4B4 /* APIWebAuthenticationAssertionResponse.h */; };
 		57AC8F50217FEED90055438C /* HidConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 57AC8F4E217FEED90055438C /* HidConnection.h */; };
 		57B4B46020B504AC00D4AD79 /* ClientCertificateAuthenticationXPCConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B4B45E20B504AB00D4AD79 /* ClientCertificateAuthenticationXPCConstants.h */; };
+		0F705D09EF998FC186CA19AB /* DigitalCredentialsPresentment.h in Headers */ = {isa = PBXBuildFile; fileRef = A10B52D125BBDAC46B45DB39 /* DigitalCredentialsPresentment.h */; };
 		57B826412304EB3E00B72EB0 /* NearFieldSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B826402304EB3E00B72EB0 /* NearFieldSPI.h */; };
 		57B826442304F14000B72EB0 /* NearFieldSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B826422304F14000B72EB0 /* NearFieldSoftLink.h */; };
 		57B826452304F14000B72EB0 /* NearFieldSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 57B826432304F14000B72EB0 /* NearFieldSoftLink.mm */; };
@@ -3440,6 +3441,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		D7FECB1B1877C086A5A1AA74 /* DigitalCredentialsPresentment.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DigitalCredentialsPresentment.mm; sourceTree = "<group>"; };
+		A10B52D125BBDAC46B45DB39 /* DigitalCredentialsPresentment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DigitalCredentialsPresentment.h; sourceTree = "<group>"; };
 		005D158E18E4C4EB00734619 /* _WKFindDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKFindDelegate.h; sourceTree = "<group>"; };
 		00B9661518E24CBA00CE1F88 /* APIFindClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIFindClient.h; sourceTree = "<group>"; };
 		00B9661718E25AE100CE1F88 /* FindClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FindClient.mm; sourceTree = "<group>"; };
@@ -9948,15 +9951,6 @@
 			path = Implementation;
 			sourceTree = "<group>";
 		};
-		079AB5292DC1202600C0CDFF /* IdentityDocumentServices */ = {
-			isa = PBXGroup;
-			children = (
-				F4F94AD82D8E05DB0087FE6F /* DigitalCredentialsRequestValidatorBridge.h */,
-				F4F94ADD2D8E066A0087FE6F /* DigitalCredentialsRequestValidatorBridge.mm */,
-			);
-			path = IdentityDocumentServices;
-			sourceTree = "<group>";
-		};
 		07C75C172399A3DB0088E65B /* media */ = {
 			isa = PBXGroup;
 			children = (
@@ -13666,6 +13660,10 @@
 				86AA5252293674E30065399E /* DataDetectionResult.serialization.in */,
 				49DAA38D24CBA1BD00793D75 /* DefaultWebBrowserChecks.h */,
 				49DAA38B24CBA1A800793D75 /* DefaultWebBrowserChecks.mm */,
+				A10B52D125BBDAC46B45DB39 /* DigitalCredentialsPresentment.h */,
+				D7FECB1B1877C086A5A1AA74 /* DigitalCredentialsPresentment.mm */,
+				F4F94AD82D8E05DB0087FE6F /* DigitalCredentialsRequestValidatorBridge.h */,
+				F4F94ADD2D8E066A0087FE6F /* DigitalCredentialsRequestValidatorBridge.mm */,
 				5630659F2F2A2E92000BF1BF /* EnhancedSecurityLinkUtilities.h */,
 				5630659E2F2A2E70000BF1BF /* EnhancedSecurityLinkUtilities.mm */,
 				07187E092F2DC276005FC058 /* GestureTypes.h */,
@@ -15418,7 +15416,6 @@
 		7C6E70F818B2D47E00F24E2E /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
-				079AB5292DC1202600C0CDFF /* IdentityDocumentServices */,
 				CD4570CB2440FB2A00A3DCEB /* AudioSessionRoutingArbitrator.cpp */,
 				CD4570CA2440FB2A00A3DCEB /* AudioSessionRoutingArbitrator.h */,
 				C14D37FC24ACDF45007FF014 /* LaunchServicesDatabaseManager.h */,
@@ -18659,6 +18656,7 @@
 				2DAADA8F2298C21000E36B0C /* DeviceManagementSPI.h in Headers */,
 				83891B6C1A68C30B0030F386 /* DiagnosticLoggingClient.h in Headers */,
 				0DD656D42C8F0A4400278C3B /* DigitalCredentialsCoordinator.h in Headers */,
+				0F705D09EF998FC186CA19AB /* DigitalCredentialsPresentment.h in Headers */,
 				F4F94AD92D8E05DB0087FE6F /* DigitalCredentialsRequestValidatorBridge.h in Headers */,
 				42057BEC2AD435E0001B963B /* DisbursementRequest.h in Headers */,
 				7AFA6F6D2A9F58440055322A /* DisplayLink.h in Headers */,

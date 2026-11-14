@@ -308,7 +308,6 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/WebProcess/WebPage/ios"
     "${WEBKIT_DIR}/WebProcess/WebPage/mac"
     "${WEBKIT_DIR}/WebProcess/cocoa"
-    "${WEBKIT_DIR}/WebProcess/cocoa/IdentityDocumentServices"
     "${WEBKIT_DIR}/WebProcess/mac"
     "${WEBKIT_DIR}/webpushd"
     "${WEBKIT_DIR}/webpushd/webpushtool"

@@ -120,8 +120,9 @@ void DigitalCredentialsCoordinator::showChooserInUIProcess(std::optional<WebCore
 
 ExceptionOr<Vector<std::optional<WebCore::ValidatedDigitalCredentialRequest>>> DigitalCredentialsCoordinator::validateAndParseDigitalCredentialRequests(const SecurityOrigin& topOrigin, const Document& document, const Vector<UnvalidatedDigitalCredentialRequest>& unvalidatedRequests)
 {
-    auto results = DigitalCredentials::validateRequests(topOrigin, document, unvalidatedRequests);
-    return WTF::move(results);
+    return DigitalCredentials::validateRequests(topOrigin.data(), unvalidatedRequests, [&](const String& message) {
+        const_cast<Document&>(document).addConsoleMessage(MessageSource::JS, MessageLevel::Warning, message);
+    });
 }
 
 void DigitalCredentialsCoordinator::dismissDigitalCredentialsChooser(CompletionHandler<void(bool)>&& completionHandler)

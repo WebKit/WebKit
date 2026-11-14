@@ -548,6 +548,7 @@ set(WebKit_PROJECT_HEADERS
 
     Platform/Logging.h
 
+    Shared/Cocoa/DigitalCredentialsRequestValidatorBridge.h
     Shared/Cocoa/SecItemRequestData.h
 
     UIProcess/Cocoa/WKShareSheet.h
@@ -592,7 +593,6 @@ set(WebKit_PROJECT_HEADERS
     WebKitSwift/WritingTools/WKIntelligenceSmartReplyTextEffectCoordinator.h
     WebKitSwift/WritingTools/WKIntelligenceTextEffectCoordinator.h
 
-    WebProcess/cocoa/IdentityDocumentServices/DigitalCredentialsRequestValidatorBridge.h
 )
 
 if (WEBKIT_SDK_IS_IOS_FAMILY)

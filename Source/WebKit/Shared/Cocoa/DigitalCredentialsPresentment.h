@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,25 +27,24 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include <WebCore/DigitalCredentialsProtocols.h>
-#include <WebCore/MobileDocumentRequest.h>
-#include <WebCore/UnvalidatedDigitalCredentialRequest.h>
-#include <WebCore/ValidatedMobileDocumentRequest.h>
-#include <WebCore/ValidatedOpenID4VPRequest.h>
-#include <wtf/Vector.h>
+#import <WebCore/DigitalCredentialsRequestData.h>
+#import <WebCore/DigitalCredentialsResponseData.h>
+#import <WebCore/ExceptionData.h>
+#import <wtf/RetainPtr.h>
 
-namespace WebCore {
-class Document;
-class SecurityOrigin;
-struct ValidatedMobileDocumentRequest;
-}
+OBJC_CLASS NSArray;
+OBJC_CLASS NSError;
+OBJC_CLASS WKIdentityDocumentPresentmentRawRequest;
+OBJC_CLASS WKIdentityDocumentPresentmentRequest;
+OBJC_CLASS WKIdentityDocumentPresentmentResponse;
 
 namespace WebKit {
-namespace DigitalCredentials {
 
-Vector<std::optional<WebCore::ValidatedDigitalCredentialRequest>> validateRequests(const WebCore::SecurityOrigin&, const WebCore::Document&, const Vector<WebCore::UnvalidatedDigitalCredentialRequest>&);
+RetainPtr<WKIdentityDocumentPresentmentRequest> createPresentmentRequest(const WebCore::DigitalCredentialsRequestData&);
+RetainPtr<NSArray> createPresentmentRawRequests(const WebCore::DigitalCredentialsRawRequests&);
+std::expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData> responseDataFromPresentment(WKIdentityDocumentPresentmentResponse *, NSError *);
+WebCore::ExceptionData exceptionDataFromPresentmentError(NSError *);
 
-} // namespace DigitalCredentials
 } // namespace WebKit
 
 #endif // ENABLE(WEB_AUTHN)
