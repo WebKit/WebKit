@@ -32,6 +32,7 @@
 #include "CachedResourceRequest.h"
 #include "CachedResourceRequestInitiatorTypes.h"
 #include "CachedSVGDocument.h"
+#include "Document.h"
 
 namespace WebCore {
 
@@ -58,8 +59,12 @@ void CachedSVGDocumentReference::load(CachedResourceLoader& loader, const Resour
 
     auto fetchOptions = options;
     fetchOptions.mode = FetchOptions::Mode::SameOrigin;
+    CSS::applyModifiersToLoaderOptions(m_location.modifiers, fetchOptions);
+
     CachedResourceRequest request(ResourceRequest(URL { m_location.resolved }), fetchOptions);
     request.setInitiatorType(cachedResourceRequestInitiatorTypes().css);
+    if (fetchOptions.mode == FetchOptions::Mode::Cors)
+        request.updateForAccessControl(*protect(loader.document()));
     if (auto result = loader.requestSVGDocument(WTF::move(request)))
         m_document = WTF::move(result.value());
     else

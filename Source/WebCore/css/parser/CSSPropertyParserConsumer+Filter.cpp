@@ -297,7 +297,7 @@ static std::optional<CSS::FilterValueList> consumeUnresolvedFilterValueList(CSSP
     };
 
     do {
-        if (auto url = consumeURLRaw(rangeCopy, state, { })) {
+        if (auto url = consumeURLRaw(rangeCopy, state, { AllowedURLModifiers::CrossOrigin, AllowedURLModifiers::Integrity, AllowedURLModifiers::ReferrerPolicy })) {
             list.value.append(CSS::FilterReference { WTF::move(*url) });
             continue;
         }
