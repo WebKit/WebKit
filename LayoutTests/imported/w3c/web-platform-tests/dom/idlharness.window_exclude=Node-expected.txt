@@ -880,34 +880,34 @@ PASS CDATASection interface: existence and properties of interface prototype obj
 PASS CDATASection interface: existence and properties of interface prototype object's "constructor" property
 PASS CDATASection interface: existence and properties of interface prototype object's @@unscopables property
 PASS ProcessingInstruction interface: existence and properties of interface object
-FAIL ProcessingInstruction interface object length assert_equals: wrong value for ProcessingInstruction.length expected 1 but got 0
+PASS ProcessingInstruction interface object length
 PASS ProcessingInstruction interface object name
 PASS ProcessingInstruction interface: existence and properties of interface prototype object
 PASS ProcessingInstruction interface: existence and properties of interface prototype object's "constructor" property
 PASS ProcessingInstruction interface: existence and properties of interface prototype object's @@unscopables property
 PASS ProcessingInstruction interface: attribute target
-FAIL ProcessingInstruction interface: operation hasAttributes() assert_own_property: interface prototype object missing non-static operation expected property "hasAttributes" missing
-FAIL ProcessingInstruction interface: operation getAttributeNames() assert_own_property: interface prototype object missing non-static operation expected property "getAttributeNames" missing
-FAIL ProcessingInstruction interface: operation getAttribute(DOMString) assert_own_property: interface prototype object missing non-static operation expected property "getAttribute" missing
-FAIL ProcessingInstruction interface: operation setAttribute(DOMString, DOMString) assert_own_property: interface prototype object missing non-static operation expected property "setAttribute" missing
-FAIL ProcessingInstruction interface: operation removeAttribute(DOMString) assert_own_property: interface prototype object missing non-static operation expected property "removeAttribute" missing
-FAIL ProcessingInstruction interface: operation toggleAttribute(DOMString, optional boolean) assert_own_property: interface prototype object missing non-static operation expected property "toggleAttribute" missing
-FAIL ProcessingInstruction interface: operation hasAttribute(DOMString) assert_own_property: interface prototype object missing non-static operation expected property "hasAttribute" missing
+PASS ProcessingInstruction interface: operation hasAttributes()
+PASS ProcessingInstruction interface: operation getAttributeNames()
+PASS ProcessingInstruction interface: operation getAttribute(DOMString)
+PASS ProcessingInstruction interface: operation setAttribute(DOMString, DOMString)
+PASS ProcessingInstruction interface: operation removeAttribute(DOMString)
+PASS ProcessingInstruction interface: operation toggleAttribute(DOMString, optional boolean)
+PASS ProcessingInstruction interface: operation hasAttribute(DOMString)
 PASS ProcessingInstruction must be primary interface of xmlDoc.createProcessingInstruction("abc", "def")
 PASS Stringification of xmlDoc.createProcessingInstruction("abc", "def")
 PASS ProcessingInstruction interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "target" with the proper type
-FAIL ProcessingInstruction interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "hasAttributes()" with the proper type assert_inherits: property "hasAttributes" not found in prototype chain
-FAIL ProcessingInstruction interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "getAttributeNames()" with the proper type assert_inherits: property "getAttributeNames" not found in prototype chain
-FAIL ProcessingInstruction interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "getAttribute(DOMString)" with the proper type assert_inherits: property "getAttribute" not found in prototype chain
-FAIL ProcessingInstruction interface: calling getAttribute(DOMString) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_inherits: property "getAttribute" not found in prototype chain
-FAIL ProcessingInstruction interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "setAttribute(DOMString, DOMString)" with the proper type assert_inherits: property "setAttribute" not found in prototype chain
-FAIL ProcessingInstruction interface: calling setAttribute(DOMString, DOMString) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_inherits: property "setAttribute" not found in prototype chain
-FAIL ProcessingInstruction interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "removeAttribute(DOMString)" with the proper type assert_inherits: property "removeAttribute" not found in prototype chain
-FAIL ProcessingInstruction interface: calling removeAttribute(DOMString) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_inherits: property "removeAttribute" not found in prototype chain
-FAIL ProcessingInstruction interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "toggleAttribute(DOMString, optional boolean)" with the proper type assert_inherits: property "toggleAttribute" not found in prototype chain
-FAIL ProcessingInstruction interface: calling toggleAttribute(DOMString, optional boolean) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_inherits: property "toggleAttribute" not found in prototype chain
-FAIL ProcessingInstruction interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "hasAttribute(DOMString)" with the proper type assert_inherits: property "hasAttribute" not found in prototype chain
-FAIL ProcessingInstruction interface: calling hasAttribute(DOMString) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_inherits: property "hasAttribute" not found in prototype chain
+PASS ProcessingInstruction interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "hasAttributes()" with the proper type
+PASS ProcessingInstruction interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "getAttributeNames()" with the proper type
+PASS ProcessingInstruction interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "getAttribute(DOMString)" with the proper type
+PASS ProcessingInstruction interface: calling getAttribute(DOMString) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError
+PASS ProcessingInstruction interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "setAttribute(DOMString, DOMString)" with the proper type
+PASS ProcessingInstruction interface: calling setAttribute(DOMString, DOMString) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError
+PASS ProcessingInstruction interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "removeAttribute(DOMString)" with the proper type
+PASS ProcessingInstruction interface: calling removeAttribute(DOMString) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError
+PASS ProcessingInstruction interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "toggleAttribute(DOMString, optional boolean)" with the proper type
+PASS ProcessingInstruction interface: calling toggleAttribute(DOMString, optional boolean) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError
+PASS ProcessingInstruction interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "hasAttribute(DOMString)" with the proper type
+PASS ProcessingInstruction interface: calling hasAttribute(DOMString) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError
 PASS CharacterData interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "data" with the proper type
 PASS CharacterData interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "length" with the proper type
 PASS CharacterData interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "substringData(unsigned long, unsigned long)" with the proper type

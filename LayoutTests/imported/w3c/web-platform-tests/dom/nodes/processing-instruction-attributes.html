@@ -260,16 +260,84 @@
     test_invalid_attribute_name("x\r");
     test_invalid_attribute_name("\rx");
 
-    test_valid_attribute_name("$");
     test_valid_attribute_name("_");
-    test_valid_attribute_name("$foo");
     test_valid_attribute_name("_bar");
-    test_valid_attribute_name("a$b");
     test_valid_attribute_name("a_b");
+
+    // '$' is neither a NameStartChar nor a NameChar, so these are not XML Names.
+    // https://github.com/whatwg/dom/pull/1524
+    test_invalid_attribute_name("$");
+    test_invalid_attribute_name("$foo");
+    test_invalid_attribute_name("a$b");
 
     test_distinct_attribute_name("ABC", "abc");
     test_distinct_attribute_name("abC", "abc");
     test_distinct_attribute_name("x123A", "x123a");
+
+    // https://www.w3.org/TR/xml-stylesheet/ defines PseudoAtt in terms of Name, so a
+    // pseudo-attribute name in data that is not an XML Name is a parse error. setAttribute()
+    // rejects these names too, so that everything it accepts survives a round trip through
+    // data; see https://github.com/whatwg/dom/pull/1524.
+    for (const data of [
+      '$="1"',
+      '1a="1"',
+      '-a="1"',
+      '.a="1"',
+      'a b="1"',
+    ]) {
+      test(() => {
+        const pi = createProcessingInstruction("t", data);
+        assert_equals(pi.data, data, "data is preserved verbatim");
+        assert_false(pi.hasAttributes());
+        assert_array_equals(pi.getAttributeNames(), []);
+      }, `Processing instruction attribute name ${JSON.stringify(data)} is not an XML Name, from ` + source);
+    }
+
+    test(() => {
+      // ':' is a NameStartChar and '-' is a NameChar, so this is a Name even though it is
+      // not a QName.
+      const pi = createProcessingInstruction("t", 'a:-b="1"');
+      assert_array_equals(pi.getAttributeNames(), ["a:-b"]);
+      assert_equals(pi.getAttribute("a:-b"), "1");
+    }, "Processing instruction attribute name with a colon and a hyphen from " + source);
+
+    // XML's CharRef production is '&#' [0-9]+ ';' | '&#x' [0-9a-fA-F]+ ';', and the
+    // referenced character has to match Char.
+    for (const [data, value, description] of [
+      ['a="&#65;"', "A", "decimal"],
+      ['a="&#x41;"', "A", "lowercase hex"],
+      ['a="&#x4a;"', "J", "lowercase hex digits"],
+      ['a="&#x4A;"', "J", "uppercase hex digits"],
+      ['a="&#xFDD0;"', "\uFDD0", "noncharacter is allowed by Char"],
+      ['a="&#xFFFD;"', "\uFFFD", "replacement character"],
+    ]) {
+      test(() => {
+        const pi = createProcessingInstruction("t", data);
+        assert_array_equals(pi.getAttributeNames(), ["a"]);
+        assert_equals(pi.getAttribute("a"), value);
+      }, `Processing instruction character reference ${JSON.stringify(data)} (${description}) from ` + source);
+    }
+
+    for (const [data, description] of [
+      ['a="&# 65;"', "leading space is not allowed"],
+      ['a="&#+65;"', "a sign is not allowed"],
+      ['a="&#X41;"', "uppercase X is not allowed"],
+      ['a="&#;"', "no digits"],
+      ['a="&#x;"', "no hex digits"],
+      ['a="&#xZZ;"', "not hex digits"],
+      ['a="&#65"', "no semicolon"],
+      ['a="&#1;"', "U+0001 does not match Char"],
+      ['a="&#xD800;"', "a surrogate does not match Char"],
+      ['a="&#x110000;"', "beyond the last code point"],
+      ['a="&unknown;"', "unknown named reference"],
+    ]) {
+      test(() => {
+        const pi = createProcessingInstruction("t", data);
+        assert_equals(pi.data, data, "data is preserved verbatim");
+        assert_false(pi.hasAttributes());
+        assert_array_equals(pi.getAttributeNames(), []);
+      }, `Processing instruction character reference ${JSON.stringify(data)} is an error, ${description}, from ` + source);
+    }
 
     // HTML parser ignores xml-stylesheet
     if (source == "html-parser")
@@ -300,5 +368,48 @@
       assert_equals(pi.getAttribute("href"), "style3.css");
       assert_array_equals(pi.getAttributeNames(), ["type", "href"]);
     }, "Processing instruction attributes with xml-stylesheet from " + source);
+  }
+
+  // setAttribute() and toggleAttribute() require the name to match the XML Name production,
+  // so that every name they accept can be serialized into data and parsed back out.
+  // https://github.com/whatwg/dom/pull/1524
+  for (const name of ["\0", "\t", "\n", "\f", "\r", " ", "/", "=", ">", "",
+                      '"', "'", "<", "&", "$", "a$b", "1a", "-a", ".a", "a b"]) {
+    test(() => {
+      const pi = document.createProcessingInstruction("t", "");
+      assert_throws_dom("InvalidCharacterError", () => pi.setAttribute(name, "v"));
+      assert_throws_dom("InvalidCharacterError", () => pi.toggleAttribute(name));
+    }, `Processing instruction setAttribute(${JSON.stringify(name)}) throws`);
+  }
+
+  // NameStartChar includes [#xFDF0-#xFFFD], so U+FFFD starts a Name.
+  for (const name of ["a", "a:b", "a:-b", "_a", ":a", "a_b", "a-b", "a.b", "a1", "\u00C0",
+                      "\uFFFD"]) {
+    test(() => {
+      const pi = document.createProcessingInstruction("t", "");
+      pi.setAttribute(name, "v");
+      assert_equals(pi.getAttribute(name), "v");
+      assert_array_equals(pi.getAttributeNames(), [name]);
+    }, `Processing instruction setAttribute(${JSON.stringify(name)}) is allowed`);
+  }
+
+  // setAttribute() requires the value to be made of Char code points. toggleAttribute()
+  // only ever writes the empty string, so it has no value check.
+  // https://github.com/whatwg/dom/pull/1524
+  for (const value of ["\0", "\x01", "\x08", "\x0B", "\x0C", "\x1F", "\uFFFE", "\uFFFF",
+                       "\uD800", "\uDC00", "a\0b"]) {
+    test(() => {
+      const pi = document.createProcessingInstruction("t", "");
+      assert_throws_dom("InvalidCharacterError", () => pi.setAttribute("a", value));
+    }, `Processing instruction setAttribute value ${JSON.stringify(value)} throws`);
+  }
+
+  for (const value of ["\t", "\n", "\r", " ", "a", "\uD7FF", "\uE000", "\uFFFD",
+                       "\u{10000}", "\u{10FFFF}"]) {
+    test(() => {
+      const pi = document.createProcessingInstruction("t", "");
+      pi.setAttribute("a", value);
+      assert_equals(pi.getAttribute("a"), value);
+    }, `Processing instruction setAttribute value ${JSON.stringify(value)} is allowed`);
   }
 </script>

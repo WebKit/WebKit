@@ -1,270 +1,294 @@
 
-FAIL Processing instruction in main parser pi.getAttribute is not a function. (In 'pi.getAttribute("a")', 'pi.getAttribute' is undefined)
-FAIL Processing instruction attribute parsing rejects unquoted attributes from html-dom pi.hasAttributes is not a function. (In 'pi.hasAttributes()', 'pi.hasAttributes' is undefined)
-FAIL Processing instruction attribute mutation from html-dom pi.hasAttributes is not a function. (In 'pi.hasAttributes()', 'pi.hasAttributes' is undefined)
-FAIL Processing instruction attribute parsing allows _ in attribute names from html-dom pi.hasAttributes is not a function. (In 'pi.hasAttributes()', 'pi.hasAttributes' is undefined)
-FAIL Processing instruction toggleAttribute from html-dom pi.getAttribute is not a function. (In 'pi.getAttribute("attr")', 'pi.getAttribute' is undefined)
-FAIL check attribute value: "=" (source: "html-dom") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
-FAIL check attribute value: "axx"" (source: "html-dom") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
-FAIL check attribute value: "axx>" (source: "html-dom") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
-FAIL check attribute value: "some<>" (source: "html-dom") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
-FAIL check attribute value: "'""'" (source: "html-dom") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
-FAIL check attribute value: "aa"aa"" (source: "html-dom") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
-FAIL Invalid attribute name: = (source: html-dom) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: a= (source: html-dom) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: =x (source: html-dom) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: b> (source: html-dom) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: > (source: html-dom) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: >x (source: html-dom) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: /x/ (source: html-dom) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: / (source: html-dom) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: x/ (source: html-dom) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: x	 (source: html-dom) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: 	x (source: html-dom) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: x
- (source: html-dom) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name:
-x (source: html-dom) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: x\r (source: html-dom) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: \rx (source: html-dom) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Valid attribute name: $ (source: html-dom) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
-FAIL Valid attribute name: _ (source: html-dom) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
-FAIL Valid attribute name: $foo (source: html-dom) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
-FAIL Valid attribute name: _bar (source: html-dom) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
-FAIL Valid attribute name: a$b (source: html-dom) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
-FAIL Valid attribute name: a_b (source: html-dom) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
-FAIL Distinct attribute name (source: html-dom): ABC and abc pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
-FAIL Distinct attribute name (source: html-dom): abC and abc pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
-FAIL Distinct attribute name (source: html-dom): x123A and x123a pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
-FAIL Processing instruction attributes with xml-stylesheet from html-dom pi.hasAttributes is not a function. (In 'pi.hasAttributes()', 'pi.hasAttributes' is undefined)
-FAIL Processing instruction attribute parsing rejects unquoted attributes from html-parser pi.hasAttributes is not a function. (In 'pi.hasAttributes()', 'pi.hasAttributes' is undefined)
-FAIL Processing instruction attribute mutation from html-parser pi.hasAttributes is not a function. (In 'pi.hasAttributes()', 'pi.hasAttributes' is undefined)
-FAIL Processing instruction attribute parsing allows _ in attribute names from html-parser pi.hasAttributes is not a function. (In 'pi.hasAttributes()', 'pi.hasAttributes' is undefined)
-FAIL Processing instruction toggleAttribute from html-parser pi.getAttribute is not a function. (In 'pi.getAttribute("attr")', 'pi.getAttribute' is undefined)
-FAIL check attribute value: "=" (source: "html-parser") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
-FAIL check attribute value: "axx"" (source: "html-parser") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
-FAIL check attribute value: "axx>" (source: "html-parser") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
-FAIL check attribute value: "some<>" (source: "html-parser") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
-FAIL check attribute value: "'""'" (source: "html-parser") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
-FAIL check attribute value: "aa"aa"" (source: "html-parser") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
-FAIL Invalid attribute name: = (source: html-parser) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: a= (source: html-parser) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: =x (source: html-parser) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: b> (source: html-parser) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: > (source: html-parser) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: >x (source: html-parser) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: /x/ (source: html-parser) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: / (source: html-parser) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: x/ (source: html-parser) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: x	 (source: html-parser) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: 	x (source: html-parser) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: x
- (source: html-parser) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name:
-x (source: html-parser) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: x\r (source: html-parser) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: \rx (source: html-parser) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Valid attribute name: $ (source: html-parser) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
-FAIL Valid attribute name: _ (source: html-parser) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
-FAIL Valid attribute name: $foo (source: html-parser) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
-FAIL Valid attribute name: _bar (source: html-parser) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
-FAIL Valid attribute name: a$b (source: html-parser) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
-FAIL Valid attribute name: a_b (source: html-parser) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
-FAIL Distinct attribute name (source: html-parser): ABC and abc pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
-FAIL Distinct attribute name (source: html-parser): abC and abc pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
-FAIL Distinct attribute name (source: html-parser): x123A and x123a pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
-FAIL Processing instruction attribute parsing rejects unquoted attributes from xml-dom pi.hasAttributes is not a function. (In 'pi.hasAttributes()', 'pi.hasAttributes' is undefined)
-FAIL Processing instruction attribute mutation from xml-dom pi.hasAttributes is not a function. (In 'pi.hasAttributes()', 'pi.hasAttributes' is undefined)
-FAIL Processing instruction attribute parsing allows _ in attribute names from xml-dom pi.hasAttributes is not a function. (In 'pi.hasAttributes()', 'pi.hasAttributes' is undefined)
-FAIL Processing instruction toggleAttribute from xml-dom pi.getAttribute is not a function. (In 'pi.getAttribute("attr")', 'pi.getAttribute' is undefined)
-FAIL check attribute value: "=" (source: "xml-dom") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
-FAIL check attribute value: "axx"" (source: "xml-dom") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
-FAIL check attribute value: "axx>" (source: "xml-dom") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
-FAIL check attribute value: "some<>" (source: "xml-dom") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
-FAIL check attribute value: "'""'" (source: "xml-dom") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
-FAIL check attribute value: "aa"aa"" (source: "xml-dom") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
-FAIL Invalid attribute name: = (source: xml-dom) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: a= (source: xml-dom) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: =x (source: xml-dom) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: b> (source: xml-dom) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: > (source: xml-dom) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: >x (source: xml-dom) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: /x/ (source: xml-dom) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: / (source: xml-dom) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: x/ (source: xml-dom) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: x	 (source: xml-dom) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: 	x (source: xml-dom) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: x
- (source: xml-dom) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name:
-x (source: xml-dom) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: x\r (source: xml-dom) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: \rx (source: xml-dom) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Valid attribute name: $ (source: xml-dom) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
-FAIL Valid attribute name: _ (source: xml-dom) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
-FAIL Valid attribute name: $foo (source: xml-dom) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
-FAIL Valid attribute name: _bar (source: xml-dom) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
-FAIL Valid attribute name: a$b (source: xml-dom) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
-FAIL Valid attribute name: a_b (source: xml-dom) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
-FAIL Distinct attribute name (source: xml-dom): ABC and abc pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
-FAIL Distinct attribute name (source: xml-dom): abC and abc pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
-FAIL Distinct attribute name (source: xml-dom): x123A and x123a pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
-FAIL Processing instruction attributes with xml-stylesheet from xml-dom pi.hasAttributes is not a function. (In 'pi.hasAttributes()', 'pi.hasAttributes' is undefined)
-FAIL Processing instruction attribute parsing rejects unquoted attributes from xml-parser pi.hasAttributes is not a function. (In 'pi.hasAttributes()', 'pi.hasAttributes' is undefined)
-FAIL Processing instruction attribute mutation from xml-parser pi.hasAttributes is not a function. (In 'pi.hasAttributes()', 'pi.hasAttributes' is undefined)
-FAIL Processing instruction attribute parsing allows _ in attribute names from xml-parser pi.hasAttributes is not a function. (In 'pi.hasAttributes()', 'pi.hasAttributes' is undefined)
-FAIL Processing instruction toggleAttribute from xml-parser pi.getAttribute is not a function. (In 'pi.getAttribute("attr")', 'pi.getAttribute' is undefined)
-FAIL check attribute value: "=" (source: "xml-parser") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
-FAIL check attribute value: "axx"" (source: "xml-parser") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
-FAIL check attribute value: "axx>" (source: "xml-parser") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
-FAIL check attribute value: "some<>" (source: "xml-parser") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
-FAIL check attribute value: "'""'" (source: "xml-parser") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
-FAIL check attribute value: "aa"aa"" (source: "xml-parser") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
-FAIL Invalid attribute name: = (source: xml-parser) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: a= (source: xml-parser) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: =x (source: xml-parser) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: b> (source: xml-parser) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: > (source: xml-parser) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: >x (source: xml-parser) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: /x/ (source: xml-parser) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: / (source: xml-parser) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: x/ (source: xml-parser) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: x	 (source: xml-parser) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: 	x (source: xml-parser) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: x
- (source: xml-parser) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name:
-x (source: xml-parser) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: x\r (source: xml-parser) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Invalid attribute name: \rx (source: xml-parser) assert_throws_dom: function "() => {
-          pi.setAttribute(name, "value");
-        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
-FAIL Valid attribute name: $ (source: xml-parser) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
-FAIL Valid attribute name: _ (source: xml-parser) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
-FAIL Valid attribute name: $foo (source: xml-parser) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
-FAIL Valid attribute name: _bar (source: xml-parser) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
-FAIL Valid attribute name: a$b (source: xml-parser) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
-FAIL Valid attribute name: a_b (source: xml-parser) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
-FAIL Distinct attribute name (source: xml-parser): ABC and abc pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
-FAIL Distinct attribute name (source: xml-parser): abC and abc pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
-FAIL Distinct attribute name (source: xml-parser): x123A and x123a pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
-FAIL Processing instruction attributes with xml-stylesheet from xml-parser pi.hasAttributes is not a function. (In 'pi.hasAttributes()', 'pi.hasAttributes' is undefined)
+PASS Processing instruction in main parser
+PASS Processing instruction attribute parsing rejects unquoted attributes from html-dom
+PASS Processing instruction attribute mutation from html-dom
+PASS Processing instruction attribute parsing allows _ in attribute names from html-dom
+PASS Processing instruction toggleAttribute from html-dom
+PASS check attribute value: "=" (source: "html-dom")
+PASS check attribute value: "axx"" (source: "html-dom")
+PASS check attribute value: "axx>" (source: "html-dom")
+PASS check attribute value: "some<>" (source: "html-dom")
+PASS check attribute value: "'""'" (source: "html-dom")
+PASS check attribute value: "aa"aa"" (source: "html-dom")
+PASS Invalid attribute name: = (source: html-dom)
+PASS Invalid attribute name: a= (source: html-dom)
+PASS Invalid attribute name: =x (source: html-dom)
+PASS Invalid attribute name: b> (source: html-dom)
+PASS Invalid attribute name: > (source: html-dom)
+PASS Invalid attribute name: >x (source: html-dom)
+PASS Invalid attribute name: /x/ (source: html-dom)
+PASS Invalid attribute name: / (source: html-dom)
+PASS Invalid attribute name: x/ (source: html-dom)
+PASS Invalid attribute name: x	 (source: html-dom)
+PASS Invalid attribute name: 	x (source: html-dom)
+PASS Invalid attribute name: x
+ (source: html-dom)
+PASS Invalid attribute name:
+x (source: html-dom)
+PASS Invalid attribute name: x\r (source: html-dom)
+PASS Invalid attribute name: \rx (source: html-dom)
+PASS Valid attribute name: _ (source: html-dom)
+PASS Valid attribute name: _bar (source: html-dom)
+PASS Valid attribute name: a_b (source: html-dom)
+PASS Invalid attribute name: $ (source: html-dom)
+PASS Invalid attribute name: $foo (source: html-dom)
+PASS Invalid attribute name: a$b (source: html-dom)
+PASS Distinct attribute name (source: html-dom): ABC and abc
+PASS Distinct attribute name (source: html-dom): abC and abc
+PASS Distinct attribute name (source: html-dom): x123A and x123a
+PASS Processing instruction attribute name "$=\"1\"" is not an XML Name, from html-dom
+PASS Processing instruction attribute name "1a=\"1\"" is not an XML Name, from html-dom
+PASS Processing instruction attribute name "-a=\"1\"" is not an XML Name, from html-dom
+PASS Processing instruction attribute name ".a=\"1\"" is not an XML Name, from html-dom
+PASS Processing instruction attribute name "a b=\"1\"" is not an XML Name, from html-dom
+PASS Processing instruction attribute name with a colon and a hyphen from html-dom
+PASS Processing instruction character reference "a=\"&#65;\"" (decimal) from html-dom
+PASS Processing instruction character reference "a=\"&#x41;\"" (lowercase hex) from html-dom
+PASS Processing instruction character reference "a=\"&#x4a;\"" (lowercase hex digits) from html-dom
+PASS Processing instruction character reference "a=\"&#x4A;\"" (uppercase hex digits) from html-dom
+PASS Processing instruction character reference "a=\"&#xFDD0;\"" (noncharacter is allowed by Char) from html-dom
+PASS Processing instruction character reference "a=\"&#xFFFD;\"" (replacement character) from html-dom
+PASS Processing instruction character reference "a=\"&# 65;\"" is an error, leading space is not allowed, from html-dom
+PASS Processing instruction character reference "a=\"&#+65;\"" is an error, a sign is not allowed, from html-dom
+PASS Processing instruction character reference "a=\"&#X41;\"" is an error, uppercase X is not allowed, from html-dom
+PASS Processing instruction character reference "a=\"&#;\"" is an error, no digits, from html-dom
+PASS Processing instruction character reference "a=\"&#x;\"" is an error, no hex digits, from html-dom
+PASS Processing instruction character reference "a=\"&#xZZ;\"" is an error, not hex digits, from html-dom
+PASS Processing instruction character reference "a=\"&#65\"" is an error, no semicolon, from html-dom
+PASS Processing instruction character reference "a=\"&#1;\"" is an error, U+0001 does not match Char, from html-dom
+PASS Processing instruction character reference "a=\"&#xD800;\"" is an error, a surrogate does not match Char, from html-dom
+PASS Processing instruction character reference "a=\"&#x110000;\"" is an error, beyond the last code point, from html-dom
+PASS Processing instruction character reference "a=\"&unknown;\"" is an error, unknown named reference, from html-dom
+PASS Processing instruction attributes with xml-stylesheet from html-dom
+PASS Processing instruction attribute parsing rejects unquoted attributes from html-parser
+PASS Processing instruction attribute mutation from html-parser
+PASS Processing instruction attribute parsing allows _ in attribute names from html-parser
+PASS Processing instruction toggleAttribute from html-parser
+PASS check attribute value: "=" (source: "html-parser")
+PASS check attribute value: "axx"" (source: "html-parser")
+PASS check attribute value: "axx>" (source: "html-parser")
+PASS check attribute value: "some<>" (source: "html-parser")
+PASS check attribute value: "'""'" (source: "html-parser")
+PASS check attribute value: "aa"aa"" (source: "html-parser")
+PASS Invalid attribute name: = (source: html-parser)
+PASS Invalid attribute name: a= (source: html-parser)
+PASS Invalid attribute name: =x (source: html-parser)
+PASS Invalid attribute name: b> (source: html-parser)
+PASS Invalid attribute name: > (source: html-parser)
+PASS Invalid attribute name: >x (source: html-parser)
+PASS Invalid attribute name: /x/ (source: html-parser)
+PASS Invalid attribute name: / (source: html-parser)
+PASS Invalid attribute name: x/ (source: html-parser)
+PASS Invalid attribute name: x	 (source: html-parser)
+PASS Invalid attribute name: 	x (source: html-parser)
+PASS Invalid attribute name: x
+ (source: html-parser)
+PASS Invalid attribute name:
+x (source: html-parser)
+PASS Invalid attribute name: x\r (source: html-parser)
+PASS Invalid attribute name: \rx (source: html-parser)
+PASS Valid attribute name: _ (source: html-parser)
+PASS Valid attribute name: _bar (source: html-parser)
+PASS Valid attribute name: a_b (source: html-parser)
+PASS Invalid attribute name: $ (source: html-parser)
+PASS Invalid attribute name: $foo (source: html-parser)
+PASS Invalid attribute name: a$b (source: html-parser)
+PASS Distinct attribute name (source: html-parser): ABC and abc
+PASS Distinct attribute name (source: html-parser): abC and abc
+PASS Distinct attribute name (source: html-parser): x123A and x123a
+PASS Processing instruction attribute name "$=\"1\"" is not an XML Name, from html-parser
+PASS Processing instruction attribute name "1a=\"1\"" is not an XML Name, from html-parser
+PASS Processing instruction attribute name "-a=\"1\"" is not an XML Name, from html-parser
+PASS Processing instruction attribute name ".a=\"1\"" is not an XML Name, from html-parser
+PASS Processing instruction attribute name "a b=\"1\"" is not an XML Name, from html-parser
+PASS Processing instruction attribute name with a colon and a hyphen from html-parser
+PASS Processing instruction character reference "a=\"&#65;\"" (decimal) from html-parser
+PASS Processing instruction character reference "a=\"&#x41;\"" (lowercase hex) from html-parser
+PASS Processing instruction character reference "a=\"&#x4a;\"" (lowercase hex digits) from html-parser
+PASS Processing instruction character reference "a=\"&#x4A;\"" (uppercase hex digits) from html-parser
+PASS Processing instruction character reference "a=\"&#xFDD0;\"" (noncharacter is allowed by Char) from html-parser
+PASS Processing instruction character reference "a=\"&#xFFFD;\"" (replacement character) from html-parser
+PASS Processing instruction character reference "a=\"&# 65;\"" is an error, leading space is not allowed, from html-parser
+PASS Processing instruction character reference "a=\"&#+65;\"" is an error, a sign is not allowed, from html-parser
+PASS Processing instruction character reference "a=\"&#X41;\"" is an error, uppercase X is not allowed, from html-parser
+PASS Processing instruction character reference "a=\"&#;\"" is an error, no digits, from html-parser
+PASS Processing instruction character reference "a=\"&#x;\"" is an error, no hex digits, from html-parser
+PASS Processing instruction character reference "a=\"&#xZZ;\"" is an error, not hex digits, from html-parser
+PASS Processing instruction character reference "a=\"&#65\"" is an error, no semicolon, from html-parser
+PASS Processing instruction character reference "a=\"&#1;\"" is an error, U+0001 does not match Char, from html-parser
+PASS Processing instruction character reference "a=\"&#xD800;\"" is an error, a surrogate does not match Char, from html-parser
+PASS Processing instruction character reference "a=\"&#x110000;\"" is an error, beyond the last code point, from html-parser
+PASS Processing instruction character reference "a=\"&unknown;\"" is an error, unknown named reference, from html-parser
+PASS Processing instruction attribute parsing rejects unquoted attributes from xml-dom
+PASS Processing instruction attribute mutation from xml-dom
+PASS Processing instruction attribute parsing allows _ in attribute names from xml-dom
+PASS Processing instruction toggleAttribute from xml-dom
+PASS check attribute value: "=" (source: "xml-dom")
+PASS check attribute value: "axx"" (source: "xml-dom")
+PASS check attribute value: "axx>" (source: "xml-dom")
+PASS check attribute value: "some<>" (source: "xml-dom")
+PASS check attribute value: "'""'" (source: "xml-dom")
+PASS check attribute value: "aa"aa"" (source: "xml-dom")
+PASS Invalid attribute name: = (source: xml-dom)
+PASS Invalid attribute name: a= (source: xml-dom)
+PASS Invalid attribute name: =x (source: xml-dom)
+PASS Invalid attribute name: b> (source: xml-dom)
+PASS Invalid attribute name: > (source: xml-dom)
+PASS Invalid attribute name: >x (source: xml-dom)
+PASS Invalid attribute name: /x/ (source: xml-dom)
+PASS Invalid attribute name: / (source: xml-dom)
+PASS Invalid attribute name: x/ (source: xml-dom)
+PASS Invalid attribute name: x	 (source: xml-dom)
+PASS Invalid attribute name: 	x (source: xml-dom)
+PASS Invalid attribute name: x
+ (source: xml-dom)
+PASS Invalid attribute name:
+x (source: xml-dom)
+PASS Invalid attribute name: x\r (source: xml-dom)
+PASS Invalid attribute name: \rx (source: xml-dom)
+PASS Valid attribute name: _ (source: xml-dom)
+PASS Valid attribute name: _bar (source: xml-dom)
+PASS Valid attribute name: a_b (source: xml-dom)
+PASS Invalid attribute name: $ (source: xml-dom)
+PASS Invalid attribute name: $foo (source: xml-dom)
+PASS Invalid attribute name: a$b (source: xml-dom)
+PASS Distinct attribute name (source: xml-dom): ABC and abc
+PASS Distinct attribute name (source: xml-dom): abC and abc
+PASS Distinct attribute name (source: xml-dom): x123A and x123a
+PASS Processing instruction attribute name "$=\"1\"" is not an XML Name, from xml-dom
+PASS Processing instruction attribute name "1a=\"1\"" is not an XML Name, from xml-dom
+PASS Processing instruction attribute name "-a=\"1\"" is not an XML Name, from xml-dom
+PASS Processing instruction attribute name ".a=\"1\"" is not an XML Name, from xml-dom
+PASS Processing instruction attribute name "a b=\"1\"" is not an XML Name, from xml-dom
+PASS Processing instruction attribute name with a colon and a hyphen from xml-dom
+PASS Processing instruction character reference "a=\"&#65;\"" (decimal) from xml-dom
+PASS Processing instruction character reference "a=\"&#x41;\"" (lowercase hex) from xml-dom
+PASS Processing instruction character reference "a=\"&#x4a;\"" (lowercase hex digits) from xml-dom
+PASS Processing instruction character reference "a=\"&#x4A;\"" (uppercase hex digits) from xml-dom
+PASS Processing instruction character reference "a=\"&#xFDD0;\"" (noncharacter is allowed by Char) from xml-dom
+PASS Processing instruction character reference "a=\"&#xFFFD;\"" (replacement character) from xml-dom
+PASS Processing instruction character reference "a=\"&# 65;\"" is an error, leading space is not allowed, from xml-dom
+PASS Processing instruction character reference "a=\"&#+65;\"" is an error, a sign is not allowed, from xml-dom
+PASS Processing instruction character reference "a=\"&#X41;\"" is an error, uppercase X is not allowed, from xml-dom
+PASS Processing instruction character reference "a=\"&#;\"" is an error, no digits, from xml-dom
+PASS Processing instruction character reference "a=\"&#x;\"" is an error, no hex digits, from xml-dom
+PASS Processing instruction character reference "a=\"&#xZZ;\"" is an error, not hex digits, from xml-dom
+PASS Processing instruction character reference "a=\"&#65\"" is an error, no semicolon, from xml-dom
+PASS Processing instruction character reference "a=\"&#1;\"" is an error, U+0001 does not match Char, from xml-dom
+PASS Processing instruction character reference "a=\"&#xD800;\"" is an error, a surrogate does not match Char, from xml-dom
+PASS Processing instruction character reference "a=\"&#x110000;\"" is an error, beyond the last code point, from xml-dom
+PASS Processing instruction character reference "a=\"&unknown;\"" is an error, unknown named reference, from xml-dom
+PASS Processing instruction attributes with xml-stylesheet from xml-dom
+PASS Processing instruction attribute parsing rejects unquoted attributes from xml-parser
+PASS Processing instruction attribute mutation from xml-parser
+PASS Processing instruction attribute parsing allows _ in attribute names from xml-parser
+PASS Processing instruction toggleAttribute from xml-parser
+PASS check attribute value: "=" (source: "xml-parser")
+PASS check attribute value: "axx"" (source: "xml-parser")
+PASS check attribute value: "axx>" (source: "xml-parser")
+PASS check attribute value: "some<>" (source: "xml-parser")
+PASS check attribute value: "'""'" (source: "xml-parser")
+PASS check attribute value: "aa"aa"" (source: "xml-parser")
+PASS Invalid attribute name: = (source: xml-parser)
+PASS Invalid attribute name: a= (source: xml-parser)
+PASS Invalid attribute name: =x (source: xml-parser)
+PASS Invalid attribute name: b> (source: xml-parser)
+PASS Invalid attribute name: > (source: xml-parser)
+PASS Invalid attribute name: >x (source: xml-parser)
+PASS Invalid attribute name: /x/ (source: xml-parser)
+PASS Invalid attribute name: / (source: xml-parser)
+PASS Invalid attribute name: x/ (source: xml-parser)
+PASS Invalid attribute name: x	 (source: xml-parser)
+PASS Invalid attribute name: 	x (source: xml-parser)
+PASS Invalid attribute name: x
+ (source: xml-parser)
+PASS Invalid attribute name:
+x (source: xml-parser)
+PASS Invalid attribute name: x\r (source: xml-parser)
+PASS Invalid attribute name: \rx (source: xml-parser)
+PASS Valid attribute name: _ (source: xml-parser)
+PASS Valid attribute name: _bar (source: xml-parser)
+PASS Valid attribute name: a_b (source: xml-parser)
+PASS Invalid attribute name: $ (source: xml-parser)
+PASS Invalid attribute name: $foo (source: xml-parser)
+PASS Invalid attribute name: a$b (source: xml-parser)
+PASS Distinct attribute name (source: xml-parser): ABC and abc
+PASS Distinct attribute name (source: xml-parser): abC and abc
+PASS Distinct attribute name (source: xml-parser): x123A and x123a
+PASS Processing instruction attribute name "$=\"1\"" is not an XML Name, from xml-parser
+PASS Processing instruction attribute name "1a=\"1\"" is not an XML Name, from xml-parser
+PASS Processing instruction attribute name "-a=\"1\"" is not an XML Name, from xml-parser
+PASS Processing instruction attribute name ".a=\"1\"" is not an XML Name, from xml-parser
+PASS Processing instruction attribute name "a b=\"1\"" is not an XML Name, from xml-parser
+PASS Processing instruction attribute name with a colon and a hyphen from xml-parser
+PASS Processing instruction character reference "a=\"&#65;\"" (decimal) from xml-parser
+PASS Processing instruction character reference "a=\"&#x41;\"" (lowercase hex) from xml-parser
+PASS Processing instruction character reference "a=\"&#x4a;\"" (lowercase hex digits) from xml-parser
+PASS Processing instruction character reference "a=\"&#x4A;\"" (uppercase hex digits) from xml-parser
+PASS Processing instruction character reference "a=\"&#xFDD0;\"" (noncharacter is allowed by Char) from xml-parser
+PASS Processing instruction character reference "a=\"&#xFFFD;\"" (replacement character) from xml-parser
+PASS Processing instruction character reference "a=\"&# 65;\"" is an error, leading space is not allowed, from xml-parser
+PASS Processing instruction character reference "a=\"&#+65;\"" is an error, a sign is not allowed, from xml-parser
+PASS Processing instruction character reference "a=\"&#X41;\"" is an error, uppercase X is not allowed, from xml-parser
+PASS Processing instruction character reference "a=\"&#;\"" is an error, no digits, from xml-parser
+PASS Processing instruction character reference "a=\"&#x;\"" is an error, no hex digits, from xml-parser
+PASS Processing instruction character reference "a=\"&#xZZ;\"" is an error, not hex digits, from xml-parser
+PASS Processing instruction character reference "a=\"&#65\"" is an error, no semicolon, from xml-parser
+PASS Processing instruction character reference "a=\"&#1;\"" is an error, U+0001 does not match Char, from xml-parser
+PASS Processing instruction character reference "a=\"&#xD800;\"" is an error, a surrogate does not match Char, from xml-parser
+PASS Processing instruction character reference "a=\"&#x110000;\"" is an error, beyond the last code point, from xml-parser
+PASS Processing instruction character reference "a=\"&unknown;\"" is an error, unknown named reference, from xml-parser
+PASS Processing instruction attributes with xml-stylesheet from xml-parser
+PASS Processing instruction setAttribute("\u0000") throws
+PASS Processing instruction setAttribute("\t") throws
+PASS Processing instruction setAttribute("\n") throws
+PASS Processing instruction setAttribute("\f") throws
+PASS Processing instruction setAttribute("\r") throws
+PASS Processing instruction setAttribute(" ") throws
+PASS Processing instruction setAttribute("/") throws
+PASS Processing instruction setAttribute("=") throws
+PASS Processing instruction setAttribute(">") throws
+PASS Processing instruction setAttribute("") throws
+PASS Processing instruction setAttribute("\"") throws
+PASS Processing instruction setAttribute("'") throws
+PASS Processing instruction setAttribute("<") throws
+PASS Processing instruction setAttribute("&") throws
+PASS Processing instruction setAttribute("$") throws
+PASS Processing instruction setAttribute("a$b") throws
+PASS Processing instruction setAttribute("1a") throws
+PASS Processing instruction setAttribute("-a") throws
+PASS Processing instruction setAttribute(".a") throws
+PASS Processing instruction setAttribute("a b") throws
+PASS Processing instruction setAttribute("a") is allowed
+PASS Processing instruction setAttribute("a:b") is allowed
+PASS Processing instruction setAttribute("a:-b") is allowed
+PASS Processing instruction setAttribute("_a") is allowed
+PASS Processing instruction setAttribute(":a") is allowed
+PASS Processing instruction setAttribute("a_b") is allowed
+PASS Processing instruction setAttribute("a-b") is allowed
+PASS Processing instruction setAttribute("a.b") is allowed
+PASS Processing instruction setAttribute("a1") is allowed
+PASS Processing instruction setAttribute("À") is allowed
+PASS Processing instruction setAttribute("�") is allowed
+PASS Processing instruction setAttribute value "\u0000" throws
+PASS Processing instruction setAttribute value "\u0001" throws
+PASS Processing instruction setAttribute value "\b" throws
+PASS Processing instruction setAttribute value "\u000b" throws
+PASS Processing instruction setAttribute value "\f" throws
+PASS Processing instruction setAttribute value "\u001f" throws
+PASS Processing instruction setAttribute value "￾" throws
+PASS Processing instruction setAttribute value "￿" throws
+PASS Processing instruction setAttribute value "\ud800" throws
+PASS Processing instruction setAttribute value "\udc00" throws
+PASS Processing instruction setAttribute value "a\u0000b" throws
+PASS Processing instruction setAttribute value "\t" is allowed
+PASS Processing instruction setAttribute value "\n" is allowed
+PASS Processing instruction setAttribute value "\r" is allowed
+PASS Processing instruction setAttribute value " " is allowed
+PASS Processing instruction setAttribute value "a" is allowed
+PASS Processing instruction setAttribute value "퟿" is allowed
+PASS Processing instruction setAttribute value "" is allowed
+PASS Processing instruction setAttribute value "�" is allowed
+PASS Processing instruction setAttribute value "𐀀" is allowed
+PASS Processing instruction setAttribute value "􏿿" is allowed
 
