@@ -7533,6 +7533,15 @@ WebLocksAPIEnabled:
   sharedPreferenceForWebProcess: true
   richJavaScript: true
 
+WebProcessGPUProcessTimeoutForTesting:
+  comment: Overrides the GPU process IPC timeout of the web process
+  type: double
+  status: internal
+  humanReadableName: "Web Process GPU Process Timeout For Testing"
+  humanReadableDescription: "Test override for the GPU process IPC timeout, in seconds (0 keeps the default)"
+  webKitLegacyExposed: false
+  defaultValue: 0
+
 WebRTCAV1CodecEnabled:
   type: bool
   status: stable
