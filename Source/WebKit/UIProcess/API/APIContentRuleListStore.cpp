@@ -73,7 +73,7 @@ static WorkQueue& retainWorkQueueForPath(const WTF::String& path)
 {
     auto& map = workQueueMap();
     auto result = map.ensure(path, [] {
-        return std::pair { WorkQueue::create("ContentRuleListStore Queue"_s), 0u };
+        return std::pair { WorkQueue::create("ContentRuleListStore Queue"_s, WorkQueue::QOS::Utility), 0u };
     });
     ++result.iterator->value.second;
     return result.iterator->value.first.get();
