@@ -1,0 +1,125 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true ] -->
+<html>
+<head>
+<style>
+    html, body {
+        margin: 0;
+        overflow: hidden;
+    }
+    .scroller {
+        position: absolute;
+        top: 0;
+        width: 200px;
+        height: 300px;
+        overflow-y: auto;
+    }
+    .item {
+        height: 300px;
+        scroll-snap-align: start;
+        background-color: green;
+    }
+    #appears {
+        left: 0;
+        display: none;
+        scroll-snap-type: y mandatory;
+    }
+    #moved-onto {
+        left: 250px;
+    }
+    #console {
+        position: absolute;
+        top: 450px;
+    }
+</style>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+jsTestIsAsync = true;
+
+// Like the page this reduces, listen for wheel events on the whole document.
+document.addEventListener("wheel", () => { }, { passive: true });
+
+async function didScroll(scroller, x, y, { duringGesture, duringMomentum, afterMomentumEnds } = { })
+{
+    scroller.scrollTop = 0;
+    let maximumScrollTop = 0;
+    const listener = () => maximumScrollTop = Math.max(maximumScrollTop, scroller.scrollTop);
+    scroller.addEventListener("scroll", listener);
+
+    await UIHelper.startMonitoringWheelEvents();
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "began", "none");
+    await duringGesture?.();
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "changed", "none");
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "none", "begin");
+    await duringMomentum?.();
+    for (let i = 0; i < 5; ++i)
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "none", "continue");
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "none", "end");
+    afterMomentumEnds?.();
+    await UIHelper.waitForScrollCompletion();
+
+    scroller.removeEventListener("scroll", listener);
+    return maximumScrollTop > 0;
+}
+
+let scrolled;
+
+async function run()
+{
+    description("Tests that a trackpad fling that starts where nothing can scroll doesn't scroll a scroller that later comes under the pointer.");
+    if (!window.eventSender) {
+        debug("To test manually, fling up over an empty part of the page; the scrollers must not scroll.");
+        finishJSTest();
+        return;
+    }
+
+    const appears = document.getElementById("appears");
+    debug("A scroller appears under the pointer during momentum");
+    scrolled = await didScroll(appears, 100, 150, {
+        duringMomentum: async () => {
+            await UIHelper.ensurePresentationUpdate();
+            appears.style.display = "block";
+            await UIHelper.ensurePresentationUpdate();
+        }
+    });
+    shouldBeFalse("scrolled");
+
+    const movedOnto = document.getElementById("moved-onto");
+    debug("The pointer moves onto a scroller during the gesture");
+    scrolled = await didScroll(movedOnto, 350, 400, { duringGesture: () => eventSender.mouseMoveTo(350, 150) });
+    shouldBeFalse("scrolled");
+
+    debug("The pointer moves onto a scroller and momentum continues after the momentum end event");
+    scrolled = await didScroll(movedOnto, 350, 400, {
+        afterMomentumEnds: () => {
+            // WebKit keeps sending its own momentum events after the system's momentum ends if its own lasts longer.
+            eventSender.mouseMoveTo(350, 150);
+            for (let i = 0; i < 5; ++i)
+                eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "none", "continue");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "none", "end");
+        }
+    });
+    shouldBeFalse("scrolled");
+
+    finishJSTest();
+}
+
+window.addEventListener("load", run);
+</script>
+</head>
+<body>
+    <div id="appears" class="scroller">
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+    </div>
+    <div id="moved-onto" class="scroller">
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+    </div>
+    <div id="console"></div>
+</body>
+</html>

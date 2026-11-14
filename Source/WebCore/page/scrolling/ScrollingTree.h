@@ -221,6 +221,7 @@ public:
 
     ScrollingTreeFrameScrollingNode* rootNode() const { return m_rootNode.get(); }
     NODELETE std::optional<ScrollingNodeID> latchedNodeID() const;
+    NODELETE bool isLatchedToUnscrollableRoot() const;
     NODELETE WEBCORE_EXPORT void clearLatchedNode();
 
     WEBCORE_EXPORT bool hasFixedOrSticky() const;
@@ -329,6 +330,7 @@ public:
     NODELETE WEBCORE_EXPORT std::optional<FrameIdentifier> frameIDForScrollingNodeID(ScrollingNodeID);
 
 protected:
+    static bool isUnscrollableRoot(const ScrollingTreeScrollingNode&);
     WEBCORE_EXPORT WheelEventHandlingResult handleWheelEventWithNode(const PlatformWheelEvent&, OptionSet<WheelEventProcessingSteps>, ScrollingTreeNode*, EventTargeting = EventTargeting::Propagate);
 
     NODELETE void setMainFrameScrollPosition(FloatPoint);
