@@ -54,6 +54,8 @@ public:
 
     void save();
     void restore();
+    void saveTransform();
+    void restoreTransform();
     void translate(float x, float y);
     void rotate(float angle);
     void scale(const WebCore::FloatSize& scale);

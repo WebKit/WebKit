@@ -386,14 +386,15 @@ void GraphicsContextCG::save(GraphicsContextState::Purpose purpose)
     CGContextSaveGState(contextForState());
 }
 
-void GraphicsContextCG::restore(GraphicsContextState::Purpose purpose)
+bool GraphicsContextCG::restore(GraphicsContextState::Purpose purpose)
 {
-    if (!stackSize())
-        return;
+    if (!canRestore(purpose))
+        return false;
 
     GraphicsContext::restore(purpose);
     CGContextRestoreGState(contextForState());
     m_userToDeviceTransformKnownToBeIdentity = false;
+    return true;
 }
 
 void GraphicsContextCG::drawNativeImage(const NativeImage& nativeImage, const FloatRect& destRect, const FloatRect& srcRect, RasterDrawingOptions options)
@@ -1218,6 +1219,9 @@ void GraphicsContextCG::beginTransparencyLayer(CompositeOperator, BlendMode)
 
 void GraphicsContextCG::endTransparencyLayer()
 {
+    if (!canRestore(GraphicsContextState::Purpose::TransparencyLayer))
+        return;
+
     GraphicsContext::endTransparencyLayer();
 
     const RetainPtr<CGContextRef>& context = contextForDraw();
