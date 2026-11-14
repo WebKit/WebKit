@@ -138,7 +138,7 @@ constexpr auto allInternalPseudoElementTypes = EnumSet {
 
 constexpr auto allPseudoElementTypes = allPublicPseudoElementTypes | allInternalPseudoElementTypes;
 
-enum class PseudoElementBoxGeneration : bool { Normal, NotForBeforeOrAfter };
+enum class PseudoElementBoxGeneration : bool { Normal, NoGeneratedContent };
 
 inline std::optional<PseudoElementType> parentPseudoElement(PseudoElementType pseudoElementType)
 {

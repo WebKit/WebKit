@@ -99,6 +99,16 @@ void RenderTreeBuilder::List::updateItemMarker(RenderListItem& listItemRenderer)
         return;
     }
 
+    RefPtr styleImage = style.listStyleImage().tryStyleImage();
+    auto hasListStyle = !style.listStyleType().isNone() || (styleImage && !styleImage->errorOccurred());
+
+    // Without a ::marker style, and always for a ::before or ::after list item, computeMarkerStyle() builds one with
+    // 'content: normal', which shows nothing without a list style.
+    if (!hasListStyle && (is<PseudoElement>(listItemRenderer.element()) || !style.pseudoElementStyle({ PseudoElementType::Marker }))) {
+        destroyExistingMarker();
+        return;
+    }
+
     auto newStyle = listItemRenderer.computeMarkerStyle();
     auto markerContentEnabled = listItemRenderer.document().settings().cssMarkerContentEnabled();
     auto markerHasContent = listMarkerHasContent(newStyle, listItemRenderer.document());
@@ -107,8 +117,6 @@ void RenderTreeBuilder::List::updateItemMarker(RenderListItem& listItemRenderer)
     // of list-style-type/image. Otherwise (css-lists-3 §3.3) a non-normal `content` generates the
     // marker box even without a list-style-image/type; only suppress when there is nothing to show.
     // (Gated on the CSSMarkerContent feature; when disabled, `content` on ::marker is ignored.)
-    RefPtr styleImage = style.listStyleImage().tryStyleImage();
-    auto hasListStyle = !style.listStyleType().isNone() || (styleImage && !styleImage->errorOccurred());
     if ((markerContentEnabled && newStyle.content().isNone()) || (!markerHasContent && !hasListStyle)) {
         destroyExistingMarker();
         return;

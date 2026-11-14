@@ -1,0 +1,8 @@
+<!DOCTYPE html>
+<style>
+li { list-style: none; list-style-position: inside; --show-marker: 1; }
+@container style(--show-marker: 1) { li::marker { content: "Q "; } }
+</style>
+<ul>
+  <li>has a marker from a style query on the list item</li>
+</ul>

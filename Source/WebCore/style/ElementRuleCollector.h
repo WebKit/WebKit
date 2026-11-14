@@ -145,7 +145,7 @@ private:
     Ref<MatchResult> m_result;
     Relations m_styleRelations;
     EnumSet<PseudoElementType> m_matchedPseudoElements;
-    PseudoElementBoxGeneration m_pseudoElementBoxGeneration { PseudoElementBoxGeneration::NotForBeforeOrAfter };
+    PseudoElementBoxGeneration m_pseudoElementBoxGeneration { PseudoElementBoxGeneration::NoGeneratedContent };
 };
 
 ALWAYS_INLINE void ElementRuleCollector::collectMatchingRulesForList(const RuleSet::RuleDataVector* rules, const MatchRequest& matchRequest)

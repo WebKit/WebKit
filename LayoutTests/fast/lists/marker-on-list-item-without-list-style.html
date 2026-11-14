@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<style>
+ul { list-style-position: inside; }
+li { list-style: none; }
+.marker-content::marker { content: "X "; }
+#display-from-custom-property { display: var(--display); }
+</style>
+<ul>
+  <li id="type-added">gains a list-style-type</li>
+  <li id="content-added">gains ::marker content</li>
+  <li id="image-added">gains a list-style-image</li>
+  <li id="display-from-custom-property" class="marker-content">becomes a list item through an inline custom property</li>
+</ul>
+<script>
+const displayEntry = document.getElementById("display-from-custom-property");
+displayEntry.style.setProperty("--display", "block");
+document.body.offsetHeight;
+document.getElementById("type-added").style.listStyleType = "square";
+document.getElementById("content-added").className = "marker-content";
+document.getElementById("image-added").style.listStyleImage = "linear-gradient(green, green)";
+displayEntry.style.setProperty("--display", "list-item");
+</script>

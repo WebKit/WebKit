@@ -146,21 +146,30 @@ NODELETE static bool isKeywordOrKeywordList(const CSSValue& value, CSSValueID ke
     return isValueID(value, keyword);
 }
 
-// ::before/::after may follow another pseudo-element, like ::part(foo)::before or ::slotted(span)::after.
-NODELETE static bool selectorHasBeforeOrAfterPseudoElement(const CSSSelector& selector)
+// These may follow another pseudo-element, like ::part(foo)::before or ::slotted(span)::marker.
+NODELETE static bool selectorHasBeforeAfterOrMarkerPseudoElement(const CSSSelector& selector)
 {
     for (auto* component = &selector; component; component = component->precedingInComplexSelector()) {
-        if (component->matchesPseudoElement() && (component->pseudoElement() == CSSSelector::PseudoElement::Before || component->pseudoElement() == CSSSelector::PseudoElement::After))
+        if (!component->matchesPseudoElement())
+            continue;
+        switch (component->pseudoElement()) {
+        case CSSSelector::PseudoElement::Before:
+        case CSSSelector::PseudoElement::After:
+        case CSSSelector::PseudoElement::Marker:
             return true;
+        default:
+            break;
+        }
     }
     return false;
 }
 
-// ::before/::after only generate a box with non-'none' content, which animations and transitions can also supply.
+// ::before/::after only generate a box with non-'none' content, and ::marker of a list item without a list style only
+// with non-'normal' content. Animations and transitions can also supply it.
 NODELETE static PseudoElementBoxGeneration computePseudoElementBoxGeneration(const CSSSelector& selector, const StyleProperties& properties)
 {
-    if (!selectorHasBeforeOrAfterPseudoElement(selector))
-        return PseudoElementBoxGeneration::NotForBeforeOrAfter;
+    if (!selectorHasBeforeAfterOrMarkerPseudoElement(selector))
+        return PseudoElementBoxGeneration::NoGeneratedContent;
 
     for (auto property : properties) {
         auto& value = *property.value();
@@ -184,7 +193,7 @@ NODELETE static PseudoElementBoxGeneration computePseudoElementBoxGeneration(con
             break;
         }
     }
-    return PseudoElementBoxGeneration::NotForBeforeOrAfter;
+    return PseudoElementBoxGeneration::NoGeneratedContent;
 }
 
 RuleData::RuleData(const StyleRule& styleRule, unsigned selectorIndex, unsigned selectorListIndex, unsigned position, IsStartingStyle isStartingStyle)

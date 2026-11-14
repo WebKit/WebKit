@@ -128,7 +128,7 @@ public:
     EnumSet<PseudoElementType> universalHTMLPseudoElementTypes() const { return m_universalHTMLPseudoElementTypes; }
     // Pseudo element types applying to all elements.
     EnumSet<PseudoElementType> universalPseudoElementTypes() const { return m_universalPseudoElementTypes; }
-    // Whether any universal ::before/::after rule may generate a box.
+    // Whether any universal ::before/::after/::marker rule may generate a box.
     PseudoElementBoxGeneration universalHTMLPseudoElementBoxGeneration() const { return m_universalHTMLPseudoElementBoxGeneration; }
     PseudoElementBoxGeneration universalPseudoElementBoxGeneration() const { return m_universalPseudoElementBoxGeneration; }
 
@@ -248,8 +248,8 @@ private:
     RuleDataVector m_universalPseudoElementRules;
     EnumSet<PseudoElementType> m_universalHTMLPseudoElementTypes;
     EnumSet<PseudoElementType> m_universalPseudoElementTypes;
-    PseudoElementBoxGeneration m_universalHTMLPseudoElementBoxGeneration { PseudoElementBoxGeneration::NotForBeforeOrAfter };
-    PseudoElementBoxGeneration m_universalPseudoElementBoxGeneration { PseudoElementBoxGeneration::NotForBeforeOrAfter };
+    PseudoElementBoxGeneration m_universalHTMLPseudoElementBoxGeneration { PseudoElementBoxGeneration::NoGeneratedContent };
+    PseudoElementBoxGeneration m_universalPseudoElementBoxGeneration { PseudoElementBoxGeneration::NoGeneratedContent };
     Vector<Ref<StyleRulePage>> m_pageRules;
     RefPtr<StyleRuleViewTransition> m_viewTransitionRule;
     RuleFeatureSet m_features;
