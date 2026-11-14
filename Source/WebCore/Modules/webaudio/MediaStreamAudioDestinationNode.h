@@ -56,6 +56,7 @@ private:
     double latencyTime() const final { return 0; }
     bool requiresTailProcessing() const final { return false; }
     void checkNumberOfChannelsForInput(AudioNodeInput*) override;
+    void updatePullStatus() final;
 
     // As an audio source, we will never propagate silence.
     bool propagatesSilence() const final { return false; }

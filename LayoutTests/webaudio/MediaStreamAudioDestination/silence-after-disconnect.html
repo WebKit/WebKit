@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("A MediaStreamAudioDestinationNode delivers samples with no input and after its input disconnects.");
+jsTestIsAsync = true;
+
+const context = new AudioContext();
+const clock = new OscillatorNode(context);
+clock.connect(context.destination);
+clock.start();
+
+function waitForMoreSamples(previous, timeoutMs) {
+    return new Promise((resolve, reject) => {
+        const start = performance.now();
+        const timer = setInterval(() => {
+            const count = internals.trackAudioSampleCount;
+            if (count > previous) {
+                clearInterval(timer);
+                resolve(count);
+            } else if (performance.now() - start > timeoutMs) {
+                clearInterval(timer);
+                reject(new Error("timed out, count " + count));
+            }
+        }, 10);
+    });
+}
+
+const idle = new MediaStreamAudioDestinationNode(context);
+internals.observeMediaStreamTrack(idle.stream.getAudioTracks()[0]);
+
+waitForMoreSamples(0, 3000).then(() => {
+    testPassed("samples with no input");
+    const destination = new MediaStreamAudioDestinationNode(context);
+    const oscillator = new OscillatorNode(context);
+    oscillator.connect(destination);
+    oscillator.start();
+    internals.observeMediaStreamTrack(destination.stream.getAudioTracks()[0]);
+    return waitForMoreSamples(0, 3000).then(count => {
+        oscillator.disconnect(destination);
+        return waitForMoreSamples(count, 3000);
+    });
+}).then(() => {
+    testPassed("samples continued after disconnect");
+    finishJSTest();
+}).catch(error => {
+    testFailed(String(error));
+    finishJSTest();
+});
+</script>
+</body>
+</html>

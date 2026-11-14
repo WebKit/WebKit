@@ -1,0 +1,11 @@
+A MediaStreamAudioDestinationNode delivers samples with no input and after its input disconnects.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS samples with no input
+PASS samples continued after disconnect
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

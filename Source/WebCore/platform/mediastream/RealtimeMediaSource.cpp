@@ -133,18 +133,41 @@ void RealtimeMediaSource::initializeIds()
     m_hashedGroupId = RealtimeMediaSourceCenter::hashStringWithSalt(m_device.groupId(), m_idHashSalts.ephemeralDeviceSalt);
 }
 
+bool RealtimeMediaSource::hasAudioSampleObservers() const
+{
+    return m_hasAudioSampleObservers.load(std::memory_order_acquire);
+}
+
+void RealtimeMediaSource::audioSampleObserversChanged()
+{
+}
+
 void RealtimeMediaSource::addAudioSampleObserver(AudioSampleObserver& observer)
 {
     ASSERT(isMainThread());
-    Locker locker { m_audioSampleObserversLock };
-    m_audioSampleObservers.add(&observer);
+    bool added = false;
+    {
+        Locker locker { m_audioSampleObserversLock };
+        added = m_audioSampleObservers.add(&observer).isNewEntry;
+        if (added)
+            m_hasAudioSampleObservers.store(true, std::memory_order_release);
+    }
+    if (added)
+        audioSampleObserversChanged();
 }
 
 void RealtimeMediaSource::removeAudioSampleObserver(AudioSampleObserver& observer)
 {
     ASSERT(isMainThread());
-    Locker locker { m_audioSampleObserversLock };
-    m_audioSampleObservers.remove(&observer);
+    bool removed = false;
+    {
+        Locker locker { m_audioSampleObserversLock };
+        removed = m_audioSampleObservers.remove(&observer);
+        if (removed)
+            m_hasAudioSampleObservers.store(!m_audioSampleObservers.isEmpty(), std::memory_order_release);
+    }
+    if (removed)
+        audioSampleObserversChanged();
 }
 
 void RealtimeMediaSource::addVideoFrameObserver(VideoFrameObserver& observer)

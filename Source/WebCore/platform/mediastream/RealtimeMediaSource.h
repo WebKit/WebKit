@@ -48,6 +48,7 @@
 #include <WebCore/RealtimeMediaSourceFactory.h>
 #include <WebCore/RealtimeMediaSourceIdentifier.h>
 #include <WebCore/VideoFrameTimeMetadata.h>
+#include <atomic>
 #include <wtf/AbstractCanMakeCheckedPtr.h>
 #include <wtf/AbstractThreadSafeRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/CheckedPtr.h>
@@ -177,6 +178,7 @@ public:
 
     WEBCORE_EXPORT void addAudioSampleObserver(AudioSampleObserver&);
     WEBCORE_EXPORT void removeAudioSampleObserver(AudioSampleObserver&);
+    bool hasAudioSampleObservers() const;
 
     WEBCORE_EXPORT void addVideoFrameObserver(VideoFrameObserver&);
     WEBCORE_EXPORT void addVideoFrameObserver(VideoFrameObserver&, IntSize, double);
@@ -315,6 +317,7 @@ protected:
 
     void scheduleDeferredTask(Function<void()>&&);
 
+    virtual void audioSampleObserversChanged();
     virtual void startApplyingConstraints() { }
     virtual void endApplyingConstraints() { }
 
@@ -391,6 +394,7 @@ private:
 
     mutable Lock m_audioSampleObserversLock;
     HashSet<CheckedPtr<AudioSampleObserver>> m_audioSampleObservers WTF_GUARDED_BY_LOCK(m_audioSampleObserversLock);
+    std::atomic<bool> m_hasAudioSampleObservers { false };
 
     mutable Lock m_videoFrameObserversLock;
     HashMap<VideoFrameObserver*, std::unique_ptr<VideoFrameAdaptor>> m_videoFrameObservers WTF_GUARDED_BY_LOCK(m_videoFrameObserversLock);
