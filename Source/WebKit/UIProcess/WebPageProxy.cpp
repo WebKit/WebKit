@@ -2089,6 +2089,7 @@ void WebPageProxy::close()
     WEBPAGEPROXY_RELEASE_LOG(Loading, "close:");
 
     m_isClosed = true;
+    internals().subframeTerminationEvent = std::nullopt;
 
     leastRecentlyVisiblePages().remove(*this);
     leastRecentlyHiddenPages().remove(*this);
@@ -10495,6 +10496,7 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
         process->didCommitMainFrameLoad(request.url());
 
         m_shouldReloadDueToCrashWhenVisible = false;
+        internals().subframeTerminationEvent = std::nullopt;
         m_hasUpdatedRenderingAfterDidCommitLoad = false;
 #if HAVE(APPKIT_GESTURES_SUPPORT)
         m_hoverActivatedByClickBounds = std::nullopt;
@@ -11873,8 +11875,10 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
     }
 
     // Navigating to another document replaces the crashed page, even if the navigation doesn't commit.
-    if (frame.isMainFrame() && !isFragmentOnlyNavigation(frame, request.url(), navigationActionData.navigationType))
+    if (frame.isMainFrame() && !isFragmentOnlyNavigation(frame, request.url(), navigationActionData.navigationType)) {
         m_shouldReloadDueToCrashWhenVisible = false;
+        internals().subframeTerminationEvent = std::nullopt;
+    }
 
     if (!navigation) {
         // The WebProcess reports the end of a navigation it started under the identifier it minted.
@@ -16351,6 +16355,7 @@ void WebPageProxy::resetStateAfterProcessTermination(ProcessTerminationReason re
         m_navigationState->clearAllNavigations();
         m_sessionHistoryTraversalQueue->cancel();
 
+        internals().pendingBackForwardCachedChildren.clear();
         auto pendingIframeRestores = std::exchange(internals().pendingBackForwardIframeRestores, { });
         for (auto& pendingRestore : pendingIframeRestores.values())
             restoreOrCancelPendingBackForwardIframes(*pendingRestore, RestoredFromBackForwardCache::No);
@@ -16386,6 +16391,7 @@ NODELETE static bool shouldReloadAfterProcessTermination(ProcessTerminationReaso
     case ProcessTerminationReason::RequestedByGPUProcess:
     case ProcessTerminationReason::RequestedByModelProcess:
     case ProcessTerminationReason::Crash:
+    case ProcessTerminationReason::NonMainFrameWebContentProcessCrash:
     case ProcessTerminationReason::Unresponsive:
         return true;
     case ProcessTerminationReason::ExceededProcessCountLimit:
@@ -16394,7 +16400,6 @@ NODELETE static bool shouldReloadAfterProcessTermination(ProcessTerminationReaso
     case ProcessTerminationReason::RequestedByClient:
     case ProcessTerminationReason::GPUProcessCrashedTooManyTimes:
     case ProcessTerminationReason::ModelProcessCrashedTooManyTimes:
-    case ProcessTerminationReason::NonMainFrameWebContentProcessCrash:
         break;
     }
     return false;
@@ -16408,6 +16413,21 @@ void WebPageProxy::clearStateForTerminatedProcess(WebProcessProxy& process)
 
     if (protect(preferences())->siteIsolationEnabled())
         processDidBecomeResponsive(process); // Check if all other processes are responsive.
+}
+
+void WebPageProxy::markProcessesIneligibleForWebProcessCache()
+{
+    if (!protect(preferences())->siteIsolationEnabled())
+        return;
+
+    // Prevent the page's other processes from entering the WebProcess cache and being reused on
+    // reload, as one of them may have caused the termination (e.g. by exceeding the page memory
+    // limit).
+    protect(browsingContextGroup())->forEachRemotePage(*this, [](auto& remotePage) {
+        Ref process = remotePage.process();
+        ASSERT(!process->isInProcessCache());
+        process->setIneligbleForWebProcessCache();
+    });
 }
 
 void WebPageProxy::mainFrameProcessDidTerminate(WebProcessProxy& process)
@@ -16440,16 +16460,81 @@ bool WebPageProxy::hasCommittedFrameInProcess(const WebProcessProxy& process) co
 
 void WebPageProxy::dispatchProcessDidTerminate(ProcessID processID, ProcessTerminationScope scope, ProcessTerminationReason reason)
 {
-    // FIXME: Other reasons, e.g. ExceededMemoryLimit, still report a subframe process kill as a
-    // termination of the page's process, and reload the page if the client doesn't handle it. Tell
-    // the client the actual reason and whether the main frame was affected.
     if (scope != ProcessTerminationScope::MainFrame && reason == ProcessTerminationReason::Crash)
         reason = ProcessTerminationReason::NonMainFrameWebContentProcessCrash;
 
     WEBPAGEPROXY_RELEASE_LOG_ERROR(Loading, "dispatchProcessDidTerminate: terminatedPID=%d (%" PUBLIC_LOG_STRING "), reason=%" PUBLIC_LOG_STRING, processID, processTerminationScopeToString(scope).characters(), processTerminationReasonToString(reason).characters());
 
-    if (m_isClosed || scope == ProcessTerminationScope::NoFrames)
+    if (m_isClosed)
         return;
+
+    switch (scope) {
+    case ProcessTerminationScope::NoFrames:
+        break;
+    case ProcessTerminationScope::Subframes:
+        coalesceSubframeProcessTerminationEvent(reason);
+        break;
+    case ProcessTerminationScope::MainFrame:
+        notifyClientOfMainFrameProcessTerminationEvent(reason);
+        break;
+    }
+}
+
+void WebPageProxy::coalesceSubframeProcessTerminationEvent(ProcessTerminationReason reason)
+{
+    auto& terminationEvent = internals().subframeTerminationEvent;
+    if (terminationEvent && !terminationEvent->clientNotified)
+        return;
+
+    auto identifier = ++internals().lastSubframeTerminationEventIdentifier;
+    terminationEvent = SubframeTerminationEvent { identifier, reason, false };
+    RunLoop::mainSingleton().dispatch([weakThis = WeakPtr { *this }, identifier] {
+        if (RefPtr protectedThis = weakThis)
+            protectedThis->notifyClientOfCoalescedSubframeTerminationEvent(identifier);
+    });
+}
+
+void WebPageProxy::notifyClientOfCoalescedSubframeTerminationEvent(unsigned terminationEventIdentifier)
+{
+    // Handling another process's termination can close the page or report the pending event.
+    auto terminationEventIsPending = [&] {
+        auto& terminationEvent = internals().subframeTerminationEvent;
+        return !isClosed() && terminationEvent && terminationEvent->identifier == terminationEventIdentifier && !terminationEvent->clientNotified;
+    };
+
+    if (!terminationEventIsPending())
+        return;
+
+    protect(legacyMainFrameProcess())->detectAndHandleTermination();
+    if (!terminationEventIsPending())
+        return;
+
+    Vector<Ref<WebProcessProxy>> otherProcesses;
+    protect(browsingContextGroup())->forEachRemotePage(*this, [&](auto& remotePage) {
+        otherProcesses.append(protect(remotePage.process()));
+    });
+    if (RefPtr provisionalPage = m_provisionalPage)
+        otherProcesses.append(protect(provisionalPage->process()));
+    for (Ref process : otherProcesses) {
+        process->detectAndHandleTermination();
+        if (!terminationEventIsPending())
+            return;
+    }
+
+    auto& terminationEvent = *internals().subframeTerminationEvent;
+    terminationEvent.clientNotified = true;
+    notifyClientOfProcessTermination(terminationEvent.reason, ProcessTerminationScope::Subframes);
+}
+
+void WebPageProxy::notifyClientOfMainFrameProcessTerminationEvent(ProcessTerminationReason reason)
+{
+    internals().subframeTerminationEvent = std::nullopt;
+    notifyClientOfProcessTermination(reason, ProcessTerminationScope::MainFrame);
+}
+
+void WebPageProxy::notifyClientOfProcessTermination(ProcessTerminationReason reason, ProcessTerminationScope scope)
+{
+    WEBPAGEPROXY_RELEASE_LOG_ERROR(Loading, "notifyClientOfProcessTermination: reason=%" PUBLIC_LOG_STRING ", scope=%" PUBLIC_LOG_STRING, processTerminationReasonToString(reason).characters(), processTerminationScopeToString(scope).characters());
 
     bool handledByClient = false;
     if (m_loaderClient)
@@ -16457,9 +16542,12 @@ void WebPageProxy::dispatchProcessDidTerminate(ProcessID processID, ProcessTermi
     else
         handledByClient = m_navigationClient->processDidTerminate(*this, reason);
 
+    if (isClosed())
+        return;
+
     if (!handledByClient && shouldReloadAfterProcessTermination(reason)) {
         if (hasMainFrameNavigationInFlight()) {
-            WEBPAGEPROXY_RELEASE_LOG_ERROR(Loading, "dispatchProcessDidTerminate: Not reloading the page because a main frame navigation is in progress");
+            WEBPAGEPROXY_RELEASE_LOG_ERROR(Loading, "notifyClientOfProcessTermination: Not reloading the page because a main frame navigation is in progress");
             return;
         }
 
@@ -16468,7 +16556,7 @@ void WebPageProxy::dispatchProcessDidTerminate(ProcessID processID, ProcessTermi
         if (pageClient && pageClient->isMainViewVisible())
             tryReloadAfterProcessTermination();
         else {
-            WEBPAGEPROXY_RELEASE_LOG_ERROR(Loading, "dispatchProcessDidTerminate: Not eagerly reloading the view because it is not currently visible");
+            WEBPAGEPROXY_RELEASE_LOG_ERROR(Loading, "notifyClientOfProcessTermination: Not eagerly reloading the view because it is not currently visible");
             m_shouldReloadDueToCrashWhenVisible = true;
         }
     }
@@ -16521,11 +16609,29 @@ void WebPageProxy::tryReloadAfterProcessTermination()
 {
     internals().resetRecentCrashCountTimer.stop();
 
+    bool isSubframeTermination = !!internals().subframeTerminationEvent;
+
+    if (isSubframeTermination) {
+        if (RefPtr currentItem = backForwardList().currentItem(); currentItem && currentItem->mainFrameState().httpBody) {
+            WEBPAGEPROXY_RELEASE_LOG_ERROR(Process, "tryReloadAfterProcessTermination: subframe process crashed and the client did not handle it, not reloading the page because it is the result of a form submission");
+            return;
+        }
+    }
+
     if (++m_recentCrashCount > maximumWebProcessRelaunchAttempts) {
         WEBPAGEPROXY_RELEASE_LOG_ERROR(Process, "tryReloadAfterProcessTermination: process crashed and the client did not handle it, not reloading the page because we reached the maximum number of attempts");
-        m_recentCrashCount = 0;
+        // The main frame survives a subframe crash and may keep inserting a crashing frame, so
+        // don't start over.
+        m_recentCrashCount = isSubframeTermination ? maximumWebProcessRelaunchAttempts + 1 : 0;
         return;
     }
+
+    if (isSubframeTermination) {
+        WEBPAGEPROXY_RELEASE_LOG(Process, "tryReloadAfterProcessTermination: subframe process crashed and the client did not handle it, reloading the page");
+        reload(ReloadOption::ExpiredOnly);
+        return;
+    }
+
     URL pendingAPIRequestURL = internals().pageLoadState.pendingAPIRequestURL();
     if (pendingAPIRequestURL.isValid()) {
         WEBPAGEPROXY_RELEASE_LOG(Process, "tryReloadAfterProcessTermination: process crashed and the client did not handle it, loading the pending API request URL again");

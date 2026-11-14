@@ -218,7 +218,6 @@ void NavigationState::setNavigationDelegate(id<WKNavigationDelegate> delegate)
     m_navigationDelegateMethods.webViewDidNegotiateModernTLS = [delegate respondsToSelector:@selector(_webView:didNegotiateModernTLSForURL:)];
     m_navigationDelegateMethods.webViewWebContentProcessDidTerminate = [delegate respondsToSelector:@selector(webViewWebContentProcessDidTerminate:)];
     m_navigationDelegateMethods.webViewWebContentProcessDidTerminateWithReason = [delegate respondsToSelector:@selector(_webView:webContentProcessDidTerminateWithReason:)];
-    m_navigationDelegateMethods.webViewWebContentProcessDidTerminateForTesting = [delegate respondsToSelector:@selector(_webView:webContentProcessDidTerminateForTesting:)];
     m_navigationDelegateMethods.webViewWebProcessDidCrash = [delegate respondsToSelector:@selector(_webViewWebProcessDidCrash:)];
     m_navigationDelegateMethods.webViewWebProcessDidBecomeResponsive = [delegate respondsToSelector:@selector(_webViewWebProcessDidBecomeResponsive:)];
     m_navigationDelegateMethods.webViewWebProcessDidBecomeUnresponsive = [delegate respondsToSelector:@selector(_webViewWebProcessDidBecomeUnresponsive:)];
@@ -1310,14 +1309,6 @@ bool NavigationState::NavigationClient::processDidTerminate(WebPageProxy& page, 
     RefPtr navigationState = m_navigationState.get();
     if (!navigationState)
         return false;
-
-    if (navigationState->m_navigationDelegateMethods.webViewWebContentProcessDidTerminateForTesting) {
-        if (auto navigationDelegate = navigationState->navigationDelegate())
-            [static_cast<id<WKNavigationDelegatePrivate>>(navigationDelegate) _webView:navigationState->webView().get() webContentProcessDidTerminateForTesting:wkProcessTerminationReason(reason)];
-    }
-
-    if (reason == ProcessTerminationReason::NonMainFrameWebContentProcessCrash)
-        return true;
 
     if (!navigationState->m_navigationDelegateMethods.webViewWebContentProcessDidTerminate
         && !navigationState->m_navigationDelegateMethods.webViewWebContentProcessDidTerminateWithReason

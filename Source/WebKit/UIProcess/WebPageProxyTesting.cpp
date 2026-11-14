@@ -93,6 +93,13 @@ void WebPageProxyTesting::isLayerTreeFrozen(CompletionHandler<void(bool)>&& comp
     sendWithAsyncReply(Messages::WebPageTesting::IsLayerTreeFrozen(), WTF::move(completionHandler));
 }
 
+void WebPageProxyTesting::isLayerTreeFrozen(FrameIdentifier frameID, CompletionHandler<void(bool)>&& completionHandler)
+{
+    Ref page = m_page;
+    Ref process = page->processContainingFrame(frameID);
+    process->sendWithAsyncReply(Messages::WebPageTesting::IsLayerTreeFrozen(), WTF::move(completionHandler), page->webPageIDInProcess(process.get()));
+}
+
 void WebPageProxyTesting::numberOfLiveDocuments(CompletionHandler<void(uint64_t)>&& completionHandler)
 {
     sendWithAsyncReply(Messages::WebPageTesting::NumberOfLiveDocuments(), WTF::move(completionHandler));

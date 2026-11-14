@@ -119,6 +119,8 @@
 
 - (void)_screenIsBeingCapturedForFrame:(_WKFrameHandle *)frameHandle completionHandler:(void (^)(BOOL))completionHandler;
 
+@property (nonatomic, readonly) NSArray<NSNumber *> *_processIdentifiersWithVisibilityPropagationForTesting;
+
 @end
 
 #endif // TARGET_OS_IPHONE
