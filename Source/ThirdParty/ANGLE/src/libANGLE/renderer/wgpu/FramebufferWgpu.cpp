@@ -11,6 +11,7 @@
 #include "common/unsafe_buffers.h"
 
 #include <__config>
+#include <limits>
 
 #include "common/Color.h"
 #include "common/debug.h"
@@ -26,6 +27,202 @@
 
 namespace rx
 {
+
+namespace
+{
+
+using DoubleRectangle = gl::RectangleImpl<double>;
+
+int64_t FloorDivide(int64_t numerator, int64_t denominator)
+{
+    ASSERT(denominator > 0);
+    const int64_t quotient = numerator / denominator;
+    return quotient * denominator > numerator ? quotient - 1 : quotient;
+}
+
+int64_t CeilDivide(int64_t numerator, int64_t denominator)
+{
+    return -FloorDivide(-numerator, denominator);
+}
+
+// Computes, in one axis, the GL window coordinates [*beginOut, *endOut) of the pixels that a blit
+// writes: the pixels in the destination rectangle and the draw framebuffer whose sample point,
+// srcStart + (g + 0.5 - dstStart) * srcExtent / dstExtent, is inside the read framebuffer, as
+// WebGL 2.0 requires. Returns false if the computation overflows, which only rectangles with
+// coordinates near the limits of GLint can make it do.
+bool GetBlitWrittenRange(int srcStart,
+                         int srcExtent,
+                         int srcSize,
+                         int dstStart,
+                         int dstExtent,
+                         int dstSize,
+                         int *beginOut,
+                         int *endOut)
+{
+    ASSERT(srcExtent != 0 && dstExtent != 0);
+
+    // The sample point of pixel g is (a + g * b) / denominator, which is inside the read
+    // framebuffer when 0 <= a + g * b < limit.
+    angle::CheckedNumeric<int64_t> a =
+        angle::CheckedNumeric<int64_t>(2) * srcStart * dstExtent +
+        (angle::CheckedNumeric<int64_t>(1) - angle::CheckedNumeric<int64_t>(2) * dstStart) *
+            srcExtent;
+    angle::CheckedNumeric<int64_t> b           = angle::CheckedNumeric<int64_t>(2) * srcExtent;
+    angle::CheckedNumeric<int64_t> denominator = angle::CheckedNumeric<int64_t>(2) * dstExtent;
+    if (dstExtent < 0)
+    {
+        a           = -a;
+        b           = -b;
+        denominator = -denominator;
+    }
+    const angle::CheckedNumeric<int64_t> limit = denominator * srcSize;
+    int64_t aValue, bValue, limitValue;
+    if (!a.AssignIfValid(&aValue) || !b.AssignIfValid(&bValue) ||
+        !limit.AssignIfValid(&limitValue) || !(limit - a).IsValid() || !(a - limit).IsValid())
+    {
+        return false;
+    }
+
+    int64_t begin = std::max<int64_t>(std::min(dstStart, dstStart + dstExtent), 0);
+    int64_t end   = std::min<int64_t>(std::max(dstStart, dstStart + dstExtent), dstSize);
+    if (bValue > 0)
+    {
+        begin = std::max(begin, CeilDivide(-aValue, bValue));
+        end   = std::min(end, CeilDivide(limitValue - aValue, bValue));
+    }
+    else
+    {
+        begin = std::max(begin, FloorDivide(aValue - limitValue, -bValue) + 1);
+        end   = std::min(end, FloorDivide(aValue, -bValue) + 1);
+    }
+    *beginOut = static_cast<int>(begin);
+    *endOut   = static_cast<int>(std::max(begin, end));
+    return true;
+}
+
+int32_t SaturateToInt32(int64_t value)
+{
+    return static_cast<int32_t>(std::clamp<int64_t>(value, std::numeric_limits<int32_t>::min(),
+                                                    std::numeric_limits<int32_t>::max()));
+}
+
+// GL_NEAREST takes, for the destination pixel center g + 0.5 in GL window coordinates, the source
+// texel floor(srcStart + (g + 0.5 - dstStart) * srcExtent / dstExtent), where the starts and the
+// signed extents are those of the blit call. Computes that in integers, in one axis, for the
+// destination texels from dstOrigin on. Texel j of a flipped subresource is GL's size - 1 - j.
+webgpu::UtilsWgpu::BlitParams::NearestAxis GetNearestAxis(int srcStart,
+                                                          int srcExtent,
+                                                          int dstStart,
+                                                          int dstExtent,
+                                                          bool srcFlip,
+                                                          int srcSize,
+                                                          bool dstFlip,
+                                                          int dstSize,
+                                                          int dstOrigin)
+{
+    webgpu::UtilsWgpu::BlitParams::NearestAxis axis;
+    axis.dstOrigin = dstOrigin;
+    axis.srcBase   = srcFlip ? srcSize - 1 : 0;
+    axis.srcSign   = srcFlip ? -1 : 1;
+
+    // The source coordinate of GL pixel g is numerator(g) / denominator. The GL pixel of
+    // destination texel dstOrigin + m is g0 + m * gStep.
+    const int64_t g0    = dstFlip ? dstSize - 1 - int64_t(dstOrigin) : dstOrigin;
+    const int64_t gStep = dstFlip ? -1 : 1;
+    int64_t denominator = 2 * int64_t(dstExtent);
+    int64_t numerator0  = 2 * int64_t(srcStart) * dstExtent +
+                         (2 * g0 + 1 - 2 * int64_t(dstStart)) * int64_t(srcExtent);
+    int64_t step = 2 * gStep * int64_t(srcExtent);
+    if (denominator < 0)
+    {
+        denominator = -denominator;
+        numerator0  = -numerator0;
+        step        = -step;
+    }
+
+    const int64_t q0 = FloorDivide(numerator0, denominator);
+    const int64_t a  = FloorDivide(step, denominator);
+    int64_t r0       = numerator0 - q0 * denominator;
+    int64_t b        = step - a * denominator;
+
+    // Keep r0 + m * b in 32 bits for any destination size. The mapping is approximate, off by up to
+    // about a texel, only for destination extents of more than 32768 pixels, more than twice the
+    // largest framebuffer.
+    constexpr int64_t kMaxDenominator = int64_t(1) << 16;
+    if (denominator > kMaxDenominator)
+    {
+        const int64_t divisor = (denominator + kMaxDenominator - 1) / kMaxDenominator;
+        r0 /= divisor;
+        b /= divisor;
+        denominator = (denominator + divisor - 1) / divisor;
+    }
+
+    axis.q0          = SaturateToInt32(q0);
+    axis.a           = SaturateToInt32(a);
+    axis.r0          = static_cast<int32_t>(r0);
+    axis.b           = static_cast<int32_t>(b);
+    axis.denominator = static_cast<int32_t>(denominator);
+    return axis;
+}
+
+// Converts a blit from GL window coordinates to texels of the source and destination
+// subresources, which have row 0 first. A framebuffer with flipY has GL's row 0 last.
+webgpu::UtilsWgpu::BlitParams GetBlitParams(const gl::Rectangle &dstArea,
+                                            const gl::Rectangle &dstScissor,
+                                            const DoubleRectangle &srcArea,
+                                            const gl::Rectangle &callSrcArea,
+                                            const gl::Rectangle &callDstArea,
+                                            bool srcFlipY,
+                                            const WGPUExtent3D &srcSize,
+                                            bool dstFlipY,
+                                            const WGPUExtent3D &dstSize,
+                                            GLenum filter)
+{
+    webgpu::UtilsWgpu::BlitParams params;
+    params.dstArea    = dstArea;
+    params.dstScissor = dstScissor;
+    params.dstSize    = dstSize;
+    params.filter     = filter;
+
+    double srcY0 = srcArea.y0();
+    double srcY1 = srcArea.y1();
+    if (srcFlipY)
+    {
+        srcY0 = srcSize.height - srcY0;
+        srcY1 = srcSize.height - srcY1;
+    }
+    if (dstFlipY)
+    {
+        const int dstHeight = static_cast<int>(dstSize.height);
+        params.dstArea.y    = dstHeight - dstArea.y1();
+        params.dstScissor.y = dstHeight - dstScissor.y1();
+        // The first destination row in texels is the last one in GL.
+        std::swap(srcY0, srcY1);
+    }
+    params.srcArea = gl::RectangleImpl<float>(
+        static_cast<float>(srcArea.x), static_cast<float>(srcY0), static_cast<float>(srcArea.width),
+        static_cast<float>(srcY1 - srcY0));
+
+    params.nearestX =
+        GetNearestAxis(callSrcArea.x, callSrcArea.width, callDstArea.x, callDstArea.width, false,
+                       srcSize.width, false, dstSize.width, params.dstArea.x);
+    params.nearestY =
+        GetNearestAxis(callSrcArea.y, callSrcArea.height, callDstArea.y, callDstArea.height,
+                       srcFlipY, srcSize.height, dstFlipY, dstSize.height, params.dstArea.y);
+    return params;
+}
+
+// Whether a blit maps each destination texel to the source texel at the same offset, so that it
+// can be a copy.
+bool IsBlitUnscaledAndUnflipped(const webgpu::UtilsWgpu::BlitParams &params)
+{
+    return params.srcArea.width == params.dstArea.width &&
+           params.srcArea.height == params.dstArea.height &&
+           params.srcArea.x == std::floor(params.srcArea.x) &&
+           params.srcArea.y == std::floor(params.srcArea.y);
+}
+
+}  // namespace
 
 FramebufferWgpu::FramebufferWgpu(const gl::FramebufferState &state) : FramebufferImpl(state)
 {
@@ -394,20 +591,59 @@ angle::Result FramebufferWgpu::blit(const gl::Context *context,
     bool blitDepth           = IsMaskFlagSet(mask, static_cast<GLbitfield>(GL_DEPTH_BUFFER_BIT));
     bool blitStencil         = IsMaskFlagSet(mask, static_cast<GLbitfield>(GL_STENCIL_BUFFER_BIT));
 
-    const gl::Framebuffer *readFBO = context->getState().getReadFramebuffer();
-    FramebufferWgpu *readFBOWgpu   = GetImplAs<FramebufferWgpu>(readFBO);
-    bool srcFlipY                  = readFBOWgpu->flipY();
-    bool dstFlipY                  = flipY();
-
-    const gl::Rectangle *scissor = nullptr;
-    if (context->getState().isScissorTestEnabled())
-    {
-        scissor = &context->getState().getScissor();
-    }
+    const gl::State &glState               = context->getState();
+    const gl::Framebuffer *readFramebuffer = glState.getReadFramebuffer();
+    FramebufferWgpu *readFBOWgpu           = GetImplAs<FramebufferWgpu>(readFramebuffer);
+    bool srcFlipY                          = readFBOWgpu->flipY();
 
     // Flush any deferred clears on the read and draw framebuffers.
     ANGLE_TRY(readFBOWgpu->flushDeferredClears(contextWgpu));
     ANGLE_TRY(flushDeferredClears(contextWgpu));
+
+    if (sourceArea.width == 0 || sourceArea.height == 0 || destArea.width == 0 ||
+        destArea.height == 0)
+    {
+        return angle::Result::Continue;
+    }
+
+    // Destination pixels whose source pixel is outside the read framebuffer are not written, as
+    // WebGL 2.0 requires. Find the written pixels exactly, and the source rectangle that maps to
+    // them, which is reversed where the blit flips, so that the destination isn't.
+    const gl::Extents srcExtents = readFramebuffer->getState().getExtents();
+    const gl::Extents dstExtents = mState.getExtents();
+    int dstX0, dstX1, dstY0, dstY1;
+    if (!GetBlitWrittenRange(sourceArea.x, sourceArea.width, srcExtents.width, destArea.x,
+                             destArea.width, dstExtents.width, &dstX0, &dstX1) ||
+        !GetBlitWrittenRange(sourceArea.y, sourceArea.height, srcExtents.height, destArea.y,
+                             destArea.height, dstExtents.height, &dstY0, &dstY1) ||
+        dstX0 == dstX1 || dstY0 == dstY1)
+    {
+        return angle::Result::Continue;
+    }
+    auto sourceEdge = [](int dstEdge, int srcStart, int srcExtent, int dstStart, int dstExtent) {
+        return srcStart + (static_cast<double>(dstEdge) - dstStart) * srcExtent / dstExtent;
+    };
+    const double srcX0 =
+        sourceEdge(dstX0, sourceArea.x, sourceArea.width, destArea.x, destArea.width);
+    const double srcX1 =
+        sourceEdge(dstX1, sourceArea.x, sourceArea.width, destArea.x, destArea.width);
+    const double srcY0 =
+        sourceEdge(dstY0, sourceArea.y, sourceArea.height, destArea.y, destArea.height);
+    const double srcY1 =
+        sourceEdge(dstY1, sourceArea.y, sourceArea.height, destArea.y, destArea.height);
+
+    BlitGeometry geometry;
+    geometry.callSrcArea = sourceArea;
+    geometry.callDstArea = destArea;
+    geometry.dstArea     = gl::Rectangle(dstX0, dstY0, dstX1 - dstX0, dstY1 - dstY0);
+    geometry.srcArea     = DoubleRectangle(srcX0, srcY0, srcX1 - srcX0, srcY1 - srcY0);
+
+    const gl::Rectangle &scissor =
+        glState.isScissorTestEnabled() ? glState.getScissor() : geometry.dstArea;
+    if (!gl::ClipRectangle(geometry.dstArea, scissor, &geometry.dstScissor))
+    {
+        return angle::Result::Continue;
+    }
 
     if (blitColor)
     {
@@ -421,22 +657,14 @@ angle::Result FramebufferWgpu::blit(const gl::Context *context,
                 mRenderTargetCache.getColorDraw(mState, drawBufferIdx);
             ASSERT(drawRenderTarget);
 
-            if (formatsAndSizesMatchForDirectCopy(context, readFBOWgpu, readRenderTarget,
-                                                  drawRenderTarget, sourceArea, destArea))
-            {
-                ANGLE_TRY(blitWithDirectCopy(contextWgpu, readRenderTarget, drawRenderTarget,
-                                             sourceArea, destArea, srcFlipY, dstFlipY,
-                                             WGPUTextureAspect_All));
-            }
-            else
-            {
-                ANGLE_TRY(blitWithShader(context, readRenderTarget, drawRenderTarget, sourceArea,
-                                         destArea, filter, srcFlipY, dstFlipY,
-                                         WGPUTextureAspect_All, scissor));
-            }
+            ANGLE_TRY(blitColorAttachment(context, geometry, readRenderTarget, srcFlipY,
+                                          drawRenderTarget, filter));
         }
     }
 
+    // Depth and stencil are blitted only if both framebuffers have them.
+    blitDepth   = blitDepth && readFramebuffer->getState().hasDepth() && mState.hasDepth();
+    blitStencil = blitStencil && readFramebuffer->getState().hasStencil() && mState.hasStencil();
     if (blitDepth || blitStencil)
     {
         RenderTargetWgpu *readRT = readFBOWgpu->mRenderTargetCache.getDepthStencil();
@@ -444,30 +672,8 @@ angle::Result FramebufferWgpu::blit(const gl::Context *context,
 
         if (readRT && drawRT)
         {
-            WGPUTextureAspect aspect = WGPUTextureAspect_All;
-            if (blitDepth && blitStencil)
-            {
-                aspect = WGPUTextureAspect_All;
-            }
-            else if (blitDepth)
-            {
-                aspect = WGPUTextureAspect_DepthOnly;
-            }
-            else if (blitStencil)
-            {
-                aspect = WGPUTextureAspect_StencilOnly;
-            }
-
-            if (formatsAndSizesMatchForDirectCopy(context, readFBOWgpu, readRT, drawRT, sourceArea,
-                                                  destArea))
-            {
-                ANGLE_TRY(blitWithDirectCopy(contextWgpu, readRT, drawRT, sourceArea, destArea,
-                                             srcFlipY, dstFlipY, aspect));
-            }
-            else
-            {
-                UNIMPLEMENTED();
-            }
+            ANGLE_TRY(blitDepthStencilAttachment(context, geometry, readRT, srcFlipY, drawRT,
+                                                 blitDepth, blitStencil));
         }
     }
 
@@ -864,99 +1070,12 @@ gl::Rectangle FramebufferWgpu::getReadArea(const gl::Context *context,
     return flippedArea;
 }
 
-bool FramebufferWgpu::formatsAndSizesMatchForDirectCopy(const gl::Context *context,
-                                                        const FramebufferWgpu *readFramebuffer,
-                                                        RenderTargetWgpu *readRenderTarget,
-                                                        RenderTargetWgpu *drawRenderTarget,
-                                                        const gl::Rectangle &sourceArea,
-                                                        const gl::Rectangle &destArea) const
-{
-    bool isScissorEnabled = context->getState().isScissorTestEnabled();
-    bool scissorMatches = !isScissorEnabled || context->getState().getScissor().encloses(destArea);
-    bool geometryMatches =
-        sourceArea.width == destArea.width && sourceArea.height == destArea.height;
-    bool flipsMatch = readFramebuffer->flipY() == flipY();
-
-    webgpu::ImageHelper *srcImage = readRenderTarget->getImage();
-    webgpu::ImageHelper *dstImage = drawRenderTarget->getImage();
-
-    WGPUTextureFormat wgpuFormat = srcImage->toWgpuTextureFormat();
-    if (wgpuFormat == WGPUTextureFormat_Depth24Plus ||
-        wgpuFormat == WGPUTextureFormat_Depth24PlusStencil8)
-    {
-        return false;
-    }
-
-    bool formatsMatch      = srcImage->getActualFormatID() == dstImage->getActualFormatID();
-    bool srcIsMultisampled = srcImage->getSamples() > 1;
-
-    WGPUExtent3D srcLevelSize =
-        srcImage->getLevelSize(srcImage->toWgpuLevel(readRenderTarget->getGlLevel()));
-    WGPUExtent3D dstLevelSize =
-        dstImage->getLevelSize(dstImage->toWgpuLevel(drawRenderTarget->getGlLevel()));
-
-    auto isWithinBounds = [](const gl::Rectangle &rect, const WGPUExtent3D &size) {
-        return rect.x >= 0 && rect.y >= 0 && rect.width >= 0 && rect.height >= 0 &&
-               static_cast<uint32_t>(rect.x + rect.width) <= size.width &&
-               static_cast<uint32_t>(rect.y + rect.height) <= size.height;
-    };
-
-    bool boundsMatch =
-        isWithinBounds(sourceArea, srcLevelSize) && isWithinBounds(destArea, dstLevelSize);
-
-    return scissorMatches && geometryMatches && flipsMatch && formatsMatch && !srcIsMultisampled &&
-           boundsMatch;
-}
-
-angle::Result FramebufferWgpu::blitWithDirectCopy(ContextWgpu *contextWgpu,
-                                                  RenderTargetWgpu *readRenderTarget,
-                                                  RenderTargetWgpu *drawRenderTarget,
-                                                  const gl::Rectangle &sourceArea,
-                                                  const gl::Rectangle &destArea,
-                                                  bool srcFlipY,
-                                                  bool dstFlipY,
-                                                  WGPUTextureAspect aspect)
-{
-    webgpu::ImageHelper *srcImage;
-    webgpu::ImageHelper *dstImage;
-    WGPUExtent3D srcLevelSize;
-    WGPUExtent3D dstLevelSize;
-
-    ANGLE_TRY(getBlitImageAndSize(contextWgpu, readRenderTarget, &srcImage, &srcLevelSize));
-    ANGLE_TRY(getBlitImageAndSize(contextWgpu, drawRenderTarget, &dstImage, &dstLevelSize));
-
-    gl::Box sourceBox(sourceArea.x, sourceArea.y, 0, sourceArea.width, sourceArea.height, 1);
-    if (srcFlipY)
-    {
-        sourceBox.y = srcLevelSize.height - sourceArea.y - sourceArea.height;
-    }
-
-    gl::Offset dstOffset(destArea.x, destArea.y, 0);
-    if (dstFlipY)
-    {
-        dstOffset.y = dstLevelSize.height - destArea.y - destArea.height;
-    }
-    dstOffset.z = drawRenderTarget->getLayer();
-
-    gl::ImageIndex dstIndex = gl::ImageIndex::Make2D(drawRenderTarget->getGlLevel().get());
-
-    ANGLE_TRY(dstImage->CopyImage(contextWgpu, srcImage, dstIndex, dstOffset,
-                                  readRenderTarget->getGlLevel(), readRenderTarget->getLayer(),
-                                  sourceBox, aspect));
-
-    return angle::Result::Continue;
-}
-
-angle::Result FramebufferWgpu::blitWithShader(const gl::Context *context,
-                                              RenderTargetWgpu *readRenderTarget,
-                                              RenderTargetWgpu *drawRenderTarget,
-                                              const gl::Rectangle &sourceArea,
-                                              const gl::Rectangle &destArea,
-                                              GLenum filter,
-                                              bool srcFlipY,
-                                              bool dstFlipY,
-                                              WGPUTextureAspect aspect,
-                                              const gl::Rectangle *scissor)
+angle::Result FramebufferWgpu::blitColorAttachment(const gl::Context *context,
+                                                   const BlitGeometry &geometry,
+                                                   RenderTargetWgpu *readRenderTarget,
+                                                   bool srcFlipY,
+                                                   RenderTargetWgpu *drawRenderTarget,
+                                                   GLenum filter)
 {
     ContextWgpu *contextWgpu = GetImplAs<ContextWgpu>(context);
     webgpu::ImageHelper *srcImage;
@@ -966,6 +1085,24 @@ angle::Result FramebufferWgpu::blitWithShader(const gl::Context *context,
 
     ANGLE_TRY(getBlitImageAndSize(contextWgpu, readRenderTarget, &srcImage, &srcLevelSize));
     ANGLE_TRY(getBlitImageAndSize(contextWgpu, drawRenderTarget, &dstImage, &dstLevelSize));
+
+    const webgpu::UtilsWgpu::BlitParams params =
+        GetBlitParams(geometry.dstArea, geometry.dstScissor, geometry.srcArea, geometry.callSrcArea,
+                      geometry.callDstArea, srcFlipY, srcLevelSize, flipY(), dstLevelSize, filter);
+
+    // A copy can't convert between formats. Formats without alpha may be stored in a format with
+    // alpha, whose stored alpha must not be read, and in which an alpha of one must be stored, so
+    // a copy into such a format would carry the source's stored alpha.
+    const bool srcHasAlpha    = angle::Format::Get(srcImage->getIntendedFormatID()).alphaBits != 0;
+    const bool dstHasAlpha    = angle::Format::Get(dstImage->getIntendedFormatID()).alphaBits != 0;
+    const bool dstStoresAlpha = angle::Format::Get(dstImage->getActualFormatID()).alphaBits != 0;
+    if (srcImage->getActualFormatID() == dstImage->getActualFormatID() &&
+        (!dstStoresAlpha || (srcHasAlpha && dstHasAlpha)) && srcImage->getSamples() <= 1 &&
+        IsBlitUnscaledAndUnflipped(params))
+    {
+        return blitWithDirectCopy(contextWgpu, readRenderTarget, drawRenderTarget, params,
+                                  WGPUTextureAspect_All);
+    }
 
     webgpu::TextureViewHandle dstView;
     angle::FormatID dstViewFormatID = dstImage->getActualFormatID();
@@ -987,18 +1124,111 @@ angle::Result FramebufferWgpu::blitWithShader(const gl::Context *context,
             WGPUTextureAspect_All, WGPUTextureFormat_Undefined));
     }
 
-    const angle::Format &srcAngleFormat = angle::Format::Get(srcImage->getIntendedFormatID());
-
-    // Fallback to regular shader-based blit
     webgpu::TextureViewHandle srcView;
-    ANGLE_TRY(srcImage->createTextureViewSingleLevel(readRenderTarget->getGlLevel(),
-                                                     readRenderTarget->getLayer(), srcView, aspect,
-                                                     WGPUTextureFormat_Undefined));
+    ANGLE_TRY(srcImage->createTextureViewSingleLevel(
+        readRenderTarget->getGlLevel(), readRenderTarget->getLayer(), srcView,
+        WGPUTextureAspect_All, WGPUTextureFormat_Undefined));
 
-    ANGLE_TRY(contextWgpu->getUtils()->blit(
-        contextWgpu, srcView, dstView, sourceArea, destArea, srcLevelSize, dstLevelSize, filter,
-        srcFlipY, dstFlipY, srcImage->getSamples(), srcAngleFormat, dstImage->getIntendedFormatID(),
-        dstViewFormatID, scissor));
+    return contextWgpu->getUtils()->blitColor(
+        contextWgpu, params, srcView, srcImage->getSamples(), srcImage->getIntendedFormatID(),
+        srcImage->getActualFormatID(), dstView, dstImage->getIntendedFormatID(), dstViewFormatID);
+}
+
+angle::Result FramebufferWgpu::blitDepthStencilAttachment(const gl::Context *context,
+                                                          const BlitGeometry &geometry,
+                                                          RenderTargetWgpu *readRenderTarget,
+                                                          bool srcFlipY,
+                                                          RenderTargetWgpu *drawRenderTarget,
+                                                          bool blitDepth,
+                                                          bool blitStencil)
+{
+    ContextWgpu *contextWgpu = GetImplAs<ContextWgpu>(context);
+    webgpu::ImageHelper *srcImage;
+    webgpu::ImageHelper *dstImage;
+    WGPUExtent3D srcLevelSize;
+    WGPUExtent3D dstLevelSize;
+
+    ANGLE_TRY(getBlitImageAndSize(contextWgpu, readRenderTarget, &srcImage, &srcLevelSize));
+    ANGLE_TRY(getBlitImageAndSize(contextWgpu, drawRenderTarget, &dstImage, &dstLevelSize));
+
+    const webgpu::UtilsWgpu::BlitParams params = GetBlitParams(
+        geometry.dstArea, geometry.dstScissor, geometry.srcArea, geometry.callSrcArea,
+        geometry.callDstArea, srcFlipY, srcLevelSize, flipY(), dstLevelSize, GL_NEAREST);
+
+    // WebGPU copies depth and stencil only for whole subresources and all their aspects, and
+    // doesn't copy depth24plus.
+    const angle::Format &format        = angle::Format::Get(dstImage->getActualFormatID());
+    const WGPUTextureFormat wgpuFormat = dstImage->toWgpuTextureFormat();
+    const gl::Rectangle dstLevelArea(0, 0, dstLevelSize.width, dstLevelSize.height);
+    if (srcImage->getActualFormatID() == dstImage->getActualFormatID() &&
+        srcImage->getSamples() <= 1 && wgpuFormat != WGPUTextureFormat_Depth24Plus &&
+        wgpuFormat != WGPUTextureFormat_Depth24PlusStencil8 &&
+        (blitDepth || format.depthBits == 0) && (blitStencil || format.stencilBits == 0) &&
+        IsBlitUnscaledAndUnflipped(params) && params.dstScissor == dstLevelArea &&
+        params.srcArea.x == 0 && params.srcArea.y == 0 &&
+        srcLevelSize.width == dstLevelSize.width && srcLevelSize.height == dstLevelSize.height)
+    {
+        return blitWithDirectCopy(contextWgpu, readRenderTarget, drawRenderTarget, params,
+                                  WGPUTextureAspect_All);
+    }
+
+    // Not implemented: resolving multisampled depth and stencil, and blits within one image, which
+    // need a copy of the source, because a render pass can't sample its attachment.
+    const bool sameSubresource =
+        srcImage == dstImage &&
+        readRenderTarget->getLevelIndex() == drawRenderTarget->getLevelIndex() &&
+        readRenderTarget->getLayer() == drawRenderTarget->getLayer();
+    if (srcImage->getSamples() > 1 || sameSubresource)
+    {
+        UNIMPLEMENTED();
+        return angle::Result::Continue;
+    }
+
+    // Sample the aspects separately.
+    const angle::Format &srcFormat = angle::Format::Get(srcImage->getActualFormatID());
+    webgpu::TextureViewHandle srcDepthView;
+    webgpu::TextureViewHandle srcStencilView;
+    if (blitDepth)
+    {
+        ANGLE_TRY(srcImage->createTextureViewSingleLevel(
+            readRenderTarget->getGlLevel(), readRenderTarget->getLayer(), srcDepthView,
+            srcFormat.stencilBits > 0 ? WGPUTextureAspect_DepthOnly : WGPUTextureAspect_All,
+            WGPUTextureFormat_Undefined));
+    }
+    if (blitStencil)
+    {
+        ANGLE_TRY(srcImage->createTextureViewSingleLevel(
+            readRenderTarget->getGlLevel(), readRenderTarget->getLayer(), srcStencilView,
+            srcFormat.depthBits > 0 ? WGPUTextureAspect_StencilOnly : WGPUTextureAspect_All,
+            WGPUTextureFormat_Undefined));
+    }
+
+    return contextWgpu->getUtils()->blitDepthStencil(
+        contextWgpu, params, srcDepthView, srcStencilView, drawRenderTarget->getTextureView(),
+        dstImage->getActualFormatID());
+}
+
+angle::Result FramebufferWgpu::blitWithDirectCopy(ContextWgpu *contextWgpu,
+                                                  RenderTargetWgpu *readRenderTarget,
+                                                  RenderTargetWgpu *drawRenderTarget,
+                                                  const webgpu::UtilsWgpu::BlitParams &params,
+                                                  WGPUTextureAspect aspect)
+{
+    webgpu::ImageHelper *srcImage = readRenderTarget->getImage();
+    webgpu::ImageHelper *dstImage = drawRenderTarget->getImage();
+
+    // Copy the part of the destination inside the scissor.
+    const gl::Rectangle &dstScissor = params.dstScissor;
+    gl::Box sourceBox(static_cast<int>(params.srcArea.x) + dstScissor.x - params.dstArea.x,
+                      static_cast<int>(params.srcArea.y) + dstScissor.y - params.dstArea.y, 0,
+                      dstScissor.width, dstScissor.height, 1);
+    gl::Offset dstOffset(dstScissor.x, dstScissor.y, drawRenderTarget->getLayer());
+
+    gl::ImageIndex dstIndex = gl::ImageIndex::Make2D(drawRenderTarget->getGlLevel().get());
+
+    ANGLE_TRY(dstImage->CopyImage(contextWgpu, srcImage, dstIndex, dstOffset,
+                                  readRenderTarget->getGlLevel(), readRenderTarget->getLayer(),
+                                  sourceBox, aspect));
 
     return angle::Result::Continue;
 }
