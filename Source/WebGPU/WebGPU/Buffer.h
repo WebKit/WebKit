@@ -167,6 +167,7 @@ private:
     bool hasPendingRecordedIndexWrite() const;
     id<MTLBuffer> _Nullable snapshotRangeBeforeClear(Queue&, NSUInteger offset, NSUInteger size);
     void restoreSnapshotAfterCommit(CommandBuffer&, Queue&, id<MTLBuffer> _Nullable snapshot, NSUInteger offset);
+    void invalidateDrawIndexedCache(CommandEncoder* = nullptr);
 
     id<MTLBuffer> m_buffer { nil };
 
