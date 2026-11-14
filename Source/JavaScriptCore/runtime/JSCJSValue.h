@@ -1361,41 +1361,24 @@ ALWAYS_INLINE void clearEncodedJSValueConcurrent(EncodedJSValue& dest)
 
 #elif USE(JSVALUE32_64)
 
-inline JSValue JSValue::decodeConcurrent(const volatile EncodedJSValue *encodedJSValue)
+inline JSValue JSValue::decodeConcurrent(const volatile EncodedJSValue* encodedJSValue)
 {
-    for (;;) {
-        auto v = JSValue::decode(reinterpret_cast<const volatile std::atomic<EncodedJSValue>*>(encodedJSValue)->load());
-        if (v.tag() != InvalidTag)
-            return v;
-    }
+    // A volatile 64-bit access compiles to a single LDRD, which is single-copy atomic on ARM
+    // with LPAE
+    ASSERT(is8ByteAligned(const_cast<EncodedJSValue*>(encodedJSValue)));
+    return JSValue::decode(*encodedJSValue);
 }
 
 inline void updateEncodedJSValueConcurrent(EncodedJSValue& dest, EncodedJSValue value)
 {
-    auto destDesc = const_cast<volatile EncodedValueDescriptor*>(reinterpret_cast<EncodedValueDescriptor*>(&dest));
-
-    EncodedValueDescriptor desc;
-    memcpy(&desc, &value, sizeof(value));
-
-    auto destTag = const_cast<volatile int32_t*>(&destDesc->asBits.tag);
-    auto destPayload = const_cast<volatile int32_t*>(&destDesc->asBits.payload);
-
-    *destTag = JSValue::InvalidTag;
-    WTF::storeStoreFence();
-    *destPayload = desc.asBits.payload;
-    WTF::storeStoreFence();
-    *destTag = desc.asBits.tag;
+    ASSERT(is8ByteAligned(&dest));
+    *const_cast<volatile EncodedJSValue*>(&dest) = value;
 }
 
 inline void clearEncodedJSValueConcurrent(EncodedJSValue& dest)
 {
-    auto destDesc = const_cast<volatile EncodedValueDescriptor*>(reinterpret_cast<EncodedValueDescriptor*>(&dest));
-    auto destTag = const_cast<volatile int32_t*>(&destDesc->asBits.tag);
-    auto destPayload = const_cast<volatile int32_t*>(&destDesc->asBits.payload);
-
-    *destTag = JSValue::EmptyValueTag;
-    WTF::storeStoreFence();
-    *destPayload = 0;
+    ASSERT(is8ByteAligned(&dest));
+    *const_cast<volatile EncodedJSValue*>(&dest) = JSValue::encode(JSValue());
 }
 
 #else

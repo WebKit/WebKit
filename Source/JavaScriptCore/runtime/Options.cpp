@@ -916,6 +916,11 @@ void Options::notifyOptionsChanged()
     if (Options::useProfiler())
         Options::useConcurrentJIT() = false;
 
+#if USE(JSVALUE32_64)
+    if (!isARMv7_LPAE())
+        Options::useConcurrentJIT() = false;
+#endif
+
     if (Options::alwaysUseShadowChicken())
         Options::maximumInliningDepth() = 1;
         
