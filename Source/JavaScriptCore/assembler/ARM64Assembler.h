@@ -37,6 +37,7 @@
 #include <JavaScriptCore/SIMDInfo.h>
 #include <limits.h>
 #include <wtf/Assertions.h>
+#include <wtf/Borrow.h>
 #include <wtf/Vector.h>
 #include <stdint.h>
 
@@ -4168,7 +4169,50 @@ public:
 
     Vector<LinkRecord, 0, UnsafeVectorOverflow>& jumpsToLink()
     {
-        std::ranges::sort(m_jumpsToLink, { }, &LinkRecord::from);
+        auto byFrom = [](const LinkRecord& a, const LinkRecord& b) {
+            return a.from() < b.from();
+        };
+        if (std::ranges::is_sorted(m_jumpsToLink, byFrom))
+            return m_jumpsToLink;
+
+        unsigned size = m_jumpsToLink.size();
+        if (size <= 96) {
+            std::ranges::sort(m_jumpsToLink, byFrom);
+            return m_jumpsToLink;
+        }
+
+        // Jumps linked late, such as YarrJIT backtracking, leave a few records far out of place, where
+        // comparison sorts do poorly. Radix sorting packed (offset, index) keys and permuting the records once
+        // is cheaper for anything but small counts.
+        Vector<uint64_t> buffer(static_cast<size_t>(size) * 2);
+        Borrow borrowedBuffer = buffer;
+        auto keys = borrowedBuffer->mutableSpan().first(size);
+        auto scratch = borrowedBuffer->mutableSpan().subspan(size);
+        uint32_t maxFrom = 0;
+        for (unsigned index = 0; index < size; ++index) {
+            uint64_t from = m_jumpsToLink[index].from();
+            ASSERT(from <= std::numeric_limits<uint32_t>::max());
+            maxFrom = std::max(maxFrom, static_cast<uint32_t>(from));
+            keys[index] = (from << 32) | index;
+        }
+        for (unsigned shift = 32; shift < 64 && (static_cast<uint64_t>(maxFrom) << 32) >> shift; shift += 8) {
+            std::array<unsigned, 257> starts { };
+            for (uint64_t key : keys)
+                ++starts[((key >> shift) & 0xff) + 1];
+            for (unsigned digit = 0; digit < 256; ++digit)
+                starts[digit + 1] += starts[digit];
+            for (uint64_t key : keys)
+                scratch[starts[(key >> shift) & 0xff]++] = key;
+            std::swap(keys, scratch);
+        }
+
+        auto sorted = [&] {
+            Borrow jumpsToLink = m_jumpsToLink;
+            return WTF::map<0, UnsafeVectorOverflow>(keys, [&](uint64_t key) {
+                return jumpsToLink[static_cast<uint32_t>(key)];
+            });
+        }();
+        m_jumpsToLink = WTF::move(sorted);
         return m_jumpsToLink;
     }
 
