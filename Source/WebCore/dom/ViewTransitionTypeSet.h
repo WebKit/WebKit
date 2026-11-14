@@ -27,7 +27,7 @@
 
 #include "Element.h"
 #include "JSDOMSetLike.h"
-#include <wtf/ListHashSet.h>
+#include <wtf/OrderedHashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/AtomString.h>
@@ -54,7 +54,7 @@ public:
 private:
     ViewTransitionTypeSet(Document&, Vector<AtomString>&&);
 
-    ListHashSet<AtomString> m_typeSet;
+    OrderedHashSet<AtomString> m_typeSet;
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
 };
 
