@@ -177,7 +177,7 @@ public:
         return m_inline.hashSet.size();
     }
 
-    class iterator {
+    class WTF_VIEW_TYPE iterator {
         WTF_DEPRECATED_MAKE_FAST_ALLOCATED(iterator);
     public:
         iterator(BitVector::iterator it, IndexType shift)

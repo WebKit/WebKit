@@ -40,7 +40,7 @@ public:
     using SetType = HashSet<KeyType>;
     using AddResult = typename SetType::AddResult;
 
-    class WeakHashSetConstIterator {
+    class WTF_VIEW_TYPE WeakHashSetConstIterator {
     public:
         using iterator_category = std::forward_iterator_tag;
         using value_type = T;
@@ -94,26 +94,26 @@ public:
 
     WeakHashSet() = default;
 
-    const_iterator begin() const { return WeakHashSetConstIterator(*this, m_set.begin()); }
-    const_iterator end() const { return WeakHashSetConstIterator(*this, m_set.end()); }
+    const_iterator begin() const LIFETIME_BOUND { return WeakHashSetConstIterator(*this, m_set.begin()); }
+    const_iterator end() const LIFETIME_BOUND { return WeakHashSetConstIterator(*this, m_set.end()); }
 
-    const_iterator find(const T* value) const
+    const_iterator find(const T* value) const LIFETIME_BOUND
     {
         increaseOperationCountSinceLastCleanup();
         return WeakHashSetConstIterator(*this, m_set.find(value));
     }
 
-    const_iterator find(const T& value) const { return find(&value); }
+    const_iterator find(const T& value) const LIFETIME_BOUND { return find(&value); }
 
-    AddResult add(const T* value)
+    AddResult add(const T* value) LIFETIME_BOUND
     {
         amortizedCleanupIfNeeded();
         return m_set.add(value);
     }
 
-    AddResult add(const T& value) { return add(&value); }
+    AddResult add(const T& value) LIFETIME_BOUND { return add(&value); }
 
-    AddResult add(WeakRef<T>&& value)
+    AddResult add(WeakRef<T>&& value) LIFETIME_BOUND
     {
         amortizedCleanupIfNeeded();
         return m_set.add(WTF::move(value));

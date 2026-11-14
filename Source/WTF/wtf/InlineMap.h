@@ -39,7 +39,7 @@
 
 namespace WTF {
 
-template<typename IteratorType> struct InlineMapAddResult {
+template<typename IteratorType> struct WTF_VIEW_TYPE InlineMapAddResult {
     IteratorType iterator;
     bool isNewEntry;
 };
@@ -147,7 +147,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
     class ValuesIterator;
 
-    class iterator {
+    class WTF_VIEW_TYPE iterator {
         friend class InlineMap;
         friend class ValuesIterator;
     public:
@@ -185,7 +185,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         Entry* m_end { nullptr };
     };
 
-    class ValuesIterator {
+    class WTF_VIEW_TYPE ValuesIterator {
     public:
         ValuesIterator() = default;
         ValuesIterator(const iterator& it)
@@ -207,7 +207,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         iterator m_impl;
     };
 
-    struct ValuesRange {
+    struct WTF_VIEW_TYPE ValuesRange {
         ValuesIterator m_begin;
         ValuesIterator m_end;
 
