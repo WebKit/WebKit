@@ -36,25 +36,15 @@
 // WebKit reaches this class through WebKitSwiftSoftLink.h. It cannot be built into WebKit.framework:
 // importing SwiftUI and CompositorServices together links the _CompositorServices_SwiftUI overlay,
 // which depends on WebKit itself.
-//
-// A build that uses the public SDK compiles this file but never presents the space: the layer
-// configuration below needs CompositorServices SPI that only the internal SDK exposes to Swift, so
-// CompositorCoordinator offers no WebXR device there.
 
 #if ENABLE_WEBXR && WTF_PLATFORM_MAC
 
 import AppKit
 import ARKit
+import CompositorServices
 import Metal
 import SwiftUI
 import os
-
-#if canImport(CompositorServices_Private)
-import CompositorServices_Private
-@_spi(Private) import CompositorServices
-#else
-import CompositorServices
-#endif
 
 @objc
 @implementation
@@ -73,6 +63,9 @@ extension WKWebXRImmersiveSpaceHost {
     /// WKWebXRLayerConfiguration when the scene builds its layer.
     @nonobjc
     fileprivate static var requestedFormats = RequestedFormats()
+
+    @nonobjc
+    fileprivate static var layerConfigurator: ((__cp_layer_renderer_configuration_t) -> Void)?
 
     @nonobjc
     private static var isImmersiveSpacePresented = false
@@ -103,6 +96,7 @@ extension WKWebXRImmersiveSpaceHost {
         colorFormat: MTLPixelFormat,
         depthFormat: MTLPixelFormat,
         usesWebGPU: Bool,
+        configureLayer: @escaping (__cp_layer_renderer_configuration_t) -> Void,
         completionHandler: @escaping (Any?, Any?) -> Void
     ) {
         guard pendingCompletionHandler == nil else {
@@ -120,6 +114,7 @@ extension WKWebXRImmersiveSpaceHost {
                     colorFormat: colorFormat,
                     depthFormat: depthFormat,
                     usesWebGPU: usesWebGPU,
+                    configureLayer: configureLayer,
                     completionHandler: completionHandler
                 )
             }
@@ -138,6 +133,7 @@ extension WKWebXRImmersiveSpaceHost {
         }
 
         requestedFormats = RequestedFormats(colorFormat: colorFormat, depthFormat: depthFormat, usesWebGPU: usesWebGPU)
+        layerConfigurator = configureLayer
         pendingCompletionHandler = completionHandler
 
         Task { @MainActor in
@@ -224,16 +220,9 @@ private struct WKWebXRLayerConfiguration: CompositorLayerConfiguration {
             configuration.depthFormat = .depth32Float_stencil8
         }
 
-        #if canImport(CompositorServices_Private)
-        if !formats.usesWebGPU {
-            // WebGL renders bottom-up.
-            cp_layer_renderer_configuration_set_contents_inverted_vertically(configuration.c_configuration, true)
-        }
-
-        // CompositorCoordinator reads the layer's completion event as an MTLSharedEvent so it
-        // can hand a port to the web process. Without this the event is process-local.
-        cp_layer_renderer_configuration_set_use_shared_events(configuration.c_configuration, true)
-        #endif
+        let layerConfiguration = configuration as __CP_OBJECT_cp_layer_renderer_configuration
+        WKWebXRImmersiveSpaceHost.layerConfigurator?(layerConfiguration)
+        configuration = layerConfiguration as LayerRenderer.Configuration
     }
 }
 

@@ -2582,6 +2582,7 @@
 		E4E57F6B21A83B1200345F3C /* RemoteLayerTreeNode.h in Headers */ = {isa = PBXBuildFile; fileRef = E4E57F6A21A83B1100345F3C /* RemoteLayerTreeNode.h */; };
 		E502E4F82D4810EA00C3D56D /* WKMaterialHostingSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = E502E4F72D4810EA00C3D56D /* WKMaterialHostingSupport.swift */; };
 		F9E52DA831AFA8F48259C878 /* WKWebXRImmersiveSpaceHost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 709078092671295C4266FA96 /* WKWebXRImmersiveSpaceHost.swift */; };
+		BCECECA37C51FC41C8F84A2C /* WKWebXRImmersiveSpaceHostVision.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAD7B44EC229BC2AD1A7C96D /* WKWebXRImmersiveSpaceHostVision.swift */; };
 		A360F9B3BF963005048C86A7 /* WKWebXRImmersiveSpaceHost.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C0763E6FA2D53E8AC97B6BA /* WKWebXRImmersiveSpaceHost.h */; };
 		48F50374C6371135C084F91E /* WKWebXRImmersiveSpaceHost.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C0763E6FA2D53E8AC97B6BA /* WKWebXRImmersiveSpaceHost.h */; };
 		E502E4FA2D48113B00C3D56D /* WKMaterialHostingSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = E502E4F92D48110200C3D56D /* WKMaterialHostingSupport.h */; };
@@ -8971,6 +8972,7 @@
 		E502E4F72D4810EA00C3D56D /* WKMaterialHostingSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKMaterialHostingSupport.swift; sourceTree = "<group>"; };
 		1C0763E6FA2D53E8AC97B6BA /* WKWebXRImmersiveSpaceHost.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKWebXRImmersiveSpaceHost.h; sourceTree = "<group>"; };
 		709078092671295C4266FA96 /* WKWebXRImmersiveSpaceHost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKWebXRImmersiveSpaceHost.swift; sourceTree = "<group>"; };
+		EAD7B44EC229BC2AD1A7C96D /* WKWebXRImmersiveSpaceHostVision.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKWebXRImmersiveSpaceHostVision.swift; sourceTree = "<group>"; };
 		E502E4F92D48110200C3D56D /* WKMaterialHostingSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKMaterialHostingSupport.h; sourceTree = "<group>"; };
 		E50620912542102000C43091 /* ContactsUISPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContactsUISPI.h; sourceTree = "<group>"; };
 		E50F80F42BD648620079DBDE /* HardwareKeyboardState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = HardwareKeyboardState.cpp; path = ios/HardwareKeyboardState.cpp; sourceTree = "<group>"; };
@@ -14128,6 +14130,7 @@
 			children = (
 				1C0763E6FA2D53E8AC97B6BA /* WKWebXRImmersiveSpaceHost.h */,
 				709078092671295C4266FA96 /* WKWebXRImmersiveSpaceHost.swift */,
+				EAD7B44EC229BC2AD1A7C96D /* WKWebXRImmersiveSpaceHostVision.swift */,
 			);
 			path = WebXR;
 			sourceTree = "<group>";
@@ -22989,6 +22992,7 @@
 				EEA52F492D7055A700D578B5 /* WKStageMode.swift in Sources */,
 				440DB5B72C1914DC0021639B /* WKTextAnimationManagerIOS.swift in Sources */,
 				F9E52DA831AFA8F48259C878 /* WKWebXRImmersiveSpaceHost.swift in Sources */,
+				BCECECA37C51FC41C8F84A2C /* WKWebXRImmersiveSpaceHostVision.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

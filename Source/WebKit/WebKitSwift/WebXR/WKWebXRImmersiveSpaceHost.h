@@ -27,7 +27,13 @@
 #import <Metal/Metal.h>
 #import <wtf/Platform.h>
 
-#if ENABLE(WEBXR) && PLATFORM(MAC)
+#if ENABLE(WEBXR) && (PLATFORM(MAC) || PLATFORM(VISION))
+
+#import <CompositorServices/CompositorServices.h>
+
+#if PLATFORM(VISION)
+@class UIViewController;
+#endif
 
 NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
@@ -38,9 +44,13 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 NS_SWIFT_UI_ACTOR
 @interface WKWebXRImmersiveSpaceHost : NSObject
 
+#if PLATFORM(MAC)
 // Presents the immersive space and reports back the CompositorServices layer renderer and the ARKit
 // device that back the session, or nils if the space cannot be presented.
-+ (void)startSessionWithColorFormat:(MTLPixelFormat)colorFormat depthFormat:(MTLPixelFormat)depthFormat usesWebGPU:(BOOL)usesWebGPU completionHandler:(void (^)(id _Nullable layerRenderer, id _Nullable remoteDevice))completionHandler NS_SWIFT_NAME(startSession(colorFormat:depthFormat:usesWebGPU:completionHandler:)) NS_SWIFT_DISABLE_ASYNC;
++ (void)startSessionWithColorFormat:(MTLPixelFormat)colorFormat depthFormat:(MTLPixelFormat)depthFormat usesWebGPU:(BOOL)usesWebGPU configureLayer:(void (^)(cp_layer_renderer_configuration_t configuration))configureLayer completionHandler:(void (^)(id _Nullable layerRenderer, id _Nullable remoteDevice))completionHandler NS_SWIFT_NAME(startSession(colorFormat:depthFormat:usesWebGPU:configureLayer:completionHandler:)) NS_SWIFT_DISABLE_ASYNC;
+#else
++ (void)startSessionWithColorFormat:(MTLPixelFormat)colorFormat depthFormat:(MTLPixelFormat)depthFormat usesWebGPU:(BOOL)usesWebGPU configureLayer:(void (^)(cp_layer_renderer_configuration_t configuration))configureLayer completionHandler:(void (^)(cp_layer_renderer_t _Nullable layerRenderer, UIViewController * _Nullable viewController))completionHandler NS_SWIFT_NAME(startSession(colorFormat:depthFormat:usesWebGPU:configureLayer:completionHandler:));
+#endif
 
 // Tears the immersive space down. Safe to call when nothing is presented.
 + (void)endSession;
@@ -49,4 +59,4 @@ NS_SWIFT_UI_ACTOR
 
 NS_HEADER_AUDIT_END(nullability, sendability)
 
-#endif // ENABLE(WEBXR) && PLATFORM(MAC)
+#endif // ENABLE(WEBXR) && (PLATFORM(MAC) || PLATFORM(VISION))

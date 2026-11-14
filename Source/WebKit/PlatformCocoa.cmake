@@ -857,6 +857,7 @@ set(WebKitSwift_SOURCES
     ${_wks_dir}/StageMode/WKStageMode.swift
     ${_wks_dir}/TextAnimation/WKTextAnimationManagerIOS.swift
     ${_wks_dir}/WebXR/WKWebXRImmersiveSpaceHost.swift
+    ${_wks_dir}/WebXR/WKWebXRImmersiveSpaceHostVision.swift
     ${_wks_dir}/WritingTools/IntelligenceTextEffectChunk.swift
     ${_wks_dir}/WritingTools/IntelligenceTextEffectViewManager.swift
     ${_wks_dir}/WritingTools/PlatformIntelligenceTextEffectView.swift

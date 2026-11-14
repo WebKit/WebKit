@@ -2283,6 +2283,16 @@ static MTLPixelFormat toMetalFormat(std::optional<::WebGPU::TextureFormat> optio
     return optionalFormat ? toMetalFormat(*optionalFormat) : MTLPixelFormatInvalid;
 }
 
+bool UIDelegate::UIClient::canRequestPermissionOnXRSessionFeatures() const
+{
+    return m_uiDelegate && m_uiDelegate->m_delegateMethods.webViewRequestPermissionForXRSessionOriginModeAndFeaturesWithCompletionHandler;
+}
+
+bool UIDelegate::UIClient::canStartXRSession() const
+{
+    return m_uiDelegate && m_uiDelegate->m_delegateMethods.webViewStartXRSessionWithCompletionHandler;
+}
+
 void UIDelegate::UIClient::startXRSession(WebPageProxy&, const PlatformXR::Device::FeatureList& sessionFeatures, std::optional<WebCore::XRCanvasConfiguration>&& init, CompletionHandler<void(RetainPtr<id>, PlatformViewController *)>&& completionHandler)
 {
     RefPtr uiDelegate = m_uiDelegate.get();

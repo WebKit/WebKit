@@ -247,6 +247,8 @@ public:
     virtual void supportedXRSessionFeatures(PlatformXR::Device::FeatureList& vrFeatures, PlatformXR::Device::FeatureList& arFeatures) { }
 
 #if PLATFORM(IOS_FAMILY)
+    virtual bool canStartXRSession() const { return false; }
+    virtual bool canRequestPermissionOnXRSessionFeatures() const { return false; }
     virtual void startXRSession(WebKit::WebPageProxy&, const PlatformXR::Device::FeatureList&, std::optional<WebCore::XRCanvasConfiguration>&&, CompletionHandler<void(RetainPtr<id>, PlatformViewController *)>&& completionHandler) { completionHandler(nil, nil); }
     virtual void endXRSession(WebKit::WebPageProxy&, WebKit::PlatformXRSessionEndReason) { }
 #elif USE(OPENXR)
