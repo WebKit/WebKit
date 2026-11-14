@@ -585,6 +585,7 @@ public:
     
     bool allowTestOnlyIPC() const { return m_allowTestOnlyIPC; }
     void setAllowTestOnlyIPC(bool allowTestOnlyIPC) { m_allowTestOnlyIPC = allowTestOnlyIPC; }
+    bool isAllowedToUseTestOnlyBackForwardListAccess() const;
 
 #if ENABLE(MEDIA_STREAM)
     static void muteCaptureInPagesExcept(WebCore::PageIdentifier);

@@ -3289,12 +3289,17 @@ String WebPage::dumpHistoryForTesting(const String& directory)
     int begin = -static_cast<int>(list->backCount());
     int end = static_cast<int>(list->forwardCount());
 
-    if (RefPtr item = list->itemAtIndex(begin); item && item->url() == aboutBlankURL())
+    RefPtr proxy = dynamicDowncast<WebBackForwardListProxy>(list->client());
+    auto itemAtIndex = [&](int index) -> RefPtr<HistoryItem> {
+        return proxy ? proxy->itemAtIndexIncludingOtherProcessesForTesting(index) : list->itemAtIndex(index);
+    };
+
+    if (RefPtr item = itemAtIndex(begin); item && item->url() == aboutBlankURL())
         ++begin;
 
     StringBuilder builder;
     for (int i = begin; i <= end; ++i) {
-        if (RefPtr item = list->itemAtIndex(i))
+        if (RefPtr item = itemAtIndex(i))
             dumpHistoryItem(*item, 8, !i, builder, directory);
     }
     return builder.toString();

@@ -1014,6 +1014,18 @@ void WebBackForwardList::backForwardItemAtIndexForWebContent(IPC::Connection& co
     completionHandler(protect(item->mainFrameItem())->copyFrameStateWithChildrenForProcess(*page, process));
 }
 
+void WebBackForwardList::backForwardItemAtIndexIncludingOtherProcessesForTesting(IPC::Connection& connection, int32_t delta, CompletionHandler<void(RefPtr<FrameState>&&)>&& completionHandler)
+{
+    MESSAGE_CHECK_COMPLETION_BASE(delta != std::numeric_limits<int32_t>::min(), connection, completionHandler(nullptr));
+    MESSAGE_CHECK_COMPLETION_BASE(WebProcessProxy::fromConnection(connection)->isAllowedToUseTestOnlyBackForwardListAccess(), connection, completionHandler(nullptr));
+
+    RefPtr item = itemAtDeltaFromCurrentIndex(delta, AllowSkippingBackForwardItems::No);
+    if (!item)
+        return completionHandler(nullptr);
+
+    completionHandler(protect(item->mainFrameItem())->copyFrameStateWithChildren());
+}
+
 void WebBackForwardList::backForwardListCounts(CompletionHandler<void(WebBackForwardListCounts&&)>&& completionHandler)
 {
     completionHandler(rawCounts());
