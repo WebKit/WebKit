@@ -48,7 +48,7 @@ class GraphicsContextSwitcher;
 class RenderLayerFilters final : public RefCounted<RenderLayerFilters>, private CachedSVGDocumentClient {
     WTF_MAKE_TZONE_ALLOCATED(RenderLayerFilters);
 public:
-    NODELETE static Ref<RenderLayerFilters> create(RenderLayer&, FloatSize scale);
+    NODELETE static Ref<RenderLayerFilters> create(RenderLayer&);
     virtual ~RenderLayerFilters();
 
     void detachFromLayer() { m_layer = nullptr; }
@@ -79,7 +79,7 @@ public:
     void applyFilterEffect(GraphicsContext& destinationContext);
 
 private:
-    explicit RenderLayerFilters(RenderLayer&, FloatSize scale);
+    explicit RenderLayerFilters(RenderLayer&);
 
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) final;
     void resetDirtySourceRect() { m_dirtySourceRect = LayoutRect(); }
@@ -91,7 +91,6 @@ private:
     LayoutRect m_dirtySourceRect;
     LayoutRect m_repaintRect;
 
-    FloatSize m_filterScale { 1, 1 };
     FloatSize m_lastUnclampedFilterScale { 1, 1 };
 
     OptionSet<FilterRenderingMode> m_preferredFilterRenderingModes { FilterRenderingMode::Software };

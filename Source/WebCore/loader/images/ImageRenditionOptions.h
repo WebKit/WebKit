@@ -42,6 +42,7 @@ class Document;
 struct ImageRenditionOptions {
     URL fragmentURL;
     Style::LinkParameters linkParameters { CSS::Keyword::None { } };
+    float deviceScaleFactor { 1 };
     IgnoreRootPreserveAspectRatio ignoreRootPreserveAspectRatio { IgnoreRootPreserveAspectRatio::No };
     InterpolationQuality interpolationQuality { InterpolationQuality::Default };
     DrawsHDRContent drawsHDRContent { DrawsHDRContent::No };

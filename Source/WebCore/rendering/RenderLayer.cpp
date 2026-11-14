@@ -6695,8 +6695,7 @@ RenderLayerFilters& RenderLayer::ensureLayerFilters()
     if (m_filters)
         return *m_filters;
     
-    auto scale = page().deviceScaleFactor();
-    m_filters = RenderLayerFilters::create(*this, { scale, scale });
+    m_filters = RenderLayerFilters::create(*this);
     return *m_filters;
 }
 

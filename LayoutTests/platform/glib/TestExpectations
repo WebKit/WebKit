@@ -2143,6 +2143,7 @@ webkit.org/b/131347 fast/repaint/hidpi-device-pixel-based-repaint-rect-tracking.
 webkit.org/b/131347 fast/repaint/hidpi-transform-on-subpixel-repaintrect.html [ Failure ]
 webkit.org/b/131347 fast/repaint/hidpi-wrong-repaint-rect-when-parent-has-noncompositing-transform.html [ Failure ]
 webkit.org/b/131347 fast/block/inside-inlines/hidpi-missing-hugging-outline.html [ ImageOnlyFailure ]
+webkit.org/b/131347 svg/as-image/image-device-pixel-ratio-media-query.html [ ImageOnlyFailure ]
 
 webkit.org/b/179948 fast/hidpi/filters-reference.html [ ImageOnlyFailure ]
 

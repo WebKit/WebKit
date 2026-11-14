@@ -341,6 +341,11 @@ void SVGImageInstance::applyDocumentState(const DocumentState& state)
         updateStyle = true;
     }
 
+    if (state.rendition.deviceScaleFactor != m_appliedDocumentState.rendition.deviceScaleFactor) {
+        page->setDeviceScaleFactor(state.rendition.deviceScaleFactor);
+        updateStyle = true;
+    }
+
     if (state.rendition.contentSettings != m_appliedDocumentState.rendition.contentSettings) {
         Ref settings = page->settings();
         settings->setFontGenericFamilies(state.rendition.contentSettings->fontGenericFamilies);
