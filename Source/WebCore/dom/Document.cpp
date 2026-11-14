@@ -12784,7 +12784,11 @@ void Document::performPendingViewTransitions()
 String Document::mediaKeysStorageDirectory()
 {
     RefPtr currentPage = page();
+#if !ENABLE(BLOCKING_OF_WEBCONTENT_FILE_WRITE)
+    return currentPage ? currentPage->ensureMediaKeysStorageDirectoryForOrigin(securityOrigin().data()) : emptyString();
+#else
     return currentPage ? currentPage->ensureMediaKeysStorageDirectoryForOrigin(securityOrigin().data(), frameID()) : emptyString();
+#endif
 }
 
 PermissionsPolicy Document::permissionsPolicy() const
