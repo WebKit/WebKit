@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/memory-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Memory.CrossOriginFrameMemoryPressure");
+
+    let mainFrameTarget;
+    let firstFrameTarget;
+    let secondFrameTarget;
+
+    const simulateMemoryPressure = `internals.beginSimulatedMemoryPressure(); internals.endSimulatedMemoryPressure(); document.URL`;
+
+    function expectPressureEventCount(target, count, message) {
+        InspectorTest.expectEqual(MemoryTest.events(target, "memoryPressure").length, count, message);
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Memory.CrossOriginFrameMemoryPressure.Setup",
+        description: "Find the frame targets, and enable the Memory domain only on the page target and on the first iframe target.",
+        async test() {
+            mainFrameTarget = await waitForFrameTargetForURLContaining("cross-origin-frame-memory-pressure.html");
+            firstFrameTarget = await waitForFrameTargetForURLContaining("frame.html?memory-pressure-first");
+            secondFrameTarget = await waitForFrameTargetForURLContaining("frame.html?memory-pressure-second");
+            InspectorTest.expectNotNull(mainFrameTarget, "Should find the main frame target.");
+            InspectorTest.expectNotNull(firstFrameTarget, "Should find the first iframe target.");
+            InspectorTest.expectNotNull(secondFrameTarget, "Should find the second iframe target.");
+            if (!mainFrameTarget || !firstFrameTarget || !secondFrameTarget)
+                throw new Error("Missing a frame target.");
+
+            InspectorTest.expectEqual(mainFrameTarget.processIdentifier, WI.mainTarget.processIdentifier, "The main frame target should be in the page target's process.");
+            InspectorTest.expectEqual(firstFrameTarget.processIdentifier, secondFrameTarget.processIdentifier, "Both iframe targets should be in one process.");
+            InspectorTest.expectNotEqual(firstFrameTarget.processIdentifier, WI.mainTarget.processIdentifier, "The iframe targets should not be in the page target's process.");
+
+            // Which targets the frontend enables depends on the frontend, so start from a known state.
+            WI.memoryManager.disable();
+            await WI.mainTarget.MemoryAgent.enable();
+            await firstFrameTarget.MemoryAgent.enable();
+            InspectorTest.expectEqual(await MemoryTest.commandError(mainFrameTarget.MemoryAgent.disable()), "Memory domain already disabled", "The main frame target should not have the Memory domain enabled.");
+            InspectorTest.expectEqual(await MemoryTest.commandError(secondFrameTarget.MemoryAgent.disable()), "Memory domain already disabled", "The second iframe target should not have the Memory domain enabled.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Memory.CrossOriginFrameMemoryPressure.IframeProcess",
+        description: "Memory pressure in the iframes' process should be reported once, by the iframe target that has the Memory domain enabled.",
+        async test() {
+            MemoryTest.clearEvents();
+
+            let pressurePromise = MemoryTest.awaitEvent(firstFrameTarget, "memoryPressure");
+            let url = await MemoryTest.evaluateInTarget(firstFrameTarget, simulateMemoryPressure);
+            InspectorTest.expectThat(url.includes("frame.html?memory-pressure-first"), "The memory pressure should be simulated in the first iframe.");
+            let [timestamp, severity] = (await pressurePromise).args;
+            InspectorTest.expectEqual(typeof timestamp, "number", "The memory pressure event should have a timestamp.");
+            InspectorTest.expectEqual(severity, InspectorBackend.Enum.Memory.MemoryPressureSeverity.Critical, "The memory pressure should be critical.");
+
+            await MemoryTest.awaitRoundTrip([WI.mainTarget, mainFrameTarget, secondFrameTarget]);
+            expectPressureEventCount(firstFrameTarget, 1, "The first iframe target should report the memory pressure once.");
+            expectPressureEventCount(secondFrameTarget, 0, "The second iframe target, which does not have the Memory domain enabled, should not report the memory pressure.");
+            expectPressureEventCount(WI.mainTarget, 0, "The page target, which is in another process, should not report the memory pressure.");
+            expectPressureEventCount(null, 1, "Only one memory pressure event should be sent.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Memory.CrossOriginFrameMemoryPressure.PageProcess",
+        description: "Memory pressure in the page's process should be reported once, by the page target, as before.",
+        async test() {
+            MemoryTest.clearEvents();
+
+            let pressurePromise = MemoryTest.awaitEvent(WI.mainTarget, "memoryPressure");
+            let url = await MemoryTest.evaluateInTarget(WI.mainTarget, simulateMemoryPressure);
+            InspectorTest.expectThat(url.includes("cross-origin-frame-memory-pressure.html"), "The memory pressure should be simulated in the page.");
+            let [timestamp, severity] = (await pressurePromise).args;
+            InspectorTest.expectEqual(typeof timestamp, "number", "The memory pressure event should have a timestamp.");
+            InspectorTest.expectEqual(severity, InspectorBackend.Enum.Memory.MemoryPressureSeverity.Critical, "The memory pressure should be critical.");
+
+            await MemoryTest.awaitRoundTrip([mainFrameTarget, firstFrameTarget, secondFrameTarget]);
+            expectPressureEventCount(WI.mainTarget, 1, "The page target should report the memory pressure once.");
+            expectPressureEventCount(mainFrameTarget, 0, "The main frame target, which does not have the Memory domain enabled, should not report the memory pressure.");
+            expectPressureEventCount(firstFrameTarget, 0, "The first iframe target, which is in another process, should not report the memory pressure.");
+            expectPressureEventCount(null, 1, "Only one memory pressure event should be sent.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that under Site Isolation, memory pressure in a process is reported once, by the target of that process that has the Memory domain enabled.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/memory/resources/frame.html?memory-pressure-first"></iframe>
+<iframe src="http://localhost:8000/site-isolation/inspector/memory/resources/frame.html?memory-pressure-second"></iframe>
+</body>

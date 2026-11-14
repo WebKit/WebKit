@@ -44,7 +44,7 @@ class InspectorMemoryAgent final : public InspectorAgentBase, public Inspector::
 public:
     OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
 
-    InspectorMemoryAgent(PageAgentContext&);
+    InspectorMemoryAgent(WebAgentContext&);
     ~InspectorMemoryAgent();
 
     // InspectorAgentBase

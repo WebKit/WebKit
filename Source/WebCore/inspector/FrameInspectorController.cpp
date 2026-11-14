@@ -46,6 +46,7 @@
 #include "InspectorBackendClient.h"
 #include "InspectorCPUProfilerAgent.h"
 #include "InspectorInstrumentation.h"
+#include "InspectorMemoryAgent.h"
 #include "InspectorWebAgentBase.h"
 #include "InstrumentingAgents.h"
 #include "JSDOMBindingSecurity.h"
@@ -224,6 +225,7 @@ void FrameInspectorController::createLazyAgents()
 
 #if ENABLE(RESOURCE_USAGE)
     m_agents.append(makeUniqueRef<InspectorCPUProfilerAgent>(context));
+    m_agents.append(makeUniqueRef<InspectorMemoryAgent>(context));
 #endif
 }
 

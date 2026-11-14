@@ -1,0 +1,33 @@
+Test that under Site Isolation, memory pressure in a process is reported once, by the target of that process that has the Memory domain enabled.
+
+
+
+== Running test suite: SiteIsolation.Memory.CrossOriginFrameMemoryPressure
+-- Running test case: SiteIsolation.Memory.CrossOriginFrameMemoryPressure.Setup
+PASS: Should find the main frame target.
+PASS: Should find the first iframe target.
+PASS: Should find the second iframe target.
+PASS: The main frame target should be in the page target's process.
+PASS: Both iframe targets should be in one process.
+PASS: The iframe targets should not be in the page target's process.
+PASS: The main frame target should not have the Memory domain enabled.
+PASS: The second iframe target should not have the Memory domain enabled.
+
+-- Running test case: SiteIsolation.Memory.CrossOriginFrameMemoryPressure.IframeProcess
+PASS: The memory pressure should be simulated in the first iframe.
+PASS: The memory pressure event should have a timestamp.
+PASS: The memory pressure should be critical.
+PASS: The first iframe target should report the memory pressure once.
+PASS: The second iframe target, which does not have the Memory domain enabled, should not report the memory pressure.
+PASS: The page target, which is in another process, should not report the memory pressure.
+PASS: Only one memory pressure event should be sent.
+
+-- Running test case: SiteIsolation.Memory.CrossOriginFrameMemoryPressure.PageProcess
+PASS: The memory pressure should be simulated in the page.
+PASS: The memory pressure event should have a timestamp.
+PASS: The memory pressure should be critical.
+PASS: The page target should report the memory pressure once.
+PASS: The main frame target, which does not have the Memory domain enabled, should not report the memory pressure.
+PASS: The first iframe target, which is in another process, should not report the memory pressure.
+PASS: Only one memory pressure event should be sent.
+
