@@ -409,6 +409,84 @@ struct WKWebExtensionAPIWindowsTests {
     }
 
     @Test
+    func getAllAfterGrantingPrivateAccess() async throws {
+        let backgroundScript = """
+            const windowsBeforeAccess = await browser.windows.getAll();
+            browser.test.sendMessage(windowsBeforeAccess.length === 1 ? 'One Window' : 'Unexpected Window Count');
+
+            while (!(await browser.extension.isAllowedIncognitoAccess()))
+                await new Promise(resolve => setTimeout(resolve, 50));
+
+            const windowsAfterAccess = await browser.windows.getAll();
+            browser.test.sendMessage(windowsAfterAccess.length === 2 && windowsAfterAccess[1].incognito ? 'Two Windows' : 'Unexpected Window Count');
+            """
+
+        let manager = parseWebExtension(manifest: windowsManifest, resources: ["background.js": backgroundScript])
+        let context = try #require(manager.context)
+
+        let regularWindow = try #require(manager.defaultWindow)
+        let privateWindow = manager.openNewWindow(usingPrivateBrowsing: true)
+
+        // Like Safari, leave private windows out of the open windows until the extension has private access.
+        manager.internalDelegate.openWindows = { context in
+            context.hasAccessToPrivateData ? [regularWindow, privateWindow] : [regularWindow]
+        }
+
+        manager.load()
+
+        try await manager.waitForTestMessage("One Window")
+
+        context.hasAccessToPrivateData = true
+
+        try await manager.waitForTestMessage("Two Windows")
+    }
+
+    @Test
+    func getAllAfterRevokingAndRegrantingPrivateAccess() async throws {
+        let backgroundScript = """
+            const waitForPrivateAccess = async (allowed) => {
+                while ((await browser.extension.isAllowedIncognitoAccess()) !== allowed)
+                    await new Promise(resolve => setTimeout(resolve, 50));
+            };
+
+            const reportWindowCount = async (message, expectedCount) => {
+                const windows = await browser.windows.getAll();
+                browser.test.sendMessage(windows.length === expectedCount ? message : 'Unexpected Window Count');
+            };
+
+            await waitForPrivateAccess(true);
+            await reportWindowCount('Two Windows', 2);
+
+            await waitForPrivateAccess(false);
+            await reportWindowCount('One Window After Revoke', 1);
+
+            await waitForPrivateAccess(true);
+            await reportWindowCount('Two Windows After Regrant', 2);
+            """
+
+        let manager = parseWebExtension(manifest: windowsManifest, resources: ["background.js": backgroundScript])
+        let context = try #require(manager.context)
+
+        let regularWindow = try #require(manager.defaultWindow)
+        let privateWindow = manager.openNewWindow(usingPrivateBrowsing: true)
+
+        manager.internalDelegate.openWindows = { context in
+            context.hasAccessToPrivateData ? [regularWindow, privateWindow] : [regularWindow]
+        }
+
+        manager.load()
+
+        context.hasAccessToPrivateData = true
+        try await manager.waitForTestMessage("Two Windows")
+
+        context.hasAccessToPrivateData = false
+        try await manager.waitForTestMessage("One Window After Revoke")
+
+        context.hasAccessToPrivateData = true
+        try await manager.waitForTestMessage("Two Windows After Regrant")
+    }
+
+    @Test
     func createdEvent() async throws {
         let backgroundScript = """
             browser.windows.onCreated.addListener((window) => {

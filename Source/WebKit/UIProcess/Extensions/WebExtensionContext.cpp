@@ -274,6 +274,12 @@ void WebExtensionContext::setHasAccessToPrivateData(bool hasAccess)
 
     m_hasAccessToPrivateData = hasAccess;
 
+#if PLATFORM(COCOA)
+    // The delegate leaves out private windows while access is off, so ask for the open windows again.
+    if (m_hasAccessToPrivateData && isLoaded())
+        populateWindowsAndTabs();
+#endif
+
     if (!safeToInjectContent())
         return;
 
