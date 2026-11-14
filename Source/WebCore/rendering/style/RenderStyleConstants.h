@@ -1150,7 +1150,9 @@ enum class AlignmentBaseline : uint8_t {
     Ideographic,
     Alphabetic,
     Hanging,
-    Mathematical
+    Mathematical,
+    TextTop,
+    TextBottom
 };
 
 enum class DominantBaseline : uint8_t {

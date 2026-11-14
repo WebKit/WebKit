@@ -34,6 +34,7 @@ namespace WebCore {
 enum class BaselineSynthesisEdge : uint8_t;
 enum class BoxAxis : uint8_t;
 enum class FontBaseline : uint8_t;
+class FontMetrics;
 class RenderBox;
 
 // Stateless CSS Box Alignment baseline helpers, used both while building baseline-sharing groups and by
@@ -43,6 +44,9 @@ struct BaselineAlignment {
     NODELETE static FontBaseline dominantBaseline(WritingMode);
     static WritingMode usedWritingModeForBaselineAlignment(LogicalBoxAxis alignmentContextAxis, WritingMode alignmentContainerWritingMode, WritingMode alignmentSubjectWritingMode);
     static LayoutUnit synthesizedBaseline(const RenderBox&, FontBaseline baselineType, WritingMode writingModeForSynthesis, BoxAxis lineDirection, BaselineSynthesisEdge);
+    // How far the baseline sits above the font's alphabetic baseline. The font's baseline table isn't read, so the hanging,
+    // ideographic, central and mathematical baselines are estimated from its ascent and descent.
+    NODELETE static float baselineOffsetFromAlphabeticBaseline(AlignmentBaseline, const FontMetrics&);
 };
 
 // These classes are used to implement the Baseline Alignment logic, as described in the CSS Box Alignment
