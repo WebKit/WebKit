@@ -1,0 +1,43 @@
+A
+B
+A
+B
+
+PASS document.execCommand("delete") when <div>A[]</div>
+PASS document.execCommand("delete") when <div>A<br>[]B</div>
+PASS document.execCommand("delete") when <div>A</div><div>[]B</div>
+PASS document.execCommand("delete") when <div>A<div>B[]</div></div>
+PASS document.execCommand("delete") when <div>A<div>[]B</div></div>
+PASS document.execCommand("delete") when <div><div>A</div>[]B</div>
+PASS document.execCommand("delete") when <div><div>A</div>B[]</div>
+PASS document.execCommand("delete") when <div>A<ul><li>[]B</li></ul></div>
+PASS document.execCommand("delete") when <div>A<ul><li>[]B</li><li>C</li></ul></div>
+PASS document.execCommand("delete") when <ul><li>A[]</li></ul>
+PASS document.execCommand("delete") when <ul><li>A</li><li>[]B</li></ul>
+PASS document.execCommand("delete") when <ul><li>A</li><li>B[]</li></ul>
+PASS document.execCommand("delete") when <ul><li>A[]</li><li>B</li></ul>
+PASS document.execCommand("delete") when <div>A<ol><li>[]B</li></ol></div>
+PASS document.execCommand("delete") when <div>A<ol><li>[]B</li><li>C</li></ol></div>
+PASS document.execCommand("delete") when <ol><li>A[]</li></ol>
+PASS document.execCommand("delete") when <ol><li>A</li><li>[]B</li></ol>
+PASS document.execCommand("delete") when <ol><li>A</li><li>B[]</li></ol>
+PASS document.execCommand("delete") when <ol><li>A[]</li><li>B</li></ol>
+PASS document.execCommand("delete") when <div>A<dl><dt>[]B</dt></dl></div>
+PASS document.execCommand("delete") when <div>A<dl><dt>[]B</dt><dt>C</dt></dl></div>
+PASS document.execCommand("delete") when <div>A<dl><dt>[]B</dt><dd>C</dd></dl></div>
+PASS document.execCommand("delete") when <div>A<dl><dd>[]B</dd></dl></div>
+PASS document.execCommand("delete") when <div>A<dl><dd>[]B</dd><dt>C</dt></dl></div>
+PASS document.execCommand("delete") when <div>A<dl><dd>[]B</dd><dd>C</dd></dl></div>
+PASS document.execCommand("delete") when <dl><dt>A</dt><dt>[]B</dt></ol>
+PASS document.execCommand("delete") when <dl><dd>A</dd><dt>[]B</dt></ol>
+PASS document.execCommand("delete") when <dl><dt>A</dt><dd>[]B</dd></ol>
+PASS document.execCommand("delete") when <dl><dd>A</dd><dd>[]B</dd></ol>
+PASS document.execCommand("delete") when <table><tr><td>A</td><td>[]B</td></tr></table>
+PASS document.execCommand("delete") when <table><tr><td>A</td></tr><tr><td>[]B</td></tr></table>
+PASS document.execCommand("delete") when <table><tr><th>A</th><td>[]B</td></tr></table>
+PASS document.execCommand("delete") when <table><tr><th>A</th></tr><tr><td>[]B</td></tr></table>
+PASS document.execCommand("delete") when <table><tr><td>A</td><th>[]B</th></tr></table>
+PASS document.execCommand("delete") when <table><tr><td>A</td></tr><tr><th>[]B</th></tr></table>
+PASS document.execCommand("delete") when <table><tr><th>A</th><th>[]B</th></tr></table>
+PASS document.execCommand("delete") when <table><tr><th>A</th></tr><tr><th>[]B</th></tr></table>
+

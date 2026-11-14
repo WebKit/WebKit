@@ -1,0 +1,29 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/editing/plaintext-only/delete-around-linebreak-or-block-boundary.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/plaintext-only/delete-part-of-white-spaces.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/plaintext-only/forwardDelete-around-linebreak-or-block-boundary.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/plaintext-only/forwardDelete-part-of-white-spaces.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/plaintext-only/insertHTML.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/plaintext-only/insertLineBreak.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/plaintext-only/insertParagraph.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/plaintext-only/insertText.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/plaintext-only/nested-with-contenteditable-true.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/plaintext-only/paste-when-nested-with-contenteditable-true.https.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/plaintext-only/paste.https.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/plaintext-only/plaintext-only-in-designMode.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/plaintext-only/styling-commands.html

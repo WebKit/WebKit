@@ -1,0 +1,14 @@
+AB
+
+
+PASS execCommand("insertParagraph") when <p>[]AB</p>
+PASS execCommand("insertParagraph") when <p>A[]B</p>
+PASS execCommand("insertParagraph") when <p>AB[]</p>
+PASS execCommand("insertParagraph") when <p style="white-space:normal">[]AB</p>
+PASS execCommand("insertParagraph") when <p style="white-space:pre">[]AB</p>
+PASS execCommand("insertParagraph") when <p style="white-space:pre-line">[]AB</p>
+PASS execCommand("insertParagraph") when <p style="white-space:pre-wrap">[]AB</p>
+PASS execCommand("insertParagraph") when <ul><li>[]AB</li></ul>
+PASS execCommand("insertParagraph") when <ul><li>A[]B</li></ul>
+PASS execCommand("insertParagraph") when <ul><li>AB[]</li></ul>
+
