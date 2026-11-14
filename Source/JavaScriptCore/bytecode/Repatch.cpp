@@ -1762,8 +1762,8 @@ void repatchInBy(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSObject* b
         case InByKind::ByVal:
             repatchSlowPathCall(codeBlock, propertyCache, operationInByValMegamorphic);
             break;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
+        case InByKind::PrivateName:
+            repatchSlowPathCall(codeBlock, propertyCache, operationHasPrivateNameMegamorphic);
             break;
         }
         break;
