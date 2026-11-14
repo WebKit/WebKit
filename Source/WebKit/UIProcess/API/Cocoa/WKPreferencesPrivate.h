@@ -160,6 +160,8 @@ typedef NS_ENUM(NSInteger, _WKNavigatorWebDriverActivePolicy) {
 - (void)_disableRichJavaScriptFeatures;
 - (void)_disableMediaPlaybackRelatedFeatures;
 
++ (void)_setGlobalPreferenceOverridesForTesting:(NSDictionary<NSString *, NSString *> *)overrides WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
 @property (nonatomic, setter=_setShouldEnableTextAutosizingBoost:) BOOL _shouldEnableTextAutosizingBoost WK_API_AVAILABLE(macos(10.14), ios(12.0));
 
 @property (nonatomic, getter=_isSafeBrowsingEnabled, setter=_setSafeBrowsingEnabled:) BOOL _safeBrowsingEnabled WK_API_AVAILABLE(macos(10.14.4), ios(12.2));

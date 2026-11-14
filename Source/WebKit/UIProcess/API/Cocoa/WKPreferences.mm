@@ -27,6 +27,7 @@
 #import "WKPreferencesInternal.h"
 
 #import "APIArray.h"
+#import "GlobalPreferenceOverridesController.h"
 #import "Logging.h"
 #import "WKNSArray.h"
 #import "WKTextExtractionUtilities.h"
@@ -659,6 +660,18 @@ NODELETE static _WKStorageBlockingPolicy toAPI(WebCore::StorageBlockingPolicy po
 {
 #if ENABLE(APPLE_PAY)
     protect(*_preferences)->setApplePayCapabilityDisclosureAllowed(applePayCapabilityDisclosureAllowed);
+#endif
+}
+
++ (void)_setGlobalPreferenceOverridesForTesting:(NSDictionary<NSString *, NSString *> *)overrides
+{
+#if defined(ENGINEERING_BUILD) && ENGINEERING_BUILD
+    HashMap<String, String> delivered;
+    for (NSString *key in overrides)
+        delivered.set(key, overrides[key]);
+    WebKit::GlobalPreferenceOverridesController::singleton().setOverrides(delivered);
+#else
+    UNUSED_PARAM(overrides);
 #endif
 }
 

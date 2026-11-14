@@ -66,6 +66,9 @@ header: <WebCore/OrganizationStorageAccessPromptQuirk.h>
 #if HAVE(ENHANCED_SECURITY_LINKS)
     bool enableEnhancedSecurityLinks
 #endif
+#if HAVE(SECURITY_OVERRIDES)
+    bool enableSecurityOverrides
+#endif
 
     Vector<WebKit::WebsiteDataStoreParameters> websiteDataStoreParameters
     HashMap<WebCore::ProcessIdentifier, Vector<String>> allowedFilePaths;

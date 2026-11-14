@@ -71,6 +71,23 @@ NODELETE SUPPRESS_NODELETE static MappedType valueForKey(const WebPreferencesSto
 }
 
 template<typename MappedType>
+SUPPRESS_NODELETE static MappedType LEGACY_NODELETE resolvedValueForKey(const WebPreferencesStore::ValueMap& values, const WebPreferencesStore::ValueMap& overriddenDefaults, const WebPreferencesStore::ValueMap& overriddenValues, const String& key)
+{
+    auto overriddenIt = overriddenValues.find(key);
+    if (overriddenIt != overriddenValues.end()) {
+        if (std::holds_alternative<MappedType>(overriddenIt->value))
+            return std::get<MappedType>(overriddenIt->value);
+
+        // Overrides are parsed against the preference's type, so this means a writer stored the wrong type.
+        RELEASE_LOG_ERROR(Loading, "WebPreferencesStore: ignoring the override of %" PUBLIC_LOG_STRING " because it is not of the preference's type", key.utf8());
+        ASSERT_NOT_REACHED();
+        return valueForKey<MappedType>(values, overriddenDefaults, key);
+    }
+
+    return valueForKey<MappedType>(values, overriddenDefaults, key);
+}
+
+template<typename MappedType>
 static bool setValueForKey(WebPreferencesStore::ValueMap& map, const WebPreferencesStore::ValueMap& overriddenDefaults, const String& key, const MappedType& value)
 {
     MappedType existingValue = valueForKey<MappedType>(map, overriddenDefaults, key);
@@ -83,16 +100,18 @@ static bool setValueForKey(WebPreferencesStore::ValueMap& map, const WebPreferen
 
 bool WebPreferencesStore::setStringValueForKey(const String& key, const String& value)
 {
+    reportSetIfMasked(key);
     return setValueForKey<String>(m_values, m_overriddenDefaults, key, value);
 }
 
 String WebPreferencesStore::getStringValueForKey(const String& key) const
 {
-    return valueForKey<String>(m_values, m_overriddenDefaults, key);
+    return resolvedValueForKey<String>(m_values, m_overriddenDefaults, m_overriddenValues, key);
 }
 
 bool WebPreferencesStore::setBoolValueForKey(const String& key, bool value)
 {
+    reportSetIfMasked(key);
     return setValueForKey<bool>(m_values, m_overriddenDefaults, key, value);
 }
 
@@ -103,27 +122,29 @@ SUPPRESS_NODELETE bool WebPreferencesStore::getBoolValueForKey(const String& key
     if (it != boolTestRunnerOverridesMap().end())
         return it->value;
 
-    return valueForKey<bool>(m_values, m_overriddenDefaults, key);
+    return resolvedValueForKey<bool>(m_values, m_overriddenDefaults, m_overriddenValues, key);
 }
 
 bool WebPreferencesStore::setUInt32ValueForKey(const String& key, uint32_t value) 
 {
+    reportSetIfMasked(key);
     return setValueForKey<uint32_t>(m_values, m_overriddenDefaults, key, value);
 }
 
 uint32_t WebPreferencesStore::getUInt32ValueForKey(const String& key) const
 {
-    return valueForKey<uint32_t>(m_values, m_overriddenDefaults, key);
+    return resolvedValueForKey<uint32_t>(m_values, m_overriddenDefaults, m_overriddenValues, key);
 }
 
 bool WebPreferencesStore::setDoubleValueForKey(const String& key, double value) 
 {
+    reportSetIfMasked(key);
     return setValueForKey<double>(m_values, m_overriddenDefaults, key, value);
 }
 
 double WebPreferencesStore::getDoubleValueForKey(const String& key) const
 {
-    return valueForKey<double>(m_values, m_overriddenDefaults, key);
+    return resolvedValueForKey<double>(m_values, m_overriddenDefaults, m_overriddenValues, key);
 }
 
 // Overridden Defaults
@@ -146,6 +167,20 @@ void WebPreferencesStore::setOverrideDefaultsUInt32ValueForKey(const String& key
 void WebPreferencesStore::setOverrideDefaultsDoubleValueForKey(const String& key, double value)
 {
     m_overriddenDefaults.set(key, Value(value));
+}
+
+void WebPreferencesStore::setOverriddenValues(ValueMap&& overrides)
+{
+    m_overriddenValues = WTF::move(overrides);
+}
+
+void WebPreferencesStore::reportSetIfMasked(const String& key)
+{
+    // While an override is in place, sets are recorded but have no effect until it is withdrawn.
+    if (!m_overriddenValues.contains(key))
+        return;
+
+    RELEASE_LOG(Loading, "WebPreferencesStore: %" PUBLIC_LOG_STRING " was set while it is overridden; the overridden value applies until the override is withdrawn", key.utf8());
 }
 
 void WebPreferencesStore::deleteKey(const String& key)
