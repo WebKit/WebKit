@@ -129,7 +129,7 @@ static LayoutUnit excludedMarkerLogicalLeftOffsetFor(const RenderBlockFlow& firs
 
     auto toAssociatedListItem = LayoutUnit { };
     if (ancestor && ancestor.get() != &listItem) {
-        for (CheckedPtr<const RenderBlock> box = ancestor->containingBlock(); box; box = box->containingBlock()) {
+        for (CheckedPtr<const RenderBoxModelObject> box = ancestor->containingBlock(); box; box = box->containingBlock()) {
             toAssociatedListItem -= (box->marginStart(box->writingMode()) + box->borderAndPaddingStart());
             if (box.get() == &listItem)
                 break;
