@@ -25,6 +25,7 @@
 
 #include "HeadlessViewBackend.h"
 
+#include <algorithm>
 #include <cassert>
 #include <fcntl.h>
 #include <mutex>
@@ -175,28 +176,23 @@ void HeadlessViewBackend::updateSnapshot(PlatformBuffer exportedBuffer)
             return;
     }
 
-    auto info = SkImageInfo::MakeN32Premul(m_width, m_height, SkColorSpace::MakeSRGB());
+    uint32_t width = std::max(0, wl_shm_buffer_get_width(shmBuffer));
+    uint32_t height = std::max(0, wl_shm_buffer_get_height(shmBuffer));
+    if (!width || !height)
+        return;
+
+    auto info = SkImageInfo::MakeN32Premul(width, height, SkColorSpace::MakeSRGB());
     uint32_t bufferStride = info.minRowBytes();
-    uint8_t* buffer = new uint8_t[bufferStride * m_height];
-    memset(buffer, 0, bufferStride * m_height);
+    uint32_t stride = std::max(0, wl_shm_buffer_get_stride(shmBuffer));
+    if (bufferStride != stride)
+        return;
 
+    uint8_t* buffer = new uint8_t[bufferStride * height];
     {
-        uint32_t width = std::min<uint32_t>(m_width, std::max(0, wl_shm_buffer_get_width(shmBuffer)));
-        uint32_t height = std::min<uint32_t>(m_height, std::max(0, wl_shm_buffer_get_height(shmBuffer)));
-        uint32_t stride = std::max(0, wl_shm_buffer_get_stride(shmBuffer));
-
         wl_shm_buffer_begin_access(shmBuffer);
         auto* data = static_cast<uint8_t*>(wl_shm_buffer_get_data(shmBuffer));
 
-        for (uint32_t y = 0; y < height; ++y) {
-            for (uint32_t x = 0; x < width; ++x) {
-                buffer[bufferStride * y + 4 * x + 0] = data[stride * y + 4 * x + 0];
-                buffer[bufferStride * y + 4 * x + 1] = data[stride * y + 4 * x + 1];
-                buffer[bufferStride * y + 4 * x + 2] = data[stride * y + 4 * x + 2];
-                buffer[bufferStride * y + 4 * x + 3] = data[stride * y + 4 * x + 3];
-            }
-        }
-
+        std::copy_n(data, bufferStride * height, buffer);
         wl_shm_buffer_end_access(shmBuffer);
     }
 
