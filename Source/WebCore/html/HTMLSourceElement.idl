@@ -37,4 +37,5 @@
 
     // Non-standard
     [Conditional=ATTACHMENT_ELEMENT, EnabledByDeprecatedGlobalSetting=AttachmentElementEnabled] readonly attribute DOMString attachmentIdentifier;
+    [CEReactions=NotNeeded, Conditional=MODEL_ELEMENT, EnabledBySetting=ModelElementSTLEnabled, Reflect] attribute DOMString surfaceColor;
 };

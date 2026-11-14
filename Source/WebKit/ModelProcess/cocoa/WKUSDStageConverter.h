@@ -25,6 +25,7 @@
 
 #pragma once
 
+#import <CoreGraphics/CoreGraphics.h>
 #import <Foundation/Foundation.h>
 #import <wtf/Platform.h>
 
@@ -33,7 +34,7 @@
 NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 @interface WKUSDStageConverter : NSObject
-+ (nullable NSData *)convert:(NSData *)data mimeType:(NSString *)mimeType;
++ (nullable NSData *)convert:(NSData *)data mimeType:(NSString *)mimeType surfaceColor:(nullable CGColorRef)surfaceColor;
 @end
 
 NS_HEADER_AUDIT_END(nullability, sendability)

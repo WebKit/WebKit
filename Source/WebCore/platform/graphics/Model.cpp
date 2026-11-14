@@ -31,15 +31,16 @@
 
 namespace WebCore {
 
-Ref<Model> Model::create(Ref<SharedBuffer>&& data, String&& mimeType, URL url, bool isConverted)
+Ref<Model> Model::create(Ref<SharedBuffer>&& data, String&& mimeType, URL url, std::optional<Color>&& surfaceColor, bool isConverted)
 {
-    return adoptRef(*new Model(WTF::move(data), WTF::move(mimeType), WTF::move(url), isConverted));
+    return adoptRef(*new Model(WTF::move(data), WTF::move(mimeType), WTF::move(url), WTF::move(surfaceColor), isConverted));
 }
 
-Model::Model(Ref<SharedBuffer>&& data, String&& mimeType, URL url, bool isConverted)
+Model::Model(Ref<SharedBuffer>&& data, String&& mimeType, URL url, std::optional<Color>&& surfaceColor, bool isConverted)
     : m_data(WTF::move(data))
     , m_mimeType(WTF::move(mimeType))
     , m_url(WTF::move(url))
+    , m_surfaceColor(WTF::move(surfaceColor))
     , m_isConverted(isConverted)
 {
 }

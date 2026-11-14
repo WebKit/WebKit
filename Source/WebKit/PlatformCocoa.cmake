@@ -143,6 +143,7 @@ list(APPEND WebKit_SOURCES
     Shared/Cocoa/XPCEndpoint.mm
     Shared/Cocoa/XPCEndpointClient.mm
 
+    Shared/Model/USDStage+Model.swift
     Shared/Model/WKStageModeOrbitSimulator.swift
 
     UIProcess/API/Cocoa/WKContentWorld.mm

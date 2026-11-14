@@ -21,9 +21,10 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
+import CoreGraphics
 import Metal
 import OSLog
-import WebKit
+@_spi(WebKitSwift) import WebKit
 import simd
 
 typealias NodeIdentifier = UInt64
@@ -2336,19 +2337,6 @@ private func fromWKBridgeConstant(_ constant: WKBridgeConstantContainer) -> Shad
     }
 }
 
-private func usdStageType(forMIMEType mimeType: String) -> UTType {
-    switch mimeType {
-    case "model/vnd.usdz+zip":
-        return .usdz
-    case "model/usd", "model/vnd.pixar.usd":
-        return .usd
-    case "model/stl":
-        return UTType(filenameExtension: "stl") ?? .data
-    default:
-        return UTType(mimeType: mimeType) ?? .usdz
-    }
-}
-
 final class USDModelLoader {
     fileprivate var usdPlayer: USDPlayer?
     fileprivate var stage: USDStage?
@@ -2419,10 +2407,10 @@ final class USDModelLoader {
         textureIdToPath.removeAll()
     }
 
-    func loadModel(data: Foundation.Data, mimeType: String) -> Bool {
+    func loadModel(data: Foundation.Data, mimeType: String, surfaceColor: CGColor?) -> Bool {
         resetLoaderState()
         do {
-            self.stage = try USDStage(data, type: usdStageType(forMIMEType: mimeType))
+            self.stage = try USDStage(modelData: data, mimeType: mimeType, surfaceColor: surfaceColor)
             guard let stage = self.stage else {
                 logError("model data is corrupted")
                 return false
@@ -2826,8 +2814,8 @@ extension WKBridgeModelLoader {
         self.processRemovalsCallback = processRemovalsCallback
     }
 
-    func loadModel(_ data: Foundation.Data, mimeType: String) -> Bool {
-        self.loader?.loadModel(data: data, mimeType: mimeType) ?? false
+    func loadModel(_ data: Foundation.Data, mimeType: String, surfaceColor: CGColor?) -> Bool {
+        self.loader?.loadModel(data: data, mimeType: mimeType, surfaceColor: surfaceColor) ?? false
     }
 
     func loadEnvironmentMap(_ data: Foundation.Data) -> WKBridgeUpdateTexture? {
@@ -3119,7 +3107,7 @@ extension WKBridgeModelLoader {
     ) {
     }
 
-    func loadModel(_ data: Foundation.Data, mimeType: String) -> Bool {
+    func loadModel(_ data: Foundation.Data, mimeType: String, surfaceColor: CGColor?) -> Bool {
         false
     }
 
