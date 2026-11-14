@@ -556,6 +556,11 @@ void WebExtensionTab::setReaderModeActive(bool showReaderMode, CompletionHandler
         return;
     }
 
+    if (showReaderMode && !isReaderModeActive() && !isReaderModeAvailable()) {
+        completionHandler(toWebExtensionError(apiName, nullString(), @"the specified tab cannot be placed into reader mode"));
+        return;
+    }
+
     [m_delegate setReaderModeActive:showReaderMode forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for toggleReaderMode: %{public}@", privacyPreservingDescription(error));

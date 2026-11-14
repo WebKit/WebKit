@@ -130,6 +130,7 @@ NS_SWIFT_UI_ACTOR
 @property (nonatomic, getter=isMuted) bool muted;
 @property (nonatomic, getter=isSelected) bool selected;
 @property (nonatomic, getter=isShowingReaderMode) bool showingReaderMode;
+@property (nonatomic) bool readerModeUnavailable;
 
 @property (nonatomic, copy, nullable) void (^setReaderModeShowing)(BOOL);
 @property (nonatomic, copy, nullable) NSLocale * _Nullable (^webpageLocale)(void);

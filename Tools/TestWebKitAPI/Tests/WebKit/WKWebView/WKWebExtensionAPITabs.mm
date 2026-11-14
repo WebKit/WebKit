@@ -1235,6 +1235,35 @@ TEST(WKWebExtensionAPITabs, ToggleReaderMode)
     ASSERT_EQ(toggleReaderModeCounter, 2lu);
 }
 
+TEST(WKWebExtensionAPITabs, ToggleReaderModeUnavailable)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const allWindows = await browser.windows.getAll({ populate: true })",
+        @"const tabId = allWindows[0].tabs[0].id",
+
+        @"await browser.test.assertRejects(browser.tabs.toggleReaderMode(tabId), /cannot be placed into reader mode/i)",
+
+        @"const tab = await browser.tabs.get(tabId)",
+        @"browser.test.assertFalse(tab.isInReaderMode, 'The tab should not be in reader mode')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto manager = Util::loadExtension(tabsManifest, @{ @"background.js": backgroundScript });
+
+    manager.get().defaultTab.readerModeUnavailable = true;
+
+    __block size_t toggleReaderModeCounter = 0;
+
+    manager.get().defaultTab.setReaderModeShowing = ^(BOOL showing) {
+        ++toggleReaderModeCounter;
+    };
+
+    [manager run];
+
+    ASSERT_EQ(toggleReaderModeCounter, 0lu);
+}
+
 TEST(WKWebExtensionAPITabs, DetectLanguage)
 {
     TestWebKitAPI::HTTPServer server({
