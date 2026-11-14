@@ -1536,7 +1536,7 @@ String formatTimeZoneOffsetString(int64_t offset)
 
     if (nanoseconds) {
         // Since nsPerSecond is 1000000000, stringified nanoseconds takes at most 9 characters (999999999).
-        auto fraction = numberToStringUnsigned<Vector<Latin1Character, 9>>(nanoseconds);
+        auto fraction = numberToStringUnsigned<Vector<Latin1Character, 9>>(static_cast<uint64_t>(nanoseconds));
         unsigned paddingLength = 9 - fraction.size();
         unsigned index = fraction.size();
         std::optional<unsigned> validLength;
@@ -1571,7 +1571,7 @@ String temporalTimeToString(PlainTime plainTime, std::tuple<Precision, unsigned>
     if (precisionType == Precision::Auto) {
         if (!fractionNanoseconds)
             return makeString(pad('0', 2, plainTime.hour()), ':', pad('0', 2, plainTime.minute()), ':', pad('0', 2, plainTime.second()));
-        auto fraction = numberToStringUnsigned<Vector<Latin1Character, 9>>(fractionNanoseconds);
+        auto fraction = numberToStringUnsigned<Vector<Latin1Character, 9>>(static_cast<uint64_t>(fractionNanoseconds));
         unsigned paddingLength = 9 - fraction.size();
         unsigned index = fraction.size();
         std::optional<unsigned> validLength;
@@ -1589,7 +1589,7 @@ String temporalTimeToString(PlainTime plainTime, std::tuple<Precision, unsigned>
     }
     if (!precisionValue)
         return makeString(pad('0', 2, plainTime.hour()), ':', pad('0', 2, plainTime.minute()), ':', pad('0', 2, plainTime.second()));
-    auto fraction = numberToStringUnsigned<Vector<Latin1Character, 9>>(fractionNanoseconds);
+    auto fraction = numberToStringUnsigned<Vector<Latin1Character, 9>>(static_cast<uint64_t>(fractionNanoseconds));
     unsigned paddingLength = 9 - fraction.size();
     paddingLength = std::min(paddingLength, precisionValue);
     precisionValue -= paddingLength;

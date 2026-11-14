@@ -27,6 +27,7 @@
 
 #include "MoveOnly.h"
 #include "Helpers/Test.h"
+#include <array>
 #include <cstddef>
 #include <cstdint>
 #include <limits>
@@ -109,10 +110,24 @@ TEST(WTF, StringConcatenate_Unsigned)
 }
 
 template<typename IntegerType>
-static void testLengthOfIntegerAsStringAtPowersOf10()
+static void testIntegerAsStringAtPowersOf10()
 {
     auto check = [](IntegerType value) {
-        EXPECT_EQ(std::to_string(value).size(), WTF::lengthOfIntegerAsString(value));
+        auto expected = std::to_string(value);
+        EXPECT_EQ(expected.size(), WTF::lengthOfIntegerAsString(value));
+
+        std::array<Latin1Character, 21> latin1 { };
+        size_t latin1Length = WTF::writeIntegerToBuffer(value, std::span { latin1 }.first(expected.size()));
+        EXPECT_EQ(expected.size(), latin1Length);
+        EXPECT_EQ(String::fromLatin1(expected.c_str()), String(std::span { latin1 }.first(latin1Length)));
+
+        std::array<char16_t, 21> utf16 { };
+        size_t utf16Length = WTF::writeIntegerToBuffer(value, std::span { utf16 }.first(expected.size()));
+        EXPECT_EQ(expected.size(), utf16Length);
+        EXPECT_EQ(String::fromLatin1(expected.c_str()), String(std::span { utf16 }.first(utf16Length)));
+
+        EXPECT_EQ(String::fromLatin1(expected.c_str()), makeString(value));
+        EXPECT_EQ(String::fromLatin1(expected.c_str()), String::number(value));
     };
     check(std::numeric_limits<IntegerType>::min());
     check(std::numeric_limits<IntegerType>::max());
@@ -129,16 +144,16 @@ static void testLengthOfIntegerAsStringAtPowersOf10()
     }
 }
 
-TEST(WTF, StringConcatenate_LengthOfIntegerAsString)
+TEST(WTF, StringConcatenate_IntegerAsString)
 {
-    testLengthOfIntegerAsStringAtPowersOf10<int8_t>();
-    testLengthOfIntegerAsStringAtPowersOf10<uint8_t>();
-    testLengthOfIntegerAsStringAtPowersOf10<int16_t>();
-    testLengthOfIntegerAsStringAtPowersOf10<uint16_t>();
-    testLengthOfIntegerAsStringAtPowersOf10<int32_t>();
-    testLengthOfIntegerAsStringAtPowersOf10<uint32_t>();
-    testLengthOfIntegerAsStringAtPowersOf10<int64_t>();
-    testLengthOfIntegerAsStringAtPowersOf10<uint64_t>();
+    testIntegerAsStringAtPowersOf10<int8_t>();
+    testIntegerAsStringAtPowersOf10<uint8_t>();
+    testIntegerAsStringAtPowersOf10<int16_t>();
+    testIntegerAsStringAtPowersOf10<uint16_t>();
+    testIntegerAsStringAtPowersOf10<int32_t>();
+    testIntegerAsStringAtPowersOf10<uint32_t>();
+    testIntegerAsStringAtPowersOf10<int64_t>();
+    testIntegerAsStringAtPowersOf10<uint64_t>();
 }
 
 TEST(WTF, StringConcatenate_Enum)
