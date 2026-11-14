@@ -1739,7 +1739,7 @@ localizedStrings["Stop recording canvas actions"] = "Stop recording canvas actio
 localizedStrings["Stop recording once page loads"] = "Stop recording once page loads";
 /* Message for progress of stopping a timeline recording. */
 localizedStrings["Stopping Timeline Recording @ Timeline Recording Progress"] = "Stopping Timeline Recording";
-localizedStrings["Stopping recording"] = "Stopping recording";
+localizedStrings["Stopping recording. Click to finish without the targets that have not stopped."] = "Stopping recording. Click to finish without the targets that have not stopped.";
 localizedStrings["Stopping the \u201C%s\u201D audit"] = "Stopping the \u201C%s\u201D audit";
 localizedStrings["Storage"] = "Storage";
 /* Name of Storage Tab */

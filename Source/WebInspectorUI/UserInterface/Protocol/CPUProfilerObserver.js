@@ -34,7 +34,7 @@ WI.CPUProfilerObserver = class CPUProfilerObserver extends InspectorBackend.Disp
 
     trackingUpdate(event)
     {
-        WI.timelineManager.cpuProfilerTrackingUpdated(event);
+        WI.timelineManager.cpuProfilerTrackingUpdated(this._target, event);
     }
 
     trackingComplete(timestamp)

@@ -1,0 +1,51 @@
+Tests that the user can stop waiting for a target that cannot report that Timeline capturing stopped, and that the target's late events are dropped.
+
+
+== Running test suite: Timeline.StopWaiting
+-- Running test case: Timeline.StopWaiting.Setup
+PASS: Added a Worker target.
+
+-- Running test case: Timeline.StopWaiting.BlockedWorker
+PASS: Capturing should still be stopping while the blocked Worker has not reported that it stopped.
+PASS: Breakpoints should still be disabled temporarily while stopping.
+PASS: Capturing should be inactive after the user stops waiting.
+PASS: Breakpoints should no longer be disabled temporarily.
+PASS: A new capture should become active while the Worker is blocked.
+PASS: The stops of the first capture should not end the new capture.
+PASS: The new capture should still be active after the Worker starts for it.
+PASS: The records of the first capture should not be added to the new capture.
+PASS: Recorded a timer from the Worker in the new capture.
+PASS: The new capture stopped after the Worker stopped.
+PASS: Breakpoints should no longer be disabled temporarily.
+
+-- Running test case: Timeline.StopWaiting.BlockedWorkerTwice
+PASS: Capturing should still be stopping while the blocked Worker has not reported that it stopped.
+PASS: Breakpoints should still be disabled temporarily while stopping.
+PASS: Capturing should be inactive after the user stops waiting.
+PASS: Breakpoints should no longer be disabled temporarily.
+PASS: Capturing should still be stopping while the blocked Worker has not reported that it stopped.
+PASS: Breakpoints should still be disabled temporarily while stopping.
+PASS: Capturing should be inactive after the user stops waiting.
+PASS: Breakpoints should no longer be disabled temporarily.
+PASS: The reports of the two captures should not change the capturing state.
+PASS: A new capture stopped after the Worker stopped.
+PASS: Breakpoints should no longer be disabled temporarily.
+
+-- Running test case: Timeline.StopWaiting.HeapDropped
+PASS: Capturing should still be stopping while the blocked Worker has not reported that it stopped.
+PASS: Breakpoints should still be disabled temporarily while stopping.
+PASS: Capturing should be inactive after the user stops waiting.
+PASS: Breakpoints should no longer be disabled temporarily.
+PASS: The garbage collections of the first capture should not be added to the new capture.
+PASS: Only the snapshot of the new capture should be parsed.
+PASS: Recorded a Heap snapshot from the Worker in the new capture.
+PASS: The new capture stopped after the Worker stopped.
+PASS: Breakpoints should no longer be disabled temporarily.
+
+-- Running test case: Timeline.StopWaiting.AnimationDropped
+PASS: Capturing should be inactive after the user stops waiting.
+PASS: Breakpoints should no longer be disabled temporarily.
+PASS: The Animation update of the abandoned capture should not be added.
+PASS: A new capture stopped after the abandoned Animation update was dropped.
+PASS: Breakpoints should no longer be disabled temporarily.
+

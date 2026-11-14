@@ -53,8 +53,8 @@ WI.AnimationObserver = class AnimationObserver extends InspectorBackend.Dispatch
         WI.animationManager.animationDestroyed(this._target, animationId);
     }
 
-    // FIXME: <https://webkit.org/b/330057> These events still drop `this._target`, and `TimelineManager.animationTrackingUpdated` resolves
-    // nodes with `WI.domManager.nodeForId()`, because tracking is page-only and needs the frame-target work before it can be per-target.
+    // FIXME: <https://webkit.org/b/330057> `TimelineManager.animationTrackingUpdated` resolves nodes with
+    // `WI.domManager.nodeForId()`, because tracking is page-only and needs the frame-target work before it can be per-target.
 
     trackingStart(timestamp)
     {
@@ -63,7 +63,7 @@ WI.AnimationObserver = class AnimationObserver extends InspectorBackend.Dispatch
 
     trackingUpdate(timestamp, event)
     {
-        WI.timelineManager.animationTrackingUpdated(timestamp, event);
+        WI.timelineManager.animationTrackingUpdated(this._target, timestamp, event);
     }
 
     trackingComplete(timestamp)
