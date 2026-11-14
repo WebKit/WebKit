@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../../resources/gc.js"></script>
+<script>
+async function checkDoesNotKeepObjectsAlive()
+{
+    let one = [{value: 1}];
+    let two = [{value: 2}];
+    let three = [{value: 3}];
+
+    let iterableWeakMap = new IterableWeakMap([[one[0], "one"], [two[0], "two"], [three[0], "three"], [two[0], "two"]]);
+
+    function check(description, keyOrValue, present) {
+        if (typeof keyOrValue === "object")
+            TestPage.dispatchEventToFrontend("TestPage-checkDoesNotKeepObjectsAlive-log", {message: `${iterableWeakMap.has(keyOrValue) === present ? "PASS" : "FAIL"}: 'has' should return ${present ? "true" : "false"} for '${JSON.stringify(keyOrValue)}' after ${description}.`});
+
+        if (typeof keyOrValue === "number") {
+            let found = false;
+            for (let [key, value] of iterableWeakMap) {
+                if (key.value !== keyOrValue)
+                    continue;
+
+                if (found) {
+                    TestPage.dispatchEventToFrontend("TestPage-checkDoesNotKeepObjectsAlive-log", {message: `FAIL: Should not find '${JSON.stringify(keyOrValue)}' more than once after ${description}.`});
+                    continue;
+                }
+
+                found = true;
+            }
+
+            TestPage.dispatchEventToFrontend("TestPage-checkDoesNotKeepObjectsAlive-log", {message: `${found === present ? "PASS" : "FAIL"}: Should ${present ? "" : "not"} contain '{"value": ${keyOrValue}}' after ${description}.`});
+        }
+    }
+
+    async function waitUntilKeyGoesAway(value)
+    {
+        let attempts = 50;
+        while (attempts--) {
+            let containsKey = false;
+            for (let [key, value_] of iterableWeakMap) {
+               if (key.value === value) {
+                   containsKey = true;
+                   break;
+               }
+            }
+            if (!containsKey)
+                return;
+            await new Promise(setTimeout);
+            gc();
+            await new Promise(setTimeout);
+        }
+    }
+
+    TestPage.dispatchEventToFrontend("TestPage-checkDoesNotKeepObjectsAlive-log", {message: JSON.stringify(iterableWeakMap)});
+    check("construction", one[0], true);
+    check("construction", two[0], true);
+    check("construction", three[0], true);
+
+    nukeArray(one);
+    await waitUntilKeyGoesAway(1);
+
+    TestPage.dispatchEventToFrontend("TestPage-checkDoesNotKeepObjectsAlive-log", {message: JSON.stringify(iterableWeakMap)});
+    check("`one = null`", 1, false);
+    check("`one = null`", two[0], true);
+    check("`one = null`", three[0], true);
+
+    nukeArray(two);
+    await waitUntilKeyGoesAway(2);
+
+    TestPage.dispatchEventToFrontend("TestPage-checkDoesNotKeepObjectsAlive-log", {message: JSON.stringify(iterableWeakMap)});
+    check("`two = null`", 1, false);
+    check("`two = null`", 2, false);
+    check("`two = null`", three[0], true);
+
+    nukeArray(three);
+    await waitUntilKeyGoesAway(3);
+
+    TestPage.dispatchEventToFrontend("TestPage-checkDoesNotKeepObjectsAlive-log", {message: JSON.stringify(iterableWeakMap)});
+    check("`three = null`", 1, false);
+    check("`three = null`", 2, false);
+    check("`three = null`", 3, false);
+
+    TestPage.dispatchEventToFrontend("TestPage-checkDoesNotKeepObjectsAlive-done");
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("IterableWeakMap");
+
+    suite.addTestCase({
+        name: "IterableWeakMap.prototype.constructor.Empty",
+        async test() {
+            let iterableWeakMap = new IterableWeakMap;
+            InspectorTest.log(iterableWeakMap);
+        },
+    });
+
+    suite.addTestCase({
+        name: "IterableWeakMap.prototype.constructor.NonEmpty",
+        async test() {
+            let one = {value: 1};
+            let two = {value: 2};
+            let three = {value: 3};
+
+            let iterableWeakMap = new IterableWeakMap([[one, "one"], [two, "two"], [three, "three"], [two, "two-again"]]);
+            InspectorTest.log(iterableWeakMap);
+        },
+    });
+
+    suite.addTestCase({
+        name: "IterableWeakMap.prototype.has",
+        async test() {
+            let one = {value: 1};
+            let two = {value: 2};
+            let three = {value: 3};
+            let four = {value: 4};
+
+            let iterableWeakMap = new IterableWeakMap([[one, "one"], [two, "two"], [three, "three"], [two, "two"]]);
+            InspectorTest.log(iterableWeakMap);
+            InspectorTest.expectTrue(iterableWeakMap.has(one), "'has' should return true if a key exists.");
+            InspectorTest.expectTrue(iterableWeakMap.has(two), "'has' should return true if a key exists (more than once).");
+            InspectorTest.expectTrue(iterableWeakMap.has(three), "'has' should return true if a key exists.");
+            InspectorTest.expectFalse(iterableWeakMap.has(four), "'has' should return false if a key doesn't exist.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "IterableWeakMap.prototype.get",
+        async test() {
+            let one = {value: 1};
+            let two = {value: 2};
+            let four = {value: 4};
+
+            let iterableWeakMap = new IterableWeakMap([[one, "one"], [two, "two"]]);
+            InspectorTest.expectEqual(iterableWeakMap.get(one), "one", "'get' should return the value for a known key.");
+            InspectorTest.expectEqual(iterableWeakMap.get(two), "two", "'get' should return the value for a known key.");
+            InspectorTest.expectEqual(iterableWeakMap.get(four), undefined, "'get' should return undefined for an unknown key.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "IterableWeakMap.prototype.set",
+        async test() {
+            let one = {value: 1};
+            let two = {value: 2};
+            let three = {value: 3};
+
+            let iterableWeakMap = new IterableWeakMap;
+            InspectorTest.log(iterableWeakMap);
+
+            iterableWeakMap.set(one, "one");
+            InspectorTest.log(iterableWeakMap);
+
+            iterableWeakMap.set(two, "two");
+            InspectorTest.log(iterableWeakMap);
+
+            iterableWeakMap.set(three, "three");
+            InspectorTest.log(iterableWeakMap);
+
+            iterableWeakMap.set(two, "two-again");
+            InspectorTest.log(iterableWeakMap);
+        },
+    });
+
+    suite.addTestCase({
+        name: "IterableWeakMap.prototype.delete",
+        async test() {
+            let one = {value: 1};
+            let two = {value: 2};
+            let three = {value: 3};
+            let four = {value: 4};
+
+            let iterableWeakMap = new IterableWeakMap([[one, "one"], [two, "two"], [three, "three"], [two, "two"]]);
+            InspectorTest.log(iterableWeakMap);
+
+            InspectorTest.expectTrue(iterableWeakMap.delete(one), "'delete' should return true for a known key.");
+            InspectorTest.log(iterableWeakMap);
+
+            InspectorTest.expectTrue(iterableWeakMap.delete(two), "'delete' should return true for a known key.");
+            InspectorTest.log(iterableWeakMap);
+
+            InspectorTest.expectFalse(iterableWeakMap.delete(two), "'delete' should return false for an already deleted key.");
+            InspectorTest.log(iterableWeakMap);
+
+            InspectorTest.expectTrue(iterableWeakMap.delete(three), "'delete' should return true for a known key.");
+            InspectorTest.log(iterableWeakMap);
+
+            InspectorTest.expectFalse(iterableWeakMap.delete(four), "'delete' should return false for an unknown key.");
+            InspectorTest.log(iterableWeakMap);
+        },
+    });
+
+    suite.addTestCase({
+        name: "IterableWeakMap.prototype.take",
+        async test() {
+            let one = {value: 1};
+            let two = {value: 2};
+            let three = {value: 3};
+            let four = {value: 4};
+
+            let iterableWeakMap = new IterableWeakMap([[one, "one"], [two, "two"], [three, "three"], [two, "two"]]);
+            InspectorTest.log(iterableWeakMap);
+
+            InspectorTest.expectEqual(iterableWeakMap.take(one), "one", "'take' should return the value for a known key.");
+            InspectorTest.log(iterableWeakMap);
+
+            InspectorTest.expectEqual(iterableWeakMap.take(two), "two", "'take' should return the value for a known key.");
+            InspectorTest.log(iterableWeakMap);
+
+            InspectorTest.expectEqual(iterableWeakMap.take(two), undefined, "'take' should return undefined for an already deleted key.");
+            InspectorTest.log(iterableWeakMap);
+
+            InspectorTest.expectEqual(iterableWeakMap.take(three), "three", "'take' should return the value for a known key.");
+            InspectorTest.log(iterableWeakMap);
+
+            InspectorTest.expectEqual(iterableWeakMap.take(four), undefined, "'take' should return undefined for an unknown key.");
+            InspectorTest.log(iterableWeakMap);
+        },
+    });
+
+    suite.addTestCase({
+        name: "IterableWeakMap.prototype.clear",
+        async test() {
+            let one = {value: 1};
+            let two = {value: 2};
+            let three = {value: 3};
+
+            let iterableWeakMap = new IterableWeakMap([[one, "one"], [two, "two"], [three, "three"], [two, "two"]]);
+            InspectorTest.log(iterableWeakMap);
+
+            iterableWeakMap.clear();
+            InspectorTest.log(iterableWeakMap);
+        },
+    });
+
+    suite.addTestCase({
+        name: "IterableWeakMap.prototype.keys",
+        async test() {
+            let one = {value: 1};
+            let two = {value: 2};
+            let three = {value: 3};
+
+            let iterableWeakMap = new IterableWeakMap([[one, "one"], [two, "two"], [three, "three"], [two, "two"]]);
+            InspectorTest.log(Array.from(iterableWeakMap.keys()));
+        },
+    });
+
+    suite.addTestCase({
+        name: "IterableWeakMap.prototype.values",
+        async test() {
+            let one = {value: 1};
+            let two = {value: 2};
+            let three = {value: 3};
+
+            let iterableWeakMap = new IterableWeakMap([[one, "one"], [two, "two"], [three, "three"], [two, "two"]]);
+            InspectorTest.log(Array.from(iterableWeakMap.values()));
+        },
+    });
+
+    suite.addTestCase({
+        name: "IterableWeakMap.prototype.copy",
+        async test() {
+            let one = {value: 1};
+            let two = {value: 2};
+            let three = {value: 3};
+            let four = {value: 4};
+
+            let iterableWeakMap = new IterableWeakMap([[one, "one"], [two, "two"], [three, "three"], [two, "two"]]);
+            InspectorTest.log(iterableWeakMap);
+
+            let copy = iterableWeakMap.copy();
+            InspectorTest.expectNotEqual(iterableWeakMap, copy, "Copy should not return the same object.")
+            InspectorTest.expectEqual(JSON.stringify(iterableWeakMap), JSON.stringify(copy), "Copy should return a deep copy.");
+
+            iterableWeakMap.set(four, "four");
+            InspectorTest.expectNotEqual(JSON.stringify(iterableWeakMap), JSON.stringify(copy), "Modifying the original should not modify the copy.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "IterableWeakMap.DoesNotKeepObjectsAlive",
+        async test() {
+            // Send `IterableWeakMap` to the page so that `GCController` can be used.
+            InspectorTest.log("Evaluating `IterableWeakMap` source in the inspected page...");
+            await InspectorTest.evaluateInPage(String(IterableWeakMap));
+
+            InspectorTest.addEventListener("TestPage-checkDoesNotKeepObjectsAlive-log", (event) => {
+                InspectorTest.log(event.data.message);
+            });
+
+            InspectorTest.log("Testing `IterableWeakMap` in the inspected page...");
+            await Promise.all([
+                InspectorTest.awaitEvent("TestPage-checkDoesNotKeepObjectsAlive-done"),
+                InspectorTest.evaluateInPage(`checkDoesNotKeepObjectsAlive()`),
+            ]);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing all methods of IterableWeakMap.</p>
+</body>
+</html>
