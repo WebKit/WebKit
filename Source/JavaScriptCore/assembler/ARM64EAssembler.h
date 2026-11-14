@@ -40,8 +40,6 @@ namespace JSC {
 
 class ARM64EAssembler : public ARM64Assembler {
 protected:
-    static constexpr RegisterID unusedID = static_cast<RegisterID>(0b11111);
-
     // Group 1 instructions from section 3.2.3.1.1.
     enum class Group1Op {
         PACIA1716 = 0b0001 << 8 | 0b000 << 5,
@@ -90,20 +88,17 @@ protected:
 
     ALWAYS_INLINE static int encodeGroup2(Group2Op op, RegisterID rn, RegisterID rd, RegisterID rm)
     {
-        ASSERT((rn & 0b11111) == rn);
-        ASSERT((rd & 0b11111) == rd);
-        ASSERT((rm & 0b11111) == rm);
-        return static_cast<int>(op) | 1 << 31 | 0b11010110 << 21 | rm << 16 | rn << 5 | rd;
+        return static_cast<int>(op) | 1 << 31 | 0b11010110 << 21 | xOrSp(rm) << 16 | xOrZr(rn) << 5 | xOrZr(rd);
     }
 
     ALWAYS_INLINE static int encodeGroup2(Group2Op op, RegisterID rn, RegisterID rd)
     {
-        return encodeGroup2(op, rn, rd, static_cast<RegisterID>(0));
+        return static_cast<int>(op) | 1 << 31 | 0b11010110 << 21 | xOrSp(rn) << 5 | xOrZr(rd);
     }
 
     ALWAYS_INLINE static int encodeGroup2(Group2Op op, RegisterID rd)
     {
-        return encodeGroup2(op, unusedID, rd);
+        return static_cast<int>(op) | 1 << 31 | 0b11010110 << 21 | 0b11111 << 5 | xOrZr(rd);
     }
 
     // Group 4 instructions from section 3.2.3.2.1.
@@ -123,11 +118,19 @@ protected:
         ERETAB = 0b0100 << 21 | 1 << 10 | 0b11111 << 5,
     };
 
-    ALWAYS_INLINE static int encodeGroup4(Group4Op op, RegisterID rn = unusedID, RegisterID rm = unusedID)
+    ALWAYS_INLINE static int encodeGroup4(Group4Op op, RegisterID rn, RegisterID rm)
     {
-        ASSERT((rn & 0b11111) == rn);
-        ASSERT((rm & 0b11111) == rm);
-        return (0b1101011 << 25 | static_cast<int>(op) | 0b11111 << 16 | 0b00001 << 11 | rn << 5 | rm);
+        return (0b1101011 << 25 | static_cast<int>(op) | 0b11111 << 16 | 0b00001 << 11 | xOrZr(rn) << 5 | xOrSp(rm));
+    }
+
+    ALWAYS_INLINE static int encodeGroup4(Group4Op op, RegisterID rn)
+    {
+        return (0b1101011 << 25 | static_cast<int>(op) | 0b11111 << 16 | 0b00001 << 11 | xOrZr(rn) << 5 | 0b11111);
+    }
+
+    ALWAYS_INLINE static int encodeGroup4(Group4Op op)
+    {
+        return (0b1101011 << 25 | static_cast<int>(op) | 0b11111 << 16 | 0b00001 << 11 | 0b11111);
     }
 
 public:
