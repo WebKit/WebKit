@@ -128,6 +128,10 @@ void WebSharedWorkerContextManagerConnection::launchSharedWorker(WebCore::Client
     else if (WebProcess::singleton().isLockdownModeEnabled())
         WebPage::adjustSettingsForLockdownMode(page->settings(), nullptr);
 
+#if HAVE(SANDBOX_STATE_FLAGS)
+    WebPage::setHasLaunchedWebContentProcess();
+#endif
+
     if (initializationData.userAgent.isEmpty())
         initializationData.userAgent = m_userAgent;
 
