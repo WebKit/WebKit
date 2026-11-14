@@ -208,6 +208,10 @@ public:
 
     virtual void mirrorEnabledVideoTrackIfNeeded(const VideoTrackPrivateGStreamer&) { }
 
+#if ENABLE(MEDIA_STREAM)
+    void removeMediaStreamAudioTrack(const AudioTrackPrivateGStreamer&);
+#endif
+
     // Used for the non-MSE case.
     void updateEnabledVideoTrack();
     void updateEnabledAudioTrack();

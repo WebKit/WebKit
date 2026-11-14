@@ -290,6 +290,26 @@ void TrackPrivateBaseGStreamer::disconnect()
     m_data->disconnect();
 }
 
+MediaStreamTrackState TrackPrivateBaseGStreamer::trackStateFromStreamTags() const
+{
+    if (!m_data->m_stream)
+        return MediaStreamTrackState::Unknown;
+
+    GRefPtr tags = adoptGRef(gst_stream_get_tags(m_data->m_stream.get()));
+    if (!tags)
+        return MediaStreamTrackState::Unknown;
+
+    GUniqueOutPtr<char> comment;
+    if (!gst_tag_list_get_string(tags.get(), GST_TAG_COMMENT, &comment.outPtr()))
+        return MediaStreamTrackState::Unknown;
+
+    auto metadata = parseMediaStreamTrackMetadataFromJSONString(StringView::fromLatin1(comment.get()));
+    if (!metadata)
+        return MediaStreamTrackState::Unknown;
+
+    return metadata->state;
+}
+
 void TrackDataHolder::disconnect()
 {
     m_taskQueue.startAborting();

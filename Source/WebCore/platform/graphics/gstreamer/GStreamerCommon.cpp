@@ -2363,6 +2363,38 @@ GstDebugLevel gstDebugLevelFromWTFLogLevel(WTFLogLevel level)
     return GST_LEVEL_NONE;
 }
 
+std::optional<MediaStreamTrackMetadata> parseMediaStreamTrackMetadataFromJSONString(StringView jsonString)
+{
+    auto parsedJSON = JSON::Value::optionalParseJSON(jsonString);
+    if (!parsedJSON)
+        return { };
+
+    auto jsonObject = parsedJSON.value()->asObject();
+    if (!jsonObject)
+        return { };
+
+    auto identifier = jsonObject->getValue("id"_s);
+    if (!identifier)
+        return { };
+
+    MediaStreamTrackMetadata metadata;
+    metadata.identifier = identifier->asString();
+    metadata.state = MediaStreamTrackState::Unknown;
+
+    auto state = jsonObject->getValue("state"_s);
+    if (!state)
+        return metadata;
+
+    auto stateString = state->asString();
+    if (stateString == "enabled"_s)
+        metadata.state = MediaStreamTrackState::Enabled;
+    else if (stateString == "disabled"_s)
+        metadata.state = MediaStreamTrackState::Disabled;
+    else if (stateString == "removed"_s)
+        metadata.state = MediaStreamTrackState::Removed;
+    return metadata;
+}
+
 #undef GST_CAT_DEFAULT
 
 } // namespace WebCore
