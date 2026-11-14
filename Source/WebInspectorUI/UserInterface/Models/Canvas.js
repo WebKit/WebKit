@@ -137,10 +137,10 @@ WI.Canvas = class Canvas extends WI.Object
         });
     }
 
-    static _domNodeForId(target, nodeId)
+    static async _resolveDOMNodeForId(target, nodeId)
     {
         if (target instanceof WI.FrameTarget)
-            return WI.domManager.nodeForIdInFrameTarget(nodeId, target);
+            return WI.domManager.resolveNodeForIdInFrameTarget(nodeId, target);
         return WI.domManager.nodeForId(nodeId);
     }
 
@@ -275,11 +275,12 @@ WI.Canvas = class Canvas extends WI.Object
             } else
                 requestPromise = Promise.resolve({nodeIds: []});
 
-            let promise = requestPromise.then(({nodeIds}) => {
+            let promise = requestPromise.then(async ({nodeIds}) => {
+                let nodes = await Promise.all(nodeIds.map((nodeId) => WI.Canvas._resolveDOMNodeForId(this._target, nodeId)));
                 if (promise !== this._requestNodesPromise)
                     return this._domNodes;
 
-                this._domNodes = nodeIds.map((nodeId) => WI.Canvas._domNodeForId(this._target, nodeId));
+                this._domNodes = nodes;
                 return this._domNodes;
             }, () => promise === this._requestNodesPromise ? [] : this._domNodes);
             this._requestNodesPromise = promise;
@@ -306,11 +307,12 @@ WI.Canvas = class Canvas extends WI.Object
             } else
                 requestPromise = Promise.resolve({clientNodeIds: []});
 
-            let promise = requestPromise.then(({clientNodeIds}) => {
+            let promise = requestPromise.then(async ({clientNodeIds}) => {
+                let clientNodes = await Promise.all(clientNodeIds.map((clientNodeId) => WI.Canvas._resolveDOMNodeForId(this._target, clientNodeId)));
                 if (promise !== this._requestCSSCanvasClientNodesPromise)
                     return this._cssCanvasClientNodes;
 
-                this._cssCanvasClientNodes = clientNodeIds.map((clientNodeId) => WI.Canvas._domNodeForId(this._target, clientNodeId));
+                this._cssCanvasClientNodes = clientNodes;
                 return this._cssCanvasClientNodes;
             }, () => promise === this._requestCSSCanvasClientNodesPromise ? [] : this._cssCanvasClientNodes);
             this._requestCSSCanvasClientNodesPromise = promise;

@@ -1,31 +1,31 @@
-Tests that a DOM node pushed to the frontend from a frame target is looked up in that frame target's node id space.
+Tests that a DOM node pushed to the frontend from the frame target of a document that is also in the page tree resolves to the page tree's node.
 
 
 == Running test suite: SiteIsolation.DOM.FrameDOMAgent.PushNodeToFrontend
 -- Running test case: Setup
-PASS: Should find exactly one frame target for the main frame.
+PASS: Should find the main frame's target.
+PASS: Should find the same-origin frame's target.
 PASS: Page target should have a document.
-PASS: Frame target should have a document.
-
--- Running test case: NodeInShadowTree
-PASS: Evaluating the expression should produce a node.
-PASS: Should push a node id to the frontend.
-PASS: nodeForId should find the pushed node.
-PASS: Pushed node should be the input inside the shadow tree.
-PASS: Pushed node should be the shadow tree's Username input.
-PASS: Pushed node should be owned by the frame target that resolved it.
-PASS: nodeForId and nodeForIdInFrameTarget should agree.
 
 -- Running test case: NodeInDocumentTree
-PASS: Evaluating the expression should produce a node.
-PASS: Should push a node id to the frontend.
-PASS: nodeForId should find the pushed node.
 PASS: Pushed node should be the paragraph.
-PASS: Pushed node should be owned by the frame target that resolved it.
+PASS: Pushed node should be the node the page target pushes.
+PASS: Pushed node should be in the page tree.
+PASS: Pushed node should not be owned by a frame target.
+
+-- Running test case: NodeInShadowTree
+PASS: Pushed node should be the input inside the shadow tree.
+PASS: Pushed node should be the shadow tree's Username input.
+PASS: Pushed node should be the node the page target pushes.
+PASS: Pushed node should be in the page tree.
+PASS: Pushed node should not be owned by a frame target.
+
+-- Running test case: NodeInSameOriginFrame
+PASS: Pushed node should be the frame's paragraph.
+PASS: Pushed node should be under the frame's owner in the page tree.
+PASS: Pushed node should be in the page tree.
+PASS: Pushed node should not be owned by a frame target.
 
 -- Running test case: PageTargetIdsAreNotScoped
-PASS: Evaluating the expression should produce a node.
 PASS: Page target node ids should stay numeric.
-PASS: nodeForId should find the pushed node.
-PASS: Pushed node should be the paragraph.
 
