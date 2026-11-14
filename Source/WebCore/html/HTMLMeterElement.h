@@ -26,7 +26,6 @@
 namespace WebCore {
 
 class MeterValueElement;
-class RenderMeter;
 
 class HTMLMeterElement final : public HTMLElement {
     WTF_MAKE_TZONE_ALLOCATED(HTMLMeterElement);
@@ -58,12 +57,9 @@ private:
     HTMLMeterElement(const QualifiedName&, Document&);
     virtual ~HTMLMeterElement();
 
-    NODELETE RenderMeter* renderMeter() const;
-
     bool isLabelable() const final { return true; }
 
     NODELETE bool supportsBaseAppearance(StyleAppearance) const final;
-    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
     bool childShouldCreateRenderer(const Node&) const final;
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
 

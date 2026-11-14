@@ -65,7 +65,6 @@
 #include "PaintInfo.h"
 #include "PlatformRenderTheme.h"
 #include "ProgressBarPart.h"
-#include "RenderMeter.h"
 #include "RenderElementInlines.h"
 #include "RenderObjectInlines.h"
 #include "RenderProgress.h"
@@ -532,12 +531,11 @@ static void updateApplePayButtonPartForRenderer(ApplePayButtonPart& applePayButt
 }
 #endif
 
-static void updateMeterPartForRenderer(MeterPart& meterPart, const RenderMeter& renderMeter)
+static void updateMeterPartForElement(MeterPart& meterPart, const HTMLMeterElement& element)
 {
-    Ref element = *renderMeter.meterElement();
     MeterPart::GaugeRegion gaugeRegion;
 
-    switch (element->gaugeRegion()) {
+    switch (element.gaugeRegion()) {
     case HTMLMeterElement::GaugeRegion::Optimum:
         gaugeRegion = MeterPart::GaugeRegion::Optimum;
         break;
@@ -550,9 +548,9 @@ static void updateMeterPartForRenderer(MeterPart& meterPart, const RenderMeter& 
     }
 
     meterPart.setGaugeRegion(gaugeRegion);
-    meterPart.setValue(element->value());
-    meterPart.setMinimum(element->min());
-    meterPart.setMaximum(element->max());
+    meterPart.setValue(element.value());
+    meterPart.setMinimum(element.min());
+    meterPart.setMaximum(element.max());
 }
 
 NODELETE static void updateProgressBarPartForRenderer(ProgressBarPart& progressBarPart, const RenderProgress& renderProgress)
@@ -725,7 +723,7 @@ RefPtr<ControlPart> RenderTheme::createControlPart(const RenderElement& renderer
 void RenderTheme::updateControlPartForRenderer(ControlPart& part, const RenderElement& renderer) const
 {
     if (auto* meterPart = dynamicDowncast<MeterPart>(part)) {
-        updateMeterPartForRenderer(*meterPart, downcast<RenderMeter>(renderer));
+        updateMeterPartForElement(*meterPart, downcast<HTMLMeterElement>(*renderer.element()));
         return;
     }
 
@@ -1552,11 +1550,6 @@ void RenderTheme::adjustMenuListStyle(Style::ComputedStyle& style, const Element
 void RenderTheme::adjustMeterStyle(Style::ComputedStyle& style, const Element*) const
 {
     style.setBoxShadow(CSS::Keyword::None { });
-}
-
-FloatSize RenderTheme::meterSizeForBounds(const RenderMeter&, const FloatRect& bounds) const
-{
-    return bounds.size();
 }
 
 #if ENABLE(ATTACHMENT_ELEMENT)

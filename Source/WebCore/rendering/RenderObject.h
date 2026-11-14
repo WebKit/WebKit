@@ -150,7 +150,6 @@ public:
         ListOutsideMarker,
         Media,
         MenuList,
-        Meter,
 #if ENABLE(MODEL_ELEMENT)
         Model,
 #endif
@@ -457,7 +456,6 @@ public:
     bool isRenderListOutsideMarker() const { return type() == Type::ListOutsideMarker; }
     bool isRenderMedia() const { return isRenderReplaced() && m_typeSpecificFlags.replacedFlags().contains(ReplacedFlag::IsMedia); }
     bool isRenderMenuList() const { return type() == Type::MenuList; }
-    bool isRenderMeter() const { return type() == Type::Meter; }
     bool isRenderProgress() const { return type() == Type::Progress; }
     bool isRenderButton() const { return type() == Type::Button; }
     bool isRenderIFrame() const { return type() == Type::IFrame; }

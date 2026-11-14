@@ -159,7 +159,7 @@ protected:
     void paintMenuListButtonDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) override;
     bool paintMenuListButton(const RenderElement&, const PaintInfo&, const FloatRect&) final;
 
-    void adjustMeterStyle(Style::ComputedStyle&, const Element*) const final;
+    void adjustMeterStyle(Style::ComputedStyle&, const Element*) const override;
     bool paintMeter(const RenderElement&, const PaintInfo&, const FloatRect&) override;
 
     void adjustListButtonStyle(Style::ComputedStyle&, const Element*) const override;

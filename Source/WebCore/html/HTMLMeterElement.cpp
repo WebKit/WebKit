@@ -32,7 +32,7 @@
 #include "NodeDocument.h"
 #include "NodeName.h"
 #include "PlatformRenderTheme.h"
-#include "RenderMeter.h"
+#include "RenderElement.h"
 #include "RenderTheme.h"
 #include "ScriptDisallowedScope.h"
 #include "Settings.h"
@@ -69,17 +69,12 @@ bool HTMLMeterElement::supportsBaseAppearance(StyleAppearance appearance) const
     return appearance == StyleAppearance::Base;
 }
 
-RenderPtr<RenderElement> HTMLMeterElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
-{
-    if (!RenderTheme::singleton().supportsMeter(style.usedAppearance()))
-        return RenderElement::createFor(*this, WTF::move(style));
-
-    return createRenderer<RenderMeter>(*this, WTF::move(style));
-}
-
 bool HTMLMeterElement::childShouldCreateRenderer(const Node& child) const
 {
-    return !is<RenderMeter>(renderer()) && HTMLElement::childShouldCreateRenderer(child);
+    // The theme paints the whole meter when it supports the used appearance, so the shadow tree is not rendered.
+    if (CheckedPtr renderer = this->renderer(); renderer && RenderTheme::singleton().supportsMeter(renderer->style().usedAppearance()))
+        return false;
+    return HTMLElement::childShouldCreateRenderer(child);
 }
 
 void HTMLMeterElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
@@ -207,11 +202,6 @@ void HTMLMeterElement::didChangeElementValue()
         fillElement->setInlineStyleProperty(CSSPropertyID::Transform, makeString("translate(-"_s, (1 - valueRatio()) * 100, "%, 0)"_s));
         fillElement->invalidateStyle();
     }
-}
-
-RenderMeter* HTMLMeterElement::renderMeter() const
-{
-    return dynamicDowncast<RenderMeter>(renderer());
 }
 
 void HTMLMeterElement::appendShadowTreeForAutoAppearance(ShadowRoot& root)
