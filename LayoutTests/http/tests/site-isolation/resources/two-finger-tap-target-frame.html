@@ -1,0 +1,9 @@
+<body style="margin: 0;">
+<div id="target" style="width: 400px; height: 300px; background-color: silver;"></div>
+<script>
+document.getElementById("target").addEventListener("click", (event) => {
+    window.top.postMessage({ type: "click", metaKey: event.metaKey }, "*");
+});
+window.top.postMessage({ type: "ready" }, "*");
+</script>
+</body>
