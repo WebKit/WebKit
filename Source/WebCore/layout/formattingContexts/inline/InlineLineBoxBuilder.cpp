@@ -27,6 +27,7 @@
 #include "config.h"
 #include "InlineLineBoxBuilder.h"
 
+#include "BaselineAlignment.h"
 #include "InlineLevelBoxInlines.h"
 #include "InlineLineBoxVerticalAligner.h"
 #include "InlineLineBuilder.h"
@@ -155,6 +156,44 @@ NODELETE static bool isLineFitEdgeLeading(const InlineLevelBox& inlineBox)
 {
     ASSERT(inlineBox.isInlineBox());
     return inlineBox.lineFitEdge().isLeading();
+}
+
+static InlineLayoutUnit alignmentBaselineOffset(const InlineLevelBox& inlineLevelBox, const InlineLevelBox& parentInlineBox, FontBaseline lineBaselineType)
+{
+    // https://drafts.csswg.org/css-inline-3/#alignment-baseline-property
+    // The box's alignment baseline lines up with the same baseline of its parent, instead of the line's baseline.
+    auto alignmentBaseline = inlineLevelBox.alignmentBaseline();
+    if (alignmentBaseline == AlignmentBaseline::Baseline)
+        return { };
+    // The 'vertical-align' values that pick a baseline of their own (e.g. middle) or align with the line box (top and bottom) win.
+    auto& verticalAlign = inlineLevelBox.verticalAlign();
+    auto isBaselineRelative = WTF::holdsAlternative<CSS::Keyword::Baseline>(verticalAlign)
+        || WTF::holdsAlternative<CSS::Keyword::Sub>(verticalAlign)
+        || WTF::holdsAlternative<CSS::Keyword::Super>(verticalAlign)
+        || WTF::holdsAlternative<InlineLayoutUnit>(verticalAlign);
+    if (!isBaselineRelative)
+        return { };
+
+    if (alignmentBaseline == AlignmentBaseline::Middle) {
+        // Center the box on its parent's x-middle baseline the way 'vertical-align: middle' does, instead of lining up the two
+        // x-middle baselines as the spec now says, which would move text once 'vertical-align' becomes the shorthand.
+        // https://github.com/w3c/csswg-drafts/issues/13951
+        auto parentXHeight = parentInlineBox.primarymetricsOfPrimaryFont().xHeight().value_or(0.f);
+        return parentXHeight / 2 - (inlineLevelBox.ascent() - inlineLevelBox.descent()) / 2;
+    }
+
+    auto offsetFromLineBaseline = [&](const InlineLevelBox& box) -> InlineLayoutUnit {
+        if (box.isAtomicInlineBox())
+            return box.ascent() - BaselineAlignment::synthesizedBaselineOffsetFromLineOverEdge(alignmentBaseline, box.ascent() + box.descent());
+        auto& fontMetrics = box.primarymetricsOfPrimaryFont();
+        auto offset = BaselineAlignment::baselineOffsetFromAlphabeticBaseline(alignmentBaseline, fontMetrics);
+        if (lineBaselineType == FontBaseline::Ideographic) {
+            // Vertical lines are aligned on the central baseline, which sits this much above the alphabetic one.
+            offset -= fontMetrics.ascent(FontBaseline::Alphabetic) - fontMetrics.ascent(FontBaseline::Ideographic);
+        }
+        return offset;
+    };
+    return offsetFromLineBaseline(parentInlineBox) - offsetFromLineBaseline(inlineLevelBox);
 }
 
 static InlineLevelBox::AscentAndDescent layoutBoundsWithEdgeAdjustmentForInlineBox(const InlineLevelBox& inlineBox, const FontMetrics& fontMetrics, FontBaseline fontBaseline)
@@ -382,6 +421,7 @@ void LineBoxBuilder::setVerticalPropertiesForInlineLevelBox(const LineBox& lineB
         // With text-box-trim, the inline box top is not always where the content starts.
         auto fontMetricBasedAscent = primaryFontMetricsForInlineBox(inlineLevelBox, lineBox.baselineType()).ascent;
         inlineLevelBox.setInlineBoxContentOffsetForTextBoxTrim(fontMetricBasedAscent - ascentAndDescent.ascent);
+        setAlignmentBaselineOffsetIfApplicable(lineBox, inlineLevelBox);
         return;
     }
     if (inlineLevelBox.isLineBreakBox()) {
@@ -429,26 +469,40 @@ void LineBoxBuilder::setVerticalPropertiesForInlineLevelBox(const LineBox& lineB
         CheckedRef layoutBox = inlineLevelBox.layoutBox();
         auto& inlineLevelBoxGeometry = formattingContext().geometryForBox(layoutBox);
         auto marginBoxHeight = inlineLevelBoxGeometry.marginBoxHeight();
+        auto synthesizedBaseline = BaselineAlignment::synthesizedBaselineOffsetFromLineOverEdge(AlignmentBaseline::Alphabetic, marginBoxHeight);
         auto ascent = [&]() -> InlineLayoutUnit {
             if (layoutState().shouldNotSynthesizeInlineBlockBaseline())
-                return inlineLevelBoxGeometry.baseline().value_or(marginBoxHeight);
+                return inlineLevelBoxGeometry.baseline().value_or(synthesizedBaseline);
 
             if (layoutBox->isInlineBlockBox()) {
                 // The baseline of an 'inline-block' is the baseline of its last line box in the normal flow, unless it has either no in-flow line boxes or
                 // if its 'overflow' property has a computed value other than 'visible', in which case the baseline is the bottom margin edge.
                 auto synthesizeBaseline = !layoutBox->establishesInlineFormattingContext() || !layoutBox->style().isOverflowVisible();
                 if (synthesizeBaseline)
-                    return marginBoxHeight;
+                    return synthesizedBaseline;
 
                 // FIXME: Grab the first/last baseline off of the inline formatting context (display content).
                 ASSERT_NOT_IMPLEMENTED_YET();
             }
-            return marginBoxHeight;
+            return synthesizedBaseline;
         }();
         setVerticalProperties({ ascent, marginBoxHeight - ascent });
+        setAlignmentBaselineOffsetIfApplicable(lineBox, inlineLevelBox);
         return;
     }
     ASSERT_NOT_REACHED();
+}
+
+void LineBoxBuilder::setAlignmentBaselineOffsetIfApplicable(const LineBox& lineBox, InlineLevelBox& inlineLevelBox) const
+{
+    if (!layoutState().shouldUseAlignmentBaseline() || inlineLevelBox.isRootInlineBox() || inlineLevelBox.alignmentBaseline() == AlignmentBaseline::Baseline)
+        return;
+    if (inlineLevelBox.isAtomicInlineBox()) {
+        // FIXME: Atomic inline boxes with baselines of their own (e.g. inline-blocks with text) should align them too.
+        if (inlineLevelBox.isListMarker() || !formattingContext().geometryForBox(inlineLevelBox.layoutBox()).hasSynthesizedBaseline())
+            return;
+    }
+    inlineLevelBox.setAlignmentBaselineOffset(alignmentBaselineOffset(inlineLevelBox, lineBox.parentInlineBox(inlineLevelBox), lineBox.baselineType()));
 }
 
 void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
@@ -746,7 +800,7 @@ void LineBoxBuilder::adjustIdeographicBaselineIfApplicable(LineBox& lineBox)
             setVerticalPropertiesForInlineLevelBox(lineBox, inlineLevelBox);
         else if (inlineLevelBox.isAtomicInlineBox()) {
             auto inlineLevelBoxHeight = inlineLevelBox.logicalHeight();
-            InlineLayoutUnit ideographicBaseline = inlineLevelBoxHeight / 2;
+            auto ideographicBaseline = BaselineAlignment::synthesizedBaselineOffsetFromLineOverEdge(AlignmentBaseline::Central, inlineLevelBoxHeight);
             // Move the baseline position but keep the same logical height.
             inlineLevelBox.setAscentAndDescent({ ideographicBaseline, inlineLevelBoxHeight - ideographicBaseline });
             inlineLevelBox.setLayoutBounds({ ideographicBaseline, inlineLevelBoxHeight - ideographicBaseline });
@@ -763,19 +817,25 @@ void LineBoxBuilder::adjustIdeographicBaselineIfApplicable(LineBox& lineBox)
     };
 
     adjustLayoutBoundsWithIdeographicBaseline(rootInlineBox);
-    for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
-        if (inlineLevelBox.isAtomicInlineBox()) {
-            auto& layoutBox = inlineLevelBox.layoutBox();
-            if (layoutBox.isInlineTableBox()) {
-                // This is the integration codepath where inline table boxes are represented as atomic inline boxes.
-                // Integration codepath sets ideographic baseline by default for non-horizontal content.
-                continue;
-            }
-            auto isInlineBlockWithNonSyntheticBaseline = layoutBox.isInlineBlockBox() && formattingContext().geometryForBox(layoutBox).baseline().has_value();
-            if (isInlineBlockWithNonSyntheticBaseline && !layoutBox.writingMode().isHorizontal())
-                continue;
+    auto keepsIntegrationBaseline = [&](const InlineLevelBox& atomicInlineBox) {
+        auto& layoutBox = atomicInlineBox.layoutBox();
+        if (layoutBox.isInlineTableBox()) {
+            // This is the integration codepath where inline table boxes are represented as atomic inline boxes.
+            // Integration codepath sets ideographic baseline by default for non-horizontal content.
+            return true;
         }
-        adjustLayoutBoundsWithIdeographicBaseline(inlineLevelBox);
+        auto isInlineBlockWithNonSyntheticBaseline = layoutBox.isInlineBlockBox() && formattingContext().geometryForBox(layoutBox).baseline().has_value();
+        return isInlineBlockWithNonSyntheticBaseline && !layoutBox.writingMode().isHorizontal();
+    };
+    for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
+        if (!inlineLevelBox.isAtomicInlineBox()) {
+            adjustLayoutBoundsWithIdeographicBaseline(inlineLevelBox);
+            continue;
+        }
+        if (!keepsIntegrationBaseline(inlineLevelBox))
+            adjustLayoutBoundsWithIdeographicBaseline(inlineLevelBox);
+        // The line now sits on the central baseline, and the box's ascent may have moved too.
+        setAlignmentBaselineOffsetIfApplicable(lineBox, inlineLevelBox);
     }
 }
 

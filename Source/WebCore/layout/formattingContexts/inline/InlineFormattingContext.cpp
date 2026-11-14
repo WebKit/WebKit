@@ -607,6 +607,8 @@ void InlineFormattingContext::initializeInlineLayoutState(const LayoutState& glo
         inlineLayoutState.setInQuirksMode();
     if (globalLayoutState.isTextShapingAcrossInlineBoxesEnabled())
         inlineLayoutState.setShouldShapeTextAcrossInlineBoxes();
+    if (globalLayoutState.isAlignmentBaselineOnInlineBoxesEnabled())
+        inlineLayoutState.setShouldUseAlignmentBaseline();
 }
 
 #if ASSERT_ENABLED

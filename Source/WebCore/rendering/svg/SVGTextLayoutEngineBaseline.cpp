@@ -22,6 +22,7 @@
 #include "config.h"
 #include "SVGTextLayoutEngineBaseline.h"
 
+#include "BaselineAlignment.h"
 #include "FontCascadeInlines.h"
 #include "RenderElementInlines.h"
 #include "RenderSVGInlineText.h"
@@ -103,36 +104,7 @@ float SVGTextLayoutEngineBaseline::calculateAlignmentBaselineShift(bool isVertic
         baseline = dominantBaselineToAlignmentBaseline(isVerticalText, textStyle);
         ASSERT(baseline != AlignmentBaseline::Baseline);
     }
-
-    const FontMetrics& fontMetrics = m_font->metricsOfPrimaryFont();
-    float ascent = fontMetrics.ascent();
-    float descent = fontMetrics.descent();
-
-    // Note: http://wiki.apache.org/xmlgraphics-fop/LineLayout/AlignmentHandling
-    switch (baseline) {
-    case AlignmentBaseline::BeforeEdge:
-    case AlignmentBaseline::TextBeforeEdge:
-        return ascent;
-    case AlignmentBaseline::Middle:
-        return fontMetrics.xHeight().value_or(0.f) / 2;
-    case AlignmentBaseline::Central:
-        return (ascent - descent) / 2;
-    case AlignmentBaseline::AfterEdge:
-    case AlignmentBaseline::TextAfterEdge:
-    case AlignmentBaseline::Ideographic:
-        return -descent;
-    case AlignmentBaseline::Alphabetic:
-        return 0;
-    case AlignmentBaseline::Hanging:
-        return ascent * 8 / 10.f;
-    case AlignmentBaseline::Mathematical:
-        return ascent / 2;
-    case AlignmentBaseline::Baseline:
-        ASSERT_NOT_REACHED();
-        return 0;
-    }
-    ASSERT_NOT_REACHED();
-    return 0;
+    return BaselineAlignment::baselineOffsetFromAlphabeticBaseline(baseline, m_font->metricsOfPrimaryFont());
 }
 
 float SVGTextLayoutEngineBaseline::calculateGlyphOrientationAngle(bool isVerticalText, const Style::ComputedStyle& style, const char32_t& character) const
