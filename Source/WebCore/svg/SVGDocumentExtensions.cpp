@@ -187,35 +187,40 @@ void SVGDocumentExtensions::unregisterSVGFontFaceElement(SVGFontFaceElement& ele
     m_svgFontFaceElements.remove(element);
 }
 
-bool SVGDocumentExtensions::hasExternalSVGResource(const URL& url) const
+static SVGExternalResourceKey externalResourceKey(const Style::URL& location)
 {
-    return m_externalSVGDocuments.contains(url);
+    auto url = location.resolved;
+    url.removeFragmentIdentifier();
+    return { .url = WTF::move(url), .modifiers = location.modifiers };
 }
 
-void SVGDocumentExtensions::addExternalSVGResource(const URL& url, CachedImage& cachedImage, Document& document)
+bool SVGDocumentExtensions::hasExternalSVGResource(const Style::URL& location) const
 {
-    m_externalSVGDocuments.set(url, IsolatedSVGDocumentContext::create(cachedImage, document));
+    return m_externalSVGDocuments.contains(externalResourceKey(location));
 }
 
-IsolatedSVGDocumentContext* SVGDocumentExtensions::isolatedSVGDocumentContext(const URL& url) const
+void SVGDocumentExtensions::addExternalSVGResource(const Style::URL& location, CachedImage& cachedImage, Document& document)
 {
-    auto it = m_externalSVGDocuments.find(url);
+    m_externalSVGDocuments.set(externalResourceKey(location), IsolatedSVGDocumentContext::create(cachedImage, document));
+}
+
+IsolatedSVGDocumentContext* SVGDocumentExtensions::isolatedSVGDocumentContext(const Style::URL& location) const
+{
+    auto it = m_externalSVGDocuments.find(externalResourceKey(location));
     return it != m_externalSVGDocuments.end() ? it->value.ptr() : nullptr;
 }
 
-std::optional<RefPtr<SVGDocument>> SVGDocumentExtensions::externalResourceDocument(const URL& url) const
+std::optional<RefPtr<SVGDocument>> SVGDocumentExtensions::externalResourceDocument(const Style::URL& location) const
 {
     Ref document = m_document.get();
     if (!document->settings().svgExternalResourcesEnabled())
         return std::nullopt;
 
+    auto& url = location.resolved;
     if (!url.protocolIsData() && !SVGURIReference::isExternalURIReference(url.string(), document))
         return std::nullopt;
 
-    auto documentURL = url;
-    documentURL.removeFragmentIdentifier();
-
-    RefPtr isolatedContext = isolatedSVGDocumentContext(documentURL);
+    RefPtr isolatedContext = isolatedSVGDocumentContext(location);
     return RefPtr { isolatedContext ? isolatedContext->document() : nullptr };
 }
 

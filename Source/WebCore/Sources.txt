@@ -1275,6 +1275,7 @@ css/values/images/CSSGradient.cpp
 css/values/images/CSSGradientColorInterpolationMethod.cpp
 css/values/images/CSSImageWrapper.cpp
 css/values/images/CSSMeshGradient.cpp
+css/values/link-params/CSSLinkParameter.cpp
 css/values/masking/CSSClip.cpp
 css/values/masking/CSSMaskBorderOutset.cpp
 css/values/masking/CSSMaskBorderRepeat.cpp

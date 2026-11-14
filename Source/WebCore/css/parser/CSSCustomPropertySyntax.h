@@ -97,4 +97,8 @@ void serializeCustomPropertySyntax(StringBuilder&, const CSSCustomPropertySyntax
 // multi-component syntax is wrapped in type(). Must not be called on the universal syntax.
 void serializeCustomPropertySyntaxAsCSSType(StringBuilder&, const CSSCustomPropertySyntax&);
 
+// MARK: - Hashing
+
+void add(Hasher&, const CSSCustomPropertySyntax::Component&);
+
 }

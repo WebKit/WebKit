@@ -331,7 +331,7 @@ RefPtr<SVGClipPathElement> ReferencedSVGResources::referencedClipPathElement(Tre
 
     Ref document = treeScope.documentScope();
     CheckedRef extensions = document->svgExtensions();
-    if (auto externalDocument = extensions->externalResourceDocument(clipPath.url().resolved)) {
+    if (auto externalDocument = extensions->externalResourceDocument(clipPath.url())) {
         RefPtr resolvedDocument = *externalDocument;
         if (!resolvedDocument)
             return nullptr;
@@ -345,7 +345,7 @@ RefPtr<SVGMarkerElement> ReferencedSVGResources::referencedMarkerElement(TreeSco
 {
     Ref document = treeScope.documentScope();
     CheckedRef extensions = document->svgExtensions();
-    if (auto externalDocument = extensions->externalResourceDocument(markerResource.resolved)) {
+    if (auto externalDocument = extensions->externalResourceDocument(markerResource)) {
         RefPtr resolvedDocument = *externalDocument;
         auto resourceID = markerResource.resolved.fragmentIdentifier().toAtomString();
         if (resourceID.isEmpty() || !resolvedDocument)
@@ -378,7 +378,7 @@ RefPtr<SVGElement> ReferencedSVGResources::referencedPaintServerElement(TreeScop
 {
     Ref document = treeScope.documentScope();
     CheckedRef extensions = document->svgExtensions();
-    if (auto externalDocument = extensions->externalResourceDocument(uri.resolved)) {
+    if (auto externalDocument = extensions->externalResourceDocument(uri)) {
         RefPtr resolvedDocument = *externalDocument;
         auto resourceID = uri.resolved.fragmentIdentifier().toAtomString();
         if (resourceID.isEmpty() || !resolvedDocument)
@@ -400,7 +400,7 @@ RefPtr<SVGFilterElement> ReferencedSVGResources::referencedFilterElement(TreeSco
 
     Ref document = treeScope.documentScope();
     CheckedRef extensions = document->svgExtensions();
-    if (auto externalDocument = extensions->externalResourceDocument(filterReference.url.resolved)) {
+    if (auto externalDocument = extensions->externalResourceDocument(filterReference.url)) {
         RefPtr resolvedDocument = *externalDocument;
         if (!resolvedDocument)
             return nullptr;
@@ -417,7 +417,7 @@ LegacyRenderSVGResourceClipper* ReferencedSVGResources::referencedClipperRendere
 
     Ref document = treeScope.documentScope();
     CheckedRef extensions = document->svgExtensions();
-    if (auto externalDocument = extensions->externalResourceDocument(clipPath.url().resolved)) {
+    if (auto externalDocument = extensions->externalResourceDocument(clipPath.url())) {
         RefPtr resolvedDocument = *externalDocument;
         if (!resolvedDocument)
             return nullptr;

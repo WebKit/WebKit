@@ -45,6 +45,10 @@ template<> struct Serialize<TypeSpecifier> {
     void operator()(StringBuilder&, const SerializationContext&, const TypeSpecifier&);
 };
 
+// MARK: - Hashing
+
+void add(Hasher&, const TypeSpecifier&);
+
 // MARK: - Logging
 
 WTF::TextStream& operator<<(WTF::TextStream&, const TypeSpecifier&);
