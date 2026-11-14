@@ -1,0 +1,49 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>RTCPeerConnection.prototype.close</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="RTCPeerConnection-helper.js"></script>
+<script>
+'use strict';
+
+promise_test(async t => {
+  const pc1 = new RTCPeerConnection();
+  t.add_cleanup(() => pc1.close());
+  const pc2 = new RTCPeerConnection();
+  t.add_cleanup(() => pc2.close());
+
+  pc1.addTrack(trackFactories.audio());
+  await exchangeOfferAnswer(pc1, pc2);
+
+  const dtlsTransport = pc1.getTransceivers()[0].sender.transport;
+  const iceTransport = dtlsTransport.iceTransport;
+  assert_not_equals(iceTransport.state, 'closed');
+  assert_not_equals(dtlsTransport.state, 'closed');
+
+  pc1.close();
+  assert_equals(iceTransport.state, 'closed');
+  assert_equals(dtlsTransport.state, 'closed');
+}, 'close() sets the state of the ICE and DTLS transports to closed');
+
+promise_test(async t => {
+  const pc1 = new RTCPeerConnection();
+  t.add_cleanup(() => pc1.close());
+  const pc2 = new RTCPeerConnection();
+  t.add_cleanup(() => pc2.close());
+
+  pc1.createDataChannel('');
+  await exchangeOfferAnswer(pc1, pc2);
+
+  const {sctp} = pc1;
+  const dtlsTransport = sctp.transport;
+  const iceTransport = dtlsTransport.iceTransport;
+  assert_not_equals(sctp.state, 'closed');
+  assert_not_equals(iceTransport.state, 'closed');
+
+  pc1.close();
+  assert_equals(sctp.state, 'closed');
+  assert_equals(dtlsTransport.state, 'closed');
+  assert_equals(iceTransport.state, 'closed');
+}, 'close() sets the state of the SCTP transport and its underlying transports to closed');
+</script>
