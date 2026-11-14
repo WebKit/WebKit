@@ -26,7 +26,7 @@
 #include "config.h"
 #include "DMABufBuffer.h"
 
-#if USE(COORDINATED_GRAPHICS)
+#if USE(COORDINATED_GRAPHICS) && !OS(ANDROID)
 #include "BitmapTexturePool.h"
 #include "CoordinatedPlatformLayerBuffer.h"
 #include "GBMVersioning.h"
@@ -585,4 +585,4 @@ sk_sp<SkImage> DMABufBuffer::createPromiseImageForQualcommVideoFrame(const sk_sp
 
 } // namespace WebCore
 
-#endif // USE(COORDINATED_GRAPHICS)
+#endif // USE(COORDINATED_GRAPHICS) && !OS(ANDROID)

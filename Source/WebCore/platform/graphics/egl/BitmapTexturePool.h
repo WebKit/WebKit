@@ -51,7 +51,7 @@ public:
     ~BitmapTexturePool() = default;
 
     WEBCORE_EXPORT Ref<BitmapTexture> acquireTexture(const IntSize&, OptionSet<BitmapTexture::Flags>);
-#if USE(GBM)
+#if !PLATFORM(PLAYSTATION)
     Ref<BitmapTexture> createTextureForImage(EGLImage, const IntSize&, OptionSet<BitmapTexture::Flags>);
 #endif
 
@@ -84,9 +84,7 @@ private:
 
     Lock m_lock;
     Vector<Entry> m_textures WTF_GUARDED_BY_LOCK(m_lock);
-#if USE(GBM)
     Vector<Ref<BitmapTexture>> m_imageTextures WTF_GUARDED_BY_LOCK(m_lock);
-#endif
     RunLoop::Timer m_releaseUnusedTexturesTimer WTF_GUARDED_BY_LOCK(m_lock);
     uint64_t m_poolSizeInBytes WTF_GUARDED_BY_LOCK(m_lock) { 0 };
     bool m_onLimitExceededMode WTF_GUARDED_BY_LOCK(m_lock) { false };
