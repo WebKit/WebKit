@@ -1,0 +1,14 @@
+Tests that Memory.disable while tracking sends trackingComplete, and that it does not send trackingComplete when not tracking.
+
+
+== Running test suite: Memory.DisableDuringTracking
+-- Running test case: Memory.DisableDuringTracking.SendsTrackingComplete
+Memory.trackingStart
+PASS: Should have a timestamp when starting.
+Memory.trackingComplete
+PASS: Should have a timestamp when completing.
+PASS: Complete timestamp should not precede the start timestamp.
+
+-- Running test case: Memory.DisableDuringTracking.NotTrackingDoesNotSendTrackingComplete
+PASS: Should not send trackingComplete when not tracking.
+
