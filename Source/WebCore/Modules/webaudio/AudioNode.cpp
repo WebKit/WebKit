@@ -630,6 +630,11 @@ void AudioNode::decrementConnectionCountWithLock()
     markNodeForDeletionIfNecessary();
 }
 
+static bool defersDeletionForTail(const AudioNode& node)
+{
+    return node.nodeType() == AudioNode::NodeTypeDelay && node.requiresTailProcessing();
+}
+
 void AudioNode::markNodeForDeletionIfNecessary()
 {
     ASSERT_WITH_SECURITY_IMPLICATION(context().isGraphOwner());
@@ -640,6 +645,12 @@ void AudioNode::markNodeForDeletionIfNecessary()
     // AudioDestinationNodes are owned by their BaseAudioContext so there is no need to mark them for deletion.
     if (nodeType() == NodeTypeDestination)
         return;
+
+    if (!m_isDisabled && !isTailProcessing() && context().isInitialized() && !context().isAudioThreadFinished() && defersDeletionForTail(*this)) {
+        protect(context())->addTailProcessingNode(*this);
+        if (hasReferences())
+            return;
+    }
 
     // All references are gone - we need to go away.
     for (auto& output : m_outputs)

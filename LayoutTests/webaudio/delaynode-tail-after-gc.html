@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>DelayNode tail after source collection</title>
+    <script src="../imported/w3c/web-platform-tests/resources/testharness.js"></script>
+    <script src="../resources/testharnessreport.js"></script>
+    <script src="resources/audit.js"></script>
+  </head>
+  <body>
+    <script id="layout-test-code">
+      let audit = Audit.createTaskRunner();
+
+      const sampleRate = 48000;
+      const renderSeconds = 1;
+      const bufferSeconds = 0.5;
+      const delaySeconds = 0.25;
+
+      function connectDetachedDelay(context, buffer) {
+        let source = context.createBufferSource();
+        source.buffer = buffer;
+        let delay = context.createDelay(1);
+        delay.delayTime.value = delaySeconds;
+        source.connect(delay);
+        delay.connect(context.destination);
+        source.start();
+        return { source: new WeakRef(source), delay: new WeakRef(delay) };
+      }
+
+      audit.define({
+        label: 'delay-tail-after-collection',
+        description: 'DelayNode plays its tail after the source node is collected'
+      }, (task, should) => {
+        let context = new OfflineAudioContext(1, sampleRate * renderSeconds, sampleRate);
+        let buffer = context.createBuffer(1, sampleRate * bufferSeconds, sampleRate);
+        buffer.getChannelData(0).fill(1);
+        let refs = connectDetachedDelay(context, buffer);
+        let delayFrames = delaySeconds * sampleRate;
+        let bufferFrames = bufferSeconds * sampleRate;
+
+        return new Promise(resolve => setTimeout(resolve, 0)).then(() => {
+          GCController.collect();
+          should(refs.source.deref(), 'AudioBufferSourceNode wrapper').beEqualTo(undefined);
+          should(refs.delay.deref(), 'DelayNode wrapper').beEqualTo(undefined);
+
+          return context.startRendering().then(rendered => {
+            let output = rendered.getChannelData(0);
+            should(output.slice(0, delayFrames), 'output[0:delay)').beConstantValueOf(0);
+            should(output.slice(delayFrames, delayFrames + bufferFrames), 'output[delay:delay+source)').beConstantValueOf(1);
+            should(output.slice(delayFrames + bufferFrames), 'output[delay+source:)').beConstantValueOf(0);
+          });
+        });
+      });
+
+      audit.run();
+    </script>
+  </body>
+</html>
