@@ -1553,6 +1553,73 @@ JSValue JSArray::fastShift(VM& vm)
     }
 }
 
+JSValue JSArray::fastUnshift(VM& vm, JSValue value)
+{
+    ensureWritable(vm);
+
+    Butterfly* butterfly = this->butterfly();
+    auto indexingType = this->indexingType();
+
+    switch (indexingType) {
+    case ArrayWithInt32:
+    case ArrayWithContiguous: {
+        unsigned length = butterfly->publicLength();
+
+        if (length >= MIN_SPARSE_ARRAY_INDEX || length >= butterfly->vectorLength())
+            return { };
+
+        if (indexingType == ArrayWithInt32 && !value.isInt32()) [[unlikely]]
+            return { };
+
+        if (length) {
+            if (holesMustForwardToPrototype()) [[unlikely]]
+                return { };
+            auto data = butterfly->contiguous().data();
+            std::span<WriteBarrier<Unknown>> destination { data + 1, length };
+            std::span<const WriteBarrier<Unknown>> source { data, length };
+            if (indexingType == ArrayWithInt32)
+                memmoveSpan(destination, source);
+            else
+                gcSafeMemmove(destination.data(), source.data(), sizeof(JSValue) * length);
+        }
+        butterfly->contiguous().at(this, 0).setWithoutWriteBarrier(value);
+        butterfly->setPublicLength(length + 1);
+        if (indexingType == ArrayWithContiguous)
+            vm.writeBarrier(this);
+        return jsNumber(length + 1);
+    }
+
+    case ArrayWithDouble: {
+        unsigned length = butterfly->publicLength();
+
+        if (length >= MIN_SPARSE_ARRAY_INDEX || length >= butterfly->vectorLength())
+            return { };
+
+        if (!value.isNumber()) [[unlikely]]
+            return { };
+
+        double valueAsDouble = value.asNumber();
+        if (valueAsDouble != valueAsDouble) [[unlikely]]
+            return { };
+
+        if (length) {
+            if (holesMustForwardToPrototype()) [[unlikely]]
+                return { };
+            auto data = butterfly->contiguousDouble().data();
+            std::span<double> destination { data + 1, length };
+            std::span<double> source { data, length };
+            memmoveSpan(destination, source);
+        }
+        butterfly->contiguousDouble().at(this, 0) = valueAsDouble;
+        butterfly->setPublicLength(length + 1);
+        return jsNumber(length + 1);
+    }
+
+    default:
+        return { };
+    }
+}
+
 // Push & putIndex are almost identical, with two small differences.
 //  - we always are writing beyond the current array bounds, so it is always necessary to update m_length & m_numValuesInVector.
 //  - pushing to an array of length 2^32-1 stores the property, but throws a range error.

@@ -112,6 +112,7 @@ public:
     JS_EXPORT_PRIVATE void push(JSGlobalObject*, JSValue);
     JS_EXPORT_PRIVATE JSValue pop(JSGlobalObject*);
     JSValue fastShift(VM&);
+    JSValue fastUnshift(VM&, JSValue);
 
     static constexpr unsigned shiftThreshold = 128;
 

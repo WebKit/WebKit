@@ -1260,7 +1260,14 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncUnShift, (JSGlobalObject* globalObject, C
     auto scope = DECLARE_THROW_SCOPE(vm);
     // 15.4.4.13
 
-    JSObject* thisObj = callFrame->thisValue().toThis(globalObject, ECMAMode::strict()).toObject(globalObject);
+    JSValue thisValue = callFrame->thisValue().toThis(globalObject, ECMAMode::strict());
+
+    if (callFrame->argumentCount() == 1 && isJSArray(thisValue)) {
+        if (JSValue newLength = asArray(thisValue)->fastUnshift(vm, callFrame->uncheckedArgument(0)))
+            RELEASE_AND_RETURN(scope, JSValue::encode(newLength));
+    }
+
+    JSObject* thisObj = thisValue.toObject(globalObject);
     EXCEPTION_ASSERT(!!scope.exception() == !thisObj);
     if (!thisObj) [[unlikely]]
         return encodedJSValue();

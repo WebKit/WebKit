@@ -1445,6 +1445,9 @@ static ALWAYS_INLINE JSValue arrayUnshiftSingleImpl(JSGlobalObject* globalObject
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    if (JSValue newLength = array->fastUnshift(vm, value))
+        return newLength;
+
     uint64_t length = toLength(globalObject, array);
     RETURN_IF_EXCEPTION(scope, { });
 
