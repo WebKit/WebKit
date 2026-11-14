@@ -429,6 +429,7 @@ protected:
     bool m_isSeeking { false };
     std::optional<MediaTimePromise::AutoRejectProducer> m_seekPromise;
     bool m_isSeekPending { false };
+    bool m_isLoopRestartSeekPending { false };
     SeekTarget m_seekTarget;
     GRefPtr<GstElement> m_source { nullptr };
     bool m_areVolumeAndMuteInitialized { false };
