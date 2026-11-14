@@ -95,7 +95,18 @@ void RemoteGPU::stopListeningForIPC()
     m_workQueue->dispatch([protectedThis = protect(*this)]() {
         protectedThis->workQueueUninitialize();
     });
-    m_workQueue->stopAndWaitForCompletion();
+    m_workQueue->stopAndWaitForCompletion([this] {
+        assertIsCurrent(workQueue());
+        // The work that ran while the work queue was stopping can create objects, such as asynchronously created pipelines.
+        clearObjectHeaps();
+    });
+}
+
+void RemoteGPU::clearObjectHeaps()
+{
+    assertIsCurrent(workQueue());
+    m_objectHeap->clear();
+    m_modelObjectHeap->clear();
 }
 
 void RemoteGPU::workQueueInitialize()
@@ -133,9 +144,14 @@ void RemoteGPU::workQueueUninitialize()
     streamConnection->stopReceivingMessages(Messages::RemoteGPU::messageReceiverName(), m_identifier.toUInt64());
     streamConnection->invalidate();
     m_streamConnection = nullptr;
-    m_objectHeap->clear();
-    m_modelObjectHeap->clear();
-    m_backing = nullptr;
+    // Once the instance is released, the devices' queues drop the work that would call their pending
+    // callbacks, so destroying the devices calls them now.
+    for (Ref device : m_objectHeap->devices())
+        device->destroy();
+    clearObjectHeaps();
+    // Destroying the instance releases the objects that it keeps alive here, on the work queue.
+    if (RefPtr backing = std::exchange(m_backing, nullptr))
+        backing->destroy();
 }
 
 void RemoteGPU::didReceiveInvalidMessage(IPC::StreamServerConnection&, IPC::MessageName messageName, const Vector<uint32_t>&)
