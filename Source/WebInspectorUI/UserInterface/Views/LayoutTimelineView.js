@@ -287,13 +287,15 @@ WI.LayoutTimelineView = class LayoutTimelineView extends WI.TimelineView
             return;
         }
 
-        let target = WI.assumingMainTarget();
-
         const contentColor = {r: 111, g: 168, b: 220, a: 0.66};
         const outlineColor = {r: 255, g: 229, b: 153, a: 0.66};
 
         var quad = record.quad;
-        if (quad) {
+        let target = record.target || WI.assumingMainTarget();
+        // The record's frame target is gone if its frame navigated or was removed after recording.
+        if (quad && !target.isDestroyed) {
+            // Each target holds its own highlight, so clear the others first.
+            WI.domManager.hideDOMNodeHighlight({excludedTargets: new Set([target])});
             target.DOMAgent.highlightQuad(quad.toProtocol(), contentColor, outlineColor);
             this._showingHighlight = true;
             return;
@@ -302,7 +304,7 @@ WI.LayoutTimelineView = class LayoutTimelineView extends WI.TimelineView
         // This record doesn't have a highlight, so hide any existing highlight.
         if (this._showingHighlight) {
             this._showingHighlight = false;
-            target.DOMAgent.hideHighlight();
+            WI.domManager.hideDOMNodeHighlight();
         }
     }
 
@@ -312,9 +314,7 @@ WI.LayoutTimelineView = class LayoutTimelineView extends WI.TimelineView
 
         if (this._showingHighlight) {
             this._showingHighlight = false;
-
-            let target = WI.assumingMainTarget();
-            target.DOMAgent.hideHighlight();
+            WI.domManager.hideDOMNodeHighlight();
         }
     }
 

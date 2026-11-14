@@ -125,6 +125,67 @@ TestPage.registerInitializer(() => {
         });
     };
 
+    // Resolves with the first record of the given type from the target in the active recording's Layout timeline.
+    FrameTimelineTest.awaitLayoutRecord = function(target, eventType) {
+        let layoutTimeline = WI.timelineManager.activeRecording.timelines.get(WI.TimelineRecord.Type.Layout);
+        return new Promise((resolve) => {
+            let listener = layoutTimeline.addEventListener(WI.Timeline.Event.RecordAdded, (event) => {
+                let {record} = event.data;
+                if (record.target !== target || record.eventType !== eventType)
+                    return;
+
+                layoutTimeline.removeEventListener(WI.Timeline.Event.RecordAdded, listener);
+                resolve(record);
+            });
+        });
+    };
+
+    // Resolves like the promise, but throws if the target is removed first. Replies to a removed target are dropped,
+    // so without this a wait on such a target would only end in a test timeout.
+    FrameTimelineTest.failIfTargetRemoved = async function(target, promise, description) {
+        let listener = null;
+        let removedPromise = new Promise((resolve, reject) => {
+            let fail = () => reject(new Error(`The target was removed while waiting for ${description}.`));
+            if (target.isDestroyed) {
+                fail();
+                return;
+            }
+
+            listener = WI.targetManager.addEventListener(WI.TargetManager.Event.TargetRemoved, (event) => {
+                if (event.data.target === target)
+                    fail();
+            });
+        });
+
+        try {
+            return await Promise.race([promise, removedPromise]);
+        } finally {
+            if (listener)
+                WI.targetManager.removeEventListener(WI.TargetManager.Event.TargetRemoved, listener);
+        }
+    };
+
+    // Resolves once the frontend has the frame target's document, which a frame target needs before it can send
+    // node IDs.
+    FrameTimelineTest.awaitFrameDocument = async function(target) {
+        if (WI.domManager.frameTargetDocumentForTarget(target))
+            return;
+
+        let listener = null;
+        let documentPromise = new Promise((resolve) => {
+            listener = WI.domManager.addEventListener(WI.DOMManager.Event.FrameDocumentAvailable, (event) => {
+                if (event.data.target === target)
+                    resolve();
+            });
+        });
+
+        try {
+            await FrameTimelineTest.failIfTargetRemoved(target, documentPromise, "its document");
+        } finally {
+            WI.domManager.removeEventListener(WI.DOMManager.Event.FrameDocumentAvailable, listener);
+        }
+    };
+
     // Fails the test case if the expression throws, so that a missing function shows up as a failure, not a timeout.
     FrameTimelineTest.evaluateInTarget = async function(target, expression) {
         let response = await target.RuntimeAgent.evaluate.invoke({expression, objectGroup: "test"});
