@@ -1,0 +1,34 @@
+<script src="../../../resources/js-test.js"></script>
+<script>
+description("Terminating a worker while its queue's onSubmittedWorkDone() calls are still in flight in the GPU process should not crash it.");
+window.jsTestIsAsync = true;
+
+async function startAndTerminateWorker()
+{
+    const worker = new Worker('../resources/terminate-worker-with-pending-onsubmittedworkdone-worker.js');
+    const started = new Promise(resolve => worker.onmessage = resolve);
+    worker.postMessage('start');
+    await started;
+    worker.terminate();
+}
+
+async function run()
+{
+    const adapter = await navigator.gpu.requestAdapter();
+    const device = await adapter.requestDevice();
+
+    for (let i = 0; i < 5; ++i)
+        await startAndTerminateWorker();
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    device.queue.submit([]);
+    await device.queue.onSubmittedWorkDone();
+    testPassed("The GPU process is still alive.");
+    finishJSTest();
+}
+
+run().catch(error => {
+    testFailed(String(error));
+    finishJSTest();
+});
+</script>
