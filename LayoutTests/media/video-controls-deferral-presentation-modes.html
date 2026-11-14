@@ -1,0 +1,89 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Entering fullscreen or picture-in-picture builds the deferred controls of an off-screen video</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="resources/media-controls-deferral.js"></script>
+<body>
+<div style="height: 20000px"></div>
+<div id="container"></div>
+<script>
+buildFirstMediaControls();
+
+// Unlike internals.shadowRoot(), this does not build deferred controls.
+function hasBuiltControls(video) {
+    return !!internals.ensureUserAgentShadowRoot(video).querySelector(".media-controls");
+}
+
+function animationFrames(count) {
+    return new Promise(resolve => {
+        const step = () => count-- > 0 ? requestAnimationFrame(step) : resolve();
+        step();
+    });
+}
+
+function event(target, name) {
+    return new Promise(resolve => target.addEventListener(name, resolve, { once: true }));
+}
+
+async function createOffScreenVideo(t, attributes = { }) {
+    const video = document.createElement("video");
+    for (const [name, value] of Object.entries(attributes))
+        video.setAttribute(name, value);
+    video.controls = true;
+    container.appendChild(video);
+    t.add_cleanup(() => {
+        video.pause();
+        container.textContent = "";
+        scrollTo(0, 0);
+    });
+    if (attributes.src && video.readyState < HTMLMediaElement.HAVE_METADATA)
+        await event(video, "loadedmetadata");
+    await animationFrames(3);
+    assert_false(hasBuiltControls(video), "the off-screen video defers its controls");
+    return video;
+}
+
+promise_test(async t => {
+    const video = await createOffScreenVideo(t);
+    const fullscreenChange = event(document, "fullscreenchange");
+    internals.withUserGesture(() => video.requestFullscreen());
+    await fullscreenChange;
+    assert_equals(document.fullscreenElement, video);
+    assert_true(hasBuiltControls(video), "the fullscreen video has its controls");
+    const exitChange = event(document, "fullscreenchange");
+    await document.exitFullscreen();
+    await exitChange;
+}, "requestFullscreen() builds the controls of an off-screen video");
+
+promise_test(async t => {
+    const video = await createOffScreenVideo(t, { src: "content/test.mp4" });
+    // Like a video without the controls attribute, the controls are built when the fullscreen change is dispatched.
+    const fullscreenChange = event(document, "fullscreenchange");
+    internals.withUserGesture(() => video.webkitEnterFullscreen());
+    await fullscreenChange;
+    assert_true(video.webkitDisplayingFullscreen, "the video is fullscreen");
+    assert_true(hasBuiltControls(video), "the fullscreen video has its controls");
+    while (internals.isChangingPresentationMode(video))
+        await animationFrames(1);
+    const exitChange = event(document, "fullscreenchange");
+    video.webkitExitFullscreen();
+    await exitChange;
+}, "webkitEnterFullscreen() builds the controls of an off-screen video");
+
+promise_test(async t => {
+    internals.settings.setAllowsPictureInPictureMediaPlayback(true);
+    internals.setMockVideoPresentationModeEnabled(true);
+    const video = await createOffScreenVideo(t, { src: "content/test.mp4" });
+    const enter = event(video, "enterpictureinpicture");
+    internals.withUserGesture(() => video.requestPictureInPicture());
+    await enter;
+    assert_true(hasBuiltControls(video), "the picture-in-picture video has its controls");
+    while (internals.isChangingPresentationMode(video))
+        await animationFrames(1);
+    const leave = event(video, "leavepictureinpicture");
+    internals.withUserGesture(() => document.exitPictureInPicture());
+    await leave;
+}, "requestPictureInPicture() builds the controls of an off-screen video");
+</script>
+</body>

@@ -1,0 +1,33 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>A video in a media document has its controls as soon as it exists, unlike an off-screen video in a page</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="resources/media-controls-deferral.js"></script>
+<body>
+<script>
+function hasBuiltControls(video) {
+    // Unlike internals.shadowRoot(), this does not build deferred controls.
+    return !!internals.ensureUserAgentShadowRoot(video).querySelector(".media-controls");
+}
+
+promise_test(async () => {
+    buildFirstMediaControls();
+    const spacer = document.body.appendChild(document.createElement("div"));
+    spacer.style.height = "20000px";
+    const offScreen = document.body.appendChild(document.createElement("video"));
+    offScreen.controls = true;
+    assert_false(hasBuiltControls(offScreen), "an off-screen video in a page defers its controls");
+
+    const iframe = document.body.appendChild(document.createElement("iframe"));
+    iframe.src = "content/test.mp4";
+    await new Promise(resolve => iframe.addEventListener("load", resolve));
+
+    let video;
+    while (!(video = iframe.contentDocument.querySelector("video")))
+        await new Promise(resolve => setTimeout(resolve));
+    assert_true(hasBuiltControls(video), "the video of a media document has its controls right away");
+    assert_false(hasBuiltControls(offScreen), "the page's off-screen video is still deferred");
+}, "A video in a media document builds its controls eagerly");
+</script>
+</body>

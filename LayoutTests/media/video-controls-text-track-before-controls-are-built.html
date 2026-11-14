@@ -1,0 +1,57 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>A video whose controls are built after a cue became active shows the current cue</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="resources/media-controls-deferral.js"></script>
+<body>
+<script>buildFirstMediaControls();</script>
+<div style="height: 20000px"></div>
+<video controls muted src="content/test.mp4">
+    <track src="track/captions-webvtt/captions.vtt" kind="captions" default>
+</video>
+<script>
+const video = document.querySelector("video");
+
+// Unlike internals.shadowRoot(), these do not build deferred controls.
+function hasBuiltControls() {
+    return !!internals.ensureUserAgentShadowRoot(video).querySelector(".media-controls");
+}
+
+function displayedCueText() {
+    return internals.ensureUserAgentShadowRoot(video).querySelector('[useragentpart="cue"]')?.textContent ?? null;
+}
+
+function animationFrames(count) {
+    return new Promise(resolve => {
+        const step = () => count-- > 0 ? requestAnimationFrame(step) : resolve();
+        step();
+    });
+}
+
+promise_test(async () => {
+    const track = video.textTracks[0];
+    track.mode = "showing";
+    if (video.readyState < HTMLMediaElement.HAVE_METADATA)
+        await new Promise(resolve => video.addEventListener("loadedmetadata", resolve, { once: true }));
+    while (!track.activeCues?.length)
+        await new Promise(resolve => track.addEventListener("cuechange", resolve, { once: true }));
+
+    // A cue change while the controls are deferred must still be shown once they are built.
+    video.currentTime = 1.5;
+    await new Promise(resolve => video.addEventListener("seeked", resolve, { once: true }));
+    await animationFrames(3);
+    assert_equals(track.activeCues[0].text, "ipsum", "the active cue");
+    assert_false(hasBuiltControls(), "the off-screen video defers its controls while a cue is active");
+    assert_equals(displayedCueText(), null, "no cue is displayed before the controls are built");
+
+    video.scrollIntoView();
+    while (!hasBuiltControls())
+        await animationFrames(1);
+
+    for (let i = 0; i < 60 && displayedCueText() !== "ipsum"; ++i)
+        await animationFrames(1);
+    assert_equals(displayedCueText(), "ipsum", "the active cue is displayed once the controls are built");
+}, "A cue that is active while the controls of a video are deferred is displayed once they are built");
+</script>
+</body>

@@ -1,0 +1,7 @@
+
+PASS play() plays an off-screen video without building its controls
+PASS An off-screen autoplay video plays without building its controls
+PASS Setting the controls attribute on a video in view builds its controls
+PASS An off-screen video with a poster builds its controls when scrolled into view
+PASS An off-screen video in a shadow root builds its controls when scrolled into view
+

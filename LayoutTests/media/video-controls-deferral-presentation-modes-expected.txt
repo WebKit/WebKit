@@ -1,0 +1,5 @@
+
+PASS requestFullscreen() builds the controls of an off-screen video
+PASS webkitEnterFullscreen() builds the controls of an off-screen video
+PASS requestPictureInPicture() builds the controls of an off-screen video
+

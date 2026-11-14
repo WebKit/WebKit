@@ -8462,7 +8462,7 @@ void HTMLMediaElement::configureTextTrackDisplay(TextTrackVisibilityCheckType ch
 
 void HTMLMediaElement::updateTextTrackDisplay()
 {
-    // Only audio defers its controls, and an audio element has no text track display to update.
+    // Deferred controls have no text track container yet; building them displays the active cues.
     if (hasDeferredMediaControls())
         return;
 
@@ -8672,7 +8672,12 @@ bool HTMLMediaElement::deferMediaControlsIfNeeded()
         return false;
 
     // Assistive technology reaches controls regardless of scroll position.
-    if (isVideo() || AXObjectCache::accessibilityEnabled())
+    if (AXObjectCache::accessibilityEnabled())
+        return false;
+
+    // A <video> is observed since creation and may have reported its intersection already, in which case
+    // the observer will not report again until it changes.
+    if (isIntersectingViewport())
         return false;
 
     // The first build in a document starts loading the icon images that later builds share, so it happens at once.
@@ -9609,7 +9614,8 @@ void HTMLMediaElement::setControllerJSProperty(ASCIILiteral propertyName, JSC::J
 
         auto controllerValue = m_mediaControlsHost->controllerWrapper().getValue();
         EXCEPTION_ASSERT_UNUSED(scope, !scope.exception() || controllerValue.isNull());
-        if (controllerValue.isNull())
+        // Once the controls are deinitialized the controller may have been collected.
+        if (!controllerValue.isObject())
             return false;
 
         JSC::PutPropertySlot propertySlot(controllerValue);
@@ -9746,8 +9752,13 @@ bool HTMLMediaElement::ensureMediaControls()
     if (oldControlsState == ControlsState::Deferred) {
         if (!controlsReady)
             LazyLoadElementObserver::observe(*this); // The build may have run script that moved the element between documents.
-        else if (!shouldObserveViewportIntersection())
-            LazyLoadElementObserver::unobserve(*this, protect(document()));
+        else {
+            if (!shouldObserveViewportIntersection())
+                LazyLoadElementObserver::unobserve(*this, protect(document()));
+            // The element was laid out before its text track container existed, so size the container and show the active cues.
+            if (m_mediaControlsHost && m_haveVisibleTextTrack)
+                m_mediaControlsHost->updateCaptionDisplaySizes(MediaControlsHost::ForceUpdate::Yes);
+        }
     }
     return controlsReady;
 }
