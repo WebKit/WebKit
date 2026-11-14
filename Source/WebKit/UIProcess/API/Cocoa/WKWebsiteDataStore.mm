@@ -230,8 +230,7 @@ private:
 
         HashMap<WTF::String, bool> result;
         RetainPtr permissions = [m_delegate.get() notificationPermissionsForWebsiteDataStore:m_dataStore.get().get()];
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL NSString *key in permissions.get()) {
+        for (NSString *key in permissions.get()) {
             RetainPtr<NSNumber> value = permissions.get()[key];
             auto originString = WebCore::SecurityOriginData::fromURL(URL(key)).toString();
             if (originString.isEmpty()) {
@@ -259,8 +258,7 @@ private:
         auto apiOrigin = API::SecurityOrigin::create(origin);
         auto delegateCompletionHandler = makeBlockPtr([completionHandler = WTF::move(completionHandler)] (NSArray<NSDictionary *> *notifications) mutable {
             Vector<WebCore::NotificationData> notificationDatas;
-            // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-            for (SUPPRESS_UNRETAINED_LOCAL id notificationDictionary in notifications) {
+            for (id notificationDictionary in notifications) {
                 auto notification = WebCore::NotificationData::fromDictionary(dynamic_objc_cast<NSDictionary>(notificationDictionary));
                 RELEASE_ASSERT_WITH_MESSAGE(notification, "getDisplayedNotificationsForWorkerOrigin: Invalid notification dictionary passed back to WebKit");
                 notificationDatas.append(*notification);
@@ -516,8 +514,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 {
     Vector<WebKit::WebsiteDataRecord> result;
 
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL WKWebsiteDataRecord *dataRecord in dataRecords)
+    for (WKWebsiteDataRecord *dataRecord in dataRecords)
         result.append(dataRecord->_websiteDataRecord->websiteDataRecord());
 
     return result;
@@ -867,8 +864,7 @@ struct WKWebsiteData {
 - (void)_setPersistedSites:(NSArray<NSURL *> *)persistedSites
 {
     HashSet<URL> urls;
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSURL *site in persistedSites) {
+    for (NSURL *site in persistedSites) {
         URL url { site };
         if (url.isValid())
             urls.add(WTF::move(url));

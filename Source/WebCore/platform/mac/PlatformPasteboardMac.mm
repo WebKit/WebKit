@@ -199,8 +199,7 @@ void PlatformPasteboard::getPathnamesForType(Vector<String>& pathnames, const St
 
 static bool pasteboardMayContainFilePaths(NSPasteboard *pasteboard)
 {
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSString *type in pasteboard.types) {
+    for (NSString *type in pasteboard.types) {
         if ([type isEqualToString:legacyFilenamesPasteboardTypeSingleton()] || [type isEqualToString:legacyFilesPromisePasteboardTypeSingleton()] || Pasteboard::shouldTreatCocoaTypeAsFile(type))
             return true;
     }
@@ -225,8 +224,7 @@ static Vector<String> urlStringsFromPasteboard(NSPasteboard *pasteboard)
     RetainPtr<NSArray<NSPasteboardItem *>> items = pasteboard.pasteboardItems;
     Vector<String> urlStrings(ReserveCapacityTag { }, items.get().count);
     if (items.get().count > 1) {
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL NSPasteboardItem *item in items.get()) {
+        for (NSPasteboardItem *item in items.get()) {
             if (RetainPtr<id> propertyList = [item propertyListForType:UTTypeURL.identifier]) {
                 if (auto urlFromItem = adoptNS([[NSURL alloc] initWithPasteboardPropertyList:propertyList.get() ofType:UTTypeURL.identifier]))
                     urlStrings.append([urlFromItem absoluteString]);
@@ -272,8 +270,7 @@ Vector<String> PlatformPasteboard::allStringsForType(const String& pasteboardTyp
     RetainPtr<NSArray<NSPasteboardItem *>> items = [m_pasteboard pasteboardItems];
     Vector<String> strings(ReserveCapacityTag { }, items.get().count);
     if (items.get().count > 1 && !typeIdentifier.isNull()) {
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL NSPasteboardItem *item in items.get()) {
+        for (NSPasteboardItem *item in items.get()) {
             if (RetainPtr stringFromItem = [item stringForType:typeIdentifier.createNSString().get()])
                 strings.append(stringFromItem.get());
         }
@@ -314,8 +311,7 @@ Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite(const String& o
     }
 
     RetainPtr<NSArray<NSString *>> allTypes = [m_pasteboard types];
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSString *type in allTypes.get()) {
+    for (NSString *type in allTypes.get()) {
         if ([type isEqualToString:RetainPtr { @(PasteboardCustomData::cocoaType().characters()) }.get()])
             continue;
 
@@ -638,8 +634,7 @@ std::optional<PasteboardItemInfo> PlatformPasteboard::informationForItemAtIndex(
     auto containsFileURL = [platformTypes containsObject:NSPasteboardTypeFileURL] ? ContainsFileURL::Yes : ContainsFileURL::No;
     OrderedHashSet<String> webSafeTypes;
     info.platformTypesByFidelity.reserveInitialCapacity(platformTypes.get().count);
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSPasteboardType type in platformTypes.get()) {
+    for (NSPasteboardType type in platformTypes.get()) {
         info.platformTypesByFidelity.append(type);
         auto webSafeType = webSafeMIMETypeForModernPasteboardType(type, containsFileURL);
         if (webSafeType.isEmpty())

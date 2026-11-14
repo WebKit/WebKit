@@ -46,8 +46,7 @@ void AuthenticationChallengeProxy::sendClientCertificateCredentialOverXpc(IPC::C
     xpc_dictionary_set_value(message.get(), ClientCertificateAuthentication::XPCSecKeyProxyEndpointKey, OSObjectPtr<xpc_endpoint_t> { protect(RetainPtr { secKeyProxyStore.get() }.get().endpoint).get()._endpoint }.get());
     OSObjectPtr certificateDataArray = adoptOSObject(xpc_array_create(nullptr, 0));
     RetainPtr nsCredential = credential.nsCredential();
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL id certificate in nsCredential.get().certificates) {
+    for (id certificate in nsCredential.get().certificates) {
         auto data = adoptCF(SecCertificateCopyData((SecCertificateRef)certificate));
         xpc_array_append_value(certificateDataArray.get(), adoptOSObject(xpc_data_create(CFDataGetBytePtr(data.get()), CFDataGetLength(data.get()))).get());
     }

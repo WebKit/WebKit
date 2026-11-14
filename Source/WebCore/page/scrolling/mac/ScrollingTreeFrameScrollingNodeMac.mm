@@ -296,12 +296,10 @@ unsigned ScrollingTreeFrameScrollingNodeMac::exposedUnfilledArea() const
 
         // If this layer is the parent of a tile, it is the parent of all of the tiles and nothing else.
         if ([[retainPtr([sublayers objectAtIndex:0]) valueForKey:@"isTile"] boolValue]) {
-            // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-            for (SUPPRESS_UNRETAINED_LOCAL CALayer* sublayer in sublayers.get())
+            for (CALayer* sublayer in sublayers.get())
                 tiles.append(sublayer);
         } else {
-            // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-            for (SUPPRESS_UNRETAINED_LOCAL CALayer* sublayer in sublayers.get())
+            for (CALayer* sublayer in sublayers.get())
                 layerQueue.append(sublayer);
         }
     }

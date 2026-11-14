@@ -90,8 +90,7 @@ AVAssetTrack* MediaSelectionOptionAVFObjC::assetTrack() const
         return [m_mediaSelectionOption track];
     if (selected()) {
         RetainPtr item = playerItem();
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL AVPlayerItemTrack* track in [item tracks]) {
+        for (AVPlayerItemTrack* track in [item tracks]) {
             if (!track.enabled)
                 continue;
             if (!track.assetTrack)
@@ -150,8 +149,7 @@ void MediaSelectionGroupAVFObjC::updateOptions(const Vector<String>& characteris
     RetainPtr<NSMutableSet> removedAVOptions = adoptNS([oldAVOptions mutableCopy]);
     [removedAVOptions minusSet:newAVOptions.get()];
 
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL AVMediaSelectionOption* removedAVOption in removedAVOptions.get()) {
+    for (AVMediaSelectionOption* removedAVOption in removedAVOptions.get()) {
         if (RefPtr protectedSelectedOption = selectedOption(); protectedSelectedOption && removedAVOption == protectedSelectedOption->avMediaSelectionOption())
             m_selectedOption = nullptr;
 
@@ -160,8 +158,7 @@ void MediaSelectionGroupAVFObjC::updateOptions(const Vector<String>& characteris
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     RetainPtr<AVMediaSelectionOption> selectedOption = [m_playerItem selectedMediaOptionInMediaSelectionGroup:m_mediaSelectionGroup.get()];
 ALLOW_DEPRECATED_DECLARATIONS_END
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL AVMediaSelectionOption* addedAVOption in addedAVOptions.get()) {
+    for (AVMediaSelectionOption* addedAVOption in addedAVOptions.get()) {
         Ref addedOption = MediaSelectionOptionAVFObjC::create(*this, addedAVOption);
         if (addedAVOption == selectedOption)
             m_selectedOption = addedOption.get();

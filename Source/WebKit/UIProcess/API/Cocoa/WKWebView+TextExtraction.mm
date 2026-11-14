@@ -241,8 +241,7 @@ static Vector<std::pair<String, String>> extractReplacementStrings(_WKTextExtrac
 {
     Vector<std::pair<String, String>> result;
     RetainPtr replacementStrings = [configuration replacementStrings];
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSString *replacement in replacementStrings.get()) {
+    for (NSString *replacement in replacementStrings.get()) {
         if (!replacement.length)
             continue;
 
@@ -764,8 +763,7 @@ static Vector<WebCore::JSHandleIdentifier> extractHandleIdentifiersOfNodesToSkip
 {
     RetainPtr nodesToSkip = [configuration nodesToSkip];
     Vector<WebCore::JSHandleIdentifier> nodes(ReserveCapacityTag { }, [nodesToSkip count]);
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL _WKJSHandle *handle in nodesToSkip.get()) {
+    for (_WKJSHandle *handle in nodesToSkip.get()) {
         if (auto identifier = WebKit::jsHandleIdentifierInFrame(frame, handle))
             nodes.append(WTF::move(*identifier));
     }
@@ -909,8 +907,7 @@ NODELETE static OptionSet<WebCore::DataDetectorType> coreDataDetectorTypes(_WKTe
     };
 
     HashSet<Ref<WebKit::WebFrameProxy>> additionalFrames;
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL WKFrameInfo *info in [configuration additionalFrames]) {
+    for (WKFrameInfo *info in [configuration additionalFrames]) {
         RefPtr frame = WebKit::WebFrameProxy::webFrame(info->_frameInfo->frameInfoData().frameID);
         if (!frame)
             continue;

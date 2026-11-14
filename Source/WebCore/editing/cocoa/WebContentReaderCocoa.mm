@@ -165,8 +165,7 @@ static FragmentAndResources createFragmentInternal(LocalFrame& frame, NSAttribut
     fragment->parseHTML(markup, dummyBodyToForceInBodyInsertionMode, { });
 
     result.fragment = WTF::move(fragment);
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL WebArchiveResourceFromNSAttributedString *resource in subresources)
+    for (WebArchiveResourceFromNSAttributedString *resource in subresources)
         result.resources.append(protect(*resource->resource));
 
     return result;

@@ -313,10 +313,8 @@ void WebsiteDataStore::removeDataStoreWithIdentifierImpl(const WTF::UUID& identi
     websiteDataStoreIOQueueSingleton().dispatch([completionHandler = WTF::move(completionHandler), identifier, directory = defaultWebsiteDataStoreDirectory(identifier).isolatedCopy()]() mutable {
         RetainPtr nsCredentialStorage = adoptNS([[NSURLCredentialStorage alloc] _initWithIdentifier:identifier.toString().createNSString().get() private:NO]);
         RetainPtr credentials = [nsCredentialStorage allCredentials];
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL NSURLProtectionSpace *space in credentials.get()) {
-            // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-            for (SUPPRESS_UNRETAINED_LOCAL NSURLCredential *credential in [credentials.get()[space] allValues])
+        for (NSURLProtectionSpace *space in credentials.get()) {
+            for (NSURLCredential *credential in [credentials.get()[space] allValues])
                 [nsCredentialStorage removeCredential:credential forProtectionSpace:space];
         }
 
@@ -403,8 +401,7 @@ String WebsiteDataStore::defaultGeneralStorageDirectory(const String& baseDirect
         RetainPtr fileManager = [NSFileManager defaultManager];
         RetainPtr<NSArray> files = [fileManager contentsOfDirectoryAtPath:oldDirectory.get() error:0];
         if (files) {
-            // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-            for (SUPPRESS_UNRETAINED_LOCAL NSString *fileName in files.get()) {
+            for (NSString *fileName in files.get()) {
                 if (![fileName length])
                     continue;
 
@@ -857,8 +854,7 @@ void WebsiteDataStore::initializeManagedDomains(ForceReinitialization forceReini
             if (forceReinitialization == ForceReinitialization::Yes)
                 managedDomains().clear();
 
-            // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-            for (SUPPRESS_UNRETAINED_LOCAL NSString *data in crossSiteTrackingPreventionRelaxedDomains.get()) {
+            for (NSString *data in crossSiteTrackingPreventionRelaxedDomains.get()) {
                 if (managedDomains().size() >= maxManagedDomainCount)
                     break;
 
@@ -1062,8 +1058,7 @@ HashSet<WebCore::RegistrableDomain> WebsiteDataStore::platformAdditionalDomainsW
     };
 
     if ([arrayOrCommaDelimitedString isKindOfClass:[NSArray class]]) {
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL id host in arrayOrCommaDelimitedString.get()) {
+        for (id host in arrayOrCommaDelimitedString.get()) {
             if ([host isKindOfClass:[NSString class]])
                 addHost((NSString *)host);
         }

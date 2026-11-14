@@ -76,8 +76,7 @@ CoreIPCNSURLCredential::CoreIPCNSURLCredential(NSURLCredential *credential)
     if ([attributes isKindOfClass:NSDictionary.class]) {
         Vector<CoreIPCNSURLCredentialData::Attributes> vector;
         vector.reserveCapacity(attributes.count);
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL id key in attributes) {
+        for (id key in attributes) {
             if (![key isKindOfClass:NSString.class]) {
                 ASSERT_NOT_REACHED();
                 break;
@@ -118,8 +117,7 @@ CoreIPCNSURLCredential::CoreIPCNSURLCredential(NSURLCredential *credential)
     if ([flags isKindOfClass:NSDictionary.class]) {
         Vector<WebKit::CoreIPCNSURLCredentialData::Flags> vector;
         vector.reserveCapacity(flags.count);
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL NSString *key in flags) {
+        for (NSString *key in flags) {
             if (![key isKindOfClass:NSString.class]) {
                 ASSERT_NOT_REACHED();
                 break;

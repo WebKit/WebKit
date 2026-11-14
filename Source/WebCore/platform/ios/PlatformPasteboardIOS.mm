@@ -240,20 +240,17 @@ std::optional<PasteboardItemInfo> PlatformPasteboard::informationForItemAtIndex(
         ASSERT(fileTypes.count == urls.count);
 
         info.pathsForFileUpload.reserveInitialCapacity(urls.count);
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL NSURL *url in urls)
+        for (NSURL *url in urls)
             info.pathsForFileUpload.append(url.path);
 
         info.platformTypesForFileUpload.reserveInitialCapacity(fileTypes.count);
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL NSString *fileType in fileTypes)
+        for (NSString *fileType in fileTypes)
             info.platformTypesForFileUpload.append(fileType);
     } else {
         NSArray *fileTypes = itemProvider.web_fileUploadContentTypes;
         info.platformTypesForFileUpload.reserveInitialCapacity(fileTypes.count);
         info.pathsForFileUpload.reserveInitialCapacity(fileTypes.count);
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL NSString *fileType in fileTypes) {
+        for (NSString *fileType in fileTypes) {
             info.platformTypesForFileUpload.append(fileType);
             info.pathsForFileUpload.append({ });
         }
@@ -275,8 +272,7 @@ std::optional<PasteboardItemInfo> PlatformPasteboard::informationForItemAtIndex(
     info.suggestedFileName = itemProvider.suggestedName;
     NSArray<NSString *> *registeredTypeIdentifiers = itemProvider.registeredTypeIdentifiers;
     info.platformTypesByFidelity.reserveInitialCapacity(registeredTypeIdentifiers.count);
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSString *typeIdentifier in registeredTypeIdentifiers) {
+    for (NSString *typeIdentifier in registeredTypeIdentifiers) {
         info.platformTypesByFidelity.append(typeIdentifier);
         RetainPtr utType = [UTType typeWithIdentifier:typeIdentifier];
         if (![utType isDeclared])
@@ -615,8 +611,7 @@ Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite(const String& o
         if (![customTypes isKindOfClass:NSArray.class])
             continue;
 
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL NSString *type in customTypes)
+        for (NSString *type in customTypes)
             domPasteboardTypes.add(type);
     }
 #endif // PASTEBOARD_SUPPORTS_PRESENTATION_STYLE_AND_TEAM_DATA

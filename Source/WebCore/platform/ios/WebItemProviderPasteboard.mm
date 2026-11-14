@@ -800,8 +800,7 @@ static NSURL *linkTemporaryItemProviderFilesToDropStagingDirectory(NSURL *url, N
     BOOL containsFile = itemProvider.web_containsFileURLAndFileUploadContent;
     BOOL containsFlatRTFD = [registeredTypeIdentifiers containsObject:UTTypeFlatRTFD.identifier];
     // First, search for the highest fidelity supported type or the highest fidelity generic content type.
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSString *registeredTypeIdentifier in registeredTypeIdentifiers) {
+    for (NSString *registeredTypeIdentifier in registeredTypeIdentifiers) {
         if (containsFlatRTFD && [registeredTypeIdentifier isEqualToString:UTTypeRTFD.identifier]) {
             // In the case where attachments are enabled and we're accepting all types of content using attachment
             // elements as a fallback representation, if the source writes attributed strings to the pasteboard with
@@ -826,8 +825,7 @@ static NSURL *linkTemporaryItemProviderFilesToDropStagingDirectory(NSURL *url, N
     // For compatibility with DataTransfer APIs, additionally load web-exposed types. Since this is the only chance to
     // fault in any data at all, we need to load up front any information that the page may ask for later down the line.
     RetainPtr customPasteboardDataUTI = @(PasteboardCustomData::cocoaType().characters());
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSString *registeredTypeIdentifier in registeredTypeIdentifiers) {
+    for (NSString *registeredTypeIdentifier in registeredTypeIdentifiers) {
         RetainPtr utType = [UTType typeWithIdentifier:registeredTypeIdentifier];
         if ([registeredTypeIdentifier isEqualToString:highestFidelityContentType]
             || [registeredTypeIdentifier isEqualToString:highestFidelitySupportedType]

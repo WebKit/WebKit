@@ -147,8 +147,7 @@ auto JavaScriptEvaluationResult::ObjCExtractor::toValue(id object) -> Value
 
     if ([object isKindOfClass:NSArray.class]) {
         Vector<JSObjectID> vector;
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL id element : (NSArray *)object)
+        for (id element : (NSArray *)object)
             vector.append(addObjectToMap(element));
         return { WTF::move(vector) };
     }

@@ -55,8 +55,7 @@ CoreIPCPresentationIntent::CoreIPCPresentationIntent(NSPresentationIntent *inten
         m_languageHint = { intent.languageHint };
         break;
     case NSPresentationIntentKindTable:
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL NSNumber *alignment in intent.columnAlignments)
+        for (NSNumber *alignment in intent.columnAlignments)
             m_columnAlignments.append(alignment.unsignedIntegerValue);
         m_columnCount = intent.columnCount;
         break;

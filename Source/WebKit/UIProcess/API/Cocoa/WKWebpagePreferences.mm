@@ -214,8 +214,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 {
     HashSet<String> exceptions;
     exceptions.reserveInitialCapacity(identifiers.count);
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSString *identifier in identifiers)
+    for (NSString *identifier in identifiers)
         exceptions.add(identifier);
 
     auto defaultEnablement = enabled ? WebCore::ContentExtensionDefaultEnablement::Enabled : WebCore::ContentExtensionDefaultEnablement::Disabled;
@@ -227,8 +226,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
     __block HashMap<String, Vector<String>> map;
     [patterns enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSSet<NSString *> *value, BOOL *) {
         Vector<String> vector(ReserveCapacityTag { }, value.count);
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL NSString *pattern in value)
+        for (NSString *pattern in value)
             vector.append(pattern);
         map.add(key, WTF::move(vector));
     }];
@@ -764,15 +762,12 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 - (void)_setVisibilityAdjustmentSelectorsIncludingShadowHosts:(NSArray<NSArray<NSSet<NSString *> *> *> *)elements
 {
     Vector<WebCore::TargetedElementSelectors> result(ReserveCapacityTag { }, elements.count);
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSArray<NSSet<NSString *> *> *nsSelectorsForElement in elements) {
+    for (NSArray<NSSet<NSString *> *> *nsSelectorsForElement in elements) {
         WebCore::TargetedElementSelectors selectorsForElement(ReserveCapacityTag { }, nsSelectorsForElement.count);
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL NSSet<NSString *> *nsSelectors in nsSelectorsForElement) {
+        for (NSSet<NSString *> *nsSelectors in nsSelectorsForElement) {
             HashSet<String> selectors;
             selectors.reserveInitialCapacity(nsSelectors.count);
-            // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-            for (SUPPRESS_UNRETAINED_LOCAL NSString *selector in nsSelectors)
+            for (NSString *selector in nsSelectors)
                 selectors.add(selector);
             selectorsForElement.append(WTF::move(selectors));
         }
@@ -800,8 +795,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 - (void)_setVisibilityAdjustmentSelectors:(NSSet<NSString *> *)nsSelectors
 {
     RetainPtr elements = adoptNS([[NSMutableArray alloc] initWithCapacity:nsSelectors.count]);
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSString *selector : nsSelectors)
+    for (NSString *selector : nsSelectors)
         [elements addObject:@[ [NSSet setWithObject:selector] ]];
     self._visibilityAdjustmentSelectorsIncludingShadowHosts = elements.get();
 }

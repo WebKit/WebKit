@@ -241,8 +241,7 @@ RetainPtr<NSArray> CookieStorageSession::cookiesForURL(const URL& firstParty, co
 Vector<Cookie> CookieStorageSession::nsCookiesToCookieVector(NSArray *nsCookies, NOESCAPE const Function<bool(NSHTTPCookie *)>& filter)
 {
     Vector<Cookie> cookies(ReserveCapacityTag { }, nsCookies.count);
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSHTTPCookie *nsCookie in nsCookies) {
+    for (NSHTTPCookie *nsCookie in nsCookies) {
         @autoreleasepool {
             if (!filter || filter(nsCookie))
                 cookies.append(nsCookie);
@@ -265,8 +264,7 @@ std::pair<String, bool> CookieStorageSession::cookiesForSession(const URL& first
 
     StringBuilder cookiesBuilder;
     bool didAccessSecureCookies = false;
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSHTTPCookie *cookie in cookies.get()) {
+    for (NSHTTPCookie *cookie in cookies.get()) {
         if (![[cookie name] length])
             continue;
         if (cookiesFor == CookiesFor::DOMAccess && [cookie isHTTPOnly])
@@ -302,8 +300,7 @@ std::optional<Vector<Cookie>> CookieStorageSession::cookiesForSessionAsVector(co
 
     Vector<Cookie> cookiesVector;
     RetainPtr name = cookieName.createNSString();
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSHTTPCookie *cookie in cookies.get()) {
+    for (NSHTTPCookie *cookie in cookies.get()) {
         if (![[cookie name] length])
             continue;
         if (cookiesFor == CookiesFor::DOMAccess && [cookie isHTTPOnly])
@@ -472,8 +469,7 @@ void CookieStorageSession::deleteAllCookies(CompletionHandler<void()>&& completi
     auto work = [completionHandler = WTF::move(completionHandler), cookieStorage = RetainPtr { cookieStorage() }] () mutable {
         if (!cookieStorage) {
             RetainPtr cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
-            // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-            for (SUPPRESS_UNRETAINED_LOCAL NSHTTPCookie *cookie in [cookieStorage cookies])
+            for (NSHTTPCookie *cookie in [cookieStorage cookies])
                 [cookieStorage deleteCookie:cookie];
         } else
             CFHTTPCookieStorageDeleteAllCookies(cookieStorage.get());
