@@ -18798,7 +18798,7 @@ IGNORE_CLANG_WARNINGS_END
         Edge& baseEdge = m_graph.varArgChild(m_node, 0);
         if (m_node->enumeratorMetadata() == JSPropertyNameEnumerator::OwnStructureMode && baseEdge.useKind() == CellUse) {
             LValue base = lowCell(baseEdge);
-            speculate(BadCache, noValue(), m_node, m_out.notEqual(m_out.load32(base, m_heaps.JSCell_structureID), m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_cachedStructureID)));
+            speculate(BadCache, noValue(), m_node, m_out.notEqual(m_out.load32(base, m_heaps.JSCell_structureID), m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_cachedStructureIDForNames)));
 
             speculate(BadCache, noValue(), m_node, m_out.notEqual(m_out.bitAnd(m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_flags), m_out.constInt32(JSPropertyNameEnumerator::enumerationModeMask)), m_out.constInt32(JSPropertyNameEnumerator::OwnStructureMode)));
 
@@ -18953,7 +18953,7 @@ IGNORE_CLANG_WARNINGS_END
         else
             structureID = m_out.load32(base, m_heaps.JSCell_structureID);
 
-        LValue hasEnumeratorStructure = m_out.equal(structureID, m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_cachedStructureID));
+        LValue hasEnumeratorStructure = m_out.equal(structureID, m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_cachedStructureIDForNamesAndOffsets));
 
         m_out.branch(hasEnumeratorStructure, usually(checkInlineOrOutOfLineBlock), rarely(genericOrRecover));
 
@@ -19039,7 +19039,7 @@ IGNORE_CLANG_WARNINGS_END
 
         m_out.appendTo(isCellBlock);
         LValue structureID = m_out.load32(base, m_heaps.JSCell_structureID);
-        m_out.branch(m_out.equal(structureID, m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_cachedStructureID)),
+        m_out.branch(m_out.equal(structureID, m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_cachedStructureIDForNames)),
             usually(matchesStructureBlock), rarely(operationBlock));
 
         m_out.appendTo(matchesStructureBlock);
@@ -19113,7 +19113,7 @@ IGNORE_CLANG_WARNINGS_END
         else
             structureID = m_out.load32(base, m_heaps.JSCell_structureID);
 
-        LValue hasEnumeratorStructure = m_out.equal(structureID, m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_cachedStructureID));
+        LValue hasEnumeratorStructure = m_out.equal(structureID, m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_cachedStructureIDForNamesAndOffsets));
         m_out.branch(hasEnumeratorStructure, usually(checkReplacementSensitiveStructure), rarely(genericOrRecover));
 
         m_out.appendTo(checkReplacementSensitiveStructure);
