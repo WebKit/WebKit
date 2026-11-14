@@ -19237,6 +19237,10 @@
 		BC1777722F42418A00E318C5 /* StyleGeneratedImage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleGeneratedImage.cpp; sourceTree = "<group>"; };
 		14070CA4E22BDE1099169BE2 /* StyleGeneratedImageCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleGeneratedImageCache.h; sourceTree = "<group>"; };
 		BC1777732F42418A00E318C5 /* StyleGradientImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleGradientImage.h; sourceTree = "<group>"; };
+		FACAA4AE9BACE471FE8DE00E /* StyleFreeformGradientImage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleFreeformGradientImage.cpp; sourceTree = "<group>"; };
+		B80BBCEFA996E302F7D9603B /* StyleFreeformGradientImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleFreeformGradientImage.h; sourceTree = "<group>"; };
+		E57B559CF2151AEC4284AE1D /* StyleFreeformGradient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleFreeformGradient.cpp; sourceTree = "<group>"; };
+		F75E2F222C4246EF9F78B5F3 /* StyleFreeformGradient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleFreeformGradient.h; sourceTree = "<group>"; };
 		23E0FEABA2D79B1892BCCE18 /* StyleMeshGradientImage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleMeshGradientImage.cpp; sourceTree = "<group>"; };
 		0BFDDBDACD1084D68932CD0C /* StyleMeshGradientImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleMeshGradientImage.h; sourceTree = "<group>"; };
 		563341B9CB7707EF51940F44 /* StyleMeshGradient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleMeshGradient.cpp; sourceTree = "<group>"; };
@@ -37562,6 +37566,8 @@
 				BC17776D2F42418A00E318C5 /* StyleCursorImage.h */,
 				BC1777702F42418A00E318C5 /* StyleFilterImage.cpp */,
 				BC17776F2F42418A00E318C5 /* StyleFilterImage.h */,
+				FACAA4AE9BACE471FE8DE00E /* StyleFreeformGradientImage.cpp */,
+				B80BBCEFA996E302F7D9603B /* StyleFreeformGradientImage.h */,
 				BC1777722F42418A00E318C5 /* StyleGeneratedImage.cpp */,
 				BC1777712F42418A00E318C5 /* StyleGeneratedImage.h */,
 				14070CA4E22BDE1099169BE2 /* StyleGeneratedImageCache.h */,
@@ -39142,6 +39148,8 @@
 			children = (
 				BC1777802F42418A00E318C5 /* kinds */,
 				BCA85BD830755FF7007121DF /* StyleCrossfade.h */,
+				E57B559CF2151AEC4284AE1D /* StyleFreeformGradient.cpp */,
+				F75E2F222C4246EF9F78B5F3 /* StyleFreeformGradient.h */,
 				BCB271B42CBD7D6B00265123 /* StyleGradient.cpp */,
 				BCB271B32CBD7D6B00265123 /* StyleGradient.h */,
 				E7C27F366A91ABF1AC55109C /* StyleGradientColorInterpolationMethod.h */,
