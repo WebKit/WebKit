@@ -414,9 +414,9 @@ void RemoteRenderingBackendProxy::createSnapshot(RemoteSnapshotIdentifier snapsh
     sendSync(Messages::RemoteRenderingBackend::CreateSnapshot(snapshotIdentifier, rootFrameIdentifier, size));
 }
 
-UniqueRef<RemoteSnapshotRecorderProxy> RemoteRenderingBackendProxy::createSnapshotRecorder(const FloatRect& initialClip, RemoteSnapshotIdentifier snapshotIdentifier, RenderingMode renderingMode)
+UniqueRef<RemoteSnapshotRecorderProxy> RemoteRenderingBackendProxy::createSnapshotRecorder(const FloatRect& initialClip, const FloatSize& scale, RemoteSnapshotIdentifier snapshotIdentifier, RenderingMode renderingMode)
 {
-    auto recorder = makeUniqueRef<RemoteSnapshotRecorderProxy>(initialClip, renderingMode, *this);
+    auto recorder = makeUniqueRef<RemoteSnapshotRecorderProxy>(initialClip, scale, renderingMode, *this);
     send(Messages::RemoteRenderingBackend::CreateSnapshotRecorder(recorder->identifier(), snapshotIdentifier));
     return recorder;
 }

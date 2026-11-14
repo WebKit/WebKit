@@ -88,6 +88,10 @@ protected:
 
     template<typename T> void send(T&& message);
 
+    // The GPU process context may start at another CTM than this one. SetCTM is absolute, so it is sent relative
+    // to the CTM of the GPU process context. The other transforms are relative, and are sent the same either way.
+    void setCTMToRemote(const WebCore::AffineTransform& ctmToRemote) { m_ctmToRemote = ctmToRemote; }
+
 private:
     void didBecomeUnresponsive() const;
 
@@ -217,6 +221,7 @@ private:
     RefPtr<IPC::StreamClientConnection> m_connection;
     WeakPtr<RemoteRenderingBackendProxy> m_renderingBackend;
     std::optional<WebCore::ContentsFormat> m_contentsFormat;
+    WebCore::AffineTransform m_ctmToRemote;
     ThreadSafeWeakPtr<RemoteImageBufferProxy> m_client;
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
     Lock m_sharedVideoFrameWriterLock;

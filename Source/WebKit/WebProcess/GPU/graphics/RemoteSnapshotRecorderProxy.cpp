@@ -36,10 +36,12 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteSnapshotRecorderProxy);
 
-RemoteSnapshotRecorderProxy::RemoteSnapshotRecorderProxy(const FloatRect& initialClip, RenderingMode renderingMode, RemoteRenderingBackendProxy& renderingBackend)
-    : RemoteGraphicsContextProxy(GraphicsContextState::initialIndeterminate(), initialClip, { }, ColorSpace::SRGB(), DrawGlyphsMode::Normal, std::nullopt, renderingMode, RemoteGraphicsContextIdentifier::generate(), renderingBackend)
+RemoteSnapshotRecorderProxy::RemoteSnapshotRecorderProxy(const FloatRect& initialClip, const FloatSize& scale, RenderingMode renderingMode, RemoteRenderingBackendProxy& renderingBackend)
+    : RemoteGraphicsContextProxy(GraphicsContextState::initialIndeterminate(), initialClip, AffineTransform::makeScale(scale), ColorSpace::SRGB(), DrawGlyphsMode::Normal, std::nullopt, renderingMode, RemoteGraphicsContextIdentifier::generate(), renderingBackend)
 {
     ASSERT(renderingMode == RenderingMode::DisplayList || renderingMode == RenderingMode::PDFDocument);
+    // The GPU process recorder starts at identity: an absolute CTM includes the scale, which the recording does not.
+    setCTMToRemote(AffineTransform::makeScale(scale).inverse().value_or(AffineTransform { }));
 }
 
 void RemoteSnapshotRecorderProxy::drawSnapshotFrame(FrameIdentifier frameIdentifier)
