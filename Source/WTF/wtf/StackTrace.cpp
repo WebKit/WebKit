@@ -31,7 +31,7 @@
 #include <wtf/PrintStream.h>
 #include <wtf/StringPrintStream.h>
 
-#if HAVE(DLADDR)
+#if HAVE(DLADDR) || USE(LIBBACKTRACE)
 #include <cxxabi.h>
 #endif
 
