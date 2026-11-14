@@ -84,8 +84,6 @@ public:
     void setExcludedMarkerLayoutBounds(Vector<AscentAndDescent>&& layoutBounds) { m_excludedMarkerLayoutBounds = WTF::move(layoutBounds); }
     const Vector<AscentAndDescent>& excludedMarkerLayoutBounds() const LIFETIME_BOUND { return m_excludedMarkerLayoutBounds; }
 
-    void setNestedListMarkerOffsets(HashMap<CheckedRef<const ElementBox>, LayoutUnit>&& nestedListMarkerOffsets) { m_nestedListMarkerOffsets = WTF::move(nestedListMarkerOffsets); }
-    LayoutUnit nestedListMarkerOffset(const ElementBox& listMarkerBox) const { return m_nestedListMarkerOffsets.get(listMarkerBox); }
     void setShouldNotSynthesizeInlineBlockBaseline() { m_shouldNotSynthesizeInlineBlockBaseline = true; }
     bool shouldNotSynthesizeInlineBlockBaseline() const { return m_shouldNotSynthesizeInlineBlockBaseline; }
 
@@ -103,7 +101,6 @@ private:
     size_t m_lineCount { 0 }; // Note that this does not include lines from nested blocks and it does not include lines with no content either.
     size_t m_lineCountWithInlineContentIncludingNestedBlocks { 0 };
     // FIXME: This is required by the integaration codepath.
-    HashMap<CheckedRef<const ElementBox>, LayoutUnit> m_nestedListMarkerOffsets;
     Vector<AscentAndDescent> m_excludedMarkerLayoutBounds;
     AvailableLineWidthOverride m_availableLineWidthOverride;
     bool m_contentFitsWithinMaximumLinesWithoutLineWidthOverride { false };

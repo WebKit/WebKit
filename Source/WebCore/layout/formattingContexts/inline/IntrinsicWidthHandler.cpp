@@ -355,13 +355,7 @@ InlineLayoutUnit IntrinsicWidthHandler::computedIntrinsicWidthForConstraint(Intr
                 // Nothing on this line is indented by text-indent: floats sit at the start of the line and out-of-flow boxes take no room on it.
                 return InlineLayoutUnit { };
             }
-            auto contentWidth = lineLayoutResult.lineGeometry.logicalTopLeft.x() + lineLayoutResult.contentGeometry.logicalWidth;
-            if (lineLayoutResult.runs.isEmpty())
-                return contentWidth;
-            auto& leadingRun = lineLayoutResult.runs.first();
-            if (leadingRun.isListMarker())
-                contentWidth -= leadingRun.logicalRight();
-            return contentWidth;
+            return lineLayoutResult.lineGeometry.logicalTopLeft.x() + lineLayoutResult.contentGeometry.logicalWidth;
         }();
 
         if (!lineLayoutResult.floatContent.placedFloats.isEmpty())
@@ -415,10 +409,6 @@ InlineLayoutUnit IntrinsicWidthHandler::simplifiedMinimumWidth(const ElementBox&
                     maximumWidth = std::max(maximumWidth, TextUtil::width(*inlineTextBox, fontCascade, index, index + characterLength, { }, TextUtil::UseTrailingWhitespaceMeasuringOptimization::No));
                 index += characterLength;
             }
-            continue;
-        }
-        if (child->isListMarkerBox()) {
-            maximumWidth = std::max<InlineLayoutUnit>(maximumWidth, formattingContext().geometryForBox(*child).marginBoxWidth());
             continue;
         }
         if (child->isAtomicInlineBox() || child->isReplacedBox()) {

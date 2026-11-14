@@ -450,7 +450,7 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineLayoutResult& 
                 return lineBox.logicalRectForLineBreakBox(layoutBox);
 
             auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
-            if (lineRun.isAtomicInlineBox() || lineRun.isListMarker())
+            if (lineRun.isAtomicInlineBox())
                 return lineBox.logicalBorderBoxForAtomicInlineBox(layoutBox, boxGeometry);
             if (lineRun.isInlineBoxStart()) {
                 auto rect = lineBox.logicalBorderBoxForInlineBox(layoutBox, boxGeometry);
@@ -490,7 +490,7 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineLayoutResult& 
                 appendSoftLineBreakDisplayBox(lineRun, visualRectRelativeToRoot, boxes);
             else if (lineRun.isHardLineBreak())
                 appendHardLineBreakDisplayBox(lineRun, visualRectRelativeToRoot, boxes);
-            else if (lineRun.isAtomicInlineBox() || lineRun.isListMarker())
+            else if (lineRun.isAtomicInlineBox())
                 appendAtomicInlineLevelDisplayBox(lineRun, visualRectRelativeToRoot, boxes);
             else if (lineRun.isInlineBoxStart())
                 appendInlineBoxDisplayBox(lineRun, lineBox.inlineLevelBoxFor(lineRun), visualRectRelativeToRoot, boxes);
@@ -804,7 +804,7 @@ void InlineDisplayContentBuilder::processBidiContent(const LineLayoutResult& lin
                     return { { }, { } };
                 }
                 auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
-                if (lineRun.isAtomicInlineBox() || lineRun.isListMarker())
+                if (lineRun.isAtomicInlineBox())
                     return lineBox.logicalBorderBoxForAtomicInlineBox(layoutBox, boxGeometry);
                 if (lineRun.isBlock()) {
                     auto borderBoxRect = BoxGeometry::borderBoxRect(boxGeometry);
@@ -846,7 +846,7 @@ void InlineDisplayContentBuilder::processBidiContent(const LineLayoutResult& lin
                 displayBoxTree.append(parentDisplayBoxNodeIndex, boxes.size() - 1);
                 continue;
             }
-            if (lineRun.isAtomicInlineBox() || lineRun.isListMarker()) {
+            if (lineRun.isAtomicInlineBox()) {
                 auto parentWritingMode = layoutBox->parent().writingMode();
                 auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
                 auto boxMarginLeft = marginLineLeft(boxGeometry, parentWritingMode);

@@ -591,7 +591,7 @@ namespace Layout {
 
 inline bool isExcludedFromLayoutBoxNavigation(const RenderObject& renderer)
 {
-    return renderer.isRenderListOutsideMarker() && renderer.isExcludedMarker();
+    return renderer.isExcludedMarker();
 }
 
 inline RenderElement* ElementBox::rendererForIntegration() const

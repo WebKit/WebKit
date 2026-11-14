@@ -85,7 +85,6 @@ LineBox LineBoxBuilder::build(size_t lineIndex)
         if (isFirstFormattedLine())
             stretchRootInlineBoxForExcludedMarkers(lineBox);
         computeLineBoxGeometry(lineBox);
-        adjustOutsideListMarkersPosition(lineBox);
 
         if (auto adjustment = formattingContext().quirks().adjustmentForLineGridLineSnap(lineBox))
             expandAboveRootInlineBox(lineBox, *adjustment);
@@ -394,37 +393,6 @@ void LineBoxBuilder::setVerticalPropertiesForInlineLevelBox(const LineBox& lineB
         }
         return;
     }
-    if (inlineLevelBox.isListMarker()) {
-        CheckedRef layoutBox = downcast<ElementBox>(inlineLevelBox.layoutBox());
-        auto& listMarkerBoxGeometry = formattingContext().geometryForBox(layoutBox);
-        auto marginBoxHeight = listMarkerBoxGeometry.marginBoxHeight();
-
-        if (lineBox.baselineType() == FontBaseline::Ideographic) {
-            // FIXME: We should rely on the integration baseline.
-            setVerticalProperties(primaryFontMetricsForInlineBox(lineBox.parentInlineBox(inlineLevelBox), lineBox.baselineType()));
-            inlineLevelBox.setLogicalHeight(marginBoxHeight);
-            return;
-        }
-        if (auto ascent = listMarkerBoxGeometry.baseline()) {
-            if (layoutBox->isListMarkerImage())
-                return setVerticalProperties({ *ascent, marginBoxHeight - *ascent });
-            // Special list marker handling. Text driven list markers behave as text when it comes to layout bounds/ascent descent.
-            // This needs to consult the list marker's style (and not the root) because we don't follow the DOM insertion point in case like this:
-            // <li><div>content</div></li>
-            // where the list marker ends up inside the <div> and the <div>'s style != <li>'s style.
-            auto listMarkerLayoutBounds = layoutBox->layoutBoundsForListMarker();
-            inlineLevelBox.setLayoutBounds({ InlineLayoutUnit(listMarkerLayoutBounds.first), InlineLayoutUnit(listMarkerLayoutBounds.second) });
-
-            auto& fontMetrics = inlineLevelBox.primarymetricsOfPrimaryFont();
-            auto fontBaseline = lineBox.baselineType();
-            inlineLevelBox.setAscentAndDescent({ fontMetrics.ascent(fontBaseline), fontMetrics.descent(fontBaseline) });
-
-            inlineLevelBox.setLogicalHeight(marginBoxHeight);
-            return;
-        }
-        setVerticalProperties({ marginBoxHeight, { } });
-        return;
-    }
     if (inlineLevelBox.isAtomicInlineBox()) {
         CheckedRef layoutBox = inlineLevelBox.layoutBox();
         auto& inlineLevelBoxGeometry = formattingContext().geometryForBox(layoutBox);
@@ -540,20 +508,6 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
             // make sure we don't end up with negative logical width on the inline box.
             inlineBox.setLogicalWidth(std::max(0.f, inlineBoxLogicalRight - inlineBox.logicalLeft()));
             inlineBox.setIsLastBox();
-            continue;
-        }
-        if (run.isListMarker()) {
-            CheckedRef listMarkerBox = downcast<ElementBox>(layoutBox);
-            if (!listMarkerBox->isListMarkerImage()) {
-                // Non-image type of list markers make their parent inline boxes (e.g. root inline box) contentful (and stretch them vertically).
-                lineBox.parentInlineBox(run).setHasContent();
-            }
-
-            m_outsideListMarkers.append(index);
-
-            auto atomicInlineBox = InlineLevelBox::createAtomicInlineBox(listMarkerBox, style, logicalLeft, formattingContext.geometryForBox(listMarkerBox).borderBoxWidth());
-            setVerticalPropertiesForInlineLevelBox(lineBox, atomicInlineBox);
-            lineBox.addInlineLevelBox(WTF::move(atomicInlineBox));
             continue;
         }
         if (run.isWordBreakOpportunity()) {
@@ -742,7 +696,7 @@ void LineBoxBuilder::adjustIdeographicBaselineIfApplicable(LineBox& lineBox)
         if (!initiatesLayoutBoundsChange)
             return;
 
-        if (inlineLevelBox.isInlineBox() || inlineLevelBox.isLineBreakBox() || (inlineLevelBox.isListMarker() && !protect(downcast<ElementBox>(inlineLevelBox.layoutBox()))->isListMarkerImage()))
+        if (inlineLevelBox.isInlineBox() || inlineLevelBox.isLineBreakBox())
             setVerticalPropertiesForInlineLevelBox(lineBox, inlineLevelBox);
         else if (inlineLevelBox.isAtomicInlineBox()) {
             auto inlineLevelBoxHeight = inlineLevelBox.logicalHeight();
@@ -909,57 +863,7 @@ void LineBoxBuilder::computeLineBoxGeometry(LineBox& lineBox) const
 {
     auto hasContentfulInlineContent = lineLayoutResult().hasContentfulInlineContent() || (isFirstFormattedLine() && !layoutState().excludedMarkerLayoutBounds().isEmpty());
     auto lineBoxLogicalHeight = applyTextBoxTrimOnLineBoxIfNeeded(LineBoxVerticalAligner { formattingContext() }.computeLogicalHeightAndAlign(lineBox, hasContentfulInlineContent), lineBox);
-    if (formattingContext().quirks().shouldCollapseLineBoxHeight(lineLayoutResult().runs, m_outsideListMarkers.size()))
-        lineBoxLogicalHeight = { };
     lineBox.setLogicalRect({ lineLayoutResult().lineGeometry.logicalTopLeft, lineLayoutResult().lineGeometry.logicalWidth, lineBoxLogicalHeight });
-}
-
-void LineBoxBuilder::adjustOutsideListMarkersPosition(LineBox& lineBox)
-{
-    auto lineBoxRect = lineBox.logicalRect();
-    auto floatConstraints = formattingContext().floatingContext().constraints(LayoutUnit { lineBoxRect.top() }, LayoutUnit { lineBoxRect.bottom() }, FloatingContext::MayBeAboveLastFloat::No);
-
-    auto lineBoxOffset = lineBoxRect.left() - (lineLayoutResult().lineGeometry.initialLogicalTopLeft.x() + lineLayoutResult().lineGeometry.intrusiveFloatsOffset);
-    auto rootInlineBoxLogicalLeft = lineBox.logicalRectForRootInlineBox().left();
-    auto rootInlineBoxOffsetFromContentBoxOrIntrusiveFloat = lineBoxOffset + rootInlineBoxLogicalLeft;
-    for (auto listMarkerBoxIndex : m_outsideListMarkers) {
-        auto& listMarkerRun = lineLayoutResult().runs[listMarkerBoxIndex];
-        ASSERT(listMarkerRun.isListMarker());
-        auto& listMarkerBox = downcast<ElementBox>(listMarkerRun.layoutBox());
-        auto& listMarkerInlineLevelBox = lineBox.inlineLevelBoxFor(listMarkerRun);
-        // Move it to the logical left of the line box (from the logical left of the root inline box).
-        auto listMarkerInitialOffsetFromRootInlineBox = listMarkerInlineLevelBox.logicalLeft() - rootInlineBoxOffsetFromContentBoxOrIntrusiveFloat;
-        auto logicalLeft = listMarkerInitialOffsetFromRootInlineBox;
-        auto nestedListMarkerMarginStart = [&] {
-            auto nestedOffset = layoutState().nestedListMarkerOffset(listMarkerBox);
-            if (nestedOffset == LayoutUnit::min())
-                return 0_lu;
-            // Nested list markers (in standards mode) share the same line and have offsets as if they had dedicated lines.
-            // <!DOCTYPE html>
-            // <ul><li><ul><li>markers on the same line in standards mode
-            // vs.
-            // <ul><li><ul><li>markers with dedicated lines in quirks mode
-            // or
-            // <!DOCTYPE html>
-            // <ul><li>markers<ul><li>with dedicated lines
-            // While a float may not constrain the line, it could constrain the nested list marker (being it outside of the line box to the logical left).  
-            // FIXME: We may need to do this in a post-process task after the line box geometry is computed.
-            return floatConstraints.start ? std::min(0_lu, std::max(floatConstraints.start->x, nestedOffset)) : nestedOffset;
-        }();
-        adjustMarginStartForListMarker(listMarkerBox, nestedListMarkerMarginStart, rootInlineBoxOffsetFromContentBoxOrIntrusiveFloat);
-        logicalLeft += nestedListMarkerMarginStart;
-        listMarkerInlineLevelBox.setLogicalLeft(logicalLeft);
-    }
-}
-
-void LineBoxBuilder::adjustMarginStartForListMarker(const ElementBox& listMarkerBox, LayoutUnit nestedListMarkerMarginStart, InlineLayoutUnit rootInlineBoxOffset) const
-{
-    if (!nestedListMarkerMarginStart && !rootInlineBoxOffset)
-        return;
-    auto& listMarkerGeometry = const_cast<InlineFormattingContext&>(formattingContext()).geometryForBox(listMarkerBox);
-    // Make sure that the line content does not get pulled in to logical left direction due to
-    // the large negative margin (i.e. this ensures that logical left of the list content stays at the line start)
-    listMarkerGeometry.setHorizontalMargin({ listMarkerGeometry.marginStart() + nestedListMarkerMarginStart - LayoutUnit { rootInlineBoxOffset }, listMarkerGeometry.marginEnd() - nestedListMarkerMarginStart + LayoutUnit { rootInlineBoxOffset } });
 }
 
 void LineBoxBuilder::expandAboveRootInlineBox(LineBox& lineBox, InlineLayoutUnit expansion) const

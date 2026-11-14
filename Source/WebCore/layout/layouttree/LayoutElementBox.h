@@ -55,11 +55,6 @@ public:
     bool hasInFlowOrFloatingChild() const { return firstInFlowOrFloatingChild(); }
     NODELETE bool hasOutOfFlowChild() const;
 
-    // From the renderer.
-    bool isListMarkerImage() const;
-    // FIXME: This is temporary until after list marker content is accessible by IFC (webkit.org/b/294342)
-    std::pair<float, float> layoutBoundsForListMarker() const;
-
     // Null only for the initial containing block. Defined in RenderElement.h.
     inline RenderElement* rendererForIntegration() const;
 
