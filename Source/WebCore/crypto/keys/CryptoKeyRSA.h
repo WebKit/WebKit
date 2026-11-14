@@ -28,7 +28,7 @@
 #include "CryptoKey.h"
 #include <wtf/Function.h>
 
-#if OS(DARWIN) && !PLATFORM(GTK)
+#if PLATFORM(COCOA)
 #include "CommonCryptoUtilities.h"
 
 typedef CCRSACryptorRef PlatformRSAKey;
