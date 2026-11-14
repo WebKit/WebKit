@@ -735,8 +735,10 @@
 #endif
 
 (read-only-and-issue-extensions (extension "com.apple.app-sandbox.read"))
+#if !ENABLE(BLOCKING_OF_WEBCONTENT_FILE_WRITE)
 (define (read-write-extension-with-telemetry) (with report) (with telemetry) (extension "com.apple.app-sandbox.read-write"))
 (read-write-and-issue-extensions (read-write-extension-with-telemetry))
+#endif
 
 ;; Allow certain Mach extensions. See <rdar://87850345>.
 (allow mach-lookup
