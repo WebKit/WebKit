@@ -25,7 +25,7 @@
 
 WI.Target = class Target extends WI.Object
 {
-    constructor(parentTarget, identifier, name, type, connection, {isPaused, isProvisional} = {})
+    constructor(parentTarget, identifier, name, type, connection, {isPaused, isProvisional, processIdentifier} = {})
     {
         console.assert(parentTarget === null || parentTarget instanceof WI.Target);
         console.assert(!isPaused || parentTarget.hasCommand("Target.setPauseOnStart"));
@@ -38,6 +38,7 @@ WI.Target = class Target extends WI.Object
         this._connection = connection;
         this._isPaused = !!isPaused;
         this._isProvisional = !!isProvisional;
+        this._processIdentifier = processIdentifier || null;
         this._executionContext = null;
         this._mainResource = null;
         this._resourceCollection = new WI.ResourceCollection;
@@ -222,6 +223,7 @@ WI.Target = class Target extends WI.Object
     get isProvisional() { return this._isProvisional; }
     get isPaused() { return this._isPaused; }
     get isDestroyed() { return this._isDestroyed; }
+    get processIdentifier() { return this._processIdentifier; }
 
     get displayName() { return this._name; }
 

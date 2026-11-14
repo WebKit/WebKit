@@ -82,4 +82,9 @@ bool FrameInspectorTargetProxy::isProvisional() const
     return m_isProvisional;
 }
 
+String FrameInspectorTargetProxy::processIdentifier() const
+{
+    return String::number(m_processID.toUInt64());
+}
+
 } // namespace WebKit

@@ -114,4 +114,17 @@ bool PageInspectorTargetProxy::isProvisional() const
     return !!m_provisionalPage;
 }
 
+// Not stored like a frame target's: the page can change process without a new target, as on its first launch.
+// Read it the way connect() picks the process.
+String PageInspectorTargetProxy::processIdentifier() const
+{
+    if (RefPtr provisionalPage = m_provisionalPage)
+        return String::number(provisionalPage->process().coreProcessIdentifier().toUInt64());
+
+    Ref page = m_page;
+    if (!page->hasRunningProcess())
+        return { };
+    return String::number(page->legacyMainFrameProcess().coreProcessIdentifier().toUInt64());
+}
+
 } // namespace WebKit

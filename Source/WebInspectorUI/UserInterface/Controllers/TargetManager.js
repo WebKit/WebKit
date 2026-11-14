@@ -195,11 +195,11 @@ WI.TargetManager = class TargetManager extends WI.Object
     _createTarget(parentTarget, targetInfo, connection)
     {
         // COMPATIBILITY (iOS 13.0): `Target.TargetInfo.isProvisional` and `Target.TargetInfo.isPaused` did not exist yet.
-        let {targetId, type, isProvisional, isPaused} = targetInfo;
+        let {targetId, type, isProvisional, isPaused, processIdentifier} = targetInfo;
 
         switch (type) {
         case InspectorBackend.Enum.Target.TargetInfoType.Page:
-            return new WI.PageTarget(parentTarget, targetId, WI.UIString("Page"), connection, {isProvisional, isPaused});
+            return new WI.PageTarget(parentTarget, targetId, WI.UIString("Page"), connection, {isProvisional, isPaused, processIdentifier});
         // `Target.TargetInfo` has no URL.
         case InspectorBackend.Enum.Target.TargetInfoType.Worker:
             return new WI.WorkerTarget(parentTarget, targetId, null, WI.UIString("Worker"), connection, {isPaused});
@@ -208,7 +208,7 @@ WI.TargetManager = class TargetManager extends WI.Object
             return new WI.WorkerTarget(parentTarget, targetId, null, WI.UIString("ServiceWorker"), connection, {isPaused});
         case InspectorBackend.Enum.Target.TargetInfoType.Frame:
             // FIXME: <https://webkit.org/b/298977> Consider setting a more meaningful name for the frame target.
-            return new WI.FrameTarget(parentTarget, targetId, WI.UIString("Frame"), connection, {isProvisional, isPaused});
+            return new WI.FrameTarget(parentTarget, targetId, WI.UIString("Frame"), connection, {isProvisional, isPaused, processIdentifier});
         }
 
         throw "Unknown Target type: " + type;

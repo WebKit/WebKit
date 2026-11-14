@@ -10,8 +10,9 @@
             "properties": [
                 { "name": "targetId", "type": "string", "description": "Unique identifier for the target." },
                 { "name": "type", "type": "string", "enum": ["page", "frame", "service-worker", "worker"] },
-                { "name": "isProvisional", "type": "boolean", "optional": true, "description": "Whether this is a provisional page target." },
-                { "name": "isPaused", "type": "boolean", "optional": true, "description": "Whether the target is paused on start and has to be explicitely resumed by inspector." }
+                { "name": "isProvisional", "type": "boolean", "optional": true, "description": "Whether this is a provisional page or frame target." },
+                { "name": "isPaused", "type": "boolean", "optional": true, "description": "Whether the target is paused on start and has to be explicitely resumed by inspector." },
+                { "name": "processIdentifier", "type": "string", "optional": true, "description": "Opaque identifier, assigned by the UI process, of the process that runs this target. Not an OS process ID. Targets with the same value run in the same process. Absent when the backend does not know the process." }
             ]
         },
         {

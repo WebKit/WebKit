@@ -52,6 +52,7 @@ public:
     virtual InspectorTargetType type() const = 0;
 
     virtual bool isProvisional() const { return false; }
+    virtual String processIdentifier() const { return { }; }
     bool isPaused() const { return m_isPaused; }
     NODELETE void pause();
     JS_EXPORT_PRIVATE void resume();
