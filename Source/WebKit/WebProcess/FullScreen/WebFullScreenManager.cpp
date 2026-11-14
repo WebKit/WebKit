@@ -994,6 +994,10 @@ void WebFullScreenManager::exitFullScreenInMainFrame(CompletionHandler<void()>&&
         return completionHandler();
 
     DocumentFullscreen::finishExitFullscreen(*mainFrame, DocumentFullscreen::ExitMode::Resize);
+    if (RefPtr localMainFrame = m_page->localMainFrame()) {
+        if (RefPtr document = localMainFrame->document())
+            document->updateLayout();
+    }
     completionHandler();
 }
 
