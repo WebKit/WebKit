@@ -115,6 +115,9 @@ public:
     IntRect clipBounds() const final;
     void clipToNativeImage(const NativeImage&, const FloatRect&) final;
 
+    bool supportsInternalLinks() const final;
+    void setURLForRect(const URL&, const FloatRect&) final;
+
     RenderingMode renderingMode() const final;
 
     SkPaint createFillPaint() const;
