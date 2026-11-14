@@ -647,6 +647,11 @@ std::optional<LayoutRect> LineLayout::layout(RenderBlockFlow::MarginInfo& margin
     inlineFormattingContext.layoutState().setNestedListMarkerOffsets(m_boxGeometryUpdater.takeNestedListMarkerOffsets());
     auto excludedMarkers = excludedMarkersForFirstFormattedLine(inlineFormattingContext.layoutState());
 
+    if (isPartialLayout && m_inlineContent) {
+        auto& displayContent = m_inlineContent->displayContent();
+        auto damagedLineIndex = m_lineDamage->layoutStartPosition()->lineIndex;
+        m_lineDamage->setPrecedingDisplayBoxCount(damagedLineIndex < displayContent.lines.size() ? displayContent.lines[damagedLineIndex].firstBoxIndex() : displayContent.boxes.size());
+    }
     auto layoutResult = inlineFormattingContext.layout(inlineContentConstraints(), m_lineDamage.get());
 
     // No layout result with the line-clamp budget used up means all the inline content was discarded.
@@ -683,15 +688,18 @@ FloatRect LineLayout::constructContent(const Layout::InlineLayoutState& inlineLa
     ensureInlineContent().setContentMayHaveInkOverflow(inlineLayoutState.contentMayHaveInkOverflow());
     m_inlineContent->setContentFitsWithinMaximumLines(layoutResult && layoutResult->lineClamp.contentFitsWithinMaximumLines);
     auto layoutInfoForTesting = collectLayoutInfoForTesting(layoutResult.get());
+    auto isFullLayout = !layoutResult || layoutResult->range == Layout::InlineLayoutResult::Range::Full;
     auto damagedRect = InlineContentBuilder { flow() }.build(WTF::move(layoutResult), *m_inlineContent, m_lineDamage.get());
     if (layoutInfoForTesting) [[unlikely]]
         setLayoutInfoForTesting(WTF::move(layoutInfoForTesting));
 
     m_inlineContent->setClearGapBeforeFirstLine(inlineLayoutState.clearGapBeforeFirstLine());
     m_inlineContent->setClearGapAfterLastLine(inlineLayoutState.clearGapAfterLastLine());
-    m_inlineContent->shrinkToFit();
-
-    ensureInlineContentCache().inlineItems().shrinkToFit();
+    // After a partial layout, spare capacity is kept for the next one to append into, and released on memory pressure.
+    if (isFullLayout) {
+        m_inlineContent->shrinkToFit();
+        ensureInlineContentCache().inlineItems().shrinkToFit();
+    }
     ensureBlockFormattingState().shrinkToFit();
 
     // FIXME: These needs to be incorporated into the partial damage.
@@ -1854,8 +1862,10 @@ void LineLayout::releaseCachesAndResetDamage()
 {
     if (m_inlineContentCache)
         m_inlineContentCache->inlineItems().content().clear();
-    if (m_inlineContent)
+    if (m_inlineContent) {
         m_inlineContent->releaseCaches();
+        m_inlineContent->shrinkToFit();
+    }
     if (m_lineDamage)
         Layout::InlineInvalidation::resetInlineDamage(*m_lineDamage);
 }

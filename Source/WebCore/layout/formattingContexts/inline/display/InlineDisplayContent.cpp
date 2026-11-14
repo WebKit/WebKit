@@ -45,6 +45,19 @@ void Content::set(Content&& newContent)
 
 void Content::append(Content&& newContent)
 {
+    // A large partial layout result has room reserved for the lines and boxes before it. Putting those in front of it then makes it
+    // this content, instead of growing this content into a copy of both.
+    auto hasRoomForThisContent = lines.size() <= newContent.lines.capacity() - newContent.lines.size() && boxes.size() <= newContent.boxes.capacity() - newContent.boxes.size();
+    if (hasRoomForThisContent && !lineEllipses && !newContent.lineEllipses) {
+        if (!lines.isEmpty())
+            newContent.lines.insertVector(0, lines);
+        if (!boxes.isEmpty())
+            newContent.boxes.insertVector(0, boxes);
+        lines = WTF::move(newContent.lines);
+        boxes = WTF::move(newContent.boxes);
+        return;
+    }
+
     auto oldLineCount = lines.size();
     lines.appendVector(WTF::move(newContent.lines));
     boxes.appendVector(WTF::move(newContent.boxes));

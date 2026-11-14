@@ -53,8 +53,9 @@ public:
             size_t inlineBoxCount { 0 };
         };
         enum class IsPopulatedFromCache : bool { No, Yes };
-        void set(InlineItemList&&, ContentAttributes, IsPopulatedFromCache);
-        void replace(size_t insertionPosition, InlineItemList&&, ContentAttributes, IsPopulatedFromCache);
+        enum class IsPartialRebuild : bool { No, Yes };
+        // The items are rebuilt in place in content().
+        void didRebuild(ContentAttributes, IsPopulatedFromCache, IsPartialRebuild);
         // Drops the items that rebuilding from this position replaces. Partial rebuild starts at the item at the position, so that one stays.
         void removeItemsReplacedByRebuild(InlineItemPosition rebuildStartPosition);
         void shrinkToFit() { m_inlineItemList.shrinkToFit(); }
@@ -112,11 +113,13 @@ inline void InlineContentCache::resetMinimumMaximumContentSizes()
     m_maximumIntrinsicWidthLineContent = { };
 }
 
-inline void InlineContentCache::InlineItems::set(InlineItemList&& inlineItemList, ContentAttributes contentAttributes, IsPopulatedFromCache isPopulatedFromCache)
+inline void InlineContentCache::InlineItems::didRebuild(ContentAttributes contentAttributes, IsPopulatedFromCache isPopulatedFromCache, IsPartialRebuild isPartialRebuild)
 {
-    m_inlineItemList = WTF::move(inlineItemList);
     m_contentAttributes = contentAttributes;
-    m_isPopulatedFromCache = isPopulatedFromCache == IsPopulatedFromCache::Yes;
+    if (isPartialRebuild == IsPartialRebuild::No)
+        m_isPopulatedFromCache = isPopulatedFromCache == IsPopulatedFromCache::Yes;
+    else if (isPopulatedFromCache == IsPopulatedFromCache::No)
+        m_isPopulatedFromCache = false;
 }
 
 inline void InlineContentCache::InlineItems::removeItemsReplacedByRebuild(InlineItemPosition rebuildStartPosition)
@@ -126,15 +129,6 @@ inline void InlineContentCache::InlineItems::removeItemsReplacedByRebuild(Inline
         return;
     }
     m_inlineItemList.shrink(std::min(m_inlineItemList.size(), rebuildStartPosition.index + 1));
-}
-
-inline void InlineContentCache::InlineItems::replace(size_t insertionPosition, InlineItemList&& inlineItemList, ContentAttributes contentAttributes, IsPopulatedFromCache isPopulatedFromCache)
-{
-    m_inlineItemList.removeAt(insertionPosition, m_inlineItemList.size() - insertionPosition);
-    m_inlineItemList.appendVector(WTF::move(inlineItemList));
-    m_contentAttributes = contentAttributes;
-    if (isPopulatedFromCache == IsPopulatedFromCache::No)
-        m_isPopulatedFromCache = false;
 }
 
 }

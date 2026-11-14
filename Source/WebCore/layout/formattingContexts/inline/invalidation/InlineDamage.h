@@ -70,6 +70,11 @@ public:
     bool hasTruncatedDisplayContent() const { return m_hasTruncatedDisplayContent; }
     FloatRect truncatedContentInkOverflow() const { return m_truncatedContentInkOverflow; }
 
+    bool hasTrailingDisplayBoxes() const { return !m_trailingDisplayBoxes.isEmpty(); }
+    // The number of display boxes on the lines before the layout start position, for partial layout to estimate the size of its result.
+    void setPrecedingDisplayBoxCount(size_t precedingDisplayBoxCount) { m_precedingDisplayBoxCount = precedingDisplayBoxCount; }
+    size_t precedingDisplayBoxCount() const { return m_precedingDisplayBoxCount; }
+
 private:
     friend class InlineInvalidation;
 
@@ -84,6 +89,7 @@ private:
     bool m_hasTruncatedDisplayContent { false };
     std::optional<LayoutPosition> m_layoutStartPosition;
     TrailingDisplayBoxList m_trailingDisplayBoxes;
+    size_t m_precedingDisplayBoxCount { 0 };
     FloatRect m_truncatedContentInkOverflow;
 };
 
@@ -117,6 +123,7 @@ inline void InlineDamage::resetLayoutPosition()
 {
     m_layoutStartPosition = { };
     m_trailingDisplayBoxes.clear();
+    m_precedingDisplayBoxCount = 0;
     // Never reset m_hasTruncatedDisplayContent. The display content stays truncated until the next layout.
 }
 
