@@ -50,6 +50,11 @@ public:
     const ::WebGPU::ExternalTexture& backing() const { return m_backing; }
     void destroy();
     void undestroy();
+    bool isDestroyed() const { return m_destroyed; }
+#if ENABLE(VIDEO)
+    std::optional<unsigned> videoFrameCallbackIdentifier() const { return m_videoFrameCallbackIdentifier; }
+    void setVideoFrameCallbackIdentifier(std::optional<unsigned> identifier) { m_videoFrameCallbackIdentifier = identifier; }
+#endif
 
     NODELETE GPUDevice* device() const;
 
@@ -61,6 +66,10 @@ private:
     const Ref<::WebGPU::ExternalTexture> m_backing;
     String m_label;
     WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData> m_device;
+    bool m_destroyed { false };
+#if ENABLE(VIDEO)
+    std::optional<unsigned> m_videoFrameCallbackIdentifier;
+#endif
 };
 
 }
