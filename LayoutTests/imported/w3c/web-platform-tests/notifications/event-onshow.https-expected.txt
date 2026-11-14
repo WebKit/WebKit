@@ -1,4 +1,3 @@
 
-PASS Checked test prerequisites.
 PASS Invoked the onshow event handler.
 

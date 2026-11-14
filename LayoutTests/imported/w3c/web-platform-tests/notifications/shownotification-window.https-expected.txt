@@ -1,0 +1,4 @@
+
+
+PASS Refreshing window does not clear persistent notifications
+

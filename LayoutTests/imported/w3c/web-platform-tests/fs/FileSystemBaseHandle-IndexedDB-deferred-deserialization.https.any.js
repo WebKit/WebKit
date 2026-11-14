@@ -1,13 +1,10 @@
+// META: global=window,worker
 // META: script=resources/test-helpers.js
 // META: script=resources/sandboxed-fs-test-helpers.js
 // META: script=resources/messaging-helpers.js
 // META: script=/IndexedDB/resources/support-promises.js
 
 'use strict';
-
-// Regression test: deserializing a FileSystemHandle out of an IndexedDB result must
-// still work after the originating record has been deleted, since `request.result`
-// is only materialized when JS first reads it.
 
 directory_test(async (t, root_dir) => {
   const handle = await createFileWithContents('file', 'contents', root_dir);

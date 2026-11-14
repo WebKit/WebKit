@@ -1,0 +1,12 @@
+
+PASS getDirectoryHandle(create=false) rejects for non-existing directories
+PASS getDirectoryHandle(create=true) creates an empty directory
+PASS getDirectoryHandle(create=false) returns existing directories
+PASS getDirectoryHandle(create=true) returns existing directories without erasing
+PASS getDirectoryHandle() when a file already exists with the same name
+PASS getDirectoryHandle() with empty name
+PASS getDirectoryHandle() with "." name
+PASS getDirectoryHandle() with ".." name
+PASS getDirectoryHandle(create=false) with a path separator when the directory exists
+PASS getDirectoryHandle(create=true) with a path separator
+

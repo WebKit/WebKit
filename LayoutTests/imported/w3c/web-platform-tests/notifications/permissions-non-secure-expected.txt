@@ -1,4 +1,5 @@
 
 PASS Notification.requestPermission must be called from a secure context
 PASS Notification.permission must be called from a secure context
+PASS Notification.permission must be called from a secure worker
 

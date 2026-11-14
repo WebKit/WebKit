@@ -89,7 +89,6 @@
     "web-platform-tests/css/css-easing": "import",
     "web-platform-tests/css/css-env": "import",
     "web-platform-tests/css/css-exclusions": "skip",
-    "web-platform-tests/css/css-fill-stroke": "import",
     "web-platform-tests/css/css-flexbox": "import",
     "web-platform-tests/css/css-font-loading": "import",
     "web-platform-tests/css/css-fonts": "import",

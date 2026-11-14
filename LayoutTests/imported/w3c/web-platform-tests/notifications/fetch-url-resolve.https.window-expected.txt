@@ -1,0 +1,4 @@
+
+PASS new Notification() should give a resolved icon URL
+PASS getNotifications() should give a resolved icon URL
+

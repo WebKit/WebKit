@@ -650,6 +650,14 @@ window.test_driver_internal.set_permission = async function(permission_params)
     case "storage-access":
         await testRunner.setStorageAccessPermission(permission_params.state === "granted", location.href);
         break;
+    case "notifications":
+        if (permission_params.state === "granted")
+            testRunner.grantWebNotificationPermission(location.origin);
+        else if (permission_params.state === "denied")
+            testRunner.denyWebNotificationPermission(location.origin);
+        else
+            testRunner.removeAllWebNotificationPermissions();
+        break;
     default:
         throw new Error(`Unsupported permission name "${permission_params.descriptor.name}".`);
     }

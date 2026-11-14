@@ -10,9 +10,16 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/notifications/resources/cross-origin-nested-child.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/notifications/resources/cross-origin-nested-parent.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/notifications/resources/cross-origin-serviceworker-iframe.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/notifications/resources/custom-data.js
+/LayoutTests/imported/w3c/web-platform-tests/notifications/resources/helpers.js
 /LayoutTests/imported/w3c/web-platform-tests/notifications/resources/icon.png
+/LayoutTests/imported/w3c/web-platform-tests/notifications/resources/permission-helper.js
+/LayoutTests/imported/w3c/web-platform-tests/notifications/resources/permission-sw.js
+/LayoutTests/imported/w3c/web-platform-tests/notifications/resources/permission-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/notifications/resources/shownotification-sw.js
+/LayoutTests/imported/w3c/web-platform-tests/notifications/resources/shownotification-window-iframe.html

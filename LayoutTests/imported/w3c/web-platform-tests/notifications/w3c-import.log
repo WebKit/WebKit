@@ -10,20 +10,38 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/notifications/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/notifications/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/notifications/common.js
 /LayoutTests/imported/w3c/web-platform-tests/notifications/constructor-basic.https.html
 /LayoutTests/imported/w3c/web-platform-tests/notifications/constructor-invalid.https.html
 /LayoutTests/imported/w3c/web-platform-tests/notifications/constructor-non-secure.html
+/LayoutTests/imported/w3c/web-platform-tests/notifications/cross-origin-nested.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/notifications/cross-origin-same-site-request.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/notifications/cross-origin-serviceworker.tentative.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/notifications/event-onclose.https.html
 /LayoutTests/imported/w3c/web-platform-tests/notifications/event-onshow.https.html
+/LayoutTests/imported/w3c/web-platform-tests/notifications/fetch-url-resolve.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/notifications/getnotifications-across-processes.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/notifications/getnotifications-sw.js
+/LayoutTests/imported/w3c/web-platform-tests/notifications/global-teardown-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/notifications/historical.any.js
+/LayoutTests/imported/w3c/web-platform-tests/notifications/icon-fetch-sw.js
+/LayoutTests/imported/w3c/web-platform-tests/notifications/icon-fetch.tentative.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/notifications/icon-url-encoding-euc-kr.https.html
 /LayoutTests/imported/w3c/web-platform-tests/notifications/idlharness.https.any.js
-/LayoutTests/imported/w3c/web-platform-tests/notifications/instance.https.html
+/LayoutTests/imported/w3c/web-platform-tests/notifications/instance-checks.js
+/LayoutTests/imported/w3c/web-platform-tests/notifications/instance-sw.js
+/LayoutTests/imported/w3c/web-platform-tests/notifications/instance.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/notifications/lang.https.html
+/LayoutTests/imported/w3c/web-platform-tests/notifications/noop-sw.js
 /LayoutTests/imported/w3c/web-platform-tests/notifications/permission.html
 /LayoutTests/imported/w3c/web-platform-tests/notifications/permissions-non-secure.html
+/LayoutTests/imported/w3c/web-platform-tests/notifications/registration-association.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/notifications/shownotification-window.https.html
+/LayoutTests/imported/w3c/web-platform-tests/notifications/shownotification-without-permission.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/notifications/shownotification.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/notifications/tag.https.html
+/LayoutTests/imported/w3c/web-platform-tests/notifications/worker-gc.https.window.js

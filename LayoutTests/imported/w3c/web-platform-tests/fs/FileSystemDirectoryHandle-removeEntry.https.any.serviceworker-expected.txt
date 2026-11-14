@@ -1,0 +1,15 @@
+
+PASS removeEntry() to remove a file
+PASS removeEntry() on an already removed file should fail
+PASS removeEntry() to remove an empty directory
+PASS removeEntry() on a non-empty directory should fail
+PASS removeEntry() on a directory recursively should delete all sub-items
+PASS removeEntry() with empty name should fail
+PASS removeEntry() with "." name should fail
+PASS removeEntry() with ".." name should fail
+PASS removeEntry() with a path separator should fail.
+PASS removeEntry() while the file has an open writable fails
+PASS removeEntry() of a directory while a containing file has an open writable fails
+PASS createWritable after removeEntry succeeds but doesnt recreate the file
+PASS removeEntry() on a non-existent directory recursively should throw NotFoundError
+

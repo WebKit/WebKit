@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fs/FileSystemBaseHandle-IndexedDB-deferred-deserialization.https.any.js
@@ -58,4 +56,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fs/README.md
 /LayoutTests/imported/w3c/web-platform-tests/fs/idlharness.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fs/opaque-origin.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/fs/opfs-shared-worker-coep.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/fs/root-name.https.any.js

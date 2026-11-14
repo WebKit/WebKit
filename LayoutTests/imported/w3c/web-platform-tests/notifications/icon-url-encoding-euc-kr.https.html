@@ -7,10 +7,10 @@
 
   promise_test(async (t) => {
     // "icon" in Korean language
-    const iconKorean = "\uc544\uc744\ucf58";
+    const iconKorean = "\uc544\uc774\ucf58";
     const n = new Notification("title", { icon: `?icon=${iconKorean}` })
     t.add_cleanup(() => n.close());
 
-    assert_equals(new URL(n.icon).search, "?icon=%EC%95%84%EC%9D%84%EC%BD%98", "icon encoded with utf-8");
+    assert_equals(new URL(n.icon).search, "?icon=%EC%95%84%EC%9D%B4%EC%BD%98", "icon encoded with utf-8");
   })
 </script>

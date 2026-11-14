@@ -1,0 +1,13 @@
+
+PASS fetching no notifications
+PASS fetching notification with an empty title
+PASS fetching notification by tag filter
+FAIL fetching same-tagged notification by tag filter assert_equals: Should return only the latest notification expected 1 but got 2
+PASS fetching multiple notifications
+PASS fetching from another registration
+PASS fetching only persistent notifications
+PASS fetching a notification with custom data
+FAIL fetching a notification with navigate URL assert_equals: Should keep track of Notification.navigate. expected (string) "https://example.com/" but got (undefined) undefined
+FAIL fetching a notification with no navigate URL assert_equals: Should return an empty string for Notification.navigate if URL is not set. expected (string) "" but got (undefined) undefined
+FAIL fetching a notification with invalid navigate URL assert_equals: Should return an empty string for Notification.navigate if URL is invalid. expected (string) "" but got (undefined) undefined
+
