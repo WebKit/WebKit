@@ -1,0 +1,130 @@
+This tests that the alt text of CSS content stands in for the generated content as a whole, whatever it is made of, and that it only applies where that content is used.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Generated content
+multipleStrings children: 2
+AXRole: AXStaticText
+AXDescription:
+AXTitle:
+AXValue: ALT MULTIPLE STRINGS
+
+counterOnly children: 2
+AXRole: AXStaticText
+AXDescription:
+AXTitle:
+AXValue: ALT COUNTER
+
+quoteOnly children: 2
+AXRole: AXStaticText
+AXDescription:
+AXTitle:
+AXValue: ALT QUOTE
+
+counterAndString children: 2
+AXRole: AXStaticText
+AXDescription:
+AXTitle:
+AXValue: ALT COUNTER AND STRING
+
+emptyAltCounter children: 1
+AXRole: AXStaticText
+AXDescription:
+AXTitle:
+AXValue: text
+
+emptyString children: 2
+AXRole: AXStaticText
+AXDescription:
+AXTitle:
+AXValue: ALT EMPTY STRING
+
+multipleImages children: 2
+AXRole: AXImage
+AXDescription: ALT MULTIPLE IMAGES
+AXTitle:
+AXValue:
+
+blockBefore children: 2
+AXRole: AXStaticText
+AXDescription:
+AXTitle:
+AXValue: ALT BLOCK
+
+emptyAltImageInFigure children: 1
+AXRole: AXStaticText
+AXDescription:
+AXTitle:
+AXValue: text
+
+Names from generated content
+multipleStringsButton
+AXTitle: ALT MULTIPLE STRINGS
+
+counterAndStringButton
+AXTitle: ALT COUNTER AND STRING
+
+emptyAltCounterButton
+AXTitle: text
+
+multipleImagesButton
+AXTitle: ALT MULTIPLE IMAGES
+
+emptyStringButton
+AXTitle: ALT EMPTY STRING
+
+replacedLabelInput
+AXTitle: ALT LABEL
+
+replacedLabelTitledInput
+AXTitle: LABEL TITLE
+
+Elements replaced by a content image
+replacedFocusable children: 0
+AXRole: AXImage
+AXDescription:
+AXTitle:
+AXValue:
+
+replacedInFigure children: 0
+AXRole: AXImage
+AXDescription:
+AXTitle:
+AXValue:
+
+replacedLabeled children: 0
+AXRole: AXImage
+AXDescription: ARIA LABEL
+AXTitle: ARIA LABEL
+AXValue:
+
+replacedWithAlt children: 0
+AXRole: AXImage
+AXDescription: ALT REPLACED
+AXTitle:
+AXValue:
+
+replacedButton children: 0
+AXRole: AXButton
+AXDescription: ALT REPLACED BUTTON
+AXTitle:
+AXValue:
+
+replacedImageMap has children: true
+AXRole: AXImageMap
+
+replacedOverlay has children: true
+AXRole: AXImage
+
+Unused content alt text
+unusedContentAlt children: 0
+AXRole: AXImage
+AXDescription:
+AXTitle:
+AXValue:
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

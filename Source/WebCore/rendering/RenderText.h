@@ -140,10 +140,6 @@ public:
 
     bool canBeSelectionLeaf() const override { return !layoutBox().contentGlyph(); }
 
-    // Alternative description from 'content' that can be used for accessibility instead of the text. Null (unspecified) is distinct from empty string.
-    NODELETE const String& altText() const LIFETIME_BOUND;
-    void setAltText(const String&);
-
     LayoutRect collectSelectionGeometriesForLineBoxes(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent, Vector<FloatQuad>&);
 
     int caretMinOffset() const final;
@@ -239,7 +235,6 @@ private:
     unsigned m_originalTextDiffersFromRendered : 1 { false };
     unsigned m_layoutBoxContentNeedsUpdate : 1 { false };
     unsigned m_hasSecureTextTimer : 1 { false };
-    unsigned m_hasAltText : 1 { false };
     unsigned m_fontCodePath : 2; // FontCascade::CodePath. Same type as the other bits so MSVC packs them together.
 
     // FIXME: This should probably be part of the text sizing structures in Document instead. That would save some memory.

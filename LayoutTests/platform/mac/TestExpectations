@@ -2489,3 +2489,6 @@ imported/w3c/web-platform-tests/service-workers/cache-storage/cache-add.https.an
 imported/w3c/web-platform-tests/service-workers/cache-storage/cache-add.https.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/cache-storage/cache-add.https.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/cache-storage/cache-add.https.any.worker.html [ Skip ]
+
+# <button> ignores `content: url()`, so its CSS alt text describes an image that is not rendered.
+webkit.org/b/238792 accessibility/isolated-tree/css-content-alt-text.html [ Failure ]
