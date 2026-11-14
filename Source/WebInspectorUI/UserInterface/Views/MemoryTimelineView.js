@@ -127,7 +127,12 @@ WI.MemoryTimelineView = class MemoryTimelineView extends WI.TimelineView
     {
         super.attached();
 
-        this._timelineRuler.needsLayout(WI.View.LayoutReason.Resize);
+        // The ruler's first layout can happen before the view is in the DOM, so it can
+        // cache a zero width. Lay it out again, synchronously, so it measures its real
+        // width now; a scheduled layout would be given this view's `Dirty` reason while
+        // records are streaming in, and `sizeDidChange` would never be called, leaving
+        // the graphs empty.
+        this._timelineRuler.updateLayout(WI.View.LayoutReason.Resize);
     }
 
     closed()

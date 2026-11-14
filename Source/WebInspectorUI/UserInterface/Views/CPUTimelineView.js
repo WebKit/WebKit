@@ -86,7 +86,12 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
     {
         super.attached();
 
-        this._timelineRuler?.needsLayout(WI.View.LayoutReason.Resize);
+        // The ruler was laid out in initialLayout(), before it was in the DOM, so it
+        // cached a zero width. Lay it out again, synchronously, so it measures its
+        // real width now; a scheduled layout would be given this view's `Dirty`
+        // reason while records are streaming in, and `sizeDidChange` would never
+        // be called, leaving the details view empty.
+        this._timelineRuler?.updateLayout(WI.View.LayoutReason.Resize);
     }
 
     closed()
