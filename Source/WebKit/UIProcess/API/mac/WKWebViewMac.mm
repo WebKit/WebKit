@@ -259,6 +259,27 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     [super renewGState];
 }
 
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+- (_NSMouseEmulationGestureConfig)_gestureRecognizersViewConfigForMouseEmulation
+{
+    if (!_page)
+        return 0;
+
+    if (!protect(_page->preferences())->useAppKitGesturesForGestureEvents())
+        return _NSMouseEmulationViewHandlesMagnify | _NSMouseEmulationViewHandlesRotate;
+
+    return 0;
+}
+
+- (NSView *)_hitTestToBlockWindowResizingForResizeDirection:(NSWindowFrameResizePosition)direction context:(NSHitTestContext *)context
+{
+    if (context.source == NSHitTestContextSourceTouch && _impl && _impl->isPointInScrollbar([self convertPoint:context.point fromView:nil]))
+        return self;
+
+    return [super _hitTestToBlockWindowResizingForResizeDirection:direction context:context];
+}
+#endif // HAVE(APPKIT_GESTURES_SUPPORT)
+
 #pragma mark - macOS IBAction/NSResponder
 
 #define WEBCORE_COMMAND(command) - (void)command:(id)sender { _impl->executeEditCommandForSelector(_cmd); }
@@ -1303,35 +1324,20 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 @end
 
-#if HAVE(APPKIT_GESTURES_SUPPORT)
-
-@implementation WKWebView (MouseEmulation)
-
-- (_NSMouseEmulationGestureConfig)_gestureRecognizersViewConfigForMouseEmulation
-{
-    if (!_page)
-        return 0;
-
-    if (!protect(_page->preferences())->useAppKitGesturesForGestureEvents())
-        return _NSMouseEmulationViewHandlesMagnify | _NSMouseEmulationViewHandlesRotate;
-
-    return 0;
-}
-
-@end
+#if ENABLE(TWO_PHASE_CLICKS)
 
 @implementation WKWebView (TwoPhaseClicks)
 
 - (void)_didNotHandleTapAsClick:(const WebCore::IntPoint&)point
 {
     if (RetainPtr gestureController = _impl->appKitGestureController())
-        [gestureController didNotHandleClickAsClick:point];
+        [gestureController didNotHandleTapAsClick:point];
 }
 
 - (void)_didHandleTapAsHover
 {
     if (RetainPtr gestureController = _impl->appKitGestureController())
-        [gestureController didHandleClickAsHover];
+        [gestureController didHandleTapAsHover];
 }
 
 - (void)_didCompleteSyntheticClick
@@ -1343,26 +1349,26 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 - (void)_commitPotentialTapFailed
 {
     if (RetainPtr gestureController = _impl->appKitGestureController())
-        [gestureController commitPotentialClickFailed];
+        [gestureController commitPotentialTapFailed];
 }
 
 - (void)_didGetTapHighlightGeometries:(WebKit::TapIdentifier)requestID color:(const WebCore::Color&)color quads:(const Vector<WebCore::FloatQuad>&)highlightedQuads cornerRadii:(WebCore::CornerRadii&&)cornerRadii nodeHasBuiltInClickHandling:(BOOL)nodeHasBuiltInClickHandling
 {
     if (RetainPtr gestureController = _impl->appKitGestureController())
-        [gestureController didGetClickHighlightForRequest:requestID color:color quads:highlightedQuads cornerRadii:WTF::move(cornerRadii) nodeHasBuiltInClickHandling:nodeHasBuiltInClickHandling];
+        [gestureController didGetTapHighlightForRequest:requestID color:color quads:highlightedQuads cornerRadii:WTF::move(cornerRadii) nodeHasBuiltInClickHandling:nodeHasBuiltInClickHandling];
 }
 
 - (BOOL)_isPotentialTapInProgress
 {
     if (RetainPtr gestureController = _impl->appKitGestureController())
-        return [gestureController isPotentialClickInProgress];
+        return [gestureController isPotentialTapInProgress];
     return NO;
 }
 
 - (void)_disableDoubleTapGesturesDuringTapIfNecessary:(WebKit::TapIdentifier)requestID
 {
     if (RetainPtr gestureController = _impl->appKitGestureController())
-        [gestureController disableDoubleClickGesturesDuringClickIfNecessary:requestID];
+        [gestureController disableDoubleTapGesturesDuringTapIfNecessary:requestID];
 }
 
 - (void)_handleSmartMagnificationInformationForPotentialTap:(WebKit::TapIdentifier)requestID renderRect:(const WebCore::FloatRect&)renderRect fitEntireRect:(BOOL)fitEntireRect viewportMinimumScale:(double)viewportMinimumScale viewportMaximumScale:(double)viewportMaximumScale nodeIsRootLevel:(BOOL)nodeIsRootLevel nodeIsPluginElement:(BOOL)nodeIsPluginElement
@@ -1371,19 +1377,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 @end
 
-@implementation WKWebView (WindowResizing)
-
-- (NSView *)_hitTestToBlockWindowResizingForResizeDirection:(NSWindowFrameResizePosition)direction context:(NSHitTestContext *)context
-{
-    if (context.source == NSHitTestContextSourceTouch && _impl->isPointInScrollbar([self convertPoint:context.point fromView:nil]))
-        return self;
-
-    return [super _hitTestToBlockWindowResizingForResizeDirection:direction context:context];
-}
-
-@end
-
-#endif // HAVE(APPKIT_GESTURES_SUPPORT)
+#endif // ENABLE(TWO_PHASE_CLICKS)
 
 #pragma mark -
 

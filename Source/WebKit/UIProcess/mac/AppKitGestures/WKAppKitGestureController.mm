@@ -31,7 +31,6 @@
 #import "AppKitSPI.h"
 #import "DrawingAreaProxy.h"
 #import "GestureTypes.h"
-#import "IdentifierTypes.h"
 #import "ImageAnalysisUtilities.h"
 #import "InteractionInformationAtPosition.h"
 #import "InteractionInformationRequest.h"
@@ -40,6 +39,8 @@
 #import "NativeWebWheelEvent.h"
 #import "PositionInformationManager.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
+#import "RemoteLayerTreeNode.h"
+#import "RemoteScrollingTreeCocoa.h"
 #import "ScrollingAccelerationCurve.h"
 #import "TextRecognitionUpdateResult.h"
 #import "ViewGestureController.h"
@@ -420,7 +421,7 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     WeakObjCPtr<WKWebView> _view;
 
     RetainPtr<NSPanGestureRecognizer> _panGestureRecognizer;
-    std::array<RetainPtr<WKMouseTrackingGestureRecognizer>, WebKit::mouseTrackingGestureCount> _mouseTrackingGestureRecognizers;
+    std::array<RetainPtr<WKMouseTrackingGestureRecognizer>, 2> _mouseTrackingGestureRecognizers;
 
     RetainPtr<NSPressGestureRecognizer> _singleClickGestureRecognizer;
     RetainPtr<NSClickGestureRecognizer> _doubleClickGestureRecognizer;
@@ -441,11 +442,11 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     bool _caughtDeceleratingScroll;
     bool _suppressNextPanScrollDelta;
 
-    bool _potentialClickInProgress;
+    bool _potentialTapInProgress;
     bool _isSuppressingSingleClickGestureForTextSelection;
 
     std::optional<WebKit::TransactionID> _layerTreeTransactionIdAtLastInteractionStart;
-    Markable<WebKit::ClickIdentifier> _latestClickID;
+    Markable<WebKit::TapIdentifier> _latestTapID;
     RetainPtr<WKClickHighlightController> _clickHighlightController;
 
     // FIXME: Avoid bloat in WKAppKitGestureController by introducing a separate
@@ -840,7 +841,7 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
 
     _isSuppressingSingleClickGestureForTextSelection = true;
 
-    [self _handleClickCancelled];
+    [self _handleTapCancelled];
     [webView _protectedPage]->cancelPotentialTap();
 }
 
@@ -921,7 +922,7 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
         case NSGestureRecognizerStateCancelled:
         case NSGestureRecognizerStateFailed:
             [self _resetCaughtDeceleratingScroll];
-            [self _handleClickCancelled];
+            [self _handleTapCancelled];
             break;
         default:
             break;
@@ -947,14 +948,14 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
 
     switch (gesture.state) {
     case NSGestureRecognizerStateBegan:
-        [self _handleClickBegan:gesture];
+        [self _handleTapBegan:gesture];
         break;
     case NSGestureRecognizerStateEnded:
-        [self _handleClickEnded:gesture];
+        [self _handleTapEnded:gesture];
         break;
     case NSGestureRecognizerStateCancelled:
     case NSGestureRecognizerStateFailed:
-        [self _handleClickCancelled];
+        [self _handleTapCancelled];
         break;
     default:
         break;
@@ -1005,7 +1006,7 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
 
     auto modifiers = WebKit::WebEventFactory::toWebEventModifierFlags([gesture modifierFlags]);
 
-    handleDoubleClickForDoubleClickAtPoint(*[webView _protectedPage], WebCore::roundedIntPoint(location), modifiers, *_layerTreeTransactionIdAtLastInteractionStart, WebKit::WebEventInputSource::Automation);
+    [webView _protectedPage]->handleDoubleTapForDoubleClickAtPoint(WebCore::roundedIntPoint(location), modifiers, *_layerTreeTransactionIdAtLastInteractionStart, WebKit::WebEventInputSource::Automation, WebKit::WebMouseEventSyntheticClickType::OneFingerTap);
 }
 
 - (void)secondaryClickGestureRecognized:(NSGestureRecognizer *)gesture
@@ -1021,7 +1022,7 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     if (gesture.state != NSGestureRecognizerStateBegan)
         return;
 
-    [self _handleClickCancelled];
+    [self _handleTapCancelled];
     [self _cancelPointerTrackingIfNeeded];
 
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
@@ -1927,7 +1928,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     if (!webView)
         return locationInWindow;
 
-    auto adjustedLocationInView = _positionInformationManager->currentInformation().automationAdjustedInteractionLocation;
+    auto adjustedLocationInView = _positionInformationManager->currentInformation().nearbySliderInteractionLocation;
     if (!adjustedLocationInView)
         return locationInWindow;
 
@@ -2066,7 +2067,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
     switch (gesture.state) {
     case NSGestureRecognizerStateBegan: {
-        [self _handleClickCancelled];
+        [self _handleTapCancelled];
         _dragGestureHasSentMouseDown = false;
         _dragGestureDidReceiveDragStart = false;
         ++_dragIdentifier;
@@ -2137,17 +2138,17 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     _layerTreeTransactionIdAtLastInteractionStart = remoteDrawingArea->lastCommittedMainFrameLayerTreeTransactionID();
 }
 
-- (void)_handleClickBegan:(NSGestureRecognizer *)gesture
+- (void)_handleTapBegan:(NSGestureRecognizer *)gesture
 {
     RetainPtr webView = _view.get();
     if (!webView)
         return;
 
-    // Equivalent to acceptsFirstMouse, but here because the potentialClick asynchrony
-    // means that the window can get focus from this click before we complete the click.
+    // Equivalent to acceptsFirstMouse, but here because potential taps are asynchronous, which
+    // means that the window can get focus from this tap before we complete the click.
     bool commandKeyIsDown = [gesture modifierFlags] & NSEventModifierFlagCommand;
     if (![[webView window] isKeyWindow] && !commandKeyIsDown) {
-        WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG([webView _protectedPage]->logIdentifier(), "Single-click began in an inactive window; suppressing");
+        WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG([webView _protectedPage]->logIdentifier(), "Tap began in an inactive window; suppressing");
         return;
     }
 
@@ -2158,63 +2159,63 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
     [self _updateLayerTreeTransactionIdAtLastInteractionStart];
 
-    _latestClickID = WebKit::ClickIdentifier::generate();
-    _potentialClickInProgress = true;
+    _latestTapID = WebKit::TapIdentifier::generate();
+    _potentialTapInProgress = true;
 
-    [_clickHighlightController beginRequest:*_latestClickID expectsFastCommit:YES];
+    [_clickHighlightController beginRequest:*_latestTapID expectsFastCommit:YES];
 
-    [webView _protectedPage]->potentialClickAtPosition(std::nullopt, WebCore::FloatPoint(position), false, *_latestClickID, WebKit::WebEventInputSource::Automation);
+    [webView _protectedPage]->potentialTapAtPosition(std::nullopt, WebCore::FloatPoint(position), false, *_latestTapID, WebKit::WebEventInputSource::Automation);
 }
 
-- (void)_handleClickEnded:(NSGestureRecognizer *)gesture
+- (void)_handleTapEnded:(NSGestureRecognizer *)gesture
 {
     RetainPtr webView = _view.get();
     if (!webView)
         return;
 
-    if (!_potentialClickInProgress)
+    if (!_potentialTapInProgress)
         return;
 
-    [self _endPotentialClickAndEnableDoubleClickGesturesIfNecessary];
+    [self _endPotentialTapAndEnableDoubleTapGesturesIfNecessary];
 
     if (!_layerTreeTransactionIdAtLastInteractionStart) {
-        [self _handleClickCancelled];
+        [self _handleTapCancelled];
         return;
     }
 
-    // If this click completes a double click, the web process delivers it as one when there is a listener for it,
-    // instead of the DOM double-click gesture also sending it.
+    // If this tap completes a double tap, the web process delivers it as a double click when there is a listener
+    // for one, instead of the DOM double-click gesture also sending it.
     auto completesDoubleClick = [self takeCompletedDOMDoubleClick] ? WebKit::CompletesDoubleClick::Yes : WebKit::CompletesDoubleClick::No;
 
     RetainPtr clickHighlightController = _clickHighlightController;
     [clickHighlightController showPendingHighlightForCommittedClick];
 
     auto modifiers = WebKit::WebEventFactory::toWebEventModifierFlags([gesture modifierFlags]);
-    [webView _protectedPage]->commitPotentialClick(std::nullopt, modifiers, *_layerTreeTransactionIdAtLastInteractionStart, WebCore::mousePointerID, completesDoubleClick);
+    [webView _protectedPage]->commitPotentialTap(std::nullopt, modifiers, *_layerTreeTransactionIdAtLastInteractionStart, WebCore::mousePointerID, completesDoubleClick);
 
     [clickHighlightController fadeUnlessAwaitingHighlight];
 }
 
-- (void)_handleClickCancelled
+- (void)_handleTapCancelled
 {
     [protect(_clickHighlightController) cancel];
 
-    if (!_potentialClickInProgress)
+    if (!_potentialTapInProgress)
         return;
 
-    _potentialClickInProgress = false;
+    _potentialTapInProgress = false;
 
     if (RetainPtr webView = _view.get())
         [webView _protectedPage]->cancelPotentialTap();
 }
 
-- (void)_endPotentialClickAndEnableDoubleClickGesturesIfNecessary
+- (void)_endPotentialTapAndEnableDoubleTapGesturesIfNecessary
 {
-    _potentialClickInProgress = false;
-    [self _setDoubleClickGesturesEnabled:YES];
+    _potentialTapInProgress = false;
+    [self _setDoubleTapGesturesEnabled:YES];
 }
 
-- (void)_setDoubleClickGesturesEnabled:(BOOL)enabled
+- (void)_setDoubleTapGesturesEnabled:(BOOL)enabled
 {
     [_doubleClickGestureRecognizer setEnabled:enabled];
 }
@@ -2223,9 +2224,9 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 #pragma mark - Two-Phase Click Response Handlers
 
-- (BOOL)isPotentialClickInProgress
+- (BOOL)isPotentialTapInProgress
 {
-    return _potentialClickInProgress;
+    return _potentialTapInProgress;
 }
 
 - (WKClickHighlightController *)clickHighlightController
@@ -2233,34 +2234,34 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     return _clickHighlightController.get();
 }
 
-- (void)didGetClickHighlightForRequest:(WebKit::ClickIdentifier)requestID color:(const WebCore::Color&)color quads:(const Vector<WebCore::FloatQuad>&)highlightedQuads cornerRadii:(WebCore::CornerRadii&&)cornerRadii nodeHasBuiltInClickHandling:(BOOL)nodeHasBuiltInClickHandling
+- (void)didGetTapHighlightForRequest:(WebKit::TapIdentifier)requestID color:(const WebCore::Color&)color quads:(const Vector<WebCore::FloatQuad>&)highlightedQuads cornerRadii:(WebCore::CornerRadii&&)cornerRadii nodeHasBuiltInClickHandling:(BOOL)nodeHasBuiltInClickHandling
 {
     RetainPtr webView = _view.get();
     if (!webView)
         return;
 
-    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG([webView _protectedPage]->logIdentifier(), "Received click highlight for request %llu, nodeHasBuiltInClickHandling=%d", requestID.toUInt64(), nodeHasBuiltInClickHandling);
+    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG([webView _protectedPage]->logIdentifier(), "Received tap highlight for request %llu, nodeHasBuiltInClickHandling=%d", requestID.toUInt64(), nodeHasBuiltInClickHandling);
 
     [protect(_clickHighlightController) didReceiveHighlightForRequest:requestID color:color quads:highlightedQuads cornerRadii:WTF::move(cornerRadii) nodeHasBuiltInClickHandling:nodeHasBuiltInClickHandling];
 }
 
-- (void)disableDoubleClickGesturesDuringClickIfNecessary:(WebKit::ClickIdentifier)requestID
+- (void)disableDoubleTapGesturesDuringTapIfNecessary:(WebKit::TapIdentifier)requestID
 {
-    if (_latestClickID != requestID)
+    if (_latestTapID != requestID)
         return;
 
-    [self _setDoubleClickGesturesEnabled:NO];
+    [self _setDoubleTapGesturesEnabled:NO];
 }
 
-- (void)commitPotentialClickFailed
+- (void)commitPotentialTapFailed
 {
     RetainPtr webView = _view.get();
     if (!webView)
         return;
 
-    [self _handleClickCancelled];
+    [self _handleTapCancelled];
 
-    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_ERROR([webView _protectedPage]->logIdentifier(), "Commit potential click failed");
+    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_ERROR([webView _protectedPage]->logIdentifier(), "Commit potential tap failed");
 }
 
 - (void)didCompleteSyntheticClick
@@ -2276,27 +2277,27 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         _positionInformationManager->invalidate();
 }
 
-- (void)didHandleClickAsHover
+- (void)didHandleTapAsHover
 {
     RetainPtr webView = _view.get();
     if (!webView)
         return;
 
-    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG([webView _protectedPage]->logIdentifier(), "Click was handled as hover");
+    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG([webView _protectedPage]->logIdentifier(), "Tap was handled as hover");
 
     _mayHaveHoverActivatedByClick = true;
     _positionInformationManager->invalidate();
 }
 
-- (void)didNotHandleClickAsClick:(const WebCore::IntPoint&)point
+- (void)didNotHandleTapAsClick:(const WebCore::IntPoint&)point
 {
     RetainPtr webView = _view.get();
     if (!webView)
         return;
 
-    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG([webView _protectedPage]->logIdentifier(), "Click at (%d, %d) was not handled as click", point.x(), point.y());
+    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG([webView _protectedPage]->logIdentifier(), "Tap at (%d, %d) was not handled as click", point.x(), point.y());
 
-    // FIXME: Consider smart magnification here if a double-click is pending and the point hasn't moved significantly.
+    // FIXME: Consider smart magnification here if a double tap is pending and the point hasn't moved significantly.
 }
 
 #pragma mark - WKClickHighlightControllerDelegate
@@ -2339,9 +2340,9 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     return [self clickHighlightControllerUnobscuredRect:controller];
 }
 
-- (BOOL)clickHighlightControllerIsPotentialClickInProgress:(WKClickHighlightController *)controller
+- (BOOL)clickHighlightControllerIsPotentialTapInProgress:(WKClickHighlightController *)controller
 {
-    return _potentialClickInProgress;
+    return _potentialTapInProgress;
 }
 
 #endif
@@ -2771,7 +2772,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 - (void)reset
 {
     [self clearGestureDragState];
-    [self _handleClickCancelled];
+    [self _handleTapCancelled];
     [self _cancelPointerTrackingIfNeeded];
     _activeMouseTrackingGestureRecognizer = nil;
     _mouseTrackingHasSentMouseDown = false;
@@ -2789,7 +2790,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     _fastScrollTracker->reset();
     _directionalScrollLockTracker->reset();
     _isSuppressingSingleClickGestureForTextSelection = false;
-    _latestClickID.reset();
+    _latestTapID.reset();
     _layerTreeTransactionIdAtLastInteractionStart.reset();
     _lastCompletedImageAnalysis.reset();
     _positionInformationManager->reset();
@@ -2821,12 +2822,13 @@ static NSPoint startLocationInView(NSPanGestureRecognizer *gesture, NSView *view
     if (!webView)
         return NO;
 
-    if ([self _isMouseTrackingGestureRecognizer:gesture]
-        || [self _isOurManipulationGestureRecognizer:gesture]
-        || gesture == _doubleClickGestureRecognizer
-        || gesture == _singleClickGestureRecognizer
-        || gesture == _dragPressGestureRecognizer
-        || isSystemWindowResizeGestureRecognizer(gesture))
+    if ([self _isMouseTrackingGestureRecognizer:gesture] || [self _isOurManipulationGestureRecognizer:gesture])
+        return YES;
+
+    if (gesture == _doubleClickGestureRecognizer || gesture == _singleClickGestureRecognizer || gesture == _dragPressGestureRecognizer)
+        return YES;
+
+    if ([gesture.name isEqualToString:@"NSThemeFrame.panTouchGestureRecognizer"])
         return YES;
 
     for (NSGestureRecognizer *gestureForFailureRequirements in [[webView textSelectionManager] gesturesForFailureRequirements]) {

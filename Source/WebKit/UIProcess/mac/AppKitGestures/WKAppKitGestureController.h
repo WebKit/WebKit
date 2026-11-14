@@ -37,10 +37,6 @@
 
 #if !__has_feature(modules)
 #import "IdentifierTypes.h"
-#import "RemoteLayerTreeNode.h"
-#import "RemoteScrollingTreeCocoa.h"
-#import "WebMouseEvent.h"
-#import "WebPageProxy.h"
 #endif
 
 namespace WebCore {
@@ -57,29 +53,6 @@ struct InteractionInformationAtPosition;
 OBJC_CLASS NSPanGestureRecognizer;
 OBJC_CLASS WKClickHighlightController;
 OBJC_CLASS WKWebView;
-
-#if !__has_feature(modules)
-
-namespace WebKit {
-using ClickIdentifier = TapIdentifier;
-
-static constexpr auto mouseTrackingGestureCount = 2;
-}
-
-#define potentialClickAtPosition potentialTapAtPosition
-#define commitPotentialClick commitPotentialTap
-
-static inline void handleDoubleClickForDoubleClickAtPoint(WebKit::WebPageProxy& page, const WebCore::IntPoint& location, OptionSet<WebKit::WebEventModifier> modifierFlags, WebKit::TransactionID lastLayerTreeTransactionId, WebKit::WebEventInputSource inputSource)
-{
-    page.handleDoubleTapForDoubleClickAtPoint(location, modifierFlags, lastLayerTreeTransactionId, inputSource, WebKit::WebMouseEventSyntheticClickType::OneFingerTap);
-}
-
-static inline BOOL isSystemWindowResizeGestureRecognizer(NSGestureRecognizer *gestureRecognizer)
-{
-    return [gestureRecognizer.name isEqualToString:@"NSThemeFrame.panTouchGestureRecognizer"];
-}
-
-#endif // !__has_feature(modules)
 
 NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
@@ -107,16 +80,16 @@ NS_SWIFT_UI_ACTOR
 
 #if ENABLE(TWO_PHASE_CLICKS)
 
-@property (nonatomic, readonly, getter=isPotentialClickInProgress) BOOL potentialClickInProgress;
+@property (nonatomic, readonly, getter=isPotentialTapInProgress) BOOL potentialTapInProgress;
 
 #if !__has_feature(modules)
 @property (nonatomic, readonly) WKClickHighlightController *clickHighlightController;
-- (void)didGetClickHighlightForRequest:(WebKit::ClickIdentifier)requestID color:(const WebCore::Color&)color quads:(const Vector<WebCore::FloatQuad>&)highlightedQuads cornerRadii:(WebCore::CornerRadii&&)cornerRadii nodeHasBuiltInClickHandling:(BOOL)nodeHasBuiltInClickHandling;
-- (void)disableDoubleClickGesturesDuringClickIfNecessary:(WebKit::ClickIdentifier)requestID;
-- (void)commitPotentialClickFailed;
+- (void)didGetTapHighlightForRequest:(WebKit::TapIdentifier)requestID color:(const WebCore::Color&)color quads:(const Vector<WebCore::FloatQuad>&)highlightedQuads cornerRadii:(WebCore::CornerRadii&&)cornerRadii nodeHasBuiltInClickHandling:(BOOL)nodeHasBuiltInClickHandling;
+- (void)disableDoubleTapGesturesDuringTapIfNecessary:(WebKit::TapIdentifier)requestID;
+- (void)commitPotentialTapFailed;
 - (void)didCompleteSyntheticClick;
-- (void)didHandleClickAsHover;
-- (void)didNotHandleClickAsClick:(const WebCore::IntPoint&)point;
+- (void)didHandleTapAsHover;
+- (void)didNotHandleTapAsClick:(const WebCore::IntPoint&)point;
 #endif // !__has_feature(modules)
 
 #endif // ENABLE(TWO_PHASE_CLICKS)

@@ -43,7 +43,7 @@
 - (CGFloat)clickHighlightControllerCornerRadiusScale:(WKClickHighlightController *)controller;
 - (WebCore::FloatRect)clickHighlightControllerUnobscuredRect:(WKClickHighlightController *)controller;
 - (WebCore::FloatRect)clickHighlightControllerBoundaryRect:(WKClickHighlightController *)controller;
-- (BOOL)clickHighlightControllerIsPotentialClickInProgress:(WKClickHighlightController *)controller;
+- (BOOL)clickHighlightControllerIsPotentialTapInProgress:(WKClickHighlightController *)controller;
 @end
 
 @interface WKClickHighlightController : NSObject

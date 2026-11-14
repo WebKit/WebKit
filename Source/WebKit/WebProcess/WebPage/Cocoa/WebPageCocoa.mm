@@ -2871,8 +2871,8 @@ static void convertPositionInformationToMainFrameCoordinates(const LocalFrameVie
     };
 
     information.request.point = convertPoint(information.request.point);
-    if (information.automationAdjustedInteractionLocation)
-        information.automationAdjustedInteractionLocation = convertPoint(*information.automationAdjustedInteractionLocation);
+    if (information.nearbySliderInteractionLocation)
+        information.nearbySliderInteractionLocation = convertPoint(*information.nearbySliderInteractionLocation);
 
     information.bounds = convertRect(information.bounds);
     information.adjustedPointForNodeRespondingToClickEvents = localRootView.convertToRootViewAcrossIsolatedFrames(information.adjustedPointForNodeRespondingToClickEvents);

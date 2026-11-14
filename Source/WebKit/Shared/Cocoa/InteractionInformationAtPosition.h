@@ -114,7 +114,7 @@ struct InteractionInformationAtPosition {
 #endif
         bool shouldTreatLongClickAsSecondaryClickQuirk,
         WebCore::FloatPoint&& adjustedPointForNodeRespondingToClickEvents,
-        std::optional<WebCore::IntPoint>&& automationAdjustedInteractionLocation,
+        std::optional<WebCore::IntPoint>&& nearbySliderInteractionLocation,
         URL&&,
         URL&& imageURL,
         URL&& modelURL,
@@ -204,7 +204,8 @@ struct InteractionInformationAtPosition {
     bool shouldTreatLongClickAsSecondaryClickQuirk { false };
     WebCore::FloatPoint adjustedPointForNodeRespondingToClickEvents;
 
-    std::optional<WebCore::IntPoint> automationAdjustedInteractionLocation;
+    // Where a touch near a slider that is too thin to reliably hit should interact with it instead, in root view coordinates.
+    std::optional<WebCore::IntPoint> nearbySliderInteractionLocation;
 
     URL url;
     URL imageURL;

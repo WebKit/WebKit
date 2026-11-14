@@ -2625,7 +2625,7 @@ static void appendRecognizerIfNonNull(RetainPtr<NSMutableArray>& array, const Re
     return protect(_page)->exposedContentRect();
 }
 
-- (BOOL)clickHighlightControllerIsPotentialClickInProgress:(WKClickHighlightController *)controller
+- (BOOL)clickHighlightControllerIsPotentialTapInProgress:(WKClickHighlightController *)controller
 {
     return _potentialTapInProgress;
 }
