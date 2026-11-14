@@ -176,7 +176,7 @@ OptionSet<FilterRenderingMode> FEGaussianBlur::supportedFilterRenderingModes(Opt
         modes.add(FilterRenderingMode::Accelerated);
 #endif
 #if HAVE(CGSTYLE_COLORMATRIX_BLUR) && HAVE(CGSTYLE_FIXES_DROP_SHADOW_BLUR)
-    if (m_stdX == m_stdY)
+    if (m_stdX == m_stdY && m_edgeMode == EdgeModeType::None)
         modes.add(FilterRenderingMode::GraphicsContext);
 #endif
     return modes & preferredFilterRenderingModes;

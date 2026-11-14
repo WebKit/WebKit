@@ -158,21 +158,18 @@ auto LegacyRenderSVGResourceFilter::applyResource(RenderElement& renderer, const
         m_rendererFilterDataMap.remove(renderer);
         return { };
     }
-    
-    // If the sourceImageRect is empty, we have something like <g filter=".."/>.
-    // Even if the target objectBoundingBox() is empty, we still have to draw the last effect result image in postApplyResource.
-    if (filterData->sourceImageRect.isEmpty()) {
-        ASSERT(m_rendererFilterDataMap.contains(renderer));
-        filterData->savedContext = context;
-        return { };
-    }
-
-    filterData->targetSwitcher->beginDrawSourceImage(*context);
-
-    filterData->savedContext = context;
-    context = filterData->targetSwitcher->drawingContext(*context);
 
     ASSERT(m_rendererFilterDataMap.contains(renderer));
+
+    filterData->targetSwitcher->beginDrawSourceImage(*context);
+    filterData->savedContext = context;
+
+    // If the sourceImageRect is empty, we have something like <g filter=".."/>.
+    // Even if the target objectBoundingBox() is empty, we still have to draw the last effect result image in postApplyResource.
+    if (filterData->sourceImageRect.isEmpty())
+        return { };
+
+    context = filterData->targetSwitcher->drawingContext(*context);
     return { ApplyResult::ResourceApplied };
 }
 

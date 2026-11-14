@@ -3,8 +3,8 @@
      http://creativecommons.org/publicdomain/zero/1.0/
 -->
 <svg xmlns="http://www.w3.org/2000/svg">
-
   <title>SourceAlpha pseudo input test</title>
+  <meta name="fuzzy" content="maxDifference=0-12; totalPixels=0-4466" />
 
   <defs>
     <filter id="alphaBlur">

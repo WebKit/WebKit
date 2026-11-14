@@ -268,19 +268,31 @@ FloatPoint3D SVGFilterRenderer::resolvedPoint3D(const FloatPoint3D& point) const
 
 OptionSet<FilterRenderingMode> SVGFilterRenderer::supportedFilterRenderingModes(OptionSet<FilterRenderingMode> preferredFilterRenderingModes) const
 {
-    OptionSet<FilterRenderingMode> modes = allFilterRenderingModes;
+    ASSERT(!m_expression.isEmpty());
+    ASSERT(isValidSVGFilterExpression(m_expression, m_effects));
 
-    for (auto& effect : m_effects) {
-        auto effectModes = effect->supportedFilterRenderingModes(preferredFilterRenderingModes);
+    Vector<OptionSet<FilterRenderingMode>> stack;
+
+    for (auto& term : m_expression) {
+        auto& effect = m_effects[term.index];
+
+        OptionSet<FilterRenderingMode> effectModes = preferredFilterRenderingModes;
+        for (unsigned i = 0; i < effect->numberOfEffectInputs(); ++i)
+            effectModes = effectModes & stack.takeLast();
+
+        effectModes = effect->supportedFilterRenderingModes(effectModes);
+
 #if !LOG_DISABLED
         if (preferredFilterRenderingModes.contains(FilterRenderingMode::Accelerated) && !effectModes.contains(FilterRenderingMode::Accelerated))
             LOG_WITH_STREAM(Filters, stream << "SVGFilterRenderer::supportedFilterRenderingModes: accelerated rendering not supported by " << effect.get());
 #endif
-        modes = modes & effectModes;
+
+        stack.append(effectModes);
     }
 
-    ASSERT(modes);
-    return modes;
+    ASSERT(stack.size() == 1);
+    ASSERT(stack.last());
+    return stack.takeLast();
 }
 
 FilterEffectVector SVGFilterRenderer::effectsOfType(FilterFunction::Type filterType) const
@@ -384,12 +396,25 @@ bool SVGFilterRenderer::isValidSVGFilterExpression(const SVGFilterExpression& ex
     if (expression.isEmpty() || effects.isEmpty())
         return false;
 
-    for (const auto& term : expression) {
+    unsigned depth = 0;
+
+    for (auto& term : expression) {
         if (term.index >= effects.size())
             return false;
+
+        auto& effect = effects[term.index];
+        auto numberOfEffectInputs = effect->numberOfEffectInputs();
+
+        // This stimulates popping the inputs from the stack.
+        if (depth < numberOfEffectInputs)
+            return false;
+        depth -= numberOfEffectInputs;
+
+        // This simulates pushing the result into the stack.
+        ++depth;
     }
 
-    return true;
+    return depth == 1;
 }
 
 FilterStyleVector SVGFilterRenderer::createFilterStyles(GraphicsContext& context, const Filter&, const FilterStyle& sourceStyle) const

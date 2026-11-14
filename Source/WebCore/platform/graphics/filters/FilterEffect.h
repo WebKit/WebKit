@@ -52,6 +52,7 @@ public:
     bool taintsOrigin() const { return m_taintsOrigin; }
     void setTaintsOrigin(bool taintsOrigin) { m_taintsOrigin = taintsOrigin; }
 
+    virtual unsigned numberOfEffectInputs() const { return 1; }
     unsigned numberOfImageInputs() const { return filterType() == FilterEffect::Type::SourceGraphic ? 1 : numberOfEffectInputs(); }
     FilterImageVector takeImageInputs(FilterImageVector& stack) const;
 
@@ -69,8 +70,6 @@ protected:
         auto* bType = dynamicDowncast<FilterEffectType>(b);
         return bType && a.operator==(*bType);
     }
-
-    virtual unsigned numberOfEffectInputs() const { return 1; }
 
     NODELETE FloatRect calculatePrimitiveSubregion(const Filter&, std::span<const FloatRect> inputPrimitiveSubregions, const std::optional<FilterEffectGeometry>&) const;
 

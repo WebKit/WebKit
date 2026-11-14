@@ -62,7 +62,8 @@ public:
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, FilterRepresentation) const final;
 
-    NODELETE WEBCORE_EXPORT static bool isValidSVGFilterExpression(const SVGFilterExpression&, const FilterEffectVector&);
+    WEBCORE_EXPORT static bool isValidSVGFilterExpression(const SVGFilterExpression&, const FilterEffectVector&);
+
 private:
     SVGFilterRenderer(const FilterGeometry&, SVGUnitTypes::SVGUnitType primitiveUnits, OptionSet<FilterRenderingOption>, std::optional<RenderingResourceIdentifier>);
     SVGFilterRenderer(const FilterGeometry&, SVGUnitTypes::SVGUnitType primitiveUnits, SVGFilterExpression&&, FilterEffectVector&&, OptionSet<FilterRenderingOption>, std::optional<RenderingResourceIdentifier>);

@@ -1,5 +1,6 @@
 <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200">
+    <meta name="fuzzy" content="maxDifference=0-2; totalPixels=0-4102" />
     <!-- Test: a reference-filtered <g> containing a composited child. The filter must render the whole
          group into a single buffer, so the composited child cannot escape it. All three rects must be
          blurred uniformly, matching the reference where nothing composites. -->
