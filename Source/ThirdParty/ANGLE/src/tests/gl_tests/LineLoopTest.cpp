@@ -462,6 +462,68 @@ TEST_P(LineLoopTest, SimpleDrawArrays)
     }
 }
 
+// Tests a line loop with many client memory indices and the vertices in a buffer, so that only the
+// indices are streamed. Confirms the draw is the same as the equivalent line strip.
+TEST_P(LineLoopTest, ManyClientMemoryIndicesWithVertexBuffer)
+{
+    // http://anglebug.com/42265165: Disable D3D11 SDK Layers warnings checks.
+    ignoreD3D11SDKLayersWarnings();
+
+    static const GLfloat positions[] = {-0.5f, -0.5f, -0.5f, 0.5f,  0.5f,
+                                        0.5f,  0.5f,  -0.5f, -0.5f, -0.5f};
+
+    // The indices go around the square many times, so the line loop draws the same square as the
+    // line strip.
+    constexpr size_t kIndexCount = 65536;
+    std::vector<GLubyte> ubyteIndices(kIndexCount);
+    std::vector<GLushort> ushortIndices(kIndexCount);
+    std::vector<GLuint> uintIndices(kIndexCount);
+    for (size_t i = 0; i < kIndexCount; ++i)
+    {
+        ubyteIndices[i]  = static_cast<GLubyte>(i % 4);
+        ushortIndices[i] = static_cast<GLushort>(i % 4);
+        uintIndices[i]   = static_cast<GLuint>(i % 4);
+    }
+
+    std::vector<GLColor> expectedPixels(getWindowWidth() * getWindowHeight());
+    std::vector<GLColor> renderedPixels(getWindowWidth() * getWindowHeight());
+
+    GLBuffer arrayBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, arrayBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
+
+    glDisable(GL_BLEND);
+    glUseProgram(mProgram);
+    glEnableVertexAttribArray(mPositionLocation);
+    glVertexAttribPointer(mPositionLocation, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glUniform4f(mColorLocation, 0.0f, 0.0f, 1.0f, 1.0f);
+
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDrawArrays(GL_LINE_STRIP, 0, 5);
+    glReadPixels(0, 0, getWindowWidth(), getWindowHeight(), GL_RGBA, GL_UNSIGNED_BYTE,
+                 expectedPixels.data());
+    ASSERT_GL_NO_ERROR();
+    ASSERT_NE(0, std::count(expectedPixels.begin(), expectedPixels.end(), GLColor::blue));
+
+    std::vector<std::pair<GLenum, const void *>> draws = {
+        {GL_UNSIGNED_BYTE, ubyteIndices.data()}, {GL_UNSIGNED_SHORT, ushortIndices.data()}};
+    if (getClientMajorVersion() >= 3 || IsGLExtensionEnabled("GL_OES_element_index_uint"))
+    {
+        draws.push_back({GL_UNSIGNED_INT, uintIndices.data()});
+    }
+
+    for (const auto &[indexType, indices] : draws)
+    {
+        glClear(GL_COLOR_BUFFER_BIT);
+        glDrawElements(GL_LINE_LOOP, kIndexCount, indexType, indices);
+        glReadPixels(0, 0, getWindowWidth(), getWindowHeight(), GL_RGBA, GL_UNSIGNED_BYTE,
+                     renderedPixels.data());
+        ASSERT_GL_NO_ERROR();
+
+        EXPECT_TRUE(expectedPixels == renderedPixels) << "index type " << indexType;
+    }
+}
+
 class LineLoopTestES3 : public LineLoopTest
 {
   protected:

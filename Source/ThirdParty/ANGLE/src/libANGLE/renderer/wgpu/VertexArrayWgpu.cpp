@@ -783,7 +783,8 @@ angle::Result VertexArrayWgpu::streamIndicesDefault(
 
     if (mode == gl::PrimitiveMode::LineLoop)
     {
-        indexCopyFunction(srcIndexData, count,
+        // Close the loop with a copy of the first index.
+        indexCopyFunction(srcIndexData, 1,
                           ANGLE_UNSAFE_TODO(stagingData + *currentStagingDataPositionOut +
                                             (destIndexUnitSize * count)));
     }
