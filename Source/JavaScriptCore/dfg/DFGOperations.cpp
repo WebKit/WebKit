@@ -3995,8 +3995,26 @@ JSC_DEFINE_JIT_OPERATION(operationStringLocaleCompare, UCPUStrictInt32, (JSGloba
     OPERATION_RETURN(scope, toUCPUStrictInt32(collator->compareStrings(globalObject, string, that)));
 }
 
+static ALWAYS_INLINE std::optional<UCPUStrictInt32> tryStringIndexOfOneCharWithoutGC(JSString* base, JSString* argument, int32_t position)
+{
+    if (argument->isRope())
+        return std::nullopt;
+
+    auto* argumentImpl = argument->getValueImpl();
+    if (argumentImpl->length() != 1 || base->isRope())
+        return std::nullopt;
+
+    size_t result = base->getValueImpl()->find((*argumentImpl)[0], static_cast<unsigned>(std::max(position, 0)));
+    if (result == notFound)
+        return toUCPUStrictInt32(-1);
+    return toUCPUStrictInt32(static_cast<int32_t>(result));
+}
+
 JSC_DEFINE_JIT_OPERATION(operationStringIndexOf, UCPUStrictInt32, (JSGlobalObject* globalObject, JSString* base, JSString* argument))
 {
+    if (auto result = tryStringIndexOfOneCharWithoutGC(base, argument, /* position */ 0))
+        return { *result, nullptr };
+
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
@@ -4059,6 +4077,9 @@ JSC_DEFINE_JIT_OPERATION(operationStringIndexOfWithOneChar, UCPUStrictInt32, (JS
 
 JSC_DEFINE_JIT_OPERATION(operationStringIndexOfWithIndex, UCPUStrictInt32, (JSGlobalObject* globalObject, JSString* base, JSString* argument, int32_t position))
 {
+    if (auto result = tryStringIndexOfOneCharWithoutGC(base, argument, position))
+        return { *result, nullptr };
+
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
