@@ -18834,7 +18834,7 @@ void WebPageProxy::drawToPDF(const std::optional<FloatRect>& rect, bool allowTra
 
 void WebPageProxy::getPDFFirstPageSize(WebCore::FrameIdentifier frameID, CompletionHandler<void(WebCore::FloatSize)>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::WebPage::GetPDFFirstPageSize(frameID), WTF::move(completionHandler));
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::GetPDFFirstPageSize(frameID), WTF::move(completionHandler));
 }
 
 void WebPageProxy::updateBackingStoreDiscardableState()
