@@ -1,0 +1,8 @@
+
+PASS fetchLater() does not accept payload[size=65537] exceeding per-origin quota in a POST request body of String.
+PASS fetchLater() does not accept payload[size=65537] exceeding per-origin quota in a POST request body of ArrayBuffer.
+PASS fetchLater() does not accept payload[size=65537] exceeding per-origin quota in a POST request body of FormData.
+PASS fetchLater() does not accept payload[size=65537] exceeding per-origin quota in a POST request body of URLSearchParams.
+PASS fetchLater() does not accept payload[size=65537] exceeding per-origin quota in a POST request body of Blob.
+PASS fetchLater() does not accept payload[size=65537] exceeding per-origin quota in a POST request body of File.
+

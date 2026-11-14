@@ -146,7 +146,6 @@
 #include <WebCore/ParentalControlsURLFilter.h>
 #endif
 
-
 #if HAVE(BROWSERENGINEKIT_WEBCONTENTFILTER)
 #include "WebParentalControlsURLFilter.h"
 #endif
@@ -216,6 +215,137 @@ NetworkProcess::NetworkProcess()
 }
 
 NetworkProcess::~NetworkProcess() = default;
+
+// https://fetch.spec.whatwg.org/#get-the-available-deferred-fetch-quota
+static constexpr uint64_t maximumDeferredFetchQuota = 640 * 1024;
+static constexpr uint64_t deferredFetchQuotaReservedForMinimal = 128 * 1024;
+static constexpr uint64_t normalDeferredFetchQuotaPool = maximumDeferredFetchQuota - deferredFetchQuotaReservedForMinimal;
+static constexpr uint64_t normalDeferredFetchReservation = 64 * 1024;
+static constexpr uint64_t minimalDeferredFetchReservation = 8 * 1024;
+static constexpr uint64_t perRequestOriginDeferredFetchQuota = 64 * 1024;
+
+std::pair<std::optional<WebCore::DeferredFetchIdentifier>, uint64_t> NetworkProcess::reserveDeferredFetchQuota(WebPageProxyIdentifier pageIdentifier, FrameIdentifier controlFrameIdentifier, const SecurityOriginData& reportingOrigin, uint64_t maximumQuota, bool isTopLevelControlFrame, uint64_t requestedBytes)
+{
+    if (!maximumQuota)
+        return { std::nullopt, 0 };
+
+    auto& page = m_deferredFetchQuotas.ensure(pageIdentifier, [] {
+        return DeferredFetchPageQuota { };
+    }).iterator->value;
+
+    // FIXME: The spec reserves a container's quota when the container navigates, and frees
+    // it on a same-origin or away navigation. We reserve on the first fetchLater() call from
+    // a control frame instead, so a container that never calls fetchLater() does not consume
+    // its parent's quota.
+    auto controlFrameIterator = page.controlFrames.find(controlFrameIdentifier);
+    if (controlFrameIterator == page.controlFrames.end()) {
+        // The control frame has no reservation yet, so take one from the pool its policy
+        // entitles it to. A container that cannot be given its full reservation gets
+        // nothing, which is also what caps the minimal pool at sixteen containers.
+        DeferredFetchControlFrameQuota reservation;
+        reservation.isTopLevel = isTopLevelControlFrame;
+        if (isTopLevelControlFrame) {
+            reservation.reservedBytes = std::min(maximumQuota, normalDeferredFetchQuotaPool);
+            if (maximumQuota > normalDeferredFetchQuotaPool) {
+                // deferred-fetch-minimal is disallowed, so nothing needs setting aside for
+                // containers and the whole 640 KiB is available here.
+                reservation.reservedBytes = std::min(maximumQuota, maximumDeferredFetchQuota - page.minimalPoolBytesReserved);
+            }
+        } else if (maximumQuota >= normalDeferredFetchReservation) {
+            if (page.normalPoolBytesReserved + normalDeferredFetchReservation > normalDeferredFetchQuotaPool)
+                return { std::nullopt, 0 };
+            reservation.reservedBytes = normalDeferredFetchReservation;
+            page.normalPoolBytesReserved += normalDeferredFetchReservation;
+        } else {
+            if (page.minimalPoolBytesReserved + minimalDeferredFetchReservation > deferredFetchQuotaReservedForMinimal)
+                return { std::nullopt, 0 };
+            reservation.reservedBytes = minimalDeferredFetchReservation;
+            reservation.isMinimal = true;
+            page.minimalPoolBytesReserved += minimalDeferredFetchReservation;
+        }
+        controlFrameIterator = page.controlFrames.add(controlFrameIdentifier, WTF::move(reservation)).iterator;
+    }
+
+    auto& controlFrame = controlFrameIterator->value;
+    // The top-level control frame draws from whatever the containers have not reserved.
+    auto reservedBytes = controlFrame.reservedBytes;
+    if (isTopLevelControlFrame) {
+        reservedBytes = reservedBytes > page.normalPoolBytesReserved ? reservedBytes - page.normalPoolBytesReserved : 0;
+        reservedBytes = std::min(reservedBytes, maximumQuota);
+    }
+
+    auto originBytesUsed = controlFrame.bytesUsedByOrigin.get(reportingOrigin);
+    auto availableForOrigin = originBytesUsed >= perRequestOriginDeferredFetchQuota ? 0 : perRequestOriginDeferredFetchQuota - originBytesUsed;
+    auto availableInReservation = controlFrame.totalBytesUsed >= reservedBytes ? 0 : reservedBytes - controlFrame.totalBytesUsed;
+    auto availableBytes = std::min(availableForOrigin, availableInReservation);
+    if (requestedBytes > availableBytes) {
+        releaseDeferredFetchControlFrameIfUnused(pageIdentifier, controlFrameIdentifier);
+        return { std::nullopt, availableBytes };
+    }
+
+    auto identifier = WebCore::DeferredFetchIdentifier::generate();
+    controlFrame.bytesUsedByOrigin.add(reportingOrigin, 0).iterator->value += requestedBytes;
+    controlFrame.totalBytesUsed += requestedBytes;
+    m_deferredFetchQuotaReservations.add(identifier, DeferredFetchQuotaReservation { pageIdentifier, controlFrameIdentifier, reportingOrigin, requestedBytes });
+    return { identifier, availableBytes };
+}
+
+void NetworkProcess::releaseDeferredFetchControlFrameIfUnused(WebPageProxyIdentifier pageIdentifier, FrameIdentifier controlFrameIdentifier)
+{
+    auto pageIterator = m_deferredFetchQuotas.find(pageIdentifier);
+    if (pageIterator == m_deferredFetchQuotas.end())
+        return;
+
+    auto& page = pageIterator->value;
+    auto controlFrameIterator = page.controlFrames.find(controlFrameIdentifier);
+    if (controlFrameIterator == page.controlFrames.end() || controlFrameIterator->value.totalBytesUsed)
+        return;
+
+    // Only a container took its reservation from one of the pools. The top-level control
+    // frame draws from what the containers have left, so it has nothing to give back.
+    auto& controlFrame = controlFrameIterator->value;
+    if (controlFrame.isMinimal) {
+        RELEASE_ASSERT(page.minimalPoolBytesReserved >= controlFrame.reservedBytes);
+        page.minimalPoolBytesReserved -= controlFrame.reservedBytes;
+    } else if (!controlFrame.isTopLevel) {
+        RELEASE_ASSERT(page.normalPoolBytesReserved >= controlFrame.reservedBytes);
+        page.normalPoolBytesReserved -= controlFrame.reservedBytes;
+    }
+    page.controlFrames.remove(controlFrameIterator);
+
+    if (page.controlFrames.isEmpty())
+        m_deferredFetchQuotas.remove(pageIterator);
+}
+
+void NetworkProcess::releaseDeferredFetchQuota(WebCore::DeferredFetchIdentifier identifier)
+{
+    auto reservationIterator = m_deferredFetchQuotaReservations.find(identifier);
+    if (reservationIterator == m_deferredFetchQuotaReservations.end())
+        return;
+    auto reservation = WTF::move(reservationIterator->value);
+    m_deferredFetchQuotaReservations.remove(reservationIterator);
+
+    auto pageIterator = m_deferredFetchQuotas.find(reservation.pageIdentifier);
+    if (pageIterator == m_deferredFetchQuotas.end())
+        return;
+
+    auto controlFrameIterator = pageIterator->value.controlFrames.find(reservation.controlFrameIdentifier);
+    if (controlFrameIterator == pageIterator->value.controlFrames.end())
+        return;
+
+    auto& controlFrame = controlFrameIterator->value;
+    auto originIterator = controlFrame.bytesUsedByOrigin.find(reservation.reportingOrigin);
+    if (originIterator != controlFrame.bytesUsedByOrigin.end()) {
+        RELEASE_ASSERT(originIterator->value >= reservation.bytes);
+        originIterator->value -= reservation.bytes;
+        if (!originIterator->value)
+            controlFrame.bytesUsedByOrigin.remove(originIterator);
+    }
+    RELEASE_ASSERT(controlFrame.totalBytesUsed >= reservation.bytes);
+    controlFrame.totalBytesUsed -= reservation.bytes;
+
+    releaseDeferredFetchControlFrameIfUnused(reservation.pageIdentifier, reservation.controlFrameIdentifier);
+}
 
 AuthenticationManager& NetworkProcess::authenticationManager()
 {
@@ -1754,7 +1884,6 @@ bool NetworkProcess::isEnhancedSecurityLinksEnabled() const
     return m_isEnhancedSecurityLinksEnabled;
 }
 #endif // HAVE(ENHANCED_SECURITY_LINKS)
-
 
 void NetworkProcess::notifyMediaStreamingActivity(bool activity)
 {
@@ -3330,7 +3459,6 @@ void NetworkProcess::setPrivateClickMeasurementEphemeralMeasurementForTesting(PA
     
     completionHandler();
 }
-
 
 void NetworkProcess::setPrivateClickMeasurementTokenPublicKeyURLForTesting(PAL::SessionID sessionID, URL&& url, CompletionHandler<void()>&& completionHandler)
 {

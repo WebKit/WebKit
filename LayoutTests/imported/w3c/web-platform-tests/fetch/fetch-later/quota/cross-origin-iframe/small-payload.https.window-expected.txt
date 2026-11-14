@@ -1,0 +1,8 @@
+
+PASS fetchLater() accepts payload[size=20] in a POST request body of String in a default cross-origin iframe.
+PASS fetchLater() accepts payload[size=20] in a POST request body of ArrayBuffer in a default cross-origin iframe.
+PASS fetchLater() accepts payload[size=20] in a POST request body of FormData in a default cross-origin iframe.
+PASS fetchLater() accepts payload[size=20] in a POST request body of URLSearchParams in a default cross-origin iframe.
+PASS fetchLater() accepts payload[size=20] in a POST request body of Blob in a default cross-origin iframe.
+PASS fetchLater() accepts payload[size=20] in a POST request body of File in a default cross-origin iframe.
+

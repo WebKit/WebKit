@@ -238,6 +238,7 @@ class Region;
 class RenderBlockFlow;
 class RenderTreeBuilder;
 class RenderView;
+class DeferredFetchRegistry;
 class ReportingScope;
 class RequestAnimationFrameCallback;
 class ResizeObserver;
@@ -2162,6 +2163,9 @@ public:
 
     std::optional<PAL::SessionID> sessionID() const final;
 
+    DeferredFetchRegistry* deferredFetchRegistryIfExists() const { return m_deferredFetchRegistry.get(); }
+    DeferredFetchRegistry& ensureDeferredFetchRegistry();
+
     ReportingScope* reportingScopeIfExists() const { return m_reportingScope.get(); }
     inline ReportingScope& reportingScope() const;
     WEBCORE_EXPORT String endpointURIForToken(const String&) const final;
@@ -2795,6 +2799,7 @@ private:
 
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_renderBlockingElements;
 
+    RefPtr<DeferredFetchRegistry> m_deferredFetchRegistry;
     const RefPtr<ReportingScope> m_reportingScope;
 
     const std::unique_ptr<WakeLockManager> m_wakeLockManager;

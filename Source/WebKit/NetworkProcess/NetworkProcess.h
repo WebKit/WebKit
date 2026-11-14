@@ -45,6 +45,7 @@
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <WebCore/ClientOrigin.h>
 #include <WebCore/CrossSiteNavigationDataTransfer.h>
+#include <WebCore/DeferredFetchIdentifier.h>
 #include <WebCore/FetchIdentifier.h>
 #include <WebCore/MessagePortChannelRegistry.h>
 #include <WebCore/NotificationEventType.h>
@@ -53,6 +54,7 @@
 #include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/PushPermissionState.h>
 #include <WebCore/RegistrableDomain.h>
+#include <WebCore/SecurityOriginData.h>
 #include <WebCore/ServiceWorkerIdentifier.h>
 #include <WebCore/ServiceWorkerTypes.h>
 #include <WebCore/Site.h>
@@ -662,6 +664,11 @@ private:
     void performDeleteWebsiteDataTask(TaskIdentifier, TaskTrigger = TaskTrigger::Connection);
     void deleteWebsiteDataImpl(PAL::SessionID, OptionSet<WebsiteDataType>, WallTime, CompletionHandler<void()>&&);
 
+    friend class NetworkConnectionToWebProcess;
+    std::pair<std::optional<WebCore::DeferredFetchIdentifier>, uint64_t> reserveDeferredFetchQuota(WebPageProxyIdentifier, WebCore::FrameIdentifier controlFrameIdentifier, const WebCore::SecurityOriginData& reportingOrigin, uint64_t maximumQuota, bool isTopLevelControlFrame, uint64_t requestedBytes);
+    void releaseDeferredFetchControlFrameIfUnused(WebPageProxyIdentifier, WebCore::FrameIdentifier);
+    void releaseDeferredFetchQuota(WebCore::DeferredFetchIdentifier);
+
     // Connections to WebProcesses.
     HashMap<WebCore::ProcessIdentifier, Ref<NetworkConnectionToWebProcess>> m_webProcessConnections;
     HashMap<WebCore::ProcessIdentifier, Vector<CompletionHandler<void()>>> m_webProcessConnectionCloseHandlers;
@@ -685,6 +692,32 @@ private:
         HashSet<WebCore::Site> sites;
     };
     HashMap<WebCore::ProcessIdentifier, AllowedFirstParties> m_allowedFirstPartiesForCookies;
+
+    // https://fetch.spec.whatwg.org/#get-the-available-deferred-fetch-quota
+    // A top-level traversable has 640 KiB, of which 128 KiB is set aside for the
+    // deferred-fetch-minimal containers. The remaining 512 KiB is shared between the
+    // top-level control frame's own records and the 64 KiB a container reserves when it is
+    // allowed to use deferred-fetch, which is what keeps the page-wide total bounded.
+    struct DeferredFetchControlFrameQuota {
+        uint64_t reservedBytes { 0 };
+        bool isTopLevel { false };
+        bool isMinimal { false };
+        uint64_t totalBytesUsed { 0 };
+        HashMap<WebCore::SecurityOriginData, uint64_t> bytesUsedByOrigin;
+    };
+    struct DeferredFetchPageQuota {
+        uint64_t normalPoolBytesReserved { 0 };
+        uint64_t minimalPoolBytesReserved { 0 };
+        HashMap<WebCore::FrameIdentifier, DeferredFetchControlFrameQuota> controlFrames;
+    };
+    struct DeferredFetchQuotaReservation {
+        WebPageProxyIdentifier pageIdentifier;
+        WebCore::FrameIdentifier controlFrameIdentifier;
+        WebCore::SecurityOriginData reportingOrigin;
+        uint64_t bytes { 0 };
+    };
+    HashMap<WebPageProxyIdentifier, DeferredFetchPageQuota> m_deferredFetchQuotas;
+    HashMap<WebCore::DeferredFetchIdentifier, DeferredFetchQuotaReservation> m_deferredFetchQuotaReservations;
     HashMap<WebCore::ProcessIdentifier, HashSet<String>> m_pendingAllowedFilePathsByProcess;
     const uint64_t m_cookieHeaderDigestSalt { cryptographicallyRandomNumber<uint64_t>() };
     HashMap<WebCore::ProcessIdentifier, HashSet<WebPageProxyIdentifier>> m_allowedWebPageProxyIdentifiers;

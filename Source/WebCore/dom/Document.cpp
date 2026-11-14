@@ -82,6 +82,7 @@
 #include "DateComponents.h"
 #include "DebugPageOverlays.h"
 #include "DebuggerSuspensionController.h"
+#include "DeferredFetchRegistry.h"
 #include "DeprecatedGlobalSettings.h"
 #include "DocumentFontLoader.h"
 #include "DocumentFragment.h"
@@ -1266,6 +1267,13 @@ Editor& Document::ensureEditor()
     ASSERT(m_constructionDidFinish);
     lazyInitialize(m_editor, makeUniqueWithoutRefCountedCheck<Editor>(*this));
     return *m_editor;
+}
+
+DeferredFetchRegistry& Document::ensureDeferredFetchRegistry()
+{
+    if (!m_deferredFetchRegistry)
+        m_deferredFetchRegistry = DeferredFetchRegistry::create(*this);
+    return *m_deferredFetchRegistry;
 }
 
 ReportingScope& Document::ensureReportingScope()
@@ -3756,6 +3764,12 @@ void Document::willBeRemovedFromFrame()
     if (m_hasPreparedForDestruction)
         return;
 
+    // Activate any pending fetchLater() requests before the document goes away.
+    // Must happen before we start tearing down subsystems the load path relies on
+    // (e.g. the CachedResourceLoader / DocumentLoader below).
+    if (RefPtr registry = m_deferredFetchRegistry)
+        registry->documentIsBeingDestroyed();
+
 #if ENABLE(WEB_RTC)
     if (RefPtr rtcNetworkManager = m_rtcNetworkManager)
         rtcNetworkManager->unregisterMDNSNames();
@@ -3924,6 +3938,14 @@ void Document::platformSuspendOrStopActiveDOMObjects()
 
 void Document::suspendActiveDOMObjects(ReasonForSuspension why)
 {
+    // https://fetch.spec.whatwg.org/#deferred-fetching asks that deferred fetches be sent
+    // when the user agent expects to lose the chance to run script. A suspended page cannot
+    // run script again until it is resumed, which may never happen.
+    if (why == ReasonForSuspension::PageWillBeSuspended) {
+        if (RefPtr registry = deferredFetchRegistryIfExists())
+            registry->activateAllDeferredFetches();
+    }
+
     if (m_documentTaskGroup)
         m_documentTaskGroup->suspend();
     ScriptExecutionContext::suspendActiveDOMObjects(why);
@@ -8003,6 +8025,8 @@ void Document::setBackForwardCacheState(BackForwardCacheState state)
             idbConnectionProxy->setContextSuspended(*this, false);
         break;
     case AboutToEnterBackForwardCache:
+        if (RefPtr registry = m_deferredFetchRegistry)
+            registry->documentIsAboutToEnterBackForwardCache();
         break;
     }
 }

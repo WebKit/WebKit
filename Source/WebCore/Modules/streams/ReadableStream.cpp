@@ -176,7 +176,7 @@ Ref<ReadableStream> ReadableStream::create(Ref<InternalReadableStream>&& interna
 
 class AsyncIteratorSource : public ReadableStreamSource, public RefCountedAndCanMakeWeakPtr<AsyncIteratorSource> {
 public:
-    NODELETE static Ref<AsyncIteratorSource> create(Ref<DOMAsyncIterator>&& iterator) { return adoptRef(*new AsyncIteratorSource(WTF::move(iterator))); }
+    static Ref<AsyncIteratorSource> create(Ref<DOMAsyncIterator>&& iterator) { return adoptRef(*new AsyncIteratorSource(WTF::move(iterator))); }
 
     NODELETE void ref() const { return RefCounted::ref(); }
     void deref() const { return RefCounted::deref(); }

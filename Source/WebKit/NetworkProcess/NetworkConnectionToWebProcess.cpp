@@ -212,6 +212,9 @@ NetworkConnectionToWebProcess::~NetworkConnectionToWebProcess()
     // This may call hasUploadStateChanged().
     m_networkResourceLoaders.clear();
 
+    for (auto identifier : m_deferredFetchQuotaReservations)
+        NetworkProcess::singleton().releaseDeferredFetchQuota(identifier);
+
     closeAllEntangledMessagePorts();
 
     auto completionHandlers = std::exchange(m_messageBatchDeliveryCompletionHandlers, { });
@@ -492,6 +495,9 @@ void NetworkConnectionToWebProcess::didClose(IPC::Connection& connection)
     // Protect ourself as we might be otherwise be deleted during this function.
     Ref<NetworkConnectionToWebProcess> protector(*this);
 
+    // Deferred fetches have to go out before the loaders below are aborted.
+    sendAllDeferredFetches();
+
 #if OS(DARWIN)
     CONNECTION_RELEASE_LOG(Loading, "didClose: WebProcess (%d) closed its connection. Aborting related loaders.", connection.remoteProcessID());
 #else
@@ -748,6 +754,112 @@ void NetworkConnectionToWebProcess::testProcessIncomingSyncMessagesWhenWaitingFo
     auto syncResult = protect(NetworkProcess::singleton().parentProcessConnection())->sendSync(Messages::NetworkProcessProxy::TestProcessIncomingSyncMessagesWhenWaitingForSyncReply(pageID), 0);
     auto [handled] = syncResult.takeReplyOr(false);
     reply(handled);
+}
+
+void NetworkConnectionToWebProcess::reserveDeferredFetchQuota(WebPageProxyIdentifier pageIdentifier, FrameIdentifier controlFrameIdentifier, SecurityOriginData&& reportingOrigin, uint64_t maximumQuota, bool isTopLevelControlFrame, uint64_t requestedBytes, CompletionHandler<void(std::optional<WebCore::DeferredFetchIdentifier>, uint64_t)>&& completionHandler)
+{
+    // The web process supplies the page and the control frame, so check the page is one this
+    // connection is allowed to act for. The frame identifier itself cannot be validated here,
+    // but it no longer grants anything: every reservation is drawn from that page's pools, so
+    // inventing frame identifiers divides the page's quota rather than multiplying it.
+    MESSAGE_CHECK_COMPLETION(NetworkProcess::singleton().allowsWebPageProxyIdentifier(m_webProcessIdentifier, pageIdentifier), completionHandler(std::nullopt, 0));
+
+    auto [reservationIdentifier, availableBytes] = NetworkProcess::singleton().reserveDeferredFetchQuota(pageIdentifier, controlFrameIdentifier, reportingOrigin, maximumQuota, isTopLevelControlFrame, requestedBytes);
+    if (reservationIdentifier)
+        m_deferredFetchQuotaReservations.add(*reservationIdentifier);
+    completionHandler(reservationIdentifier, availableBytes);
+}
+
+void NetworkConnectionToWebProcess::addDeferredFetch(WebCore::DeferredFetchIdentifier reservationIdentifier, NetworkResourceLoadParameters&& parameters)
+{
+    MESSAGE_CHECK(m_deferredFetchQuotaReservations.contains(reservationIdentifier));
+    MESSAGE_CHECK(NetworkProcess::singleton().allowsFirstPartyForCookies(m_webProcessIdentifier, parameters.request.firstPartyForCookies()));
+
+    // A blob body outlives the document that queued it, and the document revokes its blob
+    // URLs on teardown, so hold a handle until the fetch is sent or discarded.
+    retainBlobURLsForDeferredFetch(reservationIdentifier, parameters);
+
+    m_deferredFetches.set(reservationIdentifier, makeUniqueWithoutFastMallocCheck<NetworkResourceLoadParameters>(WTF::move(parameters)));
+}
+
+void NetworkConnectionToWebProcess::retainBlobURLsForDeferredFetch(WebCore::DeferredFetchIdentifier reservationIdentifier, const NetworkResourceLoadParameters& parameters)
+{
+    CheckedPtr session = networkSession();
+    if (!session)
+        return;
+
+    RefPtr body = parameters.request.httpBody();
+    if (!body)
+        return;
+
+    auto topOrigin = parameters.topOrigin ? std::optional { parameters.topOrigin->data() } : std::nullopt;
+    Vector<URL> blobURLs;
+    for (auto& element : body->elements()) {
+        if (auto* blobData = std::get_if<FormDataElement::EncodedBlobData>(&element.data)) {
+            session->blobRegistry().registerBlobURLHandle(blobData->url, topOrigin);
+            blobURLs.append(blobData->url);
+        }
+    }
+    if (!blobURLs.isEmpty())
+        m_deferredFetchBlobURLs.add(reservationIdentifier, WTF::move(blobURLs));
+}
+
+void NetworkConnectionToWebProcess::releaseBlobURLsForDeferredFetch(WebCore::DeferredFetchIdentifier reservationIdentifier, const NetworkResourceLoadParameters* parameters)
+{
+    auto blobURLs = m_deferredFetchBlobURLs.take(reservationIdentifier);
+    if (blobURLs.isEmpty())
+        return;
+
+    CheckedPtr session = networkSession();
+    if (!session)
+        return;
+
+    auto topOrigin = parameters && parameters->topOrigin ? std::optional { parameters->topOrigin->data() } : std::nullopt;
+    for (size_t index = 0; index < blobURLs.size(); ++index) {
+        auto url = blobURLs[index];
+        session->blobRegistry().unregisterBlobURLHandle(url, topOrigin);
+    }
+}
+
+void NetworkConnectionToWebProcess::sendDeferredFetch(WebCore::DeferredFetchIdentifier reservationIdentifier)
+{
+    auto parameters = m_deferredFetches.take(reservationIdentifier);
+    if (!parameters)
+        return;
+
+    CONNECTION_RELEASE_LOG(Loading, "sendDeferredFetch: (reservationIdentifier=%" PRIu64 ")", reservationIdentifier.toUInt64());
+
+    // The load is marked keepalive, so if this connection goes away while it is in flight the
+    // network session takes it over. The blob handles can go once the load owns the body.
+    scheduleResourceLoad(NetworkResourceLoadParameters { *parameters }, std::nullopt);
+    releaseBlobURLsForDeferredFetch(reservationIdentifier, parameters.get());
+    releaseDeferredFetchQuota(reservationIdentifier);
+}
+
+void NetworkConnectionToWebProcess::removeDeferredFetch(WebCore::DeferredFetchIdentifier reservationIdentifier)
+{
+    auto parameters = m_deferredFetches.take(reservationIdentifier);
+    releaseBlobURLsForDeferredFetch(reservationIdentifier, parameters.get());
+    releaseDeferredFetchQuota(reservationIdentifier);
+}
+
+void NetworkConnectionToWebProcess::sendAllDeferredFetches()
+{
+    // A document that goes away without deactivating, including when its process disappears,
+    // still has to have its deferred fetches sent.
+    auto deferredFetches = std::exchange(m_deferredFetches, { });
+    for (auto& [reservationIdentifier, parameters] : deferredFetches) {
+        CONNECTION_RELEASE_LOG(Loading, "sendAllDeferredFetches: (reservationIdentifier=%" PRIu64 ")", reservationIdentifier.toUInt64());
+        scheduleResourceLoad(NetworkResourceLoadParameters { *parameters }, std::nullopt);
+        releaseBlobURLsForDeferredFetch(reservationIdentifier, parameters.get());
+    }
+}
+
+void NetworkConnectionToWebProcess::releaseDeferredFetchQuota(WebCore::DeferredFetchIdentifier identifier)
+{
+    if (!m_deferredFetchQuotaReservations.remove(identifier))
+        return;
+    NetworkProcess::singleton().releaseDeferredFetchQuota(identifier);
 }
 
 void NetworkConnectionToWebProcess::setOnLineState(bool isOnLine)

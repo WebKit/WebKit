@@ -1,0 +1,16 @@
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT A blank window[target=''][features=''] can trigger fetchLater. Test timed out
+PASS A same-origin window[target=''][features=''] can trigger fetchLater.
+PASS A cross-origin window[target=''][features=''] can trigger fetchLater.
+TIMEOUT A blank window[target=''][features='popup'] can trigger fetchLater. Test timed out
+PASS A same-origin window[target=''][features='popup'] can trigger fetchLater.
+PASS A cross-origin window[target=''][features='popup'] can trigger fetchLater.
+TIMEOUT A blank window[target='_blank'][features=''] can trigger fetchLater. Test timed out
+PASS A same-origin window[target='_blank'][features=''] can trigger fetchLater.
+PASS A cross-origin window[target='_blank'][features=''] can trigger fetchLater.
+TIMEOUT A blank window[target='_blank'][features='popup'] can trigger fetchLater. Test timed out
+PASS A same-origin window[target='_blank'][features='popup'] can trigger fetchLater.
+PASS A cross-origin window[target='_blank'][features='popup'] can trigger fetchLater.
+
