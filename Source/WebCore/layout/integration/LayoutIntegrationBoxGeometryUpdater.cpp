@@ -143,9 +143,9 @@ void BoxGeometryUpdater::setListMarkerOffsetForMarkerOutside(const RenderListOut
             return offsetFromParentListItem;
         }
         auto offset = offsetFromParentListItem;
-        for (ancestor = ancestor->containingBlock(); ancestor; ancestor = ancestor->containingBlock()) {
-            offset -= (ancestor->marginStart(ancestor->writingMode()) + ancestor->borderStart() + ancestor->paddingStart());
-            if (ancestor == associatedListItem)
+        for (CheckedPtr<const RenderBoxModelObject> box = ancestor->containingBlock(); box; box = box->containingBlock()) {
+            offset -= (box->marginStart(box->writingMode()) + box->borderStart() + box->paddingStart());
+            if (box.get() == associatedListItem.get())
                 break;
         }
         return offset;
