@@ -6187,6 +6187,9 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.ViewportFitEdgesTests/perEdgeViewportFitExplicitlyCoversOnlyThatEdge(edge:)
 [ ios ] TestWebKitAPI.ViewportFitEdgesTests/perEdgeViewportFitIsIgnoredWhenDisabled()
 [ ios ] TestWebKitAPI.ViewportFitEdgesTests/perEdgeViewportFitOverridesViewportFitCover(value:)
+[ ios ] TestWebKitAPI.ViewportFitEdgesTests/safeAreaAffectsObscuredInsetsUnlessEveryEdgeIsCovered(viewport:)
+[ ios ] TestWebKitAPI.ViewportFitEdgesTests/safeAreaDoesNotAffectObscuredInsetsWhenEveryEdgeIsCovered(viewport:)
+[ ios ] TestWebKitAPI.ViewportFitEdgesTests/uiDelegateIsNotifiedWhenSafeAreaShouldAffectObscuredInsetsChanges()
 [ ios ] TestWebKitAPI.ViewportFitEdgesTests/viewportFitCoverImplicitlyCoversEveryEdge()
 [ ios ] TestWebKitAPI.VisibilityState.InitialHiddenState
 [ ios ] TestWebKitAPI.VisibilityState.InitialVisibleState

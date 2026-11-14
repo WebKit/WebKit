@@ -286,7 +286,6 @@ using WebKit::PageData::TransactionCallbackID = IPC::AsyncReplyID;
     OptionSet<WebCore::LayoutMilestone> newlyReachedPaintingMilestones;
     bool scaleWasSetByUIProcess;
     bool allowsUserScaling;
-    bool avoidsUnsafeArea;
     bool viewportMetaTagWidthWasExplicit;
     bool viewportMetaTagCameFromImageDocument;
     bool isInStableState;

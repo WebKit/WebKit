@@ -635,7 +635,6 @@ static CGSize roundScrollViewContentSize(const WebKit::WebPageProxy& page, CGSiz
         [_scrollView panGestureRecognizer].allowedTouchTypes = _scrollViewDefaultAllowedTouchTypes.get();
         [_scrollView _setScrollEnabledInternal:YES];
 
-        [self _setAvoidsUnsafeArea:NO];
         constexpr auto implicitCover = WebCore::ViewportFitEdge::ImplicitCover;
         [self _setViewportFitEdges:WebCore::ViewportFitEdges { implicitCover, implicitCover, implicitCover, implicitCover }];
     } else if (_customContentView) {
@@ -1388,7 +1387,6 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
             [_contentView _setDoubleTapGesturesEnabled:self._allowsDoubleTapGestures];
 
         [self _updateScrollViewBackground];
-        [self _setAvoidsUnsafeArea:mainFrameCommitData.avoidsUnsafeArea];
         [self _setViewportFitEdges:mainFrameCommitData.viewportFitEdges];
 
         if (_gestureController)
@@ -3973,22 +3971,13 @@ static WebCore::IntDegrees activeOrientation(WKWebView *webView)
 #endif
 }
 
-- (void)_setAvoidsUnsafeArea:(BOOL)avoidsUnsafeArea
+// The safe area affects the obscured insets, keeping the page within it, unless the page covers every edge.
+static bool coversEveryEdge(const WebCore::ViewportFitEdges& edges)
 {
-    if (_avoidsUnsafeArea == avoidsUnsafeArea)
-        return;
-
-    _avoidsUnsafeArea = avoidsUnsafeArea;
-
-    if ([self _updateScrollViewContentInsetsIfNecessary] && !self._shouldDeferGeometryUpdates && !_overriddenLayoutParameters)
-        [self _dispatchSetViewLayoutSize:[self activeViewLayoutSize:self.bounds]];
-
-    [self _updateScrollViewInsetAdjustmentBehavior];
-    [self _scheduleVisibleContentRectUpdate];
-
-    id <WKUIDelegatePrivate> uiDelegate = (id <WKUIDelegatePrivate>)[self UIDelegate];
-    if ([uiDelegate respondsToSelector:@selector(_webView:didChangeSafeAreaShouldAffectObscuredInsets:)])
-        [uiDelegate _webView:self didChangeSafeAreaShouldAffectObscuredInsets:avoidsUnsafeArea];
+    return edges.top != WebCore::ViewportFitEdge::Contain
+        && edges.left != WebCore::ViewportFitEdge::Contain
+        && edges.bottom != WebCore::ViewportFitEdge::Contain
+        && edges.right != WebCore::ViewportFitEdge::Contain;
 }
 
 - (void)_setViewportFitEdges:(const WebCore::ViewportFitEdges&)viewportFitEdges
@@ -3996,9 +3985,28 @@ static WebCore::IntDegrees activeOrientation(WKWebView *webView)
     if (_viewportFitEdges == viewportFitEdges)
         return;
 
+    bool coveredEveryEdge = coversEveryEdge(_viewportFitEdges);
+
     [self willChangeValueForKey:@"_viewportFitEdges"];
     _viewportFitEdges = viewportFitEdges;
+
+    bool safeAreaShouldAffectObscuredInsetsChanged = coversEveryEdge(_viewportFitEdges) != coveredEveryEdge;
+    if (safeAreaShouldAffectObscuredInsetsChanged) {
+        if ([self _updateScrollViewContentInsetsIfNecessary] && !self._shouldDeferGeometryUpdates && !_overriddenLayoutParameters)
+            [self _dispatchSetViewLayoutSize:[self activeViewLayoutSize:self.bounds]];
+
+        [self _updateScrollViewInsetAdjustmentBehavior];
+        [self _scheduleVisibleContentRectUpdate];
+    }
+
     [self didChangeValueForKey:@"_viewportFitEdges"];
+
+    if (!safeAreaShouldAffectObscuredInsetsChanged)
+        return;
+
+    id<WKUIDelegatePrivate> uiDelegate = (id<WKUIDelegatePrivate>)[self UIDelegate];
+    if ([uiDelegate respondsToSelector:@selector(_webView:didChangeSafeAreaShouldAffectObscuredInsets:)])
+        [uiDelegate _webView:self didChangeSafeAreaShouldAffectObscuredInsets:!coversEveryEdge(_viewportFitEdges)];
 }
 
 - (BOOL)_haveSetObscuredInsets
@@ -4793,7 +4801,7 @@ static bool isLockdownModeWarningNeeded()
 {
     if (![self usesStandardContentView])
         return NO;
-    return _avoidsUnsafeArea;
+    return !coversEveryEdge(_viewportFitEdges);
 }
 
 static _WKViewportFitEdge wkViewportFitEdge(WebCore::ViewportFitEdge edge)
