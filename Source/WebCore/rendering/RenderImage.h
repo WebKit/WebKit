@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include <WebCore/ColorSpace.h>
 #include <WebCore/RenderImageResource.h>
 #include <WebCore/RenderReplaced.h>
 #include <wtf/Platform.h>
@@ -50,6 +51,7 @@ struct CreateShareableBitmapFromImageOptions {
     std::optional<FloatSize> screenSizeInPixels;
     AllowAnimatedImages allowAnimatedImages { AllowAnimatedImages::Yes };
     UseSnapshotForTransparentImages useSnapshotForTransparentImages { UseSnapshotForTransparentImages::No };
+    std::optional<ColorSpace> overrideColorSpace { };
 };
 
 class RenderImage : public RenderReplaced {
