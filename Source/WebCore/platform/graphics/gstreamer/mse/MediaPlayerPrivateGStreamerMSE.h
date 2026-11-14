@@ -132,6 +132,7 @@ private:
     void propagateReadyStateToPlayer();
 
     void emitStreams(const Vector<RefPtr<MediaSourceTrackGStreamer>>&);
+    void willSetPipelineToNull() final;
 
     RefPtr<MediaSourcePrivateGStreamer> m_mediaSourcePrivate;
     MediaTime m_mediaTimeDuration { MediaTime::invalidTime() };

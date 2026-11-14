@@ -113,7 +113,20 @@ MediaPlayerPrivateGStreamerMSE::~MediaPlayerPrivateGStreamerMSE()
 {
     GST_TRACE("destroying the player (%p)", this);
 
-    m_source.clear();
+    // Not clearing m_source here because the MediaPlayerPrivateGStreamer base class destructor,
+    // which will run after this one, still needs it alive to do its job. It will be cleared by
+    // tearDown() there.
+}
+
+void MediaPlayerPrivateGStreamerMSE::willSetPipelineToNull()
+{
+    if (m_source) {
+        // Stop the source element first to ensure streaming threads are stopped before
+        // transitioning the pipeline to GST_STATE_NULL, avoiding decryptor hangs caused by
+        // HDCP related issues.
+        GST_DEBUG_OBJECT(m_pipeline.get(), "Reset source to READY before pipeline destruction");
+        gst_element_set_state(m_source.get(), GST_STATE_READY);
+    }
 }
 
 void MediaPlayerPrivateGStreamerMSE::load(const String&)
