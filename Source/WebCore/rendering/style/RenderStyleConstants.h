@@ -945,6 +945,7 @@ enum class CSSBoxType : uint8_t {
     BoxMissing = 0,
     MarginBox,
     BorderBox,
+    HalfBorderBox,
     PaddingBox,
     ContentBox,
     FillBox,

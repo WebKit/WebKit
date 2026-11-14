@@ -97,6 +97,8 @@ public:
     inline LayoutRect marginBoxRect() const;
     LayoutRect borderBoxRect() const { return { { }, borderBoxSize() }; }
     LayoutRect paddingBoxRect() const;
+    // The box midway between the padding box and the border box.
+    LayoutRect halfBorderBoxRect() const;
     inline LayoutRect contentBoxRect() const;
     inline LayoutRect paddingBoxRectIncludingScrollbar() const;
 

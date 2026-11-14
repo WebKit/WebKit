@@ -1985,6 +1985,8 @@ constexpr CSSValueID toCSSValueID(CSSBoxType cssBox)
         return CSSValueID::MarginBox;
     case CSSBoxType::BorderBox:
         return CSSValueID::BorderBox;
+    case CSSBoxType::HalfBorderBox:
+        return CSSValueID::HalfBorderBox;
     case CSSBoxType::PaddingBox:
         return CSSValueID::PaddingBox;
     case CSSBoxType::ContentBox:
@@ -2010,6 +2012,8 @@ template<> constexpr CSSBoxType fromCSSValueID(CSSValueID valueID)
         return CSSBoxType::MarginBox;
     case CSSValueID::BorderBox:
         return CSSBoxType::BorderBox;
+    case CSSValueID::HalfBorderBox:
+        return CSSBoxType::HalfBorderBox;
     case CSSValueID::PaddingBox:
         return CSSBoxType::PaddingBox;
     case CSSValueID::ContentBox:
