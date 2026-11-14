@@ -3792,12 +3792,17 @@ GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock& rootBlock, const Layo
             return { };
         }();
 
+        // The selected text's own background meets these gaps at the box edges, so take them the same way TextBoxPainter does.
+        auto boxLogicalRect = [](const InlineIterator::LeafBoxIterator& box) {
+            return LineSelection::logicalRectForPainting(box->logicalRectIgnoringInlineDirection());
+        };
+
         if (leftGap) {
-            result.uniteLeft(logicalLeftSelectionGap(rootBlock, rootBlockPhysicalPosition, offsetFromRootBlock, firstSelectedBox->renderer().parent(), LayoutUnit(firstSelectedBox->logicalLeftIgnoringInlineDirection()),
+            result.uniteLeft(logicalLeftSelectionGap(rootBlock, rootBlockPhysicalPosition, offsetFromRootBlock, firstSelectedBox->renderer().parent(), boxLogicalRect(firstSelectedBox).x(),
                 selTop, selHeight, cache, paintInfo));
         }
         if (rightGap) {
-            result.uniteRight(logicalRightSelectionGap(rootBlock, rootBlockPhysicalPosition, offsetFromRootBlock, lastSelectedBox->renderer().parent(), LayoutUnit(lastSelectedBox->logicalRightIgnoringInlineDirection()),
+            result.uniteRight(logicalRightSelectionGap(rootBlock, rootBlockPhysicalPosition, offsetFromRootBlock, lastSelectedBox->renderer().parent(), boxLogicalRect(lastSelectedBox).maxX(),
                 selTop, selHeight, cache, paintInfo));
         }
 
@@ -3810,20 +3815,21 @@ GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock& rootBlock, const Layo
         // We can see that the |bbb| run is not part of the selection while the runs around it are.
         if (firstSelectedBox && firstSelectedBox != lastSelectedBox) {
             // Now fill in any gaps on the line that occurred between two selected elements.
-            LayoutUnit lastLogicalLeft { firstSelectedBox->logicalRightIgnoringInlineDirection() };
+            auto lastLogicalLeft = boxLogicalRect(firstSelectedBox).maxX();
             bool isPreviousBoxSelected = firstSelectedBox->selectionState() != RenderObject::HighlightState::None;
             for (auto box = firstSelectedBox; box; box.traverseLineRightwardOnLine()) {
                 if (box->selectionState() != RenderObject::HighlightState::None) {
-                    LayoutRect logicalRect { lastLogicalLeft, selTop, LayoutUnit(box->logicalLeftIgnoringInlineDirection() - lastLogicalLeft), selHeight };
+                    auto selectedBoxLogicalRect = boxLogicalRect(box);
+                    LayoutRect logicalRect { lastLogicalLeft, selTop, selectedBoxLogicalRect.x() - lastLogicalLeft, selHeight };
                     logicalRect.move(isHorizontalWritingMode() ? offsetFromRootBlock : LayoutSize(offsetFromRootBlock.height(), offsetFromRootBlock.width()));
                     LayoutRect gapRect = rootBlock.logicalRectToPhysicalRect(rootBlockPhysicalPosition, logicalRect);
                     if (isPreviousBoxSelected && gapRect.width() > 0 && gapRect.height() > 0) {
                         if (paintInfo && box->renderer().parent()->usedStyle().visibility() == UsedVisibility::Visible)
-                            paintInfo->context().fillRect(gapRect, box->renderer().parent()->selectionBackgroundColor());
+                            paintInfo->context().fillRect(snapRectToDevicePixels(gapRect, document().deviceScaleFactor()), box->renderer().parent()->selectionBackgroundColor());
                         // VisibleSelection may be non-contiguous, see comment above.
                         result.uniteCenter(gapRect);
                     }
-                    lastLogicalLeft = box->logicalRightIgnoringInlineDirection();
+                    lastLogicalLeft = selectedBoxLogicalRect.maxX();
                 }
                 if (box == lastSelectedBox)
                     break;
@@ -3844,8 +3850,10 @@ GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock& rootBlock, const Layo
 
     // Now paint the gaps for the lines.
     for (; lineBox && hasSelectedChildren(lineBox); lineBox.traverseNext()) {
-        auto selectionTop = LayoutUnit { LineSelection::logicalTopAdjustedForPrecedingBlock(*lineBox) };
-        auto selectionHeight = LayoutUnit { std::max(0.f, LineSelection::logicalBottom(*lineBox) - selectionTop) };
+        auto lineSelectionRect = LineSelection::logicalRectForPainting({ FloatPoint { lineBox->contentLogicalLeft(), LineSelection::logicalTopAdjustedForPrecedingBlock(*lineBox) },
+            FloatPoint { lineBox->contentLogicalRight(), LineSelection::logicalBottom(*lineBox) } });
+        auto selectionTop = lineSelectionRect.y();
+        auto selectionHeight = lineSelectionRect.height();
 
         auto lineState = LineSelection::selectionState(*lineBox);
 
@@ -3874,7 +3882,7 @@ GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock& rootBlock, const Layo
         if (fillGapAboveLine())
             result.uniteCenter(blockSelectionGap(rootBlock, rootBlockPhysicalPosition, offsetFromRootBlock, lastLogicalTop, lastLogicalLeft, lastLogicalRight, selectionTop, cache, paintInfo));
 
-        LayoutRect logicalRect { LayoutUnit(lineBox->contentLogicalLeft()), selectionTop, LayoutUnit(lineBox->contentLogicalWidth()), selectionHeight };
+        auto logicalRect = lineSelectionRect;
         logicalRect.move(isHorizontalWritingMode() ? offsetFromRootBlock : offsetFromRootBlock.transposedSize());
         LayoutRect physicalRect = rootBlock.logicalRectToPhysicalRect(rootBlockPhysicalPosition, logicalRect);
         if (blockContainerWithOwnGaps) {

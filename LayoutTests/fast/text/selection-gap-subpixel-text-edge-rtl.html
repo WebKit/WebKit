@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>RTL selection gaps meet the selected text without hairline overlaps at subpixel positions</title>
+<style>
+#container { position: absolute; left: 20px; top: 20px; width: 300px; direction: rtl; font: 5.3px/8px Ahem; color: white; }
+.edge::selection, .edge bdo::selection { background-color: white; color: transparent; }
+.mid::selection, .mid bdo::selection { background-color: rgba(0, 0, 255, 0.4); color: transparent; }
+</style>
+</head>
+<body>
+<!-- The text is in a bdo, so each row is a real RTL run and its visual right edge is its logical start. Each row's text starts at a different 1/64px offset from the right edge; the gap must meet the text's selection background exactly. -->
+<div id="container"></div>
+<script>
+const container = document.getElementById("container");
+function addRow(className, paddingRight) {
+    const row = document.createElement("div");
+    row.className = className;
+    if (paddingRight)
+        row.style.paddingRight = `calc(${paddingRight}px / 64)`;
+    const bdo = document.createElement("bdo");
+    bdo.dir = "rtl";
+    bdo.textContent = "XX";
+    row.appendChild(bdo);
+    container.appendChild(row);
+}
+addRow("edge");
+for (let i = 0; i < 64; ++i)
+    addRow("mid", i);
+addRow("edge");
+getSelection().setBaseAndExtent(container.firstElementChild.firstChild.firstChild, 0, container.lastElementChild.firstChild.firstChild, 2);
+</script>
+</body>
+</html>

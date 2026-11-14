@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>RTL selected text whose re-measured run is narrower than its text box still meets the line-end gap</title>
+<style>
+#container { position: absolute; left: 20px; top: 20px; width: 200px; font: 20px/30px "Hoefler Text"; color: transparent; }
+.edge::selection { background-color: white; }
+.mid::selection, .mid bdo::selection { background-color: rgba(0, 0, 255, 0.5); }
+</style>
+</head>
+<body>
+<!-- In Hoefler Text, kerning across the hyphens' soft wrap opportunities makes "A-V-A-V-A" re-measure narrower than
+     its text box. The run is RTL, so its visual right edge is its logical start, and the selection background has to
+     reach the box's edge there to meet the gap that fills the rest of the line. -->
+<div id="container">
+<div class="edge">A</div>
+<div class="mid"><bdo dir="rtl">A-V-A-V-A</bdo></div>
+<div class="mid"><bdo dir="rtl">T-A-T-A</bdo></div>
+<div class="mid"><bdo dir="rtl">A-V-A-V-A</bdo></div>
+<div class="edge">A</div>
+</div>
+<script>
+const container = document.getElementById("container");
+getSelection().setBaseAndExtent(container.firstElementChild.firstChild, 0, container.lastElementChild.firstChild, 1);
+</script>
+</body>
+</html>

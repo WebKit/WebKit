@@ -3262,6 +3262,25 @@ css3/viewport-percentage-lengths/vh-auto-size.html [ ImageOnlyFailure ]
 # This test relies on the ::selection pseudoclass which isn't honored on iOS.
 webkit.org/b/169517 fast/text/complex-text-selection.html [ ImageOnlyFailure ]
 
+# Selection isn't painted in the web process on iOS, so these tests can't exercise the selection gap fix.
+fast/text/selection-gap-subpixel-block-direction.html [ Skip ]
+fast/text/selection-gap-subpixel-center-gap-bidi.html [ Skip ]
+fast/text/selection-gap-subpixel-center-gap-vertical.html [ Skip ]
+fast/text/selection-gap-subpixel-center-gap.html [ Skip ]
+fast/text/selection-gap-subpixel-centered-sideways-lr.html [ Skip ]
+fast/text/selection-gap-subpixel-centered-text-edge.html [ Skip ]
+fast/text/selection-gap-subpixel-centered-vertical-lr.html [ Skip ]
+fast/text/selection-gap-subpixel-centered-vertical-rl.html [ Skip ]
+fast/text/selection-gap-subpixel-positioned-box.html [ Skip ]
+fast/text/selection-gap-subpixel-rtl-run-vertical.html [ Skip ]
+fast/text/selection-gap-subpixel-rtl-run.html [ Skip ]
+fast/text/selection-gap-subpixel-sideways-lr-end.html [ Skip ]
+fast/text/selection-gap-subpixel-sideways-lr-start.html [ Skip ]
+fast/text/selection-gap-subpixel-text-edge-rtl.html [ Skip ]
+fast/text/selection-gap-subpixel-text-edge.html [ Skip ]
+fast/text/selection-gap-subpixel-vertical-lr.html [ Skip ]
+fast/text/selection-gap-subpixel-vertical-rl.html [ Skip ]
+
 webkit.org/b/172610 media/ios/autoplay-only-in-main-document.html [ Skip ]
 webkit.org/b/172672 fast/events/before-unload-returnValue.html [ Skip ]
 
