@@ -2435,11 +2435,6 @@ LayoutUnit RenderBox::containingBlockLogicalHeightForContent(AvailableLogicalHei
     return 0_lu;
 }
 
-LayoutUnit RenderBox::containingBlockAvailableLineWidth() const
-{
-    return containingBlock()->availableLogicalWidthForLine(logicalTop(), availableLogicalHeight(AvailableLogicalHeightType::IncludeMarginBorderPadding));
-}
-
 LayoutUnit RenderBox::perpendicularContainingBlockLogicalHeight() const
 {
     if (isGridItem()) {
@@ -2702,7 +2697,7 @@ void RenderBox::computeLogicalWidth(LogicalExtentComputedValues& computedValues)
     } else {
         auto containerLogicalWidthForAutoMargins = containerLogicalWidth;
         if (avoidsFloats() && containingBlock.containsFloats())
-            containerLogicalWidthForAutoMargins = containingBlockAvailableLineWidth();
+            containerLogicalWidthForAutoMargins = containingBlock.availableLogicalWidthForLine(logicalTop(), availableLogicalHeight(AvailableLogicalHeightType::IncludeMarginBorderPadding));
         bool hasInvertedDirection = containingBlock.writingMode().isInlineOpposing(writingMode());
         computeInlineDirectionMargins(containingBlock, containerLogicalWidth, containerLogicalWidthForAutoMargins, computedValues.extent,
             hasInvertedDirection ? computedValues.margins.end : computedValues.margins.start,

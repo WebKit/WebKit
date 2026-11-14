@@ -328,7 +328,7 @@ void RenderTable::updateLogicalWidth()
     if (!hasPerpendicularContainingBlock) {
         LayoutUnit containerLogicalWidthForAutoMargins = availableLogicalWidth;
         if (CheckedPtr block = dynamicDowncast<RenderBlock>(containingBlock); block && avoidsFloats() && block->containsFloats())
-            containerLogicalWidthForAutoMargins = containingBlockAvailableLineWidth();
+            containerLogicalWidthForAutoMargins = block->availableLogicalWidthForLine(logicalTop(), availableLogicalHeight(AvailableLogicalHeightType::IncludeMarginBorderPadding));
         ComputedMarginValues marginValues;
         bool hasSameDirection = !containingBlock->writingMode().isInlineOpposing(writingMode());
         computeInlineDirectionMargins(containingBlock, availableLogicalWidth, containerLogicalWidthForAutoMargins, logicalWidth(),
