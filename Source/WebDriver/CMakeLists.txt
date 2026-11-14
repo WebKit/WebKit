@@ -17,6 +17,25 @@ set(WebDriver_SOURCES
     WebDriverService.cpp
 )
 
+# Cocoa enables WebDriver BiDi through PlatformEnableCocoa.h rather than CMake.
+if (ENABLE_WEBDRIVER_BIDI OR APPLE)
+    set(WebDriver_BIDI_PROTOCOL ${WebKit_DERIVED_SOURCES_DIR}/CombinedWebDriverBidiDomains.json)
+    set(WebDriver_BIDI_COMMAND_NAMES_HEADER ${WebDriver_DERIVED_SOURCES_DIR}/WebDriverBidiCommandNames.h)
+    add_custom_command(
+        OUTPUT ${WebDriver_BIDI_COMMAND_NAMES_HEADER}
+        MAIN_DEPENDENCY ${WEBKIT_DIR}/Scripts/generate-webdriver-bidi-command-names.py
+        DEPENDS ${WebDriver_BIDI_PROTOCOL}
+        COMMAND
+            ${PYTHON_EXECUTABLE}
+            ${WEBKIT_DIR}/Scripts/generate-webdriver-bidi-command-names.py
+            --output ${WebDriver_BIDI_COMMAND_NAMES_HEADER}
+            ${WebDriver_BIDI_PROTOCOL}
+        VERBATIM
+    )
+
+    list(APPEND WebDriver_HEADERS ${WebDriver_BIDI_COMMAND_NAMES_HEADER})
+endif ()
+
 if (ENABLE_WEBDRIVER_BIDI)
     list(APPEND WebDriver_SOURCES WebSocketServer.cpp)
 endif ()
