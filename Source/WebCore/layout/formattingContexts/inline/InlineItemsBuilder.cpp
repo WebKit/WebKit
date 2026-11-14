@@ -181,7 +181,8 @@ void InlineItemsBuilder::build(InlineItemPosition startPosition)
     ASSERT(inlineBoxStart == inlineBoxEnd);
     ASSERT(m_inlineBoxCount == inlineBoxStart);
     ASSERT(m_hasTextAndLineBreakOnlyContent == hasTextAndLineBreakOnlyContent);
-    ASSERT(m_hasTextWithStyleOfItsOwn == hasTextWithStyleOfItsOwn);
+    // 'white-space-trim' may discard every item of a text box, which leaves the flag computed from the boxes set.
+    ASSERT(m_hasTextWithStyleOfItsOwn == hasTextWithStyleOfItsOwn || (m_hasWhiteSpaceTrim && m_hasTextWithStyleOfItsOwn));
 #endif
 }
 
@@ -816,8 +817,9 @@ void InlineItemsBuilder::breakAndComputeBidiLevels(InlineItemList& inlineItemLis
         ubidi_getLogicalRun(ubidi, currentPosition, &endPosition, &bidiLevel);
 
         auto setBidiLevelOnRange = [&](size_t bidiEnd, auto bidiLevelForRange) {
-            // We should always have inline item(s) associated with a bidi range.
-            ASSERT(inlineItemIndex < inlineItemOffsets.size());
+            // We should always have inline item(s) associated with a bidi range, unless 'white-space-trim' discarded
+            // them (the paragraph has the entire content of the text box).
+            ASSERT(inlineItemIndex < inlineItemOffsets.size() || m_hasWhiteSpaceTrim);
             // Start of the range is always where we left off (bidi ranges do not have gaps).
             for (; inlineItemIndex < inlineItemOffsets.size(); ++inlineItemIndex) {
                 auto offset = inlineItemOffsets[inlineItemIndex];
