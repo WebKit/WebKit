@@ -953,7 +953,7 @@ export class ArgumentParser {
         position += 4;
         const values = [];
         let element;
-        const argumentDefinition = {type: innerType};
+        const argumentDefinition = {type: innerTypes[0]};
         for(let index = 0; index < elementCount; index++) {
             argumentDefinition.name = `element#${ index }`;
             try {
@@ -1284,7 +1284,14 @@ export class ArgumentParser {
     }
 
     static untypeResult(typedResult) {
-        if (typeof(typedResult)=='object') {
+        if (Array.isArray(typedResult)) {
+            const newArray = [];
+            for(const element of typedResult) {
+                newArray.push(ArgumentParser.untypeResult(element));
+            }
+            return newArray;
+        }
+        if (typedResult !== null && typeof(typedResult)=='object') {
             if ('parsedType' in typedResult) {
                 if (isEnum(typedResult.parsedType) || isPrimitiveType(typedResult.parsedType) || isIdentifier(typedResult.parsedType)) {
                     return typedResult.parsedValue;
@@ -1297,13 +1304,6 @@ export class ArgumentParser {
                 }
                 return result;
             }
-        }
-        if (Array.isArray(typedResult)) {
-            const newArray = [];
-            for(const element of typedResult) {
-                newArray.push(ArgumentParser.untypeResult(element));
-            }
-            return newArray;
         }
         return typedResult;
     }
