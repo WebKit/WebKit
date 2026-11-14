@@ -25,11 +25,13 @@
 #include <gio/gio.h>
 #include <utility>
 #include <wtf/Noncopyable.h>
+#include <wtf/glib/GPtrSpecializations.h>
 
 namespace WTF {
 
 template<typename T>
 struct GPtrDeleter {
+    static constexpr bool isPrimaryTemplate = true;
     void operator()(T* ptr) const { g_free(ptr); }
 };
 
@@ -38,7 +40,14 @@ struct GFreeDeleter {
     void operator()(T* ptr) const { g_free(ptr); }
 };
 
-template<typename T, typename U = GPtrDeleter<T>>
+template<typename T>
+struct GPtrDeleterCheck {
+    static_assert(requires { GPtrDeleter<T>::isPrimaryTemplate; } || hasDeclaredGPtrDeleter<T>,
+        "GPtrDeleter<T> is specialized; declare it in wtf/glib/GPtrSpecializations.h");
+    using Type = GPtrDeleter<T>;
+};
+
+template<typename T, typename U = typename GPtrDeleterCheck<T>::Type>
 using GUniquePtr = std::unique_ptr<T, U>;
 
 #define FOR_EACH_GLIB_DELETER(macro) \
