@@ -582,6 +582,17 @@ void ScriptElement::dispatchLoadEventRespectingUserGestureIndicator()
     dispatchLoadEvent();
 }
 
+void ScriptElement::executeScriptRespectingUserGestureIndicator(LoadableScript& loadableScript)
+{
+    if (MonotonicTime::now() - m_creationTime > maxUserGesturePropagationTime) {
+        loadableScript.execute(*this);
+        return;
+    }
+
+    UserGestureIndicator indicator(m_userGestureToken);
+    loadableScript.execute(*this);
+}
+
 void ScriptElement::executeScriptAndDispatchEvent(LoadableScript& loadableScript)
 {
     if (auto error = loadableScript.takeError()) {
@@ -627,7 +638,7 @@ void ScriptElement::executeScriptAndDispatchEvent(LoadableScript& loadableScript
         }
         }
     } else if (!loadableScript.wasCanceled()) {
-        loadableScript.execute(*this);
+        executeScriptRespectingUserGestureIndicator(loadableScript);
         if (!loadableScript.isInlineModule())
             dispatchLoadEventRespectingUserGestureIndicator();
     }
