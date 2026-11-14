@@ -1088,6 +1088,17 @@ static bool shouldUpdateFetchMetadata(const LocalFrame& frame, const ResourceReq
         && !shouldReuseExistingFetchMetadata(frame, request, type, mode);
 }
 
+// https://fetch.spec.whatwg.org/#cross-origin-embedder-policy-allows-credentials
+static bool crossOriginEmbedderPolicyAllowsCredentials(const Document& document, const CachedResourceRequest& request)
+{
+    if (request.options().mode != FetchOptions::Mode::NoCors)
+        return true;
+    auto embedderPolicyValue = request.options().crossOriginEmbedderPolicy ? request.options().crossOriginEmbedderPolicy->value : document.crossOriginEmbedderPolicy().value;
+    if (embedderPolicyValue != CrossOriginEmbedderPolicyValue::Credentialless && document.documentIsolationPolicy().value != DocumentIsolationPolicyValue::IsolateAndCredentialless)
+        return true;
+    return request.origin() && protect(request.origin())->canRequest(request.resourceRequest().url(), OriginAccessPatternsForWebProcess::singleton());
+}
+
 void CachedResourceLoader::updateHTTPRequestHeaders(FrameLoader& frameLoader, CachedResource::Type type, CachedResourceRequest& request)
 {
     // Implementing steps 11 to 19 of https://fetch.spec.whatwg.org/#http-network-or-cache-fetch as of 22 Feb 2022.
@@ -1104,6 +1115,10 @@ void CachedResourceLoader::updateHTTPRequestHeaders(FrameLoader& frameLoader, Ca
         updateRequestFetchMetadataHeaders(request.resourceRequest(), request.options(), site);
     }
     request.updateUserAgentHeader(frameLoader);
+
+    // The network process decides again for each redirect. Deciding here too keeps the memory cache from using a response to a request with credentials.
+    if (RefPtr document = this->document(); document && !crossOriginEmbedderPolicyAllowsCredentials(*document, request))
+        request.resourceRequest().setAllowCookies(false);
 
     if (frame->loader().loadType() == FrameLoadType::ReloadFromOrigin)
         request.updateCacheModeIfNeeded(cachePolicy(type, request.resourceRequest().url()));

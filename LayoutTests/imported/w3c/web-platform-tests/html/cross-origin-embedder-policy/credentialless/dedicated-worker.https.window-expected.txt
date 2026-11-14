@@ -1,0 +1,9 @@
+
+PASS dedicated-worker
+PASS fetch same-origin + credentialless worker
+PASS fetch same-origin + require_corp worker
+PASS fetch same-origin
+PASS fetch cross-origin
+PASS fetch cross-origin + credentialless worker
+PASS fetch cross-origin + require_corp worker
+

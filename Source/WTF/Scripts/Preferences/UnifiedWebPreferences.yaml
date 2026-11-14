@@ -1790,7 +1790,7 @@ CoreMathMLEnabled:
 # FIXME: This has to require Local Network Access or Opaque Response Blocking before it can become stable.
 CrossOriginEmbedderPolicyCredentiallessEnabled:
   type: bool
-  status: unstable
+  status: testable
   category: security
   humanReadableName: "Cross-Origin-Embedder-Policy: credentialless"
   humanReadableDescription: "Support for credentialless Cross-Origin-Embedder-Policy and Document-Isolation-Policy values"
