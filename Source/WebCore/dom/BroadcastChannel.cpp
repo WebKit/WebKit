@@ -273,7 +273,7 @@ ScriptExecutionContext* BroadcastChannel::scriptExecutionContext() const
 
 void BroadcastChannel::eventListenersDidChange()
 {
-    m_hasRelevantEventListener = hasEventListeners(eventNames().messageEvent);
+    m_hasRelevantEventListener = hasEventListeners(eventNames().messageEvent) || hasEventListeners(eventNames().messageerrorEvent);
 }
 
 bool BroadcastChannel::virtualHasPendingActivity() const
