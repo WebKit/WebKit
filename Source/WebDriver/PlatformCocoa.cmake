@@ -9,13 +9,9 @@ list(APPEND WebDriver_SOURCES
     unix/LoggingUnix.cpp
 )
 
-# On Cocoa, ENABLE_WEBDRIVER_BIDI comes from PlatformEnableCocoa.h rather than from CMake, so
-# CMakeLists.txt doesn't add the BiDi sources.
-list(APPEND WebDriver_SOURCES
-    WebSocketServer.cpp
-
-    cocoa/WebSocketServerCocoa.cpp
-)
+if (ENABLE_WEBDRIVER_BIDI)
+    list(APPEND WebDriver_SOURCES cocoa/WebSocketServerCocoa.cpp)
+endif ()
 
 list(APPEND WebDriver_LIBRARIES
     "-framework CFNetwork"
