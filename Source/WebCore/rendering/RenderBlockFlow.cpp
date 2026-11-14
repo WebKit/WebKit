@@ -1222,8 +1222,13 @@ void RenderBlockFlow::simplifiedNormalFlowLayout()
         CheckedPtr renderer = walker.current();
         if (CheckedPtr box = dynamicDowncast<RenderBox>(renderer); box && box->needsLayout() && !box->isOutOfFlowPositioned())
             box->layout();
-        else if (isAnyOf<RenderText, RenderLineBreak>(renderer) || renderer->isInlineBox())
+        else if (isAnyOf<RenderText, RenderLineBreak>(renderer) || renderer->isInlineBox()) {
+            if (renderer->isInlineBox() && renderer->outOfFlowChildNeedsLayout()) {
+                if (CheckedPtr lineLayout = inlineLayout())
+                    lineLayout->layoutOutOfFlowBoxes(downcast<RenderBoxModelObject>(*renderer), RelayoutChildren::No, false);
+            }
             renderer->clearNeedsLayout();
+        }
     }
 
     if (auto* lineLayout = inlineLayout()) {

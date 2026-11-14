@@ -767,6 +767,7 @@ public:
     inline void setNeedsLayout(MarkingBehavior = MarkingBehavior::ContainingBlockChain);
     enum class HadSkippedLayout { No, Yes };
     void clearNeedsLayout(HadSkippedLayout = HadSkippedLayout::No);
+    void clearOutOfFlowChildNeedsLayout() { setOutOfFlowChildNeedsLayoutBit(false); }
 
     // The bits that tell what kind of layout this renderer needs, for code that puts off a layout.
     class NeedsLayoutState;

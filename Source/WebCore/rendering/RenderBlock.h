@@ -394,6 +394,8 @@ private:
 NODELETE LayoutUnit blockDirectionOffset(RenderBlock& rootBlock, const LayoutSize& offsetFromRootBlock);
 NODELETE LayoutUnit inlineDirectionOffset(RenderBlock& rootBlock, const LayoutSize& offsetFromRootBlock);
 PositionWithAffinity positionForPointRespectingEditingBoundaries(RenderBlock&, RenderBox&, const LayoutPoint&, HitTestSource);
+// The containing block is a block or an inline box.
+void layoutOutOfFlowBox(RenderBox& outOfFlowBox, RenderBoxModelObject& containingBlock, RelayoutChildren, bool fixedPositionObjectsOnly);
 
 } // namespace WebCore
 

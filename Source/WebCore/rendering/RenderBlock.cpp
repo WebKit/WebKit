@@ -662,17 +662,32 @@ static LayoutSize offsetFromBlock(const RenderBlock& block, const RenderBox& out
     return offset;
 }
 
+// The inline formatting context lays out, and adds the overflow of, the out-of-flow boxes of its inline boxes.
+static LayoutIntegration::LineLayout* inlineFormattingContext(RenderBlock& block)
+{
+    auto* blockFlow = dynamicDowncast<RenderBlockFlow>(block);
+    return blockFlow ? blockFlow->inlineLayout() : nullptr;
+}
+
 void RenderBlock::addOverflowFromOutOfFlowBoxes()
 {
-    TrackedRendererListHashSet* outOfFlowDescendants = outOfFlowBoxes();
-    if (!outOfFlowDescendants)
-        return;
+    auto addOverflow = [&](TrackedRendererListHashSet* outOfFlowDescendants) {
+        if (!outOfFlowDescendants)
+            return;
+        for (auto& outOfFlowBox : *outOfFlowDescendants) {
+            // Fixed positioned elements don't contribute to layout overflow, since they don't scroll with the content.
+            if (outOfFlowBox.isAbsolutelyPositioned())
+                addOverflowWithRendererOffset(outOfFlowBox, offsetFromBlock(*this, outOfFlowBox));
+        }
+    };
 
-    for (auto& outOfFlowBox : *outOfFlowDescendants) {
-        // Fixed positioned elements don't contribute to layout overflow, since they don't scroll with the content.
-        if (outOfFlowBox.isAbsolutelyPositioned())
-            addOverflowWithRendererOffset(outOfFlowBox, offsetFromBlock(*this, outOfFlowBox));
+    if (CheckedPtr inlineLayout = inlineFormattingContext(*this)) {
+        for (auto& weakInlineBox : inlineLayout->inlineBoxesWithOutOfFlowBoxes()) {
+            if (CheckedPtr inlineBox = weakInlineBox.get())
+                addOverflow(inlineBox->outOfFlowBoxes());
+        }
     }
+    addOverflow(outOfFlowBoxes());
 }
 
 void RenderBlock::addVisualOverflowFromTheme()
@@ -851,7 +866,7 @@ std::pair<LayoutUnit, LayoutUnit> RenderBlock::intrinsicLogicalMarginStartAndEnd
     return { startValue, endValue };
 }
 
-static void layoutOutOfFlowBox(RenderBox& outOfFlowBox, RenderBoxModelObject& containingBlock, RelayoutChildren relayoutChildren, bool fixedPositionObjectsOnly)
+void layoutOutOfFlowBox(RenderBox& outOfFlowBox, RenderBoxModelObject& containingBlock, RelayoutChildren relayoutChildren, bool fixedPositionObjectsOnly)
 {
     ASSERT(outOfFlowBox.isOutOfFlowPositioned());
 
@@ -966,6 +981,10 @@ static void layoutOutOfFlowBox(RenderBox& outOfFlowBox, RenderBoxModelObject& co
 
 void RenderBlock::layoutOutOfFlowBoxes(RelayoutChildren relayoutChildren, bool fixedPositionObjectsOnly)
 {
+    // The static position of this block's own out-of-flow boxes may depend on the out-of-flow boxes of its inline boxes.
+    if (CheckedPtr inlineLayout = inlineFormattingContext(*this))
+        inlineLayout->layoutOutOfFlowBoxes(relayoutChildren, fixedPositionObjectsOnly);
+
     auto* outOfFlowDescendants = outOfFlowBoxes();
     if (!outOfFlowDescendants)
         return;
@@ -1537,6 +1556,13 @@ GapRects RenderBlock::selectionGaps(RenderBlock& rootBlock, const LayoutPoint& r
         rootBlock.blockStartRelativeToPhysical(physicalBlockRect);
         physicalBlockRect.moveBy(rootBlockPhysicalPosition);
         clipOutOutOfFlowBoxes(paintInfo, physicalBlockRect.location(), outOfFlowBoxes());
+        if (CheckedPtr inlineLayout = inlineFormattingContext(*this)) {
+            // The out-of-flow boxes of an inline box are positioned relative to the inline box.
+            for (auto& weakInlineBox : inlineLayout->inlineBoxesWithOutOfFlowBoxes()) {
+                if (CheckedPtr inlineBox = weakInlineBox.get())
+                    clipOutOutOfFlowBoxes(paintInfo, physicalBlockRect.location() + toLayoutSize(inlineBox->blockStartRelativeFirstFragmentBorderBoxRect().location()), inlineBox->outOfFlowBoxes());
+            }
+        }
         if (isBody() || isDocumentElementRenderer()) { // The <body> must make sure to examine its containingBlock's positioned objects.
             for (auto* ancestor = containingBlock(); ancestor && !is<RenderView>(*ancestor); ancestor = ancestor->containingBlock())
                 clipOutOutOfFlowBoxes(paintInfo, LayoutPoint(ancestor->x(), ancestor->y()), ancestor->outOfFlowBoxes()); // FIXME: Not right for flipped writing modes.

@@ -105,6 +105,12 @@ public:
     LayoutRect inkOverflowBoundingBoxRectFor(const RenderBoxModelObject&) const;
     Vector<FloatRect> collectInlineBoxRects(const RenderBoxModelObject&) const;
 
+    // The out-of-flow boxes whose containing block is one of the inline boxes of this inline formatting context.
+    void layoutOutOfFlowBoxes(RelayoutChildren, bool fixedPositionObjectsOnly);
+    void layoutOutOfFlowBoxes(RenderBoxModelObject& inlineBox, RelayoutChildren, bool fixedPositionObjectsOnly);
+    // The inline boxes that had out-of-flow boxes at the last line layout.
+    const Vector<SingleThreadWeakPtr<RenderBoxModelObject>>& inlineBoxesWithOutOfFlowBoxes() const { return m_inlineBoxesWithOutOfFlowBoxes; }
+
     NODELETE LayoutUnit contentLogicalHeight() const;
     std::optional<LayoutUnit> clampedContentLogicalHeight() const;
     NODELETE bool hasEllipsisInBlockDirectionOnLastFormattedLine() const;
@@ -221,6 +227,7 @@ private:
     // FIXME: This should be part of LayoutState.
     std::unique_ptr<Layout::InlineDamage> m_lineDamage;
     std::unique_ptr<InlineContent> m_inlineContent;
+    Vector<SingleThreadWeakPtr<RenderBoxModelObject>> m_inlineBoxesWithOutOfFlowBoxes;
     BoxGeometryUpdater m_boxGeometryUpdater;
     std::unique_ptr<LayoutInfoForTesting> m_layoutInfoForTesting;
 };
