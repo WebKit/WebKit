@@ -93,6 +93,10 @@ void initializeWithOptionsCustomization(NOESCAPE const ScopedLambda<void()>& opt
 
         initializePtrTagLookup();
 
+#if CPU(ARM64) && OS(DARWIN)
+        isARM64_MTE(); // Call this to initialize g_jscConfig.hasMTE.
+#endif
+
 #if ENABLE(WRITE_BARRIER_PROFILING)
         WriteBarrierCounters::initialize();
 #endif

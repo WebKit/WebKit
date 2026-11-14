@@ -32,6 +32,7 @@
 #include "DFGCommonData.h"
 #include "ExceptionHelpers.h"
 #include "HeapInlines.h"
+#include "JSCConfig.h"
 #include "JSCJSValueInlines.h"
 #include "LLIntPCRanges.h"
 #include "MachineContext.h"
@@ -129,20 +130,23 @@ void VMTraps::tryInstallTrapBreakpoints(VMTraps::SignalContext& context, StackBo
     if (!entryFrame || !callFrame)
         return; // Not running JS code. Let the SignalSender try again later.
 
-    do {
-        if (!isSaneFrame(callFrame, calleeFrame, entryFrame, stackBounds))
-            return; // Let the SignalSender try again later.
+    {
+        MTETagCheckOverrideScope mteTagCheckOverrideScope;
+        do {
+            if (!isSaneFrame(callFrame, calleeFrame, entryFrame, stackBounds))
+                return; // Let the SignalSender try again later.
 
-        CodeBlock* candidateCodeBlock = callFrame->unsafeCodeBlock();
-        if (candidateCodeBlock && vm.heap.codeBlockSet().contains(codeBlockSetLocker, candidateCodeBlock)) {
-            foundCodeBlock = candidateCodeBlock;
-            break;
-        }
+            CodeBlock* candidateCodeBlock = callFrame->unsafeCodeBlock();
+            if (candidateCodeBlock && vm.heap.codeBlockSet().contains(codeBlockSetLocker, candidateCodeBlock)) {
+                foundCodeBlock = candidateCodeBlock;
+                break;
+            }
 
-        calleeFrame = callFrame;
-        callFrame = callFrame->callerFrame(entryFrame);
+            calleeFrame = callFrame;
+            callFrame = callFrame->callerFrame(entryFrame);
 
-    } while (callFrame && entryFrame);
+        } while (callFrame && entryFrame);
+    }
 
     if (!foundCodeBlock) {
         // We may have just entered the frame and the codeBlock pointer is not

@@ -58,6 +58,12 @@ JS_EXPORT_PRIVATE bool isARM64E_FPAC();
 constexpr bool isARM64E_FPAC() { return false; }
 #endif
 
+#if OS(DARWIN)
+JS_EXPORT_PRIVATE bool isARM64_MTE();
+#else
+constexpr bool isARM64_MTE() { return false; }
+#endif
+
 #if CPU(ARM64E) || OS(MACOS)
 // ARM64E or all macOS ARM64 CPUs have LSE.
 constexpr bool isARM64_LSE() { return true; }
@@ -75,6 +81,7 @@ JS_EXPORT_PRIVATE bool isARM64_SHA3();
 #else // not CPU(ARM64)
 constexpr bool isARM64_LSE() { return false; }
 constexpr bool isARM64E_FPAC() { return false; }
+constexpr bool isARM64_MTE() { return false; }
 constexpr bool isARM64_SHA3() { return false; }
 #endif
 

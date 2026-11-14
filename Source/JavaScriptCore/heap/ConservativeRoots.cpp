@@ -31,6 +31,7 @@
 #include "CodeBlockSetInlines.h"
 #include "Collector.h"
 #include "JITStubRoutineSet.h"
+#include "JSCConfig.h"
 #include "JSCast.h"
 #include "JSString.h"
 #include "MarkedBlockInlines.h"
@@ -192,10 +193,22 @@ inline void ConservativeRoots::genericAddPointer(char* pointer, HeapVersion mark
 }
 
 template<typename MarkHook>
-SUPPRESS_ASAN
 void ConservativeRoots::genericAddSpan(void* begin, void* end, MarkHook& markHook)
 {
+    if (g_jscConfig.hasMTE) [[unlikely]]
+        genericAddSpanImpl<true>(begin, end, markHook);
+    else
+        genericAddSpanImpl<false>(begin, end, markHook);
+}
+
+template<bool overrideTagChecks, typename MarkHook>
+SUPPRESS_ASAN
+void ConservativeRoots::genericAddSpanImpl(void* begin, void* end, MarkHook& markHook)
+{
+    MTETagCheckOverrideScope mteTagCheckOverrideScope;
+
     m_heap.collector().assertIsMarkerWithWorldStopped();
+
     if (begin > end)
         std::swap(begin, end);
 
@@ -214,15 +227,22 @@ void ConservativeRoots::genericAddSpan(void* begin, void* end, MarkHook& markHoo
 #if ENABLE(WEBASSEMBLY)
     if (boxedWasmCalleeFilter.bits()) {
         constexpr bool lookForWasmCallees = true;
-        for (char** it = static_cast<char**>(begin); it != static_cast<char**>(end); ++it)
+        for (char** it = static_cast<char**>(begin); it != static_cast<char**>(end); ++it) {
+            // Marking the previous word may have allocated, which clears TCO.
+            if constexpr (overrideTagChecks)
+                mteTagCheckOverrideScope.reassert();
             genericAddPointer<lookForWasmCallees>(*it, markingVersion, newlyAllocatedVersion, jsGCFilter, boxedWasmCalleeFilter, markHook);
+        }
     } else {
 #else
     {
 #endif
         constexpr bool lookForWasmCallees = false;
-        for (char** it = static_cast<char**>(begin); it != static_cast<char**>(end); ++it)
+        for (char** it = static_cast<char**>(begin); it != static_cast<char**>(end); ++it) {
+            if constexpr (overrideTagChecks)
+                mteTagCheckOverrideScope.reassert();
             genericAddPointer<lookForWasmCallees>(*it, markingVersion, newlyAllocatedVersion, jsGCFilter, boxedWasmCalleeFilter, markHook);
+        }
     }
 }
 
