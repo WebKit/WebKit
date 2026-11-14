@@ -1066,6 +1066,7 @@ set(WebCore_NON_SVG_IDL_FILES
     css/DOMMatrixInit.idl
     css/DOMMatrixReadOnly.idl
     css/FontFace.idl
+    css/FontFaceLoadStatus.idl
     css/FontFaceSet.idl
     css/MediaList.idl
     css/MediaQueryList.idl

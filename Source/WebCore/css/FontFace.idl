@@ -25,14 +25,6 @@
 
 typedef (ArrayBuffer or ArrayBufferView) BinaryData;
 
-// https://drafts.csswg.org/css-font-loading/#enumdef-fontfaceloadstatus
-enum FontFaceLoadStatus {
-    "unloaded",
-    "loading",
-    "loaded",
-    "error"
-};
-
 // https://drafts.csswg.org/css-font-loading/#dictdef-fontfacedescriptors
 dictionary FontFaceDescriptors {
     // FIXME: `style` should be of type `CSSOMString`.

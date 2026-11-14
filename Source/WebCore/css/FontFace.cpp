@@ -372,22 +372,9 @@ String FontFace::display() const
     return autoAtom();
 }
 
-auto FontFace::status() const -> LoadStatus
+FontFaceLoadStatus FontFace::status() const
 {
-    switch (m_backing->status()) {
-    case CSSFontFace::Status::Pending:
-        return LoadStatus::Unloaded;
-    case CSSFontFace::Status::Loading:
-        return LoadStatus::Loading;
-    case CSSFontFace::Status::TimedOut:
-        return LoadStatus::Error;
-    case CSSFontFace::Status::Success:
-        return LoadStatus::Loaded;
-    case CSSFontFace::Status::Failure:
-        return LoadStatus::Error;
-    }
-    ASSERT_NOT_REACHED();
-    return LoadStatus::Error;
+    return m_backing->fontFaceLoadStatus();
 }
 
 void FontFace::adopt(CSSFontFace& newFace)

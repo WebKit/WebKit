@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "FontFaceLoadStatus.h"
 #include "FontMetricsOverrides.h"
 #include "FontSelectionAlgorithm.h"
 #include "FontTaggedSettings.h"
@@ -119,6 +120,7 @@ public:
 
     bool isLocalFallback() const { return m_isLocalFallback; }
     Status status() const { return m_status; }
+    NODELETE FontFaceLoadStatus fontFaceLoadStatus() const;
     StyleRuleFontFace* cssConnection() const;
 
     void addClient(CSSFontFaceClient&);

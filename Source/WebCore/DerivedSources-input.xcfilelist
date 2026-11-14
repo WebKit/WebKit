@@ -1383,6 +1383,7 @@ $(PROJECT_DIR)/css/DOMMatrixReadOnly.idl
 $(PROJECT_DIR)/css/ElementCSSInlineStyle+Typedom.idl
 $(PROJECT_DIR)/css/ElementCSSInlineStyle.idl
 $(PROJECT_DIR)/css/FontFace.idl
+$(PROJECT_DIR)/css/FontFaceLoadStatus.idl
 $(PROJECT_DIR)/css/FontFaceSet.idl
 $(PROJECT_DIR)/css/FontFaceSource.idl
 $(PROJECT_DIR)/css/LinkStyle.idl

@@ -462,13 +462,21 @@ ExceptionOr<Vector<Ref<CSSFontFace>>> CSSFontFaceSet::matchingFacesExcludingPrei
 
 ExceptionOr<bool> CSSFontFaceSet::check(ScriptExecutionContext& context, const String& font, const String& text)
 {
+    // https://drafts.csswg.org/css-font-loading/#dom-fontfaceset-check
+    //
+    // 1. Let font face set be the FontFaceSet object this method was called on.
+    // 2. Find the matching font faces from font face set using the font and text arguments passed to the function,
+    //    and including system fonts, and let font face list be the returned list of font faces, and found faces be
+    //    the returned found faces flag. If a syntax error was returned, throw a SyntaxError exception and terminate
+    //    these steps.
     auto matchingFaces = this->matchingFacesExcludingPreinstalledFonts(context, font, text);
     if (matchingFaces.hasException())
         return matchingFaces.releaseException();
 
+    // 3. If font face list is empty, or all fonts in the font face list either have a status attribute
+    //    of "loaded" or are system fonts, return true. Otherwise, return false.
     for (auto& face : matchingFaces.releaseReturnValue()) {
-        if (face.get().status() == CSSFontFace::Status::Pending
-            || face.get().status() == CSSFontFace::Status::Loading)
+        if (face.get().fontFaceLoadStatus() != FontFaceLoadStatus::Loaded)
             return false;
     }
     return true;
