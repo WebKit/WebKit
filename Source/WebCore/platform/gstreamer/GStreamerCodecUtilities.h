@@ -34,6 +34,15 @@ std::pair<UTF8CStringView, String> parseH264ProfileAndLevel(const String& codec)
 UTF8CStringView parseHEVCProfile(const String& codec);
 std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> capsFromCodecString(const String&, const IntSize&, std::optional<double> frameRate = std::nullopt);
 
+// H.264 profile level validation
+struct H264LevelRequirements {
+    unsigned maxMacroblocksPerSecond;
+    unsigned maxFrameSizeInMacroblocks;
+    unsigned maxBitrate; // in kbps
+};
+
+std::optional<IntSize> adjustToH264LevelConstraints(UTF8CStringView level, unsigned width, unsigned height, double fps, H264LevelRequirements&);
+
 } // namespace GStreamerCodecUtilities
 
 } // namespace WebCore

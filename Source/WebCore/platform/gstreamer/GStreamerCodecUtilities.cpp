@@ -77,6 +77,176 @@ std::pair<UTF8CStringView, String> GStreamerCodecUtilities::parseH264ProfileAndL
     return { profile, level };
 }
 
+std::optional<IntSize> GStreamerCodecUtilities::adjustToH264LevelConstraints(UTF8CStringView level, unsigned width, unsigned height, double fps, H264LevelRequirements& outRequirements)
+{
+    ensureDebugCategoryInitialized();
+
+    if (!level) {
+        GST_WARNING("Invalid level: null");
+        return std::nullopt;
+    }
+
+    // H.264 Level definitions from ITU-T H.264 Annex A
+    struct LevelDefinition {
+        ASCIILiteral levelString;
+        unsigned maxMacroblocksPerSecond;
+        unsigned maxFrameSizeInMacroblocks;
+        unsigned maxBitrate;
+    };
+
+    static const std::array<LevelDefinition, 19> levelTable = { {
+        { "1"_s, 1485, 99, 80 },
+        { "1.1"_s, 3000, 396, 192 },
+        { "1.2"_s, 6000, 396, 384 },
+        { "1.3"_s, 11880, 396, 768 },
+        { "2"_s, 11880, 396, 2000 },
+        { "2.1"_s, 19800, 792, 4000 },
+        { "2.2"_s, 20250, 1620, 4000 },
+        { "3"_s, 40500, 1620, 10000 },
+        { "3.1"_s, 108000, 3600, 14000 },
+        { "3.2"_s, 216000, 5120, 20000 },
+        { "4"_s, 245760, 8192, 20000 },
+        { "4.1"_s, 245760, 8192, 50000 },
+        { "4.2"_s, 522240, 8704, 50000 },
+        { "5"_s, 589824, 22080, 135000 },
+        { "5.1"_s, 983040, 36864, 240000 },
+        { "5.2"_s, 2073600, 36864, 240000 },
+        { "6"_s, 4177920, 139264, 240000 },
+        { "6.1"_s, 8355840, 139264, 480000 },
+        { "6.2"_s, 16711680, 139264, 800000 }, }
+    };
+
+    std::optional<LevelDefinition> selectedLevel;
+    for (const auto& levelDef : levelTable) {
+        if (level == levelDef.levelString) {
+            selectedLevel = levelDef;
+            break;
+        }
+    }
+
+    if (!selectedLevel) {
+        GST_WARNING("Unsupported H.264 level: %s", level.utf8());
+        return std::nullopt;
+    }
+
+    // Calculate actual requirements for current dimensions.
+    const unsigned macroblockWidth = (width + 15) / 16;
+    const unsigned macroblockHeight = (height + 15) / 16;
+    const unsigned frameSizeInMacroblocks = macroblockWidth * macroblockHeight;
+    const unsigned macroblocksPerSecond = static_cast<unsigned>(frameSizeInMacroblocks * fps);
+
+    // Fill output requirements (level constraints).
+    outRequirements.maxMacroblocksPerSecond = selectedLevel->maxMacroblocksPerSecond;
+    outRequirements.maxFrameSizeInMacroblocks = selectedLevel->maxFrameSizeInMacroblocks;
+    outRequirements.maxBitrate = selectedLevel->maxBitrate;
+
+    // Check if current dimensions exceed level constraints.
+    // x264 has additional width/height constraints beyond just frame size.
+    const unsigned levelConstraint = selectedLevel->maxFrameSizeInMacroblocks * 8;
+    bool frameSizeOk = frameSizeInMacroblocks <= selectedLevel->maxFrameSizeInMacroblocks;
+    bool widthOk = levelConstraint >= macroblockWidth * macroblockWidth;
+    bool heightOk = levelConstraint >= macroblockHeight * macroblockHeight;
+    bool mbpsOk = macroblocksPerSecond <= selectedLevel->maxMacroblocksPerSecond;
+
+    GST_DEBUG("H.264 Level %s adjustment check: %dx%d @ %.2f fps", level.utf8(), width, height, fps);
+    GST_DEBUG("  Frame size: %u MBs (max: %u) - %s", frameSizeInMacroblocks, selectedLevel->maxFrameSizeInMacroblocks, frameSizeOk ? "OK" : "EXCEEDS");
+    GST_DEBUG("  Width constraint: %u >= %u - %s", levelConstraint, macroblockWidth * macroblockWidth, widthOk ? "OK" : "EXCEEDS");
+    GST_DEBUG("  Height constraint: %u >= %u - %s", levelConstraint, macroblockHeight * macroblockHeight, heightOk ? "OK" : "EXCEEDS");
+    GST_DEBUG("  MBs/second: %u (max: %u) - %s", macroblocksPerSecond, selectedLevel->maxMacroblocksPerSecond, mbpsOk ? "OK" : "EXCEEDS");
+
+    // If dimensions already fit all constraints, return them as-is.
+    if (frameSizeOk && widthOk && heightOk && mbpsOk) {
+        GST_DEBUG("Dimensions already fit within level %s, no adjustment needed", level);
+        return IntSize(width, height);
+    }
+
+    GST_INFO("Enforcing level %s: adjusting dimensions from %dx%d to fit constraints", level.utf8(), width, height);
+
+    // Calculate scale factors for each constraint.
+    double scaleForFrameSize = 1.0;
+    double scaleForMBPS = 1.0;
+    double scaleForWidth = 1.0;
+    double scaleForHeight = 1.0;
+
+    if (!frameSizeOk) {
+        scaleForFrameSize = sqrt(static_cast<double>(selectedLevel->maxFrameSizeInMacroblocks) / frameSizeInMacroblocks);
+        GST_DEBUG("  Frame size scale factor: %.3f", scaleForFrameSize);
+    }
+
+    if (!mbpsOk) {
+        scaleForMBPS = sqrt(static_cast<double>(selectedLevel->maxMacroblocksPerSecond) / macroblocksPerSecond);
+        GST_DEBUG("  MB/s scale factor: %.3f", scaleForMBPS);
+    }
+
+    // x264-specific width/height constraints: levelConstraint >= mb_width^2 and mb_height^2.
+    if (!widthOk) {
+        // levelConstraint >= mb_width^2, so mb_width <= sqrt(levelConstraint).
+        // We need: (width/16)^2 <= levelConstraint, so width <= 16 * sqrt(levelConstraint).
+        double maxWidth = 16.0 * sqrt(static_cast<double>(levelConstraint));
+        scaleForWidth = maxWidth / width;
+        GST_DEBUG("  Width scale factor: %.3f", scaleForWidth);
+    }
+
+    if (!heightOk) {
+        double maxHeight = 16.0 * sqrt(static_cast<double>(levelConstraint));
+        scaleForHeight = maxHeight / height;
+        GST_DEBUG("  Height scale factor: %.3f", scaleForHeight);
+    }
+
+    // Use the smallest (most restrictive) scale factor.
+    double scaleFactor = std::min({ scaleForFrameSize, scaleForMBPS, scaleForWidth, scaleForHeight });
+
+    // Apply 5% safety margin.
+    scaleFactor *= 0.95;
+
+    // Calculate new dimensions in macroblock space to avoid rounding issues.
+    // We need to ensure that the rounded-up macroblock count still fits the constraints.
+    unsigned targetMBWidth = static_cast<unsigned>(macroblockWidth * scaleFactor);
+    unsigned targetMBHeight = static_cast<unsigned>(macroblockHeight * scaleFactor);
+
+    // Ensure at least 1 macroblock in each dimension.
+    if (targetMBWidth < 1)
+        targetMBWidth = 1;
+    if (targetMBHeight < 1)
+        targetMBHeight = 1;
+
+    // Convert back to pixels (macroblock size is 16x16)
+    unsigned newWidth = targetMBWidth * 16;
+    unsigned newHeight = targetMBHeight * 16;
+
+    // Ensure dimensions are even (required for H.264) - already guaranteed by MB*16.
+    // Ensure minimum viable dimensions.
+    if (newWidth < 16)
+        newWidth = 16;
+    if (newHeight < 16)
+        newHeight = 16;
+
+    GST_INFO("Adjusted dimensions: %dx%d -> %dx%d (scale factor: %.3f) to fit level %s", width, height, newWidth, newHeight, scaleFactor, level.utf8());
+
+    // Verify the adjusted dimensions actually fit all constraints.
+    const unsigned newMBWidth = (newWidth + 15) / 16;
+    const unsigned newMBHeight = (newHeight + 15) / 16;
+    const unsigned newFrameSizeInMBs = newMBWidth * newMBHeight;
+    const unsigned newMBsPerSecond = static_cast<unsigned>(newFrameSizeInMBs * fps);
+    const bool newWidthOk = levelConstraint >= newMBWidth * newMBWidth;
+    const bool newHeightOk = levelConstraint >= newMBHeight * newMBHeight;
+
+    if (newFrameSizeInMBs > selectedLevel->maxFrameSizeInMacroblocks || newMBsPerSecond > selectedLevel->maxMacroblocksPerSecond || !newWidthOk || !newHeightOk) {
+        GST_WARNING("Adjusted dimensions %dx%d @ %.2f fps still exceed level %s requirements (Frame: %u/%u MBs, MB/s: %u/%u, Width: %s, Height: %s)",
+            newWidth, newHeight, fps, level.utf8(), newFrameSizeInMBs, selectedLevel->maxFrameSizeInMacroblocks,
+            newMBsPerSecond, selectedLevel->maxMacroblocksPerSecond, newWidthOk ? "OK" : "EXCEEDS", newHeightOk ? "OK" : "EXCEEDS");
+        return std::nullopt;
+    }
+
+    GST_DEBUG("Verification: adjusted dimensions fit within level %s constraints", level.utf8());
+    GST_DEBUG("  New frame size: %u MBs (max: %u)", newFrameSizeInMBs, selectedLevel->maxFrameSizeInMacroblocks);
+    GST_DEBUG("  New MB/s: %u (max: %u)", newMBsPerSecond, selectedLevel->maxMacroblocksPerSecond);
+    GST_DEBUG("  New width constraint: %u >= %u", levelConstraint, newMBWidth * newMBWidth);
+    GST_DEBUG("  New height constraint: %u >= %u", levelConstraint, newMBHeight * newMBHeight);
+
+    return IntSize(newWidth, newHeight);
+}
+
 static std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> h264CapsFromCodecString(const String& codecString)
 {
     GRefPtr outputCaps = adoptGRef(gst_caps_new_empty_simple("video/x-h264"));
