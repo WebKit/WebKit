@@ -36,15 +36,15 @@
 namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleRuleImport);
 
-Ref<StyleRuleImport> StyleRuleImport::create(const String& href, MQ::MediaQueryList&& mediaQueries, std::optional<CascadeLayerName>&& cascadeLayerName, SupportsCondition&& supportsCondition)
+Ref<StyleRuleImport> StyleRuleImport::create(CSS::URL&& url, MQ::MediaQueryList&& mediaQueries, std::optional<CascadeLayerName>&& cascadeLayerName, SupportsCondition&& supportsCondition)
 {
-    return adoptRef(*new StyleRuleImport(href, WTF::move(mediaQueries), WTF::move(cascadeLayerName), WTF::move(supportsCondition)));
+    return adoptRef(*new StyleRuleImport(WTF::move(url), WTF::move(mediaQueries), WTF::move(cascadeLayerName), WTF::move(supportsCondition)));
 }
 
-StyleRuleImport::StyleRuleImport(const String& href, MQ::MediaQueryList&& mediaQueries, std::optional<CascadeLayerName>&& cascadeLayerName, SupportsCondition&& supportsCondition)
+StyleRuleImport::StyleRuleImport(CSS::URL&& url, MQ::MediaQueryList&& mediaQueries, std::optional<CascadeLayerName>&& cascadeLayerName, SupportsCondition&& supportsCondition)
     : StyleRuleBase(StyleRuleType::Import)
     , m_styleSheetClient(*this)
-    , m_strHref(href)
+    , m_url(WTF::move(url))
     , m_mediaQueries(WTF::move(mediaQueries))
     , m_cascadeLayerName(WTF::move(cascadeLayerName))
     , m_supportsCondition(WTF::move(supportsCondition))
@@ -118,12 +118,11 @@ void StyleRuleImport::requestStyleSheet()
 
     URL absURL;
     if (!m_parentStyleSheet->baseURL().isNull())
-        // use parent styleheet's URL as the base URL
-        absURL = URL(m_parentStyleSheet->baseURL(), m_strHref);
+        absURL = URL(m_parentStyleSheet->baseURL(), m_url.specified);
     else
-        absURL = document->encodingParseURL(m_strHref);
+        absURL = document->encodingParseURL(m_url.specified);
 
-    // Check for a cycle in our import chain.  If we encounter a stylesheet
+    // Check for a cycle in our import chain. If we encounter a stylesheet
     // in our parent chain with the same URL, then just bail.
     RefPtr rootSheet = m_parentStyleSheet;
     for (RefPtr sheet = m_parentStyleSheet; sheet; sheet = sheet->parentStyleSheet()) {
@@ -161,8 +160,11 @@ void StyleRuleImport::requestStyleSheet()
         m_cachedSheet = protect(document->cachedResourceLoader())->requestUserCSSStyleSheet(*page, WTF::move(request));
     } else {
         auto options = request.options();
+        CSS::applyModifiersToLoaderOptions(m_url.modifiers, options);
         options.loadedFromOpaqueSource = m_parentStyleSheet->loadedFromOpaqueSource();
         request.setOptions(WTF::move(options));
+        if (request.options().mode == FetchOptions::Mode::Cors)
+            request.updateForAccessControl(*document);
         if (auto result = protect(document->cachedResourceLoader())->requestCSSStyleSheet(WTF::move(request)))
             m_cachedSheet = WTF::move(result.value());
         else

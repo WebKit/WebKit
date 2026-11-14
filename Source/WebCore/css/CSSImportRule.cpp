@@ -83,7 +83,7 @@ String CSSImportRule::cssTextInternal(const String& urlString, const CSS::Serial
 {
     StringBuilder builder;
     builder.append("@import "_s);
-    CSS::serializationForCSS(builder, context, CSS::URL { .specified = urlString, .resolved = { }, .modifiers = { } });
+    CSS::serializationForCSS(builder, context, CSS::URL { .specified = urlString, .resolved = { }, .modifiers = m_importRule->modifiers() });
 
     if (auto layerName = this->layerName(); !layerName.isNull()) {
         if (layerName.isEmpty())

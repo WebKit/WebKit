@@ -57,12 +57,14 @@
 #include "CSSPropertyParserConsumer+MetaConsumer.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
 #include "CSSPropertyParserConsumer+Timeline.h"
+#include "CSSPropertyParserConsumer+URL.h"
 #include "CSSSelectorParser.h"
 #include "CSSStringValue.h"
 #include "CSSStyleSheet.h"
 #include "CSSSubstitutionParser.h"
 #include "CSSSupportsParser.h"
 #include "CSSTokenizer.h"
+#include "CSSURL.h"
 #include "CSSValueList.h"
 #include "CSSValuePair.h"
 #include "CSSViewTransitionRule.h"
@@ -629,9 +631,24 @@ static std::optional<CascadeLayerName> consumeCascadeLayerName(CSSParserTokenRan
 
 RefPtr<StyleRuleImport> CSSParser::consumeImportRule(CSSParserTokenRange prelude)
 {
-    AtomString uri(consumeStringOrURI(prelude));
-    if (uri.isNull())
-        return nullptr; // Parse error, expected string or URI
+    // @import [ <url> | <string> ] [ layer | layer(<layer-name>) ]? <import-conditions> ;
+    // <import-conditions> = [ supports( [ <supports-condition> | <declaration> ] ) ]? <media-query-list>?
+    // https://drafts.csswg.org/css-cascade-5/#at-import
+
+    // [ <url> | <string> ]
+    auto url = [&] -> std::optional<CSS::URL> {
+        if (prelude.peek().type() == StringToken)
+            return CSS::URL { .specified = prelude.consumeIncludingWhitespace().value().toString(), .resolved = { }, .modifiers = { } };
+
+        auto state = CSS::PropertyParserState { .context = m_context };
+        return CSSPropertyParserHelpers::consumeURLRaw(prelude, state, {
+            CSSPropertyParserHelpers::AllowedURLModifiers::CrossOrigin,
+            CSSPropertyParserHelpers::AllowedURLModifiers::Integrity,
+            CSSPropertyParserHelpers::AllowedURLModifiers::ReferrerPolicy,
+        });
+    }();
+    if (!url)
+        return nullptr;
 
     if (RefPtr observerWrapper = m_observerWrapper.get()) {
         unsigned endOffset = observerWrapper->endOffset(prelude);
@@ -643,7 +660,8 @@ RefPtr<StyleRuleImport> CSSParser::consumeImportRule(CSSParserTokenRange prelude
 
     prelude.consumeWhitespace();
 
-    auto consumeCascadeLayer = [&]() -> std::optional<CascadeLayerName> {
+    // [ layer | layer(<layer-name>) ]?
+    auto consumeCascadeLayer = [&] -> std::optional<CascadeLayerName> {
         auto& token = prelude.peek();
         if (token.type() == FunctionToken && equalLettersIgnoringASCIICase(token.value(), "layer"_s)) {
             auto savedPreludeForFailure = prelude;
@@ -662,7 +680,8 @@ RefPtr<StyleRuleImport> CSSParser::consumeImportRule(CSSParserTokenRange prelude
         return { };
     };
 
-    auto consumeSupports = [&] () -> std::optional<StyleRuleImport::SupportsCondition> {
+    // [ supports( [ <supports-condition> | <declaration> ] ) ]?
+    auto consumeSupports = [&] -> std::optional<StyleRuleImport::SupportsCondition> {
         auto& token = prelude.peek();
         if (token.type() == FunctionToken && equalLettersIgnoringASCIICase(token.value(), "supports"_s)) {
             auto arguments = CSSPropertyParserHelpers::consumeFunction(prelude);
@@ -678,9 +697,11 @@ RefPtr<StyleRuleImport> CSSParser::consumeImportRule(CSSParserTokenRange prelude
     auto supports = consumeSupports();
     if (!supports)
         return nullptr; // Discard import rule with incorrect syntax.
+
+    // <media-query-list>?
     auto mediaQueries = MQ::MediaQueryParser::parse(prelude, m_context);
 
-    return StyleRuleImport::create(uri, WTF::move(mediaQueries), WTF::move(cascadeLayerName), WTF::move(*supports));
+    return StyleRuleImport::create(WTF::move(*url), WTF::move(mediaQueries), WTF::move(cascadeLayerName), WTF::move(*supports));
 }
 
 RefPtr<StyleRuleNamespace> CSSParser::consumeNamespaceRule(CSSParserTokenRange prelude)
