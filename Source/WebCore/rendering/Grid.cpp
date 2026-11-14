@@ -170,6 +170,17 @@ bool Grid::isEmptyAutoRepeatTrack(Style::GridTrackSizingDirection direction, uns
     return autoRepeatEmptyTracks(direction)->contains(line);
 }
 
+bool Grid::spansEmptyAutoRepeatTrack(Style::GridTrackSizingDirection direction, const GridSpan& span) const
+{
+    if (!hasAutoRepeatEmptyTracks(direction))
+        return false;
+    for (auto line : span) {
+        if (isEmptyAutoRepeatTrack(direction, line))
+            return true;
+    }
+    return false;
+}
+
 OrderedTrackIndexSet* Grid::autoRepeatEmptyTracks(Style::GridTrackSizingDirection direction) const
 {
     ASSERT(hasAutoRepeatEmptyTracks(direction));

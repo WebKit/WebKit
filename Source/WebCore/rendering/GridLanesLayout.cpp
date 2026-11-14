@@ -203,6 +203,12 @@ GridArea GridLanesLayout::gridAreaForIndefiniteGridAxisItem(const RenderBox& ite
 {
     auto itemSpanLength = std::min<unsigned>(Style::GridPositionsResolver::spanSizeForAutoPlacedItem(item, gridAxisDirection()), gridAxisTracksCount());
     auto gridAxisLines = gridAxisTracksCount() + 1;
+    auto maxStartingLine = gridAxisLines - itemSpanLength;
+
+    // "A collapsed grid track cannot accept placement of auto-placed items."
+    auto spansCollapsedTrack = [this, itemSpanLength](unsigned startingLine) {
+        return m_renderGrid->currentGrid().spansEmptyAutoRepeatTrack(gridAxisDirection(), GridSpan::translatedDefiniteGridSpan(startingLine, startingLine + itemSpanLength));
+    };
 
     if (WTF::holdsAlternative<CSS::Keyword::Infinite>(fitTolerance)) {
         // Infinite tolerance: place items strictly in order without considering track lengths
@@ -213,6 +219,9 @@ GridArea GridLanesLayout::gridAreaForIndefiniteGridAxisItem(const RenderBox& ite
         if (startingLine + itemSpanLength > gridAxisTracksCount())
             startingLine = 0;
 
+        for (unsigned i = 0; i < maxStartingLine && spansCollapsedTrack(startingLine); ++i)
+            startingLine = (startingLine + 1) % maxStartingLine;
+
         auto gridAxisPosition = GridSpan::translatedDefiniteGridSpan(startingLine, startingLine + itemSpanLength);
         return gridAreaFromGridAxisSpan(gridAxisPosition);
     }
@@ -221,16 +230,19 @@ GridArea GridLanesLayout::gridAreaForIndefiniteGridAxisItem(const RenderBox& ite
     auto toleranceValue = std::get<LayoutUnit>(fitTolerance);
 
     // Step 1: Find the absolute shortest position across all tracks
-    auto maxStartingLine = gridAxisLines - itemSpanLength;
     LayoutUnit absoluteShortest = LayoutUnit::max();
-    for (unsigned i = 0; i < maxStartingLine; i++)
-        absoluteShortest = std::min(absoluteShortest, maxRunningPositionForSpan(i, itemSpanLength));
+    for (unsigned i = 0; i < maxStartingLine; i++) {
+        if (!spansCollapsedTrack(i))
+            absoluteShortest = std::min(absoluteShortest, maxRunningPositionForSpan(i, itemSpanLength));
+    }
 
     // Step 2: Find first position within tolerance of shortest, starting from the cursor position.
     unsigned smallestMaxPosLine = 0;
     auto autoFlowNextCursorShift = (m_autoFlowNextCursor > maxStartingLine) ? 0 : m_autoFlowNextCursor;
     for (unsigned i = 0; i < maxStartingLine; i++) {
         auto startingLine = (autoFlowNextCursorShift + i) % maxStartingLine;
+        if (spansCollapsedTrack(startingLine))
+            continue;
 
         auto maxPosForCurrentStartingLine = maxRunningPositionForSpan(startingLine, itemSpanLength);
 
