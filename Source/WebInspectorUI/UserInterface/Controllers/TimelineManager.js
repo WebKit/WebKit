@@ -682,7 +682,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         this.capturingStarted(target, "CPUProfiler", timestamp);
     }
 
-    cpuProfilerTrackingUpdated(event)
+    cpuProfilerTrackingUpdated(target, event)
     {
         if (!this._enabled)
             return;
@@ -691,7 +691,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         if (!this.isCapturing())
             return;
 
-        this._addRecord(new WI.CPUTimelineRecord(event));
+        this._addProcessRecord(target, new WI.CPUTimelineRecord(event));
     }
 
     cpuProfilerTrackingCompleted(target, timestamp)
@@ -814,7 +814,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         this.capturingStarted(target, "Memory", timestamp);
     }
 
-    memoryTrackingUpdated(event)
+    memoryTrackingUpdated(target, event)
     {
         if (!this._enabled)
             return;
@@ -823,7 +823,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         if (!this.isCapturing())
             return;
 
-        this._addRecord(new WI.MemoryTimelineRecord(event.timestamp, event.categories));
+        this._addProcessRecord(target, new WI.MemoryTimelineRecord(event.timestamp, event.categories));
     }
 
     memoryTrackingCompleted(target, timestamp)
@@ -1028,12 +1028,12 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             console.assert(isNaN(endTime));
 
             // Pass the startTime as the endTime since this record type has no duration.
-            return new WI.LayoutTimelineRecord(WI.LayoutTimelineRecord.EventType.InvalidateStyles, startTime, startTime, stackTrace, sourceCodeLocation, {
+            return new WI.LayoutTimelineRecord(target, WI.LayoutTimelineRecord.EventType.InvalidateStyles, startTime, startTime, stackTrace, sourceCodeLocation, {
                 domNodeOrInfo: WI.domManager.nodeForId(recordPayload.data.nodeId),
             });
 
         case InspectorBackend.Enum.Timeline.EventType.RecalculateStyles:
-            return new WI.LayoutTimelineRecord(WI.LayoutTimelineRecord.EventType.RecalculateStyles, startTime, endTime, stackTrace, sourceCodeLocation, {
+            return new WI.LayoutTimelineRecord(target, WI.LayoutTimelineRecord.EventType.RecalculateStyles, startTime, endTime, stackTrace, sourceCodeLocation, {
                 domNodeOrInfo: WI.domManager.nodeForId(recordPayload.data.nodeId),
             });
 
@@ -1041,7 +1041,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             console.assert(isNaN(endTime));
 
             // Pass the startTime as the endTime since this record type has no duration.
-            return new WI.LayoutTimelineRecord(WI.LayoutTimelineRecord.EventType.InvalidateLayout, startTime, startTime, stackTrace, sourceCodeLocation, {
+            return new WI.LayoutTimelineRecord(target, WI.LayoutTimelineRecord.EventType.InvalidateLayout, startTime, startTime, stackTrace, sourceCodeLocation, {
                 domNodeOrInfo: WI.domManager.nodeForId(recordPayload.data.nodeId),
             });
 
@@ -1049,33 +1049,33 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             console.assert(isNaN(endTime));
 
             // Pass the startTime as the endTime since this record type has no duration.
-            return new WI.LayoutTimelineRecord(WI.LayoutTimelineRecord.EventType.ScheduleLayout, startTime, startTime, stackTrace, sourceCodeLocation, {
+            return new WI.LayoutTimelineRecord(target, WI.LayoutTimelineRecord.EventType.ScheduleLayout, startTime, startTime, stackTrace, sourceCodeLocation, {
                 domNodeOrInfo: WI.domManager.nodeForId(recordPayload.data.nodeId),
             });
 
         case InspectorBackend.Enum.Timeline.EventType.Layout:
             var layoutRecordType = sourceCodeLocation ? WI.LayoutTimelineRecord.EventType.ForcedLayout : WI.LayoutTimelineRecord.EventType.Layout;
-            return new WI.LayoutTimelineRecord(layoutRecordType, startTime, endTime, stackTrace, sourceCodeLocation, {
+            return new WI.LayoutTimelineRecord(target, layoutRecordType, startTime, endTime, stackTrace, sourceCodeLocation, {
                 quad: new WI.Quad(recordPayload.data.root),
                 domNodeOrInfo: WI.domManager.nodeForId(recordPayload.data.nodeId),
             });
 
         case InspectorBackend.Enum.Timeline.EventType.Paint:
-            return new WI.LayoutTimelineRecord(WI.LayoutTimelineRecord.EventType.Paint, startTime, endTime, stackTrace, sourceCodeLocation, {
+            return new WI.LayoutTimelineRecord(target, WI.LayoutTimelineRecord.EventType.Paint, startTime, endTime, stackTrace, sourceCodeLocation, {
                 quad: new WI.Quad(recordPayload.data.clip),
                 domNodeOrInfo: WI.domManager.nodeForId(recordPayload.data.nodeId),
             });
 
         case InspectorBackend.Enum.Timeline.EventType.Composite:
-            return new WI.LayoutTimelineRecord(WI.LayoutTimelineRecord.EventType.Composite, startTime, endTime, stackTrace, sourceCodeLocation, {
+            return new WI.LayoutTimelineRecord(target, WI.LayoutTimelineRecord.EventType.Composite, startTime, endTime, stackTrace, sourceCodeLocation, {
                 domNodeOrInfo: WI.domManager.nodeForId(recordPayload.data.nodeId),
             });
 
         case InspectorBackend.Enum.Timeline.EventType.FirstContentfulPaint:
-            return new WI.LayoutTimelineRecord(WI.LayoutTimelineRecord.EventType.FirstContentfulPaint, startTime, startTime, stackTrace, sourceCodeLocation);
+            return new WI.LayoutTimelineRecord(target, WI.LayoutTimelineRecord.EventType.FirstContentfulPaint, startTime, startTime, stackTrace, sourceCodeLocation);
 
         case InspectorBackend.Enum.Timeline.EventType.LargestContentfulPaint:
-            return new WI.LayoutTimelineRecord(WI.LayoutTimelineRecord.EventType.LargestContentfulPaint, startTime, startTime, stackTrace, sourceCodeLocation, {
+            return new WI.LayoutTimelineRecord(target, WI.LayoutTimelineRecord.EventType.LargestContentfulPaint, startTime, startTime, stackTrace, sourceCodeLocation, {
                 area: recordPayload.data.area,
                 domNodeOrInfo: WI.domManager.nodeForId(recordPayload.data.nodeId),
             });
@@ -1364,6 +1364,13 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         // Only worry about dead time after the load event.
         if (WI.networkManager.mainFrame && isNaN(WI.networkManager.mainFrame.loadEventTimestamp))
             this._resetAutoRecordingDeadTimeTimeout();
+    }
+
+    _addProcessRecord(target, record)
+    {
+        let timeline = this._activeRecording.timelineForRecordType(record.type);
+        for (let aggregateRecord of timeline.addProcessRecord(target, record, WI.targets))
+            this._addRecord(aggregateRecord);
     }
 
     _attemptAutoCapturingForFrame(frame)

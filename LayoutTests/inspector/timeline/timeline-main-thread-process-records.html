@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Timeline.MainThreadProcessRecords");
+
+    // The timelines read only the identifier, the type and the process of a target.
+    const mainTarget = {identifier: "page-1", processIdentifier: "A", type: WI.TargetType.Page};
+    const frameTargetInMainProcess = {identifier: "frame-2", processIdentifier: "A", type: WI.TargetType.Frame};
+    const frameTargetInOtherProcess = {identifier: "frame-3", processIdentifier: "B", type: WI.TargetType.Frame};
+    const workerTargetInMainProcess = {identifier: "worker-4", processIdentifier: "A", type: WI.TargetType.Worker};
+    const liveTargets = [mainTarget, frameTargetInMainProcess, frameTargetInOtherProcess, workerTargetInMainProcess];
+
+    function addCPUSample(recording, target, timestamp) {
+        let cpuTimeline = recording.timelineForRecordType(WI.TimelineRecord.Type.CPU);
+        let sample = new WI.CPUTimelineRecord({timestamp, usage: 10});
+        for (let aggregateRecord of cpuTimeline.addProcessRecord(target, sample, liveTargets))
+            recording.addRecord(aggregateRecord);
+    }
+
+    function createScriptTimelineWithRecords()
+    {
+        let scriptTimeline = WI.Timeline.create(WI.TimelineRecord.Type.Script);
+        let records = [
+            new WI.ScriptTimelineRecord(mainTarget, WI.ScriptTimelineRecord.EventType.ScriptEvaluated, 1, 2),
+            new WI.ScriptTimelineRecord(frameTargetInMainProcess, WI.ScriptTimelineRecord.EventType.ScriptEvaluated, 2, 3),
+            new WI.ScriptTimelineRecord(frameTargetInOtherProcess, WI.ScriptTimelineRecord.EventType.ScriptEvaluated, 3, 4),
+            new WI.ScriptTimelineRecord(workerTargetInMainProcess, WI.ScriptTimelineRecord.EventType.ScriptEvaluated, 4, 5),
+        ];
+        for (let record of records)
+            scriptTimeline.addRecord(record);
+        return {scriptTimeline, records};
+    }
+
+    function createLayoutTimelineWithRecords()
+    {
+        let layoutTimeline = WI.Timeline.create(WI.TimelineRecord.Type.Layout);
+        let records = [
+            new WI.LayoutTimelineRecord(mainTarget, WI.LayoutTimelineRecord.EventType.Layout, 1, 2, null, null),
+            new WI.LayoutTimelineRecord(frameTargetInOtherProcess, WI.LayoutTimelineRecord.EventType.Paint, 2, 3, null, null),
+        ];
+        for (let record of records)
+            layoutTimeline.addRecord(record);
+        return {layoutTimeline, records};
+    }
+
+    suite.addTestCase({
+        name: "Timeline.MainThreadProcessRecords.OnlyProcessesThatSendCPUSamplesCount",
+        description: "Check that only records of processes that send CPU samples are main thread records.",
+        async test() {
+            let recording = new WI.TimelineRecording("timeline-main-thread-process-records-test", "Test");
+            addCPUSample(recording, mainTarget, 10);
+
+            let cpuTimeline = recording.timelineForRecordType(WI.TimelineRecord.Type.CPU);
+            InspectorTest.expectShallowEqual(Array.from(cpuTimeline.processRecords.keys()), ["A"], "Only the main process should send CPU samples.");
+
+            let script = createScriptTimelineWithRecords();
+            let mainThreadRecords = script.scriptTimeline.mainThreadRecordsInTimeRange(0, 10, {}, recording);
+            InspectorTest.expectShallowEqual(mainThreadRecords, [script.records[0], script.records[1]], "Main thread script records should be the records of the process that sends CPU samples.");
+            InspectorTest.expectThat(mainThreadRecords.every((record) => record.target.type !== WI.TargetType.Worker), "No main thread record should come from a Worker target.");
+            InspectorTest.expectThat(script.scriptTimeline.records.includes(script.records[2]), "The Script timeline should still contain the other process' record.");
+
+            let layout = createLayoutTimelineWithRecords();
+            mainThreadRecords = layout.layoutTimeline.mainThreadRecordsInTimeRange(0, 10, {}, recording);
+            InspectorTest.expectShallowEqual(mainThreadRecords, [layout.records[0]], "Main thread layout records should be the records of the process that sends CPU samples.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Timeline.MainThreadProcessRecords.EveryProcessThatSendsCPUSamplesCounts",
+        description: "Check that records of every process that sends CPU samples are main thread records.",
+        async test() {
+            let recording = new WI.TimelineRecording("timeline-main-thread-process-records-test", "Test");
+            addCPUSample(recording, mainTarget, 10);
+            addCPUSample(recording, frameTargetInOtherProcess, 10.5);
+
+            let cpuTimeline = recording.timelineForRecordType(WI.TimelineRecord.Type.CPU);
+            InspectorTest.expectShallowEqual(Array.from(cpuTimeline.processRecords.keys()), ["A", "B"], "Both processes should send CPU samples.");
+
+            let script = createScriptTimelineWithRecords();
+            let mainThreadRecords = script.scriptTimeline.mainThreadRecordsInTimeRange(0, 10, {}, recording);
+            InspectorTest.expectShallowEqual(mainThreadRecords, [script.records[0], script.records[1], script.records[2]], "Every process that sends CPU samples should have its records counted.");
+            InspectorTest.expectFalse(mainThreadRecords.includes(script.records[3]), "The Worker's record should not be a main thread record.");
+
+            let layout = createLayoutTimelineWithRecords();
+            mainThreadRecords = layout.layoutTimeline.mainThreadRecordsInTimeRange(0, 10, {}, recording);
+            InspectorTest.expectShallowEqual(mainThreadRecords, [layout.records[0], layout.records[1]], "Every process that sends CPU samples should have its layout records counted.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Timeline.MainThreadProcessRecords.TargetWithoutProcessIdentifierCounts",
+        description: "Check that a record of a target without a processIdentifier counts, as on older backends.",
+        async test() {
+            let recording = new WI.TimelineRecording("timeline-main-thread-process-records-test", "Test");
+            addCPUSample(recording, mainTarget, 10);
+
+            let oldBackendFrameTarget = {identifier: "frame-5", type: WI.TargetType.Frame};
+            let scriptTimeline = WI.Timeline.create(WI.TimelineRecord.Type.Script);
+            let records = [
+                new WI.ScriptTimelineRecord(mainTarget, WI.ScriptTimelineRecord.EventType.ScriptEvaluated, 1, 2),
+                new WI.ScriptTimelineRecord(oldBackendFrameTarget, WI.ScriptTimelineRecord.EventType.ScriptEvaluated, 2, 3),
+            ];
+            for (let record of records)
+                scriptTimeline.addRecord(record);
+
+            let mainThreadRecords = scriptTimeline.mainThreadRecordsInTimeRange(0, 10, {}, recording);
+            InspectorTest.expectShallowEqual(mainThreadRecords, records, "A record of a target without a processIdentifier should be a main thread record.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Timeline.MainThreadProcessRecords.RecordBeforeStart",
+        description: "Check that a record before the range is included with includeRecordBeforeStart, and still filtered by process.",
+        async test() {
+            let recording = new WI.TimelineRecording("timeline-main-thread-process-records-test", "Test");
+            addCPUSample(recording, mainTarget, 10);
+
+            let scriptTimeline = WI.Timeline.create(WI.TimelineRecord.Type.Script);
+            let records = [
+                new WI.ScriptTimelineRecord(frameTargetInOtherProcess, WI.ScriptTimelineRecord.EventType.ScriptEvaluated, 0.5, 0.9),
+                new WI.ScriptTimelineRecord(mainTarget, WI.ScriptTimelineRecord.EventType.ScriptEvaluated, 0.6, 0.95),
+                new WI.ScriptTimelineRecord(mainTarget, WI.ScriptTimelineRecord.EventType.ScriptEvaluated, 1, 2),
+            ];
+            for (let record of records)
+                scriptTimeline.addRecord(record);
+
+            let mainThreadRecords = scriptTimeline.mainThreadRecordsInTimeRange(1, 10, {includeRecordBeforeStart: true}, recording);
+            InspectorTest.expectShallowEqual(mainThreadRecords, [records[1], records[2]], "The record before the range should be included and counted when its process sends CPU samples.");
+
+            mainThreadRecords = scriptTimeline.mainThreadRecordsInTimeRange(1, 10, {}, recording);
+            InspectorTest.expectShallowEqual(mainThreadRecords, [records[2]], "Without includeRecordBeforeStart, the record before the range should not be included.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Timeline.MainThreadProcessRecords.NoProcessDataKeepsEveryRecord",
+        description: "Check that without per-process CPU data, such as an imported recording, every record but the Worker's counts.",
+        async test() {
+            let recording = new WI.TimelineRecording("timeline-main-thread-process-records-test", "Test");
+
+            let script = createScriptTimelineWithRecords();
+            let mainThreadRecords = script.scriptTimeline.mainThreadRecordsInTimeRange(0, 10, {}, recording);
+            InspectorTest.expectShallowEqual(mainThreadRecords, [script.records[0], script.records[1], script.records[2]], "Without per-process data, every record but the Worker's should be a main thread record.");
+
+            mainThreadRecords = script.scriptTimeline.mainThreadRecordsInTimeRange(0, 10);
+            InspectorTest.expectShallowEqual(mainThreadRecords, [script.records[0], script.records[1], script.records[2]], "Without a recording, every record but the Worker's should be a main thread record.");
+
+            let layout = createLayoutTimelineWithRecords();
+            mainThreadRecords = layout.layoutTimeline.mainThreadRecordsInTimeRange(0, 10, {}, recording);
+            InspectorTest.expectShallowEqual(mainThreadRecords, [layout.records[0], layout.records[1]], "Without per-process data, every layout record should be a main thread record.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that Timeline records of processes that do not send CPU samples are not counted as main thread records, which feed the CPU timeline's main thread breakdown.</p>
+</body>
+</html>

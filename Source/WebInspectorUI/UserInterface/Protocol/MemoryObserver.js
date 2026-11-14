@@ -39,7 +39,7 @@ WI.MemoryObserver = class MemoryObserver extends InspectorBackend.Dispatcher
 
     trackingUpdate(event)
     {
-        WI.timelineManager.memoryTrackingUpdated(event);
+        WI.timelineManager.memoryTrackingUpdated(this._target, event);
     }
 
     trackingComplete(timestamp)

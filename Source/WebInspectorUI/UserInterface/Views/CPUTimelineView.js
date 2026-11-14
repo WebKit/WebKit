@@ -1181,7 +1181,7 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
         let possibleRepeatingTimers = new Set;
 
         let scriptTimeline = this._recording.timelineForRecordType(WI.TimelineRecord.Type.Script);
-        let scriptRecords = scriptTimeline ? scriptTimeline.mainThreadRecordsInTimeRange(startTime, endTime, {includeRecordBeforeStart: true}) : [];
+        let scriptRecords = scriptTimeline ? scriptTimeline.mainThreadRecordsInTimeRange(startTime, endTime, {includeRecordBeforeStart: true}, this._recording) : [];
         scriptRecords = scriptRecords.filter((record) => {
             // Return true for event types that define script entries/exits.
             // Return false for events with no time ranges or if they are contained in other events.
@@ -1247,7 +1247,7 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
         });
 
         let layoutTimeline = this._recording.timelineForRecordType(WI.TimelineRecord.Type.Layout);
-        let layoutRecords = layoutTimeline ? layoutTimeline.recordsInTimeRange(startTime, endTime, {includeRecordBeforeStart: true}) : [];
+        let layoutRecords = layoutTimeline ? layoutTimeline.mainThreadRecordsInTimeRange(startTime, endTime, {includeRecordBeforeStart: true}, this._recording) : [];
         layoutRecords = layoutRecords.filter((record) => {
             switch (record.eventType) {
             case WI.LayoutTimelineRecord.EventType.RecalculateStyles:
@@ -1573,7 +1573,7 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
     _attemptSelectIndicatatorTimelineRecord(startTime, endTime)
     {
         let layoutTimeline = this._recording.timelineForRecordType(WI.TimelineRecord.Type.Layout);
-        let layoutRecords = layoutTimeline ? layoutTimeline.recordsInTimeRange(startTime, endTime, {includeRecordBeforeStart: true}) : [];
+        let layoutRecords = layoutTimeline ? layoutTimeline.mainThreadRecordsInTimeRange(startTime, endTime, {includeRecordBeforeStart: true}, this._recording) : [];
         layoutRecords = layoutRecords.filter((record) => {
             switch (record.eventType) {
             case WI.LayoutTimelineRecord.EventType.RecalculateStyles:
@@ -1600,7 +1600,7 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
         }
 
         let scriptTimeline = this._recording.timelineForRecordType(WI.TimelineRecord.Type.Script);
-        let scriptRecords = scriptTimeline ? scriptTimeline.mainThreadRecordsInTimeRange(startTime, endTime, {includeRecordBeforeStart: true}) : [];
+        let scriptRecords = scriptTimeline ? scriptTimeline.mainThreadRecordsInTimeRange(startTime, endTime, {includeRecordBeforeStart: true}, this._recording) : [];
         scriptRecords = scriptRecords.filter((record) => {
             switch (record.eventType) {
             case WI.ScriptTimelineRecord.EventType.ScriptEvaluated:
