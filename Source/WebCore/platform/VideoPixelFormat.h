@@ -62,6 +62,45 @@ inline bool isHighBitDepthVideoPixelFormat(VideoPixelFormat format)
         || format == VideoPixelFormat::I444P10 || format == VideoPixelFormat::I444P12;
 }
 
+struct PlanarYUVFormatLayout {
+    unsigned bitDepth { 8 };
+    bool isChromaHorizontallySubsampled { false };
+    bool isChromaVerticallySubsampled { false };
+};
+
+// The three plane Y'CbCr formats without alpha. Samples above 8 bits are stored in 16 bits, LSB aligned.
+inline std::optional<PlanarYUVFormatLayout> planarYUVFormatLayout(VideoPixelFormat format)
+{
+    switch (format) {
+    case VideoPixelFormat::I420:
+        return PlanarYUVFormatLayout { 8, true, true };
+    case VideoPixelFormat::I420P10:
+        return PlanarYUVFormatLayout { 10, true, true };
+    case VideoPixelFormat::I420P12:
+        return PlanarYUVFormatLayout { 12, true, true };
+    case VideoPixelFormat::I422:
+        return PlanarYUVFormatLayout { 8, true, false };
+    case VideoPixelFormat::I422P10:
+        return PlanarYUVFormatLayout { 10, true, false };
+    case VideoPixelFormat::I422P12:
+        return PlanarYUVFormatLayout { 12, true, false };
+    case VideoPixelFormat::I444:
+        return PlanarYUVFormatLayout { 8, false, false };
+    case VideoPixelFormat::I444P10:
+        return PlanarYUVFormatLayout { 10, false, false };
+    case VideoPixelFormat::I444P12:
+        return PlanarYUVFormatLayout { 12, false, false };
+    case VideoPixelFormat::I420A:
+    case VideoPixelFormat::NV12:
+    case VideoPixelFormat::RGBA:
+    case VideoPixelFormat::RGBX:
+    case VideoPixelFormat::BGRA:
+    case VideoPixelFormat::BGRX:
+        break;
+    }
+    return { };
+}
+
 WEBCORE_EXPORT String convertVideoPixelFormatToString(VideoPixelFormat);
 
 } // namespace WebCore

@@ -227,30 +227,19 @@ struct YCbCrBiPlanarLayout {
     const bool isChroma422 { false };
 };
 
-class PixelBufferLock {
-    WTF_MAKE_NONCOPYABLE(PixelBufferLock);
-public:
-    PixelBufferLock(CVPixelBufferRef pixelBuffer, CVPixelBufferLockFlags flags)
-        : m_pixelBuffer(pixelBuffer)
-        , m_flags(flags)
-        , m_isLocked(CVPixelBufferLockBaseAddress(pixelBuffer, flags) == kCVReturnSuccess)
-    {
-    }
+}
 
-    ~PixelBufferLock()
-    {
-        if (m_isLocked)
-            CVPixelBufferUnlockBaseAddress(m_pixelBuffer, m_flags);
-    }
+PixelBufferLock::PixelBufferLock(CVPixelBufferRef pixelBuffer, CVPixelBufferLockFlags flags)
+    : m_pixelBuffer(pixelBuffer)
+    , m_flags(flags)
+    , m_isLocked(CVPixelBufferLockBaseAddress(pixelBuffer, flags) == kCVReturnSuccess)
+{
+}
 
-    explicit operator bool() const { return m_isLocked; }
-
-private:
-    const RetainPtr<CVPixelBufferRef> m_pixelBuffer;
-    const CVPixelBufferLockFlags m_flags;
-    const bool m_isLocked;
-};
-
+PixelBufferLock::~PixelBufferLock()
+{
+    if (m_isLocked)
+        CVPixelBufferUnlockBaseAddress(m_pixelBuffer, m_flags);
 }
 
 static constexpr OSType pixelFormat422YpCbCr8VideoRange8ATriPlanar = 'v2a8';

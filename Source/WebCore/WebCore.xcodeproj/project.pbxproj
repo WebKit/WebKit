@@ -4887,6 +4887,7 @@
 		B28C6A2A0D00C44800334AA4 /* SVGImageLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = B28C6A210D00C44800334AA4 /* SVGImageLoader.h */; };
 		B2A015A90AF6CD53006BCE0E /* GraphicsContext.h in Headers */ = {isa = PBXBuildFile; fileRef = B2A015930AF6CD53006BCE0E /* GraphicsContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2A015AB0AF6CD53006BCE0E /* GraphicsTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = B2A015950AF6CD53006BCE0E /* GraphicsTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		91D2F7642EFD24CAE800F32C /* libYUV.h in Headers */ = {isa = PBXBuildFile; fileRef = F0A18F5B3242BCAC2938B13B /* libYUV.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2A10B920B3818BD00099AA4 /* ImageBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = B2A10B910B3818BD00099AA4 /* ImageBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2A1F2AB0CEF0ABF00442F6A /* SVGFontElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B2A1F2A20CEF0ABF00442F6A /* SVGFontElement.h */; };
 		B2B1F7170D00CAA8004AEA64 /* PointerEventsHitRules.h in Headers */ = {isa = PBXBuildFile; fileRef = B2B1F7150D00CAA8004AEA64 /* PointerEventsHitRules.h */; };
@@ -18736,6 +18737,7 @@
 		B2A015930AF6CD53006BCE0E /* GraphicsContext.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = GraphicsContext.h; sourceTree = "<group>"; };
 		B2A015940AF6CD53006BCE0E /* GraphicsTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsTypes.cpp; sourceTree = "<group>"; };
 		B2A015950AF6CD53006BCE0E /* GraphicsTypes.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = GraphicsTypes.h; sourceTree = "<group>"; };
+		F0A18F5B3242BCAC2938B13B /* libYUV.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libYUV.h; sourceTree = "<group>"; };
 		B2A10B910B3818BD00099AA4 /* ImageBuffer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ImageBuffer.h; sourceTree = "<group>"; };
 		B2A1F2A10CEF0ABF00442F6A /* SVGFontElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFontElement.cpp; sourceTree = "<group>"; };
 		B2A1F2A20CEF0ABF00442F6A /* SVGFontElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFontElement.h; sourceTree = "<group>"; };
@@ -36974,6 +36976,7 @@
 				0F36E7381BD184B9002DB891 /* LayoutSize.cpp */,
 				141DC04E164834B900371E5A /* LayoutSize.h */,
 				CDDE02E918B3DFC700CF7FF1 /* LegacyCDMSession.h */,
+				F0A18F5B3242BCAC2938B13B /* libYUV.h */,
 				07E3DFD01A9E786500764CA8 /* MediaPlaybackTarget.h */,
 				079216531AA560AA00A3C049 /* MediaPlaybackTargetClient.h */,
 				078E43D71ABB6C7E001C2FA6 /* MediaPlaybackTargetPicker.cpp */,
@@ -47625,6 +47628,7 @@
 				9A7EB29F2EC20AE500A10F7E /* LibWebRTCVideoFrameUtilities.h in Headers */,
 				A396B1C829232B4F00469612 /* LibWebRTCVPXVideoDecoder.h in Headers */,
 				A396B1CA29232B4F00469612 /* LibWebRTCVPXVideoEncoder.h in Headers */,
+				91D2F7642EFD24CAE800F32C /* libYUV.h in Headers */,
 				84730D911248F0B300D3A9C9 /* LightSource.h in Headers */,
 				B22279650D00BF220071B782 /* LinearGradientAttributes.h in Headers */,
 				DD4B9CF72C80E8E8001A6830 /* LineClampUpdater.h in Headers */,

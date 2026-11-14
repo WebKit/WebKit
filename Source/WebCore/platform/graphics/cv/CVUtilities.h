@@ -30,6 +30,7 @@
 #include <optional>
 #include <span>
 #include <utility>
+#include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
 
 using CGColorSpaceRef = struct CGColorSpace*;
@@ -38,6 +39,20 @@ typedef struct CF_BRIDGED_TYPE(id) __CVBuffer *CVPixelBufferRef;
 
 namespace WebCore {
 class ProcessIdentity;
+
+class PixelBufferLock final {
+    WTF_MAKE_NONCOPYABLE(PixelBufferLock);
+public:
+    PixelBufferLock(CVPixelBufferRef, CVPixelBufferLockFlags);
+    ~PixelBufferLock();
+
+    explicit operator bool() const { return m_isLocked; }
+
+private:
+    const RetainPtr<CVPixelBufferRef> m_pixelBuffer;
+    const CVPixelBufferLockFlags m_flags;
+    const bool m_isLocked;
+};
 
 // Creates CVPixelBufferPool that creates CVPixelBuffers backed by IOSurfaces.
 // These buffers can be for example sent through IPC.
