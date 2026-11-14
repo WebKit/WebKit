@@ -2702,6 +2702,39 @@ TEST(SiteIsolation, TransientActivationFromForcedUserGestureIsRevokedWhenCrossOr
     evaluateJavaScriptInFrame(webView.get(), @"internals.setTransientActivationDuration(5); 1", nil, NO);
 }
 
+TEST(SiteIsolation, RemovingCrossOriginIframeAfterForcedUserGestureNavigationDoesNotCrash)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe id='iframe' src='https://webkit.org/iframe'></iframe><iframe src='https://webkit.org/other'></iframe>"_s } },
+        { "/iframe"_s, { "iframe text"_s } },
+        { "/other"_s, { "other text"_s } },
+        { "/destination"_s, { "<script>window.webkit.messageHandlers.testHandler.postMessage('loaded')</script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configurationWithInternals(server), CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    pid_t iframeProcessIdentifier = [webView firstChildFrame]._processIdentifier;
+    EXPECT_NE([webView mainFrame].info._processIdentifier, iframeProcessIdentifier);
+    EXPECT_EQ([webView secondChildFrame]._processIdentifier, iframeProcessIdentifier);
+
+    // The iframe's new document loader keeps the forced user gesture alive until the iframe is destroyed.
+    __block bool loaded = false;
+    [webView performAfterReceivingMessage:@"loaded" action:^{
+        loaded = true;
+    }];
+    evaluateJavaScriptInFrame(webView.get(), @"location.href = 'https://webkit.org/destination'; 1", [webView firstChildFrame], YES);
+    Util::run(&loaded);
+    EXPECT_EQ([webView firstChildFrame]._processIdentifier, iframeProcessIdentifier);
+
+    evaluateJavaScriptInFrame(webView.get(), @"document.getElementById('iframe').remove(); 1", nil, NO);
+
+    RetainPtr remainingFrame = [webView firstChildFrame];
+    ASSERT_TRUE(!!remainingFrame);
+    EXPECT_EQ(remainingFrame.get()._processIdentifier, iframeProcessIdentifier);
+    evaluateJavaScriptInFrame(webView.get(), @"1", remainingFrame.get(), NO);
+}
+
 #if PLATFORM(MAC)
 
 TEST(SiteIsolation, TransientActivationFromUserGestureIsPreservedAfterForcedUserGestureInCrossOriginIframe)

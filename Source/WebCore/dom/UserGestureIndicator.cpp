@@ -115,7 +115,7 @@ UserGestureToken::~UserGestureToken()
     for (Ref window : m_windowsWithForcedActivation)
         window->revokeForcedActivation(identifier());
 
-    if (RefPtr frame = m_frameWithForcedActivationInOtherProcesses.get())
+    if (RefPtr frame = m_frameWithForcedActivationInOtherProcesses; frame && frame->page())
         frame->loader().client().didRevokeForcedUserActivation(identifier());
 }
 
