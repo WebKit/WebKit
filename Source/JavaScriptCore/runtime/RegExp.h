@@ -203,6 +203,8 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     const String& atom() const LIFETIME_BOUND { return m_atom; }
     Yarr::SpecificPattern specificPattern() const { return m_specificPattern; }
 
+    void setIsComingFromLiteral() { m_isComingFromLiteral = true; }
+
     const WTF::BitSet<256>* firstCharacterBitmap(FirstCharacterFilterPosition);
 
 private:
@@ -255,6 +257,7 @@ private:
     Yarr::SpecificPattern m_specificPattern { Yarr::SpecificPattern::None };
     OptionSet<Yarr::Flags> m_flags;
     Yarr::ErrorCode m_constructionErrorCode { Yarr::ErrorCode::NoError };
+    bool m_isComingFromLiteral : 1 { false };
     unsigned m_numSubpatterns { 0 };
     unsigned m_minimumSize { 0 };
     std::unique_ptr<Yarr::BytecodePattern> m_regExpBytecode;

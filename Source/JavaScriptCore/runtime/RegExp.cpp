@@ -312,7 +312,8 @@ void RegExp::compile(VM* vm, Yarr::CharSize charSize, std::optional<StringView> 
 
     if (!hasCode()) {
         ASSERT(m_state == NotCompiled);
-        vm->regExpCache()->addToStrongCache(this);
+        if (!m_isComingFromLiteral)
+            vm->regExpCache()->addToStrongCache(this);
         m_state = ByteCode;
     }
 
@@ -394,7 +395,8 @@ void RegExp::compileMatchOnly(VM* vm, Yarr::CharSize charSize, std::optional<Str
 
     if (!hasCode()) {
         ASSERT(m_state == NotCompiled);
-        vm->regExpCache()->addToStrongCache(this);
+        if (!m_isComingFromLiteral)
+            vm->regExpCache()->addToStrongCache(this);
         m_state = ByteCode;
     }
 

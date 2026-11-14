@@ -171,8 +171,10 @@ RegisterID* RegExpNode::emitBytecode(BytecodeGenerator& generator, RegisterID* d
     auto flags = Yarr::parseFlags(m_flags.string());
     ASSERT(flags);
     RegExp* regExp = RegExp::create(generator.vm(), m_pattern.string(), flags.value());
-    if (regExp->isValid())
+    if (regExp->isValid()) {
+        regExp->setIsComingFromLiteral();
         return generator.emitNewRegExp(generator.finalDestination(dst), regExp);
+    }
 
     auto& message = generator.parserArena().identifierArena().makeIdentifier(generator.vm(), regExp->errorMessage().span8());
     generator.emitThrowStaticError(ErrorTypeWithExtension::SyntaxError, message);

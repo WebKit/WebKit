@@ -1347,7 +1347,9 @@ public:
     RegExp* decode(Decoder& decoder) const
     {
         String pattern { m_patternString.decode(decoder) };
-        return RegExp::create(decoder.vm(), pattern, m_flags);
+        RegExp* regExp = RegExp::create(decoder.vm(), pattern, m_flags);
+        regExp->setIsComingFromLiteral();
+        return regExp;
     }
 
 private:
