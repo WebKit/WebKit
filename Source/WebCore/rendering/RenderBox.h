@@ -553,7 +553,6 @@ public:
     LayoutUnit containingBlockLogicalWidthForContent() const override;
     LayoutUnit containingBlockLogicalHeightForContent(AvailableLogicalHeightType) const;
     LayoutRange containingBlockRangeForPositioned(const RenderBoxModelObject& containingBlock, BoxAxis physicalAxis) const;
-    LayoutUnit containingBlockAvailableLineWidth() const;
     LayoutUnit perpendicularContainingBlockLogicalHeight() const;
 
     RenderFragmentContainer* clampToStartAndEndFragments(RenderFragmentContainer*) const;
