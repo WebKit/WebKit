@@ -94,14 +94,15 @@ class WebDriverTestRunnerW3C(object):
     def run(self, tests=[]):
         executor = None
         try:
-            self._server.start()
+            # Collect the tests while the server starts up.
+            self._server.start(wait=False)
 
             # The tests compare the platformName capability with this. Like wptrunner, use the OS name as mozinfo has it
             # (mac, linux, win), which PytestExecutor maps to the WebDriver name.
             executor = WebDriverW3CExecutor(self._driver, self._server, self._env, self._port.get_option('timeout'), self._expectations, self._port.host.platform.os_name)
             executor.collect(tests)
+            self._server.wait_until_started()
             executor.setup()
-            executor.warm_up()
             restart_count = 0
             restart_seconds = 0
             previous_file_failed = False
