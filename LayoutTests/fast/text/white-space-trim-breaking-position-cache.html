@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<style>
+.trim { white-space-trim: discard-inner; }
+</style>
+<!-- The first span's inline items lose their leading and trailing white space to 'white-space-trim'. Its breaking
+     positions must not be cached and reused for the same text without trimming. -->
+<div id=trimmed>[<span class=trim>   some inline text   </span>]</div>
+<div id=untrimmed></div>
+<script>
+document.body.offsetHeight;
+// Destroying the line layout populates the breaking position cache.
+trimmed.style.display = "none";
+document.body.offsetHeight;
+untrimmed.innerHTML = "[<span>   some inline text   </span>]";
+</script>

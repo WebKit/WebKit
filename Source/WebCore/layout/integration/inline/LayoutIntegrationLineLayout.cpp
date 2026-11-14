@@ -229,6 +229,9 @@ LineLayout::~LineLayout()
         auto mayHaveInvalidContent = isDamaged() || !m_inlineContent;
         if (m_document->renderTreeState() == Document::RenderTreeState::BeingDestroyed || mayHaveInvalidContent || !m_inlineContentCache)
             return false;
+        // 'white-space-trim' discards inline items, so the breaking positions would be missing the discarded white space.
+        if (m_inlineContentCache->inlineItems().hasWhiteSpaceTrim())
+            return false;
         return !m_inlineContentCache->inlineItems().isPopulatedFromCache();
     };
     if (shouldPopulateBreakingPositionCache()) {
