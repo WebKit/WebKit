@@ -400,6 +400,8 @@ webgl/2.0.y/conformance/offscreencanvas/context-lost.html [ Skip ]
 webgl/offscreen-webgl-errors-to-console.html [ Skip ]
 webgl/webgl-worker.html [ Skip ]
 webgl/webgl2-init-missing-fragment-output-components.html [ Skip ]
+fast/text/font-face/css-font-selector-opportunistic-load-reentrancy-crash.html [ Skip ]
+fast/text/font-face/font-cascade-fallback-walk-prune-crash.html [ Skip ]
 
 # Accelerated canvas isn't supported yet
 fast/canvas/canvas-will-read-frequently.html [ Skip ]
