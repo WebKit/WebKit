@@ -41,6 +41,23 @@
 
 namespace WebCore {
 
+static bool hasTextBoxTrimEnd(const RenderBlock& blockContainer)
+{
+    auto textBoxTrim = blockContainer.style().textBoxTrim();
+    return textBoxTrim == TextBoxTrim::TrimEnd || textBoxTrim == TextBoxTrim::TrimBoth;
+}
+
+// Whether the last line before the clamp point gets its block end trimmed when it is inside this block, given whether it would when
+// it is inside the parent.
+static bool shouldTrimEndAtClampPoint(const RenderBlock& blockContainer, bool parentShouldTrimEnd)
+{
+    // "trim-end: For block containers and column boxes: trim the block-end side of the last formatted line to the specified metric
+    // of its root inline box. If there is no such line, or if there is intervening non-zero padding or borders, there is no effect."
+    // https://drafts.csswg.org/css-inline-3/#valdef-text-box-trim-trim-end
+    // The block-end padding and border of this block are between the line and the block end of its ancestors, but not of this block.
+    return hasTextBoxTrimEnd(blockContainer) || (parentShouldTrimEnd && !blockContainer.borderAndPaddingAfter());
+}
+
 bool LineClampUpdater::shouldDiscardOverflow(const RenderBlock& blockContainer)
 {
     // FIXME: continue: discard should turn the box into a fragmentation container instead (https://drafts.csswg.org/css-overflow-4/#valdef-continue-discard).
@@ -78,14 +95,14 @@ LineClampUpdater::LineClampUpdater(const RenderBlock& blockContainer)
             return;
         // New, top level line clamp.
         m_isLineClampRoot = true;
-        layoutState->setLineClamp(RenderLayoutState::LineClamp { static_cast<size_t>(maximumLinesForBlockContainer->value), shouldDiscardOverflow(m_blockContainer), { } });
+        layoutState->setLineClamp(RenderLayoutState::LineClamp { static_cast<size_t>(maximumLinesForBlockContainer->value), shouldDiscardOverflow(m_blockContainer), { }, false, false, hasTextBoxTrimEnd(m_blockContainer) });
         return;
     }
 
     if (isAutoLineClampRoot()) {
         // Until layout finds the auto clamp point (see autoClampPoint), content is laid out as before the clamp point of a line-clamp container.
         m_isLineClampRoot = true;
-        layoutState->setLineClamp(RenderLayoutState::LineClamp { std::numeric_limits<size_t>::max(), true, { }, true });
+        layoutState->setLineClamp(RenderLayoutState::LineClamp { std::numeric_limits<size_t>::max(), true, { }, true, false, hasTextBoxTrimEnd(m_blockContainer) });
         return;
     }
 
@@ -106,8 +123,11 @@ LineClampUpdater::LineClampUpdater(const RenderBlock& blockContainer)
             return;
         }
         auto effectiveShouldDiscard = m_previousLineClamp->shouldDiscardOverflow || shouldDiscardOverflow(m_blockContainer);
-        // The box to clamp after may be nested in this one (see autoClampPoints).
-        layoutState->setLineClamp(RenderLayoutState::LineClamp { m_previousLineClamp->maximumLines, effectiveShouldDiscard, m_previousLineClamp->clampAfterBox, m_previousLineClamp->isStableTextWrap });
+        // The box to clamp after may be nested in this one (see autoClampPoints). Trim-end on the line-clamp container or on a block
+        // between it and this one applies to the last line before the clamp point, which may be in this block, unless block-end padding or
+        // border is in between (see shouldTrimEndAtClampPoint). This block's own trim-end only covers its content: the destructor restores
+        // the parent's state.
+        layoutState->setLineClamp(RenderLayoutState::LineClamp { m_previousLineClamp->maximumLines, effectiveShouldDiscard, m_previousLineClamp->clampAfterBox, m_previousLineClamp->isStableTextWrap, false, shouldTrimEndAtClampPoint(m_blockContainer, m_previousLineClamp->shouldTrimEndAtClampPoint) });
         return;
     }
 }
@@ -139,7 +159,7 @@ LineClampUpdater::~LineClampUpdater()
     if (auto* blockFlow = dynamicDowncast<RenderBlockFlow>(m_blockContainer); blockFlow && blockFlow->childrenInline())
         lineCount = blockFlow->lineCount();
     auto hasConstrainedTextWrapContent = m_previousLineClamp->hasConstrainedTextWrapContent || lineClamp->hasConstrainedTextWrapContent;
-    layoutState->setLineClamp(RenderLayoutState::LineClamp { m_previousLineClamp->maximumLines - std::min(m_previousLineClamp->maximumLines, lineCount), m_previousLineClamp->shouldDiscardOverflow, m_previousLineClamp->clampAfterBox, m_previousLineClamp->isStableTextWrap, hasConstrainedTextWrapContent });
+    layoutState->setLineClamp(RenderLayoutState::LineClamp { m_previousLineClamp->maximumLines - std::min(m_previousLineClamp->maximumLines, lineCount), m_previousLineClamp->shouldDiscardOverflow, m_previousLineClamp->clampAfterBox, m_previousLineClamp->isStableTextWrap, hasConstrainedTextWrapContent, m_previousLineClamp->shouldTrimEndAtClampPoint });
 }
 
 bool LineClampUpdater::isAutoLineClampRoot() const
@@ -159,7 +179,7 @@ void LineClampUpdater::setMaximumLines(size_t maximumLines)
     if (!layoutState)
         return;
     m_isLineClampRoot = true;
-    layoutState->setLineClamp(RenderLayoutState::LineClamp { maximumLines, shouldDiscardOverflow(m_blockContainer), { } });
+    layoutState->setLineClamp(RenderLayoutState::LineClamp { maximumLines, shouldDiscardOverflow(m_blockContainer), { }, false, false, hasTextBoxTrimEnd(m_blockContainer) });
 }
 
 void LineClampUpdater::setClampAfterBox(const RenderBox& clampAfterBox)
@@ -169,7 +189,7 @@ void LineClampUpdater::setClampAfterBox(const RenderBox& clampAfterBox)
         return;
     m_isLineClampRoot = true;
     // Lines before the clamp point do not run out of the budget (and no line gets the block ellipsis).
-    layoutState->setLineClamp(RenderLayoutState::LineClamp { std::numeric_limits<size_t>::max(), shouldDiscardOverflow(m_blockContainer), &clampAfterBox });
+    layoutState->setLineClamp(RenderLayoutState::LineClamp { std::numeric_limits<size_t>::max(), shouldDiscardOverflow(m_blockContainer), &clampAfterBox, false, false, hasTextBoxTrimEnd(m_blockContainer) });
 }
 
 void LineClampUpdater::resetLineClamp()
@@ -245,10 +265,17 @@ Vector<LineClampUpdater::AutoClampPoint> LineClampUpdater::autoClampPoints() con
         for (size_t line = 1; line <= lineCount; ++line)
             clampPoints.append(lineCountBefore + line);
     };
+    // The lines were measured untrimmed, but 'text-box-trim: trim-end' trims the last line before the clamp point, which may then fit.
+    // The caller lays out each candidate clamp point from the last one on until the content fits.
+    auto appendFittingLineClampPoints = [&](size_t lineCountBefore, size_t lineCount, size_t fittingLineCount, bool mayFitWhenTrimmed) {
+        appendLineClampPoints(lineCountBefore, fittingLineCount);
+        if (mayFitWhenTrimmed && fittingLineCount < lineCount)
+            clampPoints.append(lineCountBefore + fittingLineCount + 1);
+    };
 
     if (lineClampContainer.childrenInline()) {
         auto [lineCount, fittingLineCount] = countLines(lineClampContainer);
-        appendLineClampPoints(0, fittingLineCount);
+        appendFittingLineClampPoints(0, lineCount, fittingLineCount, hasTextBoxTrimEnd(lineClampContainer));
         return clampPoints;
     }
 
@@ -258,7 +285,8 @@ Vector<LineClampUpdater::AutoClampPoint> LineClampUpdater::autoClampPoints() con
     // possible, even when its content overflows it (e.g. because of its max-height). It returns nothing once it found the box
     // that does not fit, which ends the clamp points, and otherwise whether the content of the parent ends with a line box.
     size_t lineCountBeforeChild = 0;
-    auto appendClampPointsForChildren = [&](auto& appendClampPointsForChildren, const RenderBlock& parent, LayoutUnit parentLogicalTop, bool parentFits) -> std::optional<bool> {
+    // A line in the parent gets its block end trimmed at the clamp point when parentShouldTrimEnd (see shouldTrimEndAtClampPoint).
+    auto appendClampPointsForChildren = [&](auto& appendClampPointsForChildren, const RenderBlock& parent, LayoutUnit parentLogicalTop, bool parentFits, bool parentShouldTrimEnd) -> std::optional<bool> {
         auto endsWithLineBox = false;
         for (CheckedPtr child = parent.firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
             auto childLogicalTop = parentLogicalTop + child->logicalTop();
@@ -268,18 +296,20 @@ Vector<LineClampUpdater::AutoClampPoint> LineClampUpdater::autoClampPoints() con
                 CheckedRef childStyle = child->style();
                 auto fixedMinimumHeight = childStyle->logicalMinHeight().tryFixed();
                 auto minimumHeightOverflows = fixedMinimumHeight && childLogicalTop + LayoutUnit { fixedMinimumHeight->resolveZoom(childStyle->usedZoomForLength()) } > blockSizeLimit;
-                if (!childStyle->logicalHeight().isAuto() || minimumHeightOverflows)
+                if (!childStyle->logicalHeight().isAuto() || minimumHeightOverflows) {
+                    // Not even after the first line that only fits when trimmed (see appendFittingLineClampPoints): trimming does not make the block shorter.
                     return { };
+                }
             }
             if (CheckedPtr childBlock = dynamicDowncast<RenderBlockFlow>(*child); childBlock && !childBlock->childrenInline() && !childBlock->establishesIndependentFormattingContext()) {
-                auto childEndsWithLineBox = appendClampPointsForChildren(appendClampPointsForChildren, *childBlock, childLogicalTop, !overflows);
+                auto childEndsWithLineBox = appendClampPointsForChildren(appendClampPointsForChildren, *childBlock, childLogicalTop, !overflows, shouldTrimEndAtClampPoint(*childBlock, parentShouldTrimEnd));
                 if (!childEndsWithLineBox)
                     return { };
                 endsWithLineBox = *childEndsWithLineBox;
             } else {
                 auto [lineCount, fittingLineCount] = countLines(*child);
                 if (overflows) {
-                    appendLineClampPoints(lineCountBeforeChild, fittingLineCount);
+                    appendFittingLineClampPoints(lineCountBeforeChild, lineCount, fittingLineCount, childBlock && shouldTrimEndAtClampPoint(*childBlock, parentShouldTrimEnd));
                     return { };
                 }
                 appendLineClampPoints(lineCountBeforeChild, lineCount);
@@ -295,7 +325,7 @@ Vector<LineClampUpdater::AutoClampPoint> LineClampUpdater::autoClampPoints() con
         }
         return endsWithLineBox;
     };
-    appendClampPointsForChildren(appendClampPointsForChildren, lineClampContainer, { }, false);
+    appendClampPointsForChildren(appendClampPointsForChildren, lineClampContainer, { }, false, hasTextBoxTrimEnd(lineClampContainer));
     return clampPoints;
 }
 

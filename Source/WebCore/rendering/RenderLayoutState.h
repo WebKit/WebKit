@@ -54,6 +54,8 @@ public:
         // https://drafts.csswg.org/css-overflow-4/#line-clamp
         bool isStableTextWrap { false };
         bool hasConstrainedTextWrapContent { false };
+        // 'text-box-trim: trim-end' on the line-clamp container or on a block in its block formatting context trims the last line before the clamp point.
+        bool shouldTrimEndAtClampPoint { false };
     };
 
     struct LegacyLineClamp {

@@ -43,6 +43,7 @@ public:
         bool shouldDiscardOverflow { false };
         bool isLegacy { true };
         bool isStableTextWrap { false };
+        bool shouldTrimEndAtClampPoint { false };
     };
     enum class TextBoxTrimSide : bool {
         Start,

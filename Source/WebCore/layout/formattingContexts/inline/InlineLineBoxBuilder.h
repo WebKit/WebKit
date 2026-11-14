@@ -63,6 +63,7 @@ private:
 
     bool isFirstFormattedLine() const { return lineLayoutResult().isFirstLast.isFirstFormattedLine == IsFirstFormattedLine::Yes; }
     bool isLastLine() const { return lineLayoutResult().isFirstLast.isLastLineWithInlineContent; }
+    bool isLastLineBeforeClampPointWithTrimEnd() const;
     const InlineFormattingContext& formattingContext() const LIFETIME_BOUND { return m_inlineFormattingContext; }
     const LineLayoutResult& lineLayoutResult() const LIFETIME_BOUND { return m_lineLayoutResult; }
     const ElementBox& rootBox() const { return formattingContext().root(); }
