@@ -1404,7 +1404,7 @@ void WebProcess::setInjectedBundleParameters(std::span<const uint8_t> value)
     injectedBundle->setBundleParameters(value);
 }
 
-[[noreturn]] inline void failedToGetNetworkProcessConnection()
+[[noreturn]] inline void failedToGetNetworkProcessConnection(IPC::Error sendSyncError = IPC::Error::NoError)
 {
 #if PLATFORM(GTK) || PLATFORM(WPE)
     // GTK and WPE ports don't exit on send sync message failure.
@@ -1412,8 +1412,14 @@ void WebProcess::setInjectedBundleParameters(std::span<const uint8_t> value)
     // Web process is still initializing, so we always want to exit instead of crashing. This can
     // happen when the WebView is created and then destroyed quickly.
     // See https://bugs.webkit.org/show_bug.cgi?id=183348.
+    UNUSED_PARAM(sendSyncError);
     exitProcess(0);
 #else
+    // If the UI process is gone, for example because it exited while this process was still initializing,
+    // exit quietly, as the connection's close handler is about to (see callExit()). Builds with the IPC
+    // testing API get here, because they don't exit in IPC::Connection when a sync message fails.
+    if (sendSyncError == IPC::Error::InvalidConnection || sendSyncError == IPC::Error::CantWaitForSyncReplies)
+        terminateProcess(EXIT_SUCCESS);
     CRASH();
 #endif
 }
@@ -1426,7 +1432,7 @@ static NetworkProcessConnectionInfo getNetworkProcessConnection(IPC::Connection&
         auto sendResult = connection.sendSync(Messages::WebProcessProxy::GetNetworkProcessConnection(), 0, IPC::Timeout::infinity(), IPC::SendSyncOption::MaintainOrderingWithAsyncMessages);
         if (!sendResult.succeeded()) {
             RELEASE_LOG_ERROR(Process, "getNetworkProcessConnection: Failed to send message or receive invalid message: error %" PUBLIC_LOG_STRING, IPC::errorAsString(sendResult.error()).characters());
-            failedToGetNetworkProcessConnection();
+            failedToGetNetworkProcessConnection(sendResult.error());
         }
         std::tie(connectionInfo) = sendResult.takeReply();
         return !!connectionInfo.connection;
