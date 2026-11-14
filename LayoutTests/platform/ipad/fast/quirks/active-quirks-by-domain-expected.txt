@@ -19,7 +19,8 @@ https://actesting.org/
 https://www.affirm.com/
     (none)
 https://www.airindiaexpress.com/
-    NeedsAirIndiaExpressLayeringQuirk
+    NeedsStyleSheetInjectedQuirk
+        styleSheet: .new-trip-type-and-guest-selection-container { z-index: 2; }
 https://www.amazon.com/
     ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk
         elementSelector: #magnifierLens, :has(+ #magnifierLens)
@@ -138,9 +139,10 @@ https://www.espn.com/
     NeedsSuppressedPauseEventOnFullscreenExitQuirk
     ShouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk
 https://www.facebook.com/
-    NeedsFacebookRemoveNotSupportedQuirk
     NeedsFacebookStoriesCreationFormQuirk
         secondaryURL: [*://*/stories/create*]
+    NeedsStyleSheetInjectedQuirk
+        styleSheet: div.xnw9j1v { display: none; }
     RequiresUserGestureToPauseInPictureInPictureQuirk
     ShouldComputeSimulatedMouseEventMovementDeltaQuirk
     ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk
@@ -275,49 +277,49 @@ https://www.hbomax.com/
 https://play.hbomax.com/
     ShouldEnableFontLoadingAPIQuirk
 https://www.carrentals.com/
-    NeedsExpediaGroupAnimationQuirk
-        elementSelector: .uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open
+    NeedsStyleSheetInjectedQuirk
+        styleSheet: .uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open { animation: menu-grow-left 0.18s 0s, menu-fade-in 0.06s 0.06s both; }
 https://www.cheaptickets.com/
-    NeedsExpediaGroupAnimationQuirk
-        elementSelector: .uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open
+    NeedsStyleSheetInjectedQuirk
+        styleSheet: .uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open { animation: menu-grow-left 0.18s 0s, menu-fade-in 0.06s 0.06s both; }
 https://www.chess.com/
     (none)
 https://www.ebookers.de/
-    NeedsExpediaGroupAnimationQuirk
-        elementSelector: .uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open
+    NeedsStyleSheetInjectedQuirk
+        styleSheet: .uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open { animation: menu-grow-left 0.18s 0s, menu-fade-in 0.06s 0.06s both; }
 https://www.expedia.com/
-    NeedsExpediaGroupAnimationQuirk
-        elementSelector: .uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open
+    NeedsStyleSheetInjectedQuirk
+        styleSheet: .uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open { animation: menu-grow-left 0.18s 0s, menu-fade-in 0.06s 0.06s both; }
 https://www.expedia.fr/
-    NeedsExpediaGroupAnimationQuirk
-        elementSelector: .uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open
+    NeedsStyleSheetInjectedQuirk
+        styleSheet: .uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open { animation: menu-grow-left 0.18s 0s, menu-fade-in 0.06s 0.06s both; }
 https://www.hoteis.com/
-    NeedsExpediaGroupAnimationQuirk
-        elementSelector: .uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open
+    NeedsStyleSheetInjectedQuirk
+        styleSheet: .uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open { animation: menu-grow-left 0.18s 0s, menu-fade-in 0.06s 0.06s both; }
 https://www.hoteles.com/
-    NeedsExpediaGroupAnimationQuirk
-        elementSelector: .uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open
+    NeedsStyleSheetInjectedQuirk
+        styleSheet: .uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open { animation: menu-grow-left 0.18s 0s, menu-fade-in 0.06s 0.06s both; }
 https://www.hotels.com/
-    NeedsExpediaGroupAnimationQuirk
-        elementSelector: .uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open
+    NeedsStyleSheetInjectedQuirk
+        styleSheet: .uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open { animation: menu-grow-left 0.18s 0s, menu-fade-in 0.06s 0.06s both; }
 https://www.mrjet.se/
-    NeedsExpediaGroupAnimationQuirk
-        elementSelector: .uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open
+    NeedsStyleSheetInjectedQuirk
+        styleSheet: .uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open { animation: menu-grow-left 0.18s 0s, menu-fade-in 0.06s 0.06s both; }
 https://www.orbitz.com/
-    NeedsExpediaGroupAnimationQuirk
-        elementSelector: .uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open
+    NeedsStyleSheetInjectedQuirk
+        styleSheet: .uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open { animation: menu-grow-left 0.18s 0s, menu-fade-in 0.06s 0.06s both; }
 https://www.travelocity.com/
-    NeedsExpediaGroupAnimationQuirk
-        elementSelector: .uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open
+    NeedsStyleSheetInjectedQuirk
+        styleSheet: .uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open { animation: menu-grow-left 0.18s 0s, menu-fade-in 0.06s 0.06s both; }
 https://www.travelocity.ca/
-    NeedsExpediaGroupAnimationQuirk
-        elementSelector: .uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open
+    NeedsStyleSheetInjectedQuirk
+        styleSheet: .uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open { animation: menu-grow-left 0.18s 0s, menu-fade-in 0.06s 0.06s both; }
 https://www.wotif.com/
-    NeedsExpediaGroupAnimationQuirk
-        elementSelector: .uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open
+    NeedsStyleSheetInjectedQuirk
+        styleSheet: .uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open { animation: menu-grow-left 0.18s 0s, menu-fade-in 0.06s 0.06s both; }
 https://www.wotif.co.nz/
-    NeedsExpediaGroupAnimationQuirk
-        elementSelector: .uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open
+    NeedsStyleSheetInjectedQuirk
+        styleSheet: .uitk-menu-mounted .uitk-menu-container.uitk-menu-container-autoposition.uitk-menu-container-has-intersection-root-el.uitk-menu-open { animation: menu-grow-left 0.18s 0s, menu-fade-in 0.06s 0.06s both; }
 https://www.hulu.com/
     ImplicitMuteWhenVolumeSetToZero
     NeedsCanPlayAfterSeekedQuirk
@@ -404,9 +406,10 @@ https://www.messenger.com/
     ShouldEnableRTCEncodedStreamsQuirk
     ShouldEnableRemoteTrackLabelQuirk
 https://www.netflix.com/
-    NeedsNetflixVolumeSliderQuirk
     NeedsPerDocumentAutoplayBehaviorQuirk
     NeedsSeekingSupportDisabledQuirk
+    NeedsStyleSheetInjectedQuirk
+        styleSheet: div[data-uia="scrubber"][aria-orientation="vertical"] { touch-action: none; }
 https://www.nba.com/
     NeedsPerDocumentAutoplayBehaviorQuirk
     NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
@@ -606,7 +609,8 @@ https://x.com/
 https://twitter.com/
     (none)
 https://www.yahoo.com/
-    NeedsYahooVolumeSliderQuirk
+    NeedsStyleSheetInjectedQuirk
+        styleSheet: div.vjs-volume-control { min-height: 100%; align-items: center; }
     ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor
 https://news.ycombinator.com/
     ShouldIgnoreTextAutoSizingQuirk
