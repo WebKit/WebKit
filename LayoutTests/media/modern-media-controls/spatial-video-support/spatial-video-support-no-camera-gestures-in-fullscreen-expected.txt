@@ -1,0 +1,31 @@
+Testing that SpatialVideoSupport removes its camera gestures in fullscreen on platforms whose fullscreen reserves drag gestures for dismissal, and restores them when returning inline.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS support._active is true
+PASS iosReservesDragGestures is true
+PASS macReservesDragGestures is false
+
+Inline, the camera gestures are installed:
+PASS support._interactionInstalled is true
+PASS container.style.touchAction is "none"
+
+In fullscreen they are removed, so the dismissal gestures are not swallowed:
+PASS support._interactionInstalled is false
+PASS container.style.touchAction is ""
+
+Returning inline restores them:
+PASS support._interactionInstalled is true
+PASS container.style.touchAction is "none"
+
+A platform that does not reserve drag gestures keeps them in fullscreen:
+PASS support._interactionInstalled is true
+
+The renderer stays active throughout:
+PASS support._active is true
+PASS !!support._canvas is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

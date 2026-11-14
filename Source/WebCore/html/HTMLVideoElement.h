@@ -165,6 +165,9 @@ public:
     double fieldOfView() const;
     void spatialCameraDidMove(double yaw, double pitch, double fieldOfView);
 
+    bool isSpatialVideoRendererActive() const { return m_spatialVideoRendererActive; }
+    void setSpatialVideoRendererActive(bool);
+
 private:
     friend class HTMLVideoElementPictureInPicture;
     HTMLVideoElement(const QualifiedName&, Document&, bool createdByParser);
@@ -216,6 +219,7 @@ private:
     std::optional<double> m_cameraYaw;
     std::optional<double> m_cameraPitch;
     std::optional<double> m_cameraFieldOfView;
+    bool m_spatialVideoRendererActive { false };
 
     bool m_renderingCanBeAccelerated { false };
 

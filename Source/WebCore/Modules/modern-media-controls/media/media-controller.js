@@ -492,7 +492,7 @@ class MediaController
 
     _shouldControlsBeAvailable()
     {
-        if (this.layoutTraits.controlsNeverAvailable())
+        if (this.layoutTraits.controlsNeverAvailable() && !(this.host && this.host.isInElementFullscreen))
             return false;
         
         if (this.controls instanceof IOSInlineMediaControls && this.media.webkitPresentationMode === "picture-in-picture")

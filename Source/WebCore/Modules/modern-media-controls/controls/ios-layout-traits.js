@@ -40,6 +40,11 @@ class IOSLayoutTraits extends LayoutTraits
         return this.isFullscreen;
     }
 
+    reservesFullscreenDragGestures()
+    {
+        return true;
+    }
+
     supportsIconWithFullscreenVariant()
     {
         return false;

@@ -8012,6 +8012,9 @@ bool HTMLMediaElement::videoUsesElementFullscreen() const
 #if PLATFORM(IOS_FAMILY)
     if (document().settings().videoFullscreenRequiresElementFullscreen())
         return true;
+
+    if (auto* videoElement = dynamicDowncast<HTMLVideoElement>(this); videoElement && videoElement->isSpatialVideoRendererActive())
+        return true;
 #else
     return true;
 #endif // PLATFORM(IOS_FAMILY)

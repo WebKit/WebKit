@@ -1,0 +1,75 @@
+<!-- webkit-test-runner [ SpatialVideoRenderingEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../resources/js-test.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<video src="../../content/test.mp4" style="width: 320px; height: 240px;" projection="equirectangular"></video>
+<div id="shadow"></div>
+<script type="text/javascript">
+
+description("Testing that <code>SpatialVideoSupport</code> removes its camera gestures in fullscreen on platforms whose fullscreen reserves drag gestures for dismissal, and restores them when returning inline.");
+
+window.jsTestIsAsync = true;
+
+const media = document.querySelector("video");
+const shadowRoot = document.querySelector("div#shadow").attachShadow({ mode: "open" });
+window.container = shadowRoot.appendChild(document.createElement("div"));
+
+function enterMode(TraitsClass, mode)
+{
+    mediaController.layoutTraits = new TraitsClass(mode);
+    support.handleEvent({ type: mediaController.fullscreenChangeEventType });
+}
+
+media.addEventListener("loadedmetadata", () => {
+    window.mediaController = {
+        media,
+        host: { spatialVideoRenderingEnabled: true },
+        shadowRoot,
+        container,
+        fullscreenChangeEventType: "webkitpresentationmodechanged",
+        layoutTraits: new IOSLayoutTraits(LayoutTraits.Mode.Inline),
+    };
+
+    window.support = new SpatialVideoSupport(mediaController);
+    shouldBeTrue("support._active");
+
+    window.iosReservesDragGestures = new IOSLayoutTraits(LayoutTraits.Mode.Fullscreen).reservesFullscreenDragGestures();
+    window.macReservesDragGestures = new MacOSLayoutTraits(LayoutTraits.Mode.Fullscreen).reservesFullscreenDragGestures();
+    shouldBeTrue("iosReservesDragGestures");
+    shouldBeFalse("macReservesDragGestures");
+
+    debug("");
+    debug("Inline, the camera gestures are installed:");
+    shouldBeTrue("support._interactionInstalled");
+    shouldBeEqualToString("container.style.touchAction", "none");
+
+    debug("");
+    debug("In fullscreen they are removed, so the dismissal gestures are not swallowed:");
+    enterMode(IOSLayoutTraits, LayoutTraits.Mode.Fullscreen);
+    shouldBeFalse("support._interactionInstalled");
+    shouldBeEqualToString("container.style.touchAction", "");
+
+    debug("");
+    debug("Returning inline restores them:");
+    enterMode(IOSLayoutTraits, LayoutTraits.Mode.Inline);
+    shouldBeTrue("support._interactionInstalled");
+    shouldBeEqualToString("container.style.touchAction", "none");
+
+    debug("");
+    debug("A platform that does not reserve drag gestures keeps them in fullscreen:");
+    enterMode(MacOSLayoutTraits, LayoutTraits.Mode.Fullscreen);
+    shouldBeTrue("support._interactionInstalled");
+
+    debug("");
+    debug("The renderer stays active throughout:");
+    shouldBeTrue("support._active");
+    shouldBeTrue("!!support._canvas");
+
+    media.remove();
+    shadowRoot.host.remove();
+    finishJSTest();
+}, { once: true });
+
+</script>
+</body>

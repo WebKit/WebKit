@@ -42,7 +42,11 @@ class SpatialVideoSupport extends MediaControllerSupport
 
     get mediaEvents()
     {
-        return ["loadedmetadata", "resize", "webkitprojectionchanged", "webkitcameraviewchanged"];
+        const events = ["loadedmetadata", "resize", "webkitprojectionchanged", "webkitcameraviewchanged"];
+        const fullscreenChangeEventType = this.mediaController.fullscreenChangeEventType;
+        if (fullscreenChangeEventType)
+            events.push(fullscreenChangeEventType);
+        return events;
     }
 
     get tracksToMonitor()
@@ -61,8 +65,13 @@ class SpatialVideoSupport extends MediaControllerSupport
             this._maybeEnable();
     }
 
-    handleEvent()
+    handleEvent(event)
     {
+        if (event && event.type === this.mediaController.fullscreenChangeEventType) {
+            this._updateInteraction();
+            return;
+        }
+
         this._maybeEnable();
     }
 
@@ -169,8 +178,9 @@ class SpatialVideoSupport extends MediaControllerSupport
             return;
         }
 
-        this._installInteraction(canvas);
         this._active = true;
+        this._updateInteraction();
+        this._reportRendererActive(true);
         this._resize();
         this._startRenderLoops();
     }
@@ -402,9 +412,28 @@ class SpatialVideoSupport extends MediaControllerSupport
         return { position, texCoord, edge, index, count: indices.length };
     }
 
-    _installInteraction(canvas)
+    _updateInteraction()
     {
+        if (!this._active)
+            return;
+
+        const layoutTraits = this.mediaController.layoutTraits;
+        if (layoutTraits && layoutTraits.isFullscreen && layoutTraits.reservesFullscreenDragGestures())
+            this._removeInteraction();
+        else
+            this._installInteraction();
+    }
+
+    _installInteraction()
+    {
+        if (this._interactionInstalled)
+            return;
+
         const container = this.mediaController.container;
+        if (!container)
+            return;
+
+        this._interactionInstalled = true;
         this._savedContainerTouchAction = container.style.touchAction;
         container.style.touchAction = "none";
 
@@ -459,8 +488,11 @@ class SpatialVideoSupport extends MediaControllerSupport
     _removeInteraction()
     {
         const container = this.mediaController.container;
-        if (!container || !this._onPointerDown)
+        if (!container || !this._interactionInstalled)
             return;
+        this._interactionInstalled = false;
+        this._dragging = false;
+        this._moved = false;
         container.removeEventListener("pointerdown", this._onPointerDown, true);
         container.removeEventListener("pointermove", this._onPointerMove, true);
         container.removeEventListener("pointerup", this._onPointerUp, true);
@@ -562,9 +594,18 @@ class SpatialVideoSupport extends MediaControllerSupport
         host.spatialCameraDidMove(this._yaw * 180 / Math.PI, this._pitch * 180 / Math.PI, this._cameraFieldOfView);
     }
 
+    _reportRendererActive(active)
+    {
+        const host = this.mediaController.host;
+        if (!host || typeof host.setSpatialVideoRendererActive !== "function")
+            return;
+        host.setSpatialVideoRendererActive(active);
+    }
+
     _teardown()
     {
         this._active = false;
+        this._reportRendererActive(false);
         if (this._animationFrame)
             cancelAnimationFrame(this._animationFrame);
         const media = this.mediaController.media;

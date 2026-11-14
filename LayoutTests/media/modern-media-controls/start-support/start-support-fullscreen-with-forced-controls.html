@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<script src="../../../resources/js-test.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<video src="../../content/test.mp4" style="width: 320px; height: 240px;"></video>
+<div id="shadow"></div>
+<script type="text/javascript">
+
+description("Testing that <code>StartSupport</code> does not show the start button in fullscreen even when the host forces the controls to be displayed, as it does for a video that uses element fullscreen.");
+
+window.jsTestIsAsync = true;
+
+const media = document.querySelector("video");
+const shadowRoot = document.querySelector("div#shadow").attachShadow({ mode: "open" });
+
+media.addEventListener("loadedmetadata", () => {
+    window.controls = { };
+    window.mediaController = {
+        media,
+        shadowRoot,
+        controls,
+        host: { shouldForceControlsDisplay: true },
+        hasPlayed: false,
+        isFullscreen: true,
+    };
+
+    window.support = new StartSupport(mediaController);
+
+    debug("In fullscreen, forced controls do not become a start button:");
+    shouldBeFalse("controls.showsStartButton");
+
+    debug("");
+    debug("Inline, forced controls still show the start button:");
+    mediaController.isFullscreen = false;
+    support.handleEvent({ type: "loadedmetadata" });
+    shouldBeTrue("controls.showsStartButton");
+
+    media.remove();
+    shadowRoot.host.remove();
+    finishJSTest();
+}, { once: true });
+
+</script>
+</body>
