@@ -70,6 +70,8 @@ public:
         NonDisplaying = 1 << 0,
         RealTime = 1 << 1,
         EnableStereo = 1 << 2,
+        // Fail instead of decoding VP8, VP9 or AV1 in software.
+        HardwareOnly = 1 << 3,
     };
     using DecodingFlags = OptionSet<DecodingFlag>;
 
@@ -84,7 +86,7 @@ private:
     WEBCORE_EXPORT WebCoreDecompressionSession(NSDictionary *, GuaranteedSerialFunctionDispatcher*, IsAlphaDecoder = IsAlphaDecoder::No);
     static NSDictionary *defaultPixelBufferAttributes();
 
-    std::expected<RefPtr<VideoDecoderVTBSession>, OSStatus> ensureDecoderForSample(CMSampleBufferRef);
+    std::expected<RefPtr<VideoDecoderVTBSession>, OSStatus> ensureDecoderForSample(CMSampleBufferRef, DecodingFlags);
 
     Ref<DecodingPromise> decodeSampleInternal(CMSampleBufferRef, DecodingFlags);
     Ref<DecodingPromise> decodeSampleWithAlpha(CMSampleBufferRef, CFArrayRef alphaDatas, DecodingFlags);

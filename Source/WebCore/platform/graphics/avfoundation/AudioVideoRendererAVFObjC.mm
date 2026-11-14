@@ -1673,9 +1673,12 @@ Ref<GenericPromise> AudioVideoRendererAVFObjC::setVideoRenderer(WebSampleBufferV
                     cdmInstance->setHDCPStatus(obscured ? CDMInstance::HDCPStatus::OutputRestricted : CDMInstance::HDCPStatus::Valid);
                 return;
             }
-#else
-            UNUSED_PARAM(error);
 #endif
+            bool hardwareDecoderUnavailable = error.code == kVTCouldNotFindVideoDecoderErr || error.code == kVTVideoDecoderNotAvailableNowErr;
+            if (hardwareDecoderUnavailable && protectedThis->m_preferences.contains(VideoRendererPreference::RequiresHardwareDecoder)) {
+                protectedThis->notifyError(PlatformMediaError::HardwareDecoderUnavailable);
+                return;
+            }
             protectedThis->notifyError(PlatformMediaError::VideoDecodingError);
         }
     });
