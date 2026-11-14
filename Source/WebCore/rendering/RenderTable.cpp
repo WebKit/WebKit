@@ -31,6 +31,7 @@
 #include "BackgroundPainter.h"
 #include "BorderPainter.h"
 #include "BorderShape.h"
+#include "BoxDecorationPainter.h"
 #include "CollapsedBorderValue.h"
 #include "Document.h"
 #include "FixedTableLayout.h"
@@ -40,6 +41,7 @@
 #include "InlineIteratorInlineBox.h"
 #include "LayoutRepainter.h"
 #include "LocalFrameView.h"
+#include "MaskPainter.h"
 #include "PaintInfoInlines.h"
 #include "RenderBlockFlow.h"
 #include "RenderBlockInlines.h"
@@ -883,10 +885,10 @@ void RenderTable::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
 {
     PaintPhase paintPhase = paintInfo.phase;
     if ((paintPhase == PaintPhase::BlockBackground || paintPhase == PaintPhase::ChildBlockBackground) && hasVisibleBoxDecorations() && usedStyle().visibility() == UsedVisibility::Visible)
-        paintBoxDecorations(paintInfo, paintOffset);
+        BoxDecorationPainter { *this, paintInfo, paintOffset }.paintBoxDecorations();
 
     if (paintPhase == PaintPhase::Mask) {
-        paintMask(paintInfo, paintOffset);
+        MaskPainter { *this, paintInfo, paintOffset }.paintMask();
         return;
     }
 
@@ -979,52 +981,6 @@ void RenderTable::adjustBorderBoxRectForPainting(LayoutRect& rect)
     }
     
     RenderBlock::adjustBorderBoxRectForPainting(rect);
-}
-
-void RenderTable::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-{
-    if (!paintInfo.shouldPaintWithinRoot(*this))
-        return;
-
-    LayoutRect rect(paintOffset, borderBoxSize());
-    adjustBorderBoxRectForPainting(rect);
-
-    BackgroundPainter backgroundPainter { *this, paintInfo };
-
-    auto bleedAvoidance = determineBleedAvoidance(paintInfo.context());
-    if (!BackgroundPainter::boxShadowShouldBeAppliedToBackground(*this, rect.location(), bleedAvoidance, { }))
-        backgroundPainter.paintBoxShadow(rect, usedStyle(), Style::ShadowStyle::Normal);
-
-    GraphicsContextStateSaver stateSaver(paintInfo.context(), false);
-    if (bleedAvoidance == BleedAvoidance::UseTransparencyLayer) {
-        // To avoid the background color bleeding out behind the border, we'll render background and border
-        // into a transparency layer, and then clip that in one go (which requires setting up the clip before
-        // beginning the layer).
-        stateSaver.save();
-        auto borderShape = BorderShape::shapeForBorderRect(usedStyle(), rect);
-        borderShape.clipToOuterShape(paintInfo.context(), style().deviceScaleFactor());
-        paintInfo.context().beginTransparencyLayer(1);
-    }
-
-    backgroundPainter.paintBackground(rect, bleedAvoidance);
-    backgroundPainter.paintBoxShadow(rect, usedStyle(), Style::ShadowStyle::Inset);
-
-    if (style().border().hasVisibleBorderDecoration() && !collapseBorders())
-        BorderPainter { *this, paintInfo }.paintBorder(rect, usedStyle());
-
-    if (bleedAvoidance == BleedAvoidance::UseTransparencyLayer)
-        paintInfo.context().endTransparencyLayer();
-}
-
-void RenderTable::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-{
-    if (usedStyle().visibility() != UsedVisibility::Visible || paintInfo.phase != PaintPhase::Mask)
-        return;
-
-    LayoutRect rect(paintOffset, borderBoxSize());
-    adjustBorderBoxRectForPainting(rect);
-
-    paintMaskImages(paintInfo, rect);
 }
 
 std::pair<LayoutUnit, LayoutUnit> RenderTable::computeIntrinsicLogicalWidths(TableIntrinsics intrinsics) const

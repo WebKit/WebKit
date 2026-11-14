@@ -27,6 +27,7 @@
 
 #include "BackgroundPainter.h"
 #include "BorderShape.h"
+#include "BoxDecorationPainter.h"
 #include "DocumentMarkerController.h"
 #include "ElementRuleCollector.h"
 #include "FloatRoundedRect.h"
@@ -42,6 +43,7 @@
 #include "LayoutRepainter.h"
 #include "LegacyRenderSVGRoot.h"
 #include "LocalFrame.h"
+#include "MaskPainter.h"
 #include "PositionedLayoutConstraints.h"
 #include "PaintInfoInlines.h"
 #include "RenderBlock.h"
@@ -338,15 +340,15 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     }
 
     if (hasVisibleBoxDecorations() && paintInfo.phase == PaintPhase::Foreground)
-        paintBoxDecorations(paintInfo, adjustedPaintOffset);
+        BoxDecorationPainter { *this, paintInfo, adjustedPaintOffset }.paintBoxDecorations();
     
     if (paintInfo.phase == PaintPhase::Mask) {
-        paintMask(paintInfo, adjustedPaintOffset);
+        MaskPainter { *this, paintInfo, adjustedPaintOffset }.paintMask();
         return;
     }
 
     if (paintInfo.phase == PaintPhase::ClippingMask && usedStyle().visibility() == UsedVisibility::Visible) {
-        paintClippingMask(paintInfo, adjustedPaintOffset);
+        MaskPainter { *this, paintInfo, adjustedPaintOffset }.paintClippingMask();
         return;
     }
 

@@ -1530,6 +1530,11 @@ NODELETE static LayoutRect backgroundRectForSection(const RenderTableSection& ta
     return rect;
 }
 
+bool RenderTableCell::isHiddenEmptyCell() const
+{
+    return !table()->collapseBorders() && style().emptyCells() == EmptyCell::Hide && !firstChild();
+}
+
 void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& paintInfo, LayoutPoint paintOffset, RenderBox* backgroundObject, LayoutPoint backgroundPaintOffset)
 {
     ASSERT(backgroundObject);
@@ -1540,10 +1545,10 @@ void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& paintInfo, LayoutPoi
     if (usedStyle().visibility() != UsedVisibility::Visible)
         return;
 
-    RenderTable* tableElt = table();
-    if (!tableElt->collapseBorders() && style().emptyCells() == EmptyCell::Hide && !firstChild())
+    if (isHiddenEmptyCell())
         return;
 
+    RenderTable* tableElt = table();
     const auto& style = backgroundObject->style();
     auto& bgLayers = style.backgroundLayers();
 
@@ -1619,53 +1624,6 @@ void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& paintInfo, LayoutPoi
         painter.setOverrideOrigin(FillBox::BorderBox);
     }
     painter.paintFillLayers(color, bgLayers, style.usedZoomForLength(), fillRect, BleedAvoidance::None, compositeOp, backgroundObject);
-}
-
-void RenderTableCell::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-{
-    if (!paintInfo.shouldPaintWithinRoot(*this))
-        return;
-
-    RenderTable* table = this->table();
-    if (!table->collapseBorders() && style().emptyCells() == EmptyCell::Hide && !firstChild())
-        return;
-
-    LayoutRect paintRect = LayoutRect(paintOffset, borderBoxSize());
-    adjustBorderBoxRectForPainting(paintRect);
-
-    BackgroundPainter backgroundPainter { *this, paintInfo };
-    backgroundPainter.paintBoxShadow(paintRect, usedStyle(), Style::ShadowStyle::Normal);
-
-    // Paint our cell background.
-    paintBackgroundsBehindCell(paintInfo, paintOffset, this, paintOffset);
-
-    // For collapsed borders, we expand from inner edge to outer edge for inset shadow painting.
-    LayoutRect insetShadowRect = paintRect;
-    if (table->collapseBorders())
-        insetShadowRect.expand(RectEdges<LayoutUnit> { borderTop(), borderRight(), borderBottom(), borderLeft() });
-
-    backgroundPainter.paintBoxShadow(insetShadowRect, usedStyle(), Style::ShadowStyle::Inset);
-
-    if (!style().border().hasBorder() || table->collapseBorders())
-        return;
-
-    BorderPainter borderPainter { *this, paintInfo };
-    borderPainter.paintBorder(paintRect, usedStyle());
-}
-
-void RenderTableCell::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-{
-    if (usedStyle().visibility() != UsedVisibility::Visible || paintInfo.phase != PaintPhase::Mask)
-        return;
-
-    RenderTable* tableElt = table();
-    if (!tableElt->collapseBorders() && style().emptyCells() == EmptyCell::Hide && !firstChild())
-        return;
-   
-    LayoutRect paintRect = LayoutRect(paintOffset, borderBoxSize());
-    adjustBorderBoxRectForPainting(paintRect);
-
-    paintMaskImages(paintInfo, paintRect);
 }
 
 void RenderTableCell::scrollbarsChanged(bool horizontalScrollbarChanged, bool verticalScrollbarChanged)

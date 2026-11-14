@@ -26,6 +26,7 @@
 #include "RenderSVGRoot.h"
 
 #include "BorderShape.h"
+#include "BoxDecorationPainter.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "LayoutRepainter.h"
@@ -372,7 +373,7 @@ void RenderSVGRoot::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOf
 {
     if ((paintInfo.phase == PaintPhase::BlockBackground || paintInfo.phase == PaintPhase::ChildBlockBackground) && usedStyle().visibility() == UsedVisibility::Visible) {
         if (hasVisibleBoxDecorations())
-            paintBoxDecorations(paintInfo, paintOffset);
+            BoxDecorationPainter { *this, paintInfo, paintOffset }.paintBoxDecorations();
     }
 
     if (paintInfo.phase == PaintPhase::Mask && usedStyle().visibility() == UsedVisibility::Visible) {

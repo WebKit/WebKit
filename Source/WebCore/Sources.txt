@@ -3026,6 +3026,7 @@ rendering/BlockStepSizing.cpp @header:RenderStyleGetters @cost:4
 rendering/BorderEdge.cpp @header:RenderStyleGetters @cost:4
 rendering/BorderPainter.cpp @header:RenderStyleGetters @cost:6
 rendering/BorderShape.cpp @header:RenderStyleGetters @cost:5
+rendering/BoxDecorationPainter.cpp @header:RenderStyleGetters @cost:5
 rendering/BreakablePositions.cpp
 rendering/CSSFilterRenderer.cpp @header:RenderStyleGetters @cost:6
 rendering/CaretRectComputation.cpp @header:RenderStyleGetters @cost:6
@@ -3061,6 +3062,7 @@ rendering/LayoutRepainter.cpp
 rendering/LegacyLineClampUpdater.cpp
 rendering/LineClampUpdater.cpp
 rendering/MarkedText.cpp @header:RenderStyleGetters @cost:6
+rendering/MaskPainter.cpp @header:RenderStyleGetters @cost:4
 rendering/MotionPath.cpp @header:RenderStyleGetters @cost:5
 rendering/NinePieceImagePainter.cpp @header:RenderStyleGetters @cost:5
 rendering/OrderIterator.cpp @header:RenderStyleGetters @cost:4

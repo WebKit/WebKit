@@ -25,12 +25,14 @@
 
 #include "AXObjectCache.h"
 #include "BackgroundPainter.h"
+#include "BoxDecorationPainter.h"
 #include "DocumentSecurityOrigin.h"
 #include "DocumentView.h"
 #include "FloatRoundedRect.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HitTestResult.h"
 #include "LocalFrame.h"
+#include "MaskPainter.h"
 #include "NaturalDimensions.h"
 #include "RemoteFrame.h"
 #include "RemoteFrameView.h"
@@ -365,10 +367,10 @@ void RenderWidget::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     LayoutPoint adjustedPaintOffset = paintOffset + location();
 
     if (hasVisibleBoxDecorations() && (paintInfo.phase == PaintPhase::Foreground || paintInfo.phase == PaintPhase::Selection))
-        paintBoxDecorations(paintInfo, adjustedPaintOffset);
+        BoxDecorationPainter { *this, paintInfo, adjustedPaintOffset }.paintBoxDecorations();
 
     if (paintInfo.phase == PaintPhase::Mask) {
-        paintMask(paintInfo, adjustedPaintOffset);
+        MaskPainter { *this, paintInfo, adjustedPaintOffset }.paintMask();
         return;
     }
 

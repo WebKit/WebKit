@@ -29,6 +29,7 @@
 #include "config.h"
 #include "RenderReplica.h"
 
+#include "MaskPainter.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderLayer.h"
@@ -82,7 +83,7 @@ void RenderReplica::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         OptionSet<RenderLayer::PaintLayerFlag> flags { RenderLayer::PaintLayerFlag::HaveTransparency, RenderLayer::PaintLayerFlag::AppliedTransform, RenderLayer::PaintLayerFlag::TemporaryClipRects, RenderLayer::PaintLayerFlag::PaintingReflection };
         layer()->parent()->paintLayer(paintInfo.context(), paintingInfo, flags);
     } else if (paintInfo.phase == PaintPhase::Mask)
-        paintMask(paintInfo, adjustedPaintOffset);
+        MaskPainter { *this, paintInfo, adjustedPaintOffset }.paintMask();
 }
 
 } // namespace WebCore

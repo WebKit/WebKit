@@ -88,6 +88,7 @@ public:
 
     void paintCollapsedBorders(PaintInfo&, const LayoutPoint&);
     void paintBackgroundsBehindCell(PaintInfo&, LayoutPoint paintOffset, RenderBox* backgroundObject, LayoutPoint backgroundPaintOffset);
+    bool isHiddenEmptyCell() const;
 
     LayoutUnit cellBaselinePosition() const;
     bool isBaselineAligned() const;
@@ -157,8 +158,6 @@ private:
 
     void updateLogicalWidth() override;
 
-    void paintBoxDecorations(PaintInfo&, const LayoutPoint&) override;
-    void paintMask(PaintInfo&, const LayoutPoint&) override;
 
     LayoutSize offsetFromContainer(const RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = 0) const override;
     std::optional<RepaintRects> computeVisibleRectsInContainer(const RepaintRects&, const RenderLayerModelObject* container, const VisibleRectContext&, VisibleRectState) const override;

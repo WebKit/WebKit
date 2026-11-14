@@ -113,7 +113,6 @@ public:
 #endif
 
     void paint(PaintInfo&, const LayoutPoint&) override;
-    void paintBoxDecorations(PaintInfo&, const LayoutPoint&) override;
     // Return the renderer whose background style is used to paint the root background.
     RenderElement* rendererForRootBackground() const;
 

@@ -27,6 +27,7 @@
 
 #include "AXObjectCache.h"
 #include "BorderShape.h"
+#include "BoxDecorationPainter.h"
 #include "ContainerNodeInlines.h"
 #include "Editor.h"
 #include "Element.h"
@@ -49,6 +50,7 @@
 #include "LocalFrameView.h"
 #include "Logging.h"
 #include "LogicalSelectionOffsetCachesInlines.h"
+#include "MaskPainter.h"
 #include "OutlinePainter.h"
 #include "Page.h"
 #include "PaintInfo.h"
@@ -1189,7 +1191,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
     // 1. paint background, borders etc
     if ((paintPhase == PaintPhase::BlockBackground || paintPhase == PaintPhase::ChildBlockBackground) && usedStyle().visibility() == UsedVisibility::Visible) {
         if (hasVisibleBoxDecorations())
-            paintBoxDecorations(paintInfo, paintOffset);
+            BoxDecorationPainter { *this, paintInfo, paintOffset }.paintBoxDecorations();
         paintDebugBoxShadowIfApplicable(paintInfo.context(), { paintOffset, borderBoxSize() });
     }
     
@@ -1198,12 +1200,12 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
         paintExcludedChildrenInBorder(paintInfo, paintOffset);
     
     if (paintPhase == PaintPhase::Mask && usedStyle().visibility() == UsedVisibility::Visible) {
-        paintMask(paintInfo, paintOffset);
+        MaskPainter { *this, paintInfo, paintOffset }.paintMask();
         return;
     }
 
     if (paintPhase == PaintPhase::ClippingMask && usedStyle().visibility() == UsedVisibility::Visible) {
-        paintClippingMask(paintInfo, paintOffset);
+        MaskPainter { *this, paintInfo, paintOffset }.paintClippingMask();
         return;
     }
 
