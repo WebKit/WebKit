@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="../timeline/resources/frame-timeline-test-utilities.js"></script>
+<script src="resources/cpu-profiler-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.CPUProfiler.SameProcessFrameTargets");
+
+    let firstFrameTarget;
+    let secondFrameTarget;
+    let firstWorkerTarget;
+    let secondWorkerTarget;
+
+    suite.addTestCase({
+        name: "SiteIsolation.CPUProfiler.SameProcessFrameTargets.Setup",
+        description: "Find the frame targets of two cross-origin iframes from one site, and their worker targets.",
+        async test() {
+            firstFrameTarget = await waitForFrameTargetForURLContaining("worker-frame.html?same-process-frame-targets-first");
+            secondFrameTarget = await waitForFrameTargetForURLContaining("worker-frame.html?same-process-frame-targets-second");
+            InspectorTest.expectNotNull(firstFrameTarget, "Should find the first iframe target.");
+            InspectorTest.expectNotNull(secondFrameTarget, "Should find the second iframe target.");
+            if (!firstFrameTarget || !secondFrameTarget)
+                throw new Error("Missing a frame target.");
+
+            InspectorTest.expectEqual(firstFrameTarget.processIdentifier, secondFrameTarget.processIdentifier, "Both iframe targets should be in one process.");
+            InspectorTest.expectNotEqual(firstFrameTarget.processIdentifier, WI.mainTarget.processIdentifier, "The iframe targets should not be in the page's process.");
+
+            firstWorkerTarget = await CPUProfilerTest.awaitWorkerTarget(firstFrameTarget);
+            secondWorkerTarget = await CPUProfilerTest.awaitWorkerTarget(secondFrameTarget);
+            InspectorTest.pass("Found the worker target of each iframe.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.CPUProfiler.SameProcessFrameTargets.OnlyStartedTargetReports",
+        description: "Tracking on one of two frame targets in a process should make only that target report, with the threads of the whole process.",
+        async test() {
+            // The first update may come from before the worker threads existed for long, so check the second one.
+            let updates = await CPUProfilerTest.trackOnTarget(firstFrameTarget, 2);
+            InspectorTest.pass("The first iframe target sent trackingStart, two trackingUpdate events and trackingComplete.");
+            InspectorTest.expectEqual(CPUProfilerTest.events(firstFrameTarget, "trackingStart").length, 1, "The first iframe target should send one trackingStart.");
+            InspectorTest.expectEqual(CPUProfilerTest.events(firstFrameTarget, "trackingComplete").length, 1, "The first iframe target should send one trackingComplete.");
+
+            let targets = CPUProfilerTest.targetsThatSentEvents();
+            InspectorTest.expectFalse(targets.has(secondFrameTarget), "The second iframe target should not send CPUProfiler events.");
+            InspectorTest.expectThat(targets.size === 1 && targets.has(firstFrameTarget), "Only the first iframe target should send CPUProfiler events.");
+
+            let update = updates[1];
+            InspectorTest.expectEqual(CPUProfilerTest.mainThreadCount(update), 1, "The update should have one main thread.");
+            InspectorTest.expectThat(CPUProfilerTest.hasThreadForTarget(update, firstWorkerTarget), "The update should include the thread of the first iframe's worker.");
+            InspectorTest.expectThat(CPUProfilerTest.hasThreadForTarget(update, secondWorkerTarget), "The update should include the thread of the second iframe's worker, which is in the same process.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.CPUProfiler.SameProcessFrameTargets.ConsoleProfileDoesNotStartFrameTargets",
+        description: "console.profile() in an iframe starts a capture with the CPU instrument, but a frame target should start CPUProfiler only when the frontend asks it to.",
+        async test() {
+            let originalTimelineTypes = WI.timelineManager.enabledTimelineTypes;
+            WI.timelineManager.enabledTimelineTypes = [WI.TimelineRecord.Type.CPU];
+            CPUProfilerTest.forwardEvents = true;
+            CPUProfilerTest.clearEvents();
+            FrameTimelineTest.clearTrackingEvents();
+
+            // The frontend may start one frame target per process, but a frame target must never start on its own.
+            let targetsStartedByFrontend = new Set;
+            let originalWillStartTrackingForTarget = WI.timelineManager.willStartTrackingForTarget;
+            WI.timelineManager.willStartTrackingForTarget = function(target, domain) {
+                if (domain === "CPUProfiler")
+                    targetsStartedByFrontend.add(target);
+                return originalWillStartTrackingForTarget.call(this, target, domain);
+            };
+
+            try {
+                let activePromise = FrameTimelineTest.awaitCapturingState(WI.TimelineManager.CapturingState.Active);
+                await FrameTimelineTest.evaluateInTarget(firstFrameTarget, `console.profile("frame-profile")`);
+                await activePromise;
+                await FrameTimelineTest.awaitTrackingEvent("capturingStarted", firstFrameTarget, "Timeline");
+                InspectorTest.pass("The first iframe target started Timeline.");
+
+                // A frame toggles its instruments right after it starts Timeline, so a CPUProfiler start from it would
+                // arrive before it reports that Timeline stopped.
+                let inactivePromise = FrameTimelineTest.awaitCapturingState(WI.TimelineManager.CapturingState.Inactive);
+                await FrameTimelineTest.evaluateInTarget(firstFrameTarget, `console.profileEnd("frame-profile")`);
+                await inactivePromise;
+                InspectorTest.pass("Capturing stopped.");
+                InspectorTest.expectThat(FrameTimelineTest.didReportTrackingEvent("capturingStopped", firstFrameTarget, "Timeline"), "The first iframe target should report that Timeline stopped.");
+
+                let frameTargets = WI.targets.filter((target) => target.type === WI.TargetType.Frame);
+                InspectorTest.expectThat(frameTargets.every((target) => !CPUProfilerTest.events(target, "trackingStart").length || targetsStartedByFrontend.has(target)), "No frame target should start CPUProfiler unless the frontend asked it to.");
+            } finally {
+                WI.timelineManager.willStartTrackingForTarget = originalWillStartTrackingForTarget;
+                CPUProfilerTest.forwardEvents = false;
+                WI.timelineManager.enabledTimelineTypes = originalTimelineTypes;
+            }
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that under Site Isolation, of two frame targets in one process, only the one that the frontend starts reports CPU usage, and that console.profile() in a frame does not make frame targets start CPUProfiler on their own.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/cpu-profiler/resources/worker-frame.html?same-process-frame-targets-first"></iframe>
+<iframe src="http://localhost:8000/site-isolation/inspector/cpu-profiler/resources/worker-frame.html?same-process-frame-targets-second"></iframe>
+</body>
