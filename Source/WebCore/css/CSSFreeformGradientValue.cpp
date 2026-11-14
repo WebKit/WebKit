@@ -28,14 +28,15 @@
 
 #include "CSSPrimitiveNumericTypes+CSSValueVisitation.h"
 #include "CSSPrimitiveNumericTypes+Serialization.h"
-#include "StyleImage.h"
+#include "StyleBuilderState.h"
+#include "StyleFreeformGradientImage.h"
+#include "StylePrimitiveNumericTypes+Conversions.h"
 
 namespace WebCore {
 
-RefPtr<Style::Image> CSSFreeformGradientValue::createStyleImage(const Style::BuilderState&) const
+RefPtr<Style::Image> CSSFreeformGradientValue::createStyleImage(const Style::BuilderState& state) const
 {
-    // FIXME: Add a Style::Image for freeform-gradient().
-    return nullptr;
+    return Style::FreeformGradientImage::create(Style::toStyle(m_gradient, state));
 }
 
 String CSSFreeformGradientValue::customCSSText(const CSS::SerializationContext& context) const

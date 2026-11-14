@@ -142,11 +142,12 @@ public:
     ALWAYS_INLINE bool isCachedImage() const { return m_type == Type::CachedImage; }
     ALWAYS_INLINE bool isCursorImage() const { return m_type == Type::CursorImage; }
     ALWAYS_INLINE bool isImageSet() const { return m_type == Type::ImageSet; }
-    ALWAYS_INLINE bool isGeneratedImage() const { return isFilterImage() || isCanvasImage() || isCrossfadeImage() || isGradientImage() || isMeshGradientImage() || isNamedImage() || isColorImage() || isPaintImage() || isInvalidImage(); }
+    ALWAYS_INLINE bool isGeneratedImage() const { return isFilterImage() || isCanvasImage() || isCrossfadeImage() || isGradientImage() || isFreeformGradientImage() || isMeshGradientImage() || isNamedImage() || isColorImage() || isPaintImage() || isInvalidImage(); }
     ALWAYS_INLINE bool isFilterImage() const { return m_type == Type::FilterImage; }
     ALWAYS_INLINE bool isCanvasImage() const { return m_type == Type::CanvasImage; }
     ALWAYS_INLINE bool isCrossfadeImage() const { return m_type == Type::CrossfadeImage; }
     ALWAYS_INLINE bool isGradientImage() const { return m_type == Type::GradientImage; }
+    ALWAYS_INLINE bool isFreeformGradientImage() const { return m_type == Type::FreeformGradientImage; }
     ALWAYS_INLINE bool isMeshGradientImage() const { return m_type == Type::MeshGradientImage; }
     ALWAYS_INLINE bool isNamedImage() const { return m_type == Type::NamedImage; }
     ALWAYS_INLINE bool isColorImage() const { return m_type == Type::ColorImage; }
@@ -164,6 +165,7 @@ protected:
         CanvasImage,
         CrossfadeImage,
         GradientImage,
+        FreeformGradientImage,
         MeshGradientImage,
         NamedImage,
         ColorImage,
