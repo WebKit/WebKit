@@ -217,7 +217,7 @@ ResolvedStyle TreeResolver::styleForStyleable(const Styleable& styleable, Resolu
     }();
 
     if (unadjustedStyle.relations)
-        commitRelations(WTF::move(unadjustedStyle.relations), *m_update);
+        commitRelations(WTF::move(unadjustedStyle.relations), m_update.get());
 
     auto style = WTF::move(unadjustedStyle.style);
 

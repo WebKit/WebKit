@@ -62,7 +62,7 @@ struct TextUpdate {
     std::optional<std::unique_ptr<Style::ComputedStyle>> inheritedDisplayContentsStyle;
 };
 
-class Update final : public CanMakeCheckedPtr<Update, WTF::DefaultedOperatorEqual::No, WTF::CheckedPtrDeleteCheckException::Yes> {
+class Update final : public CanMakeCheckedPtr<Update> {
     WTF_MAKE_TZONE_ALLOCATED(Update);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Update);
 public:

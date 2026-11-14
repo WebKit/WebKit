@@ -3338,10 +3338,8 @@ std::unique_ptr<Style::ComputedStyle> Document::styleForElementIgnoringPendingSt
         return WTF::move(style->style);
     }
 
-    if (elementStyle.relations) {
-        Style::Update emptyUpdate(*this);
-        Style::commitRelations(WTF::move(elementStyle.relations), emptyUpdate);
-    }
+    if (elementStyle.relations)
+        Style::commitRelations(WTF::move(elementStyle.relations), nullptr);
 
     return WTF::move(elementStyle.style);
 }
