@@ -2290,12 +2290,13 @@ WritingDirection Editor::baseWritingDirectionForSelectionStart() const
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
     CheckedPtr renderer = node->renderer();
-    if (renderer && !is<RenderBlock>(*renderer))
+    // The base writing direction is the direction of the nearest block in the containing block chain.
+    while (renderer && !is<RenderBlock>(*renderer))
         renderer = renderer->containingBlock();
     if (!renderer)
         return result;
 
-    switch (downcast<RenderBlock>(*renderer).writingMode().bidiDirection()) {
+    switch (renderer->writingMode().bidiDirection()) {
     case TextDirection::LTR:
         return WritingDirection::LeftToRight;
     case TextDirection::RTL:
