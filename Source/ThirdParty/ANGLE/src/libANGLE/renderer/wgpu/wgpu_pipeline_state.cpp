@@ -34,6 +34,29 @@ constexpr WGPUIndexFormat UnpackIndexFormat(uint32_t packedIndexFormat)
     return static_cast<WGPUIndexFormat>(packedIndexFormat + 1);
 }
 
+namespace
+{
+// GL ignores the blend factors of the GL_MIN and GL_MAX equations, but WebGPU requires them to be
+// one for the min and max operations.
+WGPUBlendComponent UnpackBlendComponent(uint32_t operation, uint32_t srcFactor, uint32_t dstFactor)
+{
+    WGPUBlendComponent component = WGPU_BLEND_COMPONENT_INIT;
+    component.operation          = static_cast<WGPUBlendOperation>(operation);
+    if (component.operation == WGPUBlendOperation_Min ||
+        component.operation == WGPUBlendOperation_Max)
+    {
+        component.srcFactor = WGPUBlendFactor_One;
+        component.dstFactor = WGPUBlendFactor_One;
+    }
+    else
+    {
+        component.srcFactor = static_cast<WGPUBlendFactor>(srcFactor);
+        component.dstFactor = static_cast<WGPUBlendFactor>(dstFactor);
+    }
+    return component;
+}
+}  // namespace
+
 // Can pack the front face into 1 bit since it has 2 values and Undefined is not used.
 static_assert(static_cast<uint32_t>(WGPUFrontFace_CW) == 2U, "Max WGPUFrontFace is not 2");
 static_assert(static_cast<uint32_t>(WGPUFrontFace_Undefined) == 0,
@@ -413,20 +436,13 @@ angle::Result RenderPipelineDesc::createPipeline(ContextWgpu *context,
             outputColorTarget.format = static_cast<WGPUTextureFormat>(packedColorTarget.format);
             if (packedColorTarget.blendEnabled)
             {
-                blendStates[colorTargetIndex] = WGPU_BLEND_STATE_INIT;
-                blendStates[colorTargetIndex].color.srcFactor =
-                    static_cast<WGPUBlendFactor>(packedColorTarget.colorBlendSrcFactor);
-                blendStates[colorTargetIndex].color.dstFactor =
-                    static_cast<WGPUBlendFactor>(packedColorTarget.colorBlendDstFactor);
-                blendStates[colorTargetIndex].color.operation =
-                    static_cast<WGPUBlendOperation>(packedColorTarget.colorBlendOp);
-
-                blendStates[colorTargetIndex].alpha.srcFactor =
-                    static_cast<WGPUBlendFactor>(packedColorTarget.alphaBlendSrcFactor);
-                blendStates[colorTargetIndex].alpha.dstFactor =
-                    static_cast<WGPUBlendFactor>(packedColorTarget.alphaBlendDstFactor);
-                blendStates[colorTargetIndex].alpha.operation =
-                    static_cast<WGPUBlendOperation>(packedColorTarget.alphaBlendOp);
+                blendStates[colorTargetIndex]       = WGPU_BLEND_STATE_INIT;
+                blendStates[colorTargetIndex].color = UnpackBlendComponent(
+                    packedColorTarget.colorBlendOp, packedColorTarget.colorBlendSrcFactor,
+                    packedColorTarget.colorBlendDstFactor);
+                blendStates[colorTargetIndex].alpha = UnpackBlendComponent(
+                    packedColorTarget.alphaBlendOp, packedColorTarget.alphaBlendSrcFactor,
+                    packedColorTarget.alphaBlendDstFactor);
 
                 outputColorTarget.blend = &blendStates[colorTargetIndex];
             }
