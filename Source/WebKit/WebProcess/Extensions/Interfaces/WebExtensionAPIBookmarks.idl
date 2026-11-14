@@ -36,7 +36,7 @@
     [RaisesException] void getTree([Optional, CallbackHandler] function callback);
     [RaisesException] void get([NSObject] any idOrIdList, [Optional, CallbackHandler] function callback);
 
-    [RaisesException] void remove(DOMString id, [Optional, CallbackHandler] function callback);
+    [RaisesException] void remove([NSObject] any idOrIdList, [Optional, CallbackHandler] function callback);
     [RaisesException] void removeTree(DOMString id, [Optional, CallbackHandler] function callback);
 
     [RaisesException] void search([NSObject] any query, [Optional, CallbackHandler] function callback);
