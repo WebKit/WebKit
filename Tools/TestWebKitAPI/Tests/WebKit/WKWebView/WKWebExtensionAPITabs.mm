@@ -1301,8 +1301,14 @@ TEST(WKWebExtensionAPITabs, DetectLanguage)
 
 TEST(WKWebExtensionAPITabs, CaptureVisibleTab)
 {
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    RetainPtr urlRequest = server.requestWithLocalhost();
+
     auto *backgroundScript = Util::constructScript(@[
-        @"const newTab = await browser.tabs.create({ url: 'http://example.com' })",
+        [NSString stringWithFormat:@"const newTab = await browser.tabs.create({ url: '%@' })", urlRequest.get().URL.absoluteString],
 
         @"let dataURLPNG = await browser.tabs.captureVisibleTab(newTab.windowId, { format: 'png' })",
         @"browser.test.assertTrue(dataURLPNG.startsWith('data:image/png;'), 'The data URL should start with the PNG mime type for PNG capture')",
@@ -1315,7 +1321,7 @@ TEST(WKWebExtensionAPITabs, CaptureVisibleTab)
 
     auto manager = Util::loadExtension(tabsManifest, @{ @"background.js": backgroundScript });
 
-    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:[NSURL URLWithString:@"http://example.com/"]];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.get().URL];
 
     [manager run];
 }
