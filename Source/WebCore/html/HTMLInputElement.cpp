@@ -1381,6 +1381,8 @@ void HTMLInputElement::defaultEventHandler(Event& event)
             protect(m_inputType)->handleMouseDownEvent(*mouseEvent);
         else if (eventType == eventNames().mousemoveEvent)
             protect(m_inputType)->handleMouseMoveEvent(*mouseEvent);
+        else if (eventType == eventNames().mouseupEvent)
+            protect(m_inputType)->handleMouseUpEvent(*mouseEvent);
 
         if (mouseEvent->defaultHandled())
             return;

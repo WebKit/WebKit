@@ -1,7 +1,7 @@
 <!doctype html>
 <html class="reftest-wait">
 <script src="../../../resources/ui-helper.js"></script>
-<input type=checkbox switch onclick=end()>
+<input type=checkbox switch>
 <div id=state></div>
 <script>
 window.onload = async () => {
@@ -18,7 +18,8 @@ window.onload = async () => {
             .move(x, y, 0.01)
             .end()
             .takeResult();
-        UIHelper.sendEventStream(eventStreamData);
+        await UIHelper.sendEventStream(eventStreamData);
+        end();
         return;
     }
     await eventSender.asyncMouseMoveTo(x, y);
@@ -26,6 +27,7 @@ window.onload = async () => {
     await eventSender.asyncMouseMoveTo(x + width, y);
     await eventSender.asyncMouseMoveTo(x, y);
     await eventSender.asyncMouseUp();
+    end();
 }
 function end() {
     document.querySelector("#state").textContent = document.querySelector("input").checked ? "Switched on." : "Switched off.";

@@ -4212,7 +4212,6 @@ imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-vs-float-clearance-
 imported/w3c/web-platform-tests/css/css-transforms/animation/transform-non-invertible-discrete-interpolation.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-writing-modes/inline-block-alignment-005.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-writing-modes/inline-table-alignment-005.xht [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/rendering/widgets/input-checkbox-switch-rtl.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-021.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-022.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-023.svg [ ImageOnlyFailure ]

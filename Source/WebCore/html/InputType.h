@@ -286,6 +286,7 @@ public:
     virtual void handleClickEvent(MouseEvent&) { }
     virtual void handleMouseDownEvent(MouseEvent&) { }
     virtual void handleMouseMoveEvent(MouseEvent&) { }
+    virtual void handleMouseUpEvent(MouseEvent&) { }
     virtual void willDispatchClick(InputElementClickState&) { }
     virtual void didDispatchClick(Event&, const InputElementClickState&) { }
     virtual void handleDOMActivateEvent(Event&) { }

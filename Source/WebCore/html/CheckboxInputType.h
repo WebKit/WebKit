@@ -73,6 +73,7 @@ private:
     void handleKeyupEvent(KeyboardEvent&) final;
     void handleMouseDownEvent(MouseEvent&) final;
     void handleMouseMoveEvent(MouseEvent&) final;
+    void handleMouseUpEvent(MouseEvent&) final;
 // FIXME: It should not be iOS-specific, but it's not been tested with a non-iOS touch
 // implementation thus far.
 #if ENABLE(IOS_TOUCH_EVENTS)
@@ -82,6 +83,7 @@ private:
     void startSwitchPointerTracking(LayoutPoint);
     void stopSwitchPointerTracking();
     NODELETE bool isSwitchPointerTracking() const;
+    bool hasSwitchThumbReturned() const;
     void willDispatchClick(InputElementClickState&) final;
     void didDispatchClick(Event&, const InputElementClickState&) final;
     bool matchesIndeterminatePseudoClass() const final;
@@ -104,6 +106,7 @@ private:
     bool m_hasSwitchVisuallyOnChanged { false };
     bool m_isSwitchVisuallyOn { false };
     bool m_isSwitchHeld { false };
+    bool m_didSkipSwitchToggle { false };
     Seconds m_switchAnimationVisuallyOnStartTime { 0_s };
     Seconds m_switchAnimationHeldStartTime { 0_s };
     const std::unique_ptr<Timer> m_switchAnimationTimer;
