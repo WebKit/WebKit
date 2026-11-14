@@ -872,6 +872,8 @@ protected:
     void stop() override;
     void suspend(ReasonForSuspension) override;
 
+    void configureMediaControls();
+
 private:
     friend class Internals;
 
@@ -1108,7 +1110,6 @@ private:
 
     NODELETE void invalidateOfficialPlaybackPosition();
 
-    void configureMediaControls();
     bool deferMediaControlsIfNeeded();
     void cancelDeferredMediaControls();
     void ensureMediaControlsStyleSheets();

@@ -165,6 +165,8 @@ public:
     double fieldOfView() const;
     void spatialCameraDidMove(double yaw, double pitch, double fieldOfView);
 
+    bool hasSpatialVideoProjection() const;
+
 private:
     friend class HTMLVideoElementPictureInPicture;
     HTMLVideoElement(const QualifiedName&, Document&, bool createdByParser);

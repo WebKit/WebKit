@@ -1,0 +1,17 @@
+Testing that removing the controls attribute from a projected video does not stop it being projected. The renderer's canvas lives alongside the controls in the shadow tree, but it presents the video rather than being part of the control chrome.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS projectionCanvas() became different from null
+The renderer is running while the controls are shown.
+
+Removing the controls attribute takes the control chrome away:
+PASS controlChromeChildCount() became 0
+
+...but the projection is still being rendered:
+PASS !!projectionCanvas() is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

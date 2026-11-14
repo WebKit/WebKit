@@ -506,10 +506,12 @@ class MediaController
     _updateControlsAvailability()
     {
         const shouldControlsBeAvailable = this._shouldControlsBeAvailable();
-        if (!shouldControlsBeAvailable)
-            this._supportingObjects.forEach(supportingObject => supportingObject.disable());
-        else
-            this._supportingObjects.forEach(supportingObject => supportingObject.enable());
+        this._supportingObjects.forEach(supportingObject => {
+            if (supportingObject.shouldBeEnabled(shouldControlsBeAvailable))
+                supportingObject.enable();
+            else
+                supportingObject.disable();
+        });
 
         this.controls.visible = shouldControlsBeAvailable;
     }
