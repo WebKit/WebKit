@@ -506,9 +506,362 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     BOOL _everMagnifiedDuringCurrentGesture;
 }
 
-#if __has_include(<WebKitAdditions/WKAppKitGestureControllerAdditionsImpl.mm>)
-#import <WebKitAdditions/WKAppKitGestureControllerAdditionsImpl.mm>
+- (OptionSet<WebCore::TouchAction>)_touchActionsForPoint:(WebCore::FloatPoint&&)point
+{
+    RetainPtr webView = _view.get();
+    if (!webView)
+        return WebCore::TouchAction::Auto;
+
+    RefPtr remoteDrawingArea = dynamicDowncast<WebKit::RemoteLayerTreeDrawingAreaProxy>([webView _protectedPage]->drawingArea());
+    if (!remoteDrawingArea)
+        return WebCore::TouchAction::Auto;
+
+    RetainPtr rootLayer = remoteDrawingArea->remoteLayerTreeHost().rootLayer();
+    if (!rootLayer)
+        return WebCore::TouchAction::Auto;
+
+    return WebKit::eventRegionForPoint(rootLayer, point).transform([point = WTF::move(point)](const WebCore::EventRegion& eventRegion) mutable {
+        return eventRegion.touchActionsForPoint(WebCore::roundedIntPoint(WTF::move(point)));
+    }).value_or(WebCore::TouchAction::Auto);
+}
+
+enum class PanAxis : uint8_t {
+    Horizontal = 1 << 0,
+    Vertical = 1 << 1,
+};
+
+- (OptionSet<PanAxis>)_touchActionsAllowedPanningAxesAtPoint:(WebCore::FloatPoint&&)point
+{
+    auto touchActions = [self _touchActionsForPoint:WTF::move(point)];
+    using enum WebCore::TouchAction;
+    bool canPanHorizontally = touchActions.containsAny({ Auto, Manipulation, PanX });
+    bool canPanVertically = touchActions.containsAny({ Auto, Manipulation, PanY });
+
+    OptionSet<PanAxis> allowedAxes;
+    if (canPanHorizontally)
+        allowedAxes |= PanAxis::Horizontal;
+    if (canPanVertically)
+        allowedAxes |= PanAxis::Vertical;
+
+    return allowedAxes;
+}
+
+- (BOOL)_touchActionsAllowPanningAtPoint:(WebCore::FloatPoint&&)point
+{
+    return !![self _touchActionsAllowedPanningAxesAtPoint:WTF::move(point)];
+}
+
+- (BOOL)panGestureRecognizerCanScroll
+{
+    RetainPtr webView = _view.get();
+    if (!webView)
+        return NO;
+
+    return [self _touchActionsAllowPanningAtPoint:WebCore::FloatPoint { [_panGestureRecognizer locationInView:webView] }];
+}
+
+- (BOOL)magnificationGestureRecognizerCanZoom
+{
+    RetainPtr webView = _view.get();
+    if (!webView)
+        return NO;
+
+    auto touchActions = [self _touchActionsForPoint:WebCore::FloatPoint { [_magnificationGestureRecognizer locationInView:webView] }];
+    using enum WebCore::TouchAction;
+    return touchActions.containsAny({ Auto, Manipulation, PinchZoom });
+}
+
+- (BOOL)prefersUnlockedScroll:(NSPanGestureRecognizer *)gesture
+{
+    return [gesture touches].count > 1;
+}
+
+- (WebKit::RefreshControllerEligibility)refreshControllerEligibility:(NSPanGestureRecognizer *)gesture
+{
+    using enum WebKit::RefreshControllerEligibility;
+    return [gesture touches].count == 1 ? Eligible : Ineligible;
+}
+
+- (BOOL)prefersForwardingToGestureController:(NSPanGestureRecognizer *)gesture
+{
+    return [gesture touches].count == 1;
+}
+
+- (BOOL)supportsMomentumScroll:(NSPanGestureRecognizer *)gesture
+{
+    return [gesture touches].count == 1;
+}
+
+- (NSString *)nameForMouseTrackingGesture:(NSPressGestureRecognizer *)gesture
+{
+    if ([gesture numberOfTouchesRequired] == 1)
+        return @"WKMouseTrackingGestureSingle";
+    if ([gesture numberOfTouchesRequired] > 1)
+        return @"WKMouseTrackingGestureMultiple";
+
+    ASSERT_NOT_REACHED();
+    return @"WKMouseTrackingGestureUnknown";
+}
+
+- (BOOL)mouseTrackingGestureRecognizerCanTrack:(NSPressGestureRecognizer *)gesture
+{
+    RetainPtr webView = _view.get();
+    if (!webView)
+        return NO;
+
+    if ([gesture numberOfTouchesRequired] <= 1)
+        return YES;
+
+    if (!protect([webView _protectedPage]->preferences())->useAppKitGesturesForGestureEvents())
+        return NO;
+
+    // If the web content permits panning, the pan GR will win.
+    // This multi-touch tracking recognizer covers the remaining case, where
+    // the content has opted out of panning. Web apps typically depend on
+    // touch/pointer/mousemove events for a notion of "translation" in this
+    // case, such as on maps.apple.com. As such, we complement the logic here
+    // with the predicate in -panGestureRecognizerCanScroll.
+    return ![self _touchActionsAllowPanningAtPoint:WebCore::FloatPoint { [gesture locationInView:webView] }];
+}
+
+// FIXME: rdar://185815023 (-[NSRotationGestureRecognizer locationInView:] should reflect live centroid of the gesture)
+// The rotation GR's -locationInView: does not reflect its live centroid over
+// the course of a twist, so we compute it directly and use it to feed our
+// gesture machinery. Otherwise, the rotation and magnification locations stomp
+// over each other in ViewGestureController.
+- (WebCore::FloatPoint)gestureCentroidInWindowForGesture:(NSGestureRecognizer *)gesture
+{
+    RetainPtr<NSArray> touches;
+    if (RetainPtr magnificationGesture = dynamic_objc_cast<NSMagnificationGestureRecognizer>(gesture))
+        touches = [magnificationGesture touches];
+    else if (RetainPtr rotationGesture = dynamic_objc_cast<NSRotationGestureRecognizer>(gesture))
+        touches = [rotationGesture touches];
+
+    auto count = [touches count];
+
+    if (!count)
+        return WebCore::FloatPoint { [gesture locationInView:nil] };
+
+    float centroidX = 0;
+    float centroidY = 0;
+    for (NSTouch *touch in touches.get()) {
+        NSPoint locationInWindow = [touch locationInView:nil];
+        centroidX += locationInWindow.x;
+        centroidY += locationInWindow.y;
+    }
+    return WebCore::FloatPoint { centroidX, centroidY }.scaled(1.0 / count);
+}
+
+static char touchThatCaughtDeceleratingScrollKey;
+
+- (BOOL)_isOnlyTouchDown:(NSTouch *)touch
+{
+    RetainPtr webView = _view.get();
+    if (!webView)
+        return NO;
+
+    RetainPtr event = [NSApp currentEvent];
+    if ([event type] != NSEventTypeDirectTouch)
+        return NO;
+
+    RetainPtr touches = [event touchesMatchingPhase:NSTouchPhaseTouching inView:webView.get()];
+    return [touches count] == 1 && [touches anyObject]._uid == touch._uid;
+}
+
+- (void)_interruptMomentumIfNeededForTouch:(NSTouch *)touch
+{
+    // Other callers of _resetCaughtDeceleratingScroll can miss the end of a gesture
+    // (e.g. a pan over content that disallows scrolling, which then neither scrolls, clicks, nor tracks the mouse).
+    // We can't let that leak into the next interaction, or it would keep refusing gestures.
+    // We only consider this a new interaction if 1) this is the only touch down,
+    // and 2) isn't the touch that caught the scroll.
+    if (_caughtDeceleratingScroll) {
+        RetainPtr<NSNumber> touchThatCaughtDeceleratingScroll = objc_getAssociatedObject(self, &touchThatCaughtDeceleratingScrollKey);
+        if (![touchThatCaughtDeceleratingScroll isEqualToNumber:@(touch._uid)] && [self _isOnlyTouchDown:touch]) {
+            if (RetainPtr webView = _view.get())
+                WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG([webView _protectedPage]->logIdentifier(), "Resetting stale caught decelerating scroll state from a previous interaction");
+            [self _resetCaughtDeceleratingScroll];
+        }
+    }
+
+    bool wasMomentumActive = _isMomentumActive;
+    [self interruptMomentumIfNeeded];
+
+    // FIXME: When upstreaming, make this a normal ivar.
+    if (wasMomentumActive && _caughtDeceleratingScroll)
+        objc_setAssociatedObject(self, &touchThatCaughtDeceleratingScrollKey, @(touch._uid), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (BOOL)gestureRecognizer:(NSGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(NSTouch *)touch
+{
+    RetainPtr webView = _view.get();
+    if (!webView)
+        return NO;
+
+    if (protect([webView _impl])->ignoresAllEvents())
+        return NO;
+
+    [self _interruptMomentumIfNeededForTouch:touch];
+
+    if (gestureRecognizer == _panGestureRecognizer) {
+        auto allowedAxes = [self _touchActionsAllowedPanningAxesAtPoint:[touch locationInView:webView]];
+        [_panGestureRecognizer _setCanPanHorizontally:allowedAxes.contains(PanAxis::Horizontal)];
+        [_panGestureRecognizer _setCanPanVertically:allowedAxes.contains(PanAxis::Vertical)];
+    }
+
+    return YES;
+}
+
+- (BOOL)gestureRecognizer:(NSGestureRecognizer *)gesture shouldAttemptToRecognizeWithEvent:(NSEvent *)event
+{
+    // Every GR we maintain is exclusively direct touch-only, so we can unconditionally return NO here.
+    // This delegate implementation is only necessary for the magnification and rotation GRs since they
+    // can not be configured as a (buttonMask + allowedTouchTypes) pair like the other gestures.
+
+    // FIXME: <rdar://166268811> Migrate towards API (once available) that configures magnification/rotation GRs as touch-only.
+    return NO;
+}
+
+- (void)configureForScrolling:(NSPanGestureRecognizer *)gesture
+{
+    // FIXME: Strictly, this should be `2` when allowsMagnification == YES and the min/max zoom
+    // scales are different, c.f. -[UIScrollView _updatePanGestureConfiguration] for prior art.
+    auto maximumNumberOfTouches = 0;
+    if (RetainPtr webView = _view.get(); webView && protect([webView _protectedPage]->preferences())->useAppKitGesturesForGestureEvents())
+        maximumNumberOfTouches = 2;
+
+    [gesture setMaximumNumberOfTouches:maximumNumberOfTouches];
+    [gesture setAllowedTouchTypes:NSTouchTypeMaskDirect];
+    [gesture setButtonMask:0];
+}
+
+- (void)configureForSingleClick:(NSPressGestureRecognizer *)gesture
+{
+    [gesture setMinimumPressDuration:0];
+    [gesture setCancelPastAllowableMovement:YES];
+    [gesture setAllowedTouchTypes:NSTouchTypeMaskDirect];
+    [gesture setButtonMask:0];
+    [gesture setNumberOfTouchesRequired:1];
+}
+
+- (void)configureForDoubleClick:(NSClickGestureRecognizer *)gesture
+{
+    [gesture setAllowedTouchTypes:NSTouchTypeMaskDirect];
+    [gesture setButtonMask:0];
+    [gesture setNumberOfTouchesRequired:2];
+    [gesture setNumberOfClicksRequired:2];
+}
+
+- (void)configureForDOMDoubleClick:(NSClickGestureRecognizer *)gesture
+{
+    [gesture setAllowedTouchTypes:NSTouchTypeMaskDirect];
+    [gesture setButtonMask:0];
+    [gesture setNumberOfTouchesRequired:1];
+    // Intentionally set to `1` and not `2`, see WKDOMDoubleClickGestureRecognizer.swift.
+    // FIXME: rdar://184563102 (An NSClickGestureRecognizer with numberOfClicksRequired=2 results in other GRs being neglected for some gestures)
+    [gesture setNumberOfClicksRequired:1];
+}
+
+- (void)configureForSecondaryClick:(NSPressGestureRecognizer *)gesture
+{
+    [gesture setAllowedTouchTypes:NSTouchTypeMaskDirect];
+    [gesture setButtonMask:0];
+}
+
+- (void)configureForMouseTracking:(NSPressGestureRecognizer *)gesture atIndex:(size_t)index
+{
+    [gesture setMinimumPressDuration:0];
+    [gesture setCancelPastAllowableMovement:NO];
+    [gesture setAllowedTouchTypes:NSTouchTypeMaskDirect];
+    [gesture setButtonMask:0];
+    [gesture setNumberOfTouchesRequired:index + 1];
+}
+
+- (void)configureForPointerTracking:(NSPressGestureRecognizer *)gesture
+{
+    [gesture setMinimumPressDuration:0];
+    [gesture setAllowableMovement:CGFLOAT_MAX];
+    [gesture setCancelPastAllowableMovement:NO];
+    [gesture setAllowedTouchTypes:NSTouchTypeMaskDirect];
+    [gesture setButtonMask:0];
+    // FIXME: Tracking more than one touch needs a pointer per touch.
+    [gesture setNumberOfTouchesRequired:1];
+}
+
+- (void)configureForPointerDownDeferral:(WKDeferringGestureRecognizer *)gesture
+{
+    [gesture setAllowedTouchTypes:NSTouchTypeMaskDirect];
+}
+
+- (void)configureForDragPress:(NSPressGestureRecognizer *)gesture
+{
+    // Matching _UIDragInteractionDefaultLiftDelay.
+    static constexpr auto dragPressMinimumDuration = 325_ms;
+    [gesture setMinimumPressDuration:dragPressMinimumDuration.seconds()];
+    [gesture setCancelPastAllowableMovement:NO];
+    [gesture setAllowedTouchTypes:NSTouchTypeMaskDirect];
+    [gesture setButtonMask:0];
+    [gesture setNumberOfTouchesRequired:1];
+}
+
+- (void)configureForDragDeferral:(WKDeferringGestureRecognizer *)gesture
+{
+    [gesture setAllowedTouchTypes:NSTouchTypeMaskDirect];
+}
+
+- (void)configureForSecondaryClickDeferral:(WKDeferringGestureRecognizer *)gesture
+{
+    [gesture setAllowedTouchTypes:NSTouchTypeMaskDirect];
+}
+
+#if ENABLE(IMAGE_ANALYSIS)
+
+- (void)configureForImageAnalysis:(NSPressGestureRecognizer *)gesture
+{
+    // Mirrors the iOS WKImageAnalysisGestureRecognizer: a short, stationary long-press that starts
+    // preflighting Live Text as soon as a press settles on an image. Movement cancels it, so a
+    // scroll or drag over an image does not trigger analysis.
+    [gesture setMinimumPressDuration:0.1];
+    [gesture setAllowableMovement:0];
+    [gesture setCancelPastAllowableMovement:YES];
+    [gesture setAllowedTouchTypes:NSTouchTypeMaskDirect];
+    [gesture setButtonMask:0];
+    [gesture setNumberOfTouchesRequired:1];
+}
+
+- (void)configureForImageAnalysisDeferral:(WKDeferringGestureRecognizer *)gesture
+{
+    [gesture setAllowedTouchTypes:NSTouchTypeMaskDirect];
+}
+
+#endif // ENABLE(IMAGE_ANALYSIS)
+
+- (void)configureForMagnification:(NSMagnificationGestureRecognizer *)gesture
+{
+    [gesture setAllowedTouchTypes:NSTouchTypeMaskDirect];
+}
+
+#if ENABLE(MAC_GESTURE_EVENTS)
+
+- (void)configureForRotation:(NSRotationGestureRecognizer *)gesture
+{
+    [gesture setAllowedTouchTypes:NSTouchTypeMaskDirect];
+}
+
 #endif
+
+static BOOL isCatchingDeceleratingScroll(NSGestureRecognizer *scrollViewPanGesture)
+{
+    RetainPtr scrollView = dynamic_objc_cast<NSScrollView>([scrollViewPanGesture view]);
+    if (!scrollView)
+        return false;
+
+    // FIXME: The flag was recently renamed in rdar://185652893, so keep this selector check for a bit.
+    if (![scrollView respondsToSelector:@selector(_touchCaughtDeceleration)])
+        return false;
+
+    return [scrollView _touchCaughtDeceleration];
+}
 
 - (instancetype)initWithView:(WKWebView *)view
 {
