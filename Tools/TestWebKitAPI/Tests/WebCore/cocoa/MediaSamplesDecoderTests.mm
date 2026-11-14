@@ -930,6 +930,38 @@ TEST(MediaSamplesDecoder, CanDecodeRejectsHardwareDecodableVideo)
 #endif
 }
 
+TEST(MediaSamplesDecoder, IsHardwareDecodable)
+{
+    EXPECT_TRUE(MediaSamplesDecoder::isHardwareDecodable(makeVideoInfo(FourCC { "avc1" }, "avc1.640028"_s)));
+    EXPECT_TRUE(MediaSamplesDecoder::isHardwareDecodable(makeVideoInfo(FourCC { "avc3" }, "avc3.640028"_s)));
+    EXPECT_FALSE(MediaSamplesDecoder::isHardwareDecodable(makeVideoInfo(FourCC { "vp08" }, "vp08.00.10.08"_s)));
+    EXPECT_FALSE(MediaSamplesDecoder::isHardwareDecodable(makeAudioInfo(FourCC { "opus" })));
+
+#if ENABLE(VP9)
+    {
+        ScopedVP9HardwareDecoder hardwareDecoder { true };
+        EXPECT_TRUE(MediaSamplesDecoder::isHardwareDecodable(makeVideoInfo(FourCC { "vp09" }, "vp09.00.10.08"_s)));
+        EXPECT_TRUE(MediaSamplesDecoder::isHardwareDecodable(makeVideoInfo(FourCC { "vp09" }, "vp09.02.10.10"_s, 10)));
+    }
+    {
+        ScopedVP9HardwareDecoder noHardwareDecoder { false };
+        EXPECT_FALSE(MediaSamplesDecoder::isHardwareDecodable(makeVideoInfo(FourCC { "vp09" }, "vp09.00.10.08"_s)));
+        EXPECT_FALSE(MediaSamplesDecoder::isHardwareDecodable(makeVideoInfo(FourCC { "vp09" }, "vp09.02.10.10"_s, 10)));
+    }
+#endif
+
+#if ENABLE(AV1)
+    {
+        ScopedAV1HardwareDecoder hardwareDecoder { true };
+        EXPECT_TRUE(MediaSamplesDecoder::isHardwareDecodable(makeVideoInfo(FourCC { "av01" }, "av01.0.04M.08"_s)));
+    }
+    {
+        ScopedAV1HardwareDecoder noHardwareDecoder { false };
+        EXPECT_FALSE(MediaSamplesDecoder::isHardwareDecodable(makeVideoInfo(FourCC { "av01" }, "av01.0.04M.08"_s)));
+    }
+#endif
+}
+
 #if ENABLE(VP9)
 TEST(MediaSamplesDecoder, CanDecodeVP9WithoutHardwareDecoder)
 {

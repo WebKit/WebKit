@@ -135,14 +135,16 @@ static bool isSoftwareDecodableAV1(const VideoInfo& info)
 #endif
 
 // FIXME: ask the GPU process which codecs it decodes in hardware instead of using a static list.
-static bool isHardwareDecodable(const VideoInfo& info)
+bool MediaSamplesDecoder::isHardwareDecodable(const TrackInfo& info)
 {
+    if (!info.isVideo())
+        return false;
     auto codecName = info.codecName();
     if (codecName == avc1CodecName || codecName == avc3CodecName)
         return true;
 #if PLATFORM(COCOA) && ENABLE(VP9)
     if (codecName == vp9CodecName)
-        return vp9Profile(info) == 0u && vp9HardwareDecoderAvailable();
+        return vp9HardwareDecoderAvailable();
 #endif
 #if PLATFORM(COCOA) && ENABLE(AV1)
     if (codecName == av1CodecName)
@@ -196,7 +198,7 @@ static std::optional<VideoDecoderConfiguration> decoderConfiguration(const Video
         return { };
 
     auto configuration = videoDecoderConfiguration(info);
-    if (!configuration || !VideoDecoder::isVPXSupported() || isHardwareDecodable(info))
+    if (!configuration || !VideoDecoder::isVPXSupported() || MediaSamplesDecoder::isHardwareDecodable(info))
         return { };
     return configuration;
 }

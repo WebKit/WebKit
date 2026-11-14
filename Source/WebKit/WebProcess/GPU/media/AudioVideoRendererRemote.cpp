@@ -727,7 +727,7 @@ bool AudioVideoRendererRemote::shouldDecodeInContentProcess(const TrackInfo& inf
         return false;
 #endif
     if (info.isVideo())
-        return m_videoCodecsDecodedInContentProcess.contains(info.codecName());
+        return m_videoCodecsDecodedInContentProcess.contains(info.codecName()) && !MediaSamplesDecoder::isHardwareDecodable(info);
     if (!m_audioDecodingInContentProcess)
         return false;
 #if PLATFORM(COCOA)

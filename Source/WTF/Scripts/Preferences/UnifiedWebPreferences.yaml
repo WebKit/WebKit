@@ -4351,7 +4351,7 @@ MediaVideoCodecIDsDecodedInContentProcess:
   type: String
   status: embedder
   excludeFrom: [ WebKitLegacy, WebCore ]
-  defaultValue: '"vp08"_str'
+  defaultValue: '"vp08,vp09,av01"_str'
 
 MetaViewportInteractiveWidgetEnabled:
   type: bool
