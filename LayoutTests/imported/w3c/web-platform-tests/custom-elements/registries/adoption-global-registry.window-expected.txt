@@ -1,0 +1,18 @@
+
+PASS Element with the global registry in a shadow root with a scoped registry, whose host is adopted into a document with a global registry
+PASS Element with the global registry in a shadow root with a scoped registry, adopted into a document with a global registry
+PASS Element with the global registry in a shadow root with a null registry, whose host is adopted into a document with a global registry
+PASS Element with the global registry in a shadow root with a null registry, adopted into a document with a global registry
+PASS Element given the global registry by initialize() in a shadow root with a scoped registry, whose host is adopted into a document with a global registry
+PASS Element without a parent given the global registry by initialize(), adopted into a document with a global registry
+PASS Element with the global registry in a shadow root with a scoped registry, whose host is adopted into a document without a browsing context
+PASS Element with the global registry in a shadow root with a scoped registry, adopted into a document without a browsing context
+PASS Element with the global registry in a shadow root with a null registry, whose host is adopted into a document without a browsing context
+PASS Element with the global registry in a shadow root with a null registry, adopted into a document without a browsing context
+PASS Element given the global registry by initialize() in a shadow root with a scoped registry, whose host is adopted into a document without a browsing context
+PASS Element without a parent given the global registry by initialize(), adopted into a document without a browsing context
+PASS Element with the global registry in a shadow root with a scoped registry, whose host is appended to another document, is upgraded by that document's registry
+PASS Element with the global registry, appended from a shadow root with a scoped registry to one in another document, is upgraded by that document's registry
+PASS Element with the global registry, adopted into another document and appended back to its shadow root with a scoped registry, is upgraded by the global registry
+PASS Element with a null registry whose parent has the global registry in a shadow root with a scoped registry, whose host is adopted into a document with a global registry
+

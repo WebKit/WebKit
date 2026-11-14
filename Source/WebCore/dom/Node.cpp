@@ -2200,7 +2200,7 @@ static ALWAYS_INLINE void adoptCustomElementRegistryIfNotKeptNull(ShadowRoot& sh
 {
     if (shadowRoot.keepsCustomElementRegistryNull() || !shadowRoot.usesNullCustomElementRegistry() || !newDocument.effectiveGlobalCustomElementRegistry()) [[likely]]
         return;
-    shadowRoot.clearUsesNullCustomElementRegistry();
+    shadowRoot.resetCustomElementRegistryType();
     shadowRoot.setCustomElementRegistry(newDocument.effectiveGlobalCustomElementRegistry());
 }
 
@@ -2307,8 +2307,10 @@ inline void Node::adoptCustomElementRegistryIntoScopedRegistryDocument()
     // An element that inherits the global custom element registry (neither uses the null registry
     // nor an explicit scoped registry) has no global registry to inherit in such a document, so it
     // ends up with a null custom element registry.
-    if (is<Element>(*this) && !usesNullCustomElementRegistry() && !usesScopedCustomElementRegistryMap())
+    if (is<Element>(*this) && !usesNullCustomElementRegistry() && !usesScopedCustomElementRegistryMap()) {
+        resetCustomElementRegistryType();
         setUsesNullCustomElementRegistry();
+    }
 }
 
 // https://dom.spec.whatwg.org/#concept-node-adopt
@@ -2323,6 +2325,13 @@ static bool shouldClearNullCustomElementRegistryOnAdoption(const Node& node, Doc
         return true;
     RefPtr registry = CustomElementRegistry::registryForNodeOrTreeScope(*parent, protect(parent->isInShadowTree() ? parent->treeScope() : newDocument));
     return registry && !registry->isScoped();
+}
+
+static void clearNullCustomElementRegistryOnAdoption(Node& node, Document& newDocument)
+{
+    node.resetCustomElementRegistryType();
+    if (is<Element>(node) && node.isInShadowTree() && node.treeScope().customElementRegistry() != newDocument.effectiveGlobalCustomElementRegistry())
+        node.setUsesGlobalCustomElementRegistry();
 }
 
 void Node::moveNodeToNewDocumentFastCase(Document& oldDocument, Document& newDocument)
@@ -2344,7 +2353,7 @@ void Node::moveNodeToNewDocumentFastCase(Document& oldDocument, Document& newDoc
     ensureWrapperForAdoptedNodeWithForeignGlobalObjectIfNeeded(*this, oldDocument, newDocument);
 
     if (usesNullCustomElementRegistry() && shouldClearNullCustomElementRegistryOnAdoption(*this, newDocument)) [[unlikely]]
-        clearUsesNullCustomElementRegistry();
+        clearNullCustomElementRegistryOnAdoption(*this, newDocument);
 
     if (auto* newRegistry = newDocument.customElementRegistry(); newRegistry && newRegistry->isScoped()) [[unlikely]]
         adoptCustomElementRegistryIntoScopedRegistryDocument();
@@ -2368,7 +2377,7 @@ void Node::moveNodeToNewDocumentSlowCase(Document& oldDocument, Document& newDoc
     oldDocument.decrementReferencingNodeCount();
 
     if (usesNullCustomElementRegistry() && shouldClearNullCustomElementRegistryOnAdoption(*this, newDocument)) [[unlikely]]
-        clearUsesNullCustomElementRegistry();
+        clearNullCustomElementRegistryOnAdoption(*this, newDocument);
 
     if (auto* newRegistry = newDocument.customElementRegistry(); newRegistry && newRegistry->isScoped()) [[unlikely]]
         adoptCustomElementRegistryIntoScopedRegistryDocument();
@@ -2992,7 +3001,7 @@ void Node::removedLastRef()
 
 void Node::incrementConnectedSubframeCount(unsigned amount)
 {
-    static_assert(RareDataBitFields { Page::maxNumberOfFrames, 0, 0, 0, 0 }.connectedSubframeCount == Page::maxNumberOfFrames, "connectedSubframeCount must fit Page::maxNumberOfFrames");
+    static_assert(RareDataBitFields { Page::maxNumberOfFrames, 0, 0, 0 }.connectedSubframeCount == Page::maxNumberOfFrames, "connectedSubframeCount must fit Page::maxNumberOfFrames");
 
     ASSERT(isContainerNode());
     auto bitfields = rareDataBitfields();
@@ -3034,23 +3043,9 @@ void Node::updateAncestorConnectedSubframeCountForInsertion() const
 
 TextDirection Node::effectiveTextDirection() const
 {
-    if (rareDataBitfields().usesEffectiveTextDirection)
-        return static_cast<TextDirection>(rareDataBitfields().effectiveTextDirection);
+    if (usesEffectiveTextDirection())
+        return hasStateFlag(StateFlag::EffectiveTextDirectionIsRTL) ? TextDirection::RTL : TextDirection::LTR;
     return document().documentElementTextDirection();
-}
-
-void Node::setEffectiveTextDirection(TextDirection direction)
-{
-    auto bitfields = rareDataBitfields();
-    bitfields.effectiveTextDirection = std::to_underlying(direction);
-    setRareDataBitfields(bitfields);
-}
-
-void Node::setUsesEffectiveTextDirection(bool value)
-{
-    auto bitfields = rareDataBitfields();
-    bitfields.usesEffectiveTextDirection = value;
-    setRareDataBitfields(bitfields);
 }
 
 bool Node::inRenderedDocument() const

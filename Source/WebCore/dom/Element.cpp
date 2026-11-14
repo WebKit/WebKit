@@ -2566,8 +2566,11 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
         break;
     }
     case AttributeNames::customelementregistryAttr:
-        if (reason == AttributeModificationReason::Parser && !isDefinedCustomElement())
+        if (reason == AttributeModificationReason::Parser && !isDefinedCustomElement()) {
+            if (usesScopedCustomElementRegistryMap())
+                CustomElementRegistry::removeFromScopedCustomElementRegistryMap(*this);
             setUsesNullCustomElementRegistry();
+        }
         break;
     default: {
         Ref document = this->document();
@@ -3235,7 +3238,7 @@ static void preserveCustomElementRegistryAfterLeavingTreeScope(Element& element,
     if (!oldParent.isInShadowTree() || element.usesNullCustomElementRegistry())
         return;
     if (RefPtr registry = oldParent.treeScope().customElementRegistry()) {
-        if (registry->isScoped() && !element.usesScopedCustomElementRegistryMap()) [[unlikely]]
+        if (registry->isScoped() && !element.usesScopedCustomElementRegistryMap() && !element.usesGlobalCustomElementRegistry()) [[unlikely]]
             CustomElementRegistry::addToScopedCustomElementRegistryMap(element, *registry);
     }
 }
@@ -3251,9 +3254,10 @@ static void preserveCustomElementRegistryAfterEnteringTreeScope(Element& element
         if (element.treeScope().customElementRegistry() != element.document().customElementRegistry()) [[unlikely]] {
             // This element was moved into a shadow tree with a scoped custom element registry.
             // Keep using the document's non-scoped custom element registry.
-            if (RefPtr window = element.document().window())
-                CustomElementRegistry::addToScopedCustomElementRegistryMap(element, protect(window->customElementRegistry()));
-        }
+            if (element.document().window())
+                element.setUsesGlobalCustomElementRegistry();
+        } else
+            element.resetCustomElementRegistryType();
     }
 }
 

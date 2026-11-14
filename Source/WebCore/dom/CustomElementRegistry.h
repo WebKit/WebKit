@@ -76,6 +76,8 @@ public:
             return nullptr;
         if (element.usesScopedCustomElementRegistryMap()) [[unlikely]]
             return scopedCustomElementRegistryMap().get(element);
+        if (element.usesGlobalCustomElementRegistry()) [[unlikely]]
+            return effectiveGlobalCustomElementRegistry(element);
         return element.treeScope().customElementRegistry();
     }
 
@@ -87,6 +89,8 @@ public:
         }
         if (auto* element = dynamicDowncast<Element>(node); element && element->usesScopedCustomElementRegistryMap()) [[unlikely]]
             return scopedCustomElementRegistryMap().get(*element);
+        if (node.usesGlobalCustomElementRegistry()) [[unlikely]]
+            return effectiveGlobalCustomElementRegistry(node);
         return treeScope.customElementRegistry();
     }
 
@@ -124,6 +128,7 @@ private:
     CustomElementRegistry(ScriptExecutionContext&, IsScoped);
 
     NODELETE static WeakHashMap<Element, Ref<CustomElementRegistry>, WeakPtrImplWithEventTargetData>& scopedCustomElementRegistryMap();
+    NODELETE static CustomElementRegistry* effectiveGlobalCustomElementRegistry(const Node&);
     NODELETE static HashMap<uintptr_t, RefPtr<CustomElementRegistry>>& activeCustomElementConstructorMap();
 
     HashMap<AtomString, Ref<JSCustomElementInterface>> m_nameMap;

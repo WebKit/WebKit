@@ -285,13 +285,29 @@ public:
     void setIsInCustomElementReactionQueue() { setStateFlag(StateFlag::IsInCustomElementReactionQueue); }
     void clearIsInCustomElementReactionQueue() { clearStateFlag(StateFlag::IsInCustomElementReactionQueue); }
 
-    bool usesNullCustomElementRegistry() const { return hasStateFlag(StateFlag::UsesNullCustomElementRegistry); }
-    void setUsesNullCustomElementRegistry() const { setStateFlag(StateFlag::UsesNullCustomElementRegistry); }
-    void clearUsesNullCustomElementRegistry() const { clearStateFlag(StateFlag::UsesNullCustomElementRegistry); }
+    bool usesNullCustomElementRegistry() const { return customElementRegistryType() == CustomElementRegistryType::Null; }
+    void setUsesNullCustomElementRegistry() { setCustomElementRegistryType(CustomElementRegistryType::Null); }
 
-    bool usesScopedCustomElementRegistryMap() const { return hasStateFlag(StateFlag::UsesScopedCustomElementRegistryMap); }
-    void setUsesScopedCustomElementRegistryMap() { setStateFlag(StateFlag::UsesScopedCustomElementRegistryMap); }
-    void clearUsesScopedCustomElementRegistryMap() { clearStateFlag(StateFlag::UsesScopedCustomElementRegistryMap); }
+    bool usesScopedCustomElementRegistryMap() const { return customElementRegistryType() == CustomElementRegistryType::ScopedMap; }
+    void setUsesScopedCustomElementRegistryMap()
+    {
+        ASSERT(isElementNode());
+        setCustomElementRegistryType(CustomElementRegistryType::ScopedMap);
+    }
+
+    bool usesGlobalCustomElementRegistry() const { return customElementRegistryType() == CustomElementRegistryType::Global; }
+    void setUsesGlobalCustomElementRegistry()
+    {
+        ASSERT(isElementNode());
+        setCustomElementRegistryType(CustomElementRegistryType::Global);
+    }
+
+    void resetCustomElementRegistryType()
+    {
+        auto bitfields = rareDataBitfields();
+        bitfields.customElementRegistryType = std::to_underlying(CustomElementRegistryType::TreeScope);
+        setRareDataBitfields(bitfields);
+    }
 
     // Returns null, a child of ShadowRoot, or a legacy shadow root.
     NODELETE Node* nonBoundaryShadowTreeRootNode();
@@ -326,10 +342,10 @@ public:
     void setSelfOrPrecedingNodesAffectDirAuto(bool flag) { setStateFlag(StateFlag::SelfOrPrecedingNodesAffectDirAuto, flag); }
 
     NODELETE TextDirection effectiveTextDirection() const;
-    NODELETE void setEffectiveTextDirection(TextDirection);
+    void setEffectiveTextDirection(TextDirection direction) { setStateFlag(StateFlag::EffectiveTextDirectionIsRTL, std::to_underlying(direction)); }
 
-    bool usesEffectiveTextDirection() const { return rareDataBitfields().usesEffectiveTextDirection; }
-    NODELETE void setUsesEffectiveTextDirection(bool);
+    bool usesEffectiveTextDirection() const { return hasStateFlag(StateFlag::UsesEffectiveTextDirection); }
+    void setUsesEffectiveTextDirection(bool value) { setStateFlag(StateFlag::UsesEffectiveTextDirection, value); }
 
     // Returns the enclosing event parent Element (or self) that, when clicked, would trigger a navigation.
     NODELETE WEBCORE_EXPORT Element* enclosingLinkEventParentOrSelf();
@@ -665,8 +681,8 @@ protected:
         HasNodeIdentifier = 1 << 11,
         IsUserActionElement = 1 << 12,
         IsInCustomElementReactionQueue = 1 << 13,
-        UsesNullCustomElementRegistry = 1 << 14,
-        UsesScopedCustomElementRegistryMap = 1 << 15,
+        UsesEffectiveTextDirection = 1 << 14,
+        EffectiveTextDirectionIsRTL = 1 << 15,
         NeedsSVGRendererUpdate = 1 << 16,
         NeedsUpdateQueryContainerDependentStyle = 1 << 17,
         EverHadSmoothScroll = 1 << 18,
@@ -697,12 +713,13 @@ protected:
         FailedOrPrecustomized = 3,
     };
 
+    enum class CustomElementRegistryType : uint8_t { TreeScope, Null, ScopedMap, Global };
+
     struct RareDataBitFields {
         uint16_t connectedSubframeCount : 10;
         uint16_t tabIndexState : 2;
         uint16_t customElementState : 2;
-        uint16_t usesEffectiveTextDirection : 1;
-        uint16_t effectiveTextDirection : 1;
+        uint16_t customElementRegistryType : 2;
     };
 
     bool hasStateFlag(StateFlag flag) const { return m_stateFlags.contains(flag); }
@@ -717,6 +734,15 @@ protected:
 
     CustomElementState customElementState() const { return static_cast<CustomElementState>(rareDataBitfields().customElementState); }
     void setCustomElementState(CustomElementState);
+
+    CustomElementRegistryType customElementRegistryType() const { return static_cast<CustomElementRegistryType>(rareDataBitfields().customElementRegistryType); }
+    void setCustomElementRegistryType(CustomElementRegistryType type)
+    {
+        ASSERT(customElementRegistryType() == CustomElementRegistryType::TreeScope || customElementRegistryType() == type);
+        auto bitfields = rareDataBitfields();
+        bitfields.customElementRegistryType = std::to_underlying(type);
+        setRareDataBitfields(bitfields);
+    }
 
     bool isParsingChildrenFinished() const { return !hasStateFlag(StateFlag::IsParsingChildren); }
     void setIsParsingChildrenFinished() { clearStateFlag(StateFlag::IsParsingChildren); }

@@ -213,23 +213,27 @@ ExceptionOr<void> CustomElementRegistry::initialize(Node& root)
     }
 
     if (RefPtr document = dynamicDowncast<Document>(*containerRoot); document && document->usesNullCustomElementRegistry()) {
-        document->clearUsesNullCustomElementRegistry();
+        document->resetCustomElementRegistryType();
         document->setCustomElementRegistry(*this);
     } else if (RefPtr shadowRoot = dynamicDowncast<ShadowRoot>(*containerRoot); shadowRoot && shadowRoot->usesNullCustomElementRegistry()) {
-        shadowRoot->clearUsesNullCustomElementRegistry();
+        shadowRoot->resetCustomElementRegistryType();
         shadowRoot->setCustomElementRegistry(*this);
         if (shadowRoot->isConnected())
             didAssociateWithDocument(protect(shadowRoot->document()).get());
     } else if (auto* documentFragment = dynamicDowncast<DocumentFragment>(*containerRoot); documentFragment && documentFragment->usesNullCustomElementRegistry())
-        documentFragment->clearUsesNullCustomElementRegistry();
+        documentFragment->resetCustomElementRegistryType();
 
     RefPtr registryOfTreeScope = root.isInTreeScope() ? root.treeScope().customElementRegistry() : nullptr;
     auto updateRegistryIfNeeded = [&](Element& element) {
         if (!element.usesNullCustomElementRegistry())
             return;
-        element.clearUsesNullCustomElementRegistry();
-        if (this != registryOfTreeScope)
-            addToScopedCustomElementRegistryMap(element, *this);
+        element.resetCustomElementRegistryType();
+        if (this != registryOfTreeScope) {
+            if (isScoped())
+                addToScopedCustomElementRegistryMap(element, *this);
+            else
+                element.setUsesGlobalCustomElementRegistry();
+        }
     };
     auto upgradeElementIfPossible = [&](Element& element) {
         if (element.isCustomElementUpgradeCandidate() && CustomElementRegistry::registryForElement(element) == this)
@@ -261,7 +265,7 @@ void CustomElementRegistry::addToScopedCustomElementRegistryMap(Element& element
 void CustomElementRegistry::removeFromScopedCustomElementRegistryMap(Element& element)
 {
     ASSERT(element.usesScopedCustomElementRegistryMap());
-    element.clearUsesScopedCustomElementRegistryMap();
+    element.resetCustomElementRegistryType();
     auto didRemove = scopedCustomElementRegistryMap().remove(element);
     ASSERT_UNUSED(didRemove, didRemove);
 }
@@ -270,6 +274,11 @@ WeakHashMap<Element, Ref<CustomElementRegistry>, WeakPtrImplWithEventTargetData>
 {
     static NeverDestroyed<WeakHashMap<Element, Ref<CustomElementRegistry>, WeakPtrImplWithEventTargetData>> map;
     return map.get();
+}
+
+CustomElementRegistry* CustomElementRegistry::effectiveGlobalCustomElementRegistry(const Node& node)
+{
+    return node.document().effectiveGlobalCustomElementRegistry();
 }
 
 // HTML has one map per similar-origin window agent. Entries only last while a constructor runs, so one map for the main thread is equivalent.

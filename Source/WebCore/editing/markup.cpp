@@ -1634,7 +1634,7 @@ static ALWAYS_INLINE ExceptionOr<Ref<DocumentFragment>> createFragmentForMarkup(
     if (registryKind == Element::CustomElementRegistryKind::Null)
         fragment->setUsesNullCustomElementRegistry();
     else
-        fragment->clearUsesNullCustomElementRegistry();
+        fragment->resetCustomElementRegistryType();
 
     if (document->isHTMLDocument() || parserContentPolicy.contains(ParserContentPolicy::AlwaysParseAsHTML)) {
         fragment->parseHTML(markup, contextElement, parserContentPolicy, registry);
