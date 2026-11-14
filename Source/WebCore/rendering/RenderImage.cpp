@@ -450,7 +450,13 @@ ConcreteObjectSize RenderImage::defaultConcreteObjectSize(NaturalDimensions natu
 RefPtr<ShareableBitmap> RenderImage::createShareableBitmap(const CreateShareableBitmapFromImageOptions& options) const
 {
     Ref frame = this->frame();
-    auto colorSpaceForBitmap = screenColorSpace(protect(protect(frame->mainFrame())->virtualView()).get());
+    auto colorSpaceForBitmap = [&] {
+        if (options.useImageColorSpace == CreateShareableBitmapFromImageOptions::UseImageColorSpace::Yes) {
+            if (RefPtr cachedImage = this->cachedImage(); cachedImage && !cachedImage->hasHDRContent())
+                return protect(cachedImage->image())->colorSpace().asRGBModelMayBeExtended().value_or(ColorSpace::SRGB());
+        }
+        return screenColorSpace(protect(protect(frame->mainFrame())->virtualView()).get());
+    }();
     if (!isRenderMedia() && !opacity() && options.useSnapshotForTransparentImages == CreateShareableBitmapFromImageOptions::UseSnapshotForTransparentImages::Yes) {
         auto snapshotRect = absoluteBoundingBoxRect();
         if (snapshotRect.isEmpty())
@@ -536,7 +542,9 @@ RefPtr<ShareableBitmap> RenderImage::createShareableBitmapForImageBitmapRequest(
 
 RefPtr<ShareableBitmap> RenderImage::createShareableBitmapForFullScreen() const
 {
-    return createShareableBitmap();
+    CreateShareableBitmapFromImageOptions options;
+    options.useImageColorSpace = CreateShareableBitmapFromImageOptions::UseImageColorSpace::Yes;
+    return createShareableBitmap(options);
 }
 
 RefPtr<ShareableBitmap> RenderImage::createShareableBitmapForImageServices() const

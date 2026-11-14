@@ -46,10 +46,12 @@ enum ImageSizeChangeType {
 struct CreateShareableBitmapFromImageOptions {
     enum class AllowAnimatedImages : bool { No, Yes };
     enum class UseSnapshotForTransparentImages : bool { No, Yes };
+    enum class UseImageColorSpace : bool { No, Yes };
 
     std::optional<FloatSize> screenSizeInPixels;
     AllowAnimatedImages allowAnimatedImages { AllowAnimatedImages::Yes };
     UseSnapshotForTransparentImages useSnapshotForTransparentImages { UseSnapshotForTransparentImages::No };
+    UseImageColorSpace useImageColorSpace { UseImageColorSpace::No };
 };
 
 class RenderImage : public RenderReplaced {
