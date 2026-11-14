@@ -28,6 +28,7 @@
 
 #include "APIData.h"
 #include "HandleMessage.h"
+#include "ImageOptions.h"
 #include "ProvisionalFrameProxy.h"
 #include "ProxyingPageAgentMessages.h"
 #include "ValidationProcedures.h"
@@ -36,6 +37,7 @@
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 #include <JavaScriptCore/InspectorProtocolObjects.h>
+#include <WebCore/ImageUtilities.h>
 #include <WebCore/InspectorIdentifierRegistry.h>
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/Borrow.h>
@@ -793,9 +795,30 @@ CommandResult<String> ProxyingPageAgent::snapshotNode(Protocol::DOM::NodeId)
     return makeUnexpected("Not yet implemented under Site Isolation"_s);
 }
 
-CommandResult<String> ProxyingPageAgent::snapshotRect(int, int, int, int, Protocol::Page::CoordinateSystem)
+// WebPageProxy::takeSnapshot() draws the frames of every process (remote snapshotting), so cross-origin
+// iframes are included. Only the UI process receives the image, not a WebContent process.
+void ProxyingPageAgent::snapshotRect(int x, int y, int width, int height, Protocol::Page::CoordinateSystem coordinateSystem, Ref<SnapshotRectCallback>&& callback)
 {
-    return makeUnexpected("Not yet implemented under Site Isolation"_s);
+#if PLATFORM(COCOA)
+    SnapshotOptions options;
+    if (coordinateSystem == Protocol::Page::CoordinateSystem::Viewport)
+        options.add(SnapshotOption::InViewCoordinates);
+
+    protect(m_inspectedPage.get())->takeSnapshot({ x, y, width, height }, { }, options, [callback = WTF::move(callback)](CGImageRef image) {
+        if (!image) {
+            callback->sendFailure("Could not capture snapshot"_s);
+            return;
+        }
+        callback->sendSuccess(encodeDataURL(image, "image/png"_s));
+    });
+#else
+    UNUSED_PARAM(x);
+    UNUSED_PARAM(y);
+    UNUSED_PARAM(width);
+    UNUSED_PARAM(height);
+    UNUSED_PARAM(coordinateSystem);
+    callback->sendFailure("Not yet implemented under Site Isolation"_s);
+#endif
 }
 
 #if ENABLE(WEB_ARCHIVE) && USE(CF)

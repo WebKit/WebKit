@@ -1,0 +1,19 @@
+
+
+== Running test suite: SiteIsolation.Page.SnapshotRectCrossOriginIFrame
+-- Running test case: SiteIsolation.Page.SnapshotRectCrossOriginIFrame.BackendTarget.Viewport
+PASS: Snapshot should contain the main frame's box.
+PASS: Snapshot should contain the cross-origin iframe's content.
+
+-- Running test case: SiteIsolation.Page.SnapshotRectCrossOriginIFrame.BackendTarget.Page
+PASS: Snapshot should contain the main frame's box.
+PASS: Snapshot should contain the cross-origin iframe's content.
+
+-- Running test case: SiteIsolation.Page.SnapshotRectCrossOriginIFrame.PageTarget
+PASS: Snapshot should contain the main frame's box.
+PASS: Snapshot should not contain the cross-origin iframe's content.
+
+-- Running test case: SiteIsolation.Page.SnapshotRectCrossOriginIFrame.BackendTarget.ZeroSizeRect
+PASS: Page.snapshotRect should return an error for a zero-size rect.
+Error message: Could not capture snapshot
+
