@@ -75,6 +75,11 @@
             "behaviors": [{ "id": "ShouldDisableScrollAnchoringQuirk" }]
         },
         {
+            "bugs": ["rdar://192546531"],
+            "matches": ["*://*.arbor-technology.com/*"],
+            "behaviors": [{ "id": "ShouldDisableCSSSizeShorthandQuirk" }]
+        },
+        {
             "bugs": ["rdar://157636545"],
             "matches": ["*://studio.atomm.com/*"],
             "behaviors": [
@@ -1054,6 +1059,11 @@
             ]
         },
         {
+            "bugs": ["rdar://192538351"],
+            "matches": ["*://*.purpletie.com/*"],
+            "behaviors": [{ "id": "ShouldDisableCSSSizeShorthandQuirk" }]
+        },
+        {
             "bugs": ["rdar://55629493"],
             "matches": ["*://*.ralphlauren.com/*"],
             "behaviors": [{ "id": "ShouldIgnoreAriaForFastPathContentObservationCheckQuirk" }]
@@ -1421,6 +1431,11 @@
                 },
                 { "id": "ShouldAvoidProgrammaticScrollClampingQuirk", "bugs": ["rdar://175565114"] }
             ]
+        },
+        {
+            "bugs": ["rdar://189631518"],
+            "matches": ["*://news.yahoo.co.jp/*"],
+            "behaviors": [{ "id": "ShouldDisableCSSSizeShorthandQuirk" }]
         },
         {
             "matches": ["*://*.yahoo.*/*"],

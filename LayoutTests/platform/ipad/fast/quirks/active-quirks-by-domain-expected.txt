@@ -39,6 +39,8 @@ https://amazon.design/
     ShouldDispatchSimulatedMouseEventsQuirk
 https://www.apple.com/
     EnsureCaptionVisibilityInFullscreenAndPictureInPicture
+https://www.arbor-technology.com/
+    ShouldDisableCSSSizeShorthandQuirk
 https://as.com/
     (none)
 https://www.att.com/
@@ -452,6 +454,8 @@ https://www.premierleague.com/
     ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor
     ShouldDispatchPlayPauseEventsOnResume
     ShouldIgnorePlaysInlineRequirementQuirk
+https://www.purpletie.com/
+    ShouldDisableCSSSizeShorthandQuirk
 https://www.ralphlauren.com/
     ShouldIgnoreAriaForFastPathContentObservationCheckQuirk
 https://www.reddit.com/
@@ -608,6 +612,10 @@ https://twitter.com/
 https://www.yahoo.com/
     NeedsYahooVolumeSliderQuirk
     ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor
+https://news.yahoo.co.jp/
+    NeedsYahooVolumeSliderQuirk
+    ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor
+    ShouldDisableCSSSizeShorthandQuirk
 https://news.ycombinator.com/
     ShouldIgnoreTextAutoSizingQuirk
 https://ycombinator.com/

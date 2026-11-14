@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<!-- Test for the arbor-technology.com size shorthand quirk (rdar://192546531). -->
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/css/support/parsing-testcommon.js"></script>
+<script>
+window.internals?.setTopDocumentURLForQuirks("https://www.arbor-technology.com/");
+</script>
+<style>
+.dropdown-menu { size: 18px; margin: 0; padding: 0; }
+</style>
+</head>
+<body>
+<div class="dropdown-menu" id="menu"><div style="height: 100px"></div></div>
+<script>
+test_valid_rule(".dropdown-menu { size: 18px; }", ".dropdown-menu { }");
+test_valid_rule(".dropdown-menu { min-size: 12px; max-size: 12px; }", ".dropdown-menu { }");
+test_valid_rule("@page { size: a3; }");
+
+test(() => {
+    assert_equals(menu.offsetWidth, document.body.clientWidth);
+    assert_equals(menu.offsetHeight, 100);
+}, "The size declaration does not change the width or height of the dropdown menu");
+</script>
+</body>
+</html>

@@ -33,6 +33,7 @@ const urls = [
     "https://www.amazon.co.uk/",
     "https://amazon.design/",
     "https://www.apple.com/",
+    "https://www.arbor-technology.com/",
     "https://as.com/",
     "https://www.att.com/",
     "https://www.baidu.com/",
@@ -164,6 +165,7 @@ const urls = [
     "https://www.playstation.com/",
     "https://my.playstation.com/",
     "https://www.premierleague.com/",
+    "https://www.purpletie.com/",
     "https://www.ralphlauren.com/",
     "https://www.reddit.com/",
     "https://www.scribd.com/",
@@ -199,6 +201,7 @@ const urls = [
     // even reaches the handler.
     "https://twitter.com/",
     "https://www.yahoo.com/",
+    "https://news.yahoo.co.jp/",
     "https://news.ycombinator.com/",
     "https://ycombinator.com/",
     "https://www.yelp.com/",
@@ -222,6 +225,7 @@ const touchEventGatedQuirks = new Map([
     ["https://www.netflix.com/", ["ShouldDispatchPointerOutAndLeaveAfterHandlingSyntheticClick"]],
     ["https://soylent.com/", ["ShouldDispatchPointerOutAndLeaveAfterHandlingSyntheticClick"]],
     ["https://www.yahoo.com/", ["ShouldPreventTouchEndDispatchQuirk"]],
+    ["https://news.yahoo.co.jp/", ["ShouldPreventTouchEndDispatchQuirk"]],
 ]);
 
 let output = "";
