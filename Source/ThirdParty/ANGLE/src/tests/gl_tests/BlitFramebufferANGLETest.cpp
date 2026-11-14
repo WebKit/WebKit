@@ -4363,6 +4363,256 @@ TEST_P(BlitFramebufferTest, Blit2DArrayTo3D)
     test3DBlit(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_3D);
 }
 
+// The corners of a blit rectangle, in the order of the glBlitFramebuffer arguments.
+struct BlitCorners
+{
+    GLint x0;
+    GLint y0;
+    GLint x1;
+    GLint y1;
+};
+
+struct BlitCase
+{
+    BlitCorners src;
+    BlitCorners dst;
+};
+
+// Returns floor(src0 + (dst + 0.5 - dst0) * (src1 - src0) / (dst1 - dst0)), the source pixel of
+// destination pixel dst for GL_NEAREST, computed exactly.
+GLint NearestBlitSourcePixel(GLint dst, GLint src0, GLint src1, GLint dst0, GLint dst1)
+{
+    int64_t numerator = 2 * int64_t(src0) * (dst1 - dst0) +
+                        (2 * int64_t(dst) + 1 - 2 * dst0) * (int64_t(src1) - src0);
+    int64_t denominator = 2 * (int64_t(dst1) - dst0);
+    if (denominator < 0)
+    {
+        numerator   = -numerator;
+        denominator = -denominator;
+    }
+    int64_t quotient = numerator / denominator;
+    if (quotient * denominator > numerator)
+    {
+        --quotient;
+    }
+    return static_cast<GLint>(quotient);
+}
+
+// Computes the result of a GL_NEAREST blit on the CPU. Destination pixels whose source pixel is
+// outside the source image are left untouched, as WebGL 2.0 requires and ANGLE implements.
+template <typename T>
+std::vector<T> ReferenceNearestBlit(const std::vector<T> &src,
+                                    GLsizei srcWidth,
+                                    GLsizei srcHeight,
+                                    const std::vector<T> &dst,
+                                    GLsizei dstWidth,
+                                    GLsizei dstHeight,
+                                    const BlitCase &blit,
+                                    const BlitCorners *scissor)
+{
+    std::vector<T> result = dst;
+
+    const GLint minX = std::max(std::min(blit.dst.x0, blit.dst.x1), 0);
+    const GLint maxX = std::min(std::max(blit.dst.x0, blit.dst.x1), dstWidth);
+    const GLint minY = std::max(std::min(blit.dst.y0, blit.dst.y1), 0);
+    const GLint maxY = std::min(std::max(blit.dst.y0, blit.dst.y1), dstHeight);
+
+    for (GLint y = minY; y < maxY; ++y)
+    {
+        for (GLint x = minX; x < maxX; ++x)
+        {
+            if (scissor &&
+                (x < scissor->x0 || x >= scissor->x1 || y < scissor->y0 || y >= scissor->y1))
+            {
+                continue;
+            }
+            const GLint srcX =
+                NearestBlitSourcePixel(x, blit.src.x0, blit.src.x1, blit.dst.x0, blit.dst.x1);
+            const GLint srcY =
+                NearestBlitSourcePixel(y, blit.src.y0, blit.src.y1, blit.dst.y0, blit.dst.y1);
+            if (srcX < 0 || srcX >= srcWidth || srcY < 0 || srcY >= srcHeight)
+            {
+                continue;
+            }
+            result[y * dstWidth + x] = src[srcY * srcWidth + srcX];
+        }
+    }
+
+    return result;
+}
+
+std::ostream &operator<<(std::ostream &ostream, const BlitCorners &corners)
+{
+    return ostream << "(" << corners.x0 << ", " << corners.y0 << ")-(" << corners.x1 << ", "
+                   << corners.y1 << ")";
+}
+
+std::ostream &operator<<(std::ostream &ostream, const BlitCase &blit)
+{
+    return ostream << "blit " << blit.src << " to " << blit.dst;
+}
+
+std::string BlitPixelToString(const GLColor &color)
+{
+    std::stringstream result;
+    result << color;
+    return result.str();
+}
+
+template <typename T>
+void ExpectBlitPixelsEqual(const std::vector<T> &expected,
+                           const std::vector<T> &actual,
+                           GLsizei width,
+                           const std::string &label)
+{
+    ASSERT_EQ(expected.size(), actual.size());
+    size_t mismatches = 0;
+    for (size_t i = 0; i < expected.size(); ++i)
+    {
+        if (!(expected[i] == actual[i]))
+        {
+            if (mismatches < 4)
+            {
+                ADD_FAILURE() << label << ": pixel (" << i % width << ", " << i / width << ") is "
+                              << BlitPixelToString(actual[i]) << ", expected "
+                              << BlitPixelToString(expected[i]);
+            }
+            ++mismatches;
+        }
+    }
+    EXPECT_EQ(0u, mismatches) << label;
+}
+
+GLColor MakeBlitPatternColor(GLint x, GLint y)
+{
+    return MakeGLColor(x * 20 + 10, y * 25 + 5, (x * 7 + y * 13) % 256, 255);
+}
+
+std::vector<GLColor> MakeBlitPattern(GLsizei width, GLsizei height)
+{
+    std::vector<GLColor> pattern(width * height);
+    for (GLint y = 0; y < height; ++y)
+    {
+        for (GLint x = 0; x < width; ++x)
+        {
+            pattern[y * width + x] = MakeBlitPatternColor(x, y);
+        }
+    }
+    return pattern;
+}
+
+std::vector<GLColor> ReadBlitPixels(GLsizei width, GLsizei height)
+{
+    std::vector<GLColor> pixels(width * height);
+    glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
+    return pixels;
+}
+
+// Attaches a texture with the given contents to the framebuffer bound to GL_FRAMEBUFFER.
+void AttachBlitPatternTexture(GLuint texture,
+                              GLenum internalFormat,
+                              GLenum format,
+                              GLenum type,
+                              GLsizei width,
+                              GLsizei height,
+                              const void *data)
+{
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, internalFormat, width, height);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, format, type, data);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+}
+
+// Test GL_NEAREST blits whose destination pixel centers map exactly to edges between source
+// texels, such as 2:1 minification, where GL_NEAREST takes the texel after the edge, and blits with
+// scales that aren't representable as floats. The sources are a texture and the default
+// framebuffer, whose rows are stored flipped.
+TEST_P(BlitFramebufferTest, NearestBlitsAtTexelEdges)
+{
+    constexpr GLsizei kPatternSize     = 16;
+    constexpr GLsizei kTargetSize      = 48;
+    const std::vector<GLColor> pattern = MakeBlitPattern(kPatternSize, kPatternSize);
+
+    GLFramebuffer srcFBO;
+    GLTexture srcTexture;
+    glBindFramebuffer(GL_FRAMEBUFFER, srcFBO);
+    AttachBlitPatternTexture(srcTexture, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, kPatternSize,
+                             kPatternSize, pattern.data());
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    GLFramebuffer dstFBO;
+    GLRenderbuffer dstRBO;
+    initColorFBO(&dstFBO, &dstRBO, GL_RGBA8, kTargetSize, kTargetSize);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    constexpr BlitCase kCases[] = {
+        // Minify by 2.
+        {{0, 0, 12, 8}, {3, 2, 9, 6}},
+        // Minify by 2 from an odd offset, flipped.
+        {{1, 1, 11, 9}, {28, 20, 23, 16}},
+        // Minify by 4 in x and 2 in y.
+        {{0, 0, 12, 8}, {20, 10, 23, 14}},
+        // Magnify by 2.
+        {{2, 1, 8, 7}, {4, 4, 16, 16}},
+        // Magnify by 37/6.
+        {{0, 0, 6, 6}, {1, 2, 38, 39}},
+        // Magnify by 37/6, flipped.
+        {{0, 0, 6, 6}, {38, 39, 1, 2}},
+        // Magnify by 23/14, from an offset.
+        {{1, 2, 15, 16}, {3, 1, 26, 24}},
+    };
+
+    const GLColor clearColor(0x11, 0x22, 0x33, 0xFF);
+    glClearColor(clearColor.R / 255.0f, clearColor.G / 255.0f, clearColor.B / 255.0f, 1.0f);
+    for (bool fromDefaultFramebuffer : {false, true})
+    {
+        if (fromDefaultFramebuffer)
+        {
+            // Copy the pattern to the default framebuffer.
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            glClear(GL_COLOR_BUFFER_BIT);
+            glBindFramebuffer(GL_READ_FRAMEBUFFER, srcFBO);
+            glBlitFramebuffer(0, 0, kPatternSize, kPatternSize, 0, 0, kPatternSize, kPatternSize,
+                              GL_COLOR_BUFFER_BIT, GL_NEAREST);
+            glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+            ASSERT_EQ(pattern, ReadBlitPixels(kPatternSize, kPatternSize));
+        }
+
+        for (bool toDefaultFramebuffer : {false, true})
+        {
+            if (fromDefaultFramebuffer && toDefaultFramebuffer)
+            {
+                continue;
+            }
+            const GLuint srcFramebuffer = fromDefaultFramebuffer ? 0 : srcFBO.get();
+            const GLuint dstFramebuffer = toDefaultFramebuffer ? 0 : dstFBO.get();
+            const GLsizei dstWidth      = toDefaultFramebuffer ? getWindowWidth() : kTargetSize;
+            const GLsizei dstHeight     = toDefaultFramebuffer ? getWindowHeight() : kTargetSize;
+            const std::vector<GLColor> cleared(dstWidth * dstHeight, clearColor);
+
+            for (const BlitCase &blit : kCases)
+            {
+                glBindFramebuffer(GL_FRAMEBUFFER, dstFramebuffer);
+                glClear(GL_COLOR_BUFFER_BIT);
+                glBindFramebuffer(GL_READ_FRAMEBUFFER, srcFramebuffer);
+                glBlitFramebuffer(blit.src.x0, blit.src.y0, blit.src.x1, blit.src.y1, blit.dst.x0,
+                                  blit.dst.y0, blit.dst.x1, blit.dst.y1, GL_COLOR_BUFFER_BIT,
+                                  GL_NEAREST);
+                ASSERT_GL_NO_ERROR();
+
+                glBindFramebuffer(GL_READ_FRAMEBUFFER, dstFramebuffer);
+                std::stringstream label;
+                label << blit << (fromDefaultFramebuffer ? " from the default framebuffer" : "")
+                      << (toDefaultFramebuffer ? " to the default framebuffer" : "");
+                ExpectBlitPixelsEqual(
+                    ReferenceNearestBlit(pattern, kPatternSize, kPatternSize, cleared, dstWidth,
+                                         dstHeight, blit, nullptr),
+                    ReadBlitPixels(dstWidth, dstHeight), dstWidth, label.str());
+            }
+        }
+    }
+}
+
 // Test that glBlitFramebuffer works when the framebuffer attachment level is not zero.  At the same
 // time, the texture's base level is also non-zero.
 TEST_P(BlitFramebufferTestES31, BlitNonZeroLevelSource)
