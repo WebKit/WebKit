@@ -564,7 +564,7 @@ String StyleRuleGroup::debugDescription() const
 
 StyleRuleMedia::StyleRuleMedia(MQ::MediaQueryList&& mediaQueries, Vector<Ref<StyleRuleBase>>&& rules)
     : StyleRuleGroup(StyleRuleType::Media, WTF::move(rules))
-    , m_mediaQueries(WTF::move(mediaQueries))
+    , m_mediaQueries(MQ::makeShared(WTF::move(mediaQueries)))
 {
 }
 

@@ -282,7 +282,7 @@ void ScopeRuleSets::appendAuthorStyleSheets(std::span<const Ref<CSSStyleSheet>> 
             }
         }
 
-        builder.addRulesFromSheet(protect(cssSheet->contents()), cssSheet->mediaQueries());
+        builder.addRulesFromSheet(protect(cssSheet->contents()), cssSheet->sharedMediaQueries());
         inspectorCSSOMWrappers.collectFromStyleSheetIfNeeded(cssSheet);
         previous = cssSheet.ptr();
     }

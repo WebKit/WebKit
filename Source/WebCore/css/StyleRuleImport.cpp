@@ -12,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Library General Public License for more details.
- *
+ *>
  * You should have received a copy of the GNU Library General Public License
  * along with this library; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
@@ -45,7 +45,7 @@ StyleRuleImport::StyleRuleImport(CSS::URL&& url, MQ::MediaQueryList&& mediaQueri
     : StyleRuleBase(StyleRuleType::Import)
     , m_styleSheetClient(*this)
     , m_url(WTF::move(url))
-    , m_mediaQueries(WTF::move(mediaQueries))
+    , m_mediaQueries(MQ::makeShared(WTF::move(mediaQueries)))
     , m_cascadeLayerName(WTF::move(cascadeLayerName))
     , m_supportsCondition(WTF::move(supportsCondition))
 {

@@ -85,7 +85,7 @@ RuleSetBuilder::~RuleSetBuilder()
     m_ruleSet->m_isBuilding = false;
 }
 
-void RuleSetBuilder::addRulesFromSheet(const StyleSheetContents& sheet, const MQ::MediaQueryList& sheetQuery)
+void RuleSetBuilder::addRulesFromSheet(const StyleSheetContents& sheet, const Box<const MQ::MediaQueryList>& sheetQuery)
 {
     auto canUseDynamicMediaQueryEvaluation = [&] {
         if (!m_resolver)
@@ -175,9 +175,9 @@ void RuleSetBuilder::addChildRule(Ref<StyleRuleBase> rule)
 
     case StyleRuleType::Media: {
         auto mediaRule = uncheckedDowncast<StyleRuleMedia>(WTF::move(rule));
-        if (m_mediaQueryCollector.pushAndEvaluate(mediaRule->mediaQueries()))
+        if (m_mediaQueryCollector.pushAndEvaluate(mediaRule->sharedMediaQueries()))
             addChildRules(mediaRule->childRules());
-        m_mediaQueryCollector.pop(mediaRule->mediaQueries());
+        m_mediaQueryCollector.pop(mediaRule->sharedMediaQueries());
         return;
     }
 
@@ -284,7 +284,7 @@ void RuleSetBuilder::addRulesFromSheetContents(const StyleSheetContents& sheet)
         if (!rule->styleSheet())
             continue;
 
-        if (m_mediaQueryCollector.pushAndEvaluate(rule->mediaQueries())) {
+        if (m_mediaQueryCollector.pushAndEvaluate(rule->sharedMediaQueries())) {
             auto& cascadeLayerName = rule->cascadeLayerName();
             if (cascadeLayerName) {
                 disallowDynamicMediaQueryEvaluationIfNeeded();
@@ -296,7 +296,7 @@ void RuleSetBuilder::addRulesFromSheetContents(const StyleSheetContents& sheet)
             if (cascadeLayerName)
                 popCascadeLayer(*cascadeLayerName);
         }
-        m_mediaQueryCollector.pop(rule->mediaQueries());
+        m_mediaQueryCollector.pop(rule->sharedMediaQueries());
     }
 
     addChildRules(sheet.childRules());
@@ -606,12 +606,12 @@ void RuleSetBuilder::updateDynamicMediaQueries()
 
 RuleSetBuilder::MediaQueryCollector::~MediaQueryCollector() = default;
 
-bool RuleSetBuilder::MediaQueryCollector::pushAndEvaluate(const MQ::MediaQueryList& mediaQueries)
+bool RuleSetBuilder::MediaQueryCollector::pushAndEvaluate(const Box<const MQ::MediaQueryList>& mediaQueries)
 {
-    if (mediaQueries.isEmpty())
+    if (!mediaQueries)
         return true;
 
-    auto dynamicDependencies = evaluator.collectDynamicDependencies(mediaQueries);
+    auto dynamicDependencies = evaluator.collectDynamicDependencies(*mediaQueries);
 
     allDynamicDependencies.add(dynamicDependencies);
 
@@ -621,12 +621,12 @@ bool RuleSetBuilder::MediaQueryCollector::pushAndEvaluate(const MQ::MediaQueryLi
             return true;
     }
 
-    return evaluator.evaluate(mediaQueries);
+    return evaluator.evaluate(*mediaQueries);
 }
 
-void RuleSetBuilder::MediaQueryCollector::pop(const MQ::MediaQueryList& mediaQueries)
+void RuleSetBuilder::MediaQueryCollector::pop(const Box<const MQ::MediaQueryList>& mediaQueries)
 {
-    if (dynamicContextStack.isEmpty() || &dynamicContextStack.last().queries != &mediaQueries)
+    if (dynamicContextStack.isEmpty() || dynamicContextStack.last().queries.get() != mediaQueries.get())
         return;
 
     if (!dynamicContextStack.last().affectedRulePositions.isEmpty() || !collectDynamic) {

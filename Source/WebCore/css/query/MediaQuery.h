@@ -25,6 +25,8 @@
 #pragma once
 
 #include <WebCore/GenericMediaQueryTypes.h>
+#include <wtf/Box.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 namespace MQ {
@@ -38,6 +40,21 @@ struct MediaQuery {
 };
 
 using MediaQueryList = Vector<MediaQuery>;
+
+// Use Box<const MediaQueryList> to share immutable lists with multiple owners,
+// copying by handle and treating a null Box as an empty list to reduce allocations.
+inline Box<const MediaQueryList> makeShared(MediaQueryList&& list)
+{
+    if (list.isEmpty())
+        return { };
+    return Box<const MediaQueryList>::create(WTF::move(list));
+}
+
+inline const MediaQueryList& sourceOrEmpty(const Box<const MediaQueryList>& list)
+{
+    static NeverDestroyed<const MediaQueryList> emptyList;
+    return list ? *list : emptyList.get();
+}
 
 struct MediaQueryResult {
     MediaQueryList mediaQueryList;
