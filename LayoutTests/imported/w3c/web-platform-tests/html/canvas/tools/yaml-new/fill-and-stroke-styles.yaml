@@ -21,6 +21,18 @@
     @assert pixel 50,25 == 0,255,0,255;
   expected: green
 
+- name: 2d.fillStyle.parse.current.changed.2
+  desc: Setting fillStyle to currentColor always re-computes it.
+  canvasType: ['HtmlCanvas']
+  code: |
+    canvas.setAttribute('style', 'color: #f00');
+    ctx.fillStyle = 'currentColor';
+    canvas.setAttribute('style', 'color: #0f0');
+    ctx.fillStyle = 'currentColor';
+    ctx.fillRect(0, 0, 100, 50);
+    @assert pixel 50,25 == 0,255,0,255;
+  expected: green
+
 - name: 2d.fillStyle.parse.current.removed
   desc: currentColor is solid black when the canvas element is not in a document
   canvasType: ['HtmlCanvas']

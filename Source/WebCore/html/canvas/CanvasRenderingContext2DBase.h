@@ -324,8 +324,13 @@ public:
         State(State&&) = default;
         State& operator=(State&&) = default;
 
+        // If the current stroke/fill style is a color, this is the color string before parsing.
+        // This is to avoid re-parsing if the stroke/fill style is set to the same color.
+        // NOTE: they're set only if the parsed color is cacheable (i.e anything not involving
+        // currentColor or color-scheme dependant color). Otherwise it's null.
         String unparsedStrokeColor;
         String unparsedFillColor;
+
         CanvasStyle strokeStyle;
         CanvasStyle fillStyle;
         double lineWidth;

@@ -72,8 +72,23 @@ private:
     Variant<Color, Ref<CanvasGradient>, Ref<CanvasPattern>> m_style;
 };
 
-Color parseColor(const String& colorString, CanvasBase&);
-Color parseColor(const String& colorString, ScriptExecutionContext&);
+class ParsedCanvasColor {
+    WTF_MAKE_TZONE_ALLOCATED(ParsedCanvasColor);
+
+public:
+    ParsedCanvasColor(Color, bool isCacheable);
+
+    Color color() const { return m_color; }
+    Color color() && { return WTF::move(m_color); }
+    bool isCacheable() const { return m_isCacheable; }
+
+private:
+    Color m_color;
+    bool m_isCacheable;
+};
+
+ParsedCanvasColor parseColor(const String& colorString, CanvasBase&);
+ParsedCanvasColor parseColor(const String& colorString, ScriptExecutionContext&);
 
 inline CanvasStyle::CanvasStyle(Color color)
     : m_style(WTF::move(color))

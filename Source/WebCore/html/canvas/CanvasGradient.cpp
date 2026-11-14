@@ -70,11 +70,11 @@ ExceptionOr<void> CanvasGradient::addColorStop(ScriptExecutionContext& scriptExe
     if (!(value >= 0 && value <= 1))
         return Exception { ExceptionCode::IndexSizeError };
 
-    auto color = parseColor(colorString, scriptExecutionContext);
-    if (!color.isValid())
+    auto parsedColor = parseColor(colorString, scriptExecutionContext);
+    if (!parsedColor.color().isValid())
         return Exception { ExceptionCode::SyntaxError };
 
-    m_gradient->addColorStop({ static_cast<float>(value), WTF::move(color) });
+    m_gradient->addColorStop({ static_cast<float>(value), WTF::move(parsedColor).color() });
     return { };
 }
 
