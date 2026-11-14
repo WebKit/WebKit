@@ -1,0 +1,17 @@
+Tests that the page target is the one target that reports process-wide data without site isolation, also after a cross-site navigation.
+
+
+== Running test suite: Target.ProcessLeaders
+-- Running test case: Target.ProcessLeaders.PageTarget
+PASS: The page target should lead its process.
+PASS: There should be one leader.
+PASS: The page target should already have the Memory domain enabled.
+
+-- Running test case: Target.ProcessLeaders.ProvisionalPageTarget
+PASS: The provisional page target should not lead.
+PASS: The previous page target should still lead.
+PASS: The provisional page target should become the page target.
+PASS: The new page target should lead its process.
+PASS: There should be one leader.
+PASS: The page target should already have the Memory domain enabled.
+
