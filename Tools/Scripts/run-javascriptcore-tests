@@ -32,6 +32,7 @@
 
 use strict;
 use warnings;
+use Encode qw(decode encode);
 use File::Basename;
 use File::Spec;
 use File::Temp qw(tempdir);
@@ -137,6 +138,8 @@ my %jsonData = (
     timestamp => time()
 );
 my %reportData = ();
+my %testOutputs = ();
+my $jscStressResultsDir;
 my @testResults = ();
 my $isTestFailed = 0;
 my $remoteConfigFile;
@@ -764,6 +767,7 @@ sub runTest {
         print "$testOutput" if ($verbose or $testResult);
     }
     $reportData{$testName} = $testResult ? {actual => "FAIL"} : {actual => "PASS"};
+    $testOutputs{$testName} = $testOutput if $testResult;
 
     my $exitStatus = exitStatus($testResult);
 
@@ -878,7 +882,7 @@ if ($isTestFailed) {
 
 sub runJSCStressTests
 {
-    my $jscStressResultsDir = $productDir . "/jsc-stress-results";
+    $jscStressResultsDir = $productDir . "/jsc-stress-results";
 
     my $hasTestsToRun = 0;
     my @testList;
@@ -1227,6 +1231,128 @@ sub writeJsonDataIfApplicable
     }
 }
 
+use constant {
+    MAXIMUM_LOG_LENGTH => 8 * 1024,
+    MINIMUM_LOG_LINE_LENGTH => 200,
+};
+
+sub resultsWithLogs
+{
+    my %results = %reportData;
+    foreach my $testName (keys %reportData) {
+        next if ($reportData{$testName}{actual} // "PASS") eq "PASS";
+        my $output = exists $testOutputs{$testName} ? $testOutputs{$testName} : stressTestOutput($testName);
+        next unless defined $output && length $output;
+        $results{$testName} = { %{$reportData{$testName}}, log => truncateLog($output) };
+    }
+    return \%results;
+}
+
+sub stressTestOutput
+{
+    my ($testName) = @_;
+    my $resultPath = File::Spec->catfile($jscStressResultsDir, $testName);
+    my $diff = readFileWrittenThisRun("$resultPath.diff");
+    return diffWithoutFileNames($diff) if defined $diff && length $diff;
+    return readFileWrittenThisRun("$resultPath.out");
+}
+
+sub readFileWrittenThisRun
+{
+    my ($path) = @_;
+    my $modificationTime = (stat($path))[9];
+    return unless defined $modificationTime && $modificationTime >= $startTime;
+    open(my $file, "<", $path) or return;
+    local $/;
+    my $contents = <$file>;
+    close($file);
+    return $contents;
+}
+
+sub diffWithoutFileNames
+{
+    my ($diff) = @_;
+    $diff =~ s/^---[^\n]*\n\+\+\+[^\n]*\n//;
+    return $diff;
+}
+
+sub truncateLog
+{
+    my ($log) = @_;
+    my $encoded = encode("UTF-8", decode("UTF-8", $log));
+    return decode("UTF-8", $encoded) if length($encoded) <= MAXIMUM_LOG_LENGTH;
+
+    my @lines = split(/\n/, $encoded, -1);
+    my @kept = truncateLogLines(@lines);
+    my $truncated = join("\n", @kept);
+    $truncated = join("\n", keepLogEnds(\@lines, \@kept)) if length($truncated) > MAXIMUM_LOG_LENGTH;
+    return decode("UTF-8", $truncated);
+}
+
+sub truncateLogLines
+{
+    my @lines = @_;
+    my $room = MAXIMUM_LOG_LENGTH - (@lines - 1);
+    my @lengths = sort { $a <=> $b } map { length($_) } @lines;
+    foreach my $index (0 .. $#lengths) {
+        my $linesLeft = @lengths - $index;
+        my $share = floor($room / $linesLeft);
+        if ($lengths[$index] > $share) {
+            my $notes = 0;
+            $notes += length(logLineNote($_)) foreach @lengths[$index .. $#lengths];
+            my $ceiling = max(floor(($room - $notes) / $linesLeft), MINIMUM_LOG_LINE_LENGTH);
+            return map { length($_) > $share ? truncateLogLine($_, $ceiling) : $_ } @lines;
+        }
+        $room -= $lengths[$index];
+    }
+    return @lines;
+}
+
+sub truncateLogLine
+{
+    my ($line, $length) = @_;
+    my $kept = encode("UTF-8", decode("UTF-8", substr($line, 0, $length), sub { "" }));
+    my $truncated = $kept . logLineNote(length($line) - length($kept));
+    return length($truncated) < length($line) ? $truncated : $line;
+}
+
+sub keepLogEnds
+{
+    my ($lines, $kept) = @_;
+    my $room = MAXIMUM_LOG_LENGTH - length(logLeftOutNote(length(join("\n", @$lines))));
+    my ($top, $topLength) = (0, 0);
+    while ($topLength + length($kept->[$top]) + 1 <= floor($room / 2)) {
+        $topLength += length($kept->[$top]) + 1;
+        $top++;
+    }
+    my ($bottom, $bottomLength) = (scalar(@$kept), 0);
+    while ($bottomLength + length($kept->[$bottom - 1]) + 1 <= $room - floor($room / 2)) {
+        $bottom--;
+        $bottomLength += length($kept->[$bottom]) + 1;
+    }
+    my $leftOut = logLeftOutNote(length(join("\n", @$lines[$top .. $bottom - 1])));
+    return (@$kept[0 .. $top - 1], $leftOut, @$kept[$bottom .. $#$kept]);
+}
+
+sub logLineNote
+{
+    my ($byteCount) = @_;
+    return " [" . formatByteCount($byteCount) . " more bytes]";
+}
+
+sub logLeftOutNote
+{
+    my ($byteCount) = @_;
+    return "[" . formatByteCount($byteCount) . " bytes left out]";
+}
+
+sub formatByteCount
+{
+    my ($byteCount) = @_;
+    1 while $byteCount =~ s/^(\d+)(\d{3})/$1,$2/;
+    return $byteCount;
+}
+
 sub uploadResults
 {
     if (not defined $report) {
@@ -1253,7 +1379,7 @@ sub uploadResults
                 end_time => $endTime,
                 tests_skipped => 0,
             },
-            results => \%reportData,
+            results => resultsWithLogs(),
         },
         timestamp => $startTime,
     );
