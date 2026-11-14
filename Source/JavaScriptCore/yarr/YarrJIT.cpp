@@ -2109,6 +2109,8 @@ class YarrGenerator final : public YarrJITInfo {
         size_t m_index { 0 };
         size_t m_previousOp;
         size_t m_nextOp;
+        // For the Begin and Next nodes of a nested disjunction, the index of its End node.
+        size_t m_endOp { notFound };
 
         // The operation, as a YarrOpCode, and also a reference to the PatternTerm.
         PatternTerm* m_term;
@@ -4381,12 +4383,7 @@ class YarrGenerator final : public YarrJITInfo {
                 PatternDisjunction* disjunction = term->parentheses.disjunction;
 
                 if (op.m_op == YarrOpCode::StringListAlternativeBegin) {
-                    YarrOp* endOp = &m_ops[op.m_nextOp];
-                    while (endOp->m_nextOp != notFound) {
-                        ASSERT(endOp->m_op == YarrOpCode::SimpleNestedAlternativeNext || endOp->m_op == YarrOpCode::StringListAlternativeNext || endOp->m_op == YarrOpCode::NestedAlternativeNext);
-                        endOp = &m_ops[endOp->m_nextOp];
-                    }
-                    ASSERT(endOp->m_op == YarrOpCode::SimpleNestedAlternativeEnd || endOp->m_op == YarrOpCode::StringListAlternativeEnd || endOp->m_op == YarrOpCode::NestedAlternativeEnd);
+                    YarrOp* endOp = &alternativeEndOp(op);
 
                     termMatchTargets.last() = alternative->m_isLastAlternative ? MatchTargets(MatchTargets::PreferredTarget::MatchSuccessFallThrough) : MatchTargets(endOp->m_jumps, op.m_jumps, MatchTargets::PreferredTarget::MatchFailFallThrough);
                 }
@@ -4417,12 +4414,7 @@ class YarrGenerator final : public YarrJITInfo {
                 PatternAlternative* alternative = op.m_alternative;
                 PatternDisjunction* disjunction = term->parentheses.disjunction;
 
-                YarrOp* endOp = &m_ops[op.m_nextOp];
-                while (endOp->m_nextOp != notFound) {
-                    ASSERT(endOp->m_op == YarrOpCode::SimpleNestedAlternativeNext || endOp->m_op == YarrOpCode::StringListAlternativeNext || endOp->m_op == YarrOpCode::NestedAlternativeNext);
-                    endOp = &m_ops[endOp->m_nextOp];
-                }
-                ASSERT(endOp->m_op == YarrOpCode::SimpleNestedAlternativeEnd || endOp->m_op == YarrOpCode::StringListAlternativeEnd || endOp->m_op == YarrOpCode::NestedAlternativeEnd);
+                YarrOp* endOp = &alternativeEndOp(op);
 
                 if (op.m_op == YarrOpCode::StringListAlternativeNext)
                     termMatchTargets.last() = alternative->m_isLastAlternative ? MatchTargets(MatchTargets::PreferredTarget::MatchSuccessFallThrough) : MatchTargets(endOp->m_jumps, op.m_jumps, MatchTargets::PreferredTarget::MatchFailFallThrough);
@@ -4444,12 +4436,6 @@ class YarrGenerator final : public YarrJITInfo {
                 if (op.m_op != YarrOpCode::StringListAlternativeNext) {
                     // If we reach here then the last alternative has matched - jump to the
                     // End node, to skip over any further alternatives.
-                    //
-                    // FIXME: this is logically O(N^2) (though N can be expected to be very
-                    // small). We could avoid this either by adding an extra jump to the JIT
-                    // data structures, or by making backtracking code that jumps to Next
-                    // alternatives are responsible for checking that input is available (if
-                    // we didn't need to plant the input checks, then m_jumps would be free).
                     endOp->m_jumps.append(m_jit.jump());
                 }
 
@@ -5277,12 +5263,7 @@ class YarrGenerator final : public YarrJITInfo {
                 // have planted a jump to be linked to the end. This jump was added to the
                 // End node's m_jumps list. If we are back at the beginning, link it here.
                 if (isBegin) {
-                    YarrOp* endOp = &m_ops[op.m_nextOp];
-                    while (endOp->m_nextOp != notFound) {
-                        ASSERT(endOp->m_op == YarrOpCode::SimpleNestedAlternativeNext || endOp->m_op == YarrOpCode::StringListAlternativeNext || endOp->m_op == YarrOpCode::NestedAlternativeNext);
-                        endOp = &m_ops[endOp->m_nextOp];
-                    }
-                    ASSERT(endOp->m_op == YarrOpCode::SimpleNestedAlternativeEnd || endOp->m_op == YarrOpCode::StringListAlternativeEnd || endOp->m_op == YarrOpCode::NestedAlternativeEnd);
+                    YarrOp* endOp = &alternativeEndOp(op);
                     m_backtrackingState.append(endOp->m_jumps);
                 }
                 op.m_contentBacktrackEntryLabel = m_jit.label();
@@ -5733,6 +5714,20 @@ class YarrGenerator final : public YarrJITInfo {
         return true;
     }
 
+    YarrOp& alternativeEndOp(const YarrOp& op)
+    {
+        ASSERT(op.m_endOp != notFound);
+        YarrOp& endOp = m_ops[op.m_endOp];
+        ASSERT(endOp.m_op == YarrOpCode::SimpleNestedAlternativeEnd || endOp.m_op == YarrOpCode::StringListAlternativeEnd || endOp.m_op == YarrOpCode::NestedAlternativeEnd);
+        return endOp;
+    }
+
+    void recordAlternativeEndOp(size_t endIndex)
+    {
+        for (size_t index = m_ops[endIndex].m_previousOp; index != notFound; index = m_ops[index].m_previousOp)
+            m_ops[index].m_endOp = endIndex;
+    }
+
     // Compilation methods:
     // ====================
 
@@ -5882,6 +5877,7 @@ class YarrGenerator final : public YarrJITInfo {
         lastOp.m_alternative = nullptr;
         lastOp.m_nextOp = notFound;
         lastOp.m_checkedOffset = checkedOffset;
+        recordAlternativeEndOp(m_ops.size() - 1);
 
         size_t parenEnd = m_ops.size();
         appendOp(parenthesesEndOpCode);
@@ -5960,6 +5956,7 @@ class YarrGenerator final : public YarrJITInfo {
         lastOp.m_alternative = nullptr;
         lastOp.m_nextOp = notFound;
         lastOp.m_checkedOffset = checkedOffset;
+        recordAlternativeEndOp(m_ops.size() - 1);
 
         m_direction = previousDirection;
 
