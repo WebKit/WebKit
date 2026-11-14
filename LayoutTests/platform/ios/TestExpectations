@@ -10497,9 +10497,6 @@ webkit.org/b/329531 imported/w3c/web-platform-tests/html/canvas/element/manual/d
 webkit.org/b/329531 imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/svg-foreign-object.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/329531 imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/svg-rect.tentative.html [ ImageOnlyFailure ]
 
-# Fails everywhere but iOS
-webkit.org/b/329821 imported/w3c/web-platform-tests/css/CSS2/tables/fixed-table-layout-027.xht [ Pass ]
-
 webkit.org/b/328390 fast/filter-image/filter-image-blur.html [ ImageOnlyFailure ]
 
 # New test in the css/css-page import. Fails on iOS, passes on macOS.
