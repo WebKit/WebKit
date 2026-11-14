@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.MemoryTimeline = class MemoryTimeline extends WI.Timeline
+WI.MemoryTimeline = class MemoryTimeline extends WI.ProcessSampleTimeline
 {
     // Public
 
@@ -58,6 +58,38 @@ WI.MemoryTimeline = class MemoryTimeline extends WI.Timeline
         }
 
         super.addRecord(record, options);
+    }
+
+    createAggregateRecord(startTime, endTime, recordsForProcess, liveProcessKeys)
+    {
+        // Memory is a level, so add up the latest sample of each process. A process that has stopped reporting keeps
+        // its last value while it still has a target, so that a change of reporter does not dip the graph.
+        let latestRecords = [];
+        for (let [processKey, records] of recordsForProcess) {
+            let index = records.upperBound(endTime, (time, record) => time - record.timestamp) - 1;
+            if (index < 0)
+                continue;
+
+            let record = records[index];
+            if (index === records.length - 1 && record.timestamp < endTime && !liveProcessKeys.has(processKey))
+                continue;
+
+            latestRecords.push(record);
+        }
+
+        // A single sample at the end of the bin, as always with one process.
+        if (latestRecords.length === 1 && latestRecords[0].timestamp === endTime) {
+            let {timestamp, protocolCategories} = latestRecords[0];
+            return new WI.MemoryTimelineRecord(timestamp, protocolCategories);
+        }
+
+        // Add up the protocol categories, so that the record is exported like a sample.
+        let sizeForType = new Map;
+        for (let record of latestRecords) {
+            for (let {type, size} of record.protocolCategories)
+                sizeForType.set(type, (sizeForType.get(type) || 0) + size);
+        }
+        return new WI.MemoryTimelineRecord(endTime, Array.from(sizeForType, ([type, size]) => ({type, size})));
     }
 };
 
