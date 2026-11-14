@@ -87,8 +87,6 @@ static RetainPtr<NSObject> evaluationResult;
 
 TEST(WKInspectorExtension, CanEvaluateScriptInExtensionTab)
 {
-    resetGlobalState();
-
     RetainPtr webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
     webViewConfiguration.get().preferences._developerExtrasEnabled = YES;
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
@@ -183,8 +181,6 @@ TEST(WKInspectorExtension, DISABLED_ExtensionTabIsPersistent)
 TEST(WKInspectorExtension, ExtensionTabIsPersistent)
 #endif
 {
-    resetGlobalState();
-
     RetainPtr webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
     webViewConfiguration.get().preferences._developerExtrasEnabled = YES;
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
@@ -301,8 +297,6 @@ TEST(WKInspectorExtension, ExtensionTabIsPersistent)
 
 TEST(WKInspectorExtension, EvaluateScriptInExtensionTabCanReturnPromises)
 {
-    resetGlobalState();
-
     RetainPtr webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
     webViewConfiguration.get().preferences._developerExtrasEnabled = YES;
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
@@ -395,8 +389,6 @@ TEST(WKInspectorExtension, DISABLED_EvaluateScriptOnPage)
 TEST(WKInspectorExtension, EvaluateScriptOnPage)
 #endif
 {
-    resetGlobalState();
-
     RetainPtr webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
     webViewConfiguration.get().preferences._developerExtrasEnabled = YES;
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
