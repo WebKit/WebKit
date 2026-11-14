@@ -359,6 +359,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/RegionTests.cpp
         Tests/WebCore/RegistrableDomain.cpp
         Tests/WebCore/RenderStyleChange.cpp
+        Tests/WebCore/ResourceResponsePersistence.cpp
         Tests/WebCore/STUNMessageParsingTest.cpp
         Tests/WebCore/SampleMap.cpp
         Tests/WebCore/SecurityOrigin.cpp
