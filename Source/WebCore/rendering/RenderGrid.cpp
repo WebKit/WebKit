@@ -1750,13 +1750,8 @@ bool RenderGrid::hasStaticPositionForGridItem(const RenderBox& gridItem, Style::
     return direction == Style::GridTrackSizingDirection::Columns ? gridItem.style().hasStaticInlinePosition(isHorizontalWritingMode()) : gridItem.style().hasStaticBlockPosition(isHorizontalWritingMode());
 }
 
-void RenderGrid::layoutOutOfFlowBox(RenderBox& gridItem, RelayoutChildren relayoutChildren, bool fixedPositionObjectsOnly)
+void RenderGrid::setGridAreaContentSizeForOutOfFlow(RenderBox& gridItem) const
 {
-    if (layoutContext().isSkippedContentRootForLayout(*this)) {
-        gridItem.clearNeedsLayoutForSkippedContent();
-        return;
-    }
-
     LayoutRange columnBreadth = gridAreaRangeForOutOfFlow(gridItem, Style::GridTrackSizingDirection::Columns);
     LayoutRange rowBreadth = gridAreaRangeForOutOfFlow(gridItem, Style::GridTrackSizingDirection::Rows);
 
@@ -1766,8 +1761,6 @@ void RenderGrid::layoutOutOfFlowBox(RenderBox& gridItem, RelayoutChildren relayo
     // Mark for layout as we're resetting the position before and we relay in generic layout logic
     // for positioned items in order to get the offsets properly resolved.
     gridItem.setChildNeedsLayout(MarkingBehavior::OnlyThis);
-
-    RenderBlock::layoutOutOfFlowBox(gridItem, relayoutChildren, fixedPositionObjectsOnly);
 }
 
 LayoutUnit RenderGrid::gridAreaBreadthForGridItemIncludingAlignmentOffsets(const RenderBox& gridItem, Style::GridTrackSizingDirection direction) const

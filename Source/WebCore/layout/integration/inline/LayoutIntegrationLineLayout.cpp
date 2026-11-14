@@ -797,6 +797,7 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
         }
     }
 
+    m_inlineBoxesWithOutOfFlowBoxes.clear();
     for (CheckedRef layoutBox : formattingContextBoxes(rootLayoutBox())) {
         if (didDiscardContent) {
             CheckedRef renderer = *layoutBox->rendererForIntegration();
@@ -808,6 +809,15 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
             renderer->clearNeedsLayout();
         }
 
+        if (layoutBox->isInlineBox()) {
+            CheckedRef inlineBox = downcast<RenderBoxModelObject>(*layoutBox->rendererForIntegration());
+            if (inlineBox->hasOutOfFlowBoxes()) {
+                // Line layout may have changed the containing block rectangle the inline box forms for its out-of-flow boxes.
+                inlineBox->markOutOfFlowBoxesForLayout(MarkingBehavior::OnlyThis);
+                m_inlineBoxesWithOutOfFlowBoxes.append(inlineBox.get());
+            }
+            continue;
+        }
         if (!layoutBox->isFloatingPositioned() && !layoutBox->isOutOfFlowPositioned())
             continue;
         if (layoutBox->isLineBreakBox())
@@ -1493,6 +1503,30 @@ static LayoutRect toPhysicalRect(const RenderBlockFlow& root, const FloatRect& r
     auto physicalRect = LayoutRect { rect };
     root.blockStartRelativeToPhysical(physicalRect);
     return physicalRect;
+}
+
+void LineLayout::layoutOutOfFlowBoxes(RelayoutChildren relayoutChildren, bool fixedPositionObjectsOnly)
+{
+    for (auto& weakInlineBox : m_inlineBoxesWithOutOfFlowBoxes) {
+        if (CheckedPtr inlineBox = weakInlineBox.get())
+            layoutOutOfFlowBoxes(*inlineBox, relayoutChildren, fixedPositionObjectsOnly);
+    }
+}
+
+void LineLayout::layoutOutOfFlowBoxes(RenderBoxModelObject& inlineBox, RelayoutChildren relayoutChildren, bool fixedPositionObjectsOnly)
+{
+    ASSERT(inlineBox.isInlineBox());
+    if (auto* outOfFlowBoxes = inlineBox.outOfFlowBoxes()) {
+        // Do not cache the end of the list, since it can be mutated as it is walked.
+        for (auto& outOfFlowBox : *outOfFlowBoxes)
+            layoutOutOfFlowBox(outOfFlowBox, inlineBox, relayoutChildren, fixedPositionObjectsOnly);
+    }
+    CheckedRef layoutContext = flow().view().frameView().layoutContext();
+    for (auto& box : layoutContext->takeBoxesNeedingTransformUpdateAfterContainerLayout(inlineBox)) {
+        if (box && box->hasLayer() && box->isOutOfFlowPositioned())
+            box->layer()->updateTransform();
+    }
+    inlineBox.clearOutOfFlowChildNeedsLayout();
 }
 
 bool LineLayout::isContentConsideredStale() const
