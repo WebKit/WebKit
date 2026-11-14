@@ -37,11 +37,8 @@ MinimumSize PreferredSize::asMinimumSize() const
         return MinimumSize { calcSize() };
     if (isFitContentFunction())
         return MinimumSize { get<FitContentFunction>() };
-    // Copying the numeric value whole keeps its stretch() and quirk bits, which switchOn() doesn't hand over.
-    if (auto numeric = tryNumeric())
-        return MinimumSize { WTF::move(*numeric) };
 
-    return WTF::switchOn(*this,
+    return switchOnUsingNumeric(
         [&](const auto& value) {
             return MinimumSize { value };
         }
@@ -54,11 +51,8 @@ FlexBasis PreferredSize::asFlexBasis() const
         return FlexBasis { calcSize() };
     if (isFitContentFunction())
         return FlexBasis { get<FitContentFunction>() };
-    // Copying the numeric value whole keeps its stretch() and quirk bits, which switchOn() doesn't hand over.
-    if (auto numeric = tryNumeric())
-        return FlexBasis { WTF::move(*numeric) };
 
-    return WTF::switchOn(*this,
+    return switchOnUsingNumeric(
         [&](const auto& value) {
             return FlexBasis { value };
         }

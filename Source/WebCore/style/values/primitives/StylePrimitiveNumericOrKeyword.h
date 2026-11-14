@@ -281,6 +281,8 @@ public:
         RELEASE_ASSERT_NOT_REACHED();
     }
 
+    // Unlike switchOn(), hands the <length-percentage> alternatives over as one Numeric copied whole,
+    // so its stretch() and quirk bits come along.
     template<typename... F> decltype(auto) switchOnUsingNumeric(NOESCAPE F&&... f) const
     {
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
