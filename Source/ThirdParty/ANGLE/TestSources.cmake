@@ -265,6 +265,7 @@ set(angle_end2end_tests_sources
     "src/tests/gl_tests/WebGLCompressedTextureAvailabilityTest.cpp"
     "src/tests/gl_tests/WebGLFramebufferTest.cpp"
     "src/tests/gl_tests/WebGLReadOutsideFramebufferTest.cpp"
+    "src/tests/gl_tests/WebGPUDeviceTest.cpp"
     "src/tests/test_expectations/GPUTestConfig.cpp"
     "src/tests/test_expectations/GPUTestExpectationsParser.cpp"
     "src/tests/test_expectations/GPUTestExpectationsTest.cpp"

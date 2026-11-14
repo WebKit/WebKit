@@ -196,6 +196,7 @@ angle_end2end_tests_sources = [
   "gl_tests/WebGLCompressedTextureAvailabilityTest.cpp",
   "gl_tests/WebGLFramebufferTest.cpp",
   "gl_tests/WebGLReadOutsideFramebufferTest.cpp",
+  "gl_tests/WebGPUDeviceTest.cpp",
   "gl_tests/gles1/AlphaFuncTest.cpp",
   "gl_tests/gles1/BGRATextureTest.cpp",
   "gl_tests/gles1/BasicDrawTest.cpp",
