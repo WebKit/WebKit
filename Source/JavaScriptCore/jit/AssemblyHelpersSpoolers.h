@@ -185,7 +185,7 @@ private:
 #if USE(JSVALUE64)
         m_jit.loadPair64(m_baseGPR, TrustedImm32(offset), reg1, reg2);
 #else
-        m_jit.loadPair32(m_baseGPR, TrustedImm32(offset), reg1, reg2);
+        m_jit.loadPair32Aligned(m_baseGPR, TrustedImm32(offset), reg1, reg2);
 #endif
     }
     ALWAYS_INLINE void executePair(ptrdiff_t offset, FPRReg reg1, FPRReg reg2)
@@ -580,7 +580,7 @@ protected:
 #if USE(JSVALUE64)
         m_jit.loadPair64(m_srcBufferGPR, TrustedImm32(offset), dest1, dest2);
 #else
-        m_jit.loadPair32(m_srcBufferGPR, TrustedImm32(offset), dest1, dest2);
+        m_jit.loadPair32Aligned(m_srcBufferGPR, TrustedImm32(offset), dest1, dest2);
 #endif
     }
 

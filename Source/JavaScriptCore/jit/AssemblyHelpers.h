@@ -288,7 +288,7 @@ public:
         load64(address, regs.gpr());
 #else
         static_assert(!PayloadOffset && TagOffset == 4, "Assumes little-endian system");
-        loadPair32(address, regs.payloadGPR(), regs.tagGPR());
+        loadPair32Aligned(address, regs.payloadGPR(), regs.tagGPR());
 #endif
     }
     
@@ -298,7 +298,7 @@ public:
         load64(address, regs.gpr());
 #else
         static_assert(!PayloadOffset && TagOffset == 4, "Assumes little-endian system");
-        loadPair32(address, regs.payloadGPR(), regs.tagGPR());
+        loadPair32Aligned(address, regs.payloadGPR(), regs.tagGPR());
 #endif
     }
 
@@ -307,7 +307,7 @@ public:
 #if USE(JSVALUE64)
         load64(address, regs.gpr());
 #else
-        loadPair32(AbsoluteAddress(address), regs.payloadGPR(), regs.tagGPR());
+        loadPair32Aligned(AbsoluteAddress(address), regs.payloadGPR(), regs.tagGPR());
 #endif
     }
     
