@@ -261,12 +261,12 @@ public:
     using Direction = CanvasDirection;
     void setDirection(Direction);
 
-    class FontProxy final : public FontSelectorClient {
+    class FontProxy final : public RefCounted<FontProxy>, public FontSelectorClient {
     public:
-        FontProxy() = default;
+        static Ref<FontProxy> create();
+        Ref<FontProxy> NODELETE clone() const;
+
         virtual ~FontProxy();
-        FontProxy(const FontProxy&);
-        FontProxy& operator=(const FontProxy&);
 
         bool realized() const { return m_font.hasFontSelector(); }
         void initialize(FontSelector&, const FontCascade&);
@@ -288,6 +288,12 @@ public:
         void setWordSpacing(float wordSpacing) { m_font.setWordSpacing(wordSpacing); }
 
     private:
+        FontProxy() = default;
+
+        // Don't use these to make a copy, use clone() instead,
+        // which ensures the resulting copy is ref-counted.
+        FontProxy(const FontProxy&);
+        FontProxy& operator=(const FontProxy&);
         void update(FontSelector&);
         void fontsNeedUpdate(FontSelector&) final;
 
@@ -296,6 +302,13 @@ public:
 
     struct State final {
         State();
+
+        State clone() const;
+
+        // Explicit copy constructor definition inhibits these,
+        // so we have to explicitly define them.
+        State(State&&) = default;
+        State& operator=(State&&) = default;
 
         String unparsedStrokeColor;
         String unparsedFillColor;
@@ -328,7 +341,7 @@ public:
         String wordSpacing;
 
         String unparsedFont;
-        FontProxy font;
+        Ref<FontProxy> font;
 
         RefPtr<CanvasLayerContextSwitcher> targetSwitcher;
 
@@ -339,6 +352,10 @@ public:
         String fontString() const;
         String globalCompositeOperationString() const;
         String shadowColorString() const;
+
+private:
+        // Use clone() to make a copy.
+        State(const State&) = default;
     };
     const Vector<State, 1>& stateStack() LIFETIME_BOUND;
 

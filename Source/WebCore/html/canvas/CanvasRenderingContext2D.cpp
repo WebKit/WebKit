@@ -221,7 +221,7 @@ void CanvasRenderingContext2D::setFontWithoutUpdatingStyle(const String& newFont
     if (newFont.isEmpty())
         return;
 
-    if (newFont == state().unparsedFont && state().font.realized())
+    if (newFont == state().unparsedFont && protect(state().font)->realized())
         return;
 
     Ref canvas = this->canvas();
@@ -253,9 +253,9 @@ void CanvasRenderingContext2D::setFontWithoutUpdatingStyle(const String& newFont
     realizeSaves();
     modifiableState().unparsedFont = newFontSafeCopy;
 
-    modifiableState().font.initialize(protect(document->fontSelector()), *fontCascade);
-    ASSERT(state().font.realized());
-    ASSERT(state().font.isPopulated());
+    protect(modifiableState().font)->initialize(protect(document->fontSelector()), *fontCascade);
+    ASSERT(protect(state().font)->realized());
+    ASSERT(protect(state().font)->isPopulated());
 
     // Recompute the word and the letter spacing for the new font.
     String letterSpacing;
@@ -327,9 +327,9 @@ auto CanvasRenderingContext2D::fontProxy() -> const FontProxy*
     // This means that the style may end up being stale here, but that's at least better than running arbitrary JS in the middle of processing.
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
-    if (!state().font.realized())
+    if (!protect(state().font)->realized())
         setFontWithoutUpdatingStyle(state().unparsedFont);
-    return &state().font;
+    return state().font.ptr();
 }
 
 void CanvasRenderingContext2D::drawTextInternal(const String& text, double x, double y, bool fill, std::optional<double> maxWidth)
