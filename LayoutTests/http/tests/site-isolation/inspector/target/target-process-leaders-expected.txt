@@ -1,0 +1,26 @@
+Tests that one target per process is chosen to report process-wide data.
+
+
+
+== Running test suite: SiteIsolation.Target.ProcessLeaders
+-- Running test case: SiteIsolation.Target.ProcessLeaders.OneLeaderPerProcess
+PASS: Should find the main frame's target.
+PASS: Should find the same-site frame's target.
+PASS: Should find the cross-origin frame's target.
+PASS: The page target should lead its process.
+PASS: The main frame's target should have the page target as its leader.
+PASS: The same-site frame's target should have the page target as its leader.
+PASS: The cross-origin frame's target should lead its process.
+PASS: There should be one leader per process.
+
+-- Running test case: SiteIsolation.Target.ProcessLeaders.ProvisionalFrameTargetCommits
+PASS: The added frame should load in the cross-origin frame's process.
+PASS: The provisional frame target should not lead.
+PASS: The cross-origin frame's target should still lead after the added frame target commits.
+PASS: The added frame's target should have the cross-origin frame's target as its leader.
+
+-- Running test case: SiteIsolation.Target.ProcessLeaders.LeaderRemoved
+PASS: The cross-origin frame's target should be removed.
+PASS: The added frame's target should lead its process.
+PASS: The page target should still lead its process.
+

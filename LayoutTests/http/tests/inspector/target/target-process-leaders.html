@@ -1,0 +1,70 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=false ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("Target.ProcessLeaders");
+
+    // The backend rejects a second Memory.enable, so this fails unless the frontend already enabled the target.
+    async function expectMemoryEnabled(target) {
+        try {
+            await target.MemoryAgent.enable();
+            InspectorTest.fail("The page target should already have the Memory domain enabled.");
+        } catch (error) {
+            InspectorTest.expectEqual(error.message, "Memory domain already enabled", "The page target should already have the Memory domain enabled.");
+        }
+    }
+
+    suite.addTestCase({
+        name: "Target.ProcessLeaders.PageTarget",
+        description: "The page target leads its process and has the Memory domain enabled.",
+        async test() {
+            InspectorTest.expectThat(WI.targetManager.isProcessLeader(WI.pageTarget), "The page target should lead its process.");
+            InspectorTest.expectEqual(WI.targetManager.processLeaders.length, 1, "There should be one leader.");
+            await expectMemoryEnabled(WI.pageTarget);
+        }
+    });
+
+    suite.addTestCase({
+        name: "Target.ProcessLeaders.ProvisionalPageTarget",
+        description: "After a cross-site navigation, the committed page target leads its process and has the Memory domain enabled.",
+        async test() {
+            let previousPageTarget = WI.pageTarget;
+            let reloadPromise = InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad);
+            let provisionalTargetPromise = new Promise((resolve) => {
+                let listener = WI.targetManager.addEventListener(WI.TargetManager.Event.TargetAdded, (event) => {
+                    let {target} = event.data;
+                    if (target.type !== WI.TargetType.Page || !target.isProvisional)
+                        return;
+
+                    WI.targetManager.removeEventListener(WI.TargetManager.Event.TargetAdded, listener);
+                    resolve(target);
+                });
+            });
+
+            WI.mainTarget.RuntimeAgent.evaluate("location.hostname = 'localhost'");
+
+            let provisionalTarget = await provisionalTargetPromise;
+            await Promise.resolve();
+            InspectorTest.expectFalse(WI.targetManager.isProcessLeader(provisionalTarget), "The provisional page target should not lead.");
+            InspectorTest.expectThat(WI.targetManager.isProcessLeader(previousPageTarget), "The previous page target should still lead.");
+
+            // Wait for the new page to load to avoid a race between flushing the results and completing the test.
+            await reloadPromise;
+            InspectorTest.expectEqual(WI.pageTarget, provisionalTarget, "The provisional page target should become the page target.");
+            InspectorTest.expectThat(WI.targetManager.isProcessLeader(WI.pageTarget), "The new page target should lead its process.");
+            InspectorTest.expectEqual(WI.targetManager.processLeaders.length, 1, "There should be one leader.");
+            await expectMemoryEnabled(WI.pageTarget);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that the page target is the one target that reports process-wide data without site isolation, also after a cross-site navigation.</p>
+</body>
+</html>
