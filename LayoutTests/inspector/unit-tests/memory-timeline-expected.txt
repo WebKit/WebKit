@@ -1,0 +1,10 @@
+Testing that WI.MemoryTimeline keeps memory pressure events sorted by timestamp when they arrive out of order.
+
+
+== Running test suite: MemoryTimeline
+-- Running test case: MemoryTimeline.AddMemoryPressureEvent.OutOfOrderEventsStaySorted
+Timestamps: 1000, 1500, 2000, 3000, 3500
+
+-- Running test case: MemoryTimeline.AddMemoryPressureEvent.BinarySearchFindsEveryVisibleEvent
+Sorted timestamps: 1000, 1500, 2000, 2000, 3000
+

@@ -33,7 +33,9 @@ WI.MemoryTimeline = class MemoryTimeline extends WI.Timeline
     {
         console.assert(memoryPressureEvent instanceof WI.MemoryPressureEvent);
 
-        this._pressureEvents.push(memoryPressureEvent);
+        // Events can arrive out of order, and consumers (e.g. WI.MemoryTimelineOverviewGraph) binary search by timestamp.
+        let index = this._pressureEvents.lowerBound(memoryPressureEvent.timestamp, (time, event) => time - event.timestamp);
+        this._pressureEvents.splice(index, 0, memoryPressureEvent);
 
         this.dispatchEventToListeners(WI.MemoryTimeline.Event.MemoryPressureEventAdded, {memoryPressureEvent});
     }
