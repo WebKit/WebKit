@@ -376,6 +376,8 @@ void MediaPlayerPrivateGStreamer::load(const String& urlString)
 
     resetVideoSinkStatistics();
 
+    m_hasAdaptiveDemuxer = false;
+
     registerWebKitGStreamerElements();
 
     if (!m_pipeline)
@@ -1072,7 +1074,8 @@ unsigned long long MediaPlayerPrivateGStreamer::totalBytes() const
     if (gst_element_query_duration(m_source.get(), fmt, &length)) {
         GST_INFO_OBJECT(pipeline(), "totalBytes %" G_GINT64_FORMAT, length);
         m_totalBytes = static_cast<unsigned long long>(length);
-        m_isLiveStream = !length;
+        if (!m_hasAdaptiveDemuxer)
+            m_isLiveStream = !length;
         return m_totalBytes;
     }
 
@@ -1106,7 +1109,8 @@ unsigned long long MediaPlayerPrivateGStreamer::totalBytes() const
 
     GST_INFO_OBJECT(pipeline(), "totalBytes %" G_GINT64_FORMAT, length);
     m_totalBytes = static_cast<unsigned long long>(length);
-    m_isLiveStream = !length;
+    if (!m_hasAdaptiveDemuxer)
+        m_isLiveStream = !length;
     return m_totalBytes;
 }
 
@@ -1141,6 +1145,9 @@ void MediaPlayerPrivateGStreamer::durationChanged()
 {
     MediaTime previousDuration = duration();
     m_cachedDuration = MediaTime::invalidTime();
+
+    if (m_hasAdaptiveDemuxer)
+        updateLiveStreamFromDuration();
 
     // Avoid emitting durationChanged in the case where the previous
     // duration was 0 because that case is already handled by the
@@ -1500,6 +1507,22 @@ MediaTime MediaPlayerPrivateGStreamer::platformDuration() const
 
     GST_LOG_OBJECT(pipeline(), "Duration: %" GST_TIME_FORMAT, GST_TIME_ARGS(duration));
     return MediaTime(duration, GST_SECOND);
+}
+
+void MediaPlayerPrivateGStreamer::updateLiveStreamFromDuration()
+{
+    if (!m_pipeline || m_didErrorOccur)
+        return;
+
+    int64_t duration = 0;
+    bool isLive = gst_element_query_duration(m_pipeline.get(), GST_FORMAT_TIME, &duration) && !GST_CLOCK_TIME_IS_VALID(duration);
+    if (m_isLiveStream && *m_isLiveStream == isLive)
+        return;
+
+    GST_INFO_OBJECT(pipeline(), "Adaptive demuxer reports a %s stream", isLive ? "live" : "non-live");
+    m_isLiveStream = isLive;
+    m_cachedDuration = MediaTime::invalidTime();
+    updateDownloadBufferingFlag();
 }
 
 bool MediaPlayerPrivateGStreamer::isMuted() const
@@ -2463,7 +2486,7 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
                     }
                 } else
                     contentLength = *contentLengthFromResponse;
-                if (!isRangeRequest) {
+                if (!isRangeRequest && !m_hasAdaptiveDemuxer) {
                     m_isLiveStream = !contentLength;
                     if (*m_isLiveStream && WEBKIT_IS_WEB_SRC(m_source.get()) && webKitSrcIsSeekable(WEBKIT_WEB_SRC_CAST(m_source.get())))
                         m_isLiveStream = false;
@@ -2835,6 +2858,11 @@ void MediaPlayerPrivateGStreamer::configureElement(GstElement* element)
     String elementClass = String::fromLatin1(unsafeSpan(gst_element_get_metadata(element, GST_ELEMENT_METADATA_KLASS)));
     auto classifiers = elementClass.split('/');
 
+    // An adaptive demuxer is the only element that knows whether the stream is live, so once one is
+    // plugged it owns the liveness verdict and the HTTP-transport heuristics must stop deciding it.
+    if (classifiers.contains("Adaptive"_s))
+        m_hasAdaptiveDemuxer = true;
+
     // In GStreamer 1.20 and older urisourcebin mishandles source elements with dynamic pads. This
     // is not an issue in 1.22. Streams parsing is needed, otherwise decodebin3 might not auto-plug
     // hardware decoders, specially in versions older than 1.24.13 and 1.26.1.
@@ -3034,6 +3062,9 @@ void MediaPlayerPrivateGStreamer::didPreroll()
     // committed via doSeek()).
     if (m_isSeeking && !m_isSeekPending)
         finishSeek();
+
+    if (m_hasAdaptiveDemuxer)
+        updateLiveStreamFromDuration();
 }
 
 void MediaPlayerPrivateGStreamer::updateStates()
