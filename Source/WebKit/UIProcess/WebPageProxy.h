@@ -947,6 +947,7 @@ public:
     void sendMessageToInspectorFrontend(const String& targetId, const String& message);
     void frameDidPauseForDebugger(IPC::Connection&, WebCore::FrameIdentifier);
     void frameDidContinueForDebugger(IPC::Connection&, WebCore::FrameIdentifier);
+    void debuggerDidPause(IPC::Connection&);
 
     void getAllFrames(CompletionHandler<void(std::optional<FrameTreeNodeData>&&)>&&);
     void getAllFrameTreesForSiteIsolationTesting(CompletionHandler<void(Vector<FrameTreeNodeData>&&)>&&);
@@ -1587,7 +1588,8 @@ public:
 
     NODELETE bool isProcessingMouseEvents() const;
     void processNextQueuedMouseEvent();
-    void sendMouseEvent(WebCore::FrameIdentifier, Ref<NativeWebMouseEvent>&&, std::optional<Vector<SandboxExtensionHandle>>&&);
+    enum class UpdateProcessAwaitingMouseEventReply : bool { No, Yes };
+    void sendMouseEvent(WebCore::FrameIdentifier, Ref<NativeWebMouseEvent>&&, std::optional<Vector<SandboxExtensionHandle>>&&, UpdateProcessAwaitingMouseEventReply = UpdateProcessAwaitingMouseEventReply::Yes);
     void handleMouseEvent(Ref<NativeWebMouseEvent>&&);
     void recordUIProcessUserActivation(const WebEvent&);
     void dispatchMouseDidMoveOverElementForModifierFlagsChange(Ref<NativeWebMouseEvent>&&);
@@ -3682,6 +3684,7 @@ private:
     void discardQueuedMouseEvents();
 
     void mouseEventHandlingCompleted(bool handled, std::optional<WebCore::RemoteUserInputEventData>);
+    void handleMouseEventReplyForParkedEvent(Ref<NativeWebMouseEvent>&&, WebCore::FrameIdentifier, std::optional<WebCore::RemoteUserInputEventData>&&);
     void remoteFrameMouseEventTimedOut();
     void mouseMoveWasHandledInFrame(WebCore::FrameIdentifier);
     void keyEventHandlingCompleted(bool handled);

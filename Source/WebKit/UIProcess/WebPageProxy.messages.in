@@ -467,6 +467,7 @@ messages -> WebPageProxy {
     SendMessageToInspectorFrontend(String targetId, String message)
     FrameDidPauseForDebugger(WebCore::FrameIdentifier frameID)
     FrameDidContinueForDebugger(WebCore::FrameIdentifier frameID)
+    DebuggerDidPause()
 
     # Search popup menus
     SaveRecentSearches(String name, Vector<WebCore::RecentSearch> searchItems)

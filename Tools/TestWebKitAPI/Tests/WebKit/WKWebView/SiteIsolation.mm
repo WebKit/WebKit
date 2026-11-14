@@ -75,6 +75,10 @@
 #import <WebKit/WKWebpagePreferencesPrivate.h>
 #import <WebKit/WKWebsiteDataRecordPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
+#import <WebKit/_WKAutomationSession.h>
+#import <WebKit/_WKAutomationSessionConfiguration.h>
+#import <WebKit/_WKAutomationSessionDelegate.h>
+#import <WebKit/_WKAutomationSessionPrivateForTesting.h>
 #import <WebKit/_WKContentWorldConfiguration.h>
 #import <WebKit/_WKFeature.h>
 #import <WebKit/_WKFrameTreeNode.h>
@@ -516,6 +520,18 @@ std::pair<std::unique_ptr<InstanceMethodSwizzler>, std::unique_ptr<InstanceMetho
 }
 
 @end
+
+#if defined(NDEBUG) && PLATFORM(MAC) && ENABLE(REMOTE_INSPECTOR)
+@interface DebuggerPauseTestAutomationSessionDelegate : NSObject <_WKAutomationSessionDelegate>
+@end
+
+@implementation DebuggerPauseTestAutomationSessionDelegate
+- (BOOL)_automationSessionShouldEnableInspectorTesting:(_WKAutomationSession *)automationSession
+{
+    return YES;
+}
+@end
+#endif
 
 namespace TestWebKitAPI {
 
@@ -10760,6 +10776,348 @@ TEST(SiteIsolation, MouseEventsAfterUnresponsiveSubframeProcessIsTerminated)
 
     EXPECT_TRUE(waitForMainFrameMouseDown(webView.get(), 20));
 }
+
+#if ENABLE(REMOTE_INSPECTOR)
+
+static NSString *inspectorProtocolMessage(NSInteger identifier, NSString *method, NSDictionary *params)
+{
+    NSData *data = [NSJSONSerialization dataWithJSONObject:@{ @"id": @(identifier), @"method": method, @"params": params ?: @{ } } options:0 error:nil];
+    return [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
+}
+
+static NSString *sendInspectorMessageAutomationCommand(NSInteger identifier, NSString *browsingContextHandle, NSString *message)
+{
+    NSData *data = [NSJSONSerialization dataWithJSONObject:@{
+        @"id": @(identifier),
+        @"method": @"Automation.sendInspectorMessage",
+        @"params": @{ @"browsingContextHandle": browsingContextHandle, @"message": message },
+    } options:0 error:nil];
+    return [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
+}
+
+static NSDictionary *parsedJSONDictionary(NSString *string)
+{
+    if (!string)
+        return nil;
+    NSDictionary *object = [NSJSONSerialization JSONObjectWithData:[string dataUsingEncoding:NSUTF8StringEncoding] options:0 error:nil];
+    return [object isKindOfClass:NSDictionary.class] ? object : nil;
+}
+
+using InspectorMessageBlock = void (^)(NSDictionary *);
+using InspectorMessagePredicateBlock = BOOL (^)(NSDictionary *);
+
+// Inspector protocol traffic reaches the automation session wrapped in Automation.receiveInspectorMessage events.
+static void forEachInspectorMessageReceivedByAutomationSession(NSArray<NSString *> *capturedMessages, InspectorMessageBlock block)
+{
+    for (NSString *rawMessage in capturedMessages) {
+        NSDictionary *event = parsedJSONDictionary(rawMessage);
+        if (![event[@"method"] isEqualToString:@"Automation.receiveInspectorMessage"])
+            continue;
+        if (NSDictionary *message = parsedJSONDictionary(event[@"params"][@"message"]))
+            block(message);
+    }
+}
+
+static bool automationSessionReceivedInspectorReply(NSArray<NSString *> *capturedMessages, NSInteger identifier)
+{
+    __block bool received = false;
+    forEachInspectorMessageReceivedByAutomationSession(capturedMessages, ^(NSDictionary *message) {
+        if ([message[@"id"] isEqualToNumber:@(identifier)])
+            received = true;
+    });
+    return received;
+}
+
+// Replies and events from an inspector target come back wrapped in Target.dispatchMessageFromTarget events.
+static bool automationSessionReceivedMessageFromTarget(NSArray<NSString *> *capturedMessages, InspectorMessagePredicateBlock predicate)
+{
+    __block bool received = false;
+    forEachInspectorMessageReceivedByAutomationSession(capturedMessages, ^(NSDictionary *message) {
+        if (![message[@"method"] isEqualToString:@"Target.dispatchMessageFromTarget"])
+            return;
+        NSDictionary *targetMessage = parsedJSONDictionary(message[@"params"][@"message"]);
+        if (targetMessage && predicate(targetMessage))
+            received = true;
+    });
+    return received;
+}
+
+static bool automationSessionReceivedReplyFromTarget(NSArray<NSString *> *capturedMessages, NSInteger identifier)
+{
+    return automationSessionReceivedMessageFromTarget(capturedMessages, ^BOOL(NSDictionary *message) {
+        return [message[@"id"] isEqualToNumber:@(identifier)];
+    });
+}
+
+struct DebuggerPauseTestFixture {
+    RetainPtr<TestWKWebView> webView;
+    RetainPtr<WKProcessPool> processPool;
+    RetainPtr<_WKAutomationSession> session;
+    RetainPtr<DebuggerPauseTestAutomationSessionDelegate> sessionDelegate;
+    RetainPtr<NSString> browsingContextHandle;
+    RetainPtr<NSMutableArray<NSString *>> capturedMessages;
+
+    DebuggerPauseTestFixture() = default;
+    DebuggerPauseTestFixture(DebuggerPauseTestFixture&&) = default;
+    DebuggerPauseTestFixture& operator=(DebuggerPauseTestFixture&&) = default;
+    DebuggerPauseTestFixture(const DebuggerPauseTestFixture&) = delete;
+    DebuggerPauseTestFixture& operator=(const DebuggerPauseTestFixture&) = delete;
+
+    ~DebuggerPauseTestFixture()
+    {
+        [session _setMessageToFrontendHandlerForTesting:nil];
+        [processPool _setAutomationSession:nil];
+    }
+
+    void dispatchInspectorMessage(NSInteger identifier, NSString *message)
+    {
+        [session _dispatchMessageFromRemoteForTesting:sendInspectorMessageAutomationCommand(identifier, browsingContextHandle.get(), message)];
+    }
+
+    void dispatchInspectorMessageToTarget(NSInteger identifier, NSString *targetID, NSString *message)
+    {
+        dispatchInspectorMessage(identifier, inspectorProtocolMessage(identifier, @"Target.sendMessageToTarget", @{ @"targetId": targetID, @"message": message }));
+    }
+};
+
+static NSArray<NSString *> *frameTargetIdentifiers(NSArray<NSString *> *capturedMessages)
+{
+    RetainPtr result = adoptNS([NSMutableArray new]);
+    forEachInspectorMessageReceivedByAutomationSession(capturedMessages, ^(NSDictionary *message) {
+        if (![message[@"method"] isEqualToString:@"Target.targetCreated"])
+            return;
+        NSDictionary *targetInfo = message[@"params"][@"targetInfo"];
+        if ([targetInfo[@"type"] isEqualToString:@"frame"])
+            [result addObject:(NSString *)targetInfo[@"targetId"]];
+    });
+    return result.autorelease();
+}
+
+static NSString *pageTargetIdentifier(NSArray<NSString *> *capturedMessages)
+{
+    __block RetainPtr<NSString> result;
+    forEachInspectorMessageReceivedByAutomationSession(capturedMessages, ^(NSDictionary *message) {
+        if (![message[@"method"] isEqualToString:@"Target.targetCreated"])
+            return;
+        NSDictionary *targetInfo = message[@"params"][@"targetInfo"];
+        if ([targetInfo[@"type"] isEqualToString:@"page"])
+            result = targetInfo[@"targetId"];
+    });
+    return result.autorelease();
+}
+
+// The same three commands the Web Inspector frontend sends when it attaches: enable the domain, arm pausing on
+// debugger statements, and recompile already-parsed code with debugger requests so the statements take effect.
+static void enableDebuggingOnTarget(DebuggerPauseTestFixture& fixture, NSString *targetID, NSInteger firstIdentifier)
+{
+    fixture.dispatchInspectorMessageToTarget(firstIdentifier, targetID, inspectorProtocolMessage(firstIdentifier, @"Debugger.enable", nil));
+    EXPECT_TRUE(Util::waitFor([&] {
+        return automationSessionReceivedReplyFromTarget(fixture.capturedMessages.get(), firstIdentifier);
+    }));
+    fixture.dispatchInspectorMessageToTarget(firstIdentifier + 1, targetID, inspectorProtocolMessage(firstIdentifier + 1, @"Debugger.setPauseOnDebuggerStatements", @{ @"enabled": @YES }));
+    EXPECT_TRUE(Util::waitFor([&] {
+        return automationSessionReceivedReplyFromTarget(fixture.capturedMessages.get(), firstIdentifier + 1);
+    }));
+    fixture.dispatchInspectorMessageToTarget(firstIdentifier + 2, targetID, inspectorProtocolMessage(firstIdentifier + 2, @"Debugger.setBreakpointsActive", @{ @"active": @YES }));
+    EXPECT_TRUE(Util::waitFor([&] {
+        return automationSessionReceivedReplyFromTarget(fixture.capturedMessages.get(), firstIdentifier + 2);
+    }));
+}
+
+static DebuggerPauseTestFixture webViewWithAutomationSession(const HTTPServer& server, bool useSiteIsolation)
+{
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    if (useSiteIsolation)
+        enableSiteIsolation(configuration.get());
+
+    // Use a dedicated process pool: the automation session turns off process swapping, which would leak into
+    // later tests through the shared default pool.
+    DebuggerPauseTestFixture fixture;
+    fixture.processPool = adoptNS([WKProcessPool new]);
+    configuration.get().processPool = fixture.processPool.get();
+    fixture.sessionDelegate = adoptNS([DebuggerPauseTestAutomationSessionDelegate new]);
+    fixture.session = adoptNS([[_WKAutomationSession alloc] initWithConfiguration:adoptNS([_WKAutomationSessionConfiguration new]).get()]);
+    fixture.session.get().delegate = fixture.sessionDelegate.get();
+    [fixture.processPool _setAutomationSession:fixture.session.get()];
+
+    fixture.webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr navigationDelegate = adoptNS([NavigationDelegateWithUnresponsiveCallback new]);
+    fixture.webView.get().navigationDelegate = navigationDelegate.get();
+    [fixture.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/parent"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    fixture.browsingContextHandle = [fixture.session _registerWebViewForTesting:fixture.webView.get()];
+    fixture.capturedMessages = adoptNS([NSMutableArray new]);
+    RetainPtr capturedMessages = fixture.capturedMessages;
+    [fixture.session _setMessageToFrontendHandlerForTesting:^(NSString *message) {
+        [capturedMessages addObject:message];
+    }];
+    return fixture;
+}
+
+// The first message connects the automation passthrough frontend, which reports the existing targets.
+static void connectPassthrough(DebuggerPauseTestFixture& fixture)
+{
+    fixture.dispatchInspectorMessage(1, inspectorProtocolMessage(1, @"Target.setPauseOnStart", @{ @"pauseOnStart": @NO }));
+    EXPECT_TRUE(Util::waitFor([&] {
+        return automationSessionReceivedInspectorReply(fixture.capturedMessages.get(), 1);
+    }));
+}
+
+static NSString *connectPassthroughAndGetPageTarget(DebuggerPauseTestFixture& fixture)
+{
+    connectPassthrough(fixture);
+    return pageTargetIdentifier(fixture.capturedMessages.get());
+}
+
+static void expectMouseEventsAreRetiredImmediatelyAfterPause(TestWKWebView *webView, NSArray<NSString *> *capturedMessages)
+{
+    __block bool finishedProcessingMouseEvents = false;
+    [webView _doAfterProcessingAllPendingMouseEvents:^{
+        finishedProcessingMouseEvents = true;
+    }];
+
+    // The debugger statement must actually pause the process, otherwise a fast queue drain proves nothing.
+    EXPECT_TRUE(Util::waitFor([&] {
+        return automationSessionReceivedMessageFromTarget(capturedMessages, ^BOOL(NSDictionary *message) {
+            return [message[@"method"] isEqualToString:@"Debugger.paused"];
+        });
+    }));
+
+    // The pause must retire the event immediately; anything else would wait for the process to resume.
+    EXPECT_TRUE(Util::runFor(&finishedProcessingMouseEvents, 2_s));
+}
+
+static constexpr auto pageThatPausesInMouseDownHandlerHTML = "<!DOCTYPE html><html><body><script>addEventListener('mousedown', () => { debugger; });</script>main frame</body></html>"_s;
+
+TEST(SiteIsolation, MouseEventsRetiredImmediatelyWhenMainFrameProcessPausesAtDebugger)
+{
+    HTTPServer server({
+        { "/parent"_s, { pageThatPausesInMouseDownHandlerHTML } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto fixture = webViewWithAutomationSession(server, true);
+
+    connectPassthrough(fixture);
+
+    // With no subframes the only frame target is the main frame's.
+    RetainPtr<NSString> frameTargetID = frameTargetIdentifiers(fixture.capturedMessages.get()).firstObject;
+    ASSERT_TRUE(!!frameTargetID);
+
+    // Enable the debugger in the main frame target so the mousedown handler's debugger statement pauses the main frame process.
+    enableDebuggingOnTarget(fixture, frameTargetID.get(), 100);
+
+    [fixture.webView mouseDownAtPoint:[fixture.webView convertPoint:CGPointMake(400, 400) toView:nil] simulatePressure:NO];
+    expectMouseEventsAreRetiredImmediatelyAfterPause(fixture.webView.get(), fixture.capturedMessages.get());
+
+    // Let the paused process resume so it can finish handling the event and shut down cleanly.
+    fixture.dispatchInspectorMessageToTarget(4, frameTargetID.get(), inspectorProtocolMessage(103, @"Debugger.resume", nil));
+    EXPECT_TRUE(Util::waitFor([&] {
+        return automationSessionReceivedReplyFromTarget(fixture.capturedMessages.get(), 103);
+    }));
+    [fixture.webView mouseUpAtPoint:[fixture.webView convertPoint:CGPointMake(400, 400) toView:nil]];
+}
+
+TEST(SiteIsolation, MouseEventsRetiredImmediatelyWhenPagePausesAtDebuggerWithoutSiteIsolation)
+{
+    HTTPServer server({
+        { "/parent"_s, { pageThatPausesInMouseDownHandlerHTML } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto fixture = webViewWithAutomationSession(server, false);
+
+    RetainPtr pageTargetID = connectPassthroughAndGetPageTarget(fixture);
+    ASSERT_TRUE(!!pageTargetID);
+
+    enableDebuggingOnTarget(fixture, pageTargetID.get(), 100);
+
+    [fixture.webView mouseDownAtPoint:[fixture.webView convertPoint:CGPointMake(400, 400) toView:nil] simulatePressure:NO];
+    expectMouseEventsAreRetiredImmediatelyAfterPause(fixture.webView.get(), fixture.capturedMessages.get());
+
+    fixture.dispatchInspectorMessageToTarget(4, pageTargetID.get(), inspectorProtocolMessage(103, @"Debugger.resume", nil));
+    EXPECT_TRUE(Util::waitFor([&] {
+        return automationSessionReceivedReplyFromTarget(fixture.capturedMessages.get(), 103);
+    }));
+    [fixture.webView mouseUpAtPoint:[fixture.webView convertPoint:CGPointMake(400, 400) toView:nil]];
+}
+
+static NSString *targetIDThatReportedDebuggerPaused(NSArray<NSString *> *capturedMessages)
+{
+    __block RetainPtr<NSString> result;
+    forEachInspectorMessageReceivedByAutomationSession(capturedMessages, ^(NSDictionary *message) {
+        if (![message[@"method"] isEqualToString:@"Target.dispatchMessageFromTarget"])
+            return;
+        NSDictionary *targetMessage = parsedJSONDictionary(message[@"params"][@"message"]);
+        if (targetMessage && [targetMessage[@"method"] isEqualToString:@"Debugger.paused"])
+            result = message[@"params"][@"targetId"];
+    });
+    return result.autorelease();
+}
+
+static constexpr auto parentWithCrossSiteIframeHTML = "<!DOCTYPE html><html><body style='margin:0'><iframe src='https://apple.com/child' style='position:absolute;left:0;top:0;width:800px;height:600px;border:0'></iframe></body></html>"_s;
+static constexpr auto childThatRecordsClicksHTML = "<!DOCTYPE html><html><body><script>addEventListener('mousedown', () => { window.clicked = true; });</script>iframe</body></html>"_s;
+
+TEST(SiteIsolation, MouseEventParkedDuringUnrelatedDebuggerPauseReachesRemoteFrame)
+{
+    HTTPServer server({
+        { "/parent"_s, { parentWithCrossSiteIframeHTML } },
+        { "/child"_s, { childThatRecordsClicksHTML } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto fixture = webViewWithAutomationSession(server, true);
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        RetainPtr childFrame = [fixture.webView firstChildFrame];
+        return childFrame && [[fixture.webView objectByEvaluatingJavaScript:@"document.readyState" inFrame:childFrame.get()] isEqualToString:@"complete"];
+    }));
+    RetainPtr childFrame = [fixture.webView firstChildFrame];
+
+    connectPassthrough(fixture);
+
+    // TargetInfo carries no URL, so enable the debugger on every frame target; the main frame's target is among them.
+    NSInteger commandIdentifier = 100;
+    for (NSString *frameTargetID in frameTargetIdentifiers(fixture.capturedMessages.get())) {
+        enableDebuggingOnTarget(fixture, frameTargetID, commandIdentifier);
+        commandIdentifier += 100;
+    }
+
+    __block bool finishedProcessingMouseEvents = false;
+
+    // The debugger statement runs in the main frame process while the mousedown below is in flight. The pause is
+    // unrelated to the event, so the event must be parked rather than dropped, and its late reply must still
+    // forward the click to the iframe's process.
+    [fixture.webView evaluateJavaScript:@"debugger;" completionHandler:nil];
+    [fixture.webView mouseDownAtPoint:[fixture.webView convertPoint:CGPointMake(400, 300) toView:nil] simulatePressure:NO];
+    [fixture.webView _doAfterProcessingAllPendingMouseEvents:^{
+        finishedProcessingMouseEvents = true;
+    }];
+
+    // The debugger statement must actually pause the process, otherwise a fast queue drain proves nothing.
+    EXPECT_TRUE(Util::waitFor([&] {
+        return automationSessionReceivedMessageFromTarget(fixture.capturedMessages.get(), ^BOOL(NSDictionary *message) {
+            return [message[@"method"] isEqualToString:@"Debugger.paused"];
+        });
+    }));
+
+    // The pause must park the event immediately; anything else would wait for the process to resume.
+    EXPECT_TRUE(Util::runFor(&finishedProcessingMouseEvents, 2_s));
+
+    // The parked event's late reply carries the hit-test result, so the click reaches the iframe without resuming.
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[fixture.webView objectByEvaluatingJavaScript:@"window.clicked ? 'yes' : 'no'" inFrame:childFrame.get()] isEqualToString:@"yes"];
+    }));
+
+    // Let the paused process resume so it can finish handling the event and shut down cleanly.
+    RetainPtr<NSString> pausedTargetID = targetIDThatReportedDebuggerPaused(fixture.capturedMessages.get());
+    ASSERT_TRUE(!!pausedTargetID);
+    fixture.dispatchInspectorMessageToTarget(commandIdentifier, pausedTargetID.get(), inspectorProtocolMessage(commandIdentifier, @"Debugger.resume", nil));
+    EXPECT_TRUE(Util::waitFor([&] {
+        return automationSessionReceivedReplyFromTarget(fixture.capturedMessages.get(), commandIdentifier);
+    }));
+    [fixture.webView mouseUpAtPoint:[fixture.webView convertPoint:CGPointMake(400, 300) toView:nil]];
+}
+
+#endif // ENABLE(REMOTE_INSPECTOR)
 #endif
 
 #if PLATFORM(MAC)

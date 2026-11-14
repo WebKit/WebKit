@@ -85,6 +85,7 @@ public:
 
     virtual void frameDebuggerDidPause(FrameIdentifier) { }
     virtual void frameDebuggerDidContinue(FrameIdentifier) { }
+    virtual void debuggerDidPause() { }
     virtual unsigned paintRectCount() const { return 0; }
     virtual void didSetSearchingForNode(bool) { }
     virtual void elementSelectionChanged(bool) { }

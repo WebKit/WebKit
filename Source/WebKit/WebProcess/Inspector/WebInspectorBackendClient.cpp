@@ -415,6 +415,12 @@ void WebInspectorBackendClient::frameDebuggerDidPause(WebCore::FrameIdentifier f
         page->send(Messages::WebPageProxy::FrameDidPauseForDebugger(frameID));
 }
 
+void WebInspectorBackendClient::debuggerDidPause()
+{
+    if (RefPtr page = m_page)
+        page->send(Messages::WebPageProxy::DebuggerDidPause());
+}
+
 void WebInspectorBackendClient::frameDebuggerDidContinue(WebCore::FrameIdentifier frameID)
 {
     if (RefPtr page = m_page.get())

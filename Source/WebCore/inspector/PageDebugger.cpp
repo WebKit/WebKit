@@ -98,6 +98,9 @@ void PageDebugger::didPause(JSGlobalObject* globalObject)
 {
     JSC::Debugger::didPause(globalObject);
 
+    if (auto* client = protect(m_page)->inspectorController().inspectorBackendClient())
+        client->debuggerDidPause();
+
     setJavaScriptPaused(protect(protect(m_page)->group()), true);
 }
 

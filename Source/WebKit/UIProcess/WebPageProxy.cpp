@@ -2177,6 +2177,8 @@ void WebPageProxy::close()
     resetState(ResetStateReason::PageInvalidated);
 
     internals().mouseEventQueue.clear();
+    internals().mouseEventsForPausedProcess.clear();
+    internals().processAwaitingMouseEventReply = std::nullopt;
     flushPendingMouseEventCallbacks();
 
     Ref process = m_legacyMainFrameProcess;
@@ -3576,6 +3578,22 @@ void WebPageProxy::frameDidPauseForDebugger(IPC::Connection& connection, WebCore
 void WebPageProxy::frameDidContinueForDebugger(IPC::Connection& connection, WebCore::FrameIdentifier frameID)
 {
     m_inspectorController->frameDidContinueForDebugger(WebProcessProxy::fromConnection(connection), frameID);
+}
+
+void WebPageProxy::debuggerDidPause(IPC::Connection& connection)
+{
+    if (m_isClosed || internals().mouseEventQueue.isEmpty())
+        return;
+
+    auto awaitedProcess = internals().processAwaitingMouseEventReply;
+    if (!awaitedProcess || WebProcessProxy::fromConnection(connection)->coreProcessIdentifier() != *awaitedProcess)
+        return;
+
+    // The process handling the head mouse event is paused at the debugger and cannot reply until it resumes, so retire the event now to keep input flowing for the rest of the page.
+    // The event is parked rather than dropped: it still finishes dispatching in the paused process's nested run loop, and its late reply is honored so the event can still reach a remote frame.
+    WEBPAGEPROXY_RELEASE_LOG(MouseHandling, "debuggerDidPause: Parking the head mouse event whose process paused at the debugger");
+    internals().mouseEventsForPausedProcess.append(internals().mouseEventQueue.first());
+    mouseEventHandlingCompleted(false, std::nullopt);
 }
 
 #if ENABLE(REMOTE_INSPECTOR)
@@ -5089,7 +5107,7 @@ static RefPtr<T> removeOldRedundantEvent(Deque<Ref<T>>& queue, WebEventType inco
     return nullptr;
 }
 
-void WebPageProxy::sendMouseEvent(FrameIdentifier frameID, Ref<NativeWebMouseEvent>&& event, std::optional<Vector<SandboxExtensionHandle>>&& sandboxExtensions)
+void WebPageProxy::sendMouseEvent(FrameIdentifier frameID, Ref<NativeWebMouseEvent>&& event, std::optional<Vector<SandboxExtensionHandle>>&& sandboxExtensions, UpdateProcessAwaitingMouseEventReply updateProcessAwaitingMouseEventReply)
 {
     if (event->type() == WebEventType::MouseDown || event->type() == WebEventType::MouseUp)
         processContainingFrame(frameID)->recordUserGestureAuthorizationToken(webPageIDInMainFrameProcess(), event->authorizationToken());
@@ -5101,12 +5119,17 @@ void WebPageProxy::sendMouseEvent(FrameIdentifier frameID, Ref<NativeWebMouseEve
 
     auto eventType = event->type();
     Ref sentEvent = event;
+
+    if (updateProcessAwaitingMouseEventReply == UpdateProcessAwaitingMouseEventReply::Yes)
+        internals().processAwaitingMouseEventReply = processContainingFrame(frameID)->coreProcessIdentifier();
+
     sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::MouseEvent(frameID, WTF::move(event), WTF::move(sandboxExtensions)), [weakThis = WeakPtr { *this }, eventType, sentEvent = WTF::move(sentEvent), frameID](IPC::Connection* connection, bool handled, std::optional<RemoteUserInputEventData> remoteUserInputEventData) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
 
         // Ignore replies for events that have already been retired, e.g. because the queue was cleared or the event timed out.
+        // Parked events are the exception: they were retired because their process paused at the debugger, but their replies still arrive once it resumes.
         auto& mouseEventQueue = protectedThis->internals().mouseEventQueue;
         bool isReplyForCurrentEvent = !mouseEventQueue.isEmpty() && mouseEventQueue.first().ptr() == sentEvent.ptr();
 
@@ -5115,12 +5138,20 @@ void WebPageProxy::sendMouseEvent(FrameIdentifier frameID, Ref<NativeWebMouseEve
         if (!connection) {
             if (isReplyForCurrentEvent)
                 protectedThis->mouseEventHandlingCompleted(false, std::nullopt);
+            else {
+                protectedThis->internals().mouseEventsForPausedProcess.removeFirstMatching([&](auto& parked) {
+                    return parked.ptr() == sentEvent.ptr();
+                });
+            }
             return;
         }
 
         if (!isReplyForCurrentEvent) {
+            MESSAGE_CHECK_BASE(!remoteUserInputEventData || protect(protectedThis->preferences())->siteIsolationEnabled(), connection);
+
             if (eventType != WebEventType::MouseMove)
                 WebProcessProxy::fromConnection(*connection)->stopResponsivenessTimer();
+            protectedThis->handleMouseEventReplyForParkedEvent(WTF::move(sentEvent), frameID, WTF::move(remoteUserInputEventData));
             return;
         }
 
@@ -15827,21 +15858,55 @@ void WebPageProxy::setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
         pageClient->setCursorHiddenUntilMouseMoves(hiddenUntilMouseMoves);
 }
 
+static void transformMouseEventForRemoteFrame(NativeWebMouseEvent& event, const WebCore::RemoteUserInputEventData& remoteUserInputEventData)
+{
+    const auto originalPosition = event.position();
+    const auto transformedPosition = remoteUserInputEventData.transformedPoint;
+    event.setPosition(transformedPosition);
+
+    const auto offset = originalPosition - transformedPosition;
+    auto coalescedEvents = event.coalescedEvents();
+    for (Ref coalescedEvent : coalescedEvents) {
+        const auto adjustedPosition = coalescedEvent->position() - offset;
+        coalescedEvent->setPosition(adjustedPosition);
+    }
+    event.setCoalescedEvents(coalescedEvents);
+}
+
+void WebPageProxy::handleMouseEventReplyForParkedEvent(Ref<NativeWebMouseEvent>&& event, FrameIdentifier frameID, std::optional<RemoteUserInputEventData>&& remoteUserInputEventData)
+{
+    auto matchesEvent = [&event](const Ref<NativeWebMouseEvent>& parked) {
+        return parked.ptr() == event.ptr();
+    };
+    if (!internals().mouseEventsForPausedProcess.containsIf(matchesEvent))
+        return;
+
+    if (!remoteUserInputEventData) {
+        internals().mouseEventsForPausedProcess.removeFirstMatching(matchesEvent);
+        if (event->type() == WebEventType::MouseMove)
+            mouseMoveWasHandledInFrame(frameID);
+        return;
+    }
+
+    // Forwarding is the one effect of a parked event's late reply that must not be dropped: without it a click meant for a cross-process iframe is lost.
+    transformMouseEventForRemoteFrame(event, *remoteUserInputEventData);
+
+    // FIXME: If these sandbox extensions are important, find a way to get them to the iframe process.
+    if (RefPtr targetFrame = WebFrameProxy::webFrame(remoteUserInputEventData->targetFrameID)) {
+        startResponsivenessTimerForMouseEvent(*targetFrame, event->type());
+        // The event stays parked until a hop replies without forwarding data, in case the target finds yet another remote frame. It is no longer the queue head, so don't overwrite the head's awaited process or arm its timeout.
+        sendMouseEvent(remoteUserInputEventData->targetFrameID, WTF::move(event), { }, UpdateProcessAwaitingMouseEventReply::No);
+        return;
+    }
+
+    internals().mouseEventsForPausedProcess.removeFirstMatching(matchesEvent);
+}
+
 void WebPageProxy::mouseEventHandlingCompleted(bool handled, std::optional<RemoteUserInputEventData> remoteUserInputEventData)
 {
     if (remoteUserInputEventData) {
         Ref event = internals().mouseEventQueue.first();
-        const auto originalPosition = event->position();
-        const auto transformedPosition = remoteUserInputEventData->transformedPoint;
-        event->setPosition(transformedPosition);
-
-        const auto offset = originalPosition - transformedPosition;
-        auto coalescedEvents = event->coalescedEvents();
-        for (Ref coalescedEvent : coalescedEvents) {
-            const auto adjustedPosition = coalescedEvent->position() - offset;
-            coalescedEvent->setPosition(adjustedPosition);
-        }
-        event->setCoalescedEvents(coalescedEvents);
+        transformMouseEventForRemoteFrame(event, *remoteUserInputEventData);
 
         // FIXME: If these sandbox extensions are important, find a way to get them to the iframe process.
         if (RefPtr targetFrame = WebFrameProxy::webFrame(remoteUserInputEventData->targetFrameID)) {
@@ -15862,6 +15927,7 @@ void WebPageProxy::mouseEventHandlingCompleted(bool handled, std::optional<Remot
 
     // Retire the last sent event now that WebProcess is done handling it.
     Ref event = internals().mouseEventQueue.takeFirst();
+    internals().processAwaitingMouseEventReply = std::nullopt;
 #if ENABLE(CONTEXT_MENU_EVENT)
     if (event->button() == WebMouseEventButton::Right) {
         if (event->type() == WebEventType::MouseDown) {
@@ -16756,7 +16822,9 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
 #endif
 
     internals().mouseEventQueue.clear();
+    internals().mouseEventsForPausedProcess.clear();
     internals().coalescedMouseEvents.clear();
+    internals().processAwaitingMouseEventReply = std::nullopt;
     internals().remoteFrameMouseEventTimeoutTimer.stop();
     internals().lastFrameHandlingMouseMove = std::nullopt;
     flushPendingMouseEventCallbacks();

@@ -274,9 +274,15 @@ public:
     WebCore::IntSize minimumSizeForAutoLayout;
     WebCore::FloatSize minimumUnobscuredSize;
     Deque<Ref<NativeWebMouseEvent>> mouseEventQueue;
+    // Events retired from the queue because their process paused at the debugger. They finish dispatching in the
+    // paused process's nested run loop, and their late replies are still honored so they can reach remote frames.
+    Vector<Ref<NativeWebMouseEvent>> mouseEventsForPausedProcess;
     std::optional<WebCore::FrameIdentifier> lastFrameHandlingMouseMove;
     Vector<Ref<WebMouseEvent>> coalescedMouseEvents;
     RunLoop::Timer remoteFrameMouseEventTimeoutTimer;
+    // The process the queue head is waiting on. One is enough: only the head event blocks the queue, and its hops
+    // are a sequential chain (each forward starts from the previous hop's reply), so it never awaits two at once.
+    std::optional<WebCore::ProcessIdentifier> processAwaitingMouseEventReply;
     WebCore::MediaProducerMutedStateFlags mutedState;
     WebNotificationManagerMessageHandler notificationManagerMessageHandler;
     OptionSet<WebCore::LayoutMilestone> observedLayoutMilestones;
