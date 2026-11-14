@@ -36,8 +36,8 @@
         waitForEventOnceOn(video.audioTracks, 'change', trackEnabled);
     }
 
-    function trackEnabled() {
-        testExpected('internals.audioSessionCategory()', 'MediaPlayback');
+    async function trackEnabled() {
+        await testExpectedEventually('internals.audioSessionCategory()', 'MediaPlayback');
         endTest();
     }
     </script>
