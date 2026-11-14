@@ -31,6 +31,9 @@
 #include "StylePosition.h"
 
 namespace WebCore {
+
+class FreeformGradient;
+
 namespace Style {
 
 // https://github.com/w3c/csswg-drafts/pull/14655
@@ -77,6 +80,8 @@ template<size_t I> const auto& get(const FreeformGradient& value)
 DEFINE_TYPE_MAPPING(CSS::FreeformGradient, FreeformGradient)
 
 bool containsCurrentColor(const FreeformGradient&);
+
+Ref<WebCore::FreeformGradient> createPlatformFreeformGradient(const FreeformGradient&, FloatSize, const ComputedStyle&);
 
 } // namespace Style
 } // namespace WebCore

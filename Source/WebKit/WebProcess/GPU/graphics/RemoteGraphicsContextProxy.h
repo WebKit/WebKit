@@ -28,6 +28,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "RemoteDisplayListIdentifier.h"
+#include "RemoteFreeformGradientIdentifier.h"
 #include "RemoteGradientIdentifier.h"
 #include "RemoteGraphicsContextIdentifier.h"
 #include "RemoteMeshGradientIdentifier.h"
@@ -131,6 +132,7 @@ private:
     void drawLine(const WebCore::FloatPoint& point1, const WebCore::FloatPoint& point2) final;
     void drawLinesForText(const WebCore::FloatPoint&, float thickness, std::span<const WebCore::FloatSegment>, bool isPrinting, bool doubleLines, WebCore::StrokeStyle) final;
     void drawDotsForDocumentMarker(const WebCore::FloatRect&, WebCore::DocumentMarkerLineStyle) final;
+    void drawFreeformGradient(WebCore::FreeformGradient&, const WebCore::FloatRect& destination) final;
     void drawMeshGradient(WebCore::MeshGradient&, const WebCore::FloatRect& destination) final;
     void drawEllipse(const WebCore::FloatRect&) final;
     void drawPath(const WebCore::Path&) final;
@@ -174,6 +176,7 @@ private:
     bool recordResourceUse(const WebCore::SourceImage&);
     bool recordResourceUse(WebCore::FontBase&);
     std::optional<RemoteGradientIdentifier> recordResourceUse(WebCore::Gradient&);
+    std::optional<RemoteFreeformGradientIdentifier> recordResourceUse(WebCore::FreeformGradient&);
     std::optional<RemoteMeshGradientIdentifier> recordResourceUse(WebCore::MeshGradient&);
     bool recordResourceUse(WebCore::Filter&);
     std::optional<RemoteDisplayListIdentifier> recordResourceUse(const WebCore::DisplayList::DisplayList&);

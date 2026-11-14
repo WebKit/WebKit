@@ -32,6 +32,7 @@
 #include <WebCore/Filter.h>
 #include <WebCore/FloatRoundedRect.h>
 #include <WebCore/Font.h>
+#include <WebCore/FreeformGradient.h>
 #include <WebCore/GlyphBuffer.h>
 #include <WebCore/Gradient.h>
 #include <WebCore/GraphicsContext.h>
@@ -923,6 +924,27 @@ private:
     bool m_printing;
     bool m_doubleLines;
     StrokeStyle m_style;
+};
+
+class DrawFreeformGradient {
+public:
+    static constexpr ASCIILiteral name = "draw-freeform-gradient"_s;
+
+    DrawFreeformGradient(FreeformGradient& gradient, const FloatRect& destination)
+        : m_gradient(gradient)
+        , m_destination(destination)
+    {
+    }
+
+    const FreeformGradient& gradient() const { return m_gradient; }
+    const FloatRect& destination() const LIFETIME_BOUND { return m_destination; }
+
+    WEBCORE_EXPORT void apply(GraphicsContext&) const;
+    void dump(TextStream&, OptionSet<AsTextFlag>) const;
+
+private:
+    const Ref<FreeformGradient> m_gradient;
+    FloatRect m_destination;
 };
 
 class DrawMeshGradient {

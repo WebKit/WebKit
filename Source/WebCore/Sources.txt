@@ -2729,6 +2729,9 @@ platform/graphics/FontSelectionAlgorithm.cpp
 platform/graphics/FontSelector.cpp
 platform/graphics/FontTaggedSettings.cpp
 platform/graphics/FourCC.cpp
+platform/graphics/FreeformGradient.cpp
+platform/graphics/FreeformGradientRenderer.cpp
+platform/graphics/FreeformGradientRendererCPU.cpp
 platform/graphics/GeometryUtilities.cpp
 platform/graphics/Gradient.cpp
 platform/graphics/GradientColorStop.cpp

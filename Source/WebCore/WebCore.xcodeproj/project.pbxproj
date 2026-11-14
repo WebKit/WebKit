@@ -2954,6 +2954,9 @@
 		726CDE202759735000A445B2 /* FilterEffectGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = 729661A2275960A500E7DF9B /* FilterEffectGeometry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		726D56E2253AE28D0002EF90 /* PlatformImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 726D56E1253AE0430002EF90 /* PlatformImage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		726D56E3253AE3660002EF90 /* NativeImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 55A336F61D8209F40022C4C7 /* NativeImage.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1B2569BA3B93DA5648B09915 /* FreeformGradientRendererCPU.h in Headers */ = {isa = PBXBuildFile; fileRef = B63C08DE6D0180D872E552A6 /* FreeformGradientRendererCPU.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CA07B1627CFA914F6CA6EFB5 /* FreeformGradientRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 09012F20867F2C055AFE611D /* FreeformGradientRenderer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CD357793FA5998E532875CA0 /* FreeformGradient.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C3A78CE4705C70D1FA746FA /* FreeformGradient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C8A32D842775CD9FA494E7AF /* MeshGradientRendererMetal.h in Headers */ = {isa = PBXBuildFile; fileRef = AACD2A2FE1349CC2796D24BE /* MeshGradientRendererMetal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		90C063E8DD6EB5CD9957990D /* MeshGradientRendererCPU.h in Headers */ = {isa = PBXBuildFile; fileRef = CF5B71CDD2CB5D823572727F /* MeshGradientRendererCPU.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41ACF31DC72BF9108385C7C3 /* MeshGradientRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = CE04C4227D3BF83B554DE57B /* MeshGradientRenderer.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -13200,6 +13203,12 @@
 		AACD2A2FE1349CC2796D24BE /* MeshGradientRendererMetal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MeshGradientRendererMetal.h; sourceTree = "<group>"; };
 		7B3C1E5A2F0D4A6E9C81D2F4 /* MetalColorConversion.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MetalColorConversion.mm; sourceTree = "<group>"; };
 		7B3C1E5B2F0D4A6E9C81D2F4 /* MetalColorConversion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MetalColorConversion.h; sourceTree = "<group>"; };
+		7BB0250CF46CEFF7C97DB33E /* FreeformGradientRendererCPU.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FreeformGradientRendererCPU.cpp; sourceTree = "<group>"; };
+		B63C08DE6D0180D872E552A6 /* FreeformGradientRendererCPU.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FreeformGradientRendererCPU.h; sourceTree = "<group>"; };
+		09012F20867F2C055AFE611D /* FreeformGradientRenderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FreeformGradientRenderer.h; sourceTree = "<group>"; };
+		FDC853B5BEE5D4FA2CCCED79 /* FreeformGradientRenderer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FreeformGradientRenderer.cpp; sourceTree = "<group>"; };
+		461BDE148EE8BF115DAFA4B9 /* FreeformGradient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FreeformGradient.cpp; sourceTree = "<group>"; };
+		3C3A78CE4705C70D1FA746FA /* FreeformGradient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FreeformGradient.h; sourceTree = "<group>"; };
 		0FAB358E2F99319B7975CA02 /* MeshGradientRendererCPU.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MeshGradientRendererCPU.cpp; sourceTree = "<group>"; };
 		CF5B71CDD2CB5D823572727F /* MeshGradientRendererCPU.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MeshGradientRendererCPU.h; sourceTree = "<group>"; };
 		CE04C4227D3BF83B554DE57B /* MeshGradientRenderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MeshGradientRenderer.h; sourceTree = "<group>"; };
@@ -36906,6 +36915,12 @@
 				7CE6CBFA187F370700D46BF5 /* FormatConverter.h */,
 				932D26F4279B8526004DCD8D /* FourCC.cpp */,
 				CD525BA21EE0B10700788DF5 /* FourCC.h */,
+				461BDE148EE8BF115DAFA4B9 /* FreeformGradient.cpp */,
+				3C3A78CE4705C70D1FA746FA /* FreeformGradient.h */,
+				FDC853B5BEE5D4FA2CCCED79 /* FreeformGradientRenderer.cpp */,
+				09012F20867F2C055AFE611D /* FreeformGradientRenderer.h */,
+				7BB0250CF46CEFF7C97DB33E /* FreeformGradientRendererCPU.cpp */,
+				B63C08DE6D0180D872E552A6 /* FreeformGradientRendererCPU.h */,
 				72C9B6512F9994AD0070F060 /* GainMap.h */,
 				7B7363A62EA761A000770085 /* GCGLExtension.h */,
 				3A2FE8CE2978CC7800BA1D92 /* GCGLSpan.h */,
@@ -46119,6 +46134,9 @@
 				A773AD2F2E7CCA1A004E6E72 /* FrameTreeSyncData.serialization.in in Headers */,
 				5C907ECA2952E20800B3402D /* FrameView.h in Headers */,
 				5EAAE11E2F4FC900009CAB0D /* FrameWorkerAgent.h in Headers */,
+				CD357793FA5998E532875CA0 /* FreeformGradient.h in Headers */,
+				CA07B1627CFA914F6CA6EFB5 /* FreeformGradientRenderer.h in Headers */,
+				1B2569BA3B93DA5648B09915 /* FreeformGradientRendererCPU.h in Headers */,
 				46781A1528EFCF810095AD63 /* FullscreenOptions.h in Headers */,
 				26B999931803B9D900D01121 /* FunctionCall.h in Headers */,
 				72C9B6522F99950B0070F060 /* GainMap.h in Headers */,

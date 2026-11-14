@@ -94,6 +94,7 @@ messages -> RemoteGraphicsContext Stream {
     DrawLine(WebCore::FloatPoint point1, WebCore::FloatPoint point2) StreamBatched
     DrawLinesForText(WebCore::FloatPoint point, float thickness, std::span<const WebCore::FloatSegment> lineSegments, bool printing, bool doubleLines, enum:uint8_t WebCore::StrokeStyle strokeStyle) StreamBatched
     DrawDotsForDocumentMarker(WebCore::FloatRect rect, struct WebCore::DocumentMarkerLineStyle style) StreamBatched
+    DrawFreeformGradient(WebKit::RemoteFreeformGradientIdentifier identifier, WebCore::FloatRect destination) StreamBatched
     DrawMeshGradient(WebKit::RemoteMeshGradientIdentifier identifier, WebCore::FloatRect destination) StreamBatched
     DrawEllipse(WebCore::FloatRect rect) StreamBatched
     DrawPath(WebCore::Path path) StreamBatched

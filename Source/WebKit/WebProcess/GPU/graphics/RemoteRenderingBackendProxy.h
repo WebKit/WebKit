@@ -33,6 +33,7 @@
 #include "MarkSurfacesAsVolatileRequestIdentifier.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
+#include "RemoteFreeformGradientIdentifier.h"
 #include "RemoteGradientIdentifier.h"
 #include "RemoteGraphicsContextMessages.h"
 #include "RemoteImageBufferProxy.h"
@@ -137,6 +138,8 @@ public:
     void releaseFontCustomPlatformData(WebCore::RenderingResourceIdentifier);
     void cacheGradient(Ref<WebCore::Gradient>&&, RemoteGradientIdentifier);
     void releaseGradient(RemoteGradientIdentifier);
+    void cacheFreeformGradient(Ref<WebCore::FreeformGradient>&&, RemoteFreeformGradientIdentifier);
+    void releaseFreeformGradient(RemoteFreeformGradientIdentifier);
     void cacheMeshGradient(Ref<WebCore::MeshGradient>&&, RemoteMeshGradientIdentifier);
     void releaseMeshGradient(RemoteMeshGradientIdentifier);
     void cacheFilter(Ref<WebCore::Filter>&&);

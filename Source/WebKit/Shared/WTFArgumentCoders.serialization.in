@@ -225,6 +225,7 @@ template: enum class WebKit::LegacyCustomProtocolIDType
 template: struct WebKit::LibWebRTCResolverIdentifierType
 template: struct WebKit::LogStreamIdentifierType
 template: struct WebKit::RemoteGradientIdentifierType
+template: struct WebKit::RemoteFreeformGradientIdentifierType
 template: struct WebKit::RemoteMeshGradientIdentifierType
 template: struct WebKit::RemoteGraphicsContextIdentifierType
 template: struct WebKit::RemoteDisplayListIdentifierType

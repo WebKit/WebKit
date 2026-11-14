@@ -85,6 +85,7 @@ public:
     void drawLine(const FloatPoint& point1, const FloatPoint& point2) final;
     void drawLinesForText(const FloatPoint&, float thickness, std::span<const FloatSegment>, bool isPrinting, bool doubleLines, StrokeStyle) final;
     void drawDotsForDocumentMarker(const FloatRect&, DocumentMarkerLineStyle) final;
+    void drawFreeformGradient(FreeformGradient&, const FloatRect& destination) final;
     void drawMeshGradient(MeshGradient&, const FloatRect& destination) final;
     void drawEllipse(const FloatRect&) final;
     void drawPath(const Path&) final;

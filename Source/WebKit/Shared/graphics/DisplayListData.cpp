@@ -124,6 +124,7 @@ private:
                 return true;
             },
             [](const DisplayList::ClipToNativeImage&) { return false; },
+            [](const DisplayList::DrawFreeformGradient&) { return false; },
             [](const DisplayList::DrawImageBuffer&) { return false; },
             [](const DisplayList::DrawMeshGradient&) { return false; },
             [](const DisplayList::DrawNativeImage&) { return false; },

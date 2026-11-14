@@ -601,6 +601,15 @@ void BifurcatedGraphicsContext::drawDotsForDocumentMarker(const FloatRect& rect,
     VERIFY_STATE_SYNCHRONIZATION();
 }
 
+void BifurcatedGraphicsContext::drawFreeformGradient(FreeformGradient& gradient, const FloatRect& destination)
+{
+    updatePlatformContextStateIfNeeded();
+    m_primaryContext.drawFreeformGradient(gradient, destination);
+    m_secondaryContext.drawFreeformGradient(gradient, destination);
+
+    VERIFY_STATE_SYNCHRONIZATION();
+}
+
 void BifurcatedGraphicsContext::drawMeshGradient(MeshGradient& gradient, const FloatRect& destination)
 {
     updatePlatformContextStateIfNeeded();

@@ -2490,6 +2490,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/FontSizeAdjust.h
     platform/graphics/FontTaggedSettings.h
     platform/graphics/FourCC.h
+    platform/graphics/FreeformGradient.h
+    platform/graphics/FreeformGradientRenderer.h
+    platform/graphics/FreeformGradientRendererCPU.h
     platform/graphics/GainMap.h
     platform/graphics/GCGLExtension.h
     platform/graphics/GCGLSpan.h

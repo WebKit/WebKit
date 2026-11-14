@@ -26,8 +26,35 @@
 #include "config.h"
 #include "StyleFreeformGradient.h"
 
+#include "FreeformGradient.h"
+#include "StyleAppleColorFilter.h"
+#include "StyleColorResolver.h"
+#include "StyleComputedStyle+GettersInlines.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
+
 namespace WebCore {
 namespace Style {
+
+Ref<WebCore::FreeformGradient> createPlatformFreeformGradient(const FreeformGradient& gradient, FloatSize size, const ComputedStyle& style)
+{
+    auto zoom = style.usedZoomForLength();
+    bool hasColorFilter = !style.appleColorFilter().isNone();
+    ColorResolver colorResolver { style };
+
+    auto resolveColor = [&](const Color& color) {
+        return hasColorFilter ? colorResolver.colorResolvingCurrentColorApplyingColorFilter(color) : colorResolver.colorResolvingCurrentColor(color);
+    };
+
+    auto stops = WTF::map(gradient.stops, [&](auto& stop) -> WebCore::FreeformGradient::Stop {
+        return {
+            .position = evaluate<FloatPoint>(stop.position, size, zoom),
+            .color = resolveColor(stop.color),
+            .weight = stop.weight ? narrowPrecisionToFloat(stop.weight->value) : 0,
+        };
+    });
+
+    return WebCore::FreeformGradient::create(gradient.colorInterpolationMethod.method.value, WTF::move(stops));
+}
 
 bool containsCurrentColor(const FreeformGradient& gradient)
 {
