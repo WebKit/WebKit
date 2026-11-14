@@ -177,6 +177,7 @@
 #import <WebCore/ElementContext.h>
 #import <WebCore/ElementTargetingTypes.h>
 #import <WebCore/ExceptionCode.h>
+#import <WebCore/FontAttributes.h>
 #import <WebCore/ICUSearcher.h>
 #import <WebCore/ImageUtilities.h>
 #import <WebCore/JSDOMBinding.h>
@@ -4589,6 +4590,13 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
         if (capturedCompletionBlock)
             capturedCompletionBlock(YES);
     });
+}
+
+- (void)_applyBlockPresentationIntent:(NSPresentationIntent *)intent
+{
+    THROW_IF_SUSPENDED;
+    if (auto blockIntent = WebCore::BlockPresentationIntent::fromPresentationIntent(intent))
+        _page->applyBlockPresentationIntent(*blockIntent);
 }
 
 - (id <_WKTextManipulationDelegate>)_textManipulationDelegate

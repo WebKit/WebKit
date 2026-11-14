@@ -4109,6 +4109,7 @@
 		9B2D8A7914997CCF00ECEF3E /* UndoStep.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B2D8A7814997CCF00ECEF3E /* UndoStep.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9B32CDA913DF7FA900F34D13 /* RenderedPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B32CDA713DF7FA900F34D13 /* RenderedPosition.h */; };
 		9B417064125662B3006B28FC /* ApplyBlockElementCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B417062125662B3006B28FC /* ApplyBlockElementCommand.h */; };
+		AEB87AE9831088FE8B6BAF3B /* ApplyBlockPresentationIntentCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = B54B04BF98566AE8E19EE0F5 /* ApplyBlockPresentationIntentCommand.h */; };
 		9B46C03C2DC34A51002E22C4 /* ContainerNodeInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B46C03B2DC34A47002E22C4 /* ContainerNodeInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9B46C04B2DC4A867002E22C4 /* FrameInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B46C04A2DC4A867002E22C4 /* FrameInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9B46C0502DC4AB14002E22C4 /* LocalFrameInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B46C04F2DC4AAC7002E22C4 /* LocalFrameInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -17029,6 +17030,8 @@
 		9B3C74462DB82F9700C13EF6 /* GetComposedRangesOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = GetComposedRangesOptions.idl; sourceTree = "<group>"; };
 		9B417062125662B3006B28FC /* ApplyBlockElementCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplyBlockElementCommand.h; sourceTree = "<group>"; };
 		9B417063125662B3006B28FC /* ApplyBlockElementCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ApplyBlockElementCommand.cpp; sourceTree = "<group>"; };
+		0921FB137CC10EDADDBE949C /* ApplyBlockPresentationIntentCommand.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ApplyBlockPresentationIntentCommand.cpp; sourceTree = "<group>"; };
+		B54B04BF98566AE8E19EE0F5 /* ApplyBlockPresentationIntentCommand.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApplyBlockPresentationIntentCommand.h; sourceTree = "<group>"; };
 		9B4376EF2117E872009D03A0 /* ThrowOnDynamicMarkupInsertionCountIncrementer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ThrowOnDynamicMarkupInsertionCountIncrementer.h; sourceTree = "<group>"; };
 		9B46C03B2DC34A47002E22C4 /* ContainerNodeInlines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContainerNodeInlines.h; sourceTree = "<group>"; };
 		9B46C04A2DC4A867002E22C4 /* FrameInlines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FrameInlines.h; sourceTree = "<group>"; };
@@ -33005,6 +33008,8 @@
 				93309D88099E64910056E581 /* AppendNodeCommand.h */,
 				9B417063125662B3006B28FC /* ApplyBlockElementCommand.cpp */,
 				9B417062125662B3006B28FC /* ApplyBlockElementCommand.h */,
+				0921FB137CC10EDADDBE949C /* ApplyBlockPresentationIntentCommand.cpp */,
+				B54B04BF98566AE8E19EE0F5 /* ApplyBlockPresentationIntentCommand.h */,
 				93309D89099E64910056E581 /* ApplyStyleCommand.cpp */,
 				93309D8A099E64910056E581 /* ApplyStyleCommand.h */,
 				93309D8B099E64910056E581 /* BreakBlockquoteCommand.cpp */,
@@ -44533,6 +44538,7 @@
 				63152D191F9531EE007A5E4B /* ApplicationManifestLoader.h in Headers */,
 				6354F4C91F7AFC9400D89DF3 /* ApplicationManifestParser.h in Headers */,
 				9B417064125662B3006B28FC /* ApplyBlockElementCommand.h in Headers */,
+				AEB87AE9831088FE8B6BAF3B /* ApplyBlockPresentationIntentCommand.h in Headers */,
 				58D20235FE0A31C88C42127E /* ApplyImageDevicePixelRatio.h in Headers */,
 				93309DD9099E64920056E581 /* ApplyStyleCommand.h in Headers */,
 				512DD8F60D91E6AF000F89EE /* Archive.h in Headers */,

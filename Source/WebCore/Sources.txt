@@ -1551,6 +1551,7 @@ domjit/JSNodeDOMJIT.cpp
 editing/AlternativeTextController.cpp @cost:3
 editing/AppendNodeCommand.cpp
 editing/ApplyBlockElementCommand.cpp @header:RenderStyleGetters
+editing/ApplyBlockPresentationIntentCommand.cpp
 editing/ApplyStyleCommand.cpp @header:RenderStyleGetters
 editing/BreakBlockquoteCommand.cpp
 editing/CachedMatchFinder.cpp

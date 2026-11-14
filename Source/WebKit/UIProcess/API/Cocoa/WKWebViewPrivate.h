@@ -373,6 +373,13 @@ for this property.
 
 - (void)_executeEditCommand:(NSString *)command argument:(NSString *)argument completion:(void (^)(BOOL))completion WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
 
+// Makes the blocks in the selection the kind of block that the innermost intent describes, as one undoable edit.
+// A list item, or a paragraph in one, makes them its list. A code block becomes <pre><code>, with its language hint
+// as a language-* class. Leaving a list, a code block or a block quote removes it. A block quote wraps the selected
+// blocks, keeping them as they are, and does nothing to quoted blocks. A thematic break inserts a horizontal rule after
+// the selected paragraphs. Table intents and list items outside a list are ignored.
+- (void)_applyBlockPresentationIntent:(NSPresentationIntent *)intent WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
 - (void)_isJITEnabled:(void(^)(BOOL))completionHandler WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
 - (void)_isEnhancedSecurityEnabled:(void(^)(BOOL))completionHandler WK_API_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4));
 - (void)_removeDataDetectedLinks:(dispatch_block_t)completion WK_API_AVAILABLE(macos(10.14.4), ios(12.2));

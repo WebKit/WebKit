@@ -32,9 +32,62 @@
 #import "Helpers/Test.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import "Helpers/cocoa/WKWebViewConfigurationExtras.h"
+#import <WebCore/NodeHTMLConverter.h>
+#import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <wtf/RetainPtr.h>
+
+@interface PresentationIntentFontAttributesListener : NSObject <WKUIDelegatePrivate> {
+@public
+    bool _didChangeFontAttributes;
+}
+@property (nonatomic, readonly) NSDictionary *lastFontAttributes;
+@end
+
+@implementation PresentationIntentFontAttributesListener {
+    RetainPtr<NSDictionary> _lastFontAttributes;
+}
+
+- (void)_webView:(WKWebView *)webView didChangeFontAttributes:(NSDictionary<NSString *, id> *)fontAttributes
+{
+    _lastFontAttributes = fontAttributes;
+    _didChangeFontAttributes = true;
+}
+
+- (NSDictionary *)lastFontAttributes
+{
+    return _lastFontAttributes.get();
+}
+
+@end
+
+// Stands in for the AppKit text formatting bar, which sends -changeAttributes: with a converter that adds a style's attributes.
+@interface PresentationIntentAttributeConverter : NSObject
+- (instancetype)initWithAttributes:(NSDictionary *)attributes;
+- (NSDictionary *)convertAttributes:(NSDictionary *)attributes;
+@end
+
+@implementation PresentationIntentAttributeConverter {
+    RetainPtr<NSDictionary> _attributes;
+}
+
+- (instancetype)initWithAttributes:(NSDictionary *)attributes
+{
+    if (!(self = [super init]))
+        return nil;
+    _attributes = attributes;
+    return self;
+}
+
+- (NSDictionary *)convertAttributes:(NSDictionary *)attributes
+{
+    RetainPtr result = adoptNS([attributes mutableCopy]);
+    [result addEntriesFromDictionary:_attributes.get()];
+    return result.autorelease();
+}
+
+@end
 
 namespace TestWebKitAPI {
 
@@ -550,6 +603,958 @@ TEST(PresentationIntents, PartialRanges)
     ASSERT_NOT_NULL(quotedIntent);
     EXPECT_EQ(quotedIntent.intentKind, NSPresentationIntentKindParagraph);
     EXPECT_EQ(quotedIntent.parentIntent.intentKind, NSPresentationIntentKindBlockQuote);
+}
+
+static RetainPtr<TestWKWebView> editableWebViewWithPresentationIntents(NSString *bodyContents, PresentationIntentFontAttributesListener *listener, ReadsAllPresentationIntents readsAllPresentationIntents = ReadsAllPresentationIntents::Yes)
+{
+    RetainPtr webView = webViewWithPresentationIntents([NSString stringWithFormat:@"<body contenteditable>%@</body>", bodyContents], readsAllPresentationIntents);
+    [webView setUIDelegate:listener];
+    [webView stringByEvaluatingJavaScript:@"document.body.focus()"];
+    return webView;
+}
+
+// Puts the caret after the first character of the element's first text node and returns the font attributes reported for it.
+static NSDictionary *fontAttributesWithCaretInElement(TestWKWebView *webView, PresentationIntentFontAttributesListener *listener, NSString *elementID)
+{
+    listener->_didChangeFontAttributes = false;
+    [webView stringByEvaluatingJavaScript:[NSString stringWithFormat:@"getSelection().setPosition(document.getElementById('%@').firstChild, 1)", elementID]];
+    Util::run(&listener->_didChangeFontAttributes);
+    [webView waitForNextPresentationUpdate];
+    return listener.lastFontAttributes;
+}
+
+static NSPresentationIntent *presentationIntentWithCaretInElement(TestWKWebView *webView, PresentationIntentFontAttributesListener *listener, NSString *elementID)
+{
+    return fontAttributesWithCaretInElement(webView, listener, elementID)[NSPresentationIntentAttributeName];
+}
+
+static void placeCaretInElement(TestWKWebView *webView, NSString *elementID)
+{
+    [webView stringByEvaluatingJavaScript:[NSString stringWithFormat:@"getSelection().setPosition(document.getElementById('%@').firstChild, 1)", elementID]];
+}
+
+// The tag names of the editable body's element children, with their element children, such as "H1" or "UL(LI)".
+static RetainPtr<NSString> blockStructure(TestWKWebView *webView)
+{
+    [webView waitForNextPresentationUpdate];
+    return [webView stringByEvaluatingJavaScript:@"[...document.body.children].map(element => element.children.length ? `${element.tagName}(${[...element.children].map(child => child.tagName).join(',')})` : element.tagName).join(',')"];
+}
+
+// The UI process only sends -changeAttributes: on once it knows the selection is editable. It reads the
+// __NSPresentationIntentHTMLInterchange default itself, so this overrides it there as the web view's page does.
+static void changeAttributes(TestWKWebView *webView, id converter, ReadsAllPresentationIntents readsAllPresentationIntents = ReadsAllPresentationIntents::Yes)
+{
+    [webView waitForNextPresentationUpdate];
+    WebCore::setPresentationIntentHTMLInterchangeEnabledForTesting(readsAllPresentationIntents == ReadsAllPresentationIntents::Yes);
+    [webView performSelector:@selector(changeAttributes:) withObject:converter];
+    WebCore::setPresentationIntentHTMLInterchangeEnabledForTesting(std::nullopt);
+}
+
+TEST(PresentationIntents, FontAttributesReportBlockIntents)
+{
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr webView = editableWebViewWithPresentationIntents(@"<h2 id='heading'>Heading</h2><p id='paragraph'>Body</p>"
+        "<blockquote><p id='quoted'>Quoted</p></blockquote><ol start='3'><li id='item'>Item</li></ol>"
+        "<pre><code id='code' class='language-swift'>let x</code></pre><div id='plain'>Plain</div>", listener.get());
+
+    NSPresentationIntent *heading = presentationIntentWithCaretInElement(webView.get(), listener.get(), @"heading");
+    ASSERT_NOT_NULL(heading);
+    EXPECT_EQ(heading.intentKind, NSPresentationIntentKindHeader);
+    EXPECT_EQ(heading.headerLevel, 2);
+    EXPECT_NULL(heading.parentIntent);
+
+    NSPresentationIntent *paragraph = presentationIntentWithCaretInElement(webView.get(), listener.get(), @"paragraph");
+    ASSERT_NOT_NULL(paragraph);
+    EXPECT_EQ(paragraph.intentKind, NSPresentationIntentKindParagraph);
+
+    NSPresentationIntent *quoted = presentationIntentWithCaretInElement(webView.get(), listener.get(), @"quoted");
+    ASSERT_NOT_NULL(quoted);
+    EXPECT_EQ(quoted.intentKind, NSPresentationIntentKindParagraph);
+    EXPECT_EQ(quoted.parentIntent.intentKind, NSPresentationIntentKindBlockQuote);
+    EXPECT_NE(quoted.identity, quoted.parentIntent.identity);
+
+    NSPresentationIntent *item = presentationIntentWithCaretInElement(webView.get(), listener.get(), @"item");
+    ASSERT_NOT_NULL(item);
+    EXPECT_EQ(item.intentKind, NSPresentationIntentKindListItem);
+    EXPECT_EQ(item.ordinal, 3);
+    EXPECT_EQ(item.parentIntent.intentKind, NSPresentationIntentKindOrderedList);
+
+    NSPresentationIntent *code = presentationIntentWithCaretInElement(webView.get(), listener.get(), @"code");
+    ASSERT_NOT_NULL(code);
+    EXPECT_EQ(code.intentKind, NSPresentationIntentKindCodeBlock);
+    EXPECT_WK_STREQ(code.languageHint, "swift");
+
+    EXPECT_NULL(presentationIntentWithCaretInElement(webView.get(), listener.get(), @"plain"));
+}
+
+TEST(PresentationIntents, FontAttributesRequireDefault)
+{
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr webView = editableWebViewWithPresentationIntents(@"<h1 id='heading'>Heading</h1>", listener.get(), ReadsAllPresentationIntents::No);
+    NSDictionary *attributes = fontAttributesWithCaretInElement(webView.get(), listener.get(), @"heading");
+    ASSERT_NOT_NULL(attributes);
+    EXPECT_NULL(attributes[NSPresentationIntentAttributeName]);
+}
+
+TEST(PresentationIntents, ApplyBlockPresentationIntent)
+{
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr webView = editableWebViewWithPresentationIntents(@"<p id='line'>Line</p>", listener.get());
+
+    placeCaretInElement(webView.get(), @"line");
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent headerIntentWithIdentity:1 level:1 nestedInsideIntent:nil]];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "H1");
+
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent headerIntentWithIdentity:1 level:3 nestedInsideIntent:nil]];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "H3");
+
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent paragraphIntentWithIdentity:1 nestedInsideIntent:nil]];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "P");
+
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent blockQuoteIntentWithIdentity:1 nestedInsideIntent:nil]];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "BLOCKQUOTE(P)");
+
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent paragraphIntentWithIdentity:1 nestedInsideIntent:nil]];
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent unorderedListIntentWithIdentity:1 nestedInsideIntent:nil]];
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.querySelector('ul > li')?.textContent"], "Line");
+
+    // Applying the list kind the selection already has keeps the list.
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent unorderedListIntentWithIdentity:1 nestedInsideIntent:nil]];
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.querySelector('ul > li')?.textContent"], "Line");
+
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent orderedListIntentWithIdentity:1 nestedInsideIntent:nil]];
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.querySelector('ol > li')?.textContent"], "Line");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"String(!!document.querySelector('ul'))"], "false");
+}
+
+TEST(PresentationIntents, ApplyBlockPresentationIntentReportsAndUndoes)
+{
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr webView = editableWebViewWithPresentationIntents(@"<p id='line'>Line</p>", listener.get());
+
+    placeCaretInElement(webView.get(), @"line");
+    listener->_didChangeFontAttributes = false;
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent headerIntentWithIdentity:1 level:2 nestedInsideIntent:nil]];
+    Util::run(&listener->_didChangeFontAttributes);
+    [webView waitForNextPresentationUpdate];
+    NSPresentationIntent *intent = listener.get().lastFontAttributes[NSPresentationIntentAttributeName];
+    EXPECT_EQ(intent.intentKind, NSPresentationIntentKindHeader);
+    EXPECT_EQ(intent.headerLevel, 2);
+
+    [webView _executeEditCommand:@"Undo" argument:nil completion:nil];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "P");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.getElementById('line')?.textContent"], "Line");
+}
+
+TEST(PresentationIntents, ApplyBlockPresentationIntentCodeBlock)
+{
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr webView = editableWebViewWithPresentationIntents(@"<p id='line'>Line</p>", listener.get());
+
+    placeCaretInElement(webView.get(), @"line");
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent codeBlockIntentWithIdentity:1 languageHint:nil nestedInsideIntent:nil]];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "PRE(CODE)");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.querySelector('pre > code')?.textContent"], "Line");
+
+    // The caret is still in the block, so the code block is reported.
+    listener->_didChangeFontAttributes = false;
+    [webView stringByEvaluatingJavaScript:@"getSelection().setPosition(document.querySelector('code').firstChild, 2)"];
+    Util::run(&listener->_didChangeFontAttributes);
+    [webView waitForNextPresentationUpdate];
+    NSPresentationIntent *intent = listener.get().lastFontAttributes[NSPresentationIntentAttributeName];
+    EXPECT_EQ(intent.intentKind, NSPresentationIntentKindCodeBlock);
+
+    // Leaving the code block leaves no inline code behind.
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent paragraphIntentWithIdentity:1 nestedInsideIntent:nil]];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "P");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.body.textContent"], "Line");
+}
+
+TEST(PresentationIntents, ApplyBlockPresentationIntentCodeBlockUndoesInOneStep)
+{
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr webView = editableWebViewWithPresentationIntents(@"<p id='line'>Line</p>", listener.get());
+
+    placeCaretInElement(webView.get(), @"line");
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent codeBlockIntentWithIdentity:1 languageHint:nil nestedInsideIntent:nil]];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "PRE(CODE)");
+
+    [webView _executeEditCommand:@"Undo" argument:nil completion:nil];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "P");
+}
+
+TEST(PresentationIntents, ApplyBlockPresentationIntentLeavesList)
+{
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr webView = editableWebViewWithPresentationIntents(@"<ul><li id='item'>Item</li></ul>", listener.get());
+
+    placeCaretInElement(webView.get(), @"item");
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent headerIntentWithIdentity:1 level:2 nestedInsideIntent:nil]];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "H2");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"String(!!document.querySelector('ul, li'))"], "false");
+
+    [webView _executeEditCommand:@"Undo" argument:nil completion:nil];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "UL(LI)");
+}
+
+TEST(PresentationIntents, ApplyBlockPresentationIntentListFromCodeBlock)
+{
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr webView = editableWebViewWithPresentationIntents(@"<pre><code id='code'>Code</code></pre>", listener.get());
+
+    placeCaretInElement(webView.get(), @"code");
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent orderedListIntentWithIdentity:1 nestedInsideIntent:nil]];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.querySelector('ol > li')?.textContent"], "Code");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"String(!!document.querySelector('pre, code'))"], "false");
+}
+
+TEST(PresentationIntents, ApplyBlockPresentationIntentClampsHeaderLevel)
+{
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr webView = editableWebViewWithPresentationIntents(@"<p id='line'>Line</p>", listener.get());
+
+    placeCaretInElement(webView.get(), @"line");
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent headerIntentWithIdentity:1 level:7 nestedInsideIntent:nil]];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "H6");
+
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent headerIntentWithIdentity:1 level:0 nestedInsideIntent:nil]];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "H1");
+}
+
+TEST(PresentationIntents, ApplyBlockPresentationIntentCodeBlockWithLineBreak)
+{
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr webView = editableWebViewWithPresentationIntents(@"<pre><code id='code'>Code</code><br></pre>", listener.get());
+
+    // A <br> beside the <code> still makes a code block, so applying a code block doesn't wrap it in more code.
+    [webView stringByEvaluatingJavaScript:@"getSelection().setPosition(document.getElementById('code').firstChild, 0)"];
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent codeBlockIntentWithIdentity:1 languageHint:nil nestedInsideIntent:nil]];
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"String(document.querySelectorAll('code').length)"], "1");
+    EXPECT_EQ(presentationIntentWithCaretInElement(webView.get(), listener.get(), @"code").intentKind, NSPresentationIntentKindCodeBlock);
+
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent paragraphIntentWithIdentity:1 nestedInsideIntent:nil]];
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"String(!!document.querySelector('pre, code'))"], "false");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.body.textContent"], "Code");
+}
+
+TEST(PresentationIntents, ApplyBlockPresentationIntentInsertsThematicBreak)
+{
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr webView = editableWebViewWithPresentationIntents(@"<p id='line'>Line</p>", listener.get());
+
+    placeCaretInElement(webView.get(), @"line");
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent thematicBreakIntentWithIdentity:1 nestedInsideIntent:nil]];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"String(document.querySelectorAll('hr').length)"], "1");
+}
+
+TEST(PresentationIntents, ChangeAttributesAppliesBlockIntent)
+{
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr webView = editableWebViewWithPresentationIntents(@"<p id='line'>Line</p>", listener.get());
+
+    placeCaretInElement(webView.get(), @"line");
+    RetainPtr converter = adoptNS([[PresentationIntentAttributeConverter alloc] initWithAttributes:@{
+        NSPresentationIntentAttributeName : [NSPresentationIntent headerIntentWithIdentity:1 level:1 nestedInsideIntent:nil],
+        NSFontAttributeName : [NSFont boldSystemFontOfSize:28],
+    }]);
+    changeAttributes(webView.get(), converter.get());
+
+    // The block's look comes from the page's style sheet, so the style's font is not applied inline.
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "H1");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.body.innerHTML"], "<h1>Line</h1>");
+}
+
+TEST(PresentationIntents, ChangeAttributesWithoutBlockIntent)
+{
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr webView = editableWebViewWithPresentationIntents(@"<p id='line'>Line</p>", listener.get());
+
+    [webView stringByEvaluatingJavaScript:@"getSelection().selectAllChildren(document.getElementById('line'))"];
+    RetainPtr converter = adoptNS([[PresentationIntentAttributeConverter alloc] initWithAttributes:@{
+        NSUnderlineStyleAttributeName : @(NSUnderlineStyleSingle),
+    }]);
+    changeAttributes(webView.get(), converter.get());
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.getElementById('line').tagName"], "P");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.queryCommandState('underline') ? 'true' : 'false'"], "true");
+}
+
+// Pasted rich text carries its source's fonts inline; applying a block intent hands the block's look to the style sheet.
+TEST(PresentationIntents, ApplyBlockPresentationIntentOnPastedRichText)
+{
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr webView = editableWebViewWithPresentationIntents(@"<div id='line'><br></div>", listener.get());
+    [webView stringByEvaluatingJavaScript:@"getSelection().setPosition(document.getElementById('line'), 0)"];
+
+    RetainPtr rtf = [@"{\\rtf1\\ansi\\ansicpg1252\\cocoartf2927\n{\\fonttbl\\f0\\fnil\\fcharset0 Helvetica;}\n"
+        "{\\*\\AppleIntentTbl\n{\\AppleIntentKind0}}\n"
+        "\\pard\\sa160\\AppleIntent1 \\f0\\fs26 \\cf0 Pasted body\\\n}" dataUsingEncoding:NSASCIIStringEncoding];
+    [[NSPasteboard generalPasteboard] declareTypes:@[NSPasteboardTypeRTF] owner:nil];
+    [[NSPasteboard generalPasteboard] setData:rtf.get() forType:NSPasteboardTypeRTF];
+    [webView paste:nil];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr<NSString> findText = @"(() => { const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT); let node; while ((node = walker.nextNode())) { if (node.data.includes('Pasted body')) return node; } return null; })()";
+    [webView stringByEvaluatingJavaScript:[NSString stringWithFormat:@"getSelection().setPosition(%@, 3)", findText.get()]];
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent headerIntentWithIdentity:1 level:1 nestedInsideIntent:nil]];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr enclosingHeading = [NSString stringWithFormat:@"%@.parentElement.closest('h1') ? 'h1' : 'none'", findText.get()];
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:enclosingHeading.get()], "h1");
+    // Nothing inline in the heading sets a size, face or margin, so its text is the style sheet's heading size.
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"String([document.querySelector('h1'), ...document.querySelectorAll('h1 *')].some(element => /font|margin|line-height/.test(element.getAttribute('style') ?? '') || element.hasAttribute('size') || element.hasAttribute('face')))"], "false");
+    RetainPtr sameSize = [NSString stringWithFormat:@"getComputedStyle(%@.parentElement).fontSize === getComputedStyle(document.querySelector('h1')).fontSize ? 'same' : 'different'", findText.get()];
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:sameSize.get()], "same");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"getComputedStyle(document.querySelector('h1')).fontSize"], "32px");
+
+    [webView _executeEditCommand:@"Undo" argument:nil completion:nil];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"String(!!document.querySelector('h1'))"], "false");
+}
+
+// Selects from the start of the first element's text to the end of the second element's text.
+static void selectFromElementToElement(TestWKWebView *webView, NSString *startElementID, NSString *endElementID)
+{
+    [webView stringByEvaluatingJavaScript:[NSString stringWithFormat:@"(() => { const end = document.getElementById('%@').lastChild; getSelection().setBaseAndExtent(document.getElementById('%@').firstChild, 0, end, end.length); })()", endElementID, startElementID]];
+}
+
+TEST(PresentationIntents, ApplyBlockPresentationIntentInBlockQuote)
+{
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr webView = editableWebViewWithPresentationIntents(@"<blockquote><p id='quoted'>Quoted</p></blockquote>", listener.get());
+
+    // Quoted blocks are already quoted.
+    placeCaretInElement(webView.get(), @"quoted");
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent blockQuoteIntentWithIdentity:1 nestedInsideIntent:nil]];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "BLOCKQUOTE(P)");
+
+    // Another kind of block replaces the quote, as it does when the quote has no paragraph inside.
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent headerIntentWithIdentity:1 level:1 nestedInsideIntent:nil]];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "H1");
+
+    [webView _executeEditCommand:@"Undo" argument:nil completion:nil];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "BLOCKQUOTE(P)");
+
+    [webView _executeEditCommand:@"Redo" argument:nil completion:nil];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "H1");
+}
+
+TEST(PresentationIntents, ApplyBlockPresentationIntentLeavesBlockQuote)
+{
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr webView = editableWebViewWithPresentationIntents(@"<blockquote><p id='quoted'>Quoted</p></blockquote>", listener.get());
+    placeCaretInElement(webView.get(), @"quoted");
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent paragraphIntentWithIdentity:1 nestedInsideIntent:nil]];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "P");
+
+    webView = editableWebViewWithPresentationIntents(@"<blockquote id='quoted'>Quoted</blockquote>", listener.get());
+    placeCaretInElement(webView.get(), @"quoted");
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent paragraphIntentWithIdentity:1 nestedInsideIntent:nil]];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"String(!!document.querySelector('blockquote'))"], "false");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.querySelector('p')?.textContent"], "Quoted");
+
+    webView = editableWebViewWithPresentationIntents(@"<blockquote><blockquote><p id='quoted'>Quoted</p></blockquote></blockquote>", listener.get());
+    placeCaretInElement(webView.get(), @"quoted");
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent unorderedListIntentWithIdentity:1 nestedInsideIntent:nil]];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"[...document.querySelectorAll('ul > li')].map(item => item.textContent).join()"], "Quoted");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"String(!!document.querySelector('blockquote'))"], "false");
+}
+
+// Mail's quotes of other messages stay, along with the quotes around them.
+TEST(PresentationIntents, ApplyBlockPresentationIntentKeepsMailBlockQuote)
+{
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr webView = editableWebViewWithPresentationIntents(@"<blockquote><blockquote type='cite'><p id='quoted'>Quoted</p></blockquote></blockquote>", listener.get());
+
+    placeCaretInElement(webView.get(), @"quoted");
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent headerIntentWithIdentity:1 level:2 nestedInsideIntent:nil]];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.querySelector('blockquote > blockquote[type=cite] h2')?.textContent"], "Quoted");
+}
+
+TEST(PresentationIntents, ApplyBlockPresentationIntentListItem)
+{
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr webView = editableWebViewWithPresentationIntents(@"<p id='line'>Line</p>", listener.get());
+
+    // A list item outside a list is ignored.
+    placeCaretInElement(webView.get(), @"line");
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent listItemIntentWithIdentity:1 ordinal:1 nestedInsideIntent:nil]];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "P");
+
+    RetainPtr orderedList = [NSPresentationIntent orderedListIntentWithIdentity:1 nestedInsideIntent:nil];
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent listItemIntentWithIdentity:2 ordinal:1 nestedInsideIntent:orderedList.get()]];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"[...document.querySelectorAll('ol > li')].map(item => item.textContent).join()"], "Line");
+
+    // Markdown puts a list item's text in a paragraph.
+    RetainPtr unorderedList = [NSPresentationIntent unorderedListIntentWithIdentity:1 nestedInsideIntent:nil];
+    RetainPtr listItem = [NSPresentationIntent listItemIntentWithIdentity:2 ordinal:1 nestedInsideIntent:unorderedList.get()];
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent paragraphIntentWithIdentity:3 nestedInsideIntent:listItem.get()]];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"[...document.querySelectorAll('ul > li')].map(item => item.textContent).join()"], "Line");
+}
+
+TEST(PresentationIntents, ApplyBlockPresentationIntentIgnoresTables)
+{
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr webView = editableWebViewWithPresentationIntents(@"<p id='line'>Line</p>", listener.get());
+
+    placeCaretInElement(webView.get(), @"line");
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent tableCellIntentWithIdentity:1 column:0 nestedInsideIntent:nil]];
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.body.innerHTML"], "<p id=\"line\">Line</p>");
+}
+
+TEST(PresentationIntents, ChangeAttributesAppliesListItemIntent)
+{
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr webView = editableWebViewWithPresentationIntents(@"<p id='line'>Line</p>", listener.get());
+
+    placeCaretInElement(webView.get(), @"line");
+    RetainPtr orderedList = [NSPresentationIntent orderedListIntentWithIdentity:1 nestedInsideIntent:nil];
+    RetainPtr converter = adoptNS([[PresentationIntentAttributeConverter alloc] initWithAttributes:@{
+        NSPresentationIntentAttributeName : [NSPresentationIntent listItemIntentWithIdentity:2 ordinal:1 nestedInsideIntent:orderedList.get()],
+    }]);
+    changeAttributes(webView.get(), converter.get());
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"[...document.querySelectorAll('ol > li')].map(item => item.textContent).join()"], "Line");
+}
+
+// A style whose intent cannot be applied still applies its other attributes.
+TEST(PresentationIntents, ChangeAttributesWithIgnoredIntent)
+{
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr<NSArray<NSPresentationIntent *>> intents = @[
+        [NSPresentationIntent listItemIntentWithIdentity:1 ordinal:1 nestedInsideIntent:nil],
+        [NSPresentationIntent tableCellIntentWithIdentity:1 column:0 nestedInsideIntent:nil],
+    ];
+    for (NSPresentationIntent *intent in intents.get()) {
+        RetainPtr webView = editableWebViewWithPresentationIntents(@"<p id='line'>Line</p>", listener.get());
+        [webView stringByEvaluatingJavaScript:@"getSelection().selectAllChildren(document.getElementById('line'))"];
+        RetainPtr converter = adoptNS([[PresentationIntentAttributeConverter alloc] initWithAttributes:@{
+            NSPresentationIntentAttributeName : intent,
+            NSUnderlineStyleAttributeName : @(NSUnderlineStyleSingle),
+        }]);
+        changeAttributes(webView.get(), converter.get());
+        [webView waitForNextPresentationUpdate];
+        EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"String(!!document.querySelector('ol, ul, li'))"], "false");
+        EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.queryCommandState('underline') ? 'true' : 'false'"], "true");
+    }
+}
+
+TEST(PresentationIntents, ApplyBlockPresentationIntentCodeBlockLanguageHint)
+{
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr webView = editableWebViewWithPresentationIntents(@"<p id='line'>Line</p><pre><code id='code' class='language-c'>Code</code></pre>", listener.get());
+
+    placeCaretInElement(webView.get(), @"line");
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent codeBlockIntentWithIdentity:1 languageHint:@"swift" nestedInsideIntent:nil]];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "PRE(CODE),PRE(CODE)");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.querySelector('pre > code').className"], "language-swift");
+
+    listener->_didChangeFontAttributes = false;
+    [webView stringByEvaluatingJavaScript:@"getSelection().setPosition(document.querySelector('code').firstChild, 2)"];
+    Util::run(&listener->_didChangeFontAttributes);
+    [webView waitForNextPresentationUpdate];
+    NSPresentationIntent *intent = listener.get().lastFontAttributes[NSPresentationIntentAttributeName];
+    EXPECT_EQ(intent.intentKind, NSPresentationIntentKindCodeBlock);
+    EXPECT_WK_STREQ(intent.languageHint, "swift");
+
+    // The hint replaces the language of a code block that has one.
+    placeCaretInElement(webView.get(), @"code");
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent codeBlockIntentWithIdentity:1 languageHint:@"swift" nestedInsideIntent:nil]];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.getElementById('code').className"], "language-swift");
+}
+
+TEST(PresentationIntents, ApplyBlockPresentationIntentOnSeveralBlocks)
+{
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr webView = editableWebViewWithPresentationIntents(@"<p id='first'>First</p><p id='second'>Second</p>", listener.get());
+
+    selectFromElementToElement(webView.get(), @"first", @"second");
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent unorderedListIntentWithIdentity:1 nestedInsideIntent:nil]];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"[...document.querySelectorAll('ul > li')].map(item => item.textContent).join()"], "First,Second");
+
+    // A selection that starts in a list of the kind still puts the blocks after it in the list.
+    webView = editableWebViewWithPresentationIntents(@"<ul><li id='item'>Item</li></ul><p id='after'>After</p>", listener.get());
+    selectFromElementToElement(webView.get(), @"item", @"after");
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent unorderedListIntentWithIdentity:1 nestedInsideIntent:nil]];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"[...document.querySelectorAll('ul > li')].map(item => item.textContent).join()"], "Item,After");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"String(document.querySelectorAll('ul').length)"], "1");
+
+    // Leaving a list works the same way.
+    webView = editableWebViewWithPresentationIntents(@"<ul><li id='item'>Item</li></ul><p id='after'>After</p>", listener.get());
+    selectFromElementToElement(webView.get(), @"item", @"after");
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent headerIntentWithIdentity:1 level:2 nestedInsideIntent:nil]];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"String(!!document.querySelector('ul, li'))"], "false");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"String([...document.body.children].every(element => element.tagName === 'H2'))"], "true");
+
+    // And one that starts outside a list still takes the blocks after it out of their list.
+    webView = editableWebViewWithPresentationIntents(@"<p id='before'>Before</p><ol><li id='item'>Item</li></ol>", listener.get());
+    selectFromElementToElement(webView.get(), @"before", @"item");
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent headerIntentWithIdentity:1 level:2 nestedInsideIntent:nil]];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"String(!!document.querySelector('ol, li'))"], "false");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"String([...document.body.children].every(element => element.tagName === 'H2'))"], "true");
+}
+
+// Only the <code> of a code block is code block markup; inline code in the other selected blocks stays.
+TEST(PresentationIntents, ApplyBlockPresentationIntentLeavesCodeBlockKeepingInlineCode)
+{
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr webView = editableWebViewWithPresentationIntents(@"<pre><code id='code'>Code</code></pre><p id='after'><code>inline</code></p>", listener.get());
+
+    [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(document.getElementById('code').firstChild, 0, document.querySelector('#after code').firstChild, 6)"];
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent paragraphIntentWithIdentity:1 nestedInsideIntent:nil]];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"String(!!document.querySelector('pre'))"], "false");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"[...document.querySelectorAll('code')].map(code => code.textContent).join()"], "inline");
+}
+
+TEST(PresentationIntents, ApplyBlockPresentationIntentRedoes)
+{
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr webView = editableWebViewWithPresentationIntents(@"<ul><li id='item'>Item</li></ul>", listener.get());
+
+    placeCaretInElement(webView.get(), @"item");
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent headerIntentWithIdentity:1 level:2 nestedInsideIntent:nil]];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "H2");
+    [webView _executeEditCommand:@"Undo" argument:nil completion:nil];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "UL(LI)");
+    [webView _executeEditCommand:@"Redo" argument:nil completion:nil];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "H2");
+
+    webView = editableWebViewWithPresentationIntents(@"<p id='line'>Line</p>", listener.get());
+    placeCaretInElement(webView.get(), @"line");
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent codeBlockIntentWithIdentity:1 languageHint:@"swift" nestedInsideIntent:nil]];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "PRE(CODE)");
+    [webView _executeEditCommand:@"Undo" argument:nil completion:nil];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "P");
+    [webView _executeEditCommand:@"Redo" argument:nil completion:nil];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "PRE(CODE)");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.querySelector('pre > code').className"], "language-swift");
+}
+
+// Content that is not editable keeps its look.
+TEST(PresentationIntents, ApplyBlockPresentationIntentKeepsNonEditableContent)
+{
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr webView = editableWebViewWithPresentationIntents(@"<p id='line' style='font-size: 10px'>Line <span contenteditable='false' style='font-size: 30px'><font face='Courier'>fixed</font></span></p>", listener.get());
+
+    placeCaretInElement(webView.get(), @"line");
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent headerIntentWithIdentity:1 level:2 nestedInsideIntent:nil]];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.querySelector('h2')?.style.fontSize"], "");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.querySelector('[contenteditable=false]').style.fontSize"], "30px");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.querySelector('font')?.getAttribute('face')"], "Courier");
+}
+
+TEST(PresentationIntents, ApplyBlockPresentationIntentListTypeKeepsNonEditableContent)
+{
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr webView = editableWebViewWithPresentationIntents(@"<ol><li>Item</li><li>Line <span contenteditable='false' style='font-size: 30px'><font face='Courier'>fixed</font></span> more</li></ol>", listener.get());
+
+    [webView stringByEvaluatingJavaScript:@"getSelection().selectAllChildren(document.body)"];
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent unorderedListIntentWithIdentity:1 nestedInsideIntent:nil]];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"String(document.querySelectorAll('ul > li').length)"], "2");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.querySelector('ul [contenteditable=false]')?.style.fontSize"], "30px");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.querySelector('ul font')?.getAttribute('face')"], "Courier");
+}
+
+TEST(PresentationIntents, FontAttributesReportCodeBlockWithLineBreak)
+{
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr webView = editableWebViewWithPresentationIntents(@"<pre><code id='code'>Code</code><br></pre><pre><span role='code' id='role'>Code</span></pre>", listener.get());
+
+    EXPECT_EQ(presentationIntentWithCaretInElement(webView.get(), listener.get(), @"code").intentKind, NSPresentationIntentKindCodeBlock);
+    EXPECT_EQ(presentationIntentWithCaretInElement(webView.get(), listener.get(), @"role").intentKind, NSPresentationIntentKindCodeBlock);
+}
+
+// role="code" makes an element code, as it does when reading the block's intent.
+TEST(PresentationIntents, ApplyBlockPresentationIntentCodeBlockWithCodeRole)
+{
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr webView = editableWebViewWithPresentationIntents(@"<pre><span role='code' id='code'>Code</span></pre>", listener.get());
+
+    placeCaretInElement(webView.get(), @"code");
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent codeBlockIntentWithIdentity:1 languageHint:@"swift" nestedInsideIntent:nil]];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"String(document.querySelectorAll('code').length)"], "0");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.getElementById('code').className"], "language-swift");
+
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent paragraphIntentWithIdentity:1 nestedInsideIntent:nil]];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"String(!!document.querySelector('pre, [role=code]'))"], "false");
+}
+
+TEST(PresentationIntents, ApplyBlockPresentationIntentLeavesNestedList)
+{
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr<NSArray<NSString *>> lists = @[
+        @"<ul><li>Outer<ol><li id='inner'>Inner</li></ol></li></ul>",
+        @"<ul><li>Outer</li><ul><li id='inner'>Inner</li></ul></ul>",
+        @"<ul><li>Outer<ul><li>Middle<ul><li id='inner'>Inner</li></ul></li></ul></li></ul>",
+    ];
+    for (NSString *list in lists.get()) {
+        RetainPtr webView = editableWebViewWithPresentationIntents(list, listener.get());
+        placeCaretInElement(webView.get(), @"inner");
+        [webView _applyBlockPresentationIntent:[NSPresentationIntent headerIntentWithIdentity:1 level:2 nestedInsideIntent:nil]];
+        [webView waitForNextPresentationUpdate];
+        EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.querySelector('h2')?.textContent"], "Inner");
+        EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.querySelector('h2')?.closest('li, ul, ol') ? 'in list' : 'not in list'"], "not in list");
+        EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.querySelector('ul > li')?.firstChild.textContent"], "Outer");
+    }
+}
+
+// A thematic break goes after the selected paragraphs rather than replacing the selection.
+TEST(PresentationIntents, ApplyBlockPresentationIntentThematicBreakKeepsSelectedText)
+{
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr webView = editableWebViewWithPresentationIntents(@"<p id='line'>Line</p><p id='after'>After</p>", listener.get());
+
+    [webView stringByEvaluatingJavaScript:@"getSelection().selectAllChildren(document.getElementById('line'))"];
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent thematicBreakIntentWithIdentity:1 nestedInsideIntent:nil]];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"String(document.querySelectorAll('hr').length)"], "1");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.body.textContent"], "LineAfter");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.querySelector('hr').previousElementSibling?.textContent"], "Line");
+
+    [webView _executeEditCommand:@"Undo" argument:nil completion:nil];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"String(document.querySelectorAll('hr').length)"], "0");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.body.textContent"], "LineAfter");
+
+    webView = editableWebViewWithPresentationIntents(@"<p id='line'>Line</p>", listener.get());
+    [webView stringByEvaluatingJavaScript:@"getSelection().selectAllChildren(document.getElementById('line'))"];
+    RetainPtr converter = adoptNS([[PresentationIntentAttributeConverter alloc] initWithAttributes:@{
+        NSPresentationIntentAttributeName : [NSPresentationIntent thematicBreakIntentWithIdentity:1 nestedInsideIntent:nil],
+    }]);
+    changeAttributes(webView.get(), converter.get());
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"String(document.querySelectorAll('hr').length)"], "1");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.body.textContent"], "Line");
+}
+
+// A block quote holds other blocks, so quoting them keeps them.
+TEST(PresentationIntents, ApplyBlockPresentationIntentBlockQuoteKeepsBlocks)
+{
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr webView = editableWebViewWithPresentationIntents(@"<ul><li id='item'>Item</li></ul>", listener.get());
+    [webView stringByEvaluatingJavaScript:@"getSelection().setPosition(document.getElementById('item').firstChild, 0)"];
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent blockQuoteIntentWithIdentity:1 nestedInsideIntent:nil]];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "BLOCKQUOTE(UL)");
+    NSPresentationIntent *item = presentationIntentWithCaretInElement(webView.get(), listener.get(), @"item");
+    EXPECT_EQ(item.intentKind, NSPresentationIntentKindListItem);
+    EXPECT_EQ(item.parentIntent.intentKind, NSPresentationIntentKindUnorderedList);
+    EXPECT_EQ(item.parentIntent.parentIntent.intentKind, NSPresentationIntentKindBlockQuote);
+
+    [webView _executeEditCommand:@"Undo" argument:nil completion:nil];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "UL(LI)");
+
+    webView = editableWebViewWithPresentationIntents(@"<ol><li id='first'>One</li><li id='second'>Two</li></ol>", listener.get());
+    selectFromElementToElement(webView.get(), @"first", @"second");
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent blockQuoteIntentWithIdentity:1 nestedInsideIntent:nil]];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "BLOCKQUOTE(OL)");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"[...document.querySelectorAll('blockquote > ol > li')].map(item => item.textContent).join()"], "One,Two");
+
+    webView = editableWebViewWithPresentationIntents(@"<h2 id='heading'>Heading</h2>", listener.get());
+    placeCaretInElement(webView.get(), @"heading");
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent blockQuoteIntentWithIdentity:1 nestedInsideIntent:nil]];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "BLOCKQUOTE(H2)");
+
+    webView = editableWebViewWithPresentationIntents(@"<pre><code id='code' class='language-swift'>Code</code></pre>", listener.get());
+    placeCaretInElement(webView.get(), @"code");
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent blockQuoteIntentWithIdentity:1 nestedInsideIntent:nil]];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "BLOCKQUOTE(PRE)");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.querySelector('blockquote > pre > code.language-swift')?.textContent"], "Code");
+
+    webView = editableWebViewWithPresentationIntents(@"<p id='first'>First</p><ul><li id='item'>Item</li></ul><p>After</p>", listener.get());
+    selectFromElementToElement(webView.get(), @"first", @"item");
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent blockQuoteIntentWithIdentity:1 nestedInsideIntent:nil]];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "BLOCKQUOTE(P,UL),P");
+
+    webView = editableWebViewWithPresentationIntents(@"Line", listener.get());
+    [webView stringByEvaluatingJavaScript:@"getSelection().setPosition(document.body.firstChild, 1)"];
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent blockQuoteIntentWithIdentity:1 nestedInsideIntent:nil]];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "BLOCKQUOTE");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.querySelector('blockquote')?.textContent"], "Line");
+}
+
+TEST(PresentationIntents, ChangeAttributesRequiresDefault)
+{
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr webView = editableWebViewWithPresentationIntents(@"<p id='line'>Line</p>", listener.get(), ReadsAllPresentationIntents::No);
+
+    placeCaretInElement(webView.get(), @"line");
+    RetainPtr converter = adoptNS([[PresentationIntentAttributeConverter alloc] initWithAttributes:@{
+        NSPresentationIntentAttributeName : [NSPresentationIntent headerIntentWithIdentity:1 level:1 nestedInsideIntent:nil],
+    }]);
+    changeAttributes(webView.get(), converter.get(), ReadsAllPresentationIntents::No);
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "P");
+}
+
+// Only the editable content's blocks are reported, and content outside an editable root has none.
+TEST(PresentationIntents, FontAttributesOutsideEditableContent)
+{
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr webView = webViewWithPresentationIntents(@"<h1 id='heading'>Heading</h1><h2 contenteditable id='root'>Root <span contenteditable='false' id='island'>fixed</span></h2>");
+    [webView setUIDelegate:listener.get()];
+
+    EXPECT_NULL(presentationIntentWithCaretInElement(webView.get(), listener.get(), @"heading"));
+    EXPECT_NULL(presentationIntentWithCaretInElement(webView.get(), listener.get(), @"root"));
+    EXPECT_NULL(presentationIntentWithCaretInElement(webView.get(), listener.get(), @"island"));
+}
+
+// The paragraph that a selection ends at the start of is not selected, so its Mail quote doesn't keep the others quoted.
+TEST(PresentationIntents, ApplyBlockPresentationIntentSelectionEndingAtStartOfParagraph)
+{
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr webView = editableWebViewWithPresentationIntents(@"<blockquote><p id='quoted'>Quoted</p></blockquote><blockquote type='cite'><p id='mail'>Mail</p></blockquote>", listener.get());
+
+    [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(document.getElementById('quoted').firstChild, 0, document.getElementById('mail').firstChild, 0)"];
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent paragraphIntentWithIdentity:1 nestedInsideIntent:nil]];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"[...document.querySelectorAll('blockquote')].map(blockQuote => blockQuote.textContent).join()"], "Mail");
+}
+
+// Only the blocks that change lose their inline presentation, and Mail's quotes keep theirs.
+TEST(PresentationIntents, ApplyBlockPresentationIntentKeepsPresentationOfUnchangedBlocks)
+{
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr webView = editableWebViewWithPresentationIntents(@"<blockquote type='cite'><p><span id='mail' style='font-size: 30px'>Mail</span></p></blockquote>", listener.get());
+    placeCaretInElement(webView.get(), @"mail");
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent headerIntentWithIdentity:1 level:2 nestedInsideIntent:nil]];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.querySelector('blockquote[type=cite] > h2')?.textContent"], "Mail");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.getElementById('mail').style.fontSize"], "30px");
+
+    webView = editableWebViewWithPresentationIntents(@"<p id='line'>Line</p><blockquote type='cite'><p><span id='mail' style='font-size: 30px'>Mail</span></p></blockquote>", listener.get());
+    selectFromElementToElement(webView.get(), @"line", @"mail");
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent blockQuoteIntentWithIdentity:1 nestedInsideIntent:nil]];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "BLOCKQUOTE(P),BLOCKQUOTE(P)");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.querySelector('blockquote[type=cite]').parentElement.tagName"], "BODY");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.getElementById('mail').style.fontSize"], "30px");
+
+    webView = editableWebViewWithPresentationIntents(@"<h2><span id='heading' style='font-size: 30px'>Heading</span></h2>", listener.get());
+    placeCaretInElement(webView.get(), @"heading");
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent headerIntentWithIdentity:1 level:2 nestedInsideIntent:nil]];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.getElementById('heading').style.fontSize"], "30px");
+}
+
+TEST(PresentationIntents, CodeBlockWithLineBreak)
+{
+    RetainPtr attributedString = attributedStringWithPresentationIntents(@"<pre><code>let x = 1</code><br></pre>");
+    NSPresentationIntent *intent = intentForSubstring(attributedString.get(), @"let");
+    ASSERT_NOT_NULL(intent);
+    EXPECT_EQ(intent.intentKind, NSPresentationIntentKindCodeBlock);
+}
+
+static RetainPtr<NSString> enclosingTagNameOfSelection(TestWKWebView *webView, NSString *selector)
+{
+    return [webView stringByEvaluatingJavaScript:[NSString stringWithFormat:@"(() => { const node = getSelection().anchorNode; return (node.nodeType === Node.ELEMENT_NODE ? node : node.parentElement).closest('%@')?.tagName ?? 'none'; })()", selector]];
+}
+
+// An empty line becomes a quote holding the caret.
+TEST(PresentationIntents, ApplyBlockPresentationIntentBlockQuoteOnEmptyLine)
+{
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr webView = editableWebViewWithPresentationIntents(@"<br>", listener.get());
+    [webView stringByEvaluatingJavaScript:@"getSelection().setPosition(document.body, 0)"];
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent blockQuoteIntentWithIdentity:1 nestedInsideIntent:nil]];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "BLOCKQUOTE(BR)");
+    EXPECT_WK_STREQ(enclosingTagNameOfSelection(webView.get(), @"blockquote").get(), "BLOCKQUOTE");
+
+    webView = editableWebViewWithPresentationIntents(@"<p>A</p><br>", listener.get());
+    [webView stringByEvaluatingJavaScript:@"getSelection().setPosition(document.body, 1)"];
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent blockQuoteIntentWithIdentity:1 nestedInsideIntent:nil]];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "P,BLOCKQUOTE(BR)");
+    EXPECT_WK_STREQ(enclosingTagNameOfSelection(webView.get(), @"blockquote").get(), "BLOCKQUOTE");
+}
+
+// Only the selected lines are quoted, even when a block holds unselected ones too.
+TEST(PresentationIntents, ApplyBlockPresentationIntentBlockQuoteKeepsUnselectedLines)
+{
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr webView = editableWebViewWithPresentationIntents(@"<div>Unselected<br><span id='second'>Second</span></div><p id='after'>After</p>", listener.get());
+    selectFromElementToElement(webView.get(), @"second", @"after");
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent blockQuoteIntentWithIdentity:1 nestedInsideIntent:nil]];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.querySelector('blockquote')?.textContent"], "SecondAfter");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.body.textContent"], "UnselectedSecondAfter");
+
+    webView = editableWebViewWithPresentationIntents(@"<div><p>Unselected</p><p id='second'>Second</p></div><p id='after'>After</p>", listener.get());
+    selectFromElementToElement(webView.get(), @"second", @"after");
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent blockQuoteIntentWithIdentity:1 nestedInsideIntent:nil]];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.querySelector('blockquote')?.textContent"], "SecondAfter");
+
+    // A partly selected list keeps its other items out of the quote.
+    webView = editableWebViewWithPresentationIntents(@"<ul><li>One</li><li id='two'>Two</li><li>Three</li></ul>", listener.get());
+    placeCaretInElement(webView.get(), @"two");
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent blockQuoteIntentWithIdentity:1 nestedInsideIntent:nil]];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "UL(LI),BLOCKQUOTE(UL),UL(LI)");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.querySelector('blockquote')?.textContent"], "Two");
+    [webView _executeEditCommand:@"Undo" argument:nil completion:nil];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "UL(LI,LI,LI)");
+    [webView _executeEditCommand:@"Redo" argument:nil completion:nil];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "UL(LI),BLOCKQUOTE(UL),UL(LI)");
+
+    // A line ending in inline markup takes its line break into the quote.
+    webView = editableWebViewWithPresentationIntents(@"<p id='before'>Before</p><div><b id='second'>Second</b><br>Third</div>", listener.get());
+    selectFromElementToElement(webView.get(), @"before", @"second");
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent blockQuoteIntentWithIdentity:1 nestedInsideIntent:nil]];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "BLOCKQUOTE(P,DIV),DIV");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.querySelector('blockquote').textContent"], "BeforeSecond");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.body.lastElementChild.innerHTML"], "Third");
+    [webView _executeEditCommand:@"Undo" argument:nil completion:nil];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "P,DIV(B,BR)");
+    [webView _executeEditCommand:@"Redo" argument:nil completion:nil];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "BLOCKQUOTE(P,DIV),DIV");
+}
+
+TEST(PresentationIntents, ApplyBlockPresentationIntentBlockQuoteKeepsTables)
+{
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr<NSString> table = @"<table><tr><td id='a'>A</td><td id='b'>B</td></tr></table>";
+    RetainPtr<NSString> oneRowWithBothCells = @"String(document.querySelectorAll('tr').length === 1 && document.querySelector('tr').cells.length === 2)";
+
+    RetainPtr webView = editableWebViewWithPresentationIntents([NSString stringWithFormat:@"<p id='before'>Before</p>%@", table.get()], listener.get());
+    selectFromElementToElement(webView.get(), @"before", @"a");
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent blockQuoteIntentWithIdentity:1 nestedInsideIntent:nil]];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "BLOCKQUOTE(P,TABLE)");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:oneRowWithBothCells.get()], "true");
+    [webView _executeEditCommand:@"Undo" argument:nil completion:nil];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "P,TABLE(TBODY)");
+    [webView _executeEditCommand:@"Redo" argument:nil completion:nil];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "BLOCKQUOTE(P,TABLE)");
+
+    webView = editableWebViewWithPresentationIntents([NSString stringWithFormat:@"%@<p id='after'>After</p>", table.get()], listener.get());
+    selectFromElementToElement(webView.get(), @"b", @"after");
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent blockQuoteIntentWithIdentity:1 nestedInsideIntent:nil]];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "BLOCKQUOTE(TABLE,P)");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:oneRowWithBothCells.get()], "true");
+
+    webView = editableWebViewWithPresentationIntents(table.get(), listener.get());
+    selectFromElementToElement(webView.get(), @"a", @"b");
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent blockQuoteIntentWithIdentity:1 nestedInsideIntent:nil]];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "BLOCKQUOTE(TABLE)");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:oneRowWithBothCells.get()], "true");
+}
+
+// Quotes inside other blocks are never nested, so the blocks holding them aren't quoted.
+TEST(PresentationIntents, ApplyBlockPresentationIntentBlockQuoteSkipsBlocksHoldingQuotes)
+{
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr<NSArray<NSString *>> quotes = @[ @"<blockquote>", @"<blockquote type='cite'>" ];
+    for (NSString *quote in quotes.get()) {
+        RetainPtr webView = editableWebViewWithPresentationIntents([NSString stringWithFormat:@"<p id='line'>Line</p><div>%@<p id='quoted'>Quoted</p></blockquote></div><p id='after'>After</p>", quote], listener.get());
+        selectFromElementToElement(webView.get(), @"line", @"after");
+        [webView _applyBlockPresentationIntent:[NSPresentationIntent blockQuoteIntentWithIdentity:1 nestedInsideIntent:nil]];
+        EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "BLOCKQUOTE(P),DIV(BLOCKQUOTE),BLOCKQUOTE(P)");
+        EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"String(!!document.querySelector('blockquote blockquote'))"], "false");
+    }
+}
+
+// An editable root that holds only phrasing content gets no quote inside it.
+TEST(PresentationIntents, ApplyBlockPresentationIntentBlockQuoteInParagraphRoot)
+{
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr webView = webViewWithPresentationIntents(@"<p contenteditable id='root'>Line</p>");
+    [webView setUIDelegate:listener.get()];
+    [webView stringByEvaluatingJavaScript:@"document.getElementById('root').focus()"];
+    placeCaretInElement(webView.get(), @"root");
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent blockQuoteIntentWithIdentity:1 nestedInsideIntent:nil]];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.getElementById('root').innerHTML"], "Line");
+}
+
+// Quoted blocks in the selection are already quoted, and Mail's quotes are never moved.
+TEST(PresentationIntents, ApplyBlockPresentationIntentBlockQuoteDoesNotDoubleQuote)
+{
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr webView = editableWebViewWithPresentationIntents(@"<p id='line'>Line</p><blockquote><p id='quoted'>Quoted</p></blockquote>", listener.get());
+    selectFromElementToElement(webView.get(), @"line", @"quoted");
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent blockQuoteIntentWithIdentity:1 nestedInsideIntent:nil]];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "BLOCKQUOTE(P),BLOCKQUOTE(P)");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"String(!!document.querySelector('blockquote blockquote'))"], "false");
+
+    webView = editableWebViewWithPresentationIntents(@"<p id='line'>Line</p><blockquote type='cite'><p id='mail'>Mail</p></blockquote><p id='after'>After</p>", listener.get());
+    selectFromElementToElement(webView.get(), @"line", @"after");
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent blockQuoteIntentWithIdentity:1 nestedInsideIntent:nil]];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "BLOCKQUOTE(P),BLOCKQUOTE(P),BLOCKQUOTE(P)");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.querySelector('blockquote[type=cite]').parentElement.tagName"], "BODY");
+}
+
+TEST(PresentationIntents, ApplyBlockPresentationIntentBlockQuoteRedoes)
+{
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr webView = editableWebViewWithPresentationIntents(@"<p id='first'>First</p><ul><li id='item'>Item</li></ul>", listener.get());
+    selectFromElementToElement(webView.get(), @"first", @"item");
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent blockQuoteIntentWithIdentity:1 nestedInsideIntent:nil]];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "BLOCKQUOTE(P,UL)");
+    [webView _executeEditCommand:@"Undo" argument:nil completion:nil];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "P,UL(LI)");
+    [webView _executeEditCommand:@"Redo" argument:nil completion:nil];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "BLOCKQUOTE(P,UL)");
+}
+
+// The selection keeps its direction across the quote.
+TEST(PresentationIntents, ApplyBlockPresentationIntentBlockQuoteKeepsSelection)
+{
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr webView = editableWebViewWithPresentationIntents(@"<p id='first'>First</p><p id='second'>Second</p>", listener.get());
+    [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(document.getElementById('second').firstChild, 3, document.getElementById('first').firstChild, 2)"];
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent blockQuoteIntentWithIdentity:1 nestedInsideIntent:nil]];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "BLOCKQUOTE(P,P)");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"`${getSelection().anchorNode.textContent}:${getSelection().anchorOffset},${getSelection().focusNode.textContent}:${getSelection().focusOffset}`"], "Second:3,First:2");
+}
+
+TEST(PresentationIntents, ApplyBlockPresentationIntentLeavesMixedNestedLists)
+{
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr webView = editableWebViewWithPresentationIntents(@"<p id='before'>Before</p><ul><li>Outer<ol><li id='inner'>Inner</li></ol></li></ul>", listener.get());
+    selectFromElementToElement(webView.get(), @"before", @"inner");
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent headerIntentWithIdentity:1 level:2 nestedInsideIntent:nil]];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"String(!!document.querySelector('ul, ol, li'))"], "false");
+}
+
+// The rule goes after the paragraph, whatever block it is, and the caret goes after the rule.
+TEST(PresentationIntents, ApplyBlockPresentationIntentThematicBreakAfterParagraph)
+{
+    RetainPtr<NSString> caretIsAfterRule = @"(() => { const range = document.createRange(); range.setStartAfter(document.querySelector('hr')); return range.comparePoint(getSelection().anchorNode, getSelection().anchorOffset) >= 0 ? 'after' : 'before'; })()";
+    RetainPtr listener = adoptNS([[PresentationIntentFontAttributesListener alloc] init]);
+    RetainPtr webView = editableWebViewWithPresentationIntents(@"<p id='line'>Line</p>", listener.get());
+    [webView stringByEvaluatingJavaScript:@"getSelection().setPosition(document.getElementById('line').firstChild, 2)"];
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent thematicBreakIntentWithIdentity:1 nestedInsideIntent:nil]];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "P,HR");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.getElementById('line').textContent"], "Line");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:caretIsAfterRule.get()], "after");
+
+    webView = editableWebViewWithPresentationIntents(@"<ul><li id='item'>Item</li><li>Next</li></ul>", listener.get());
+    placeCaretInElement(webView.get(), @"item");
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent thematicBreakIntentWithIdentity:1 nestedInsideIntent:nil]];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.getElementById('item').textContent"], "Item");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.querySelector('hr')?.closest('li')?.id"], "item");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"String(document.querySelectorAll('li').length)"], "2");
+
+    webView = editableWebViewWithPresentationIntents(@"<pre><code id='code'>let x</code></pre><p>After</p>", listener.get());
+    placeCaretInElement(webView.get(), @"code");
+    [webView _applyBlockPresentationIntent:[NSPresentationIntent thematicBreakIntentWithIdentity:1 nestedInsideIntent:nil]];
+    EXPECT_WK_STREQ(blockStructure(webView.get()).get(), "PRE(CODE),HR,P");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.getElementById('code').textContent"], "let x");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:caretIsAfterRule.get()], "after");
 }
 
 } // namespace TestWebKitAPI

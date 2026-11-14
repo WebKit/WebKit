@@ -28,6 +28,7 @@
 #include "Editing.h"
 
 #include "AXObjectCache.h"
+#include "AccessibilityObject.h"
 #include "CachedImage.h"
 #include "ContainerNodeInlines.h"
 #include "EditingInlines.h"
@@ -881,6 +882,35 @@ bool isMailBlockquote(const Node& node)
     if (!htmlElement || !htmlElement->hasTagName(blockquoteTag))
         return false;
     return htmlElement->attributeWithoutSynchronization(typeAttr) == "cite"_s;
+}
+
+static bool isCodeElement(const HTMLElement& element)
+{
+    if (element.hasAttributeWithoutSynchronization(roleAttr)) {
+        if (auto role = AccessibilityObject::ariaRoleToWebCoreRole(element.attributeWithoutSynchronization(roleAttr)); role != AccessibilityRole::Unknown)
+            return role == AccessibilityRole::Code;
+    }
+    return element.hasTagName(codeTag);
+}
+
+// The code of the CommonMark form <pre><code>, the only element in the block apart from line breaks and whitespace.
+RefPtr<HTMLElement> codeElementOfCodeBlock(const Element& block)
+{
+    RefPtr<HTMLElement> codeElement;
+    for (RefPtr child = block.firstChild(); child; child = child->nextSibling()) {
+        if (RefPtr text = dynamicDowncast<Text>(*child)) {
+            if (!text->containsOnlyASCIIWhitespace())
+                return nullptr;
+        } else if (is<Element>(*child)) {
+            if (child->hasTagName(brTag))
+                continue;
+            RefPtr htmlElement = dynamicDowncast<HTMLElement>(*child);
+            if (codeElement || !htmlElement || !isCodeElement(*htmlElement))
+                return nullptr;
+            codeElement = WTF::move(htmlElement);
+        }
+    }
+    return codeElement;
 }
 
 int caretMinOffset(const Node& node)
