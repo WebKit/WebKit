@@ -1,0 +1,29 @@
+Test that under Site Isolation, script run in a cross-origin iframe is profiled by the iframe's frame target.
+
+
+
+== Running test suite: SiteIsolation.Timeline.FrameTargetScriptProfiler
+-- Running test case: SiteIsolation.Timeline.FrameTargetScriptProfiler.Domain
+PASS: Should find the cross-origin iframe target.
+PASS: The cross-origin iframe should be in another process than the main frame.
+PASS: The main frame target should have the ScriptProfiler domain.
+PASS: The cross-origin iframe target should have the ScriptProfiler domain.
+
+-- Running test case: SiteIsolation.Timeline.FrameTargetScriptProfiler.CrossOriginIFrame
+PASS: Both frame targets started tracking.
+PASS: Capturing stopped.
+PASS: The cross-origin iframe target should report that ScriptProfiler stopped.
+PASS: The cross-origin iframe target should report ScriptProfiler events.
+PASS: Each event should end no earlier than it starts.
+PASS: Each event should be within the recording.
+PASS: The cross-origin iframe target should report a Microtask event for the microtask it queued.
+PASS: The page target should report no ScriptProfiler events.
+PASS: The cross-origin iframe target should record a timer.
+PASS: A timer record from the cross-origin iframe target should contain one of its ScriptProfiler events.
+PASS: A timer record from the cross-origin iframe target should have a profile with samples taken during it.
+PASS: Samples from the cross-origin iframe target should include iframeWork.
+PASS: Samples from the cross-origin iframe target should not include mainFrameWork.
+PASS: Samples from the main frame target should include mainFrameWork.
+PASS: Samples from the main frame target should not include iframeWork.
+PASS: The page target should report no samples.
+

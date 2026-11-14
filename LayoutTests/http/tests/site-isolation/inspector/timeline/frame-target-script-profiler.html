@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/frame-timeline-test-utilities.js"></script>
+<script src="resources/frame-script-profiler-test-utilities.js"></script>
+<script src="resources/script-profiler-work.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Timeline.FrameTargetScriptProfiler");
+
+    let mainFrameTarget;
+    let iframeTarget;
+
+    suite.addTestCase({
+        name: "SiteIsolation.Timeline.FrameTargetScriptProfiler.Domain",
+        description: "Frame targets should have the ScriptProfiler domain.",
+        async test() {
+            mainFrameTarget = InspectorTest.mainFrameTarget;
+            iframeTarget = await waitForFrameTargetForURLContaining("script-profiler-frame.html");
+            InspectorTest.expectNotNull(iframeTarget, "Should find the cross-origin iframe target.");
+            await waitForExpressionInTarget(iframeTarget, "typeof runInTimer === 'function'");
+
+            InspectorTest.expectNotEqual(FrameScriptProfilerTest.processIdentifier(iframeTarget), FrameScriptProfilerTest.processIdentifier(mainFrameTarget), "The cross-origin iframe should be in another process than the main frame.");
+
+            InspectorTest.expectThat(mainFrameTarget.hasDomain("ScriptProfiler"), "The main frame target should have the ScriptProfiler domain.");
+            InspectorTest.expectThat(iframeTarget.hasDomain("ScriptProfiler"), "The cross-origin iframe target should have the ScriptProfiler domain.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Timeline.FrameTargetScriptProfiler.CrossOriginIFrame",
+        description: "Script run in the cross-origin iframe should be profiled by the iframe's frame target, and joined with its Timeline records.",
+        async test() {
+            let {recording} = await FrameScriptProfilerTest.repeatWhileUnsampled(async () => {
+                await FrameScriptProfilerTest.startCapturing([mainFrameTarget, iframeTarget]);
+
+                let recording = WI.timelineManager.activeRecording;
+                await FrameScriptProfilerTest.runInTimer(iframeTarget, "iframeWork");
+                await FrameScriptProfilerTest.runInTimer(iframeTarget, "queueIFrameMicrotask");
+                await FrameScriptProfilerTest.runInTimer(mainFrameTarget, "mainFrameWork");
+
+                await FrameTimelineTest.stopCapturing();
+                return {
+                    recording,
+                    functionNamesByTarget: FrameScriptProfilerTest.sampledFunctionNamesByTarget(recording),
+                    expectedFunctionNames: ["iframeWork", "mainFrameWork"],
+                    targetForFunctionName: new Map([["iframeWork", iframeTarget], ["mainFrameWork", mainFrameTarget]]),
+                };
+            });
+            InspectorTest.pass("Both frame targets started tracking.");
+            InspectorTest.pass("Capturing stopped.");
+            InspectorTest.expectThat(FrameTimelineTest.didReportTrackingEvent("capturingStopped", iframeTarget, "ScriptProfiler"), "The cross-origin iframe target should report that ScriptProfiler stopped.");
+
+            let events = FrameScriptProfilerTest.scriptProfilerEventsForTarget(iframeTarget);
+            InspectorTest.expectGreaterThan(events.length, 0, "The cross-origin iframe target should report ScriptProfiler events.");
+            InspectorTest.expectThat(events.every((event) => event.startTime <= event.endTime), "Each event should end no earlier than it starts.");
+            InspectorTest.expectThat(events.every((event) => recording.startTime <= event.startTime && event.endTime <= recording.endTime), "Each event should be within the recording.");
+            InspectorTest.expectThat(events.some((event) => event.type === InspectorBackend.Enum.ScriptProfiler.EventType.Microtask && event.endTime - event.startTime >= 0.004), "The cross-origin iframe target should report a Microtask event for the microtask it queued.");
+            InspectorTest.expectEqual(FrameScriptProfilerTest.scriptProfilerEventsForTarget(WI.mainTarget).length, 0, "The page target should report no ScriptProfiler events.");
+
+            let scriptTimeline = recording.timelines.get(WI.TimelineRecord.Type.Script);
+            let timerRecords = scriptTimeline.records.filter((record) => record.target === iframeTarget && record.eventType === WI.ScriptTimelineRecord.EventType.TimerFired);
+            InspectorTest.expectGreaterThan(timerRecords.length, 0, "The cross-origin iframe target should record a timer.");
+            InspectorTest.expectThat(timerRecords.some((record) => events.some((event) => record.startTime <= event.startTime && event.endTime <= record.endTime)), "A timer record from the cross-origin iframe target should contain one of its ScriptProfiler events.");
+            InspectorTest.expectThat(timerRecords.some((record) => record.profilePayload?.rootNodes.length), "A timer record from the cross-origin iframe target should have a profile with samples taken during it.");
+
+            let iframeFunctionNames = FrameScriptProfilerTest.sampledFunctionNames(recording, iframeTarget);
+            InspectorTest.expectThat(iframeFunctionNames.has("iframeWork"), "Samples from the cross-origin iframe target should include iframeWork.");
+            InspectorTest.expectFalse(iframeFunctionNames.has("mainFrameWork"), "Samples from the cross-origin iframe target should not include mainFrameWork.");
+
+            let mainFrameFunctionNames = FrameScriptProfilerTest.sampledFunctionNames(recording, mainFrameTarget);
+            InspectorTest.expectThat(mainFrameFunctionNames.has("mainFrameWork"), "Samples from the main frame target should include mainFrameWork.");
+            InspectorTest.expectFalse(mainFrameFunctionNames.has("iframeWork"), "Samples from the main frame target should not include iframeWork.");
+
+            InspectorTest.expectEqual(FrameScriptProfilerTest.sampleCount(recording, WI.mainTarget), 0, "The page target should report no samples.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that under Site Isolation, script run in a cross-origin iframe is profiled by the iframe's frame target.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/timeline/resources/script-profiler-frame.html"></iframe>
+</body>
