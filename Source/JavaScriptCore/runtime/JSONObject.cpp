@@ -740,6 +740,16 @@ public:
     };
     static_assert(sizeof(PreparedProperty) == 8);
 
+    // A string value already written without escapes, as the offset and length of its quoted text in the output.
+    struct PreparedString {
+        JSCell* string;
+        uint32_t offset;
+        uint32_t length;
+    };
+    static constexpr bool usePreparedStrings = bufferMode == BufferMode::DynamicBuffer && std::same_as<CharType, Latin1Character>;
+    static constexpr unsigned preparedStringTableSizeLog2 = 8;
+    static constexpr unsigned preparedStringTableSize = usePreparedStrings ? 1u << preparedStringTableSizeLog2 : 1;
+
 private:
     explicit FastStringifier(JSGlobalObject&);
     template<HasGap hasGap> void append(JSValue);
@@ -753,6 +763,11 @@ private:
     static ALWAYS_INLINE unsigned preparedStructureSlot(StructureID structureID)
     {
         return (structureID.bits() * 0x9e3779b9u) >> (32 - preparedStructureTableSizeLog2);
+    }
+
+    static ALWAYS_INLINE unsigned preparedStringSlot(JSCell* cell)
+    {
+        return (std::bit_cast<uintptr_t>(cell) >> 4) & (preparedStringTableSize - 1);
     }
 
     static constexpr unsigned maxInt32StringLength = ("-2147483648"_s).length();
@@ -804,6 +819,7 @@ private:
     std::array<PreparedStructureRange, preparedStructureTableSize> m_preparedStructureRanges;
     std::array<PreparedProperty, maxPreparedProperties> m_preparedProperties;
     std::array<PreparedProperty, maxPreparedPropertyScratch> m_preparedPropertyScratch;
+    std::array<PreparedString, preparedStringTableSize> m_preparedStrings { };
 
     CharType m_buffer[staticBufferSize];
 };
@@ -1453,6 +1469,25 @@ ALWAYS_INLINE bool FastStringifier<CharType, bufferMode>::appendPreparedObjectKe
     return true;
 }
 
+#if JSON_STRING_COPY_HAS_SIMD
+static constexpr unsigned preparedTextCopyOverrun = SIMD::stride<Latin1Character>;
+#else
+static constexpr unsigned preparedTextCopyOverrun = 0;
+#endif
+
+// Copies text written earlier in the same buffer. It may write up to preparedTextCopyOverrun characters past the end.
+static ALWAYS_INLINE void copyPreparedText(Latin1Character* destination, const Latin1Character* source, unsigned length)
+{
+    ASSERT(source + length <= destination);
+#if JSON_STRING_COPY_HAS_SIMD
+    constexpr unsigned stride = SIMD::stride<Latin1Character>;
+    for (unsigned offset = 0; offset < length; offset += stride)
+        SIMD::store(SIMD::load(std::bit_cast<const uint8_t*>(source + offset)), std::bit_cast<uint8_t*>(destination + offset));
+#else
+    memcpySpan(std::span { destination, length }, std::span { source, length });
+#endif
+}
+
 #undef JSON_STRING_COPY_HAS_SIMD
 
 template<typename CharType, BufferMode bufferMode>
@@ -1515,26 +1550,42 @@ NEVER_INLINE void FastStringifier<CharType, bufferMode>::appendPreparedObject(JS
         }
 
         if constexpr (std::same_as<CharType, Latin1Character>) {
-            if (value.isCell() && value.asCell()->type() == StringType) [[likely]] {
-                auto valueString = asString(value.asCell())->tryGetView();
-                if (!valueString.data.isNull() && valueString.data.is8Bit()) [[likely]] {
-                    unsigned valueLength = valueString.data.length();
-                    if (!appendPreparedObjectKey<hasGap>(property, wroteProperty, newLineAndIndent, 1 + valueLength + 1, out, length, capacity)) [[unlikely]]
-                        return;
-                    out[length] = '"';
-                    if (!stringCopySameType<CharType, useShortCopyTier>(valueString.data.span8(), out + length + 1)) [[likely]] {
-                        out[length + 1 + valueLength] = '"';
-                        length += 1 + valueLength + 1;
+            if (value.isCell()) [[likely]] {
+                JSCell* cell = value.asCell();
+                if constexpr (usePreparedStrings) {
+                    const PreparedString& preparedString = m_preparedStrings[preparedStringSlot(cell)];
+                    if (preparedString.string == cell) {
+                        unsigned quotedLength = preparedString.length;
+                        if (!appendPreparedObjectKey<hasGap>(property, wroteProperty, newLineAndIndent, quotedLength + preparedTextCopyOverrun, out, length, capacity)) [[unlikely]]
+                            return;
+                        copyPreparedText(out + length, out + preparedString.offset, quotedLength);
+                        length += quotedLength;
                         continue;
                     }
-                    m_length = length;
-                    append<hasGap>(value);
-                    if (haveFailure()) [[unlikely]]
-                        return;
-                    out = buffer();
-                    length = m_length;
-                    capacity = m_capacity;
-                    continue;
+                }
+                if (cell->type() == StringType) [[likely]] {
+                    auto valueString = asString(cell)->tryGetView();
+                    if (!valueString.data.isNull() && valueString.data.is8Bit()) [[likely]] {
+                        unsigned valueLength = valueString.data.length();
+                        if (!appendPreparedObjectKey<hasGap>(property, wroteProperty, newLineAndIndent, 1 + valueLength + 1, out, length, capacity)) [[unlikely]]
+                            return;
+                        out[length] = '"';
+                        if (!stringCopySameType<CharType, useShortCopyTier>(valueString.data.span8(), out + length + 1)) [[likely]] {
+                            out[length + 1 + valueLength] = '"';
+                            if constexpr (usePreparedStrings)
+                                m_preparedStrings[preparedStringSlot(cell)] = { cell, length, 1 + valueLength + 1 };
+                            length += 1 + valueLength + 1;
+                            continue;
+                        }
+                        m_length = length;
+                        append<hasGap>(value);
+                        if (haveFailure()) [[unlikely]]
+                            return;
+                        out = buffer();
+                        length = m_length;
+                        capacity = m_capacity;
+                        continue;
+                    }
                 }
             }
         }
