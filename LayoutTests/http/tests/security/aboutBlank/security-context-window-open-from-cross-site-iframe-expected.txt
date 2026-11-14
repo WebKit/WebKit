@@ -1,0 +1,6 @@
+--- Test begins ---
+* "iframe"
+document.cookie =
+* "about:blank"
+document.cookie =
+--- Test ends ---
