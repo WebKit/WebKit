@@ -55,6 +55,7 @@ struct ResourceLoaderOptions;
 
 enum class CrossOriginEmbedderPolicyValue : uint8_t;
 enum class DocumentIsolationPolicyValue : uint8_t;
+enum class FetchOptionsCredentials : uint8_t;
 enum class FetchOptionsDestination : uint8_t;
 enum class IncludesCredentials : bool;
 
@@ -67,6 +68,7 @@ WEBCORE_EXPORT void updateRequestForAccessControl(ResourceRequest&, SecurityOrig
 
 WEBCORE_EXPORT ResourceRequest createAccessControlPreflightRequest(const ResourceRequest&, SecurityOrigin&, const String&, bool includeFetchMetadata);
 enum class SameOriginFlag : bool { No, Yes };
+StoredCredentialsPolicy storedCredentialsPolicyForCredentialsMode(FetchOptionsCredentials, ResourceResponse::Tainting);
 CachedResourceRequest createPotentialAccessControlRequest(ResourceRequest&&, ResourceLoaderOptions&&, Document&, const String& crossOriginAttribute, SameOriginFlag = SameOriginFlag::No);
 
 enum class HTTPHeadersToKeepFromCleaning : uint8_t {
