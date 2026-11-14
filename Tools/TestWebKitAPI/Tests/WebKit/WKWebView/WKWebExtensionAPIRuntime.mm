@@ -160,10 +160,10 @@ TEST(WKWebExtensionAPIRuntime, PlatformArch)
     auto *backgroundScript = Util::constructScript(@[
         @"browser.test.assertEq(typeof browser.runtime.PlatformArch, 'object', 'PlatformArch should be an object')",
 
-        @"browser.test.assertEq(browser.runtime.PlatformArch.ARM, 'arm', 'ARM should be defined')",
+        @"browser.test.assertEq(browser.runtime.PlatformArch.ARM64, 'arm64', 'ARM64 should be defined')",
         @"browser.test.assertEq(browser.runtime.PlatformArch.X86_64, 'x86-64', 'X86_64 should be defined')",
 
-        @"browser.test.assertDeepEq(Object.keys(browser.runtime.PlatformArch).sort(), [ 'ARM', 'X86_64' ], 'PlatformArch should only define the supported values')",
+        @"browser.test.assertDeepEq(Object.keys(browser.runtime.PlatformArch).sort(), [ 'ARM64', 'X86_64' ], 'PlatformArch should only define the supported values')",
 
         @"browser.test.notifyPass()"
     ]);
@@ -428,12 +428,12 @@ TEST(WKWebExtensionAPIRuntime, GetVersion)
 
 TEST(WKWebExtensionAPIRuntime, GetPlatformInfo)
 {
-#if PLATFORM(MAC) && (CPU(ARM) || CPU(ARM64))
-    auto *expectedInfo = @"{ os: 'mac', arch: 'arm' }";
+#if PLATFORM(MAC) && CPU(ARM64)
+    auto *expectedInfo = @"{ os: 'mac', arch: 'arm64' }";
 #elif PLATFORM(MAC) && (CPU(X86_64))
     auto *expectedInfo = @"{ os: 'mac', arch: 'x86-64' }";
-#elif PLATFORM(IOS_FAMILY) && (CPU(ARM) || CPU(ARM64))
-    auto *expectedInfo = @"{ os: 'ios', arch: 'arm' }";
+#elif PLATFORM(IOS_FAMILY) && CPU(ARM64)
+    auto *expectedInfo = @"{ os: 'ios', arch: 'arm64' }";
 #elif PLATFORM(IOS_FAMILY) && (CPU(X86_64))
     auto *expectedInfo = @"{ os: 'ios', arch: 'x86-64' }";
 #else

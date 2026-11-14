@@ -175,8 +175,8 @@ void WebExtensionAPIRuntime::getPlatformInfo(Ref<WebExtensionCallbackHandler>&& 
 
 #if CPU(X86_64)
     static constexpr auto archValue = x86_64Key;
-#elif CPU(ARM) || CPU(ARM64)
-    static constexpr auto archValue = armKey;
+#elif CPU(ARM64)
+    static constexpr auto archValue = arm64Key;
 #else
     static constexpr auto archValue = "unknown"_s;
 #endif
@@ -312,7 +312,7 @@ JSValueRef WebExtensionAPIRuntime::platformArch(JSContextRef context)
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/PlatformArch
 
     return makeEnumObject(context, {
-        { "ARM"_s, armKey },
+        { "ARM64"_s, arm64Key },
         { "X86_64"_s, x86_64Key },
     });
 }
