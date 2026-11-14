@@ -1,0 +1,61 @@
+<!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("A cached cross-origin redirect must not let the redirecting origin revalidate the redirect target's cache entry.");
+
+jsTestIsAsync = true;
+
+const victimURL = "resources/cached-redirect-to-cross-origin-leak-source.py?victim";
+
+async function serverState(mode)
+{
+    const response = await fetch("resources/cached-redirect-to-cross-origin-leak-source.py?mode=" + mode);
+    return JSON.parse(await response.text());
+}
+
+async function loadViaCachedRedirect()
+{
+    // The disk cache commits its entry asynchronously, so the cached-redirect path may not be
+    // taken by the first attempt. Retry until one of the two origins is asked to revalidate.
+    for (let attempt = 0; attempt < 5; ++attempt) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+        internals.clearMemoryCache();
+
+        let result = { blocked: false, body: null, exception: null };
+        try {
+            result.body = await (await fetch(victimURL, { mode: "cors", credentials: "include" })).text();
+        } catch (e) {
+            result.blocked = true;
+            result.exception = e;
+        }
+
+        const state = await serverState("report");
+        if (state.sourceWasAskedToRevalidate || state.targetWasAskedToRevalidate)
+            return { ...result, ...state };
+    }
+    return null;
+}
+
+async function test()
+{
+    await serverState("reset");
+
+    // Prime the disk cache with the redirect and with the target's no-cache response.
+    await fetch(victimURL, { mode: "no-cors", credentials: "include" });
+
+    const result = await loadViaCachedRedirect();
+    if (!result)
+        testFailed("The redirect target's cache entry was never revalidated, so this test did not exercise the cached-redirect path");
+    else if (result.sourceWasAskedToRevalidate)
+        testFailed("The redirect source was asked to revalidate the cross-origin target's cache entry");
+    else if (!result.blocked)
+        testFailed("Read the cross-origin redirect's body: " + result.body);
+    else {
+        testPassed("Revalidated the target's cache entry against the target, not against the redirect source");
+        testPassed("Blocked read of cross-origin redirect's body, threw exception: " + result.exception);
+    }
+    finishJSTest();
+}
+
+test();
+</script>
