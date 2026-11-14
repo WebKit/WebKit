@@ -28,6 +28,7 @@
 #include "CSSPrimitiveNumericCategory.h"
 #include "Chrome.h"
 #include "ComputedStyleDependencies.h"
+#include "DocumentFullscreen.h"
 #include "DocumentLoader.h"
 #include "DocumentPage.h"
 #include "DocumentQuirks.h"
@@ -797,9 +798,14 @@ static const IdentifierSchema& displayModeFeatureSchema()
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "display-mode"_s,
         FixedVector { CSSValueID::Fullscreen, CSSValueID::Standalone, CSSValueID::MinimalUi, CSSValueID::Browser },
-        OptionSet<MediaQueryDynamicDependency>(),
+        MediaQueryDynamicDependency::DisplayMode,
         [](auto& context) {
             auto identifier = [&] {
+#if ENABLE(FULLSCREEN_API)
+                RefPtr mainFrameDocument = protect(context.document.get())->mainFrameDocument();
+                if (mainFrameDocument && protect(mainFrameDocument->fullscreen())->isFullscreen())
+                    return CSSValueID::Fullscreen;
+#endif
                 Ref frame = *context.document->frame();
                 auto manifest = frame->page() ? frame->page()->applicationManifest() : std::nullopt;
                 if (!manifest)
