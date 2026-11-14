@@ -13,15 +13,19 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webtransport/handlers/abort-stream-from-server.py
+/LayoutTests/imported/w3c/web-platform-tests/webtransport/handlers/anticipated-streams.py
 /LayoutTests/imported/w3c/web-platform-tests/webtransport/handlers/client-close.py
 /LayoutTests/imported/w3c/web-platform-tests/webtransport/handlers/custom-response.py
 /LayoutTests/imported/w3c/web-platform-tests/webtransport/handlers/echo-request-headers.py
 /LayoutTests/imported/w3c/web-platform-tests/webtransport/handlers/echo.py
 /LayoutTests/imported/w3c/web-platform-tests/webtransport/handlers/echo_datagram_length.py
 /LayoutTests/imported/w3c/web-platform-tests/webtransport/handlers/query.py
+/LayoutTests/imported/w3c/web-platform-tests/webtransport/handlers/reset-bidi-stream-then-read.py
 /LayoutTests/imported/w3c/web-platform-tests/webtransport/handlers/sendorder.py
 /LayoutTests/imported/w3c/web-platform-tests/webtransport/handlers/server-close.py
 /LayoutTests/imported/w3c/web-platform-tests/webtransport/handlers/server-connection-close.py
 /LayoutTests/imported/w3c/web-platform-tests/webtransport/handlers/server-create-multiple-streams.py
+/LayoutTests/imported/w3c/web-platform-tests/webtransport/handlers/server-drain.py
 /LayoutTests/imported/w3c/web-platform-tests/webtransport/handlers/server-read-then-close.py
+/LayoutTests/imported/w3c/web-platform-tests/webtransport/handlers/stop-sending-bidi-stream-then-send.py
 /LayoutTests/imported/w3c/web-platform-tests/webtransport/handlers/token-count.py

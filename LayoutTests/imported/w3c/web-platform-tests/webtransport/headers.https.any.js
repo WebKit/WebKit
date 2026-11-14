@@ -1,163 +1,254 @@
 // META: global=window,worker
-// META: script=resources/webtransport-test-helpers.sub.js
-// Tests for the WebTransportOptions headers option and the responseHeaders
-// attribute.
-// https://w3c.github.io/webtransport/#dom-webtransportoptions-headers
-//
-// The constructor tests validate constructor behavior only and do not require
-// a WebTransport server connection. They use https://localhost:0/ as
-// the URL to avoid triggering real connection attempts. The remaining tests
-// connect to the webtransport-h3 test server.
+// META: script=/webtransport/resources/webtransport-test-helpers.sub.js
 
-const TEST_URL = 'https://localhost:0/';
-
-function createAndClose(url, options) {
-  const wt = new WebTransport(url, options);
-  wt.ready.catch(() => {});
-  wt.closed.catch(() => {});
-  wt.close();
+async function read_first_incoming_stream_as_json(wt) {
+  const streams = await wt.incomingUnidirectionalStreams;
+  const stream_reader = streams.getReader();
+  const {value: recv_stream} = await stream_reader.read();
+  stream_reader.releaseLock();
+  return read_stream_as_json(recv_stream);
 }
-
-test(() => {
-  assert_throws_js(TypeError, () => new WebTransport(
-    TEST_URL, { headers: { 'wt-available-protocols': 'test' } }));
-}, 'Setting wt-available-protocols header should throw TypeError');
-
-test(() => {
-  assert_throws_js(TypeError, () => new WebTransport(
-    TEST_URL, { headers: { 'WT-Available-Protocols': 'test' } }));
-}, 'Setting wt-available-protocols header should throw TypeError (case-insensitive)');
-
-test(() => {
-  assert_throws_js(TypeError, () => new WebTransport(
-    TEST_URL, { headers: { 'Wt-AVAILABLE-protocols': 'test' } }));
-}, 'Setting wt-available-protocols header should throw TypeError (mixed case)');
-
-test(() => {
-  createAndClose(TEST_URL,
-    { headers: { 'Host': 'evil.example.com' } });
-}, 'Forbidden request headers should be silently dropped');
-
-test(() => {
-  createAndClose(TEST_URL, { headers: {} });
-}, 'Empty headers object should be accepted');
-
-test(() => {
-  createAndClose(TEST_URL,
-    { headers: { 'x-custom-header': 'custom-value' } });
-}, 'Custom headers should be accepted');
-
-test(() => {
-  createAndClose(TEST_URL,
-    { headers: {
-        'x-grpc-method': '/service/Method',
-        'content-type': 'application/grpc+proto',
-        'x-custom': 'value'
-    } });
-}, 'Multiple custom headers should be accepted');
-
-test(() => {
-  createAndClose(TEST_URL,
-    { headers: [['x-foo', 'bar'], ['x-baz', 'qux']] });
-}, 'Headers as sequence of sequences should be accepted');
-
-test(() => {
-  createAndClose(TEST_URL,
-    { headers: [['x-dup', 'one'], ['x-dup', 'two']] });
-}, 'Duplicate header names in sequence form should be accepted');
-
-test(() => {
-  createAndClose(TEST_URL,
-    { headers: { 'X-Custom': 'value' } });
-}, 'Header names should be lowercased');
-
-test(() => {
-  createAndClose(TEST_URL,
-    { headers: [['foo', 'bar'], ['Foo', 'baz']] });
-}, 'Mixed-case duplicate header names should be lowercased and preserved');
-
-test(() => {
-  assert_throws_js(TypeError, () => new WebTransport(
-    TEST_URL, { headers: [['only-one-element']] }));
-}, 'Sequence with wrong inner length should throw TypeError');
-
-test(() => {
-  assert_throws_js(TypeError, () => new WebTransport(
-    TEST_URL, { headers: { 'bad name': 'value' } }));
-}, 'Invalid header name should throw TypeError');
-
-test(() => {
-  assert_throws_js(TypeError, () => new WebTransport(
-    TEST_URL, { headers: { 'x-custom': 'bad\r\nvalue' } }));
-}, 'Header value with CR/LF should throw TypeError');
 
 promise_test(async t => {
   const wt = new WebTransport(webtransport_url('echo-request-headers.py'));
   t.add_cleanup(() => wt.close());
   assert_equals(wt.responseHeaders, null,
-    'responseHeaders is null synchronously after construction');
+                'responseHeaders is null synchronously after construction');
   await wt.ready;
 }, 'responseHeaders is null before the connection is established');
 
 promise_test(async t => {
-  const wt = new WebTransport(webtransport_url('echo-request-headers.py'), {
-    headers: {
-      'X-Custom-Header': '  custom-value  ',
-      'x-other-header': 'other-value',
-      'Host': 'evil.example.com',
-    },
-  });
+  const wt = new WebTransport(webtransport_url('echo-request-headers.py'));
+  t.add_cleanup(() => wt.close());
   await wt.ready;
-
-  // Read incoming unidirectional stream for echoed request headers.
-  const streams = await wt.incomingUnidirectionalStreams;
-  const stream_reader = streams.getReader();
-  const { value: recv_stream } = await stream_reader.read();
-  stream_reader.releaseLock();
-  const request_headers = await read_stream_as_json(recv_stream);
-
-  assert_equals(request_headers['x-custom-header'], 'custom-value',
-    'header name should be lowercased and value trimmed');
-  assert_equals(request_headers['x-other-header'], 'other-value');
-  assert_equals(request_headers['host'], undefined,
-    'forbidden request headers should not be sent');
-}, 'Custom request headers are received by the server');
+  assert_true(wt.responseHeaders instanceof Headers,
+              'responseHeaders is a Headers object after ready');
+}, 'responseHeaders is a Headers object after ready resolves');
 
 promise_test(async t => {
   const wt = new WebTransport(
-    webtransport_url('custom-response.py?x-custom-response=custom-response-value'));
+      webtransport_url('custom-response.py?x-test-header=hello&x-other=world'));
+  t.add_cleanup(() => wt.close());
   await wt.ready;
-
-  assert_not_equals(wt.responseHeaders, null,
-    'responseHeaders should not be null after ready');
-  assert_true(wt.responseHeaders instanceof Headers);
-  assert_equals(wt.responseHeaders.get('x-custom-response'),
-    'custom-response-value');
-}, 'responseHeaders exposes headers from the server CONNECT response');
+  assert_equals(wt.responseHeaders.get('x-test-header'), 'hello');
+  assert_equals(wt.responseHeaders.get('x-other'), 'world');
+}, 'responseHeaders exposes server-sent response headers');
 
 promise_test(async t => {
   const wt = new WebTransport(
-    webtransport_url('custom-response.py?set-cookie=a%3Db&x-safe-header=yes'));
-  await wt.ready;
-
-  assert_equals(wt.responseHeaders.get('x-safe-header'), 'yes',
-    'non-forbidden response headers should be exposed');
-  assert_equals(wt.responseHeaders.get('set-cookie'), null,
-    'forbidden response header names should not be exposed via get()');
-  const names = [...wt.responseHeaders.keys()];
-  assert_false(names.includes('set-cookie'),
-    'forbidden response header names should not be exposed via iteration');
-}, 'Forbidden response header names are not exposed in responseHeaders');
-
-promise_test(async t => {
-  const wt = new WebTransport(
-    webtransport_url('custom-response.py?wt-protocol=foo'));
+      webtransport_url('custom-response.py?x-test-header=hello'));
   t.add_cleanup(() => wt.close());
   await wt.ready;
 
+  // Verify that the mutating methods actually exist. If they didn't, calling
+  // them would throw a TypeError, which would cause the `assert_throws_js`
+  // checks below to pass for the wrong reason.
+  assert_equals(typeof wt.responseHeaders.delete, 'function');
+  assert_equals(typeof wt.responseHeaders.set, 'function');
+  assert_equals(typeof wt.responseHeaders.append, 'function');
+
+  assert_throws_js(TypeError, () => wt.responseHeaders.delete('x-test-header'),
+                   'delete must throw on immutable responseHeaders');
+  assert_throws_js(TypeError,
+                   () => wt.responseHeaders.set('x-test-header', 'changed'),
+                   'set must throw on immutable responseHeaders');
+  assert_throws_js(TypeError,
+                   () => wt.responseHeaders.append('x-added', 'nope'),
+                   'append must throw on immutable responseHeaders');
+
+  assert_equals(wt.responseHeaders.get('x-test-header'), 'hello',
+                'the existing header survives the rejected mutations');
+  assert_false(wt.responseHeaders.has('x-added'),
+               'no header is added by the rejected append');
+}, 'responseHeaders is immutable');
+
+promise_test(async t => {
+  const wt =
+      new WebTransport(webtransport_url('custom-response.py?wt-protocol=foo'));
+  t.add_cleanup(() => wt.close());
+  await wt.ready;
   assert_false(wt.responseHeaders.has('wt-protocol'),
-    'wt-protocol must not be exposed via has()');
-  const names = [...wt.responseHeaders.keys()];
-  assert_false(names.includes('wt-protocol'),
-    'wt-protocol must not be exposed via iteration');
+               'wt-protocol must be stripped from responseHeaders');
+  assert_false([...wt.responseHeaders.keys()].includes('wt-protocol'),
+               'wt-protocol must not be exposed via iteration');
 }, 'wt-protocol is stripped from responseHeaders');
+
+promise_test(async t => {
+  // https://fetch.spec.whatwg.org/#forbidden-response-header-name
+  const wt = new WebTransport(webtransport_url(
+      'custom-response.py?set-cookie=probe%3D1&x-safe-header=yes'));
+  t.add_cleanup(() => wt.close());
+  await wt.ready;
+  assert_false(
+      wt.responseHeaders.has('set-cookie'),
+      'Set-Cookie must not be exposed via WebTransport.responseHeaders');
+  assert_false([...wt.responseHeaders.keys()].includes('set-cookie'),
+               'Set-Cookie must not be exposed via iteration');
+  assert_equals(wt.responseHeaders.get('x-safe-header'), 'yes',
+                'other response headers are still exposed');
+}, 'Set-Cookie is stripped from responseHeaders');
+
+// A user agent may send a repeated header as separate fields or combine them
+// into one comma-separated field (RFC 9110 section 5.3).
+function header_values(headers, name) {
+  return [].concat(headers[name]).join(', ');
+}
+
+promise_test(async t => {
+  const wt = new WebTransport(
+      webtransport_url('echo-request-headers.py'),
+      {headers: {'X-Client-Header': 'sent', 'x-padded-header': '  padded  '}});
+  t.add_cleanup(() => wt.close());
+  await wt.ready;
+
+  const request_headers = await read_first_incoming_stream_as_json(wt);
+
+  // HTTP/3 requires lowercase field names (RFC 9114 §4.2), so the header
+  // should arrive at the server lowercased regardless of the source casing.
+  assert_equals(request_headers['x-client-header'], 'sent',
+                'custom header forwarded to the server');
+  assert_equals(request_headers['X-Client-Header'], undefined,
+                'custom header is not forwarded with the original casing');
+  assert_equals(request_headers['x-padded-header'], 'padded',
+                'header value is normalized before it is sent');
+}, 'headers option forwards a custom header to the server, lowercased');
+
+promise_test(async t => {
+  // Cookie, Host and Referer are on the Fetch forbidden request-header list
+  // by name; Sec-Fetch-Mode is forbidden by the `Sec-` prefix rule. Forbidden
+  // names are silently dropped rather than throwing, so the connection
+  // succeeds but none of the user-supplied values reach the server.  The user
+  // agent may still send its own Cookie, Referer or Sec-Fetch-Mode header,
+  // possibly as a separate field, so check every field of each name.
+  const wt = new WebTransport(
+      webtransport_url('echo-request-headers.py?format=list'), {
+        headers: {
+          'Cookie': 'probe=forbidden',
+          'Host': 'evil.example.com',
+          'Sec-Fetch-Mode': 'navigate',
+          'Referer': 'https://evil.example.com/'
+        }
+      });
+  t.add_cleanup(() => wt.close());
+  await wt.ready;
+
+  const request_headers = await read_first_incoming_stream_as_json(wt);
+
+  assert_false(
+      header_values(request_headers, 'cookie').includes('probe=forbidden'),
+      'user-supplied Cookie must be silently dropped, not forwarded');
+  assert_false(
+      header_values(request_headers, 'host').includes('evil.example.com'),
+      'user-supplied Host must be silently dropped, not forwarded');
+  assert_false(
+      header_values(request_headers, 'sec-fetch-mode').includes('navigate'),
+      'user-supplied Sec-Fetch-Mode must be silently dropped, not forwarded');
+  assert_false(
+      header_values(request_headers, 'referer').includes('evil.example.com'),
+      'user-supplied Referer must be silently dropped, not forwarded');
+}, 'Forbidden request-header names are silently dropped from the headers option');
+
+promise_test(async t => {
+  const wt = new WebTransport(webtransport_url('echo-request-headers.py'),
+                              {headers: {}});
+  t.add_cleanup(() => wt.close());
+  await wt.ready;
+}, 'An empty headers object is accepted');
+
+test(() => {
+  assert_throws_js(TypeError,
+                   () => new WebTransport('https://localhost:0/',
+                                          {headers: {'bad name': 'value'}}));
+}, 'Invalid header name throws TypeError');
+
+test(() => {
+  assert_throws_js(TypeError, () => new WebTransport('https://localhost:0/', {
+                                headers: {'x-custom': 'bad\r\nvalue'}
+                              }));
+}, 'Header value containing CR/LF throws TypeError');
+
+test(() => {
+  assert_throws_js(TypeError, () => new WebTransport('https://localhost:0/', {
+                                headers: {'wt-available-protocols': 'test'}
+                              }));
+}, 'wt-available-protocols header throws TypeError');
+
+test(() => {
+  assert_throws_js(TypeError, () => new WebTransport('https://localhost:0/', {
+                                headers: {'WT-Available-Protocols': 'test'}
+                              }));
+}, 'wt-available-protocols header throws TypeError (upper case)');
+
+test(() => {
+  assert_throws_js(TypeError, () => new WebTransport('https://localhost:0/', {
+                                headers: {'Wt-AVAILABLE-protocols': 'test'}
+                              }));
+}, 'wt-available-protocols header throws TypeError (mixed case)');
+
+promise_test(async t => {
+  const wt = new WebTransport(webtransport_url('echo-request-headers.py'),
+                              {headers: [['x-foo', 'bar'], ['x-baz', 'qux']]});
+  t.add_cleanup(() => wt.close());
+  await wt.ready;
+
+  const request_headers = await read_first_incoming_stream_as_json(wt);
+
+  assert_equals(request_headers['x-foo'], 'bar');
+  assert_equals(request_headers['x-baz'], 'qux');
+}, 'HeadersInit sequence-of-sequences form sends every header');
+
+promise_test(async t => {
+  const wt =
+      new WebTransport(webtransport_url('echo-request-headers.py'),
+                       {headers: new Headers({'x-one': '1', 'x-two': '2'})});
+  t.add_cleanup(() => wt.close());
+  await wt.ready;
+
+  const request_headers = await read_first_incoming_stream_as_json(wt);
+
+  assert_equals(request_headers['x-one'], '1');
+  assert_equals(request_headers['x-two'], '2');
+}, 'HeadersInit Headers object form sends every header');
+
+promise_test(async t => {
+  const wt =
+      new WebTransport(webtransport_url('echo-request-headers.py?format=list'),
+                       {headers: [['x-dup', 'one'], ['x-dup', 'two']]});
+  t.add_cleanup(() => wt.close());
+  await wt.ready;
+
+  const request_headers = await read_first_incoming_stream_as_json(wt);
+
+  assert_equals(header_values(request_headers, 'x-dup'), 'one, two');
+}, 'Duplicate header names in sequence form are all sent, in order');
+
+promise_test(async t => {
+  const wt =
+      new WebTransport(webtransport_url('echo-request-headers.py?format=list'),
+                       {headers: [['foo', 'bar'], ['Foo', 'baz']]});
+  t.add_cleanup(() => wt.close());
+  await wt.ready;
+
+  const request_headers = await read_first_incoming_stream_as_json(wt);
+
+  assert_equals(header_values(request_headers, 'foo'), 'bar, baz');
+  assert_equals(request_headers['Foo'], undefined);
+}, 'Header names differing only in case are lowercased and both sent');
+
+test(() => {
+  assert_throws_js(
+      TypeError,
+      () => new WebTransport('https://localhost:0/', {headers: [[]]}));
+}, 'HeadersInit sequence with an empty inner sequence throws TypeError');
+
+test(() => {
+  assert_throws_js(TypeError,
+                   () => new WebTransport('https://localhost:0/',
+                                          {headers: [['only-one-element']]}));
+}, 'HeadersInit sequence with one inner element throws TypeError');
+
+test(() => {
+  assert_throws_js(TypeError, () => new WebTransport('https://localhost:0/', {
+                                headers: [['one', 'two', 'three']]
+                              }));
+}, 'HeadersInit sequence with three inner elements throws TypeError');

@@ -6792,6 +6792,27 @@ imported/w3c/web-platform-tests/webtransport/historical.https.sub.any.servicewor
 imported/w3c/web-platform-tests/webtransport/historical.https.sub.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/webtransport/historical.https.sub.any.worker.html [ Skip ]
 
+# createSendGroup() in a worker hits ASSERT(isMainThread()) generating a WebTransportSendGroupIdentifier.
+imported/w3c/web-platform-tests/webtransport/send-stream-stats.https.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/send-stream-stats.https.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/send-stream-stats.https.any.worker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/sendgroup.https.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/sendgroup.https.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/sendgroup.https.any.worker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/stream-stats.https.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/stream-stats.https.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/stream-stats.https.any.worker.html [ Skip ]
+
+# Flaky: getStats() on a client-initiated bidirectional stream sometimes rejects with InvalidStateError.
+imported/w3c/web-platform-tests/webtransport/receive-stream-stats.https.any.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/receive-stream-stats.https.any.worker.html [ Skip ]
+
+# Timeout: draining does not resolve when the server sends WT_DRAIN_SESSION.
+imported/w3c/web-platform-tests/webtransport/draining.https.any.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/draining.https.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/draining.https.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/draining.https.any.worker.html [ Skip ]
+
 # Some of Canvas Layer API features are not supported yet.
 imported/w3c/web-platform-tests/html/canvas/element/layers/2d.layer.anisotropic-blur.isotropic.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/element/layers/2d.layer.anisotropic-blur.mostly-x.html [ ImageOnlyFailure ]
