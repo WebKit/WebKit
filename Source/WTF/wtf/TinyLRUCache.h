@@ -74,7 +74,7 @@ public:
     TinyLRUCache(TinyLRUCache&&) = delete;
     TinyLRUCache& operator=(TinyLRUCache&&) = delete;
 
-    class FindResult {
+    class WTF_VIEW_TYPE FindResult {
     public:
         FindResult() = default;
 
@@ -145,7 +145,7 @@ public:
         return cacheBuffer()[m_size - 1].second;
     }
 
-    FindResult findIfCached(const KeyType& key)
+    FindResult findIfCached(const KeyType& key) LIFETIME_BOUND
     {
         invalidateIterators();
 

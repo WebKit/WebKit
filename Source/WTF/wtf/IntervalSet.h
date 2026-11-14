@@ -668,7 +668,7 @@ private:
     };
 
 public:
-    class iterator {
+    class WTF_VIEW_TYPE iterator {
     public:
         iterator() = default;
 
@@ -719,7 +719,7 @@ public:
     };
 
     // Returns an iterator with the path to the left-most leaf node and index 0
-    iterator begin() const
+    iterator begin() const LIFETIME_BOUND
     {
         if (isEmpty())
             return end();
@@ -738,7 +738,7 @@ public:
         return iterator(WTF::move(path));
     }
 
-    iterator end() const
+    iterator end() const LIFETIME_BOUND
     {
         return iterator();
     }

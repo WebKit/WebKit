@@ -67,7 +67,7 @@ template<typename HashTable, typename Key, typename Value, typename Extractor, t
 class RobinHoodHashTableIterator;
 
 template<typename HashTable, typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
-class RobinHoodHashTableConstIterator {
+class WTF_VIEW_TYPE RobinHoodHashTableConstIterator {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(RobinHoodHashTableConstIterator);
 public:
     using iterator_category = std::forward_iterator_tag;
@@ -201,7 +201,7 @@ public:
 };
 
 template<typename HashTable, typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
-class RobinHoodHashTableIterator {
+class WTF_VIEW_TYPE RobinHoodHashTableIterator {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(RobinHoodHashTableIterator);
 public:
     using iterator_category = std::forward_iterator_tag;
