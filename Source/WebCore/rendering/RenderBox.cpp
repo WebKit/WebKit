@@ -2799,7 +2799,7 @@ void RenderBox::computeLogicalWidth(LogicalExtentComputedValues& computedValues)
         return;
     }
 
-    auto& containingBlock = *this->containingBlock();
+    const RenderBoxModelObject& containingBlock = *this->containingBlock();
     bool hasPerpendicularContainingBlock = containingBlock.isHorizontalWritingMode() != isHorizontalWritingMode();
 
     // Width calculations
@@ -2837,8 +2837,8 @@ void RenderBox::computeLogicalWidth(LogicalExtentComputedValues& computedValues)
         }
     } else {
         auto containerLogicalWidthForAutoMargins = containerLogicalWidth;
-        if (avoidsFloats() && containingBlock.containsFloats())
-            containerLogicalWidthForAutoMargins = containingBlock.availableLogicalWidthForLine(logicalTop(), availableLogicalHeight(AvailableLogicalHeightType::IncludeMarginBorderPadding));
+        if (CheckedPtr block = dynamicDowncast<RenderBlock>(containingBlock); block && avoidsFloats() && block->containsFloats())
+            containerLogicalWidthForAutoMargins = block->availableLogicalWidthForLine(logicalTop(), availableLogicalHeight(AvailableLogicalHeightType::IncludeMarginBorderPadding));
         bool hasInvertedDirection = containingBlock.writingMode().isInlineOpposing(writingMode());
         computeInlineDirectionMargins(containingBlock, containerLogicalWidth, containerLogicalWidthForAutoMargins, computedValues.extent,
             hasInvertedDirection ? computedValues.margins.end : computedValues.margins.start,
