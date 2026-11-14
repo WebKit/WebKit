@@ -52,6 +52,11 @@ public:
 
     bool computeIsEmpty() const { return m_impl.computeIsEmpty(); }
     bool computeIsEmpty() { return m_impl.computeIsEmpty(); }
+
+    // FIXME: Update Apple-internal code to stop calling these, then remove them.
+    bool isEmptyIgnoringNullReferences() const { return computeIsEmpty(); }
+    bool isEmptyIgnoringNullReferences() { return computeIsEmpty(); }
+
     unsigned computeSize() const { return m_impl.computeSize(); }
     unsigned computeSize() { return m_impl.computeSize(); }
 
