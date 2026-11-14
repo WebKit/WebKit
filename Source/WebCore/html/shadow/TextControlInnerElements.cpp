@@ -41,13 +41,13 @@
 #include "NodeDocument.h"
 #include "PlatformRenderTheme.h"
 #include "Quirks.h"
-#include "RenderSearchField.h"
-#include "RenderTextControl.h"
+#include "RenderTextControlSingleLine.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "ResolvedStyle.h"
 #include "ScriptController.h"
 #include "ScriptDisallowedScope.h"
+#include "SearchInputType.h"
 #include "ShadowRoot.h"
 #include "StyleAdjuster.h"
 #include "StyleComputedStyle+SettersInlines.h"
@@ -312,11 +312,11 @@ void SearchFieldResultsButtonElement::defaultEventHandler(Event& event)
 #if !PLATFORM(IOS_FAMILY)
             protect(document())->updateStyleIfNeeded();
 
-            if (CheckedPtr searchFieldRenderer = dynamicDowncast<RenderSearchField>(input->renderer())) {
-                if (searchFieldRenderer->popupIsVisible())
-                    searchFieldRenderer->hidePopup();
+            if (RefPtr searchInputType = dynamicDowncast<SearchInputType>(*input->inputType())) {
+                if (searchInputType->popupIsVisible())
+                    searchInputType->hidePopup();
                 else if (input->maxResults() > 0)
-                    searchFieldRenderer->showPopup();
+                    searchInputType->showPopup();
             }
 #endif
             event.setDefaultHandled();

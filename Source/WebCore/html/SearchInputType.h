@@ -80,10 +80,18 @@ public:
     HostWindow* hostWindow() const override;
 #endif
 
-    Vector<RecentSearch>& recentSearches() LIFETIME_BOUND { return m_recentSearches; }
+    bool popupIsVisible() const { return m_searchPopupIsVisible; }
+    void showPopup();
+    void hidePopup();
+    WEBCORE_EXPORT std::span<const RecentSearch> recentSearches() LIFETIME_BOUND;
 
 private:
     explicit SearchInputType(HTMLInputElement&);
+
+    SearchPopupMenu* searchPopup();
+    void saveRecentSearches();
+    void disconnectSearchPopup();
+    void detach() final;
 
     void addSearchResult() final;
     void attributeChanged(const QualifiedName&) final;
@@ -104,6 +112,8 @@ private:
     RefPtr<HTMLElement> m_cancelButton;
 
     Vector<RecentSearch> m_recentSearches;
+    RefPtr<SearchPopupMenu> m_searchPopup;
+    bool m_searchPopupIsVisible { false };
 };
 
 } // namespace WebCore

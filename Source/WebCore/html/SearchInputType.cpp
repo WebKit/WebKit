@@ -35,12 +35,16 @@
 #include "DocumentInlines.h"
 #include "ContainerNodeInlines.h"
 #include "CSSFontSelector.h"
+#include "Chrome.h"
+#include "DocumentPage.h"
+#include "DocumentView.h"
 #include "ElementInlines.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "InputTypeNames.h"
 #include "KeyboardEvent.h"
+#include "LocalFrameView.h"
 #include "LocalizedStrings.h"
 #include "NodeRenderStyle.h"
 #include "Page.h"
@@ -75,11 +79,8 @@ void SearchInputType::valueChanged(unsigned listIndex, bool fireEvents)
     if (static_cast<int>(listIndex) == (listSize() - 1)) {
         if (fireEvents) {
             m_recentSearches.clear();
-            const AtomString& name = inputElement->attributeWithoutSynchronization(nameAttr);
-            if (!name.isEmpty()) {
-                if (CheckedPtr renderer = dynamicDowncast<RenderSearchField>(inputElement->renderer()))
-                    renderer->updatePopup(name, m_recentSearches);
-            }
+            if (!inputElement->attributeWithoutSynchronization(nameAttr).isEmpty())
+                saveRecentSearches();
         }
     } else {
         inputElement->setValue(itemText(listIndex));
@@ -141,17 +142,14 @@ PopupMenuStyle SearchInputType::menuStyle() const
 #if PLATFORM(WIN)
 int SearchInputType::clientInsetLeft() const
 {
-    // Inset the menu by the radius of the cap on the left so that
-    // it only runs along the straight part of the bezel.
-    return height() / 2;
+    CheckedPtr renderer = dynamicDowncast<RenderSearchField>(element()->renderer());
+    return renderer ? renderer->clientInsetLeft() : 0;
 }
 
 int SearchInputType::clientInsetRight() const
 {
-    // Inset the menu by the radius of the cap on the right so that
-    // it only runs along the straight part of the bezel (unless it needs
-    // to be wider).
-    return height() / 2;
+    CheckedPtr renderer = dynamicDowncast<RenderSearchField>(element()->renderer());
+    return renderer ? renderer->clientInsetRight() : 0;
 }
 
 LayoutUnit SearchInputType::clientPaddingLeft() const
@@ -173,7 +171,7 @@ FontSelector* SearchInputType::fontSelector() const
 
 HostWindow* SearchInputType::hostWindow() const
 {
-    if (CheckedPtr renderer = dynamicDowncast<RenderSearchField>(protect(element())->renderer()))
+    if (CheckedPtr renderer = protect(element())->renderer())
         return renderer->hostWindow();
     return nullptr;
 }
@@ -190,8 +188,7 @@ int SearchInputType::listSize() const
 
 void SearchInputType::popupDidHide()
 {
-    if (CheckedPtr renderer = dynamicDowncast<RenderSearchField>(element()->renderer()))
-        renderer->popupDidHide();
+    m_searchPopupIsVisible = false;
 }
 
 bool SearchInputType::itemIsSeparator(unsigned listIndex) const
@@ -228,8 +225,8 @@ void SearchInputType::addSearchResult()
     if (value.isEmpty())
         return;
 
-    CheckedPtr renderer = dynamicDowncast<RenderSearchField>(inputElement->renderer());
-    if (renderer && renderer->page().usesEphemeralSession())
+    RefPtr page = inputElement->document().page();
+    if (page && page->usesEphemeralSession())
         return;
 
     m_recentSearches.removeAllMatching([value] (const RecentSearch& recentSearch) {
@@ -241,10 +238,84 @@ void SearchInputType::addSearchResult()
     while (static_cast<int>(m_recentSearches.size()) > inputElement->maxResults())
         m_recentSearches.removeLast();
 
-    const AtomString& name = inputElement->attributeWithoutSynchronization(nameAttr);
-    if (CheckedPtr renderer = dynamicDowncast<RenderSearchField>(inputElement->renderer()))
-        renderer->updatePopup(name, m_recentSearches);
+    saveRecentSearches();
 #endif
+}
+
+SearchPopupMenu* SearchInputType::searchPopup()
+{
+    if (!m_searchPopup) {
+        RefPtr element = this->element();
+        RefPtr page = element ? element->document().page() : nullptr;
+        if (!page)
+            return nullptr;
+        m_searchPopup = page->chrome().createSearchPopupMenu(*this);
+    }
+    return m_searchPopup.get();
+}
+
+void SearchInputType::saveRecentSearches()
+{
+    if (RefPtr popup = searchPopup())
+        popup->saveRecentSearches(protect(element())->attributeWithoutSynchronization(nameAttr), m_recentSearches);
+}
+
+std::span<const RecentSearch> SearchInputType::recentSearches()
+{
+    if (RefPtr popup = searchPopup())
+        popup->loadRecentSearches(protect(element())->attributeWithoutSynchronization(nameAttr), m_recentSearches);
+    return m_recentSearches.span();
+}
+
+void SearchInputType::showPopup()
+{
+    if (m_searchPopupIsVisible)
+        return;
+
+    RefPtr element = this->element();
+    CheckedPtr renderer = element ? element->renderer() : nullptr;
+    RefPtr frameView = element ? element->document().view() : nullptr;
+    RefPtr popup = searchPopup();
+    if (!renderer || !frameView || !popup || !popup->enabled())
+        return;
+
+    m_searchPopupIsVisible = true;
+
+    const AtomString& name = element->attributeWithoutSynchronization(nameAttr);
+    popup->loadRecentSearches(name, m_recentSearches);
+
+    // Trim the recent searches list if the maximum size has changed since we last saved.
+    if (static_cast<int>(m_recentSearches.size()) > element->maxResults()) {
+        do {
+            m_recentSearches.removeLast();
+        } while (static_cast<int>(m_recentSearches.size()) > element->maxResults());
+
+        popup->saveRecentSearches(name, m_recentSearches);
+    }
+
+    FloatPoint absTopLeft = renderer->localToAbsolute(FloatPoint(), MapCoordinatesMode::UseTransforms);
+    IntRect absBounds = renderer->absoluteBoundingBoxRectIgnoringTransforms();
+    absBounds.setLocation(roundedIntPoint(absTopLeft));
+    protect(popup->popupMenu())->show(absBounds, *frameView, -1);
+}
+
+void SearchInputType::hidePopup()
+{
+    if (RefPtr popup = m_searchPopup)
+        protect(popup->popupMenu())->hide();
+}
+
+void SearchInputType::disconnectSearchPopup()
+{
+    if (RefPtr popup = std::exchange(m_searchPopup, nullptr))
+        protect(popup->popupMenu())->disconnectClient();
+    m_searchPopupIsVisible = false;
+}
+
+void SearchInputType::detach()
+{
+    disconnectSearchPopup();
+    BaseTextInputType::detach();
 }
 
 static void updateResultButtonPseudoType(SearchFieldResultsButtonElement& resultButton, int maxResults)
@@ -338,6 +409,7 @@ auto SearchInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBase
 
 void SearchInputType::removeShadowSubtree()
 {
+    disconnectSearchPopup();
     TextFieldInputType::removeShadowSubtree();
     m_resultsButton = nullptr;
     m_cancelButton = nullptr;
@@ -346,10 +418,9 @@ void SearchInputType::removeShadowSubtree()
 void SearchInputType::didSetValueByUserEdit()
 {
     ASSERT(element());
-    if (m_cancelButton) {
-        if (CheckedPtr renderer = dynamicDowncast<RenderSearchField>(element()->renderer()))
-            renderer->updateCancelButtonVisibility();
-    }
+    // The cancel button's visibility depends on whether the value is empty; see SearchFieldCancelButtonElement::resolveCustomStyle().
+    if (RefPtr cancelButton = m_cancelButton)
+        cancelButton->invalidateStyle();
 
     TextFieldInputType::didSetValueByUserEdit();
 }
