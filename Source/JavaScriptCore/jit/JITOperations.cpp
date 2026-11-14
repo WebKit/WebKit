@@ -3865,6 +3865,27 @@ ALWAYS_INLINE static JSValue getPrivateName(JSGlobalObject* globalObject, CallFr
     return slot.getValue(globalObject, fieldName);
 }
 
+static ALWAYS_INLINE JSValue getPrivateNameMegamorphic(JSGlobalObject* globalObject, VM& vm, CallFrame* callFrame, JSValue baseValue, CacheableIdentifier identifier)
+{
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto* uid = identifier.uid();
+
+    if (!baseValue.isObject()) [[unlikely]]
+        RELEASE_AND_RETURN(scope, getPrivateName(globalObject, callFrame, baseValue, identifier));
+
+    JSObject* baseObject = asObject(baseValue);
+    PropertySlot slot(baseObject, PropertySlot::InternalMethodType::GetOwnProperty);
+    baseObject->getPrivateField(globalObject, identifier, slot);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    ASSERT(slot.slotBase() == baseObject);
+    if (baseObject->structure()->propertyAccessesAreCacheable() && slot.isCacheableValue() && slot.cachedOffset() <= MegamorphicCache::maxOffset) [[likely]]
+        vm.megamorphicCache()->initAsHit(baseObject->structureID(), uid, baseObject, slot.cachedOffset(), /* ownProperty */ true);
+
+    RELEASE_AND_RETURN(scope, slot.getValue(globalObject, identifier));
+}
+
 JSC_DEFINE_JIT_OPERATION(operationGetPrivateNameOptimize, EncodedJSValue, (EncodedJSValue encodedBase, EncodedJSValue encodedFieldName, PropertyInlineCache* propertyCache))
 {
     JSGlobalObject* globalObject = propertyCache->globalObject();
@@ -3916,6 +3937,22 @@ JSC_DEFINE_JIT_OPERATION(operationGetPrivateNameGaveUp, EncodedJSValue, (Encoded
     JSValue fieldNameValue = JSValue::decode(encodedFieldName);
 
     OPERATION_RETURN(scope, JSValue::encode(getPrivateName(globalObject, callFrame, baseValue, fieldNameValue)));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationGetPrivateNameMegamorphic, EncodedJSValue, (EncodedJSValue encodedBase, EncodedJSValue encodedFieldName, PropertyInlineCache* propertyCache))
+{
+    JSGlobalObject* globalObject = propertyCache->globalObject();
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    ICSlowPathCallFrameTracer tracer(vm, callFrame, propertyCache);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue baseValue = JSValue::decode(encodedBase);
+    JSValue fieldNameValue = JSValue::decode(encodedFieldName);
+    ASSERT(CacheableIdentifier::isCacheableIdentifierCell(fieldNameValue));
+    CacheableIdentifier identifier = CacheableIdentifier::createFromCell(fieldNameValue.asCell());
+
+    OPERATION_RETURN(scope, JSValue::encode(getPrivateNameMegamorphic(globalObject, vm, callFrame, baseValue, identifier)));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationGetPrivateNameGeneric, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue encodedBase, EncodedJSValue encodedFieldName))
@@ -3982,6 +4019,20 @@ JSC_DEFINE_JIT_OPERATION(operationGetPrivateNameByIdOptimize, EncodedJSValue, (E
     }
 
     OPERATION_RETURN(scope, JSValue::encode(getPrivateName(globalObject, callFrame, baseValue, identifier)));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationGetPrivateNameByIdMegamorphic, EncodedJSValue, (EncodedJSValue base, PropertyInlineCache* propertyCache))
+{
+    JSGlobalObject* globalObject = propertyCache->globalObject();
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    ICSlowPathCallFrameTracer tracer(vm, callFrame, propertyCache);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue baseValue = JSValue::decode(base);
+    CacheableIdentifier identifier = propertyCache->identifier();
+
+    OPERATION_RETURN(scope, JSValue::encode(getPrivateNameMegamorphic(globalObject, vm, callFrame, baseValue, identifier)));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationGetPrivateNameByIdGeneric, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue base, uintptr_t rawCacheableIdentifier))
