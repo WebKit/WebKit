@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<link rel="author" title="Tim Nguyen" href="https://github.com/nt1m">
+<link rel="help" href="https://drafts.csswg.org/css-flexbox-2/#flex-line-count-property">
+<link rel="help" href="https://drafts.csswg.org/css-flexbox-2/#algo-available">
+<link rel="match" href="balance-available-size-002-ref.html">
+<meta name="assert" content="Tests that flex-line-count changes the available-size that a block-size of stretch resolves against when the block axis is the cross axis.">
+<style>
+#flex {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  flex-line-count: 2;
+  align-items: start;
+  gap: 20px;
+  width: 220px;
+  height: 220px;
+}
+
+#flex > div {
+  background: green;
+  width: 100px;
+  height: stretch;
+}
+</style>
+<p>There should be three (3) green squares below.</p>
+<div id="flex">
+  <div></div>
+  <div></div>
+  <div></div>
+</div>

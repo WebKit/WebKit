@@ -132,6 +132,7 @@ public:
     NODELETE static bool isMultiline(const RenderFlexibleBox&);
     NODELETE static bool isBalance(const RenderFlexibleBox&);
     NODELETE static size_t minimumLineCount(const RenderFlexibleBox&);
+    static LayoutUnit crossAxisAvailableSpaceForFlexItem(const RenderBox& flexItem, LogicalBoxAxis flexItemAxis, LayoutUnit availableSpace);
     NODELETE bool isLeftToRightFlow() const;
     NODELETE static bool mainAxisIsFlexItemInlineAxis(const RenderBox& flexItem);
     static Style::FlexBasis flexBasisForFlexItem(const RenderBox& flexItem);

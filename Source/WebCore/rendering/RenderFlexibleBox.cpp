@@ -186,12 +186,20 @@ void RenderFlexibleBox::styleDidChange(Style::Difference diff, const Style::Comp
     auto oldAlignItems = oldStyle->alignItems().resolve().position();
     auto newAlignItems = style().alignItems().resolve().position();
     auto alignItemsStretchChanged = (oldAlignItems == ItemPosition::Normal || oldAlignItems == ItemPosition::Stretch) != (newAlignItems == ItemPosition::Normal || newAlignItems == ItemPosition::Stretch);
+    auto crossAxisAvailableSpaceMayHaveChanged = [&] {
+        if (oldStyle->flexLineCount().value == 1 && style().flexLineCount().value == 1)
+            return false;
+        return oldStyle->flexLineCount() != style().flexLineCount() || oldStyle->flexWrap().isMultiline() != style().flexWrap().isMultiline()
+            || oldStyle->columnGap() != style().columnGap() || oldStyle->rowGap() != style().rowGap();
+    }();
     for (auto& flexItem : childrenOfType<RenderBox>(*this)) {
         // Flex items that were previously stretching need to be relayed out so we
         // can compute new available cross axis space. This is only necessary for
         // stretching since other alignment values don't change the size of the
         // box.
         if (alignItemsStretchChanged && flexItem.style().alignSelf().isAuto())
+            flexItem.setChildNeedsLayout(MarkingBehavior::OnlyThis);
+        if (crossAxisAvailableSpaceMayHaveChanged && !flexItem.isOutOfFlowPositioned())
             flexItem.setChildNeedsLayout(MarkingBehavior::OnlyThis);
     }
 }

@@ -613,6 +613,30 @@ size_t FlexFormattingUtils::minimumLineCount(const RenderFlexibleBox& flexBox)
     return flexBox.style().flexLineCount().value;
 }
 
+// https://drafts.csswg.org/css-flexbox-2/#algo-available
+// "If the available space in the cross axis is definite, then additionally modify it based on flex-line-count."
+LayoutUnit FlexFormattingUtils::crossAxisAvailableSpaceForFlexItem(const RenderBox& flexItem, LogicalBoxAxis flexItemAxis, LayoutUnit availableSpace)
+{
+    if (!flexItem.isFlexItem() || flexItem.isOutOfFlowPositioned())
+        return availableSpace;
+    if ((flexItemAxis == LogicalBoxAxis::Inline) == mainAxisIsFlexItemInlineAxis(flexItem))
+        return availableSpace;
+
+    CheckedRef flexBox = downcast<RenderFlexibleBox>(*flexItem.parent());
+    auto flexLineCount = flexBox->style().flexLineCount().value;
+    // https://drafts.csswg.org/css-flexbox-2/#flex-line-count-property
+    // "If the flex container is single-line (aka, flex-wrap: nowrap), this property has no effect."
+    if (!isMultiline(flexBox) || flexLineCount == 1)
+        return availableSpace;
+    // A column flex container's cross axis is its inline axis. A row flex container's cross axis is its block axis.
+    if (!isColumnFlow(flexBox) && !flexBox->hasDefiniteLogicalHeight())
+        return availableSpace;
+    // "subtracting the size of N-1 gaps from the normal available space, then dividing the leftover by N,
+    // where N is the flex-line-count value. This uses the actual flex-line-count value, not the minimum flex
+    // line count or the actual number of generated lines."
+    return std::max(0_lu, (availableSpace - (flexLineCount - 1) * computeGap(flexBox, GapType::BetweenLines)) / flexLineCount);
+}
+
 Style::FlexBasis FlexFormattingUtils::flexBasisForFlexItem(const RenderBox& flexItem)
 {
     auto flexBasis = flexItem.style().flexBasis();
