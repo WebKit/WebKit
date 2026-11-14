@@ -220,6 +220,9 @@ class CreateWGPUShaderModuleTask : public LinkSubTask
                         switch (message.type)
                         {
                             case WGPUCompilationMessageType_Error:
+                                // The request status is success also for a shader module that
+                                // failed to compile, its errors are reported as messages.
+                                task->mResult = angle::Result::Stop;
                                 task->mLog << "Error: ";
                                 break;
                             case WGPUCompilationMessageType_Warning:
