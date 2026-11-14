@@ -1,0 +1,29 @@
+Tests that Timeline records of processes that do not send CPU samples are not counted as main thread records, which feed the CPU timeline's main thread breakdown.
+
+
+== Running test suite: Timeline.MainThreadProcessRecords
+-- Running test case: Timeline.MainThreadProcessRecords.OnlyProcessesThatSendCPUSamplesCount
+PASS: Only the main process should send CPU samples.
+PASS: Main thread script records should be the records of the process that sends CPU samples.
+PASS: No main thread record should come from a Worker target.
+PASS: The Script timeline should still contain the other process' record.
+PASS: Main thread layout records should be the records of the process that sends CPU samples.
+
+-- Running test case: Timeline.MainThreadProcessRecords.EveryProcessThatSendsCPUSamplesCounts
+PASS: Both processes should send CPU samples.
+PASS: Every process that sends CPU samples should have its records counted.
+PASS: The Worker's record should not be a main thread record.
+PASS: Every process that sends CPU samples should have its layout records counted.
+
+-- Running test case: Timeline.MainThreadProcessRecords.TargetWithoutProcessIdentifierCounts
+PASS: A record of a target without a processIdentifier should be a main thread record.
+
+-- Running test case: Timeline.MainThreadProcessRecords.RecordBeforeStart
+PASS: The record before the range should be included and counted when its process sends CPU samples.
+PASS: Without includeRecordBeforeStart, the record before the range should not be included.
+
+-- Running test case: Timeline.MainThreadProcessRecords.NoProcessDataKeepsEveryRecord
+PASS: Without per-process data, every record but the Worker's should be a main thread record.
+PASS: Without a recording, every record but the Worker's should be a main thread record.
+PASS: Without per-process data, every layout record should be a main thread record.
+

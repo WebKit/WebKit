@@ -25,7 +25,7 @@
 
 WI.LayoutTimelineRecord = class LayoutTimelineRecord extends WI.TimelineRecord
 {
-    constructor(eventType, startTime, endTime, stackTrace, sourceCodeLocation, {quad, area, domNodeOrInfo} = {})
+    constructor(target, eventType, startTime, endTime, stackTrace, sourceCodeLocation, {quad, area, domNodeOrInfo} = {})
     {
         super(WI.TimelineRecord.Type.Layout, startTime, endTime, stackTrace, sourceCodeLocation);
 
@@ -35,6 +35,8 @@ WI.LayoutTimelineRecord = class LayoutTimelineRecord extends WI.TimelineRecord
 
         if (eventType in WI.LayoutTimelineRecord.EventType)
             eventType = WI.LayoutTimelineRecord.EventType[eventType];
+
+        this._target = target;
 
         this._eventType = eventType;
         this._quad = quad || null;
@@ -95,7 +97,7 @@ WI.LayoutTimelineRecord = class LayoutTimelineRecord extends WI.TimelineRecord
             };
         }
 
-        return new WI.LayoutTimelineRecord(eventType, startTime, endTime, stackTrace, sourceCodeLocation, {quad, domNodeOrInfo});
+        return new WI.LayoutTimelineRecord(WI.assumingMainTarget(), eventType, startTime, endTime, stackTrace, sourceCodeLocation, {quad, domNodeOrInfo});
     }
 
     toJSON()
@@ -120,6 +122,8 @@ WI.LayoutTimelineRecord = class LayoutTimelineRecord extends WI.TimelineRecord
     {
         return this._eventType;
     }
+
+    get target() { return this._target; }
 
     get width()
     {
