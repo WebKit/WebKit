@@ -722,8 +722,8 @@ bool Line::restoreTrimmedTrailingWhitespace(InlineLayoutUnit trimmedTrailingWhit
 
 bool LineRun::isListMarkerOrItsContent() const
 {
-    // A marker's contents inherit the ::marker style, so the marker and its text answer alike.
-    return isListMarker() || m_layoutBox->style().isListMarkerStyle();
+    // An inside marker's inline box and its contents carry the ::marker style.
+    return m_layoutBox->style().isListMarkerStyle();
 }
 
 bool Line::hasTrailingForcedLineBreak(const RunList& runs)
@@ -737,7 +737,7 @@ bool Line::hasContentOrDecoration() const
         return false;
     auto& formattingContext = this->formattingContext();
     for (auto& run : m_runs | std::views::reverse) {
-        if (Line::Run::isContentfulOrHasDecoration(run, formattingContext) && !run.isListMarker())
+        if (Line::Run::isContentfulOrHasDecoration(run, formattingContext))
             return true;
     }
     return false;
@@ -826,8 +826,6 @@ NODELETE inline static Line::Run::Type toLineRunType(const InlineItem& inlineIte
     case InlineItem::Type::WordBreakOpportunity:
         return Line::Run::Type::WordBreakOpportunity;
     case InlineItem::Type::AtomicInlineBox:
-        if (inlineItem.layoutBox().isListMarkerBox())
-            return Line::Run::Type::ListMarker;
         return Line::Run::Type::AtomicInlineBox;
     case InlineItem::Type::InlineBoxStart:
         return Line::Run::Type::InlineBoxStart;
