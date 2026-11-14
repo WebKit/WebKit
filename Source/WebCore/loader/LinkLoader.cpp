@@ -98,10 +98,12 @@ void LinkLoader::triggerEvents(const CachedResource& resource)
     if (!client)
         return;
 
-    if (resource.errorOccurred())
+    if (resource.errorOccurred()) {
         client->linkLoadingErrored();
-    else
-        client->linkLoaded();
+        return;
+    }
+
+    client->linkLoaded();
 }
 
 void LinkLoader::triggerError()
@@ -141,7 +143,7 @@ void LinkLoader::loadLinksFromHeader(const String& headerValue, const URL& baseU
             continue;
 
         auto fetchPriority = parseEnumerationFromString<RequestPriority>(header.fetchPriority()).value_or(RequestPriority::Auto);
-        LinkLoadParameters params { relAttribute, url, header.as(), header.media(), header.mimeType(), header.crossOrigin(), header.imageSrcSet(), header.imageSizes(), header.nonce(),
+        LinkLoadParameters params { relAttribute, url, header.as(), header.media(), header.mimeType(), header.crossOrigin(), header.imageSrcSet(), header.imageSizes(), header.nonce(), { },
             parseReferrerPolicy(header.referrerPolicy(), ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString), fetchPriority };
 
         preconnectIfNeeded(params, document);
@@ -168,7 +170,7 @@ void LinkLoader::loadCompressionDictionariesFromHeader(const String& headerValue
             continue;
 
         auto fetchPriority = parseEnumerationFromString<RequestPriority>(header.fetchPriority()).value_or(RequestPriority::Auto);
-        LinkLoadParameters params { relAttribute, url, header.as(), header.media(), header.mimeType(), header.crossOrigin(), header.imageSrcSet(), header.imageSizes(), header.nonce(),
+        LinkLoadParameters params { relAttribute, url, header.as(), header.media(), header.mimeType(), header.crossOrigin(), header.imageSrcSet(), header.imageSizes(), header.nonce(), { },
             parseReferrerPolicy(header.referrerPolicy(), ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString), fetchPriority };
 
         loadCompressionDictionaryIfNeeded(params, document, nullptr);
@@ -428,6 +430,7 @@ RefPtr<LinkPreloadResourceClient> LinkLoader::preloadIfNeeded(const LinkLoadPara
     options.referrerPolicy = params.referrerPolicy;
     options.fetchPriority = params.fetchPriority;
     options.nonce = params.nonce;
+    options.integrity = params.integrity;
 
     auto linkRequest = [&]() {
         if (params.relAttribute.isLinkModulePreload) {

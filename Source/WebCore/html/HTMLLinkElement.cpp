@@ -315,6 +315,7 @@ void HTMLLinkElement::process()
         attributeWithoutSynchronization(imagesrcsetAttr),
         attributeWithoutSynchronization(imagesizesAttr),
         nonce(),
+        attributeWithoutSynchronization(integrityAttr),
         referrerPolicy(),
         fetchPriority(),
     };

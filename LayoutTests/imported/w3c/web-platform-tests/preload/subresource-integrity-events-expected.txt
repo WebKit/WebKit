@@ -1,0 +1,20 @@
+
+PASS as=script with a matching sha256 digest
+PASS as=script with a matching sha384 digest
+PASS as=script with a matching sha512 digest
+PASS as=script with empty integrity
+PASS as=script with a digest that does not match
+PASS as=script with an unknown algorithm only
+PASS as=script with options after the digest
+PASS as=script with a sha256 mismatch and a sha512 match
+PASS as=script with a sha256 match and a sha512 mismatch
+PASS as=style with a matching sha256 digest
+PASS as=style with a digest that does not match
+PASS as=font with a matching sha256 digest
+PASS as=font with a digest that does not match
+PASS cross-origin as=script with a matching sha256 digest, ACAO: *
+PASS cross-origin as=script with a digest that does not match, ACAO: *
+PASS cross-origin as=script with a matching digest but no ACAO
+PASS cross-origin as=script, not a CORS request, with a matching digest
+PASS cross-origin as=script, not a CORS request, with empty integrity
+

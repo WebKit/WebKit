@@ -14,8 +14,8 @@ PASS link rel=modulepreload with non-style as= value (style)
 FAIL link rel=modulepreload with non-JSON as= value (JSON) promise_test: Unhandled rejection with value: object "[object Event]"
 PASS link rel=modulepreload with integrity match
 PASS link rel=modulepreload with integrity match2
-FAIL link rel=modulepreload with integrity mismatch promise_test: Unhandled rejection with value: object "[object Event]"
-FAIL link rel=modulepreload with integrity mismatch2 promise_test: Unhandled rejection with value: object "[object Event]"
+PASS link rel=modulepreload with integrity mismatch
+PASS link rel=modulepreload with integrity mismatch2
 PASS link rel=modulepreload with invalid integrity
 PASS multiple link rel=modulepreload with child module before parent
 FAIL link rel=modulepreload with empty href and invalid as= value promise_test: Unhandled rejection with value: object "[object Event]"

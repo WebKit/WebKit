@@ -53,6 +53,7 @@ struct LinkLoadParameters {
     String imageSrcSet;
     String imageSizes;
     String nonce;
+    String integrity;
     ReferrerPolicy referrerPolicy { ReferrerPolicy::EmptyString };
     RequestPriority fetchPriority { RequestPriority::Auto };
 };
