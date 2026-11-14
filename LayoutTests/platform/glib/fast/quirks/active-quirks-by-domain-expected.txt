@@ -76,7 +76,7 @@ https://bungalow.com/
 https://www.capitalgroup.com/
     ShouldDelayReloadWhenRegisteringServiceWorker
 https://www.cbssports.com/
-    (none)
+    AllowsAutoplayToCarryForwardAcrossNavigationQuirk
 https://chatgpt.com/
     NeedsMarginTrimInlineSupportsQuirk
 https://www.cnn.com/
