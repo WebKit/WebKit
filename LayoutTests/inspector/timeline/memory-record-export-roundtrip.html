@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Timeline.MemoryRecordExportRoundtrip");
+
+    const timestamps = [10, 11, 12.5];
+    const categories = [
+        {type: InspectorBackend.Enum.Memory.CategoryDataType.JavaScript, size: 100},
+        {type: InspectorBackend.Enum.Memory.CategoryDataType.Images, size: 200},
+    ];
+
+    function expectImportedRecordEqualsOriginal(original, imported, index)
+    {
+        InspectorTest.expectEqual(imported.timestamp, original.timestamp, `Record ${index} should import the same timestamp.`);
+        InspectorTest.expectEqual(imported.startTime, original.startTime, `Record ${index} should import the same startTime.`);
+        InspectorTest.expectEqual(imported.endTime, original.endTime, `Record ${index} should import the same endTime.`);
+    }
+
+    suite.addTestCase({
+        name: "Timeline.MemoryRecordExportRoundtrip.Memory",
+        description: "A WI.MemoryTimelineRecord added to a WI.MemoryTimeline should round-trip its timestamp, startTime and endTime through toJSON and fromJSON.",
+        async test() {
+            let originalTimeline = new WI.MemoryTimeline(WI.TimelineRecord.Type.Memory);
+            for (let timestamp of timestamps)
+                originalTimeline.addRecord(new WI.MemoryTimelineRecord(timestamp, categories));
+
+            let originalRecords = originalTimeline.records;
+            InspectorTest.expectEqual(originalRecords[0].startTime, timestamps[0] - WI.MemoryTimelineRecord.samplingRatePerSecond, "The first record's startTime should be the sample time minus the sampling rate.");
+            InspectorTest.expectEqual(originalRecords[1].startTime, originalRecords[0].endTime, "The second record's startTime should be adjusted to the first record's endTime.");
+
+            let importedTimeline = new WI.MemoryTimeline(WI.TimelineRecord.Type.Memory);
+            for (let record of originalRecords)
+                importedTimeline.addRecord(await WI.MemoryTimelineRecord.fromJSON(record.toJSON()));
+
+            for (let i = 0; i < originalRecords.length; ++i)
+                expectImportedRecordEqualsOriginal(originalRecords[i], importedTimeline.records[i], i);
+        }
+    });
+
+    suite.addTestCase({
+        name: "Timeline.MemoryRecordExportRoundtrip.CPUControl",
+        description: "A WI.CPUTimelineRecord should also round-trip its timestamp through toJSON and fromJSON.",
+        async test() {
+            let threads = [{name: "Main", usage: 10, type: InspectorBackend.Enum.CPUProfiler.ThreadInfoType.Main}];
+            let originalTimeline = new WI.CPUTimeline(WI.TimelineRecord.Type.CPU);
+            for (let timestamp of timestamps)
+                originalTimeline.addRecord(new WI.CPUTimelineRecord({timestamp, usage: 10, threads}));
+
+            let originalRecords = originalTimeline.records;
+            let importedTimeline = new WI.CPUTimeline(WI.TimelineRecord.Type.CPU);
+            for (let record of originalRecords)
+                importedTimeline.addRecord(await WI.CPUTimelineRecord.fromJSON(record.toJSON()));
+
+            for (let i = 0; i < originalRecords.length; ++i)
+                expectImportedRecordEqualsOriginal(originalRecords[i], importedTimeline.records[i], i);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test that WI.MemoryTimelineRecord and WI.CPUTimelineRecord round-trip their timestamps through toJSON and fromJSON.</p>
+</body>
+</html>

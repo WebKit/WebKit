@@ -102,7 +102,7 @@ WI.MemoryTimelineRecord = class MemoryTimelineRecord extends WI.TimelineRecord
     {
         return {
             type: this.type,
-            timestamp: this.startTime,
+            timestamp: this._timestamp,
             categories: this._exportCategories,
         };
     }
