@@ -71,7 +71,7 @@ AncestorSubgridIterator& AncestorSubgridIterator::operator++()
 
     if (m_firstAncestorSubgrid && m_currentAncestorSubgrid && m_direction) {
         CheckedPtr nextAncestor = RenderTraversal::findAncestorOfType<RenderGrid>(*m_currentAncestorSubgrid);
-        m_currentAncestorSubgrid = (nextAncestor && nextAncestor->isSubgrid(GridLayoutFunctions::flowAwareDirectionForGridItem(*nextAncestor, *m_firstAncestorSubgrid, m_direction.value()))) ? nextAncestor.get() : nullptr;
+        m_currentAncestorSubgrid = (nextAncestor && nextAncestor->isSubgrid(GridLayoutFunctions::flowAwareDirection(*nextAncestor, *m_firstAncestorSubgrid, m_direction.value()))) ? nextAncestor.get() : nullptr;
     }
     return *this;
 }

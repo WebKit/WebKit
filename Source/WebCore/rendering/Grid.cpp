@@ -305,7 +305,7 @@ GridIterator GridIterator::createForSubgrid(const RenderGrid& subgrid, const Gri
     unsigned fixedIndex = (outer.direction() == Style::GridTrackSizingDirection::Columns) ? outer.m_columnIndex : outer.m_rowIndex;
     fixedIndex -= subgridSpanInOuter.startLine();
 
-    auto innerDirection = GridLayoutFunctions::flowAwareDirectionForGridItem(*parent, subgrid, outer.direction());
+    auto innerDirection = GridLayoutFunctions::flowAwareDirection(*parent, subgrid, outer.direction());
     ASSERT(subgrid.isSubgrid(innerDirection));
 
     if (GridLayoutFunctions::isSubgridReversedDirection(*parent, outer.direction(), subgrid)) {
