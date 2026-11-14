@@ -2,4 +2,6 @@
 PASS e.style['font-variant-alternates'] = "character-variant(more, than, one)" should set the property value
 PASS e.style['font-variant-alternates'] = "styleset(more, than, one)" should set the property value
 PASS e.style['font-variant-alternates'] = "styleset(more, than, one) character-variant(more, than, one)" should set the property value
+PASS e.style['font-variant-alternates'] = "normal" should set the property value
+PASS e.style['font-variant-alternates'] = "historical-forms" should set the property value
 

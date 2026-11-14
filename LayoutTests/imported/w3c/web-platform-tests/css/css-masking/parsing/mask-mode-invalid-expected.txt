@@ -1,0 +1,10 @@
+
+PASS e.style['mask-mode'] = "auto" should not set the property value
+PASS e.style['mask-mode'] = "none" should not set the property value
+PASS e.style['mask-mode'] = "alpha luminance" should not set the property value
+PASS e.style['mask-mode'] = "alpha," should not set the property value
+PASS e.style['mask-mode'] = ", alpha" should not set the property value
+PASS e.style['mask-mode'] = "rubbish" should not set the property value
+PASS e.style['mask-mode'] = "center" should not set the property value
+PASS e.style['mask-mode'] = "repeat" should not set the property value
+

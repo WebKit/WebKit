@@ -29,4 +29,7 @@ PASS e.style['opacity'] = "min(0, 0.5)" should set the property value
 PASS e.style['opacity'] = "max(0.5, 0)" should set the property value
 PASS e.style['opacity'] = "max(0, 0.5)" should set the property value
 PASS e.style['opacity'] = "min(-0.4, 0.5)" should set the property value
+PASS e.style['opacity'] = "2.5e-1" should set the property value
+PASS e.style['opacity'] = "2.5e1%" should set the property value
+PASS e.style['opacity'] = "100.25%" should set the property value
 

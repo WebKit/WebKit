@@ -7,4 +7,8 @@ PASS e.style['font-feature-settings'] = "\"liga\" off" should set the property v
 PASS e.style['font-feature-settings'] = "\"tnum\", 'hist'" should set the property value
 PASS e.style['font-feature-settings'] = "\"PKRN\"" should set the property value
 PASS e.style['font-feature-settings'] = "\"dlig\" 1, \"smcp\" on, \"dlig\" 0" should set the property value
+PASS e.style['font-feature-settings'] = "\"dlig\" 1, \"smcp\" on, \"liga\" off" should set the property value
+PASS e.style['font-feature-settings'] = "\"swsh\" 2" should set the property value
+PASS e.style['font-feature-settings'] = "\"!@#$\"" should set the property value
+PASS e.style['font-feature-settings'] = "\"a bc\"" should set the property value
 

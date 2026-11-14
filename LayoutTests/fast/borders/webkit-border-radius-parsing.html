@@ -1,0 +1,38 @@
+<pre id="console"></pre>
+<script>
+
+    function log(message)
+    {
+        document.getElementById("console").appendChild(document.createTextNode(message + "\n"));
+    }
+
+    function testBorderRadiusValue(property, value, expectedRadii)
+    {
+        log ("Testing " + property + ": " + value + ";");
+        var element = document.createElement("div");
+        document.body.appendChild(element);
+        element.style.setProperty(property, value);
+        var computedStyle = getComputedStyle(element);
+        var properties = ["border-top-left-radius", "border-top-right-radius",
+                          "border-bottom-right-radius", "border-bottom-left-radius"];
+        var failed = false;
+        for (var i = 0; i < 4; ++i) {
+            actualRadius = computedStyle.getPropertyValue(properties[i]);
+            if (actualRadius === expectedRadii[i])
+                continue;
+
+            failed = true;
+            log("FAILED: " + properties[i] + " was " + actualRadius + " instead of " + expectedRadii[i]);
+        }
+        if (!failed)
+            log("SUCCESS");
+        document.body.removeChild(element);
+    }
+
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    // -webkit-border-radius treats two values as the horizontal and vertical radii of every corner.
+    testBorderRadiusValue("-webkit-border-radius", "10px 20px", ["10px 20px", "10px 20px", "10px 20px", "10px 20px"]);
+    testBorderRadiusValue("-webkit-border-radius", "10% 20%", ["10% 20%", "10% 20%", "10% 20%", "10% 20%"]);
+</script>

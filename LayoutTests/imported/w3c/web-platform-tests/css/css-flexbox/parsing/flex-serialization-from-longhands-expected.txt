@@ -1,0 +1,10 @@
+
+PASS flex serializes from longhands {}
+PASS flex serializes from longhands {"flex-grow":"2"}
+PASS flex serializes from longhands {"flex-grow":"2","flex-shrink":"3"}
+PASS flex serializes from longhands {"flex-grow":"2","flex-shrink":"3","flex-basis":"0"}
+PASS flex serializes from longhands {"flex-grow":"2","flex-shrink":"0","flex-basis":"50%"}
+PASS flex serializes from longhands {"flex-grow":"2","flex-shrink":"0","flex-basis":"auto"}
+PASS Setting flex-grow after flex: none updates the flex shorthand
+PASS A unitless zero flex-basis serializes as 0px
+

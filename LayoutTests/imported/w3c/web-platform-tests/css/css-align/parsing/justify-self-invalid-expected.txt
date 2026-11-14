@@ -21,4 +21,5 @@ PASS e.style['justify-self'] = "space-between" should not set the property value
 PASS e.style['justify-self'] = "space-evenly" should not set the property value
 PASS e.style['justify-self'] = "start safe" should not set the property value
 PASS e.style['justify-self'] = "unsafe" should not set the property value
+PASS e.style['justify-self'] = "end unsafe" should not set the property value
 

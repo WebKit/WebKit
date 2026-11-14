@@ -6,4 +6,5 @@ PASS e.style['scroll-snap-align'] = "center" should set the property value
 PASS e.style['scroll-snap-align'] = "start none" should set the property value
 PASS e.style['scroll-snap-align'] = "center end" should set the property value
 PASS e.style['scroll-snap-align'] = "start start" should set the property value
+PASS e.style['scroll-snap-align'] = "start end" should set the property value
 

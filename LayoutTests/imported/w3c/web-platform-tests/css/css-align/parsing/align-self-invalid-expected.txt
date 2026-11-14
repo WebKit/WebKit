@@ -15,7 +15,10 @@ PASS e.style['align-self'] = "normal baseline" should not set the property value
 PASS e.style['align-self'] = "normal safe" should not set the property value
 PASS e.style['align-self'] = "normal unsafe" should not set the property value
 PASS e.style['align-self'] = "right legacy" should not set the property value
+PASS e.style['align-self'] = "right" should not set the property value
 PASS e.style['align-self'] = "safe" should not set the property value
+PASS e.style['align-self'] = "safe auto" should not set the property value
+PASS e.style['align-self'] = "safe right" should not set the property value
 PASS e.style['align-self'] = "self-end unsafe" should not set the property value
 PASS e.style['align-self'] = "space-around" should not set the property value
 PASS e.style['align-self'] = "space-between" should not set the property value
@@ -23,4 +26,5 @@ PASS e.style['align-self'] = "space-evenly" should not set the property value
 PASS e.style['align-self'] = "start safe" should not set the property value
 PASS e.style['align-self'] = "unsafe right" should not set the property value
 PASS e.style['align-self'] = "unsafe" should not set the property value
+PASS e.style['align-self'] = "end unsafe" should not set the property value
 

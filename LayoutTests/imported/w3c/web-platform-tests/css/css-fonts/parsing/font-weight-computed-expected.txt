@@ -19,6 +19,7 @@ PASS Property font-weight value 'calc(0)'
 PASS Property font-weight value 'calc(-100)'
 PASS Property font-weight value 'calc(100 + 100)'
 PASS Property font-weight value 'calc(100 + (sign(20cqw - 10px) * 5))'
+PASS Property font-weight value 'calc(600 + 700)'
 PASS 1 made bolder computes to 400
 PASS 50 made bolder computes to 400
 PASS 100 made bolder computes to 400

@@ -1,7 +1,19 @@
 
 PASS e.style['font-feature-settings'] = "normal \"dlig\"" should not set the property value
+PASS e.style['font-feature-settings'] = "normal, normal" should not set the property value
 PASS e.style['font-feature-settings'] = "\"c2sc\", normal" should not set the property value
 PASS e.style['font-feature-settings'] = "\"tnum\" \"hist\"" should not set the property value
 PASS e.style['font-feature-settings'] = "\"silly\" off" should not set the property value
 PASS e.style['font-feature-settings'] = "dlig" should not set the property value
+PASS e.style['font-feature-settings'] = "dlig, DLIG, DLig" should not set the property value
+PASS e.style['font-feature-settings'] = "1" should not set the property value
+PASS e.style['font-feature-settings'] = "off" should not set the property value
+PASS e.style['font-feature-settings'] = "\"aaaaa\"" should not set the property value
+PASS e.style['font-feature-settings'] = "\"aaaa\" 1.5" should not set the property value
+PASS e.style['font-feature-settings'] = "\"aaaa\" \"bbbb\"" should not set the property value
+PASS e.style['font-feature-settings'] = "\"aaaa\"," should not set the property value
+PASS e.style['font-feature-settings'] = "\"aaaa\", on" should not set the property value
+PASS e.style['font-feature-settings'] = "\"aaaa\" 1, \"bbbb\", 0" should not set the property value
+PASS e.style['font-feature-settings'] = "," should not set the property value
+PASS e.style['font-feature-settings'] = ",\"aaaa\"" should not set the property value
 

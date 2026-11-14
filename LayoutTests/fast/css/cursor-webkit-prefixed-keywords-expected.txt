@@ -1,0 +1,14 @@
+Test the parsing of the -webkit- prefixed cursor keywords.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test the -webkit- prefixed cursor keywords, which should round-trip exactly.
+PASS style.cssText is "cursor: -webkit-grab;"
+PASS style.cssText is "cursor: -webkit-grabbing;"
+PASS style.cssText is "cursor: -webkit-zoom-in;"
+PASS style.cssText is "cursor: -webkit-zoom-out;"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

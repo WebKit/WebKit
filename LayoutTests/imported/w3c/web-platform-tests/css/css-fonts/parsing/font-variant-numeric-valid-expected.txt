@@ -1,12 +1,16 @@
 
 PASS e.style['font-variant-numeric'] = "normal" should set the property value
 PASS e.style['font-variant-numeric'] = "lining-nums" should set the property value
+PASS e.style['font-variant-numeric'] = "lining-nums slashed-zero" should set the property value
+PASS e.style['font-variant-numeric'] = "lining-nums proportional-nums" should set the property value
+PASS e.style['font-variant-numeric'] = "lining-nums diagonal-fractions" should set the property value
 PASS e.style['font-variant-numeric'] = "oldstyle-nums" should set the property value
 PASS e.style['font-variant-numeric'] = "proportional-nums" should set the property value
 PASS e.style['font-variant-numeric'] = "tabular-nums" should set the property value
 PASS e.style['font-variant-numeric'] = "diagonal-fractions" should set the property value
 PASS e.style['font-variant-numeric'] = "stacked-fractions" should set the property value
 PASS e.style['font-variant-numeric'] = "ordinal" should set the property value
+PASS e.style['font-variant-numeric'] = "ordinal slashed-zero" should set the property value
 PASS e.style['font-variant-numeric'] = "slashed-zero" should set the property value
 PASS e.style['font-variant-numeric'] = "oldstyle-nums tabular-nums diagonal-fractions" should set the property value
 PASS e.style['font-variant-numeric'] = "slashed-zero ordinal stacked-fractions proportional-nums lining-nums" should set the property value

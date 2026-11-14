@@ -19,4 +19,5 @@ PASS e.style['scroll-margin'] = "auto" should not set the property value
 PASS e.style['scroll-margin'] = "20%" should not set the property value
 PASS e.style['scroll-margin'] = "-30%" should not set the property value
 PASS e.style['scroll-margin'] = "1px 2px 3px 4px 5px" should not set the property value
+PASS e.style['scroll-margin'] = "calc(25% + 10px)" should not set the property value
 

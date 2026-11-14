@@ -17,4 +17,8 @@ PASS e.style['background-image'] = "radial-gradient(at right 40%, red, blue)" sh
 PASS e.style['background-image'] = "radial-gradient(at right 30% top 60px, red, blue)" should set the property value
 PASS e.style['background-image'] = "radial-gradient(at top, red, blue)" should set the property value
 PASS e.style['background-image'] = "radial-gradient(at top center, red, blue)" should set the property value
+PASS e.style['background-image'] = "radial-gradient(circle closest-side at top, red, blue)" should set the property value
+PASS e.style['background-image'] = "radial-gradient(circle closest-side at top left, red, blue)" should set the property value
+PASS e.style['background-image'] = "radial-gradient(circle closest-side at 10px 20%, red, blue)" should set the property value
+PASS e.style['background-image'] = "radial-gradient(10px 10px at center, red, blue)" should set the property value
 

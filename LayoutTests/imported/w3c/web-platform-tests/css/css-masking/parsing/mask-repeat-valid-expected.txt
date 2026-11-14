@@ -1,5 +1,6 @@
 
 PASS e.style['mask-repeat'] = "repeat-x" should set the property value
+PASS e.style['mask-repeat'] = "repeat-x, repeat-y" should set the property value
 PASS e.style['mask-repeat'] = "repeat-y" should set the property value
 PASS e.style['mask-repeat'] = "repeat" should set the property value
 PASS e.style['mask-repeat'] = "space" should set the property value
@@ -21,4 +22,5 @@ PASS e.style['mask-repeat'] = "no-repeat repeat" should set the property value
 PASS e.style['mask-repeat'] = "no-repeat space" should set the property value
 PASS e.style['mask-repeat'] = "no-repeat round" should set the property value
 PASS e.style['mask-repeat'] = "no-repeat no-repeat" should set the property value
+PASS mask-repeat with fewer values than there are layers serializes as specified
 

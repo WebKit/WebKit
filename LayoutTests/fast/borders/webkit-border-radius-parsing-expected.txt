@@ -1,0 +1,5 @@
+Testing -webkit-border-radius: 10px 20px;
+SUCCESS
+Testing -webkit-border-radius: 10% 20%;
+SUCCESS
+

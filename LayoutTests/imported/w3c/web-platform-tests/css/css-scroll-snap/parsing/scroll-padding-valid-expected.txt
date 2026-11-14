@@ -28,6 +28,7 @@ PASS e.style['scroll-padding'] = "10px" should set the property value
 PASS e.style['scroll-padding'] = "0" should set the property value
 PASS e.style['scroll-padding'] = "20%" should set the property value
 PASS e.style['scroll-padding'] = "calc(2em + 3ex)" should set the property value
+PASS e.style['scroll-padding'] = "calc(50px + 10%) 20px" should set the property value
 PASS e.style['scroll-padding'] = "1px 2px" should set the property value
 PASS e.style['scroll-padding'] = "1px 2px 3%" should set the property value
 PASS e.style['scroll-padding'] = "1px 2px 3% 4px" should set the property value

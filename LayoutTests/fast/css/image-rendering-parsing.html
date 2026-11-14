@@ -7,7 +7,7 @@
 <p id="description"></p>
 <div id="console"></div>
 <script>
-description("Test the parsing of the image-rendering property.");
+description("Test the parsing of the non-standard and legacy image-rendering values.");
 
 var div;
 function testImageRendering(value, computedValue)
@@ -22,9 +22,6 @@ function testImageRendering(value, computedValue)
     document.body.removeChild(div);
 }
 
-testImageRendering('auto', 'auto');
-testImageRendering('crisp-edges', 'crisp-edges');
-testImageRendering('pixelated', 'pixelated');
 testImageRendering('-webkit-crisp-edges', 'crisp-edges');
 testImageRendering('-webkit-optimize-contrast', 'crisp-edges');
 testImageRendering('optimizeSpeed', 'optimizespeed');

@@ -1,5 +1,7 @@
 
 PASS e.style['background-image'] = "radial-gradient(at top 0px, red, blue)" should not set the property value
+PASS e.style['background-image'] = "radial-gradient(at 10px 20% circle closest-side, red, blue)" should not set the property value
+PASS e.style['background-image'] = "radial-gradient(circle at 10px 20% circle, red, blue)" should not set the property value
 PASS e.style['background-image'] = "radial-gradient(at center left 1px, red, blue)" should not set the property value
 PASS e.style['background-image'] = "radial-gradient(at center top 2px, red, blue)" should not set the property value
 PASS e.style['background-image'] = "radial-gradient(at right 3% center, red, blue)" should not set the property value

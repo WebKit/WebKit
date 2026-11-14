@@ -4,4 +4,5 @@ PASS e.style['mask-repeat'] = "repeat-z" should not set the property value
 PASS e.style['mask-repeat'] = "repeat undefined" should not set the property value
 PASS e.style['mask-repeat'] = "undefined repeat" should not set the property value
 PASS e.style['mask-repeat'] = "repeat; round" should not set the property value
+PASS e.style['mask-repeat'] = "45" should not set the property value
 

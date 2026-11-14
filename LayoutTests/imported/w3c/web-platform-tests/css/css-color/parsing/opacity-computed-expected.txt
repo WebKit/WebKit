@@ -29,4 +29,7 @@ PASS Property opacity value 'min(0, 0.5)'
 PASS Property opacity value 'max(0.5, 0)'
 PASS Property opacity value 'max(0, 0.5)'
 PASS Property opacity value 'min(-0.4, 0.5)'
+PASS Property opacity value '2.5e-1'
+PASS Property opacity value '2.5e1%'
+PASS Property opacity value '100.25%'
 

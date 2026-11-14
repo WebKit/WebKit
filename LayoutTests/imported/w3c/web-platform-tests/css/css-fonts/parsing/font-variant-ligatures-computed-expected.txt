@@ -9,4 +9,5 @@ PASS Property font-variant-ligatures value 'historical-ligatures'
 PASS Property font-variant-ligatures value 'no-historical-ligatures'
 PASS Property font-variant-ligatures value 'contextual'
 PASS Property font-variant-ligatures value 'no-contextual'
+PASS Property font-variant-ligatures value 'no-contextual common-ligatures'
 

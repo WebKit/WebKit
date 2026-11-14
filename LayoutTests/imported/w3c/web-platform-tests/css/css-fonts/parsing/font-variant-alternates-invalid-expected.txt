@@ -14,4 +14,5 @@ PASS e.style['font-variant-alternates'] = "unkown(one) myfunction(two)" should n
 PASS e.style['font-variant-alternates'] = "styleset(thisone) styleset(something,else)" should not set the property value
 PASS e.style['font-variant-alternates'] = "swash(foo) swash(bar)" should not set the property value
 PASS e.style['font-variant-alternates'] = "ornaments(one historical-forms" should not set the property value
+PASS e.style['font-variant-alternates'] = "normal historical-forms" should not set the property value
 

@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Test the parsing of the -webkit- prefixed cursor keywords.");
+
+var style;
+
+function makeCursorRule(rule)
+{
+    return "cursor: " + rule + ";";
+}
+
+function testCursorRule(rule)
+{
+    var cssText = makeCursorRule(rule);
+    style = roundtripCssRule(cssText);
+    shouldBeEqualToString('style.cssText', cssText);
+}
+
+function roundtripCssRule(cssText)
+{
+    var div = document.createElement("div");
+    div.setAttribute("style", cssText);
+    document.body.appendChild(div);
+    var result = div.style;
+    document.body.removeChild(div);
+    return result;
+}
+
+debug('Test the -webkit- prefixed cursor keywords, which should round-trip exactly.');
+
+testCursorRule('-webkit-grab');
+testCursorRule('-webkit-grabbing');
+testCursorRule('-webkit-zoom-in');
+testCursorRule('-webkit-zoom-out');
+
+successfullyParsed = true;
+</script>
+</body>
+</html>

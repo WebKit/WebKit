@@ -1,0 +1,8 @@
+
+PASS e.style['mask-mode'] = "alpha" should set the property value
+PASS e.style['mask-mode'] = "luminance" should set the property value
+PASS e.style['mask-mode'] = "match-source" should set the property value
+PASS e.style['mask-mode'] = "luminance, alpha" should set the property value
+PASS e.style['mask-mode'] = "alpha, alpha, alpha, alpha" should set the property value
+PASS e.style['mask-mode'] = "match-source, alpha, luminance, luminance" should set the property value
+
