@@ -397,6 +397,8 @@ void WebAutomationSession::didDestroyFrame(FrameIdentifier frameID)
     for (auto& callback : m_pendingEagerNavigationInBrowsingContextCallbacksPerFrame.take(frameID))
         callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(FrameNotFound)));
 
+    schedulePageAndFramesLoadCheck();
+
     // The spec's navigable seen nodes map is weak between a navigable and its set, so
     // the set dies with the navigable. Note this runs after a process swap has already
     // moved the set onto the replacement frame's identifier, so it drops nothing that
@@ -896,6 +898,7 @@ void WebAutomationSession::loadTimerFired()
     respondToPendingFrameNavigationCallbacksWithTimeout(m_pendingEagerNavigationInBrowsingContextCallbacksPerFrame);
     respondToPendingPageNavigationCallbacksWithTimeout(m_pendingNormalNavigationInBrowsingContextCallbacksPerPage);
     respondToPendingPageNavigationCallbacksWithTimeout(m_pendingEagerNavigationInBrowsingContextCallbacksPerPage);
+    respondToPendingPageNavigationCallbacksWithTimeout(m_pendingPageAndFramesLoadCallbacksPerPage);
 #if ENABLE(WEBDRIVER_BIDI)
     completeBidiCommitWaits([](auto&) {
         return true;
@@ -1017,6 +1020,8 @@ void WebAutomationSession::willShowJavaScriptDialog(WebPageProxy& page, const St
             respondToPendingFrameNavigationCallbacksWithTimeout(m_pendingNormalNavigationInBrowsingContextCallbacksPerFrame);
             respondToPendingPageNavigationCallbacksWithTimeout(m_pendingNormalNavigationInBrowsingContextCallbacksPerPage);
         }
+        // A prompt can keep a frame from finishing its load, as one keeps a page loading.
+        respondToPendingPageAndFramesLoadCallbacksWithSuccess(page->identifier());
 
         if (!m_evaluateJavaScriptFunctionCallbacks.isEmpty()) {
             for (auto key : copyToVector(m_evaluateJavaScriptFunctionCallbacks.keys())) {
@@ -1099,6 +1104,77 @@ void WebAutomationSession::waitForHistoryTraversalToComplete(WebPageProxy& page,
     waitForNavigationToCompleteOnPage(page, loadStrategy, timeout, WTF::move(callback), WTF::move(navigation), isSameDocumentNavigation ? SameDocumentNavigation::Yes : SameDocumentNavigation::No);
 }
 
+static bool pageAndFramesHaveFinishedLoading(WebPageProxy& page)
+{
+    if (protect(page.pageLoadState())->isLoading())
+        return false;
+    RefPtr mainFrame = page.mainFrame();
+    for (RefPtr frame = mainFrame; frame; frame = frame->traverseNext(mainFrame.get())) {
+        if (frame->frameLoadState().state() != FrameLoadState::State::Finished)
+            return false;
+    }
+    return true;
+}
+
+void WebAutomationSession::waitForPageAndFramesToFinishLoading(WebPageProxy& page, Inspector::Protocol::Automation::PageLoadStrategy loadStrategy, Seconds timeout, Inspector::CommandCallback<void>&& callback)
+{
+    // The eager strategy waits for the frames' load events too, since a frame's load state doesn't tell when its document
+    // has loaded.
+    if (loadStrategy == Inspector::Protocol::Automation::PageLoadStrategy::None) {
+        callback({ });
+        return;
+    }
+
+    m_loadTimer.startOneShot(timeout);
+    addPendingNavigationCallback(m_pendingPageAndFramesLoadCallbacksPerPage, page.identifier(), PendingPageNavigationCallback { nullptr, false, false, WTF::move(callback) });
+    schedulePageAndFramesLoadCheck();
+}
+
+void WebAutomationSession::schedulePageAndFramesLoadCheck()
+{
+    if (m_pendingPageAndFramesLoadCallbacksPerPage.isEmpty() || m_pageAndFramesLoadCheckIsScheduled)
+        return;
+
+    // WebPageProxy updates a frame's load state after it reports the end of the load, so check once it has.
+    m_pageAndFramesLoadCheckIsScheduled = true;
+    RunLoop::mainSingleton().dispatch([weakThis = WeakPtr { *this }] {
+        RefPtr protectedThis = weakThis;
+        if (!protectedThis)
+            return;
+        protectedThis->m_pageAndFramesLoadCheckIsScheduled = false;
+        for (auto pageID : copyToVector(protectedThis->m_pendingPageAndFramesLoadCallbacksPerPage.keys())) {
+            if (RefPtr page = WebProcessProxy::webPage(pageID); page && pageAndFramesHaveFinishedLoading(*page))
+                protectedThis->respondToPendingPageAndFramesLoadCallbacksWithSuccess(pageID);
+        }
+    });
+}
+
+void WebAutomationSession::respondToPendingPageAndFramesLoadCallbacksWithSuccess(WebPageProxyIdentifier pageID)
+{
+    respondToPendingNavigationCallbacksWithSuccess(WTF::map(m_pendingPageAndFramesLoadCallbacksPerPage.take(pageID), [](auto&& pending) {
+        return WTF::move(pending.callback);
+    }));
+}
+
+void WebAutomationSession::traverseHistoryByDelta(WebPageProxy& page, int delta, Inspector::Protocol::Automation::PageLoadStrategy loadStrategy, Seconds timeout, Inspector::CommandCallback<void>&& callback)
+{
+    // When the main frame's entry stays, the traversal changes subframes only, and may load documents in them. Back
+    // waits for the pageshow event of each document that it loads, which follows the document's load event
+    // (https://w3c.github.io/webdriver/#back). Without a running web process, the traversal loads the whole page.
+    RefPtr currentItem = page.backForwardListWrapper().currentItem();
+    RefPtr targetItem = page.backForwardListWrapper().itemAtDeltaFromCurrentIndex(delta, AllowSkippingBackForwardItems::No);
+    bool onlySubframesChange = currentItem && targetItem && page.hasRunningProcess() && currentItem->mainFrameState().itemSequenceNumber == targetItem->mainFrameState().itemSequenceNumber;
+
+    // With Site Isolation, a page's history.go() traverses with this too, from SessionHistoryTraversalQueue, which this
+    // bypasses, as the commands always did.
+    RefPtr navigation = page.goToBackForwardItemAtIndexForTraversal(delta, [] { });
+    if (onlySubframesChange) {
+        waitForPageAndFramesToFinishLoading(page, loadStrategy, timeout, WTF::move(callback));
+        return;
+    }
+    waitForHistoryTraversalToComplete(page, loadStrategy, timeout, WTF::move(callback), WTF::move(navigation));
+}
+
 void WebAutomationSession::goBackInBrowsingContext(const Inspector::Protocol::Automation::BrowsingContextHandle& handle, std::optional<Inspector::Protocol::Automation::PageLoadStrategy>&& optionalPageLoadStrategy, std::optional<double>&& optionalPageLoadTimeout, CommandCallback<void>&& callback)
 {
     auto page = webPageProxyForHandle(handle);
@@ -1107,7 +1183,7 @@ void WebAutomationSession::goBackInBrowsingContext(const Inspector::Protocol::Au
     auto pageLoadStrategy = optionalPageLoadStrategy.value_or(defaultPageLoadStrategy);
     auto pageLoadTimeout = optionalPageLoadTimeout ? Seconds::fromMilliseconds(*optionalPageLoadTimeout) : defaultPageLoadTimeout;
 
-    waitForHistoryTraversalToComplete(*page, pageLoadStrategy, pageLoadTimeout, WTF::move(callback), page->goBack());
+    traverseHistoryByDelta(*page, -1, pageLoadStrategy, pageLoadTimeout, WTF::move(callback));
 }
 
 void WebAutomationSession::goForwardInBrowsingContext(const Inspector::Protocol::Automation::BrowsingContextHandle& handle, std::optional<Inspector::Protocol::Automation::PageLoadStrategy>&& optionalPageLoadStrategy, std::optional<double>&& optionalPageLoadTimeout, CommandCallback<void>&& callback)
@@ -1118,7 +1194,7 @@ void WebAutomationSession::goForwardInBrowsingContext(const Inspector::Protocol:
     auto pageLoadStrategy = optionalPageLoadStrategy.value_or(defaultPageLoadStrategy);
     auto pageLoadTimeout = optionalPageLoadTimeout ? Seconds::fromMilliseconds(*optionalPageLoadTimeout) : defaultPageLoadTimeout;
 
-    waitForHistoryTraversalToComplete(*page, pageLoadStrategy, pageLoadTimeout, WTF::move(callback), page->goForward());
+    traverseHistoryByDelta(*page, 1, pageLoadStrategy, pageLoadTimeout, WTF::move(callback));
 }
 
 void WebAutomationSession::traverseHistoryInBrowsingContext(const Inspector::Protocol::Automation::BrowsingContextHandle& handle, int delta, CommandCallback<void>&& callback)
@@ -1132,12 +1208,11 @@ void WebAutomationSession::traverseHistoryInBrowsingContext(const Inspector::Pro
         return;
     }
 
-    // The spec traverses the session history by the delta as it is; entries that script added without a user gesture
-    // are not skipped, as history.go() does not skip them, so there is no entry only when the delta is out of range.
-    RefPtr targetItem = page->backForwardListWrapper().itemAtDeltaFromCurrentIndex(delta, AllowSkippingBackForwardItems::No);
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!targetItem, NoSuchHistoryEntry);
+    // Entries that script added without a user gesture count, as history.go() counts them, so there is no entry only when
+    // the delta is out of range.
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page->backForwardListWrapper().itemAtDeltaFromCurrentIndex(delta, AllowSkippingBackForwardItems::No), NoSuchHistoryEntry);
 
-    waitForHistoryTraversalToComplete(*page, defaultPageLoadStrategy, defaultPageLoadTimeout, WTF::move(callback), page->goToBackForwardItem(*targetItem));
+    traverseHistoryByDelta(*page, delta, defaultPageLoadStrategy, defaultPageLoadTimeout, WTF::move(callback));
 }
 
 void WebAutomationSession::reloadBrowsingContext(const Inspector::Protocol::Automation::BrowsingContextHandle& handle, std::optional<Inspector::Protocol::Automation::PageLoadStrategy>&& optionalPageLoadStrategy, std::optional<double>&& optionalPageLoadTimeout, CommandCallback<void>&& callback)
@@ -1368,7 +1443,8 @@ bool WebAutomationSession::hasPendingNavigationCallbacks() const
         return true;
 #endif
     return !m_pendingNormalNavigationInBrowsingContextCallbacksPerPage.isEmpty() || !m_pendingEagerNavigationInBrowsingContextCallbacksPerPage.isEmpty()
-        || !m_pendingNormalNavigationInBrowsingContextCallbacksPerFrame.isEmpty() || !m_pendingEagerNavigationInBrowsingContextCallbacksPerFrame.isEmpty();
+        || !m_pendingNormalNavigationInBrowsingContextCallbacksPerFrame.isEmpty() || !m_pendingEagerNavigationInBrowsingContextCallbacksPerFrame.isEmpty()
+        || !m_pendingPageAndFramesLoadCallbacksPerPage.isEmpty();
 }
 
 Vector<Inspector::CommandCallback<void>> WebAutomationSession::takePendingPageNavigationCallbacks(HashMap<WebPageProxyIdentifier, Vector<PendingPageNavigationCallback>>& map, const WebPageProxy& page, API::Navigation* finishedNavigation, UnboundWaits unboundWaits, NavigationNotification notification)
@@ -1433,6 +1509,8 @@ void WebAutomationSession::navigationOccurredForFrame(const WebFrameProxy& frame
         respondToPendingNavigationCallbacksWithSuccess(m_pendingEagerNavigationInBrowsingContextCallbacksPerFrame.take(frame.frameID()));
         respondToPendingNavigationCallbacksWithSuccess(m_pendingNormalNavigationInBrowsingContextCallbacksPerFrame.take(frame.frameID()));
     }
+
+    schedulePageAndFramesLoadCheck();
 }
 
 void WebAutomationSession::navigationDestroyed(const WebPageProxy& page, const API::Navigation& navigation)
@@ -1451,6 +1529,9 @@ void WebAutomationSession::navigationDestroyed(const WebPageProxy& page, const A
     };
     markWaitsForDestroyedNavigation(m_pendingNormalNavigationInBrowsingContextCallbacksPerPage);
     markWaitsForDestroyedNavigation(m_pendingEagerNavigationInBrowsingContextCallbacksPerPage);
+
+    // A traversal whose load in a subframe was cancelled before it started leaves the frames as they were.
+    schedulePageAndFramesLoadCheck();
 
 #if ENABLE(WEBDRIVER_BIDI)
     // https://w3c.github.io/webdriver-bidi/#await-a-navigation: a navigation that ends before committing without
@@ -1926,6 +2007,8 @@ void WebAutomationSession::willClosePage(const WebPageProxy& page)
     for (auto& pending : m_pendingNormalNavigationInBrowsingContextCallbacksPerPage.take(page.identifier()))
         pending.callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(WindowNotFound)));
     for (auto& pending : m_pendingEagerNavigationInBrowsingContextCallbacksPerPage.take(page.identifier()))
+        pending.callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(WindowNotFound)));
+    for (auto& pending : m_pendingPageAndFramesLoadCallbacksPerPage.take(page.identifier()))
         pending.callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(WindowNotFound)));
 
     // The web process does not report the frames of a closing page destroyed, so the waits on them end here.

@@ -2,6 +2,7 @@ import pytest
 from webdriver import error
 
 from tests.support.classic.asserts import assert_error, assert_success
+from tests.support.sync import Poll
 
 
 def back(session):
@@ -131,6 +132,37 @@ def test_history_pushstate(session, inline):
 
     assert session.url == pushstate_page
     assert session.execute_script("return history.state;") is None
+
+
+def test_history_pushstate_without_user_activation(session, inline):
+    first_page = inline("<p>first</p>")
+    second_page = inline("<p>second</p>")
+
+    session.url = first_page
+    session.url = second_page
+    session.execute_script("history.pushState(null, '', '#pushstate');")
+    assert session.url == "{}#pushstate".format(second_page)
+
+    response = back(session)
+    assert_success(response)
+
+    assert session.url == second_page
+
+
+def test_navigation_from_script_without_user_activation(session, inline):
+    first_page = inline("<p>first</p>")
+    second_page = inline("<p>second</p>")
+    third_page = inline("<p>third</p>")
+
+    session.url = first_page
+    session.url = second_page
+    session.execute_script("window.location.href = arguments[0];", args=[third_page])
+    Poll(session, message="The third page did not load").until(lambda s: s.url == third_page)
+
+    response = back(session)
+    assert_success(response)
+
+    assert session.url == second_page
 
 
 def test_removed_iframe(session, url, inline):

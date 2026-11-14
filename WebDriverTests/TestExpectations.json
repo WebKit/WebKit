@@ -3602,26 +3602,20 @@
     "imported/w3c/webdriver/tests/bidi/browsing_context/set_viewport/user_contexts.py": {
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288333"}}
     },
-    "imported/w3c/webdriver/tests/bidi/browsing_context/traverse_history/context.py": {
+    "imported/w3c/webdriver/tests/bidi/browsing_context/traverse_history/delta.py": {
         "subtests": {
-            "test_top_level_contexts": {
-                "expected": {"mac": {"status": ["TIMEOUT"], "note": "Fails on Mac, not investigated yet"}, "mac-site-isolation": {"status": ["TIMEOUT"], "note": "With Site Isolation, traverseHistory times out"}}
+            "test_history_push_state": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288058"}}
             }
         }
     },
-    "imported/w3c/webdriver/tests/bidi/browsing_context/traverse_history/delta.py": {
+    "imported/w3c/webdriver/tests/bidi/browsing_context/traverse_history/frame.py": {
         "subtests": {
-            "test_delta_forward_and_back": {
-                "expected": {"mac": {"status": ["TIMEOUT"], "note": "Fails on Mac, not investigated yet"}, "mac-site-isolation": {"status": ["TIMEOUT"], "note": "With Site Isolation, traverseHistory times out"}}
+            "test_navigated_frame_and_main_frame_fragment[same_origin]": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/331658"}, "mac-site-isolation": { "status": ["PASS"], "bug": "webkit.org/b/331658"}}
             },
-            "test_navigate_special_protocols[data url]": {
-                "expected": {"mac": {"status": ["TIMEOUT"], "note": "Fails on Mac, not investigated yet"}, "mac-site-isolation": {"status": ["TIMEOUT"], "note": "With Site Isolation, traverseHistory times out"}}
-            },
-            "test_navigate_special_protocols[file url]": {
-                "expected": {"mac": {"status": ["TIMEOUT"], "note": "Fails on Mac, not investigated yet"}, "mac-site-isolation": {"status": ["TIMEOUT"], "note": "With Site Isolation, traverseHistory times out"}}
-            },
-            "test_history_push_state": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288058"}}
+            "test_navigated_frame_and_main_frame_fragment[cross_origin]": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/331658"}}
             }
         }
     },
