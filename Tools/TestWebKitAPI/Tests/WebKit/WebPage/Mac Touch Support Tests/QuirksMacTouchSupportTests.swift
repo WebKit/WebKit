@@ -303,7 +303,10 @@ extension MacTouchSupportTests.Quirks {
         )
     }
 
-    private func pinchAfterMouseTracking(over surface: ManipulationSurface) async throws {
+    private func pinchAfterMouseTracking(
+        over surface: ManipulationSurface,
+        followedByTranslationOf translation: CGSize? = nil
+    ) async throws {
         let center = CGPoint(x: surface.bounds.midX, y: surface.bounds.midY)
 
         await recap.play { composer in
@@ -312,7 +315,8 @@ extension MacTouchSupportTests.Quirks {
                 end: CGPoint(x: center.x + 30, y: center.y),
                 spreadBy: 100,
                 duration: .seconds(0.5),
-                precededByDragOf: CGSize(width: 0, height: 40)
+                precededByDragOf: CGSize(width: 0, height: 40),
+                followedByTranslationOf: translation
             )
             composer.liftUpAtAllActivePoints()
         }
@@ -347,6 +351,21 @@ extension MacTouchSupportTests.Quirks {
         #expect(counts.wheel == 0)
         #expect(counts.down == 1)
         #expect(counts.up == 1)
+    }
+
+    @Test
+    func translationAfterAPinchResumesMouseTrackingForContentThatDoesNotHandleIt() async throws {
+        let surface = try await loadManipulationSurface(styleValue: "none")
+        try await installPinchEventCounters(preventingGestureEvents: false)
+
+        try await pinchAfterMouseTracking(over: surface, followedByTranslationOf: CGSize(width: 0, height: 120))
+
+        let counts = try await pinchEventCounts()
+
+        try #require(counts.wheel > 0, "\(counts)")
+        #expect(counts.down > 1)
+        #expect(counts.move > 0)
+        #expect(counts.down == counts.up)
     }
 }
 
