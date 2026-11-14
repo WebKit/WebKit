@@ -1,0 +1,69 @@
+<!DOCTYPE html><!-- webkit-test-runner [ WebCodecsHighBitDepthEnabled=true ] -->
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+// Lossless 64x64 VP9 keyframes with every sample set to Y=601, U=301, V=703.
+const streams = [
+    {
+        codec: 'vp09.02.10.10',
+        format: 'I420P10',
+        chromaWidth: 32,
+        chromaHeight: 32,
+        data: 'kkmDQgAB+AH7ABwSDgwAAAAQAAB4uf///lvIAMf////ysQw4f////JvTBmaxCQA=',
+    },
+    {
+        codec: 'vp09.03.10.10.02',
+        format: 'I422P10',
+        chromaWidth: 32,
+        chromaHeight: 64,
+        data: 'sSTBoQIAH4AfsAHBIODAAAABAAAAeLn///5byADH////8rEMG3////5N6YGQxZnQAA==',
+    },
+];
+
+const width = 64;
+const height = 64;
+const expectedSamples = [601, 301, 703];
+
+function decodeFrame(stream, hardwareAcceleration)
+{
+    return new Promise((resolve, reject) => {
+        const decoder = new VideoDecoder({
+            output: frame => {
+                decoder.close();
+                resolve(frame);
+            },
+            error: reject,
+        });
+        decoder.configure({ codec: stream.codec, codedWidth: width, codedHeight: height, hardwareAcceleration });
+        const data = Uint8Array.from(atob(stream.data), c => c.charCodeAt(0));
+        decoder.decode(new EncodedVideoChunk({ type: 'key', timestamp: 0, data }));
+        decoder.flush().catch(reject);
+    });
+}
+
+for (const stream of streams) {
+    for (const hardwareAcceleration of ['prefer-software', 'no-preference']) {
+        promise_test(async t => {
+            const support = await VideoDecoder.isConfigSupported({ codec: stream.codec, codedWidth: width, codedHeight: height, hardwareAcceleration });
+            assert_implements_optional(support.supported, `${stream.codec} is not supported`);
+
+            const frame = await decodeFrame(stream, hardwareAcceleration);
+            t.add_cleanup(() => frame.close());
+            assert_equals(frame.format, stream.format, 'format');
+
+            const lumaSize = width * height;
+            const chromaSize = stream.chromaWidth * stream.chromaHeight;
+            assert_equals(frame.allocationSize(), 2 * (lumaSize + 2 * chromaSize), 'allocationSize');
+
+            const buffer = new ArrayBuffer(frame.allocationSize());
+            const layout = await frame.copyTo(buffer);
+            const planeSizes = [lumaSize, chromaSize, chromaSize];
+            for (let plane = 0; plane < 3; ++plane) {
+                const samples = new Uint16Array(buffer, layout[plane].offset, planeSizes[plane]);
+                const mismatch = samples.findIndex(sample => sample !== expectedSamples[plane]);
+                assert_equals(mismatch, -1, `plane ${plane} sample ${mismatch} is ${samples[mismatch]}`);
+            }
+        }, `${stream.format} frame decoded from ${stream.codec} with ${hardwareAcceleration}`);
+    }
+}
+</script>

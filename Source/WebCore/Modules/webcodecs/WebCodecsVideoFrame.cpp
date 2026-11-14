@@ -415,6 +415,14 @@ Ref<WebCodecsVideoFrame> WebCodecsVideoFrame::create(ScriptExecutionContext& con
     return result;
 }
 
+std::optional<VideoPixelFormat> WebCodecsVideoFrame::videoPixelFormatForContext(const ScriptExecutionContext& context, const VideoFrame& frame)
+{
+    auto format = convertVideoFramePixelFormat(frame.pixelFormat());
+    if (format && isHighBitDepthVideoPixelFormat(*format) && !context.settingsValues().webCodecsHighBitDepthEnabled)
+        return { };
+    return format;
+}
+
 NODELETE static VideoPixelFormat computeVideoPixelFormat(VideoPixelFormat baseFormat, bool shouldDiscardAlpha)
 {
     if (!shouldDiscardAlpha)
@@ -482,7 +490,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameFromOt
 {
     auto codedWidth = internalVideoFrame->presentationSize().width();
     auto codedHeight = internalVideoFrame->presentationSize().height();
-    auto initialFormat = convertVideoFramePixelFormat(internalVideoFrame->pixelFormat());
+    auto initialFormat = videoPixelFormatForContext(context, internalVideoFrame);
     auto format = initialFormat ? std::make_optional(computeVideoPixelFormat(*initialFormat, init.alpha == WebCodecsAlphaOption::Discard)) : std::nullopt;
     if (!validateVideoFrameInit(init, codedWidth, codedHeight, format.value_or(VideoPixelFormat::I420)))
         return Exception { ExceptionCode::TypeError,  "VideoFrameInit is not valid"_s };
