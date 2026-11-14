@@ -36,7 +36,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(IIRDSPKernel);
 IIRDSPKernel::IIRDSPKernel(IIRProcessor& processor)
     : AudioDSPKernel(&processor)
     , m_iirFilter(processor.feedforward(), processor.feedback())
-    , m_tailTime(m_iirFilter.tailTime(processor.sampleRate(), processor.isFilterStable()))
+    , m_tailTime(processor.tailTime())
 {
 }
 

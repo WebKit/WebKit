@@ -1,0 +1,12 @@
+Creating many IIRFilterNodes leaves a later filter able to render.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS first sample is 1
+PASS second sample is 0.5
+PASS output after the decay is silent
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
