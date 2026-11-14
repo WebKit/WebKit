@@ -43,25 +43,191 @@ macro(WEBKIT_OPTION_DEFAULT_PORT_VALUE _name _public _value)
     set(_WEBKIT_AVAILABLE_OPTIONS_INITIAL_VALUE_${_name} ${_value})
 endmacro()
 
-# Retires options whose value wtf/Platform.h owns on this port. That value can
-# depend on the SDK, so it isn't knowable at configure time: dropping them from
-# the option list keeps cmakeconfig.h from overriding Platform.h, keeps them out
-# of FEATURE_DEFINES, and makes CMake code that reads one fail loudly. The
-# generators get them from the build-time --defines-file instead. Bug 312033.
+# Retires options whose value wtf/Platform.h owns on this port. Dropping them
+# from the option list keeps cmakeconfig.h from overriding Platform.h and keeps
+# them out of FEATURE_DEFINES; the generators get them from the build-time
+# --defines-file instead. Bug 312033. WEBKIT_PROBE_PLATFORM_H() later sets each
+# one to the value Platform.h gives it, for the CMake code that reads them.
 macro(WEBKIT_OPTION_OWNED_BY_PLATFORM_H)
     _ENSURE_OPTION_MODIFICATION_IS_ALLOWED()
 
     foreach (_platform_h_owned_name ${ARGN})
         _ENSURE_IS_WEBKIT_OPTION(${_platform_h_owned_name})
 
-        # Don't let a value cached before the option was retired survive.
+        # Drop any cached value, keeping it for WEBKIT_PROBE_PLATFORM_H() to check. An entry
+        # with the option's description was written by option() before the option was retired;
+        # any other entry came from -D, a preset or -C.
+        if (DEFINED CACHE{${_platform_h_owned_name}})
+            set(_WEBKIT_PLATFORM_H_DROPPED_CACHE_${_platform_h_owned_name} "$CACHE{${_platform_h_owned_name}}")
+            get_property(_platform_h_owned_help CACHE ${_platform_h_owned_name} PROPERTY HELPSTRING)
+            if (_platform_h_owned_help STREQUAL "${_WEBKIT_AVAILABLE_OPTIONS_DESCRIPTION_${_platform_h_owned_name}}")
+                set(_WEBKIT_PLATFORM_H_DROPPED_CACHE_IS_STALE_${_platform_h_owned_name} TRUE)
+            endif ()
+            unset(_platform_h_owned_help)
+        endif ()
         unset(${_platform_h_owned_name} CACHE)
         unset(${_platform_h_owned_name})
 
         list(REMOVE_ITEM _WEBKIT_AVAILABLE_OPTIONS ${_platform_h_owned_name})
         list(REMOVE_ITEM _WEBKIT_CONFIG_FILE_VARIABLES ${_platform_h_owned_name})
+        list(APPEND _WEBKIT_PLATFORM_H_OWNED_OPTIONS ${_platform_h_owned_name})
     endforeach ()
 endmacro()
+
+# Preprocesses wtf/Platform.h at configure time, the way this build's C-family
+# compiles will see it. Sets each option retired by WEBKIT_OPTION_OWNED_BY_PLATFORM_H
+# to ON or OFF, and WEBKIT_PLATFORM_H_<NAME> to 0 or 1 for every HAVE_, USE_ and
+# ENABLE_ macro. Call it once the options and the SDK search paths are final.
+# CMake code may read the retired options but not set them, a -D value that
+# differs from Platform.h's is an error, and the build fails if a value CMake
+# read no longer matches what the compiler sees.
+macro(WEBKIT_PROBE_PLATFORM_H)
+    set(_probe_dir "${CMAKE_BINARY_DIR}/PlatformH")
+    set(_probe_script "${CMAKE_SOURCE_DIR}/Source/WTF/Scripts/generate-platform-args")
+    file(MAKE_DIRECTORY "${_probe_dir}")
+    _WEBKIT_WRITE_CONFIGURATION_HEADER("${_probe_dir}/cmakeconfig.h")
+    _webkit_platform_args_empty_input(_probe_input)
+    _webkit_platform_args_clang_prefix(_probe_command
+        "${_probe_dir}/probe.d" probe "${CMAKE_SOURCE_DIR}/Source/WTF" "${_probe_dir}")
+    _webkit_platform_feature_defines_flags(_probe_flags "${CMAKE_SOURCE_DIR}")
+    list(APPEND _probe_command ${_probe_flags} "${_probe_input}")
+    list(JOIN _probe_command "\n" _probe_command_lines)
+    file(WRITE "${_probe_dir}/command.txt" "${_probe_command_lines}\n")
+
+    execute_process(
+        COMMAND ${Python_EXECUTABLE} "${_probe_script}" --cmake-probe
+            --output "${_probe_dir}/values.cmake" --cmakeconfig "${_probe_dir}/cmakeconfig.h"
+            -- ${_probe_command}
+        WORKING_DIRECTORY "${_probe_dir}"
+        TIMEOUT 120
+        COMMAND_ERROR_IS_FATAL ANY)
+    include("${_probe_dir}/values.cmake")
+
+    set(_probe_on_count 0)
+    set(_probe_changed "")
+    set(_probe_rejected "")
+    foreach (_name IN LISTS _WEBKIT_PLATFORM_H_OWNED_OPTIONS)
+        if (WEBKIT_PLATFORM_H_${_name})
+            set(_probe_value ON)
+            math(EXPR _probe_on_count "${_probe_on_count} + 1")
+        else ()
+            set(_probe_value OFF)
+        endif ()
+        set(${_name} ${_probe_value})
+        if (DEFINED _WEBKIT_PLATFORM_H_DROPPED_CACHE_${_name})
+            if (_WEBKIT_PLATFORM_H_DROPPED_CACHE_${_name})
+                set(_probe_cached ON)
+            else ()
+                set(_probe_cached OFF)
+            endif ()
+            if (NOT _probe_cached STREQUAL _probe_value)
+                if (_WEBKIT_PLATFORM_H_DROPPED_CACHE_IS_STALE_${_name})
+                    list(APPEND _probe_changed "${_name} is now ${_probe_value}")
+                else ()
+                    list(APPEND _probe_rejected "-D${_name}=${_probe_cached}: wtf/Platform.h sets it to ${_probe_value} for this build")
+                endif ()
+            endif ()
+            unset(_WEBKIT_PLATFORM_H_DROPPED_CACHE_${_name})
+            unset(_WEBKIT_PLATFORM_H_DROPPED_CACHE_IS_STALE_${_name})
+        endif ()
+    endforeach ()
+    if (_probe_rejected)
+        list(JOIN _probe_rejected "\n  " _probe_rejected)
+        message(FATAL_ERROR "On this port wtf/Platform.h decides these features, so CMake can't change them:\n"
+            "  ${_probe_rejected}\n"
+            "Remove them from the cmake command line or preset (for build-webkit, drop the matching --<feature> "
+            "or --no-<feature> switch) and run cmake again. To build with a different value, change the "
+            "feature's rule in wtf/Platform.h, as an Xcode build would need.")
+    endif ()
+
+    # WebKitFeatures.cmake lists dependencies between some of these features and CMake
+    # options. Platform.h checks only a few of them, and CMake can't turn an owned feature off.
+    set(_probe_unmet "")
+    foreach (_name IN LISTS _WEBKIT_PLATFORM_H_OWNED_OPTIONS _WEBKIT_AVAILABLE_OPTIONS)
+        foreach (_probe_dependency IN LISTS _WEBKIT_AVAILABLE_OPTIONS_${_name}_DEPENDENCIES)
+            if (_name IN_LIST _WEBKIT_PLATFORM_H_OWNED_OPTIONS)
+                if (WEBKIT_PLATFORM_H_${_name} AND NOT _probe_dependency IN_LIST _WEBKIT_PLATFORM_H_OWNED_OPTIONS AND NOT ${_probe_dependency})
+                    list(APPEND _probe_unmet "${_name} needs ${_probe_dependency}, which is OFF, but wtf/Platform.h turns ${_name} on. Turn ${_probe_dependency} back on, or change the rule for ${_name} in wtf/Platform.h.")
+                endif ()
+            elseif (${_name} AND _probe_dependency IN_LIST _WEBKIT_PLATFORM_H_OWNED_OPTIONS AND NOT WEBKIT_PLATFORM_H_${_probe_dependency})
+                list(APPEND _probe_unmet "${_name} needs ${_probe_dependency}, which wtf/Platform.h turns off for this build. Turn ${_name} off.")
+            endif ()
+        endforeach ()
+    endforeach ()
+    if (_probe_unmet)
+        list(JOIN _probe_unmet "\n  " _probe_unmet)
+        message(FATAL_ERROR "Feature dependencies aren't met:\n  ${_probe_unmet}")
+    endif ()
+
+    foreach (_name IN LISTS _WEBKIT_PLATFORM_H_OWNED_OPTIONS)
+        variable_watch(${_name} _WEBKIT_PLATFORM_H_OWNED_OPTION_ACCESS)
+    endforeach ()
+    list(LENGTH _WEBKIT_PLATFORM_H_OWNED_OPTIONS _probe_count)
+    message(STATUS "wtf/Platform.h owns ${_probe_count} features, ${_probe_on_count} on")
+    if (_probe_changed)
+        list(JOIN _probe_changed ", " _probe_changed)
+        message(WARNING "Ignored the values cached for options before wtf/Platform.h owned them: ${_probe_changed}")
+    endif ()
+    if (WEBKIT_PLATFORM_H_OVERRIDES)
+        list(JOIN WEBKIT_PLATFORM_H_OVERRIDES ", " _probe_overrides)
+        message(STATUS "cmakeconfig.h overrides wtf/Platform.h (CMake:Platform.h): ${_probe_overrides}")
+    endif ()
+
+    # Reconfigure when a header the answers came from changes. Depfiles escape $ as $$.
+    file(READ "${_probe_dir}/probe.d" _probe_depfile)
+    string(REGEX REPLACE "^[^:]*:" "" _probe_depfile "${_probe_depfile}")
+    string(REPLACE "\\\n" " " _probe_depfile "${_probe_depfile}")
+    string(REPLACE "$$" "$" _probe_depfile "${_probe_depfile}")
+    separate_arguments(_probe_depfile UNIX_COMMAND "${_probe_depfile}")
+    foreach (_probe_header IN LISTS _probe_depfile)
+        cmake_path(IS_PREFIX CMAKE_SOURCE_DIR "${_probe_header}" NORMALIZE _probe_in_source)
+        if (_probe_in_source)
+            set_property(DIRECTORY "${CMAKE_SOURCE_DIR}" APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${_probe_header}")
+        endif ()
+    endforeach ()
+    set_property(DIRECTORY "${CMAKE_SOURCE_DIR}" APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${_probe_script}")
+
+    set(WEBKIT_PLATFORM_H_READS_FILE "${_probe_dir}/cmake-reads.txt")
+    cmake_language(DEFER DIRECTORY "${CMAKE_SOURCE_DIR}" CALL _WEBKIT_WRITE_PLATFORM_H_READS)
+
+    foreach (_probe_var IN ITEMS _name _probe_cached _probe_changed _probe_command _probe_command_lines
+            _probe_count _probe_dependency _probe_depfile _probe_dir _probe_flags _probe_header _probe_in_source
+            _probe_input _probe_on_count _probe_overrides _probe_rejected _probe_script _probe_unmet _probe_value)
+        unset(${_probe_var})
+    endforeach ()
+    unset(_probe_var)
+endmacro()
+
+function(_WEBKIT_PLATFORM_H_OWNED_OPTION_ACCESS _variable _access)
+    if (_access STREQUAL "READ_ACCESS")
+        set_property(GLOBAL APPEND PROPERTY _WEBKIT_PLATFORM_H_READS ${_variable})
+    else ()
+        message(FATAL_ERROR "${_variable} comes from wtf/Platform.h on this port, so CMake code can't set or unset it (${_access}).")
+    endif ()
+endfunction()
+
+# The values that CMake read, for the build to check against what it compiles with.
+function(_WEBKIT_WRITE_PLATFORM_H_READS)
+    get_property(_reads GLOBAL PROPERTY _WEBKIT_PLATFORM_H_READS)
+    list(REMOVE_DUPLICATES _reads)
+    list(SORT _reads)
+    set(_contents "")
+    foreach (_name IN LISTS _reads)
+        if (WEBKIT_PLATFORM_H_${_name})
+            string(APPEND _contents "${_name}=1\n")
+        else ()
+            string(APPEND _contents "${_name}=0\n")
+        endif ()
+    endforeach ()
+    # Rewrite only on change: the build-time check depends on this file.
+    if (EXISTS "${WEBKIT_PLATFORM_H_READS_FILE}")
+        file(READ "${WEBKIT_PLATFORM_H_READS_FILE}" _previous)
+        if (_previous STREQUAL _contents)
+            return ()
+        endif ()
+    endif ()
+    file(WRITE "${WEBKIT_PLATFORM_H_READS_FILE}" "${_contents}")
+endfunction()
 
 macro(WEBKIT_OPTION_CONFLICT _name _conflict)
     _ENSURE_OPTION_MODIFICATION_IS_ALLOWED()
@@ -397,6 +563,10 @@ endmacro()
 
 function(_WEBKIT_OPTION_ENFORCE_DEPENDS _name _resultvar)
     foreach (_dependency ${_WEBKIT_AVAILABLE_OPTIONS_${_name}_DEPENDENCIES})
+        # WEBKIT_PROBE_PLATFORM_H() checks the features wtf/Platform.h owns, once it knows them.
+        if (_dependency IN_LIST _WEBKIT_PLATFORM_H_OWNED_OPTIONS)
+            continue ()
+        endif ()
         if (NOT ${_dependency})
             message(STATUS "Disabling ${_name} since ${_dependency} is disabled.")
             set(${_name} OFF CACHE BOOL "" FORCE)
@@ -638,6 +808,10 @@ macro(_ADD_CONFIGURATION_LINE_TO_HEADER_STRING _string _variable_name _output_va
 endmacro()
 
 macro(CREATE_CONFIGURATION_HEADER)
+    _WEBKIT_WRITE_CONFIGURATION_HEADER("${CMAKE_BINARY_DIR}/cmakeconfig.h")
+endmacro()
+
+macro(_WEBKIT_WRITE_CONFIGURATION_HEADER _path)
     list(SORT _WEBKIT_CONFIG_FILE_VARIABLES)
     set(_file_contents "#ifndef CMAKECONFIG_H\n")
     set(_file_contents "${_file_contents}#define CMAKECONFIG_H\n\n")
@@ -650,13 +824,13 @@ macro(CREATE_CONFIGURATION_HEADER)
     endforeach ()
     set(_file_contents "${_file_contents}\n#endif /* CMAKECONFIG_H */\n")
 
-    file(WRITE "${CMAKE_BINARY_DIR}/cmakeconfig.h.tmp" "${_file_contents}")
+    file(WRITE "${_path}.tmp" "${_file_contents}")
     execute_process(COMMAND ${CMAKE_COMMAND}
         -E copy_if_different
-        "${CMAKE_BINARY_DIR}/cmakeconfig.h.tmp"
-        "${CMAKE_BINARY_DIR}/cmakeconfig.h"
+        "${_path}.tmp"
+        "${_path}"
     )
-    file(REMOVE "${CMAKE_BINARY_DIR}/cmakeconfig.h.tmp")
+    file(REMOVE "${_path}.tmp")
 endmacro()
 
 macro(GET_WEBKIT_CONFIG_VARIABLES _set_vars)
