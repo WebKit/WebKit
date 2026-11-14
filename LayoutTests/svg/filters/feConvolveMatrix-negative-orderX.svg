@@ -2,8 +2,8 @@
   <filter id="f1">
     <feConvolveMatrix order="-3" kernelMatrix="0 1 0   1 1 1   0 1 0"/>
   </filter>
-  <text x="20" y="20">Test PASSES if it does not crash and has no red rectangle.</text>
+  <text x="20" y="20">A negative order is replaced by the initial value 3.</text>
   <g filter="url(#f1)">
-    <rect x="0" y="0" width="50" height="50" fill="red" />
+    <rect x="20" y="40" width="50" height="50" fill="green"/>
   </g>
 </svg>

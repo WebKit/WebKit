@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("Checks that invalid feConvolveMatrix attribute values are kept as set, and what the SVG DOM returns for them.");
+
+var element = document.createElementNS("http://www.w3.org/2000/svg", "feConvolveMatrix");
+
+debug("");
+debug("preserveAlpha values other than 'true' and 'false' are the initial value false");
+element.setAttribute("preserveAlpha", "foo");
+shouldBeEqualToString("element.getAttribute('preserveAlpha')", "foo");
+shouldBeFalse("element.preserveAlpha.baseVal");
+element.setAttribute("preserveAlpha", "true");
+shouldBeTrue("element.preserveAlpha.baseVal");
+element.setAttribute("preserveAlpha", "TRUE");
+shouldBeEqualToString("element.getAttribute('preserveAlpha')", "TRUE");
+shouldBeFalse("element.preserveAlpha.baseVal");
+element.setAttribute("preserveAlpha", "true");
+element.removeAttribute("preserveAlpha");
+shouldBeNull("element.getAttribute('preserveAlpha')");
+shouldBeFalse("element.preserveAlpha.baseVal");
+element.setAttribute("preserveAlpha", "foo");
+element.preserveAlpha.baseVal = true;
+shouldBeEqualToString("element.getAttribute('preserveAlpha')", "true");
+shouldBeTrue("element.preserveAlpha.baseVal");
+
+debug("");
+debug("A divisor that does not parse is the initial value");
+element.setAttribute("divisor", "abc");
+shouldBeEqualToString("element.getAttribute('divisor')", "abc");
+shouldBe("element.divisor.baseVal", "1");
+element.setAttribute("divisor", "18");
+shouldBe("element.divisor.baseVal", "18");
+element.setAttribute("divisor", "abc");
+shouldBe("element.divisor.baseVal", "1");
+element.divisor.baseVal = 18;
+shouldBeEqualToString("element.getAttribute('divisor')", "18");
+shouldBe("element.divisor.baseVal", "18");
+
+debug("");
+debug("targetX and targetY keep out of range values, and one that does not parse is the initial value");
+element.setAttribute("targetX", "-1");
+shouldBeEqualToString("element.getAttribute('targetX')", "-1");
+shouldBe("element.targetX.baseVal", "-1");
+element.setAttribute("targetX", "3");
+shouldBe("element.targetX.baseVal", "3");
+element.setAttribute("targetX", "abc");
+shouldBeEqualToString("element.getAttribute('targetX')", "abc");
+shouldBe("element.targetX.baseVal", "0");
+element.targetX.baseVal = -1;
+shouldBeEqualToString("element.getAttribute('targetX')", "-1");
+shouldBe("element.targetX.baseVal", "-1");
+element.setAttribute("targetY", "-1");
+shouldBeEqualToString("element.getAttribute('targetY')", "-1");
+shouldBe("element.targetY.baseVal", "-1");
+element.setAttribute("targetY", "3");
+shouldBe("element.targetY.baseVal", "3");
+element.setAttribute("targetY", "abc");
+shouldBeEqualToString("element.getAttribute('targetY')", "abc");
+shouldBe("element.targetY.baseVal", "0");
+element.targetY.baseVal = -1;
+shouldBeEqualToString("element.getAttribute('targetY')", "-1");
+shouldBe("element.targetY.baseVal", "-1");
+
+debug("");
+debug("An order that does not parse or is below 1 is the initial value 3");
+element.setAttribute("order", "0");
+shouldBeEqualToString("element.getAttribute('order')", "0");
+shouldBe("element.orderX.baseVal", "3");
+shouldBe("element.orderY.baseVal", "3");
+element.setAttribute("order", "2 4");
+shouldBe("element.orderX.baseVal", "2");
+shouldBe("element.orderY.baseVal", "4");
+element.setAttribute("order", "-3");
+shouldBe("element.orderX.baseVal", "3");
+shouldBe("element.orderY.baseVal", "3");
+element.setAttribute("order", "2 4");
+element.setAttribute("order", "0.9");
+shouldBe("element.orderX.baseVal", "3");
+shouldBe("element.orderY.baseVal", "3");
+element.setAttribute("order", "2 4");
+element.setAttribute("order", "2 0");
+shouldBeEqualToString("element.getAttribute('order')", "2 0");
+shouldBe("element.orderX.baseVal", "3");
+shouldBe("element.orderY.baseVal", "3");
+element.setAttribute("order", "2 4");
+element.setAttribute("order", "abc");
+shouldBe("element.orderX.baseVal", "3");
+shouldBe("element.orderY.baseVal", "3");
+
+debug("");
+debug("A kernelMatrix that does not parse is an empty list, and one with the wrong number of entries is kept");
+element.setAttribute("order", "3");
+element.setAttribute("kernelMatrix", "1 1 abc");
+shouldBeEqualToString("element.getAttribute('kernelMatrix')", "1 1 abc");
+shouldBe("element.kernelMatrix.baseVal.numberOfItems", "0");
+element.setAttribute("kernelMatrix", "1 1");
+shouldBe("element.kernelMatrix.baseVal.numberOfItems", "2");
+element.setAttribute("kernelMatrix", "1 1 1 1 1 1 1 1 1 1");
+shouldBe("element.kernelMatrix.baseVal.numberOfItems", "10");
+
+debug("");
+debug("An edgeMode that does not parse is the initial value duplicate");
+element.setAttribute("edgeMode", "foo");
+shouldBeEqualToString("element.getAttribute('edgeMode')", "foo");
+shouldBe("element.edgeMode.baseVal", "SVGFEConvolveMatrixElement.SVG_EDGEMODE_DUPLICATE");
+element.setAttribute("edgeMode", "wrap");
+shouldBe("element.edgeMode.baseVal", "SVGFEConvolveMatrixElement.SVG_EDGEMODE_WRAP");
+element.setAttribute("edgeMode", "WRAP");
+shouldBe("element.edgeMode.baseVal", "SVGFEConvolveMatrixElement.SVG_EDGEMODE_DUPLICATE");
+</script>
+</body>
+</html>

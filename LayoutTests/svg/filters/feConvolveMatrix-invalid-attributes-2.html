@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html class="reftest-wait">
+<head>
+<style>
+.target {
+    width: 20px;
+    height: 20px;
+    margin: 4px;
+    display: inline-block;
+    background-color: green;
+    border: 5px solid black;
+}
+</style>
+</head>
+<body>
+<!--
+Each target must render as the spec specifies when an feConvolveMatrix
+attribute has an invalid value, whether the value is in the markup, set with
+setAttribute() after the filter has been rendered, or set through the SVG DOM
+after the filter has been rendered:
+- If the number of kernelMatrix entries is not orderX * orderY, the filter
+  primitive passes its input through, so the target renders unfiltered.
+- A preserveAlpha value other than "true" or "false", or a removed
+  preserveAlpha, is the initial value false.
+- A divisor that does not parse is replaced by the default value.
+- A targetX or targetY that does not parse or is out of range is replaced by
+  the default value.
+- An order that does not parse or is below 1 is replaced by the initial value
+  3.
+-->
+<svg width="0" height="0" style="position: absolute">
+    <filter id="markup-kernelMatrix-too-short-filter">
+        <feConvolveMatrix id="markup-kernelMatrix-too-short" order="3" kernelMatrix="1 1 1 1 1 1 1 1"/>
+    </filter>
+    <filter id="markup-kernelMatrix-too-long-filter">
+        <feConvolveMatrix id="markup-kernelMatrix-too-long" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1 1"/>
+    </filter>
+    <filter id="markup-kernelMatrix-unparseable-filter">
+        <feConvolveMatrix id="markup-kernelMatrix-unparseable" order="3" kernelMatrix="1 1 1 1 abc 1 1 1 1"/>
+    </filter>
+    <filter id="markup-kernelMatrix-missing-filter">
+        <feConvolveMatrix id="markup-kernelMatrix-missing" order="3"/>
+    </filter>
+    <filter id="markup-kernelMatrix-order-mismatch-filter">
+        <feConvolveMatrix id="markup-kernelMatrix-order-mismatch" order="2" kernelMatrix="1 1 1 1 1 1 1 1 1"/>
+    </filter>
+    <filter id="attribute-kernelMatrix-too-short-filter">
+        <feConvolveMatrix id="attribute-kernelMatrix-too-short" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1"/>
+    </filter>
+    <filter id="attribute-kernelMatrix-too-long-filter">
+        <feConvolveMatrix id="attribute-kernelMatrix-too-long" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1"/>
+    </filter>
+    <filter id="attribute-kernelMatrix-unparseable-filter">
+        <feConvolveMatrix id="attribute-kernelMatrix-unparseable" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1"/>
+    </filter>
+    <filter id="attribute-kernelMatrix-removed-filter">
+        <feConvolveMatrix id="attribute-kernelMatrix-removed" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1"/>
+    </filter>
+    <filter id="attribute-kernelMatrix-order-mismatch-filter">
+        <feConvolveMatrix id="attribute-kernelMatrix-order-mismatch" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1"/>
+    </filter>
+    <filter id="dom-kernelMatrix-too-short-filter">
+        <feConvolveMatrix id="dom-kernelMatrix-too-short" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1"/>
+    </filter>
+    <filter id="dom-kernelMatrix-too-long-filter">
+        <feConvolveMatrix id="dom-kernelMatrix-too-long" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1"/>
+    </filter>
+    <filter id="dom-kernelMatrix-cleared-filter">
+        <feConvolveMatrix id="dom-kernelMatrix-cleared" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1"/>
+    </filter>
+    <filter id="dom-kernelMatrix-order-mismatch-filter">
+        <feConvolveMatrix id="dom-kernelMatrix-order-mismatch" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1"/>
+    </filter>
+    <filter id="markup-kernelMatrix-too-short-to-valid-filter">
+        <feConvolveMatrix id="markup-kernelMatrix-too-short-to-valid" order="3" kernelMatrix="1 1 1 1 1 1 1 1"/>
+    </filter>
+    <filter id="markup-kernelMatrix-order-mismatch-to-valid-filter">
+        <feConvolveMatrix id="markup-kernelMatrix-order-mismatch-to-valid" order="2" kernelMatrix="1 1 1 1 1 1 1 1 1"/>
+    </filter>
+    <filter id="dom-kernelMatrix-too-short-to-valid-filter">
+        <feConvolveMatrix id="dom-kernelMatrix-too-short-to-valid" order="3" kernelMatrix="1 1 1 1 1 1 1 1"/>
+    </filter>
+
+    <filter id="markup-preserveAlpha-invalid-filter">
+        <feConvolveMatrix id="markup-preserveAlpha-invalid" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" preserveAlpha="foo"/>
+    </filter>
+    <filter id="markup-preserveAlpha-uppercase-filter">
+        <feConvolveMatrix id="markup-preserveAlpha-uppercase" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" preserveAlpha="TRUE"/>
+    </filter>
+    <filter id="attribute-preserveAlpha-invalid-filter">
+        <feConvolveMatrix id="attribute-preserveAlpha-invalid" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" preserveAlpha="true"/>
+    </filter>
+    <filter id="attribute-preserveAlpha-uppercase-filter">
+        <feConvolveMatrix id="attribute-preserveAlpha-uppercase" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" preserveAlpha="true"/>
+    </filter>
+    <filter id="attribute-preserveAlpha-removed-filter">
+        <feConvolveMatrix id="attribute-preserveAlpha-removed" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" preserveAlpha="true"/>
+    </filter>
+    <filter id="markup-preserveAlpha-invalid-to-valid-filter">
+        <feConvolveMatrix id="markup-preserveAlpha-invalid-to-valid" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" preserveAlpha="foo"/>
+    </filter>
+    <filter id="dom-preserveAlpha-invalid-to-valid-filter">
+        <feConvolveMatrix id="dom-preserveAlpha-invalid-to-valid" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" preserveAlpha="foo"/>
+    </filter>
+
+    <filter id="markup-divisor-unparseable-filter">
+        <feConvolveMatrix id="markup-divisor-unparseable" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" divisor="abc"/>
+    </filter>
+    <filter id="markup-divisor-unparseable-zero-sum-kernel-filter">
+        <feConvolveMatrix id="markup-divisor-unparseable-zero-sum-kernel" order="3" kernelMatrix="1 0 0 0 1 0 0 0 -2" divisor="abc"/>
+    </filter>
+    <filter id="attribute-divisor-unparseable-filter">
+        <feConvolveMatrix id="attribute-divisor-unparseable" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" divisor="18"/>
+    </filter>
+    <filter id="attribute-divisor-unparseable-zero-sum-kernel-filter">
+        <feConvolveMatrix id="attribute-divisor-unparseable-zero-sum-kernel" order="3" kernelMatrix="1 0 0 0 1 0 0 0 -2" divisor="2"/>
+    </filter>
+    <filter id="markup-divisor-unparseable-to-valid-filter">
+        <feConvolveMatrix id="markup-divisor-unparseable-to-valid" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" divisor="abc"/>
+    </filter>
+    <filter id="dom-divisor-unparseable-to-valid-filter">
+        <feConvolveMatrix id="dom-divisor-unparseable-to-valid" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" divisor="abc"/>
+    </filter>
+    <filter id="markup-divisor-unparseable-removed-filter">
+        <feConvolveMatrix id="markup-divisor-unparseable-removed" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" divisor="abc"/>
+    </filter>
+
+    <filter id="markup-targetX-negative-filter">
+        <feConvolveMatrix id="markup-targetX-negative" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" targetX="-1"/>
+    </filter>
+    <filter id="markup-targetX-too-large-filter">
+        <feConvolveMatrix id="markup-targetX-too-large" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" targetX="3"/>
+    </filter>
+    <filter id="markup-targetX-unparseable-filter">
+        <feConvolveMatrix id="markup-targetX-unparseable" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" targetX="abc"/>
+    </filter>
+    <filter id="markup-targetY-negative-filter">
+        <feConvolveMatrix id="markup-targetY-negative" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" targetY="-1"/>
+    </filter>
+    <filter id="markup-targetY-too-large-filter">
+        <feConvolveMatrix id="markup-targetY-too-large" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" targetY="3"/>
+    </filter>
+    <filter id="markup-targetY-unparseable-filter">
+        <feConvolveMatrix id="markup-targetY-unparseable" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" targetY="abc"/>
+    </filter>
+    <filter id="attribute-targetX-negative-filter">
+        <feConvolveMatrix id="attribute-targetX-negative" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" targetX="0"/>
+    </filter>
+    <filter id="attribute-targetX-too-large-filter">
+        <feConvolveMatrix id="attribute-targetX-too-large" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" targetX="0"/>
+    </filter>
+    <filter id="attribute-targetX-unparseable-filter">
+        <feConvolveMatrix id="attribute-targetX-unparseable" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" targetX="0"/>
+    </filter>
+    <filter id="attribute-targetY-negative-filter">
+        <feConvolveMatrix id="attribute-targetY-negative" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" targetY="0"/>
+    </filter>
+    <filter id="attribute-targetY-too-large-filter">
+        <feConvolveMatrix id="attribute-targetY-too-large" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" targetY="0"/>
+    </filter>
+    <filter id="attribute-targetY-unparseable-filter">
+        <feConvolveMatrix id="attribute-targetY-unparseable" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" targetY="0"/>
+    </filter>
+    <filter id="dom-targetX-negative-filter">
+        <feConvolveMatrix id="dom-targetX-negative" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" targetX="0"/>
+    </filter>
+    <filter id="dom-targetX-too-large-filter">
+        <feConvolveMatrix id="dom-targetX-too-large" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" targetX="0"/>
+    </filter>
+    <filter id="dom-targetY-negative-filter">
+        <feConvolveMatrix id="dom-targetY-negative" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" targetY="0"/>
+    </filter>
+    <filter id="dom-targetY-too-large-filter">
+        <feConvolveMatrix id="dom-targetY-too-large" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" targetY="0"/>
+    </filter>
+    <filter id="markup-targetX-negative-to-valid-filter">
+        <feConvolveMatrix id="markup-targetX-negative-to-valid" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" targetX="-1"/>
+    </filter>
+    <filter id="dom-targetX-negative-to-valid-filter">
+        <feConvolveMatrix id="dom-targetX-negative-to-valid" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" targetX="-1"/>
+    </filter>
+    <filter id="markup-targetY-negative-to-valid-filter">
+        <feConvolveMatrix id="markup-targetY-negative-to-valid" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" targetY="-1"/>
+    </filter>
+    <filter id="dom-targetY-negative-to-valid-filter">
+        <feConvolveMatrix id="dom-targetY-negative-to-valid" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" targetY="-1"/>
+    </filter>
+    <filter id="attribute-order-targetX-out-of-range-filter">
+        <feConvolveMatrix id="attribute-order-targetX-out-of-range" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" targetX="2"/>
+    </filter>
+    <filter id="attribute-order-targetY-out-of-range-filter">
+        <feConvolveMatrix id="attribute-order-targetY-out-of-range" order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" targetY="2"/>
+    </filter>
+
+    <filter id="markup-order-zero-filter">
+        <feConvolveMatrix id="markup-order-zero" order="0" kernelMatrix="1 1 1 1 1 1 1 1 1"/>
+    </filter>
+    <filter id="markup-order-negative-filter">
+        <feConvolveMatrix id="markup-order-negative" order="-3" kernelMatrix="1 1 1 1 1 1 1 1 1"/>
+    </filter>
+    <filter id="markup-order-below-one-filter">
+        <feConvolveMatrix id="markup-order-below-one" order="0.9" kernelMatrix="1 1 1 1 1 1 1 1 1"/>
+    </filter>
+    <filter id="markup-order-unparseable-filter">
+        <feConvolveMatrix id="markup-order-unparseable" order="abc" kernelMatrix="1 1 1 1 1 1 1 1 1"/>
+    </filter>
+    <filter id="markup-order-zero-y-filter">
+        <feConvolveMatrix id="markup-order-zero-y" order="3 0" kernelMatrix="1 1 1 1 1 1 1 1 1"/>
+    </filter>
+    <filter id="markup-order-zero-kernelMatrix-mismatch-filter">
+        <feConvolveMatrix id="markup-order-zero-kernelMatrix-mismatch" order="0" kernelMatrix="1 1 1 1"/>
+    </filter>
+    <filter id="attribute-order-zero-filter">
+        <feConvolveMatrix id="attribute-order-zero" order="1 9" kernelMatrix="1 1 1 1 1 1 1 1 1"/>
+    </filter>
+    <filter id="attribute-order-negative-filter">
+        <feConvolveMatrix id="attribute-order-negative" order="1 9" kernelMatrix="1 1 1 1 1 1 1 1 1"/>
+    </filter>
+    <filter id="attribute-order-unparseable-filter">
+        <feConvolveMatrix id="attribute-order-unparseable" order="1 9" kernelMatrix="1 1 1 1 1 1 1 1 1"/>
+    </filter>
+    <filter id="dom-orderX-zero-filter">
+        <feConvolveMatrix id="dom-orderX-zero" order="1 9" kernelMatrix="1 1 1 1 1 1 1 1 1"/>
+    </filter>
+    <filter id="dom-orderY-zero-filter">
+        <feConvolveMatrix id="dom-orderY-zero" order="9 1" kernelMatrix="1 1 1 1 1 1 1 1 1"/>
+    </filter>
+    <filter id="markup-order-zero-to-valid-filter">
+        <feConvolveMatrix id="markup-order-zero-to-valid" order="0" kernelMatrix="1 1 1 1 1 1 1 1 1"/>
+    </filter>
+    <filter id="markup-order-zero-removed-filter">
+        <feConvolveMatrix id="markup-order-zero-removed" order="0" kernelMatrix="1 1 1 1 1 1 1 1 1"/>
+    </filter>
+</svg>
+
+<div class="target" style="filter: url(#markup-kernelMatrix-too-short-filter)"></div>
+<div class="target" style="filter: url(#markup-kernelMatrix-too-long-filter)"></div>
+<div class="target" style="filter: url(#markup-kernelMatrix-unparseable-filter)"></div>
+<div class="target" style="filter: url(#markup-kernelMatrix-missing-filter)"></div>
+<div class="target" style="filter: url(#markup-kernelMatrix-order-mismatch-filter)"></div>
+<div class="target" style="filter: url(#attribute-kernelMatrix-too-short-filter)"></div>
+<div class="target" style="filter: url(#attribute-kernelMatrix-too-long-filter)"></div>
+<div class="target" style="filter: url(#attribute-kernelMatrix-unparseable-filter)"></div>
+<div class="target" style="filter: url(#attribute-kernelMatrix-removed-filter)"></div>
+<div class="target" style="filter: url(#attribute-kernelMatrix-order-mismatch-filter)"></div>
+<div class="target" style="filter: url(#dom-kernelMatrix-too-short-filter)"></div>
+<div class="target" style="filter: url(#dom-kernelMatrix-too-long-filter)"></div>
+<div class="target" style="filter: url(#dom-kernelMatrix-cleared-filter)"></div>
+<div class="target" style="filter: url(#dom-kernelMatrix-order-mismatch-filter)"></div>
+<div class="target" style="filter: url(#markup-kernelMatrix-too-short-to-valid-filter)"></div>
+<div class="target" style="filter: url(#markup-kernelMatrix-order-mismatch-to-valid-filter)"></div>
+<div class="target" style="filter: url(#dom-kernelMatrix-too-short-to-valid-filter)"></div>
+
+<div class="target" style="filter: url(#markup-preserveAlpha-invalid-filter)"></div>
+<div class="target" style="filter: url(#markup-preserveAlpha-uppercase-filter)"></div>
+<div class="target" style="filter: url(#attribute-preserveAlpha-invalid-filter)"></div>
+<div class="target" style="filter: url(#attribute-preserveAlpha-uppercase-filter)"></div>
+<div class="target" style="filter: url(#attribute-preserveAlpha-removed-filter)"></div>
+<div class="target" style="filter: url(#markup-preserveAlpha-invalid-to-valid-filter)"></div>
+<div class="target" style="filter: url(#dom-preserveAlpha-invalid-to-valid-filter)"></div>
+
+<div class="target" style="filter: url(#markup-divisor-unparseable-filter)"></div>
+<div class="target" style="filter: url(#markup-divisor-unparseable-zero-sum-kernel-filter)"></div>
+<div class="target" style="filter: url(#attribute-divisor-unparseable-filter)"></div>
+<div class="target" style="filter: url(#attribute-divisor-unparseable-zero-sum-kernel-filter)"></div>
+<div class="target" style="filter: url(#markup-divisor-unparseable-to-valid-filter)"></div>
+<div class="target" style="filter: url(#dom-divisor-unparseable-to-valid-filter)"></div>
+<div class="target" style="filter: url(#markup-divisor-unparseable-removed-filter)"></div>
+
+<div class="target" style="filter: url(#markup-targetX-negative-filter)"></div>
+<div class="target" style="filter: url(#markup-targetX-too-large-filter)"></div>
+<div class="target" style="filter: url(#markup-targetX-unparseable-filter)"></div>
+<div class="target" style="filter: url(#markup-targetY-negative-filter)"></div>
+<div class="target" style="filter: url(#markup-targetY-too-large-filter)"></div>
+<div class="target" style="filter: url(#markup-targetY-unparseable-filter)"></div>
+<div class="target" style="filter: url(#attribute-targetX-negative-filter)"></div>
+<div class="target" style="filter: url(#attribute-targetX-too-large-filter)"></div>
+<div class="target" style="filter: url(#attribute-targetX-unparseable-filter)"></div>
+<div class="target" style="filter: url(#attribute-targetY-negative-filter)"></div>
+<div class="target" style="filter: url(#attribute-targetY-too-large-filter)"></div>
+<div class="target" style="filter: url(#attribute-targetY-unparseable-filter)"></div>
+<div class="target" style="filter: url(#dom-targetX-negative-filter)"></div>
+<div class="target" style="filter: url(#dom-targetX-too-large-filter)"></div>
+<div class="target" style="filter: url(#dom-targetY-negative-filter)"></div>
+<div class="target" style="filter: url(#dom-targetY-too-large-filter)"></div>
+<div class="target" style="filter: url(#markup-targetX-negative-to-valid-filter)"></div>
+<div class="target" style="filter: url(#dom-targetX-negative-to-valid-filter)"></div>
+<div class="target" style="filter: url(#markup-targetY-negative-to-valid-filter)"></div>
+<div class="target" style="filter: url(#dom-targetY-negative-to-valid-filter)"></div>
+<div class="target" style="filter: url(#attribute-order-targetX-out-of-range-filter)"></div>
+<div class="target" style="filter: url(#attribute-order-targetY-out-of-range-filter)"></div>
+
+<div class="target" style="filter: url(#markup-order-zero-filter)"></div>
+<div class="target" style="filter: url(#markup-order-negative-filter)"></div>
+<div class="target" style="filter: url(#markup-order-below-one-filter)"></div>
+<div class="target" style="filter: url(#markup-order-unparseable-filter)"></div>
+<div class="target" style="filter: url(#markup-order-zero-y-filter)"></div>
+<div class="target" style="filter: url(#markup-order-zero-kernelMatrix-mismatch-filter)"></div>
+<div class="target" style="filter: url(#attribute-order-zero-filter)"></div>
+<div class="target" style="filter: url(#attribute-order-negative-filter)"></div>
+<div class="target" style="filter: url(#attribute-order-unparseable-filter)"></div>
+<div class="target" style="filter: url(#dom-orderX-zero-filter)"></div>
+<div class="target" style="filter: url(#dom-orderY-zero-filter)"></div>
+<div class="target" style="filter: url(#markup-order-zero-to-valid-filter)"></div>
+<div class="target" style="filter: url(#markup-order-zero-removed-filter)"></div>
+<script>
+function createNumber(value)
+{
+    const number = document.querySelector("svg").createSVGNumber();
+    number.value = value;
+    return number;
+}
+
+onload = () => requestAnimationFrame(() => requestAnimationFrame(() => {
+    document.getElementById("attribute-kernelMatrix-too-short").setAttribute("kernelMatrix", "1 1 1 1 1 1 1 1");
+    document.getElementById("attribute-kernelMatrix-too-long").setAttribute("kernelMatrix", "1 1 1 1 1 1 1 1 1 1");
+    document.getElementById("attribute-kernelMatrix-unparseable").setAttribute("kernelMatrix", "1 1 1 1 abc 1 1 1 1");
+    document.getElementById("attribute-kernelMatrix-removed").removeAttribute("kernelMatrix");
+    document.getElementById("attribute-kernelMatrix-order-mismatch").setAttribute("order", "2");
+    document.getElementById("dom-kernelMatrix-too-short").kernelMatrix.baseVal.removeItem(0);
+    document.getElementById("dom-kernelMatrix-too-long").kernelMatrix.baseVal.appendItem(createNumber(1));
+    document.getElementById("dom-kernelMatrix-cleared").kernelMatrix.baseVal.clear();
+    document.getElementById("dom-kernelMatrix-order-mismatch").orderX.baseVal = 2;
+    document.getElementById("markup-kernelMatrix-too-short-to-valid").setAttribute("kernelMatrix", "1 1 1 1 1 1 1 1 1");
+    document.getElementById("markup-kernelMatrix-order-mismatch-to-valid").setAttribute("order", "3");
+    document.getElementById("dom-kernelMatrix-too-short-to-valid").kernelMatrix.baseVal.appendItem(createNumber(1));
+
+    document.getElementById("attribute-preserveAlpha-invalid").setAttribute("preserveAlpha", "foo");
+    document.getElementById("attribute-preserveAlpha-uppercase").setAttribute("preserveAlpha", "TRUE");
+    document.getElementById("attribute-preserveAlpha-removed").removeAttribute("preserveAlpha");
+    document.getElementById("markup-preserveAlpha-invalid-to-valid").setAttribute("preserveAlpha", "true");
+    document.getElementById("dom-preserveAlpha-invalid-to-valid").preserveAlpha.baseVal = true;
+
+    document.getElementById("attribute-divisor-unparseable").setAttribute("divisor", "abc");
+    document.getElementById("attribute-divisor-unparseable-zero-sum-kernel").setAttribute("divisor", "abc");
+    document.getElementById("markup-divisor-unparseable-to-valid").setAttribute("divisor", "18");
+    document.getElementById("dom-divisor-unparseable-to-valid").divisor.baseVal = 18;
+    document.getElementById("markup-divisor-unparseable-removed").removeAttribute("divisor");
+
+    document.getElementById("attribute-targetX-negative").setAttribute("targetX", "-1");
+    document.getElementById("attribute-targetX-too-large").setAttribute("targetX", "3");
+    document.getElementById("attribute-targetX-unparseable").setAttribute("targetX", "abc");
+    document.getElementById("attribute-targetY-negative").setAttribute("targetY", "-1");
+    document.getElementById("attribute-targetY-too-large").setAttribute("targetY", "3");
+    document.getElementById("attribute-targetY-unparseable").setAttribute("targetY", "abc");
+    document.getElementById("dom-targetX-negative").targetX.baseVal = -1;
+    document.getElementById("dom-targetX-too-large").targetX.baseVal = 3;
+    document.getElementById("dom-targetY-negative").targetY.baseVal = -1;
+    document.getElementById("dom-targetY-too-large").targetY.baseVal = 3;
+    document.getElementById("markup-targetX-negative-to-valid").setAttribute("targetX", "0");
+    document.getElementById("dom-targetX-negative-to-valid").targetX.baseVal = 0;
+    document.getElementById("markup-targetY-negative-to-valid").setAttribute("targetY", "0");
+    document.getElementById("dom-targetY-negative-to-valid").targetY.baseVal = 0;
+    document.getElementById("attribute-order-targetX-out-of-range").setAttribute("order", "1 9");
+    document.getElementById("attribute-order-targetY-out-of-range").setAttribute("order", "9 1");
+
+    document.getElementById("attribute-order-zero").setAttribute("order", "0");
+    document.getElementById("attribute-order-negative").setAttribute("order", "-3");
+    document.getElementById("attribute-order-unparseable").setAttribute("order", "abc");
+    document.getElementById("dom-orderX-zero").orderX.baseVal = 0;
+    document.getElementById("dom-orderY-zero").orderY.baseVal = 0;
+    document.getElementById("markup-order-zero-to-valid").setAttribute("order", "1 9");
+    document.getElementById("markup-order-zero-removed").removeAttribute("order");
+
+    requestAnimationFrame(() => requestAnimationFrame(() => document.documentElement.classList.remove("reftest-wait")));
+}));
+</script>
+</body>
+</html>
