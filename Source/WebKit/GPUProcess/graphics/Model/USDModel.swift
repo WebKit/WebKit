@@ -30,7 +30,6 @@ typealias NodeIdentifier = UInt64
 
 #if ENABLE_GPU_PROCESS_MODEL && canImport(RealityCoreDeformation, _version: 23.0.2) && canImport(ShaderGraph, _version: 159.0.3) && arch(arm64)
 import USDKit
-import DirectResource
 import RealityKit
 internal import Spatial
 import UniformTypeIdentifiers
@@ -1278,7 +1277,7 @@ private func webPartsFromParts(_ parts: [LowLevelMesh.Part]) -> [WKBridgeMeshPar
     })
 }
 
-private func webUpdateTextureRequestFromTextureData(_ textureData: TextureData, hashString: String) -> WKBridgeUpdateTexture {
+private func webUpdateTextureRequestFromTextureData(_ textureData: USDPlayer.TextureData, hashString: String) -> WKBridgeUpdateTexture {
     WKBridgeUpdateTexture(
         imageAsset: .init(textureData.descriptor, data: textureData.data),
         identifier: makeTypedResourceId(
@@ -1297,7 +1296,7 @@ private func webUpdateTextureRequestFromTextureData(_ textureData: TextureData, 
     )
 }
 
-private func deformationID(from meshType: MeshData.MeshType) -> DeformationID? {
+private func deformationID(from meshType: USDPlayer.MeshData.MeshType) -> USDPlayer.DeformationID? {
     if case .deformable(let id) = meshType { return id }
     return nil
 }
@@ -1320,7 +1319,7 @@ struct DeformationOverrides {
     var vertexAdjacencies: [UInt32]?
     var vertexAdjacencyEndIndices: [UInt32]?
 
-    mutating func apply(_ update: DeformationData.Update) {
+    mutating func apply(_ update: USDPlayer.DeformationData.Update) {
         if let s = update.skinning {
             if let v = s.jointTransforms { jointTransforms = v }
             if let v = s.inverseBindPoses { inverseBindPoses = v }
@@ -1341,7 +1340,7 @@ struct DeformationOverrides {
 }
 
 private func bridgeDeformation(
-    base: DeformationData?,
+    base: USDPlayer.DeformationData?,
     overrides: DeformationOverrides?,
     rootJointIndices: [UInt32]
 ) -> WKBridgeDeformationData? {
@@ -1379,7 +1378,7 @@ private func bridgeDeformation(
 }
 
 private func webMeshFromMeshData(
-    _ meshData: MeshData,
+    _ meshData: USDPlayer.MeshData,
     deformation: WKBridgeDeformationData?
 ) -> WKBridgeUpdateMesh {
     WKBridgeUpdateMesh(
@@ -1407,7 +1406,7 @@ private func webMeshFromMeshData(
 }
 
 private func webMeshFromMeshUpdate(
-    _ update: MeshData.Update,
+    _ update: USDPlayer.MeshData.Update,
     primPath: String,
     deformation: WKBridgeDeformationData?
 ) -> WKBridgeUpdateMesh {
@@ -1440,7 +1439,7 @@ private func webMeshFromMeshUpdate(
 // when DeformationData.Update fires without an accompanying MeshData.Update.
 // Carries no mesh data — just the new joint transforms / blend weights / etc.
 private func webMeshDeformationDelta(
-    meshId: MeshID,
+    meshId: USDPlayer.MeshID,
     primPath: String,
     deformation: WKBridgeDeformationData
 ) -> WKBridgeUpdateMesh {
@@ -2363,30 +2362,30 @@ final class USDModelLoader {
     // MaterialData.assignedTextures so we can set WKBridgeUpdateTexture.hashString
     // to the parameter name that the receiver matches against `parameter.name`
     // at material processing time.
-    private var textureIdToParameterName: [TextureID: String] = [:]
+    private var textureIdToParameterName: [USDPlayer.TextureID: String] = [:]
 
     // Cached DeformationData by ID. MeshData.MeshType.deformable(DeformationID)
     // points to a DeformationData received in deformationAdditions; we hold it
     // here so subsequent mesh updates can re-use the same deformation binding.
-    private var deformationDataById: [DeformationID: DeformationData] = [:]
+    private var deformationDataById: [USDPlayer.DeformationID: USDPlayer.DeformationData] = [:]
 
     // Per-frame field-level overrides applied on top of `deformationDataById`
     // when constructing the WKBridgeDeformationData we send to the receiver.
     // DeformationData.Update fields (jointTransforms, weights, etc.) are merged
     // here so animated skeletons keep deforming on subsequent frames.
-    private var deformationOverridesById: [DeformationID: DeformationOverrides] = [:]
+    private var deformationOverridesById: [USDPlayer.DeformationID: DeformationOverrides] = [:]
 
     // Reverse lookup so a deformation update can find its mesh: needed to
     // synthesize a delta WKBridgeUpdateMesh that refreshes the receiver's GPU
     // buffers when only the deformation changed this frame (no MeshData.Update).
-    private var meshIdByDeformationId: [DeformationID: MeshID] = [:]
-    private var meshPathByDeformationId: [DeformationID: String] = [:]
+    private var meshIdByDeformationId: [USDPlayer.DeformationID: USDPlayer.MeshID] = [:]
+    private var meshPathByDeformationId: [USDPlayer.DeformationID: String] = [:]
 
     // ID → primPath maps so we can build WKBridgeTypedResourceId for removals
     // (the new public ID types do not expose a `.path` accessor).
-    private var meshIdToPath: [MeshID: String] = [:]
-    private var materialIdToPath: [MaterialID: String] = [:]
-    private var textureIdToPath: [TextureID: String] = [:]
+    private var meshIdToPath: [USDPlayer.MeshID: String] = [:]
+    private var materialIdToPath: [USDPlayer.MaterialID: String] = [:]
+    private var textureIdToPath: [USDPlayer.TextureID: String] = [:]
 
     @nonobjc
     fileprivate var time: TimeInterval = 0
@@ -2540,7 +2539,7 @@ final class USDModelLoader {
         }
 
         // ===== Phase 1: take deformation data =====
-        var dirtyDeformations: Set<DeformationID> = []
+        var dirtyDeformations: Set<USDPlayer.DeformationID> = []
         for id in frameUpdate.deformationAdditions {
             if let deformation = frameUpdate.takeDeformationAddition(id: id) {
                 deformationDataById[id] = deformation
@@ -2568,7 +2567,7 @@ final class USDModelLoader {
         }
 
         // ===== Phase 2: take material data =====
-        var materialAdditions: [MaterialData] = []
+        var materialAdditions: [USDPlayer.MaterialData] = []
         for id in frameUpdate.materialAdditions {
             if let material = frameUpdate.takeMaterialAddition(id: id) {
                 materialIdToPath[id] = material.primPath
@@ -2593,7 +2592,7 @@ final class USDModelLoader {
         }
 
         // ===== Phase 3: take texture data =====
-        var textureAdditions: [TextureData] = []
+        var textureAdditions: [USDPlayer.TextureData] = []
         for id in frameUpdate.textureAdditions {
             if let textureData = frameUpdate.takeTextureAddition(id: id) {
                 textureIdToPath[id] = textureData.assetPath
@@ -2602,8 +2601,8 @@ final class USDModelLoader {
         }
 
         // ===== Phase 4: take mesh data =====
-        var meshAdditions: [MeshData] = []
-        var meshUpdates: [MeshData.Update] = []
+        var meshAdditions: [USDPlayer.MeshData] = []
+        var meshUpdates: [USDPlayer.MeshData.Update] = []
         for id in frameUpdate.meshAdditions {
             if let mesh = frameUpdate.takeMeshAddition(id: id) {
                 meshIdToPath[id] = mesh.primPath
@@ -2667,11 +2666,11 @@ final class USDModelLoader {
         meshRemovalIds: [WKBridgeTypedResourceId],
         materialRemovalIds: [WKBridgeTypedResourceId],
         textureRemovalIds: [WKBridgeTypedResourceId],
-        textureAdditions: [TextureData],
-        materialAdditions: [MaterialData],
-        meshAdditions: [MeshData],
-        meshUpdates: [MeshData.Update],
-        dirtyDeformations: Set<DeformationID>
+        textureAdditions: [USDPlayer.TextureData],
+        materialAdditions: [USDPlayer.MaterialData],
+        meshAdditions: [USDPlayer.MeshData],
+        meshUpdates: [USDPlayer.MeshData.Update],
+        dirtyDeformations: Set<USDPlayer.DeformationID>
     ) {
         // ===== Dispatch to receiver in dependency order =====
         // (removals → textures → materials → meshes)
@@ -2706,7 +2705,7 @@ final class USDModelLoader {
         let stageForMeshUpdates = self.stage
         // Track which mesh IDs already get a real mesh update this frame so we
         // don't duplicate them when synthesizing per-deformation deltas below.
-        var meshesAlreadyDispatched: Set<MeshID> = []
+        var meshesAlreadyDispatched: Set<USDPlayer.MeshID> = []
 
         let meshAdditionRequests = meshAdditions.map { meshData -> WKBridgeUpdateMesh in
             meshesAlreadyDispatched.insert(meshData.id)
@@ -2762,7 +2761,8 @@ final class USDModelLoader {
         self.objcLoader.updateMesh(webRequest: meshAdditionRequests + meshUpdateRequests + synthesizedRequests)
     }
 
-    private func bridgeDeformationFor(meshType: MeshData.MeshType, primPath: String, stage: USDStage?) -> WKBridgeDeformationData? {
+    private func bridgeDeformationFor(meshType: USDPlayer.MeshData.MeshType, primPath: String, stage: USDStage?) -> WKBridgeDeformationData?
+    {
         guard let did = deformationID(from: meshType) else { return nil }
         let base = deformationDataById[did]
         let rootIndices = resolveRootJointIndices(

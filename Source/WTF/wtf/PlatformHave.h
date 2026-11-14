@@ -1017,10 +1017,6 @@
 
 #if PLATFORM(COCOA)
 #define HAVE_WEBGPU_IMPLEMENTATION 1
-// FIXME: PlatformHave.h should not depend or defined ENABLE macros.
-#if !defined(ENABLE_WEBGPU_SWIFT)
-#define ENABLE_WEBGPU_SWIFT 0
-#endif
 #endif
 
 #if PLATFORM(COCOA) && !PLATFORM(WATCHOS)
