@@ -46,6 +46,7 @@ NonInheritedRareData::NonInheritedRareData()
     , maskBorder(MaskBorderData::create())
     , clip(ComputedStyle::initialClip())
     , clipPath(ComputedStyle::initialClipPath())
+    , borderShape(ComputedStyle::initialBorderShape())
     , overflowClipMargin(ComputedStyle::initialOverflowClipMargin())
     , scrollMargin(0_css_px)
     , scrollPadding(CSS::Keyword::Auto { })
@@ -168,6 +169,7 @@ inline NonInheritedRareData::NonInheritedRareData(const NonInheritedRareData& o)
     , maskBorder(o.maskBorder)
     , clip(o.clip)
     , clipPath(o.clipPath)
+    , borderShape(o.borderShape)
     , overflowClipMargin(o.overflowClipMargin)
     , scrollMargin(o.scrollMargin)
     , scrollPadding(o.scrollPadding)
@@ -295,6 +297,7 @@ bool NonInheritedRareData::operator==(const NonInheritedRareData& o) const
         && maskBorder == o.maskBorder
         && clip == o.clip
         && clipPath == o.clipPath
+        && borderShape == o.borderShape
         && overflowClipMargin == o.overflowClipMargin
         && scrollMargin == o.scrollMargin
         && scrollPadding == o.scrollPadding
@@ -431,6 +434,8 @@ void NonInheritedRareData::dumpDifferences(TextStream& ts, const NonInheritedRar
 
     LOG_IF_DIFFERENT(clip);
     LOG_IF_DIFFERENT(clipPath);
+    LOG_IF_DIFFERENT(borderShape);
+
     LOG_IF_DIFFERENT(overflowClipMargin);
 
     LOG_IF_DIFFERENT(scrollMargin);

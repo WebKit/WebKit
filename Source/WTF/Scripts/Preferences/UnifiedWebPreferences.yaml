@@ -872,6 +872,14 @@ CSSBorderRadiusSideShorthandsEnabled:
   humanReadableDescription: "Enable support for the border-radius side shorthand physical & logical properties"
   defaultValue: true
 
+CSSBorderShapeEnabled:
+  type: bool
+  category: css
+  status: testable
+  humanReadableName: "CSS border-shape property"
+  humanReadableDescription: "Enable support for CSS border-shape property"
+  defaultValue: false
+
 CSSCalcMixEnabled:
   type: bool
   category: css

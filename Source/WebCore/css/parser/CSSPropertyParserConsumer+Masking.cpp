@@ -150,7 +150,7 @@ RefPtr<CSSValue> consumeClipPath(CSSParserTokenRange& range, CSS::PropertyParser
     auto consumeShape = [&]() -> bool {
         if (shape)
             return false;
-        shape = consumeBasicShape(range, state, { });
+        shape = consumeBasicShape(range, state);
         return !!shape;
     };
     auto consumeBox = [&]() -> bool {
