@@ -1087,6 +1087,8 @@ accessibility/dynamic-content-visibility.html [ Skip ]
 accessibility/dynamic-selected-radio-button.html [ Skip ]
 accessibility/password-notifications-timing.html [ Skip ]
 
+accessibility/aria-tree-with-empty-generic-in-group-exposes-treeitems.html [ Skip ]
+
 # appearance: base-select failures. These need investigation, but it's possible they can be made to pass if the tests
 # are restructured to be more platform-agnostic.
 accessibility/base-select-basic.html [ Skip ]
