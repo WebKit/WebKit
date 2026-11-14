@@ -974,7 +974,7 @@ imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/loc
 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_assign.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/per-global.window.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/browsing_context_name_cross_origin_3.html [ Skip ]
-imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/history-traversal-navigates-multiple-frames.html [ Skip ]
+webkit.org/b/331658 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/history-traversal-navigates-multiple-frames.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/window-name-after-cross-origin-main-frame-navigation.sub.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/a-user-click-during-load.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/prompt-and-unload-script-closeable.html [ Skip ]
