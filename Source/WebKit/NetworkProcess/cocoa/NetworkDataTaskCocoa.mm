@@ -546,7 +546,7 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
         request.clearHTTPAuthorization();
         request.clearHTTPOrigin();
 
-    } else {
+    } else if (m_storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::Use) {
         // Only consider applying authentication credentials if this is actually a redirect and the redirect
         // URL didn't include credentials of its own.
         if (m_user.isEmpty() && m_password.isEmpty() && !redirectResponse.isNull()) {
