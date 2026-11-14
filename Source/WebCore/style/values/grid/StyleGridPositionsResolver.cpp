@@ -442,8 +442,8 @@ unsigned GridPositionsResolver::explicitGridCount(const RenderGrid& gridContaine
 {
     if (gridContainer.isSubgrid(direction)) {
         auto& parent = *downcast<RenderGrid>(gridContainer.parent());
-        auto flowAwareDirection = GridLayoutFunctions::flowAwareDirectionForGridItem(parent, gridContainer, direction);
-        return parent.gridSpanForGridItem(gridContainer, flowAwareDirection).integerSpan();
+        auto parentDirection = GridLayoutFunctions::flowAwareDirection(parent, gridContainer, direction);
+        return parent.gridSpanForGridItem(gridContainer, parentDirection).integerSpan();
     }
     auto& style = gridContainer.style();
     return std::min<unsigned>(
