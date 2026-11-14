@@ -33,6 +33,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/SwiftBridging.h>
 #import <wtf/TZoneMalloc.h>
+#import <wtf/ThreadSafeRefCounted.h>
 #import <wtf/ThreadSafeWeakPtr.h>
 #import <wtf/Vector.h>
 #import <wtf/WeakPtr.h>
@@ -43,6 +44,16 @@ namespace WebGPU::Metal {
 
 class CommandEncoder;
 class Device;
+
+// What Metal's completion handler of a command buffer records, on Metal's threads, without
+// referencing the command buffer.
+struct CommandBufferCompletion : ThreadSafeRefCounted<CommandBufferCompletion> {
+    static Ref<CommandBufferCompletion> create() { return adoptRef(*new CommandBufferCompletion); }
+
+    // FIXME: we should not need this semaphore - https://bugs.webkit.org/show_bug.cgi?id=272353
+    BinarySemaphore semaphore;
+    std::atomic<double> gpuExecutionDurationSeconds { 0 };
+};
 
 // https://gpuweb.github.io/gpuweb/#gpucommandbuffer
 class CommandBuffer final : public WebGPU::CommandBuffer {
@@ -83,7 +94,7 @@ public:
     void postCommitHandler();
     void addPostCommitHandler(Function<void(id<MTLCommandBuffer>)>&&);
 
-    double gpuExecutionDurationSeconds() const { return m_gpuExecutionDurationSeconds.load(std::memory_order_relaxed); }
+    double gpuExecutionDurationSeconds() const { return m_completion->gpuExecutionDurationSeconds.load(std::memory_order_relaxed); }
 
 private:
     CommandBuffer(id<MTLCommandBuffer>, Device&, id<MTLSharedEvent>, uint64_t sharedEventSignalValue, Vector<Function<bool(CommandBuffer&, CommandEncoder&)>>&&, CommandEncoder&);
@@ -102,10 +113,8 @@ private:
     Vector<Function<bool(CommandBuffer&, CommandEncoder&)>> m_preCommitHandlers;
     Vector<Function<void(id<MTLCommandBuffer>)>> m_postCommitHandlers;
     const uint64_t m_sharedEventSignalValue { 0 };
-    // FIXME: we should not need this semaphore - https://bugs.webkit.org/show_bug.cgi?id=272353
-    BinarySemaphore m_commandBufferComplete;
+    const Ref<CommandBufferCompletion> m_completion { CommandBufferCompletion::create() };
     RefPtr<CommandEncoder> m_commandEncoder;
-    std::atomic<double> m_gpuExecutionDurationSeconds { 0 };
 } DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refCommandBuffer, derefCommandBuffer);
 
 } // namespace WebGPU::Metal

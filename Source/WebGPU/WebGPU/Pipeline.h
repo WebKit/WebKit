@@ -60,9 +60,11 @@ LibraryCompileRequest libraryCompileRequest(const PreparedLibrary&);
 
 id<MTLLibrary> compileLibrary(id<MTLDevice>, const LibraryCompileRequest&, NSError **);
 
-void compileLibraryAsync(id<MTLDevice>, Instance&, const LibraryCompileRequest&, CompletionHandler<void(id<MTLLibrary>, NSError *)>&&);
-void createComputePipelineStateAsync(id<MTLDevice>, Instance&, MTLComputePipelineDescriptor *, CompletionHandler<void(id<MTLComputePipelineState>, NSError *)>&&);
-void createRenderPipelineStateAsync(id<MTLDevice>, Instance&, MTLRenderPipelineDescriptor *, CompletionHandler<void(id<MTLRenderPipelineState>, NSError *)>&&);
+// The callback is called on the thread that the device's instance calls back on, or without a result
+// when the device is destroyed first.
+void compileLibraryAsync(Device&, const LibraryCompileRequest&, CompletionHandler<void(id<MTLLibrary>, NSError *)>&&);
+void createComputePipelineStateAsync(Device&, MTLComputePipelineDescriptor *, CompletionHandler<void(id<MTLComputePipelineState>, NSError *)>&&);
+void createRenderPipelineStateAsync(Device&, MTLRenderPipelineDescriptor *, CompletionHandler<void(id<MTLRenderPipelineState>, NSError *)>&&);
 
 ScopeExit<Function<void()>> scopedErrorReporting(Device&, bool suppressErrors);
 

@@ -28,8 +28,21 @@
 #include "IPCTestUtilities.h"
 #include "StreamConnectionWorkQueue.h"
 #include "Helpers/Test.h"
+#include <wtf/Threading.h>
+#include <wtf/threads/BinarySemaphore.h>
 
 namespace TestWebKitAPI {
+
+namespace {
+
+// Called on the work queue as the only work dispatched so far. Returns once stopAndWaitForCompletion()
+// has been called: it wakes up the work queue only after it has marked the work queue as stopping.
+void waitUntilStopping(IPC::StreamConnectionWorkQueue& queue)
+{
+    EXPECT_TRUE(queue.wakeUpSemaphore().wait());
+}
+
+}
 
 class StreamConnectionWorkQueueTest : public ::testing::Test {
 public:
@@ -48,6 +61,51 @@ TEST_F(StreamConnectionWorkQueueTest, IsCurrentAtStopNoCrash)
         });
     }
     queue->stopAndWaitForCompletion();
+}
+
+TEST_F(StreamConnectionWorkQueueTest, WorkDispatchedWhileStoppingRuns)
+{
+    auto queue = IPC::StreamConnectionWorkQueue::create("StreamConnectionWorkQueueTest work queue"_s);
+    Vector<int> order;
+    queue->dispatch([&] {
+        waitUntilStopping(queue);
+        order.append(1);
+        queue->dispatch([&] {
+            order.append(2);
+            queue->dispatch([&] {
+                order.append(3);
+            });
+        });
+    });
+    queue->stopAndWaitForCompletion([&] {
+        assertIsCurrent(queue);
+        order.append(4);
+    });
+    EXPECT_EQ(order, (Vector<int> { 1, 2, 3, 4 }));
+}
+
+TEST_F(StreamConnectionWorkQueueTest, WorkDispatchedFromOtherThreadWhileStoppingRuns)
+{
+    auto queue = IPC::StreamConnectionWorkQueue::create("StreamConnectionWorkQueueTest work queue"_s);
+    Vector<int> order;
+    RefPtr<Thread> otherThread;
+    queue->dispatch([&] {
+        waitUntilStopping(queue);
+        order.append(1);
+        BinarySemaphore didDispatch;
+        otherThread = Thread::create("StreamConnectionWorkQueueTest other thread"_s, [&] {
+            queue->dispatch([&] {
+                order.append(2);
+            });
+            didDispatch.signal();
+        });
+        didDispatch.wait();
+    });
+    queue->stopAndWaitForCompletion([&] {
+        order.append(3);
+    });
+    otherThread->waitForCompletion();
+    EXPECT_EQ(order, (Vector<int> { 1, 2, 3 }));
 }
 
 }

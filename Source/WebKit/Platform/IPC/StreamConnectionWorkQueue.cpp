@@ -48,14 +48,14 @@ void StreamConnectionWorkQueue::dispatch(WTF::Function<void()>&& function)
 {
     {
         Locker locker { m_lock };
-        // Currently stream IPC::Connection::Client::didClose is delivered after
-        // scheduling the work queue stop. This is ignored, as the client function
-        // is not used at the moment. Later on, the closure signal should be set synchronously,
-        // not dispatched as a function.
-        if (m_shouldQuit)
+        // Work dispatched while the work queue is stopping still runs. Work must not be dispatched
+        // after it has stopped, including by the cleanup function.
+        if (m_isStopped) {
+            ASSERT_NOT_REACHED();
             return;
+        }
         m_functions.append(WTF::move(function));
-        if (!m_shouldQuit && !m_processingThread) {
+        if (!m_processingThread) {
             startProcessingThread();
             return;
         }
@@ -97,6 +97,8 @@ void StreamConnectionWorkQueue::stopAndWaitForCompletion(NOESCAPE WTF::Function<
         m_cleanupFunction = WTF::move(cleanupFunction);
         processingThread = m_processingThread;
         m_shouldQuit = true;
+        if (!processingThread)
+            m_isStopped = true;
     }
     if (!processingThread)
         return;
@@ -120,12 +122,17 @@ void StreamConnectionWorkQueue::startProcessingThread()
         for (;;) {
             processStreams();
             if (m_shouldQuit) {
-                processStreams();
+                // Run the work dispatched while stopping, including the work that the work dispatches,
+                // until there is none left. The cleanup function is the last work to run.
                 WTF::Function<void()> cleanup = nullptr;
-                {
+                for (;;) {
+                    processStreams();
                     Locker locker { m_lock };
-                    cleanup = WTF::move(m_cleanupFunction);
-
+                    if (m_functions.isEmpty()) {
+                        m_isStopped = true;
+                        cleanup = WTF::move(m_cleanupFunction);
+                        break;
+                    }
                 }
                 if (cleanup)
                     cleanup();

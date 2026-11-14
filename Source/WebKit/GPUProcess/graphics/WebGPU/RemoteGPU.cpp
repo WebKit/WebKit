@@ -95,7 +95,18 @@ void RemoteGPU::stopListeningForIPC()
     m_workQueue->dispatch([protectedThis = protect(*this)]() {
         protectedThis->workQueueUninitialize();
     });
-    m_workQueue->stopAndWaitForCompletion();
+    m_workQueue->stopAndWaitForCompletion([this] {
+        assertIsCurrent(workQueue());
+        // The work that ran while the work queue was stopping can create objects, such as asynchronously created pipelines.
+        clearObjectHeaps();
+    });
+}
+
+void RemoteGPU::clearObjectHeaps()
+{
+    assertIsCurrent(workQueue());
+    m_objectHeap->clear();
+    m_modelObjectHeap->clear();
 }
 
 void RemoteGPU::workQueueInitialize()
@@ -111,7 +122,7 @@ void RemoteGPU::workQueueInitialize()
     // this owns m_backing, but m_backing contains a callback which has a stong reference to this.
     // The retain cycle is required because callbacks need to execute even if this is disowned
     // (because the callbacks handle resource cleanup, etc.).
-    // The retain cycle is broken in workQueueUninitialize().
+    // The retain cycle is broken in workQueueUninitialize(), which destroys m_backing.
     auto gpuProcessConnection = m_gpuConnectionToWebProcess.get();
     auto backing = WebCore::createWebGPUIntegration([protectedThis = protect(*this)](Function<void()>&& workItem) {
         protectedThis->m_workQueue->dispatch(WTF::move(workItem));
@@ -133,9 +144,15 @@ void RemoteGPU::workQueueUninitialize()
     streamConnection->stopReceivingMessages(Messages::RemoteGPU::messageReceiverName(), m_identifier.toUInt64());
     streamConnection->invalidate();
     m_streamConnection = nullptr;
-    m_objectHeap->clear();
-    m_modelObjectHeap->clear();
-    m_backing = nullptr;
+    // Once the instance is destroyed, it drops the work that would call the pending callbacks of
+    // the devices, so destroying the devices calls them now.
+    for (Ref device : m_objectHeap->devices())
+        device->destroy();
+    clearObjectHeaps();
+    // A destroyed instance schedules no more work, so it dispatches nothing to the work queue once
+    // the work queue has stopped.
+    if (RefPtr backing = std::exchange(m_backing, nullptr))
+        backing->destroy();
 }
 
 void RemoteGPU::didReceiveInvalidMessage(IPC::StreamServerConnection&, IPC::MessageName messageName, const Vector<uint32_t>&)
