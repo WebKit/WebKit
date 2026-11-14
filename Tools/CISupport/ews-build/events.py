@@ -28,6 +28,7 @@ import re
 import time
 import twisted
 
+from buildbot.db.buildrequests import NotClaimedError
 from buildbot.process.results import SUCCESS, FAILURE, CANCELLED, WARNINGS, SKIPPED, EXCEPTION, RETRY
 from buildbot.util import httpclientservice, service
 from buildbot.www.hooks.github import GitHubEventHandler
@@ -579,6 +580,61 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
         return result
 
     @defer.inlineCallbacks
+    def is_priority_admin(self, user):
+        if not user:
+            return defer.returnValue(False)
+
+        username, access_token = GitHub.credentials()
+        response = yield TwistedAdditions.request(
+            url=f'{self.github_api_endpoint}/orgs/WebKit/teams/{GitHub.PRIORITY_TEAM}/memberships/{user}',
+            type=b'GET',
+            timeout=60,
+            headers=dict(
+                Authorization=[f'Bearer {access_token}'],
+                Accept=['application/vnd.github.v3+json'],
+            ), logger=log.msg,
+        )
+        if not response:
+            log.msg(f"Failed to check whether '{user}' is a member of {GitHub.PRIORITY_TEAM}: no response")
+            return defer.returnValue(False)
+        if response.status_code // 100 != 2:
+            if response.status_code != 404:
+                log.msg(f"Failed to check whether '{user}' is a member of {GitHub.PRIORITY_TEAM}: HTTP {response.status_code}")
+            return defer.returnValue(False)
+        return defer.returnValue((response.json() or {}).get('state') == 'active')
+
+    @defer.inlineCallbacks
+    def incomplete_build_requests(self, pr_number, head_sha):
+        requests = yield self.master.db.buildrequests.getBuildRequests(complete=False)
+        result = []
+        for buildsetid in sorted({request.buildsetid for request in requests}):
+            props = yield self.master.db.buildsets.getBuildsetProperties(buildsetid)
+            if props.get('github.number', (None,))[0] == pr_number and props.get('github.head.sha', (None,))[0] == head_sha:
+                result += [request.buildrequestid for request in requests if request.buildsetid == buildsetid]
+        return defer.returnValue(sorted(result))
+
+    @defer.inlineCallbacks
+    def update_priority(self, pr_number, head_sha, labels, sender):
+        is_admin = yield self.is_priority_admin(sender)
+        if not is_admin:
+            log.msg(f"Ignoring priority label change on PR #{pr_number} by '{sender}', who could not be verified as a member of {GitHub.PRIORITY_TEAM}")
+            return
+
+        priority = max([GitHub.PRIORITY_LABELS[label] for label in labels if label in GitHub.PRIORITY_LABELS], default=0)
+        # Labels are often added right after a push, before the push's build requests exist.
+        yield task.deferLater(reactor, self.LABEL_PROCESS_DELAY, lambda: None)
+
+        updated = []
+        brids = yield self.incomplete_build_requests(pr_number, head_sha)
+        for brid in brids:
+            try:
+                yield self.master.db.buildrequests.set_build_requests_priority([brid], priority)
+                updated.append(brid)
+            except NotClaimedError:
+                log.msg(f'Build request {brid} for PR #{pr_number} completed before its priority could be set')
+        log.msg(f"Set priority {priority} on {len(updated)} build requests for PR #{pr_number} ({head_sha}) for '{sender}': {updated}")
+
+    @defer.inlineCallbacks
     def handle_pull_request(self, payload, event):
         pr_number = payload['number']
         action = payload.get('action')
@@ -598,6 +654,10 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
         if custom_suffix != '' and pr_number % 10 != 0:
             # To trigger testing environment on every PR, please comment out this if block and restart buildbot
             log.msg(f'Ignoring PR {pr_number} ({head_sha}) on testing environment.')
+            return defer.returnValue(([], 'git'))
+
+        if action in ('labeled', 'unlabeled') and payload.get('label', {}).get('name') in GitHub.PRIORITY_LABELS:
+            self.update_priority(pr_number, head_sha, labels, sender).addErrback(log.err, f'Failed to update priority for PR #{pr_number}')
             return defer.returnValue(([], 'git'))
 
         if action == 'labeled' and GitHub.UNSAFE_MERGE_QUEUE_LABEL in labels:

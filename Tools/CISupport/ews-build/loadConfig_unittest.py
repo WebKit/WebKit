@@ -26,8 +26,16 @@
 import os
 import unittest
 
+from buildbot.db.buildrequests import NotClaimedError
+from buildbot.process.properties import Properties
+from buildbot.schedulers import triggerable
+from buildbot.test import fakedb
+from buildbot.test.fake import fakemaster
+from buildbot.test.reactor import TestReactorMixin
 from datetime import datetime, timedelta, timezone
 from twisted.internet import defer
+from twisted.trial import unittest as trial_unittest
+from unittest.mock import patch
 
 from . import loadConfig
 
@@ -348,6 +356,57 @@ class TestPrioritizeBuilders(unittest.TestCase):
             ['Unsafe-Merge-Queue', 'Merge-Queue'],
             [builder.name for builder in sorted_builders],
         )
+
+
+class TestSetBuildRequestsPriority(TestReactorMixin, trial_unittest.TestCase):
+    @defer.inlineCallbacks
+    def setUp(self):
+        self.setup_test_reactor()
+        self.master = yield defer.ensureDeferred(fakemaster.make_master(self, wantDb=True))
+        yield self.master.db.insert_test_data([
+            fakedb.Builder(id=77, name='bbb'),
+            fakedb.SourceStamp(id=234),
+            fakedb.Buildset(id=20),
+            fakedb.BuildsetSourceStamp(buildsetid=20, sourcestampid=234),
+            fakedb.BuildRequest(id=44, buildsetid=20, builderid=77),
+            fakedb.BuildRequest(id=45, buildsetid=20, builderid=77),
+            fakedb.BuildRequest(id=46, buildsetid=20, builderid=77, complete=1),
+        ])
+
+    @defer.inlineCallbacks
+    def priorities(self):
+        requests = yield self.master.db.buildrequests.getBuildRequests()
+        return sorted((request.buildrequestid, request.priority) for request in requests)
+
+    @defer.inlineCallbacks
+    def test_set_priority(self):
+        yield self.master.db.buildrequests.set_build_requests_priority([44, 45], 2)
+        self.assertEqual((yield self.priorities()), [(44, 2), (45, 2), (46, 0)])
+
+    @defer.inlineCallbacks
+    def test_completed_request(self):
+        with self.assertRaises(NotClaimedError):
+            yield self.master.db.buildrequests.set_build_requests_priority([44, 46], 2)
+        self.flushLoggedErrors(NotClaimedError)
+        self.assertEqual((yield self.priorities()), [(44, 0), (45, 0), (46, 0)])
+
+
+class TestTriggerable(unittest.TestCase):
+    def priority_for(self, properties):
+        with patch.object(triggerable.Triggerable, 'addBuildsetForSourceStampsWithDefaults', return_value=defer.succeed((1, {}))) as addBuildset:
+            loadConfig.Triggerable(name='tester', builderNames=['Tester']).addBuildsetForSourceStampsWithDefaults('reason', properties=properties)
+        return addBuildset.call_args.kwargs['priority']
+
+    def test_priority_from_properties(self):
+        properties = Properties()
+        properties.setProperty('priority', 2, 'Trigger')
+        self.assertEqual(self.priority_for(properties), 2)
+
+    def test_no_priority_property(self):
+        self.assertIsNone(self.priority_for(Properties()))
+
+    def test_no_properties(self):
+        self.assertIsNone(self.priority_for(None))
 
 
 if __name__ == '__main__':

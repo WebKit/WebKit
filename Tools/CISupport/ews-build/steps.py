@@ -32,6 +32,7 @@ from typing import Any, Generator
 from unittest import mock
 
 from twisted.internet import defer, reactor, task
+from twisted.python import log
 
 from .layout_test_failures import LayoutTestFailures
 from .send_email import send_email_to_patch_author, send_email_to_bot_watchers, send_email_to_github_admin, FROM_EMAIL
@@ -134,11 +135,16 @@ class GitHub(object):
     BLOCKED_LABEL = 'merging-blocked'
     SKIP_EWS_LABEL = 'skip-ews'
     NO_FAILURE_LIMITS_LABEL = 'no-failure-limits'
+    PRIORITY_LABELS = {
+        'ews-priority-high': 1,
+        'ews-priority-urgent': 2,
+    }
+    PRIORITY_TEAM = 'buildbot-administrators'
     LABELS = [
         MERGE_QUEUE_LABEL, UNSAFE_MERGE_QUEUE_LABEL, SAFE_MERGE_QUEUE_LABEL,
         REQUEST_MERGE_QUEUE_LABEL, BLOCKED_LABEL,
         SKIP_EWS_LABEL, NO_FAILURE_LIMITS_LABEL,
-    ]
+    ] + list(PRIORITY_LABELS)
 
     @classmethod
     def repository_urls(cls):
@@ -2860,6 +2866,28 @@ class Trigger(trigger.Trigger):
         self.triggers = triggers
         set_properties = self.propertiesToPassToTriggers(pull_request=pull_request) or {}
         super().__init__(schedulerNames=schedulerNames, set_properties=set_properties, updateSourceStamp=updateSourceStamp, **kwargs)
+
+    @defer.inlineCallbacks
+    def run(self):
+        try:
+            priority = yield self.current_priority()
+        except Exception as e:
+            log.msg(f'Failed to read the priority of build {self.getProperty("buildnumber")} on {self.getProperty("buildername")}, triggering without it: {e}')
+            priority = 0
+        if priority:
+            self.set_properties['priority'] = priority
+        rc = yield super().run()
+        return defer.returnValue(rc)
+
+    # Read from the database rather than self.build.requests, which holds the priority from when the build was claimed.
+    @defer.inlineCallbacks
+    def current_priority(self):
+        priorities = []
+        for request in self.build.requests:
+            buildrequest = yield self.master.data.get(('buildrequests', request.id))
+            if buildrequest:
+                priorities.append(buildrequest.get('priority') or 0)
+        return defer.returnValue(max(priorities, default=0))
 
     def propertiesToPassToTriggers(self, pull_request=False):
         property_names = [

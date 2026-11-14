@@ -27,13 +27,16 @@ import re
 
 from webkitcorepy import Config
 
-from buildbot.scheduler import AnyBranchScheduler, Periodic, Dependent, Triggerable, Nightly
+from buildbot.db.buildrequests import BuildRequestsConnectorComponent, NotClaimedError
+from buildbot.scheduler import AnyBranchScheduler, Periodic, Dependent, Nightly
+from buildbot.schedulers import triggerable
 from buildbot.schedulers.forcesched import ChoiceStringParameter, CodebaseParameter, FixedParameter, ForceScheduler, StringParameter
 from buildbot.worker import Worker
 from buildbot.util import identifiers as buildbot_identifiers
 from buildbot.changes.filter import ChangeFilter
 from datetime import datetime, timezone
 from twisted.internet import defer
+from twisted.python import log
 
 from Shared.utils import getWorkerPassword
 
@@ -53,6 +56,38 @@ STEP_NAME_LENGTH_LIMIT = 50
 
 # Where a worker runs, if it is managed: on EC2, or in Air-Cloud.
 WORKER_FLEETS = ('aws', 'air-cloud')
+
+
+# Backport of https://github.com/buildbot/buildbot/pull/9280; remove once the installed Buildbot includes it.
+def set_build_requests_priority(self, brids, priority):
+    def thd(conn):
+        transaction = conn.begin()
+        reqs_tbl = self.db.model.buildrequests
+        for batch in self.doBatch(brids, 100):
+            q = reqs_tbl.update()
+            q = q.where(reqs_tbl.c.id.in_(batch))
+            q = q.where(reqs_tbl.c.complete != 1)
+            res = conn.execute(q.values(priority=priority))
+            if res.rowcount != len(batch):
+                log.msg(f'tried to set priority on {len(batch)} buildrequests, but only updated {res.rowcount}')
+                transaction.rollback()
+                raise NotClaimedError
+        transaction.commit()
+
+    return self.db.pool.do(thd)
+
+
+BuildRequestsConnectorComponent.set_build_requests_priority = set_build_requests_priority
+
+
+class Triggerable(triggerable.Triggerable):
+    def addBuildsetForSourceStampsWithDefaults(self, reason, sourcestamps=None, waited_for=False, properties=None, builderNames=None, priority=None, **kwargs):
+        if properties:
+            priority = properties.getProperty('priority', priority)
+        return super().addBuildsetForSourceStampsWithDefaults(
+            reason, sourcestamps=sourcestamps, waited_for=waited_for, properties=properties,
+            builderNames=builderNames, priority=priority, **kwargs,
+        )
 
 
 def render_config(template=None, output=None):

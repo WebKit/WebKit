@@ -21,15 +21,22 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import json
 import os
 import time
 import unittest
 from unittest.mock import Mock, patch
 
+from buildbot.test import fakedb
+from buildbot.test.fake import fakemaster
+from buildbot.test.reactor import TestReactorMixin
 from twisted.internet import defer, task
 from twisted.python import log
+from twisted.trial import unittest as trial_unittest
 
+from . import loadConfig  # noqa: F401 (applies the set_build_requests_priority backport)
 from .events import CommitClassifier, Events, GitHubEventHandlerNoEdits
+from .steps import GitHub
 from .twisted_additions import TwistedAdditions
 
 
@@ -250,3 +257,125 @@ class TestSendDataToEWS(unittest.TestCase):
             ('ews-step', 'started', False),
             ('ews-step', 'finished', False),
         ])
+
+
+class TestPriorityLabels(TestReactorMixin, trial_unittest.TestCase):
+    PR_NUMBER = 80135
+    HEAD_SHA = 'd2daf5dde4d47a1ecc8a42b31d68287a6265563e'
+    OLD_SHA = 'cf887897c1e787a39e9c50cc07fbd6a4b98dbf36'
+
+    @defer.inlineCallbacks
+    def setUp(self):
+        self.setup_test_reactor()
+        self.master = yield defer.ensureDeferred(fakemaster.make_master(self, wantDb=True))
+        yield self.master.db.insert_test_data([
+            fakedb.Master(id=88),
+            fakedb.Builder(id=77, name='iOS-27-Simulator-Build-EWS'),
+            fakedb.SourceStamp(id=234),
+            *[row for buildsetid, pr_number, sha in [
+                (20, self.PR_NUMBER, self.HEAD_SHA),
+                (21, self.PR_NUMBER, self.OLD_SHA),
+                (22, 80136, self.HEAD_SHA),
+            ] for row in [
+                fakedb.Buildset(id=buildsetid),
+                fakedb.BuildsetSourceStamp(buildsetid=buildsetid, sourcestampid=234),
+                fakedb.BuildsetProperty(buildsetid=buildsetid, property_name='github.number', property_value=json.dumps([pr_number, 'Change'])),
+                fakedb.BuildsetProperty(buildsetid=buildsetid, property_name='github.head.sha', property_value=json.dumps([sha, 'Change'])),
+            ]],
+            fakedb.BuildRequest(id=44, buildsetid=20, builderid=77),
+            fakedb.BuildRequest(id=45, buildsetid=20, builderid=77),
+            fakedb.BuildRequestClaim(brid=45, masterid=88, claimed_at=1794253903),
+            fakedb.BuildRequest(id=46, buildsetid=20, builderid=77, complete=1),
+            fakedb.BuildRequest(id=47, buildsetid=21, builderid=77),
+            fakedb.BuildRequest(id=48, buildsetid=22, builderid=77),
+        ])
+        self.handler = GitHubEventHandlerNoEdits(secret=None, strict=False, master=self.master, github_api_endpoint='https://api.github.com')
+        for patcher in (
+            patch.object(task, 'deferLater', lambda clock, delay, callable, *args, **kwargs: defer.succeed(callable(*args, **kwargs))),
+            patch.object(log, 'msg', lambda *args, **kwargs: None),
+            patch.object(GitHub, 'credentials', lambda user=None: ('webkit-ews', 'token')),
+        ):
+            patcher.start()
+            self.addCleanup(patcher.stop)
+
+    @defer.inlineCallbacks
+    def priorities(self):
+        requests = yield self.master.db.buildrequests.getBuildRequests()
+        return {request.buildrequestid: request.priority for request in requests}
+
+    def membership(self, status_code, state=None):
+        content = json.dumps(dict(state=state)).encode('utf-8') if state else b''
+        return patch.object(TwistedAdditions, 'request', return_value=defer.succeed(TwistedAdditions.Response(status_code=status_code, content=content)))
+
+    @defer.inlineCallbacks
+    def test_incomplete_build_requests(self):
+        brids = yield self.handler.incomplete_build_requests(self.PR_NUMBER, self.HEAD_SHA)
+        self.assertEqual(brids, [44, 45])
+
+    @defer.inlineCallbacks
+    def test_update_priority(self):
+        with self.membership(200, state='active'):
+            yield self.handler.update_priority(self.PR_NUMBER, self.HEAD_SHA, ['ews-priority-high', 'ews-priority-urgent'], 'admin')
+        self.assertEqual((yield self.priorities()), {44: 2, 45: 2, 46: 0, 47: 0, 48: 0})
+
+    @defer.inlineCallbacks
+    def test_update_priority_after_label_removed(self):
+        yield self.master.db.buildrequests.set_build_requests_priority([44, 45], 2)
+        with self.membership(200, state='active'):
+            yield self.handler.update_priority(self.PR_NUMBER, self.HEAD_SHA, ['merge-queue'], 'admin')
+        self.assertEqual((yield self.priorities()), {44: 0, 45: 0, 46: 0, 47: 0, 48: 0})
+
+    @defer.inlineCallbacks
+    def test_update_priority_not_admin(self):
+        with self.membership(404):
+            yield self.handler.update_priority(self.PR_NUMBER, self.HEAD_SHA, ['ews-priority-urgent'], 'contributor')
+        self.assertEqual((yield self.priorities())[44], 0)
+
+    @defer.inlineCallbacks
+    def test_is_priority_admin(self):
+        with self.membership(200, state='active') as request:
+            self.assertTrue((yield self.handler.is_priority_admin('admin')))
+        self.assertEqual(request.call_args.kwargs['url'], 'https://api.github.com/orgs/WebKit/teams/buildbot-administrators/memberships/admin')
+
+    @defer.inlineCallbacks
+    def test_is_priority_admin_not_a_member(self):
+        with self.membership(404), patch.object(log, 'msg') as log_msg:
+            self.assertFalse((yield self.handler.is_priority_admin('contributor')))
+        log_msg.assert_not_called()
+
+    @defer.inlineCallbacks
+    def test_is_priority_admin_github_error(self):
+        with self.membership(502), patch.object(log, 'msg') as log_msg:
+            self.assertFalse((yield self.handler.is_priority_admin('admin')))
+        log_msg.assert_called_once_with("Failed to check whether 'admin' is a member of buildbot-administrators: HTTP 502")
+
+    @defer.inlineCallbacks
+    def test_is_priority_admin_no_response(self):
+        with patch.object(TwistedAdditions, 'request', return_value=defer.succeed(None)), patch.object(log, 'msg') as log_msg:
+            self.assertFalse((yield self.handler.is_priority_admin('admin')))
+        log_msg.assert_called_once_with("Failed to check whether 'admin' is a member of buildbot-administrators: no response")
+
+    @defer.inlineCallbacks
+    def test_is_priority_admin_pending_invitation(self):
+        with self.membership(200, state='pending'):
+            self.assertFalse((yield self.handler.is_priority_admin('invitee')))
+
+    @defer.inlineCallbacks
+    def test_is_priority_admin_no_user(self):
+        with self.membership(200, state='active') as request:
+            self.assertFalse((yield self.handler.is_priority_admin('')))
+        request.assert_not_called()
+
+    @defer.inlineCallbacks
+    def test_priority_label_event(self):
+        payload = dict(
+            number=self.PR_NUMBER,
+            action='labeled',
+            label=dict(name='ews-priority-urgent'),
+            sender=dict(login='admin'),
+            pull_request=dict(state='open', labels=[dict(name='ews-priority-urgent')], head=dict(sha=self.HEAD_SHA)),
+        )
+        with patch.object(GitHubEventHandlerNoEdits, 'update_priority', return_value=defer.succeed(None)) as update_priority:
+            result = yield self.handler.handle_pull_request(payload, 'pull_request')
+        self.assertEqual(result, ([], 'git'))
+        update_priority.assert_called_once_with(self.PR_NUMBER, self.HEAD_SHA, ['ews-priority-urgent'], 'admin')

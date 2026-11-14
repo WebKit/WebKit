@@ -32,9 +32,10 @@ import tempfile
 import time
 from typing import Any, Callable, Generator, Iterable, Optional
 from unittest import skip as skipTest
-from unittest.mock import call, create_autospec, patch
+from unittest.mock import Mock, call, create_autospec, patch
 
 from buildbot.process import properties
+from buildbot.process.buildstep import create_step_from_step_or_factory
 from buildbot.process import remotetransfer
 from buildbot.process.results import SUCCESS, FAILURE, WARNINGS, SKIPPED, RETRY, CANCELLED
 from buildbot.test.fake.fakebuild import FakeBuild
@@ -14725,6 +14726,44 @@ class TestTrigger(BuildStepMixinAdditions, unittest.TestCase):
     def test_scheduler_names_set(self):
         step = Trigger(schedulerNames=['scheduler1', 'scheduler2'])
         self.assertEqual(step.schedulerNames, ['scheduler1', 'scheduler2'])
+
+    def step_with_priorities(self, priorities):
+        step = create_step_from_step_or_factory(Trigger(schedulerNames=['test-scheduler']))
+        step.build = Mock(requests=[Mock(id=brid) for brid in priorities])
+        step.master = Mock()
+        step.master.data.get = lambda path: defer.succeed({'buildrequestid': path[1], 'priority': priorities[path[1]]})
+        return step
+
+    @defer.inlineCallbacks
+    def test_current_priority(self):
+        step = self.step_with_priorities({44: 0, 45: 2})
+        self.assertEqual((yield step.current_priority()), 2)
+
+    @defer.inlineCallbacks
+    def test_run_passes_priority(self):
+        step = self.step_with_priorities({44: 1})
+        with patch('buildbot.steps.trigger.Trigger.run', return_value=defer.succeed(SUCCESS)):
+            rc = yield step.run()
+        self.assertEqual(rc, SUCCESS)
+        self.assertEqual(step.set_properties['priority'], 1)
+
+    @defer.inlineCallbacks
+    def test_run_when_priority_lookup_fails(self):
+        step = self.step_with_priorities({44: 2})
+        step.master.data.get = lambda path: defer.fail(RuntimeError('database unavailable'))
+        with patch('buildbot.steps.trigger.Trigger.run', return_value=defer.succeed(SUCCESS)) as trigger_run, patch.object(log, 'msg') as log_msg:
+            rc = yield step.run()
+        self.assertEqual(rc, SUCCESS)
+        trigger_run.assert_called_once()
+        self.assertNotIn('priority', step.set_properties)
+        self.assertIn('database unavailable', log_msg.call_args.args[0])
+
+    @defer.inlineCallbacks
+    def test_run_without_priority(self):
+        step = self.step_with_priorities({44: 0})
+        with patch('buildbot.steps.trigger.Trigger.run', return_value=defer.succeed(SUCCESS)):
+            yield step.run()
+        self.assertNotIn('priority', step.set_properties)
 
 
 class TestResultsDatabaseFailureHandling(unittest.TestCase):
