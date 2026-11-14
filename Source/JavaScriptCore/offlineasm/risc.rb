@@ -117,11 +117,11 @@ end
 # lshifti tmp, bar
 #
 
-def riscSanitizeShift(operand, list)
+def riscSanitizeShift(operand, list, mask = 31)
     return operand if operand.immediate?
     
     tmp = Tmp.new(operand.codeOrigin, :gpr)
-    list << Instruction.new(operand.codeOrigin, "andi", [operand, Immediate.new(operand.codeOrigin, 31), tmp])
+    list << Instruction.new(operand.codeOrigin, "andi", [operand, Immediate.new(operand.codeOrigin, mask), tmp])
     tmp
 end
 
@@ -131,11 +131,19 @@ def riscLowerShiftOps(list)
         | node |
         if node.is_a? Instruction
             case node.opcode
-            when "lshifti", "rshifti", "urshifti", "lshiftp", "rshiftp", "urshiftp"
+            when "lshifti", "rshifti", "urshifti", "lshiftp", "rshiftp", "urshiftp", "lshiftq", "rshiftq", "urshiftq"
+                mask = case node.opcode
+                       when /q$/
+                           63
+                       when /p$/
+                           $currentSettings["ADDRESS64"] ? 63 : 31
+                       else
+                           31
+                       end
                 if node.operands.size == 2
-                    newList << Instruction.new(node.codeOrigin, node.opcode, [riscSanitizeShift(node.operands[0], newList), node.operands[1]], node.annotation)
+                    newList << Instruction.new(node.codeOrigin, node.opcode, [riscSanitizeShift(node.operands[0], newList, mask), node.operands[1]], node.annotation)
                 else
-                    newList << Instruction.new(node.codeOrigin, node.opcode, [node.operands[0], riscSanitizeShift(node.operands[1], newList), node.operands[2]], node.annotation)
+                    newList << Instruction.new(node.codeOrigin, node.opcode, [node.operands[0], riscSanitizeShift(node.operands[1], newList, mask), node.operands[2]], node.annotation)
                     raise "Wrong number of operands for shift at #{node.codeOriginString}" unless node.operands.size == 3
                 end
             else
@@ -370,7 +378,7 @@ class Immediate
     end
 end
 
-def riscLowerMalformedImmediates(list, validImmediates, validLogicalImmediates)
+def riscLowerMalformedImmediates(list, validImmediates, validLogicalImmediates, validLogicalImmediates32 = validLogicalImmediates)
     newList = []
     list.each {
         | node |
@@ -415,7 +423,11 @@ def riscLowerMalformedImmediates(list, validImmediates, validLogicalImmediates)
                 else
                     newList << node.riscLowerMalformedImmediatesRecurse(newList, validImmediates)
                 end
-            when "ori", "orh", "orp", "orq", "oris", "xori", "xorp", "xorq", "andi", "andp", "andq"
+            when "ori", "orh", "oris", "xori", "andi"
+                newList << node.riscLowerMalformedImmediatesRecurse(newList, validLogicalImmediates32)
+            when "orp", "xorp", "andp"
+                newList << node.riscLowerMalformedImmediatesRecurse(newList, $currentSettings["ADDRESS64"] ? validLogicalImmediates : validLogicalImmediates32)
+            when "orq", "xorq", "andq"
                 newList << node.riscLowerMalformedImmediatesRecurse(newList, validLogicalImmediates)
             else
                 newList << node.riscLowerMalformedImmediatesRecurse(newList, validImmediates)
