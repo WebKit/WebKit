@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("MemoryTimeline");
+
+    function makeEvent(timestamp)
+    {
+        return new WI.MemoryPressureEvent(timestamp, WI.MemoryPressureEvent.Severity.Critical);
+    }
+
+    function visibleEvents(events, startTime, endTime)
+    {
+        // Same binary searches as WI.MemoryTimelineOverviewGraph.prototype._visibleMemoryPressureEvents.
+        let lowerIndex = events.lowerBound(startTime, (time, event) => time - event.timestamp);
+        let upperIndex = events.upperBound(endTime, (time, event) => time - event.timestamp);
+        return events.slice(lowerIndex, upperIndex);
+    }
+
+    suite.addTestCase({
+        name: "MemoryTimeline.AddMemoryPressureEvent.OutOfOrderEventsStaySorted",
+        test() {
+            let timeline = new WI.MemoryTimeline(WI.TimelineRecord.Type.Memory);
+
+            // Interleave two sources reporting out of order.
+            timeline.addMemoryPressureEvent(makeEvent(3000));
+            timeline.addMemoryPressureEvent(makeEvent(1000));
+            timeline.addMemoryPressureEvent(makeEvent(3500));
+            timeline.addMemoryPressureEvent(makeEvent(1500));
+            timeline.addMemoryPressureEvent(makeEvent(2000));
+
+            let timestamps = timeline.memoryPressureEvents.map((event) => event.timestamp);
+            InspectorTest.assert(timestamps.length === 5, "Should have every event");
+            for (let i = 1; i < timestamps.length; ++i)
+                InspectorTest.assert(timestamps[i] >= timestamps[i - 1], "Should keep events sorted by timestamp");
+
+            InspectorTest.log("Timestamps: " + timestamps.join(", "));
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "MemoryTimeline.AddMemoryPressureEvent.BinarySearchFindsEveryVisibleEvent",
+        test() {
+            let timeline = new WI.MemoryTimeline(WI.TimelineRecord.Type.Memory);
+
+            // Interleave two sources reporting out of order, with duplicate timestamps.
+            timeline.addMemoryPressureEvent(makeEvent(2000));
+            timeline.addMemoryPressureEvent(makeEvent(1000));
+            timeline.addMemoryPressureEvent(makeEvent(2000));
+            timeline.addMemoryPressureEvent(makeEvent(3000));
+            timeline.addMemoryPressureEvent(makeEvent(1500));
+
+            let events = timeline.memoryPressureEvents;
+
+            let visible = visibleEvents(events, 1400, 3600);
+            InspectorTest.assert(visible.length === 4, "Should find every event inside the time range: " + visible.length);
+            InspectorTest.assert(visible.every((event) => event.timestamp >= 1400 && event.timestamp <= 3600), "Should only find events inside the time range");
+
+            visible = visibleEvents(events, 1000, 1000);
+            InspectorTest.assert(visible.length === 1 && visible[0].timestamp === 1000, "Should find the event at the exact boundary");
+
+            visible = visibleEvents(events, 2000, 2000);
+            InspectorTest.assert(visible.length === 2 && visible.every((event) => event.timestamp === 2000), "Should find every duplicate-timestamp event");
+
+            visible = visibleEvents(events, 2100, 2900);
+            InspectorTest.assert(visible.length === 0, "Should find no event in an empty time range");
+
+            InspectorTest.log("Sorted timestamps: " + events.map((event) => event.timestamp).join(", "));
+            return true;
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing that WI.MemoryTimeline keeps memory pressure events sorted by timestamp when they arrive out of order.</p>
+</body>
+</html>
