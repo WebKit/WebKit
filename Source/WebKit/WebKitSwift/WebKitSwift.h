@@ -39,6 +39,7 @@
 #import "WKIntelligenceSmartReplyTextEffectCoordinator.h"
 #import "WKIntelligenceTextEffectCoordinator.h"
 #import "WKMarketplaceKit.h"
+#import "WKPhoneNumberPossessionPlatformManaging.h"
 #import "WKPreviewWindowController.h"
 #import "WKRKEntity.h"
 #import "WKSExperienceController.h"

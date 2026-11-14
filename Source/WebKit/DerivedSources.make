@@ -1199,4 +1199,11 @@ DigitalCredentialsExtras.swift : $(DIGITAL_CREDENTIALS_EXTRAS)
 	$(if $(DIGITAL_CREDENTIALS_EXTRAS),cp -f $< $@,: > $@)
 
 all : DigitalCredentialsExtras.swift
+
+PHONE_NUMBER_POSSESSION_EXTRAS = $(call find-webkitadditions-file,PhoneNumberPossessionExtras.swift.in)
+
+PhoneNumberPossessionExtras.swift : $(PHONE_NUMBER_POSSESSION_EXTRAS)
+	$(if $(PHONE_NUMBER_POSSESSION_EXTRAS),cp -f $< $@,: > $@)
+
+all : PhoneNumberPossessionExtras.swift
 endif

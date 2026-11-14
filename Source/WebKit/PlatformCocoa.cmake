@@ -178,6 +178,7 @@ list(APPEND WebKit_SOURCES
     UIProcess/Cocoa/WebInspectorPreferenceObserver.mm
     ${WEBKIT_DIR}/UIProcess/Cocoa/TextExtraction/WKWebView+TextExtraction.swift
     ${WEBKIT_DIR}/UIProcess/Cocoa/WKDeferringGestureRecognizer.swift
+    ${WEBKIT_DIR}/UIProcess/PhoneNumberPossession/Cocoa/CocoaPhoneNumberPossessionManager.swift
     ${WEBKIT_DIR}/UIProcess/PhoneNumberPossession/Cocoa/MockPhoneNumberPossessionManager.swift
     ${WEBKIT_DIR}/UIProcess/PhoneNumberPossession/Cocoa/PhoneNumberPossessionController.swift
     ${WEBKIT_DIR}/UIProcess/PhoneNumberPossession/Cocoa/PhoneNumberPossessionManaging.swift
@@ -902,6 +903,12 @@ if (USE_APPLE_INTERNAL_SDK)
         list(APPEND _additions_swift_sources DigitalCredentialsExtras)
     endif ()
 
+    set(_phone_number_possession_extras_available OFF)
+    if (EXISTS "${CMAKE_SOURCE_DIR}/../Internal/WebKit/WebKitAdditions/Additions/PhoneNumberPossessionExtras.swift.in")
+        set(_phone_number_possession_extras_available ON)
+        list(APPEND _additions_swift_sources PhoneNumberPossessionExtras)
+    endif ()
+
     foreach (_additions_swift_source ${_additions_swift_sources})
         add_custom_command(
             OUTPUT ${WebKit_DERIVED_SOURCES_DIR}/${_additions_swift_source}.swift
@@ -923,6 +930,9 @@ if (USE_APPLE_INTERNAL_SDK)
     )
     if (_digital_credentials_extras_available)
         target_sources(WebKitSwift PRIVATE ${WebKit_DERIVED_SOURCES_DIR}/DigitalCredentialsExtras.swift)
+    endif ()
+    if (_phone_number_possession_extras_available)
+        target_sources(WebKitSwift PRIVATE ${WebKit_DERIVED_SOURCES_DIR}/PhoneNumberPossessionExtras.swift)
     endif ()
 endif ()
 

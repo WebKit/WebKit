@@ -613,6 +613,7 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/ModelIBLTextures.swift
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/ModelParameters.swift
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/ModelRenderer.swift
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/ModelUtils.swift
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/PhoneNumberPossessionExtras.swift
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteAudioDestinationManagerMessages.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/SecurityFlags.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/SecurityFlags.h

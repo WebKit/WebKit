@@ -29,18 +29,21 @@
 #if ENABLE(PHONE_NUMBER_POSSESSION)
 
 #import "WebKit-Swift.h"
+#import "WebKitSwiftSoftLink.h"
 #import "WebPageProxy.h"
-#import <WebCore/SecurityOriginData.h>
 #import <WebKit/WKWebView.h>
 
 namespace WebKit {
+
+id<WKPhoneNumberPossessionPlatformManaging> phoneNumberPossessionPlatformManager()
+{
+    return adoptNS([getWKPhoneNumberPossessionPlatformManagerClassSingleton() new]).autorelease();
+}
 
 static PhoneNumberPossessionController createController(const std::optional<WebCore::MockPhoneNumberPossessionConfiguration>& mockConfiguration)
 {
     if (mockConfiguration)
         return PhoneNumberPossessionController::init(*mockConfiguration);
-
-    // FIXME: The controller reports every request as unavailable until the platform's manager is added.
     return PhoneNumberPossessionController::init();
 }
 
@@ -49,7 +52,7 @@ void WebPhoneNumberPossessionCoordinatorProxy::platformIsAvailable(CompletionHan
     createController(m_mockConfiguration).canRequest(PhoneNumberPossessionCanRequestCompletionHandler::create(WTF::move(completionHandler)).ptr());
 }
 
-void WebPhoneNumberPossessionCoordinatorProxy::platformRequestPhoneNumberPossession(WebCore::PhoneNumberPossessionRequest&& request, const WebCore::SecurityOriginData& origin, WebPageProxy& page, CompletionHandler<void(PhoneNumberPossessionResult&&)>&& completionHandler)
+void WebPhoneNumberPossessionCoordinatorProxy::platformRequestPhoneNumberPossession(WebCore::PhoneNumberPossessionRequest&& request, WebPageProxy& page, CompletionHandler<void(PhoneNumberPossessionResult&&)>&& completionHandler)
 {
     ASSERT(m_pendingRequest);
     auto controller = createController(m_mockConfiguration);
@@ -58,7 +61,7 @@ void WebPhoneNumberPossessionCoordinatorProxy::platformRequestPhoneNumberPossess
     };
 
     RetainPtr webView = page.cocoaView();
-    controller.request(RefCountedPhoneNumberPossessionRequest::create(WTF::move(request)).ptr(), origin.toString(), [webView window], PhoneNumberPossessionRequestCompletionHandler::create([completionHandler = WTF::move(completionHandler)](PhoneNumberPossessionResult result) mutable {
+    controller.request(RefCountedPhoneNumberPossessionRequest::create(WTF::move(request)).ptr(), [webView window], PhoneNumberPossessionRequestCompletionHandler::create([completionHandler = WTF::move(completionHandler)](PhoneNumberPossessionResult result) mutable {
         completionHandler(WTF::move(result));
     }).ptr());
 }

@@ -35,6 +35,10 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
+#ifdef __OBJC__
+#import "WKPhoneNumberPossessionPlatformManaging.h"
+#endif
+
 namespace WebKit {
 
 enum class PhoneNumberPossessionError : uint8_t {
@@ -60,6 +64,10 @@ using PhoneNumberPossessionResult = std::expected<WebCore::PhoneNumberPossession
 using PhoneNumberPossessionCanRequestCompletionHandler = WTF::RefCountable<CompletionHandler<void(bool)>>;
 using PhoneNumberPossessionRequestCompletionHandler = WTF::RefCountable<CompletionHandler<void(PhoneNumberPossessionResult)>>;
 using PhoneNumberPossessionCancelCompletionHandler = WTF::RefCountable<CompletionHandler<void()>>;
+
+#ifdef __OBJC__
+id<WKPhoneNumberPossessionPlatformManaging> _Nullable phoneNumberPossessionPlatformManager();
+#endif
 
 } // namespace WebKit
 
