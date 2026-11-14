@@ -5523,15 +5523,13 @@ LayoutUnit RenderBox::offsetFromLogicalTopOfFirstPage() const
     if ((layoutState && !layoutState->isPaginated()) || (!layoutState && !enclosingFragmentedFlow()))
         return 0;
 
-    CheckedPtr containingBlock = this->containingBlock();
-    auto logicalTopInContainingBlock = logicalTop();
     if (CheckedPtr inlineBox = dynamicDowncast<RenderBoxModelObject>(container()); inlineBox && inlineBox->isInlineBox() && isOutOfFlowPositioned()) {
-        // The box is positioned relative to the inline box, which is positioned in its own containing block.
+        // The box is positioned relative to the inline box, which is positioned in its block container.
         auto inlineBoxOffset = toLayoutSize(inlineBox->blockStartRelativeFirstFragmentBorderBoxRect().location());
-        logicalTopInContainingBlock += inlineBox->isHorizontalWritingMode() ? inlineBoxOffset.height() : inlineBoxOffset.width();
-        containingBlock = inlineBox->containingBlock();
+        auto logicalTopInBlockContainer = logicalTop() + (inlineBox->isHorizontalWritingMode() ? inlineBoxOffset.height() : inlineBoxOffset.width());
+        return protect(LayoutIntegration::LineLayout::blockContainer(*inlineBox))->offsetFromLogicalTopOfFirstPage() + logicalTopInBlockContainer;
     }
-    return containingBlock->offsetFromLogicalTopOfFirstPage() + logicalTopInContainingBlock;
+    return protect(containingBlock())->offsetFromLogicalTopOfFirstPage() + logicalTop();
 }
 
 LayoutBoxExtent RenderBox::scrollPaddingForViewportRect(const LayoutRect& viewportRect)
