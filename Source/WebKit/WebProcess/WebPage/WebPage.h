@@ -1386,7 +1386,7 @@ public:
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     void cancelComposition(const String& text);
-    void deleteSurrounding(int64_t offset, unsigned characterCount);
+    void deleteSurrounding(int64_t offset, unsigned characterCount, CompletionHandler<void()>&&);
 #endif
 
 #if PLATFORM(GTK)
@@ -3444,6 +3444,7 @@ private:
 #if PLATFORM(GTK) || PLATFORM(WPE)
     std::optional<InputMethodState> m_inputMethodState;
     WeakPtr<WebCore::Element, WebCore::WeakPtrImplWithEventTargetData> m_focusedElementBeforePageBlur;
+    uint64_t m_handledInputMethodKeyEventCount { 0 };
 #endif
 
 #if USE(OS_STATE)

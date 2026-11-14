@@ -23,8 +23,11 @@
 #include "WebKitInputMethodContextPrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include "WebPageProxy.h"
+#include <limits>
 #include <wtf/SetForScope.h>
 #include <wtf/glib/GMallocString.h>
+#include <wtf/text/MakeString.h>
+#include <wtf/unicode/CharacterNames.h>
 
 #if PLATFORM(GTK)
 #include "Display.h"
@@ -60,7 +63,17 @@ void InputMethodFilter::committedCallback(InputMethodFilter* filter, const char*
 
 void InputMethodFilter::deleteSurroundingCallback(InputMethodFilter* filter, int offset, unsigned characterCount)
 {
-    filter->deleteSurrounding(offset, characterCount);
+    filter->deleteSurrounding(InputMethodDeleteSurroundingUnit::UTF16, offset, characterCount);
+}
+
+void InputMethodFilter::deleteSurroundingCodePointsCallback(InputMethodFilter* filter, int offset, unsigned codePointCount)
+{
+    filter->deleteSurrounding(InputMethodDeleteSurroundingUnit::CodePoints, offset, codePointCount);
+}
+
+void InputMethodFilter::deleteSurroundingBytesCallback(InputMethodFilter* filter, int offset, unsigned byteCount)
+{
+    filter->deleteSurrounding(InputMethodDeleteSurroundingUnit::UTF8, offset, byteCount);
 }
 
 void InputMethodFilter::setContext(WebKitInputMethodContext* context)
@@ -71,8 +84,6 @@ void InputMethodFilter::setContext(WebKitInputMethodContext* context)
     }
 
     m_context = context;
-    m_cursorRect = { };
-    m_surrounding = { };
     if (!m_context)
         return;
 
@@ -82,18 +93,29 @@ void InputMethodFilter::setContext(WebKitInputMethodContext* context)
     g_signal_connect_swapped(m_context.get(), "preedit-finished", G_CALLBACK(preeditFinishedCallback), this);
     g_signal_connect_swapped(m_context.get(), "committed", G_CALLBACK(committedCallback), this);
     g_signal_connect_swapped(m_context.get(), "delete-surrounding", G_CALLBACK(deleteSurroundingCallback), this);
+    g_signal_connect_swapped(m_context.get(), "delete-surrounding-code-points", G_CALLBACK(deleteSurroundingCodePointsCallback), this);
+    g_signal_connect_swapped(m_context.get(), "delete-surrounding-bytes", G_CALLBACK(deleteSurroundingBytesCallback), this);
 
     notifyContentType();
 
-    if (isEnabled() && isViewFocused())
+    if (!isEnabled())
+        return;
+
+    if (isViewFocused())
         notifyFocusedIn();
+    else
+        notifyCursorRectAndSurroundingToContext();
 }
 
 void InputMethodFilter::setState(std::optional<InputMethodState>&& state)
 {
     bool focusChanged = state.has_value() != m_state.has_value();
-    if (focusChanged && !state)
+    if (focusChanged && !state) {
         notifyFocusedOut();
+        // The cursor area and surrounding text are the ones of the element that lost the focus.
+        m_cursorRect = { };
+        m_surrounding = { };
+    }
 
     m_state = WTF::move(state);
     notifyContentType();
@@ -234,6 +256,10 @@ void InputMethodFilter::notifyFocusedIn()
         return;
 
     webkit_input_method_context_notify_focus_in(m_context.get());
+
+    // The cursor area and surrounding text might not change when the focus comes back, or when the context is new, so
+    // notify the ones known right away.
+    notifyCursorRectAndSurroundingToContext();
 }
 
 void InputMethodFilter::notifyFocusedOut()
@@ -242,14 +268,13 @@ void InputMethodFilter::notifyFocusedOut()
         return;
 
     cancelComposition();
-    m_cursorRect = { };
-    m_surrounding = { };
     webkit_input_method_context_notify_focus_out(m_context.get());
 }
 
 void InputMethodFilter::notifyCursorRect(const IntRect& cursorRect)
 {
-    if (!isEnabled() || !m_context)
+    // The cursor area is kept without a context too, to notify the next one of it.
+    if (!isEnabled())
         return;
 
     // Don't notify cursor area when cursorRect is default-initialized (location and size are all 0).
@@ -260,23 +285,105 @@ void InputMethodFilter::notifyCursorRect(const IntRect& cursorRect)
         return;
 
     m_cursorRect = cursorRect;
-    auto translatedRect = platformTransformCursorRectToViewCoordinates(cursorRect);
+    if (m_context)
+        notifyCursorRectToContext();
+}
+
+void InputMethodFilter::notifyCursorRectAndSurroundingToContext()
+{
+    if (m_cursorRect != IntRect { })
+        notifyCursorRectToContext();
+    // Unlike the surrounding text of the editor states received while deletions are pending, this one has them, so the
+    // input method counts its next deletions in it.
+    if (!m_surrounding.text.isNull())
+        notifySurroundingToContext();
+}
+
+void InputMethodFilter::notifyCursorRectToContext()
+{
+    auto translatedRect = platformTransformCursorRectToViewCoordinates(m_cursorRect);
     webkit_input_method_context_notify_cursor_area(m_context.get(), translatedRect.x(), translatedRect.y(), translatedRect.width(), translatedRect.height());
+}
+
+// The web process sends at most this many characters before and after the selection. Keep it in sync with
+// maxSurroundingTextLength in WebPageGLib.cpp.
+static constexpr unsigned maxSurroundingTextLength = 1000;
+
+// Whether two surrounding texts have the same text around the cursor. Beyond the part both have, they can only differ
+// because the web process left text out of one of them: then the longer one reaches the limit, or the limit minus one
+// when the last character in it would have split a surrogate pair.
+static bool surroundingTextsAgreeAroundCursor(const String& first, uint64_t firstCursor, uint64_t firstSelection, const String& second, uint64_t secondCursor, uint64_t secondSelection)
+{
+    if (std::max(firstCursor, firstSelection) > first.length() || std::max(secondCursor, secondSelection) > second.length())
+        return false;
+    if (static_cast<int64_t>(firstSelection) - static_cast<int64_t>(firstCursor) != static_cast<int64_t>(secondSelection) - static_cast<int64_t>(secondCursor))
+        return false;
+
+    auto sideLengthsAgree = [](unsigned firstLength, unsigned secondLength) {
+        return firstLength == secondLength || std::max(firstLength, secondLength) >= maxSurroundingTextLength - 1;
+    };
+
+    StringView firstView(first);
+    StringView secondView(second);
+    unsigned firstStart = std::min(firstCursor, firstSelection);
+    unsigned firstEnd = std::max(firstCursor, firstSelection);
+    unsigned secondStart = std::min(secondCursor, secondSelection);
+    unsigned secondEnd = std::max(secondCursor, secondSelection);
+
+    // The selected text is always sent whole.
+    if (firstView.substring(firstStart, firstEnd - firstStart) != secondView.substring(secondStart, secondEnd - secondStart))
+        return false;
+
+    if (!sideLengthsAgree(firstStart, secondStart))
+        return false;
+    unsigned beforeLength = std::min(firstStart, secondStart);
+    if (firstView.substring(firstStart - beforeLength, beforeLength) != secondView.substring(secondStart - beforeLength, beforeLength))
+        return false;
+
+    unsigned firstAfterLength = first.length() - firstEnd;
+    unsigned secondAfterLength = second.length() - secondEnd;
+    if (!sideLengthsAgree(firstAfterLength, secondAfterLength))
+        return false;
+    unsigned afterLength = std::min(firstAfterLength, secondAfterLength);
+    return firstView.substring(firstEnd, afterLength) == secondView.substring(secondEnd, afterLength);
 }
 
 void InputMethodFilter::notifySurrounding(const String& text, uint64_t cursorPosition, uint64_t selectionPosition)
 {
-    if (!isEnabled() || !m_context)
+    // The surrounding text is kept without a context too, to notify the next one of it.
+    if (!isEnabled())
+        return;
+
+    // The input method was already notified of the text without the deletions that the web process hasn't replied to
+    // yet, so this text is older than that. The web process sends a new editor state after replying.
+    if (*m_pendingDeletionCount)
         return;
 
     if (m_surrounding.text == text && m_surrounding.cursorPosition == cursorPosition && m_surrounding.selectionPosition == selectionPosition)
         return;
 
+    bool changedWithoutInputMethod = !surroundingTextsAgreeAroundCursor(m_surrounding.text, m_surrounding.cursorPosition, m_surrounding.selectionPosition, text, cursorPosition, selectionPosition);
     m_surrounding.text = text;
     m_surrounding.cursorPosition = cursorPosition;
     m_surrounding.selectionPosition = selectionPosition;
+    if (!m_context)
+        return;
 
-    auto textUTF8 = m_surrounding.text.utf8();
+    notifySurroundingToContext();
+    // The changes made by the input method are already in m_surrounding, so a different text around the cursor was
+    // changed by something else, like a script, the user moving the cursor, or the focus moving to another element.
+    // Input methods only ask for the surrounding text when they handle their own events, so reset the context to make
+    // them ask for it now. A text that only differs where the limit of the surrounding text cut it isn't a change.
+    if (changedWithoutInputMethod && m_preedit.text.isEmpty())
+        webkit_input_method_context_reset(m_context.get());
+}
+
+void InputMethodFilter::notifySurroundingToContext()
+{
+    const auto& text = m_surrounding.text;
+    auto cursorPosition = m_surrounding.cursorPosition;
+    auto selectionPosition = m_surrounding.selectionPosition;
+    auto textUTF8 = text.utf8();
     auto cursorPositionUTF8 = cursorPosition != text.length() ? StringView(text).left(cursorPosition).utf8().length() : textUTF8.length();
     auto selectionPositionUTF8 = cursorPositionUTF8;
     if (cursorPosition != selectionPosition)
@@ -360,6 +467,10 @@ void InputMethodFilter::committed(const char* compositionString)
     bool preeditWasEmpty = m_preedit.text.isEmpty();
     m_preedit = { };
 
+    // Input methods ask for the surrounding text right after committing, before the web process has inserted the
+    // text. Insert it in the surrounding text right away, like deletions are removed from it.
+    insertTextInSurrounding(m_compositionResult);
+
     auto* webView = webkitInputMethodContextGetWebView(m_context.get());
     ASSERT(webView);
     if (m_filteringContext.isActive) {
@@ -370,14 +481,54 @@ void InputMethodFilter::committed(const char* compositionString)
     m_compositionResult = { };
 }
 
-void InputMethodFilter::deleteSurrounding(int offset, unsigned characterCount)
+void InputMethodFilter::deleteSurrounding(InputMethodDeleteSurroundingUnit unit, int64_t offset, uint64_t count)
 {
     if (!isEnabled())
         return;
 
+    if (unit != InputMethodDeleteSurroundingUnit::UTF16) {
+        // A UTF-16 deletion of nothing moves the cursor, but the other ones do nothing.
+        // FIXME: Make a UTF-16 deletion of nothing do nothing too, like GtkIMContext and the Wayland text input
+        // protocols do. Moving the cursor is a side effect of the original implementation.
+        if (!count)
+            return;
+        // Code points and bytes are counted in the surrounding text given to the input method, so they can't be
+        // converted without it.
+        if (m_surrounding.text.isNull())
+            return;
+    }
+
+    // Input methods expect the surrounding text to change as soon as they ask for a deletion, but the web process
+    // deletes the text asynchronously. Remove the text from the surrounding text right away, and notify the input
+    // method of it, so that it counts what it asks for next in the text as it will be.
+    std::optional<InputMethodSurroundingRange> range;
+    if (!m_surrounding.text.isNull())
+        range = inputMethodSurroundingDeletionRange(m_surrounding.text, m_surrounding.cursorPosition, unit, offset, count);
+
+    if (unit != InputMethodDeleteSurroundingUnit::UTF16) {
+        if (!range)
+            return;
+        offset = static_cast<int64_t>(range->start) - static_cast<int64_t>(m_surrounding.cursorPosition);
+        count = range->end - range->start;
+    }
+
     auto* webView = webkitInputMethodContextGetWebView(m_context.get());
     ASSERT(webView);
-    webkitWebViewDeleteSurrounding(webView, offset, characterCount);
+    ++*m_pendingDeletionCount;
+    webkitWebViewDeleteSurrounding(webView, offset, std::min<uint64_t>(count, std::numeric_limits<unsigned>::max()), [pendingDeletionCount = m_pendingDeletionCount] {
+        --*pendingDeletionCount;
+    });
+
+    if (!range)
+        return;
+
+    if (range->start == range->end && range->start == m_surrounding.cursorPosition && range->start == m_surrounding.selectionPosition)
+        return;
+
+    m_surrounding.text = makeString(StringView(m_surrounding.text).left(range->start), StringView(m_surrounding.text).substring(range->end));
+    m_surrounding.cursorPosition = range->start;
+    m_surrounding.selectionPosition = range->start;
+    notifySurroundingToContext();
 }
 
 void InputMethodFilter::cancelComposition()
@@ -391,6 +542,34 @@ void InputMethodFilter::cancelComposition()
     m_preedit = { };
     m_compositionResult = { };
     webkit_input_method_context_reset(m_context.get());
+}
+
+void InputMethodFilter::insertTextInSurrounding(const String& text)
+{
+    if (m_surrounding.text.isNull())
+        return;
+
+    unsigned length = m_surrounding.text.length();
+    unsigned start = std::min<uint64_t>(std::min(m_surrounding.cursorPosition, m_surrounding.selectionPosition), length);
+    unsigned end = std::min<uint64_t>(std::max(m_surrounding.cursorPosition, m_surrounding.selectionPosition), length);
+    if (text.isEmpty() && start == end)
+        return;
+
+    // The web process reports the text of a password field masked, one bullet per UTF-16 code unit (see
+    // RenderText::secureText()). Mask the inserted text the same way, so that the input method is never told it in clear.
+    String insertedText = text;
+    if (m_state && m_state->purpose == InputMethodState::Purpose::Password) {
+        std::span<char16_t> characters;
+        insertedText = String::createUninitialized(text.length(), characters);
+        for (auto& character : characters)
+            character = WTF::Unicode::bullet;
+    }
+
+    StringView surroundingText(m_surrounding.text);
+    m_surrounding.text = makeString(surroundingText.left(start), insertedText, surroundingText.substring(end));
+    m_surrounding.cursorPosition = start + insertedText.length();
+    m_surrounding.selectionPosition = m_surrounding.cursorPosition;
+    notifySurroundingToContext();
 }
 
 } // namespace WebKit

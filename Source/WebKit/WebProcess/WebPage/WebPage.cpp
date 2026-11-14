@@ -2066,6 +2066,9 @@ EditorState WebPage::editorState(ShouldPerformLayout shouldPerformLayout) const
     // Always return an EditorState with a valid identifier or it will fail to decode and this process will be terminated.
     EditorState result;
     result.identifier = m_internals->lastEditorStateIdentifier.increment();
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    result.handledInputMethodKeyEventCount = m_handledInputMethodKeyEventCount;
+#endif
 
     // Ref the frame because this function may perform layout, which may cause frame destruction.
     RefPtr frame = corePage()->focusController().focusedOrMainFrame();
@@ -4687,7 +4690,19 @@ void WebPage::keyEvent(FrameIdentifier frameID, Ref<WebKeyboardEvent>&& keyboard
     if (RefPtr frame = WebProcess::singleton().webFrame(frameID))
         handled = frame->handleKeyEvent(keyboardEvent);
 
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    // Editor states sent from now on have this key event applied.
+    if (keyboardEvent.handledByInputMethod())
+        ++m_handledInputMethodKeyEventCount;
+#endif
     completionHandler(handled);
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    // The UI process ignores the editor states sent while key events of the input method are queued, since they
+    // might not have them applied yet. Like WebPage::deleteSurrounding(), send one after the reply.
+    if (keyboardEvent.handledByInputMethod())
+        sendEditorStateUpdate();
+#endif
 }
 
 bool WebPage::handleKeyEventByRelinquishingFocusToChrome(const KeyboardEvent& event)

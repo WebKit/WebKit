@@ -1477,7 +1477,7 @@ public:
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     void cancelComposition(const String& compositionString);
-    void deleteSurrounding(int64_t offset, unsigned characterCount);
+    void deleteSurrounding(int64_t offset, unsigned characterCount, CompletionHandler<void()>&&);
 
     void setInputMethodState(std::optional<InputMethodState>&&);
 #endif
@@ -2678,6 +2678,9 @@ public:
     bool isHandlingPreventableTouchEnd() const { return m_handlingPreventableTouchEndCount; }
 
     NODELETE bool hasQueuedKeyEvent() const;
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    bool hasQueuedInputMethodKeyEvent() const;
+#endif
     NODELETE const NativeWebKeyboardEvent& firstQueuedKeyEvent() const LIFETIME_BOUND;
 
     void grantAccessToAssetServices();
@@ -3688,6 +3691,9 @@ private:
     void remoteFrameMouseEventTimedOut();
     void mouseMoveWasHandledInFrame(WebCore::FrameIdentifier);
     void keyEventHandlingCompleted(bool handled);
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    void sendPendingDeleteSurroundings();
+#endif
 #if ENABLE(MAC_GESTURE_EVENTS)
     void gestureEventHandlingCompleted(std::optional<WebEventType>, bool handled, std::optional<WebCore::RemoteUserInputEventData>);
 #endif
