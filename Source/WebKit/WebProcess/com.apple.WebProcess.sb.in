@@ -739,7 +739,7 @@
 (read-only-and-issue-extensions (extension "com.apple.app-sandbox.read"))
 #if !ENABLE(BLOCKING_OF_WEBCONTENT_FILE_WRITE)
 (define (read-write-extension-with-telemetry) (with report) (with telemetry) (extension "com.apple.app-sandbox.read-write"))
-(read-write-and-issue-extensions (read-write-extension-with-telemetry))
+; (read-write-and-issue-extensions (read-write-extension-with-telemetry))
 #endif
 
 ;; Allow certain Mach extensions. See <rdar://87850345>.
@@ -764,7 +764,7 @@
 
 (when (positive? (string-length (param "DARWIN_USER_TEMP_DIR")))
     (allow file-read* (subpath (param "DARWIN_USER_TEMP_DIR")))
-    (allow file-write* (with report) (with telemetry-backtrace) (subpath (param "DARWIN_USER_TEMP_DIR"))))
+    (deny file-write* (with telemetry-backtrace) (subpath (param "DARWIN_USER_TEMP_DIR"))))
 #endif
 
 ;; IOKit user clients
