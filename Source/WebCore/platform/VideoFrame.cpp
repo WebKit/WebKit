@@ -35,6 +35,7 @@
 #endif
 
 #if !PLATFORM(COCOA) && !USE(GSTREAMER)
+#include "ColorSpace.h"
 #include "ImageOrientation.h"
 #endif
 
@@ -275,7 +276,7 @@ void VideoFrame::copyTo(std::span<uint8_t>, VideoPixelFormat, ColorSpace, Vector
     callback({ });
 }
 
-RefPtr<NativeImage> VideoFrame::copyNativeImage() const
+RefPtr<NativeImage> VideoFrame::copyNativeImage(std::optional<ColorSpace>) const
 {
     // FIXME: Add support.
     return nullptr;

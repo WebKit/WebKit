@@ -459,7 +459,7 @@ void GraphicsContext::drawMeshGradient(MeshGradient& gradient, const FloatRect& 
 #if ENABLE(VIDEO)
 void GraphicsContext::drawVideoFrame(const VideoFrame& frame, const FloatRect& destination, ShouldDiscardAlpha shouldDiscardAlpha, RasterDrawingOptions options)
 {
-    RefPtr image = frame.copyNativeImage();
+    RefPtr image = frame.copyNativeImage({ this->colorSpace() });
     if (!image)
         return;
     IntSize size = image->size();

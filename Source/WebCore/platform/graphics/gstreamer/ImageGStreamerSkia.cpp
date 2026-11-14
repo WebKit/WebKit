@@ -29,7 +29,6 @@
 #if ENABLE(VIDEO) && USE(GSTREAMER) && USE(SKIA)
 
 #include "ColorSpaceSkia.h"
-#include "NotImplemented.h"
 #include "PlatformVideoColorSpace.h"
 #include <skia/core/SkImage.h>
 
@@ -39,7 +38,7 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebCore {
 
-ImageGStreamer::ImageGStreamer(GRefPtr<GstSample>&& sample)
+ImageGStreamer::ImageGStreamer(GRefPtr<GstSample>&& sample, std::optional<ColorSpace> colorSpace)
     : m_sample(WTF::move(sample))
 {
     GstBuffer* buffer = gst_sample_get_buffer(m_sample.get());
@@ -55,10 +54,6 @@ ImageGStreamer::ImageGStreamer(GRefPtr<GstSample>&& sample)
     // The frame has to be RGB so we can paint it.
     ASSERT(GST_VIDEO_INFO_IS_RGB(videoInfo));
 
-    // The video buffer may have these formats in these cases:
-    // { BGRx, BGRA } on little endian
-    // { xRGB, ARGB } on big endian:
-    // { RGBx, RGBA }
     SkColorType colorType = kUnknown_SkColorType;
     SkAlphaType alphaType = kUnknown_SkAlphaType;
     switch (videoFrame.format()) {
@@ -70,11 +65,6 @@ ImageGStreamer::ImageGStreamer(GRefPtr<GstSample>&& sample)
         colorType = kBGRA_8888_SkColorType;
         alphaType = kUnpremul_SkAlphaType;
         break;
-    case GST_VIDEO_FORMAT_xRGB:
-    case GST_VIDEO_FORMAT_ARGB:
-        // FIXME: we need a conversion here.
-        notImplemented();
-        return;
     case GST_VIDEO_FORMAT_RGBx:
         colorType = kRGB_888x_SkColorType;
         alphaType = kOpaque_SkAlphaType;
@@ -90,7 +80,18 @@ ImageGStreamer::ImageGStreamer(GRefPtr<GstSample>&& sample)
 
     m_size = { static_cast<float>(videoFrame.width()), static_cast<float>(videoFrame.height()) };
 
-    auto toSkiaColorSpace = [](const PlatformVideoColorSpace& videoColorSpace) {
+    auto toSkiaColorSpace = [&colorSpace](const PlatformVideoColorSpace& videoColorSpace) {
+        if (colorSpace)
+            return colorSpace->platformColorSpace();
+
+        if (videoColorSpace == srgbColorSpace())
+            return sRGBColorSpaceSingleton();
+
+#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+        if (videoColorSpace == displayP3ColorSpace())
+            return displayP3ColorSpaceSingleton();
+#endif
+
         // Only valid, full-range RGB spaces are supported.
         if (!videoColorSpace.primaries || !videoColorSpace.transfer || !videoColorSpace.matrix || !videoColorSpace.fullRange)
             return sk_sp<SkColorSpace>();
