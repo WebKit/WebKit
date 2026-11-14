@@ -7,22 +7,22 @@ layer at (0,0) size 480x360
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.7 $"
     RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
     RenderSVGText {text} at (228,12) size 24x23 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 24x23
-        chunk 1 (middle anchor) text run 1 at (228.33,30.00) startOffset 0 endOffset 4 width 23.33: "fill"
-    RenderSVGContainer {g} at (110,92) size 300x142 [transform={m=((1.00,0.00)(0.00,1.00)) t=(130.00,60.00)}]
-      RenderSVGContainer {g} at (110,92) size 140x142 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,45.00)}]
-        RenderSVGText {text} at (-140,-13) size 140x17 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 140x16
-            chunk 1 (end anchor) text run 1 at (-139.17,0.00) startOffset 0 endOffset 25 width 139.17: "fill unspecified (remove)"
-        RenderSVGText {text} at (-67,12) size 67x17 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 67x16
-            chunk 1 (end anchor) text run 1 at (-66.21,25.00) startOffset 0 endOffset 11 width 66.21: "fill=remove"
-        RenderSVGText {text} at (-135,87) size 135x17 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 135x16
-            chunk 1 (end anchor) text run 1 at (-134.60,100.00) startOffset 0 endOffset 26 width 134.60: "fill=freeze (with restart)"
-        RenderSVGText {text} at (-124,112) size 124x17 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 124x16
-            chunk 1 (end anchor) text run 1 at (-123.71,125.00) startOffset 0 endOffset 24 width 123.71: "fill=freeze (no restart)"
+      RenderSVGInlineText {#text} at (0,0) size 23x23
+        chunk 1 (middle anchor) text run 1 at (228.88,30.00) startOffset 0 endOffset 4 width 22.24: "fill"
+    RenderSVGContainer {g} at (112,92) size 298x142 [transform={m=((1.00,0.00)(0.00,1.00)) t=(130.00,60.00)}]
+      RenderSVGContainer {g} at (112,92) size 138x142 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,45.00)}]
+        RenderSVGText {text} at (-138,-13) size 138x17 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 138x16
+            chunk 1 (end anchor) text run 1 at (-137.63,0.00) startOffset 0 endOffset 25 width 137.63: "fill unspecified (remove)"
+        RenderSVGText {text} at (-66,12) size 66x17 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 66x16
+            chunk 1 (end anchor) text run 1 at (-65.44,25.00) startOffset 0 endOffset 11 width 65.44: "fill=remove"
+        RenderSVGText {text} at (-134,87) size 134x17 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 134x16
+            chunk 1 (end anchor) text run 1 at (-133.83,100.00) startOffset 0 endOffset 26 width 133.83: "fill=freeze (with restart)"
+        RenderSVGText {text} at (-123,112) size 123x17 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 123x16
+            chunk 1 (end anchor) text run 1 at (-122.94,125.00) startOffset 0 endOffset 24 width 122.94: "fill=freeze (no restart)"
       RenderSVGContainer {g} at (294,157) size 116x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,125.00)}]
         RenderSVGText {text} at (-16,-28) size 32x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 32x16

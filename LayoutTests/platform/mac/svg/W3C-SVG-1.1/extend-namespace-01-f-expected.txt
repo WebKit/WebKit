@@ -6,8 +6,8 @@ layer at (0,0) size 480x360
       RenderSVGContainer {g} at (63,15) size 354x19
         RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGText {text} at (63,15) size 354x19 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 354x18
-            chunk 1 (middle anchor) text run 1 at (63.46,30.00) startOffset 0 endOffset 51 width 353.08: "Pie chart built from data in a different namespace."
+          RenderSVGInlineText {#text} at (0,0) size 353x18
+            chunk 1 (middle anchor) text run 1 at (63.61,30.00) startOffset 0 endOffset 51 width 352.79: "Pie chart built from data in a different namespace."
       RenderSVGContainer {g} at (126,61) size 243x215
         RenderSVGPath {path} at (263,76) size 106x83 [transform={m=((1.00,0.00)(0.00,1.00)) t=(27.00,-13.00)}] [stroke={[type=SOLID] [color=#0000FF] [stroke width=3.00]}] [fill={[type=SOLID] [color=#FF8888]}] [data="M 240 170 L 340 170 C 340.103 139.741 326.499 111.063 303 92 Z"]
         RenderSVGText {text} at (284,129) size 29x16 contains 1 chunk(s)
@@ -20,7 +20,7 @@ layer at (0,0) size 480x360
         RenderSVGPath {path} at (126,80) size 116x132 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#929292]}] [data="M 240 170 L 192 82 C 146.3 106.75 127.176 162.382 148 210 Z"]
         RenderSVGText {text} at (162,136) size 32x16 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 32x16
-            chunk 1 (middle anchor) text run 1 at (162.06,149.00) startOffset 0 endOffset 4 width 31.89: "West"
+            chunk 1 (middle anchor) text run 1 at (162.18,149.00) startOffset 0 endOffset 4 width 31.64: "West"
         RenderSVGPath {path} at (146,168) size 96x102 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#B6B6B6]}] [data="M 240 170 L 148 210 C 160.888 239.682 187.343 261.293 219 268 Z"]
         RenderSVGText {text} at (176,207) size 46x16 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 46x16

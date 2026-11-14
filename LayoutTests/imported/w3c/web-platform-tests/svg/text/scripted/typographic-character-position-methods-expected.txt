@@ -1,0 +1,18 @@
+AÉB
+AẸ́B
+रामो
+AÉB
+रामो
+
+PASS getNumberOfChars still counts every character
+PASS getStartPositionOfChar on a combining mark returns the start of its base
+PASS getEndPositionOfChar on a base and on its combining mark returns the end of the typographic character
+PASS getExtentOfChar on a combining mark returns the extent of the typographic character
+FAIL every mark of a typographic character with two marks returns the same start and end assert_approx_equals: end of character 2 x expected 42.041015625 +/- 0.01 but got 50
+PASS getStartPositionOfChar on a Devanagari vowel sign returns the start of its consonant
+FAIL getEndPositionOfChar on a Devanagari consonant and its vowel sign returns the end of the typographic character assert_approx_equals: end of RA x expected 23.5 +/- 0.01 but got 18.040000915527344
+PASS getExtentOfChar on a Devanagari vowel sign returns the extent of the typographic character
+FAIL getCharNumAtPosition returns the first character of the typographic character assert_equals: inside the first typographic character expected 0 but got -1
+PASS with one x per character, getStartPositionOfChar on a combining mark returns the x of its base
+PASS with one x per character, getStartPositionOfChar on a Devanagari vowel sign returns the x of its consonant
+

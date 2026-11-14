@@ -26,7 +26,6 @@
 #include "config.h"
 #include "SVGTextLayoutAlgorithm.h"
 
-#include "ComplexTextController.h"
 #include "FontCascadeInlines.h"
 #include "InlineDisplayBoxInlines.h"
 #include "LayoutElementBox.h"
@@ -37,6 +36,7 @@
 #include "SVGGeometryElement.h"
 #include "SVGLengthContext.h"
 #include "SVGNames.h"
+#include "SVGTextBoxPainter.h"
 #include "SVGTextFragment.h"
 #include "SVGTextLayoutEngineBaseline.h"
 #include "SVGTextLayoutEngineSpacing.h"
@@ -44,7 +44,6 @@
 #include "SVGTextPositioningElement.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "TextUtil.h"
-#include "WidthIterator.h"
 #include <unicode/ubrk.h>
 #include <wtf/text/TextBreakIterator.h>
 
@@ -127,75 +126,100 @@ static bool shouldUseComplexTextController(const FontCascade& scaledFont, const 
     return codePath == FontCascade::CodePath::Complex;
 }
 
-// One metrics entry per measured unit (a character or a surrogate pair), covering the whole text. Measured with the
-// scaled font and kept until the text or the font changes.
-static void ensureTextMetrics(RenderSVGInlineText& text)
+NODELETE static unsigned metricsLengthAt(StringView text, unsigned position)
 {
-    if (text.hasValidTextMetrics())
-        return;
-    text.setHasValidTextMetrics(true);
+    return U16_LENGTH(text.codePointAt(position));
+}
 
+template<typename IsClusterStart>
+static void appendRunMetrics(RenderSVGInlineText& text, unsigned runStart, unsigned runLength, TextDirection direction, const IsClusterStart& isClusterStart)
+{
     auto& metrics = text.textMetrics();
-    metrics.clear();
-
-    auto run = SVGTextMetrics::constructTextRun(text);
+    CheckedRef style = text.style();
+    auto run = constructTextRun(StringView(text.text()).substring(runStart, runLength), direction, style);
     auto length = run.length();
-    if (!length)
-        return;
 
     CheckedRef scaledFont = text.scaledFont();
     auto scalingFactor = text.scalingFactor();
     ASSERT(scalingFactor);
     auto height = scaledFont->metricsOfPrimaryFont().height() / scalingFactor;
-    metrics.reserveInitialCapacity(length);
 
     auto appendMetrics = [&](unsigned metricsLength, float width) {
         metrics.append(SVGTextMetrics(metricsLength, width / scalingFactor, height));
     };
 
-    if (shouldUseComplexTextController(scaledFont, run)) {
-        auto controller = ComplexTextController { scaledFont, run, true };
-        auto totalWidth = 0.f;
-        for (unsigned position = 0; position < length;) {
-            unsigned metricsLength = U16_IS_LEAD(run[position]) && position + 1 < length && U16_IS_TRAIL(run[position + 1]) ? 2 : 1;
-            controller.advance(position + metricsLength, nullptr);
-            auto widthSoFar = controller.runWidthSoFar();
-            appendMetrics(metricsLength, widthSoFar - totalWidth);
-            totalWidth = widthSoFar;
-            position += metricsLength;
+    if (metricsLengthAt(run.text(), 0) == length) {
+        appendMetrics(length, scaledFont->width(run));
+        return;
+    }
+
+    auto glyphBuffer = scaledFont->layoutText(scaledFont->codePath(run), run, 0, length).glyphBuffer;
+    auto characterWidths = Vector<float, 64>(FillWith { }, length, 0.f);
+    auto characterHasGlyph = Vector<bool, 64>(FillWith { }, length, false);
+    if (auto offset = glyphBuffer.size() ? glyphBuffer.checkedStringOffsetAt(0, length) : std::nullopt)
+        characterWidths[*offset] += width(glyphBuffer.initialAdvance());
+    for (size_t i = 0; i < glyphBuffer.size(); ++i) {
+        if (auto offset = glyphBuffer.checkedStringOffsetAt(i, length)) {
+            characterWidths[*offset] += width(glyphBuffer.advanceAt(i));
+            characterHasGlyph[*offset] |= glyphBuffer.glyphAt(i) != deletedGlyph;
         }
-        return;
     }
 
-    auto canUseSimplifiedTextMeasuring = [&] {
-        if (run.direction() != TextDirection::LTR)
-            return false;
-        if (auto cachedValue = text.canUseSimplifiedTextMeasuringWithScaledFont())
-            return *cachedValue;
-        auto value = Layout::TextUtil::canUseSimplifiedTextMeasuring(run.text(), scaledFont, text.style().collapseWhiteSpace(), nullptr);
-        text.setCanUseSimplifiedTextMeasuringWithScaledFont(value);
-        return value;
-    }();
-
-    if (canUseSimplifiedTextMeasuring) {
-        auto view = run.text();
-        for (unsigned position = 0; position < length; ++position)
-            appendMetrics(1, scaledFont->widthForTextUsingSimplifiedMeasuring(view.substring(position, 1), TextDirection::LTR));
-        return;
-    }
-
-    auto iterator = WidthIterator { scaledFont, run };
-    auto totalWidth = 0.f;
     for (unsigned position = 0; position < length;) {
-        GlyphBuffer glyphBuffer;
-        auto before = iterator.currentCharacterIndex();
-        iterator.advance(position + 1, glyphBuffer);
-        auto after = iterator.currentCharacterIndex();
-        unsigned metricsLength = after > before ? after - before : 1;
-        auto widthSoFar = iterator.runWidthSoFar();
-        appendMetrics(metricsLength, widthSoFar - totalWidth);
-        totalWidth = widthSoFar;
+        auto metricsLength = metricsLengthAt(run.text(), position);
+        auto metricsWidth = 0.f;
+        auto hasGlyph = false;
+        for (unsigned offset = position; offset < position + metricsLength; ++offset) {
+            metricsWidth += characterWidths[offset];
+            hasGlyph |= characterHasGlyph[offset];
+        }
+
+        // A typographic character is a grapheme cluster, or the characters of a ligature.
+        // Default ignorable characters, like joiners and bidi controls, have no glyph of their own either.
+        // https://w3c.github.io/svgwg/svg2-draft/text.html#TermTypographicCharacterUnit
+        auto continuesTypographicCharacter = !isClusterStart(runStart + position) || (!hasGlyph && !isDefaultIgnorableCodePoint(run.text().codePointAt(position)));
+        if (position && continuesTypographicCharacter) {
+            auto& previous = metrics.last();
+            previous = SVGTextMetrics(previous.length() + metricsLength, previous.width() + metricsWidth / scalingFactor, height);
+        } else
+            appendMetrics(metricsLength, metricsWidth);
         position += metricsLength;
+    }
+}
+
+// Shapes each run separately into one metrics entry per typographic character, kept until the text, the font or the runs change.
+// Spec: "Ligature substitution and bidi-reordering only occur within a text chunk."
+// https://w3c.github.io/svgwg/svg2-draft/text.html#TermTextChunk
+template<typename IsClusterStart>
+static void ensureTextMetrics(RenderSVGInlineText& text, Vector<SVGTextShapingRun>&& shapingRuns, const IsClusterStart& isClusterStart)
+{
+    if (text.hasValidTextMetrics() && text.shapingRuns() == shapingRuns)
+        return;
+    text.setHasValidTextMetrics(true);
+    text.setShapingRuns(WTF::move(shapingRuns));
+
+    auto& metrics = text.textMetrics();
+    metrics.clear();
+
+    auto length = text.text().length();
+    if (!length)
+        return;
+    metrics.reserveInitialCapacity(length);
+
+    CheckedRef scaledFont = text.scaledFont();
+    if (!text.canUseSimplifiedTextMeasuringWithScaledFont()) {
+        CheckedRef style = text.style();
+        auto run = constructTextRun(text.text(), style->writingMode().bidiDirection(), style);
+        if (run.direction() == TextDirection::LTR && !shouldUseComplexTextController(scaledFont, run))
+            text.setCanUseSimplifiedTextMeasuringWithScaledFont(Layout::TextUtil::canUseSimplifiedTextMeasuring(run.text(), scaledFont, style->collapseWhiteSpace(), nullptr));
+    }
+
+    auto& runs = text.shapingRuns();
+    ASSERT(!runs.isEmpty() && !runs.first().start);
+    for (size_t index = 0; index < runs.size(); ++index) {
+        auto runEnd = index + 1 < runs.size() ? runs[index + 1].start : length;
+        ASSERT(runEnd > runs[index].start && runEnd <= length);
+        appendRunMetrics(text, runs[index].start, runEnd - runs[index].start, runs[index].direction, isClusterStart);
     }
 }
 
@@ -243,8 +267,10 @@ void SVGTextLayoutAlgorithm::layout()
     if (m_displayOrder.isEmpty())
         return;
 
-    computeCSSPositions();
     resolveCharacterPositioning();
+    computeShapingRunStarts();
+    measureText();
+    computeCSSPositions();
     adjustRelativePositions();
     applyTextLength();
     adjustAbsolutePositions();
@@ -271,7 +297,6 @@ void SVGTextLayoutAlgorithm::collectTextContent()
                 CheckedPtr text = svgInlineText(*inlineTextBox);
                 if (!text)
                     continue;
-                ensureTextMetrics(*text);
                 m_textContents.append({ *inlineTextBox, contentLength });
                 contentLength += inlineTextBox->content().length();
                 continue;
@@ -291,7 +316,6 @@ void SVGTextLayoutAlgorithm::collectTextContent()
 
     for (auto& textContent : m_textContents) {
         auto& content = textContent.inlineTextBox->content();
-        auto& metrics = textMetrics(textContent.inlineTextBox);
         // "Set middle to true if the character at index i is the second or later character that corresponds to a typographic character."
         // https://w3c.github.io/svgwg/svg2-draft/text.html#TermTypographicCharacterUnit
         // Latin-1 has no combining marks, so every character starts a grapheme cluster except a line feed after a carriage return.
@@ -304,11 +328,11 @@ void SVGTextLayoutAlgorithm::collectTextContent()
             return !position || content[position] != newlineCharacter || content[position - 1] != carriageReturn;
         };
         unsigned position = 0;
-        for (size_t metricsIndex = 0; metricsIndex < metrics.size() && position < content.length(); ++metricsIndex) {
+        for (unsigned metricsIndex = 0; position < content.length(); ++metricsIndex) {
             auto& character = m_characters[textContent.start + position];
             character.metricsIndex = metricsIndex;
             character.isClusterStart = isClusterStart(position);
-            position += metrics[metricsIndex].length();
+            position += metricsLengthAt(content, position);
         }
     }
 }
@@ -407,7 +431,6 @@ void SVGTextLayoutAlgorithm::computeCSSPositions()
         CheckedRef style = textBox.inlineTextBox->style();
         auto& content = textBox.inlineTextBox->content();
         auto baselineLayout = SVGTextLayoutEngineBaseline { protect(style->fontCascade()) };
-        auto spacingLayout = SVGTextLayoutEngineSpacing { protect(style->fontCascade()) };
 
         for (auto index = textBox.start; index < textBox.start + textBox.length; ++index) {
             auto& character = m_characters[index];
@@ -426,7 +449,6 @@ void SVGTextLayoutAlgorithm::computeCSSPositions()
 
             character.orientationAngle = baselineLayout.calculateGlyphOrientationAngle(m_isVertical, style, codePoint);
             character.advance = baselineLayout.calculateGlyphAdvanceAndOrientation(m_isVertical, metrics(character), character.orientationAngle, character.xOrientationShift, character.yOrientationShift);
-            character.spacing = spacingLayout.calculateCSSSpacing(codePoint);
             position += character.advance + character.spacing;
         }
     }
@@ -537,6 +559,86 @@ void SVGTextLayoutAlgorithm::resolveCharacterPositioning()
     }
 
     m_characters[m_displayOrder.first()].startsAnchoredChunk = true;
+}
+
+void SVGTextLayoutAlgorithm::computeShapingRunStarts()
+{
+    // Spec: "Ligature formation should not be enabled when characters are in different DOM text nodes"
+    // https://w3c.github.io/svgwg/svg2-draft/text.html#FontsGlyphs
+    for (auto& textBox : m_textBoxes) {
+        CheckedRef style = textBox.inlineTextBox->style();
+        auto& content = textBox.inlineTextBox->content();
+        auto spacingLayout = SVGTextLayoutEngineSpacing { protect(style->fontCascade()) };
+        auto previousHasSpacing = false;
+
+        for (auto index = textBox.start; index < textBox.start + textBox.length; ++index) {
+            auto& character = m_characters[index];
+            if (!character.hasMetrics())
+                continue;
+
+            character.spacing = spacingLayout.calculateCSSSpacing(content.codePointAt(index - textBox.contentStart));
+
+            // Spec: "SVG attributes such as 'dx', 'textLength', and 'spacing' (in 'textPath') that may reposition
+            // typographic characters do not break discretionary ligatures."
+            // https://w3c.github.io/svgwg/svg2-draft/text.html#FontsGlyphs
+            character.startsShapingRun = [&] {
+                if (!character.isClusterStart)
+                    return false;
+                // Spec: "Ligature substitution and bidi-reordering only occur within a text chunk."
+                // https://w3c.github.io/svgwg/svg2-draft/text.html#TermTextChunk
+                // Spec: "Each new absolute positioning adjustment (due to an 'x' or 'y' attribute [...]) creates a new text chunk."
+                // https://w3c.github.io/svgwg/svg2-draft/text.html#TermTextChunk
+                auto startsTextChunk = !isUnspecified(valueAt(m_resolvedX, index)) || !isUnspecified(valueAt(m_resolvedY, index));
+                // Spec: "Discretionary ligatures should not be used when the spacing between two characters is not the same as the default space"
+                // https://w3c.github.io/svgwg/svg2-draft/text.html#FontsGlyphs
+                // Each character of vertical text is shaped on its own.
+                return startsTextChunk || m_isVertical || previousHasSpacing;
+            }();
+
+            previousHasSpacing = character.spacing;
+        }
+    }
+}
+
+void SVGTextLayoutAlgorithm::measureText()
+{
+    for (auto& textContent : m_textContents) {
+        CheckedRef text = *svgInlineText(textContent.inlineTextBox);
+        auto length = textContent.inlineTextBox->content().length();
+        ASSERT(text->text().length() == length);
+
+        // Characters outside the text boxes are not painted. They are shaped apart from the painted ones.
+        auto runDirection = [&](unsigned offset) {
+            auto textBoxIndex = m_characters[textContent.start + offset].textBoxIndex;
+            if (textBoxIndex == notFound32)
+                return text->style().writingMode().bidiDirection();
+            return m_displayBoxes[m_textBoxes[textBoxIndex].displayBoxIndex].bidiLevel() % 2 ? TextDirection::RTL : TextDirection::LTR;
+        };
+
+        auto runs = Vector<SVGTextShapingRun> { { 0, runDirection(0) } };
+        for (unsigned offset = 1; offset < length; ++offset) {
+            auto& character = m_characters[textContent.start + offset];
+            if (!character.hasMetrics())
+                continue;
+            if (character.startsShapingRun || character.textBoxIndex != m_characters[textContent.start + offset - 1].textBoxIndex)
+                runs.append({ offset, runDirection(offset) });
+        }
+
+        ensureTextMetrics(text, WTF::move(runs), [&](unsigned offset) {
+            return m_characters[textContent.start + offset].isClusterStart;
+        });
+
+        // Only the first character of a typographic character has metrics.
+        for (unsigned offset = 0; offset < length; ++offset)
+            m_characters[textContent.start + offset].metricsIndex = notFound32;
+
+        auto& metrics = text->textMetrics();
+        unsigned position = 0;
+        for (unsigned metricsIndex = 0; metricsIndex < metrics.size() && position < length; ++metricsIndex) {
+            m_characters[textContent.start + position].metricsIndex = metricsIndex;
+            position += metrics[metricsIndex].length();
+        }
+    }
 }
 
 // "Adjust positions: dx, dy"
@@ -928,6 +1030,7 @@ void SVGTextLayoutAlgorithm::buildFragments()
         auto fragmentLengthAdjustScale = 1.f;
         auto fragmentHasSpacing = false;
         auto lastRotate = 0.f;
+        auto previousIsPositioned = false;
 
         auto closeFragment = [&](unsigned endIndex) {
             if (!fragment)
@@ -952,8 +1055,11 @@ void SVGTextLayoutAlgorithm::buildFragments()
                 closeFragment(index);
                 continue;
             }
-            if (!character.hasMetrics())
+            if (!character.hasMetrics()) {
+                // "Let shift.x = shift.x + resolve_dx[i]": the dx of a character inside a ligature moves the characters _after_ it.
+                previousIsPositioned |= character.isPositioned;
                 continue;
+            }
 
             auto startsFragment = [&] {
                 if (!fragment)
@@ -961,10 +1067,11 @@ void SVGTextLayoutAlgorithm::buildFragments()
                 // A combining mark stays with its base rather than being shaped alone. Bug 266832.
                 if (!character.isClusterStart)
                     return false;
-                return character.isPositioned || m_isVertical || isOnPath || character.rotate || lastRotate || character.orientationAngle
+                return character.isPositioned || previousIsPositioned || m_isVertical || isOnPath || character.rotate || lastRotate || character.orientationAngle
                     || fragmentHasSpacing || character.isInSpacingTextLength || character.lengthAdjustScale != fragmentLengthAdjustScale;
             }();
             lastRotate = character.rotate;
+            previousIsPositioned = false;
 
             if (!startsFragment) {
                 fragmentHasSpacing |= !!character.spacing;

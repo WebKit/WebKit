@@ -282,6 +282,11 @@ fast/shapes/shape-outside-floats/shape-outside-imagedata-overflow.html [ Skip ]
 [ Debug ] security/decode-buffer-size.html [ Skip ]
 [ Debug ] security/text-decode-long-strings.html [ Skip ]
 
+webkit.org/b/197181 [ Debug ] imported/w3c/web-platform-tests/svg/text/scripted/text-query-fragments.html [ Skip ]
+webkit.org/b/197181 imported/w3c/web-platform-tests/svg/text/scripted/getcomputedtextlength.html [ Pass Crash ]
+webkit.org/b/197181 imported/w3c/web-platform-tests/svg/text/scripted/getsubstringlength.html [ Pass Crash ]
+webkit.org/b/197181 imported/w3c/web-platform-tests/svg/text/scripted/text-query-bidi.html [ Pass Crash ]
+
 # These hit debug-only assertions in UniqueIDBDatabase teardown, so we skip them there.
 # <rdar://186427316>
 [ Debug ] storage/indexeddb/clear-data-with-stalled-abort-crash.html [ Skip ]

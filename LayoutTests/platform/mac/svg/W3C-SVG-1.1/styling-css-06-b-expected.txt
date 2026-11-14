@@ -4,10 +4,10 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGContainer {g} at (50,72) size 360x176
       RenderSVGContainer {g} at (50,72) size 360x176
-        RenderSVGText {text} at (50,72) size 87x36 contains 1 chunk(s)
-          RenderSVGInline {a} at (0,0) size 87x35
-            RenderSVGInlineText {#text} at (0,0) size 87x35
-              chunk 1 text run 1 at (50.00,100.00) startOffset 0 endOffset 7 width 86.66: "Visited"
+        RenderSVGText {text} at (50,72) size 85x36 contains 1 chunk(s)
+          RenderSVGInline {a} at (0,0) size 85x35
+            RenderSVGInlineText {#text} at (0,0) size 85x35
+              chunk 1 text run 1 at (50.00,100.00) startOffset 0 endOffset 7 width 84.87: "Visited"
         RenderSVGText {text} at (250,72) size 117x36 contains 1 chunk(s)
           RenderSVGInline {a} at (0,0) size 117x35
             RenderSVGInlineText {#text} at (0,0) size 117x35
