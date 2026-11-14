@@ -4001,7 +4001,6 @@ media/media-vp9-reschange-webm.html [ Skip ]
 
 # webkit.org/b/277760 [ iOS ] 2x imported/w3c/web-platform-tests/html/rendering/widgets/input-checkbox-switch-rtl.tentative.html (layout-tests) are ref mismatch
 webkit.org/b/229291 imported/w3c/web-platform-tests/html/rendering/replaced-elements/images/revoked-blob-print.html [ Pass ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/rendering/widgets/input-checkbox-switch-rtl.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/widgets/input-date-baseline-min-height.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/propagate-text-decoration.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/widgets/input-date-whitespace-pre-1.html [ ImageOnlyFailure ]

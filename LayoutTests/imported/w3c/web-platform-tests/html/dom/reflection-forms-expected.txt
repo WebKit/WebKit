@@ -3511,6 +3511,45 @@ PASS input.step: IDL set to "\0"
 PASS input.step: IDL set to null
 PASS input.step: IDL set to object "test-toString"
 PASS input.step: IDL set to object "test-valueOf"
+PASS input.switch: typeof IDL attribute
+PASS input.switch: IDL get with DOM attribute unset
+PASS input.switch: setAttribute() to ""
+PASS input.switch: setAttribute() to " foo "
+PASS input.switch: setAttribute() to undefined
+PASS input.switch: setAttribute() to null
+PASS input.switch: setAttribute() to 7
+PASS input.switch: setAttribute() to 1.5
+PASS input.switch: setAttribute() to "5%"
+PASS input.switch: setAttribute() to "+100"
+PASS input.switch: setAttribute() to ".5"
+PASS input.switch: setAttribute() to true
+PASS input.switch: setAttribute() to false
+PASS input.switch: setAttribute() to object "[object Object]"
+PASS input.switch: setAttribute() to NaN
+PASS input.switch: setAttribute() to Infinity
+PASS input.switch: setAttribute() to -Infinity
+PASS input.switch: setAttribute() to "\0"
+PASS input.switch: setAttribute() to object "test-toString"
+PASS input.switch: setAttribute() to object "test-valueOf"
+PASS input.switch: setAttribute() to "switch"
+PASS input.switch: IDL set to ""
+PASS input.switch: IDL set to " foo "
+PASS input.switch: IDL set to undefined
+PASS input.switch: IDL set to null
+PASS input.switch: IDL set to 7
+PASS input.switch: IDL set to 1.5
+PASS input.switch: IDL set to "5%"
+PASS input.switch: IDL set to "+100"
+PASS input.switch: IDL set to ".5"
+PASS input.switch: IDL set to true
+PASS input.switch: IDL set to false
+PASS input.switch: IDL set to object "[object Object]"
+PASS input.switch: IDL set to NaN
+PASS input.switch: IDL set to Infinity
+PASS input.switch: IDL set to -Infinity
+PASS input.switch: IDL set to "\0"
+PASS input.switch: IDL set to object "test-toString"
+PASS input.switch: IDL set to object "test-valueOf"
 PASS input.type: typeof IDL attribute
 PASS input.type: IDL get with DOM attribute unset
 PASS input.type: setAttribute() to ""
