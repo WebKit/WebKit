@@ -27,6 +27,7 @@
 #include "BuiltinNames.h"
 #include "DebuggerParseData.h"
 #include "JSCJSValueInlines.h"
+#include "RegExpCache.h"
 #include "VM.h"
 #include "VariableEnvironmentInlines.h"
 #include <utility>
@@ -5340,7 +5341,13 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parsePrimaryExpre
         JSTextPosition start = tokenStartPosition();
         JSTokenLocation location(tokenLocation());
         next();
-        TreeExpression re = context.createRegExp(location, *pattern, *flags, start, m_lexer->isReparsingFunction());
+        bool skipSyntaxCheck = m_lexer->isReparsingFunction();
+        if (!skipSyntaxCheck) {
+            // RegExpCache only holds patterns that compiled successfully.
+            if (auto parsedFlags = Yarr::parseFlags(flags->string()))
+                skipSyntaxCheck = m_vm.regExpCache()->lookup(m_vm, pattern->string(), *parsedFlags);
+        }
+        TreeExpression re = context.createRegExp(location, *pattern, *flags, start, skipSyntaxCheck);
         if (!re) [[unlikely]] {
             Yarr::ErrorCode errorCode = Yarr::checkSyntax(pattern->string(), flags->string());
             regexFail(String::fromLatin1(Yarr::errorMessage(errorCode)));

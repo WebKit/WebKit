@@ -3088,22 +3088,24 @@ template <typename T>
 JSTokenType Lexer<T>::scanRegExp(JSToken* tokenRecord, char16_t patternPrefix)
 {
     JSTokenData* tokenData = &tokenRecord->m_data;
-    ASSERT(m_buffer16.isEmpty());
 
     bool lastWasEscape = false;
     bool inBrackets = false;
     char16_t charactersOredTogether = 0;
 
+    // The pattern is taken verbatim from the source, including the prefix the caller already consumed.
+    const T* patternStart = m_code;
     if (patternPrefix) {
         ASSERT(!isLineTerminator(patternPrefix));
         ASSERT(patternPrefix != '/');
         ASSERT(patternPrefix != '[');
-        record16(patternPrefix);
+        ASSERT(patternStart > m_codeStart && patternStart[-1] == patternPrefix);
+        --patternStart;
+        orCharacter<T>(charactersOredTogether, patternPrefix);
     }
 
     while (true) {
         if (isLineTerminator(m_current) || atEnd()) {
-            m_buffer16.shrink(0);
             JSTokenType token = UNTERMINATED_REGEXP_LITERAL_ERRORTOK;
             fillTokenInfo(tokenRecord, currentPosition());
             m_error = true;
@@ -3118,7 +3120,6 @@ JSTokenType Lexer<T>::scanRegExp(JSToken* tokenRecord, char16_t patternPrefix)
         if (prev == '/' && !lastWasEscape && !inBrackets)
             break;
 
-        record16(prev);
         orCharacter<T>(charactersOredTogether, prev);
 
         if (lastWasEscape) {
@@ -3139,20 +3140,21 @@ JSTokenType Lexer<T>::scanRegExp(JSToken* tokenRecord, char16_t patternPrefix)
         }
     }
 
-    tokenData->pattern = makeRightSizedIdentifier(m_buffer16, charactersOredTogether);
-    m_buffer16.shrink(0);
+    std::span<const T> pattern { patternStart, m_code - 1 };
+    if constexpr (std::is_same_v<T, Latin1Character>)
+        tokenData->pattern = makeIdentifier(pattern);
+    else
+        tokenData->pattern = makeRightSizedIdentifier(pattern, charactersOredTogether);
 
-    ASSERT(m_buffer8.isEmpty());
+    const T* flagsStart = m_code;
     while (isLatin1(m_current)) [[likely]] {
         if (!isIdentPart(static_cast<Latin1Character>(m_current)))
             break;
-        record8(static_cast<Latin1Character>(m_current));
         shift();
     }
 
     // Normally this would not be a lex error but dealing with surrogate pairs here is annoying and it's going to be an error anyway...
     if (!isLatin1(m_current) && !isWhiteSpace(m_current) && !isLineTerminator(m_current)) [[unlikely]] {
-        m_buffer8.shrink(0);
         JSTokenType token = INVALID_IDENTIFIER_UNICODE_ERRORTOK;
         fillTokenInfo(tokenRecord, currentPosition());
         m_error = true;
@@ -3163,8 +3165,7 @@ JSTokenType Lexer<T>::scanRegExp(JSToken* tokenRecord, char16_t patternPrefix)
         return token;
     }
 
-    tokenData->flags = makeIdentifier(m_buffer8.span());
-    m_buffer8.shrink(0);
+    tokenData->flags = makeLatin1Identifier(std::span<const T> { flagsStart, m_code });
 
     // Since RegExp always ends with / or flags (IdentifierPart), m_atLineStart always becomes false.
     m_atLineStart = false;
