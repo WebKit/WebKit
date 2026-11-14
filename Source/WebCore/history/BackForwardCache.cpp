@@ -672,6 +672,23 @@ void BackForwardCache::removeAllItemsForMainFrame(LocalFrame& frame)
     });
 }
 
+Vector<BackForwardFrameItemIdentifier> BackForwardCache::removeItemsContainingFrame(const Frame& frame)
+{
+    Vector<BackForwardFrameItemIdentifier> removedItems;
+    m_cachedPageMap.removeIf([&](auto& pair) -> bool {
+        auto* cachedPage = std::get_if<UniqueRef<CachedPage>>(&pair.value);
+        if (!cachedPage)
+            return false;
+        if (CheckedRef page = cachedPage->get(); !page->cachedMainFrame() || !page->cachedMainFrame()->containsFrame(frame))
+            return false;
+        RELEASE_LOG(BackForwardCache, "BackForwardCache::removeItemsContainingFrame removing item: %s, size: %u / %u", pair.key.toString().utf8(), pageCount() - 1, maxSize());
+        m_items.remove(pair.key);
+        removedItems.append(pair.key);
+        return true;
+    });
+    return removedItems;
+}
+
 CachedPage* BackForwardCache::get(HistoryItem& item, Page* page)
 {
     auto it = m_cachedPageMap.find(item.frameItemID());

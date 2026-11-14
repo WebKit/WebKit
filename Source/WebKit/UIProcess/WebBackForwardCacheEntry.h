@@ -60,6 +60,7 @@ public:
     void clearSuspendedPage();
     Ref<SuspendedPageProxy> takeSuspendedPage();
     WebCore::ProcessIdentifier processIdentifier() const { return m_processIdentifier; }
+    std::optional<WebCore::BackForwardFrameItemIdentifier> backForwardFrameItemID() const { return m_backForwardFrameItemID; }
     RefPtr<WebProcessProxy> process() const;
 
     // Subframes of the cached main frame that were detached from

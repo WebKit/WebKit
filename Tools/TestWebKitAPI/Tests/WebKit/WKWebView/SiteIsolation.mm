@@ -3420,6 +3420,276 @@ TEST(SiteIsolation, GeneratesPageLoadTimingAfterOnUnloadFetch)
     EXPECT_TRUE(didGeneratePageLoadTiming);
 }
 
+// AfterMainFrameCommitBeforeFirstPaint holds the new page's body after its first bytes, so the
+// subframe commit reaches the main frame process while the new page still waits for its first
+// meaningful paint.
+enum class SubframeCommit : uint8_t { BeforeMainFrameCommit, AfterMainFrameCommit, AfterMainFrameCommitBeforeFirstPaint };
+
+// SameSite moves the same-site iframe from the main frame process into the shared process.
+// CrossSite moves the cross-site iframe from the shared process into the main frame process.
+enum class SwappedSubframe : bool { SameSite, CrossSite };
+
+static void runSubframeSwapDuringSameSiteMainFrameNavigation(SubframeCommit subframeCommit, SwappedSubframe swappedSubframe = SwappedSubframe::SameSite)
+{
+    bool swapsSameSiteSubframe = swappedSubframe == SwappedSubframe::SameSite;
+    auto subframeTargetPath = swapsSameSiteSubframe ? "/c"_s : "/frame2"_s;
+    NSString *subframeTargetURL = swapsSameSiteSubframe ? @"https://c.com/c" : @"https://a.com/frame2";
+
+    auto responseBody = [](StringView path) -> String {
+        if (path == "/1"_s)
+            return "<iframe id='same-site' src='https://a.com/frame'></iframe><iframe id='cross-site' src='https://b.com/b'></iframe><script src='/script'></script><p>first page</p>"_s;
+        if (path == "/2"_s)
+            return "<script src='/script'></script><div style='width:300px;height:300px;background:blue'></div><p>second page</p>"_s;
+        if (path == "/script"_s)
+            return "console.log('script')"_s;
+        return "subframe"_s;
+    };
+
+    HashSet<String> pathsToHold;
+    if (subframeCommit != SubframeCommit::BeforeMainFrameCommit)
+        pathsToHold.add(subframeTargetPath);
+    if (subframeCommit == SubframeCommit::AfterMainFrameCommitBeforeFirstPaint)
+        pathsToHold.add("/2"_s);
+    struct HeldResponse {
+        String path;
+        Connection connection;
+        Vector<uint8_t> bytesToSend;
+    };
+    Vector<HeldResponse> heldResponses;
+    Function<void()> navigateSubframe;
+    Function<void(Connection)> respond;
+    respond = [&](Connection connection) {
+        connection.receiveHTTPRequest([&, connection](Vector<char>&& request) {
+            if (request.isEmpty())
+                return;
+            auto path = HTTPServer::parsePath(request);
+            if (pathsToHold.remove(path)) {
+                if (path != "/2"_s) {
+                    heldResponses.append({ path, connection, HTTPResponse(responseBody(path)).serialize() });
+                    return;
+                }
+                // Send a visually empty start of the page, so the main frame commits but can't paint yet.
+                auto prefix = "<html><body>"_s;
+                auto body = makeString(prefix, responseBody(path));
+                connection.send(makeString("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: "_s, body.length(), "\r\n\r\n"_s, prefix));
+                heldResponses.append({ path, connection, Vector<uint8_t> { byteCast<uint8_t>(responseBody(path).utf8().span()) } });
+                return;
+            }
+            connection.send(HTTPResponse(responseBody(path)).serialize(), [&, connection] {
+                respond(connection);
+            });
+        });
+    };
+    auto isHeld = [&](const String& path) {
+        return heldResponses.containsIf([&](auto& held) {
+            return held.path == path;
+        });
+    };
+    auto releaseHeldResponse = [&](const String& path) {
+        auto index = heldResponses.findIf([&](auto& held) {
+            return held.path == path;
+        });
+        if (index == notFound)
+            return;
+        auto held = heldResponses[index];
+        heldResponses.removeAt(index);
+        held.connection.send(WTF::move(held.bytesToSend), [&, connection = held.connection] {
+            respond(connection);
+        });
+    };
+    HTTPServer server([&](Connection connection) {
+        respond(connection);
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto *configuration = server.httpsProxyConfiguration();
+    setFeatureEnabled(configuration, @"SiteIsolationSharedProcessEnabled", true);
+    setFeatureEnabled(configuration, @"MultiProcessBackForwardCacheEnabled", true);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 400, 400));
+
+    RetainPtr window = adoptNS([[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, 400, 400) styleMask:0 backing:NSBackingStoreBuffered defer:NO]);
+    [window.get().contentView addSubview:webView.get()];
+
+    bool mainFrameCommitted { false };
+    bool subframeCommitted { false };
+    bool mainFrameFinished { false };
+    bool didFirstVisuallyNonEmptyLayout { false };
+    bool didFirstMeaningfulPaint { false };
+    bool didGeneratePageLoadTiming { false };
+    pid_t subframePID { 0 };
+    RetainPtr<NSMutableArray<NSString *>> commitOrder = adoptNS([NSMutableArray new]);
+    BlockPtr<void(WKNavigationResponsePolicy)> heldDecision;
+
+    [webView _setObservedRenderingProgressEvents:_WKRenderingProgressEventFirstVisuallyNonEmptyLayout | _WKRenderingProgressEventFirstMeaningfulPaint];
+    navigationDelegate.get().renderingProgressDidChange = makeBlockPtr([&](WKWebView *, _WKRenderingProgressEvents events) {
+        if (!mainFrameCommitted)
+            return;
+        if (events & _WKRenderingProgressEventFirstVisuallyNonEmptyLayout)
+            didFirstVisuallyNonEmptyLayout = true;
+        if (events & _WKRenderingProgressEventFirstMeaningfulPaint)
+            didFirstMeaningfulPaint = true;
+    }).get();
+    navigationDelegate.get().didGeneratePageLoadTiming = makeBlockPtr([&](_WKPageLoadTiming *timing) {
+        if (timing)
+            didGeneratePageLoadTiming = true;
+    }).get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/1"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    Vector<ExpectedFrameTree> expectedBefore {
+        { "https://a.com"_s, { { "https://a.com"_s }, { RemoteFrame } } },
+        { RemoteFrame, { { RemoteFrame }, { "https://b.com"_s } } },
+    };
+    EXPECT_TRUE(Util::waitFor([&] {
+        return frameTreesMatch(frameTrees(webView.get()).get(), Vector<ExpectedFrameTree> { expectedBefore });
+    }));
+    checkFrameTreesInProcesses(webView.get(), WTF::move(expectedBefore));
+    pid_t mainFramePID = [webView _webProcessIdentifier];
+    pid_t sharedPID = findFramePID(frameTrees(webView.get()).get(), FrameType::Remote);
+    EXPECT_NE(mainFramePID, sharedPID);
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return didGeneratePageLoadTiming;
+    }, 20));
+    didGeneratePageLoadTiming = false;
+    [webView stringByEvaluatingJavaScript:@"window.marker = 'first page'"];
+
+    navigationDelegate.get().decidePolicyForNavigationResponse = makeBlockPtr([&](WKNavigationResponse *response, void (^decisionHandler)(WKNavigationResponsePolicy)) {
+        NSURL *url = response.response.URL;
+        if (subframeCommit == SubframeCommit::BeforeMainFrameCommit && response.forMainFrame && [url.absoluteString isEqualToString:@"https://a.com/2"]) {
+            heldDecision = makeBlockPtr(decisionHandler);
+            return;
+        }
+        decisionHandler(WKNavigationResponsePolicyAllow);
+    }).get();
+    navigationDelegate.get().didCommitLoadWithRequestInFrame = makeBlockPtr([&](WKWebView *, NSURLRequest *request, WKFrameInfo *frame) {
+        if (frame.isMainFrame) {
+            if ([request.URL.absoluteString isEqualToString:@"https://a.com/2"]) {
+                mainFrameCommitted = true;
+                [commitOrder addObject:@"main"];
+            }
+            return;
+        }
+        if ([request.URL.absoluteString isEqualToString:subframeTargetURL]) {
+            subframeCommitted = true;
+            subframePID = frame._processIdentifier;
+            [commitOrder addObject:@"subframe"];
+        }
+    }).get();
+    navigationDelegate.get().didFinishNavigation = makeBlockPtr([&](WKWebView *, WKNavigation *) {
+        mainFrameFinished = true;
+    }).get();
+
+    navigateSubframe = [&] {
+        NSString *script = [NSString stringWithFormat:@"document.getElementById('%@').src = '%@'", swapsSameSiteSubframe ? @"same-site" : @"cross-site", subframeTargetURL];
+        [webView evaluateJavaScript:script completionHandler:nil];
+    };
+    if (subframeCommit == SubframeCommit::BeforeMainFrameCommit) {
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/2"]]];
+        EXPECT_TRUE(Util::waitFor([&] {
+            return !!heldDecision;
+        }, 50));
+        navigateSubframe();
+        EXPECT_TRUE(Util::waitFor([&] {
+            return subframeCommitted;
+        }, 50));
+        if (auto decision = std::exchange(heldDecision, nullptr))
+            decision(WKNavigationResponsePolicyAllow);
+    } else {
+        navigateSubframe();
+        EXPECT_TRUE(Util::waitFor([&] {
+            return isHeld(subframeTargetPath);
+        }, 50));
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/2"]]];
+        EXPECT_TRUE(Util::waitFor([&] {
+            return mainFrameCommitted;
+        }, 50));
+        releaseHeldResponse(subframeTargetPath);
+        EXPECT_TRUE(Util::waitFor([&] {
+            return subframeCommitted;
+        }, 50));
+        if (subframeCommit == SubframeCommit::AfterMainFrameCommitBeforeFirstPaint) {
+            EXPECT_TRUE(isHeld("/2"_s));
+            EXPECT_FALSE(didFirstMeaningfulPaint);
+            releaseHeldResponse("/2"_s);
+        }
+    }
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return mainFrameFinished;
+    }, 50));
+
+    EXPECT_WK_STREQ(subframeCommit == SubframeCommit::BeforeMainFrameCommit ? @"subframe,main" : @"main,subframe", [commitOrder componentsJoinedByString:@","]);
+    EXPECT_EQ(subframePID, swapsSameSiteSubframe ? sharedPID : mainFramePID);
+    EXPECT_EQ([webView _webProcessIdentifier], mainFramePID);
+    EXPECT_WK_STREQ(@"https://a.com/2", [webView URL].absoluteString);
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return didFirstMeaningfulPaint && didGeneratePageLoadTiming;
+    }, 50));
+    EXPECT_TRUE(didFirstVisuallyNonEmptyLayout);
+    EXPECT_TRUE(didFirstMeaningfulPaint);
+    EXPECT_TRUE(didGeneratePageLoadTiming);
+
+    navigationDelegate.get().renderingProgressDidChange = nil;
+    navigationDelegate.get().didGeneratePageLoadTiming = nil;
+    navigationDelegate.get().decidePolicyForNavigationResponse = nil;
+    navigationDelegate.get().didCommitLoadWithRequestInFrame = nil;
+    navigationDelegate.get().didFinishNavigation = nil;
+
+    if (subframeCommit == SubframeCommit::BeforeMainFrameCommit) {
+        checkTopDocumentURLsInBackForwardCacheAtIndex(webView.get(), -1, 2, @"https://a.com/2");
+        return;
+    }
+
+    // FIXME: The late subframe commit adds a back/forward list entry after a.com/2, so look up and
+    // navigate to the first item in the back list instead of using index -1 or going back.
+    EXPECT_TRUE(Util::waitFor([&] {
+        __block bool done = false;
+        __block NSUInteger count = 0;
+        auto firstPageIndex = -static_cast<NSInteger>([webView backForwardList].backList.count);
+        [webView _topDocumentURLsInBackForwardCacheAtIndexForTesting:firstPageIndex completionHandler:^(NSArray<NSURL *> *topDocumentURLs) {
+            count = topDocumentURLs.count;
+            done = true;
+        }];
+        Util::run(&done);
+        return !count;
+    }, 20));
+
+    [webView goToBackForwardListItem:[webView backForwardList].backList.firstObject];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_WK_STREQ(@"https://a.com/1", [webView URL].absoluteString);
+    EXPECT_WK_STREQ(@"undefined", [webView stringByEvaluatingJavaScript:@"String(window.marker)"]);
+    Vector<ExpectedFrameTree> expectedAfterBack {
+        { "https://a.com"_s, { { "https://a.com"_s }, { RemoteFrame } } },
+        { RemoteFrame, { { RemoteFrame }, { "https://b.com"_s } } },
+    };
+    EXPECT_TRUE(Util::waitFor([&] {
+        return frameTreesMatch(frameTrees(webView.get()).get(), Vector<ExpectedFrameTree> { expectedAfterBack });
+    }));
+    checkFrameTreesInProcesses(webView.get(), WTF::move(expectedAfterBack));
+}
+
+TEST(SiteIsolation, SubframeCommitBeforeSameSiteMainFrameCommitStillPaints)
+{
+    runSubframeSwapDuringSameSiteMainFrameNavigation(SubframeCommit::BeforeMainFrameCommit);
+}
+
+TEST(SiteIsolation, SubframeCommitAfterSameSiteMainFrameCommitStillPaints)
+{
+    runSubframeSwapDuringSameSiteMainFrameNavigation(SubframeCommit::AfterMainFrameCommit);
+}
+
+TEST(SiteIsolation, SubframeCommitAfterSameSiteMainFrameCommitBeforeFirstPaintStillPaints)
+{
+    runSubframeSwapDuringSameSiteMainFrameNavigation(SubframeCommit::AfterMainFrameCommitBeforeFirstPaint);
+}
+
+TEST(SiteIsolation, CrossSiteSubframeCommitAfterSameSiteMainFrameCommitStillPaints)
+{
+    runSubframeSwapDuringSameSiteMainFrameNavigation(SubframeCommit::AfterMainFrameCommit, SwappedSubframe::CrossSite);
+}
+
 TEST(SiteIsolation, PropagateMouseEventsToSubframe)
 {
     auto mainframeHTML = "<script>"

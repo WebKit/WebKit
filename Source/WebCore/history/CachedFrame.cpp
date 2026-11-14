@@ -86,6 +86,15 @@ CachedFrameBase::~CachedFrameBase()
     ASSERT(!m_document);
 }
 
+bool CachedFrameBase::containsFrame(const Frame& frame) const
+{
+    if (RefPtr view = m_view; view && &view->frame() == &frame)
+        return true;
+    return std::ranges::any_of(m_childFrames, [&](auto& child) {
+        return child->containsFrame(frame);
+    });
+}
+
 void CachedFrameBase::pruneDetachedChildFrames()
 {
     m_childFrames.removeAllMatching([] (auto& childFrame) {

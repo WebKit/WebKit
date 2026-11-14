@@ -437,6 +437,17 @@ DidCacheOutgoingDocument WebFrame::loadDidCommitInAnotherProcess(WebCore::Proces
     RefPtr parent = localFrame->tree().parent();
     RefPtr ownerElement = localFrame->ownerElement();
 
+    // Subframes in the back/forward cache are detached from their parents.
+    if (!parent && !localFrame->isMainFrame()) {
+        RELEASE_LOG(SiteIsolation, "WebFrame::loadDidCommitInAnotherProcess: evicting the cached page of detached subframe %" PRIu64, m_frameID.toUInt64());
+        auto removedItems = WebCore::BackForwardCache::singleton().removeItemsContainingFrame(*localFrame);
+        if (RefPtr page = m_page) {
+            for (auto frameItemID : removedItems)
+                page->send(Messages::WebPageProxy::DidEvictBackForwardFrameItem(frameItemID));
+        }
+        return DidCacheOutgoingDocument::No;
+    }
+
     // loadDidCommitInAnotherProcess implies the new frame is cross-origin to the current frame.
     // Cross-origin navigation doesn't trigger view transitions, and does not provide any activation information.
     protect(localFrame->document())->dispatchPageswapEvent(CanTriggerCrossDocumentViewTransition::No, nullptr);
