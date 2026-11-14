@@ -1141,10 +1141,13 @@ void Debugger::pauseIfNeeded(JSGlobalObject* globalObject)
 
     if (!m_deferredBreakpoints.isEmpty()) {
         std::optional<BreakpointID> pausingBreakpointID;
+        bool hasSpecialBreakpoint = false;
         bool hasEvaluatedSpecialBreakpoint = false;
         bool shouldContinue = true;
 
         for (auto&& deferredBreakpoint : std::exchange(m_deferredBreakpoints, { })) {
+            hasSpecialBreakpoint |= !deferredBreakpoint->isLinked();
+
             // Note that breakpoint evaluations can potentially stop the debugger, so we need to
             // check that we still have a current call frame after evaluating them.
 
@@ -1170,6 +1173,14 @@ void Debugger::pauseIfNeeded(JSGlobalObject* globalObject)
                 hasEvaluatedSpecialBreakpoint = true;
             else if (!hasEvaluatedSpecialBreakpoint && !pausingBreakpointID)
                 pausingBreakpointID = deferredBreakpoint->id();
+        }
+
+        // A step that still pauses here may have no reason of its own, such as inside `breakProgram()`, so it keeps
+        // the reason of the special breakpoint. A special breakpoint armed by a condition or action is still pending.
+        if (hasSpecialBreakpoint && !hasEvaluatedSpecialBreakpoint && !didPauseForStep && !m_specialBreakpoint) {
+            dispatchFunctionToObservers([&](Observer& observer) {
+                observer.didNotPauseForSpecialBreakpoint();
+            });
         }
 
         if (shouldContinue) {
@@ -1484,6 +1495,8 @@ void Debugger::didExecuteProgram(CallFrame* callFrame)
 
     // Do not continue stepping into an unknown future program.
     if (!m_currentCallFrame) {
+        bool hadSpecialBreakpoint = !!m_specialBreakpoint;
+
         resetImmediatePauseState();
         resetEventualPauseState();
         m_deferredBreakpoints.clear();
@@ -1491,6 +1504,10 @@ void Debugger::didExecuteProgram(CallFrame* callFrame)
         if (shouldKeepPause) {
             schedulePauseAtNextOpportunity();
             m_afterBlackboxedScript = wasAfterBlackboxedScript;
+        } else if (hadSpecialBreakpoint) {
+            dispatchFunctionToObservers([&](Observer& observer) {
+                observer.didNotPauseForSpecialBreakpoint();
+            });
         }
     }
 }
