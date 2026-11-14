@@ -260,7 +260,8 @@ class FPRegisterID
             arm64FPRName('q14', kind)
         when 'csfr7'
             arm64FPRName('q15', kind)
-        else "Bad register name #{@name} at #{codeOriginString}"
+        else
+            raise "Bad register name #{@name} at #{codeOriginString}"
         end
     end
 end
@@ -308,7 +309,7 @@ class VecRegisterID
             arm64VecName('v19.s', kind)
         when 'v3_q'
             arm64VecName('v19.d', kind)
-        when 'v5'
+        when 'v4'
             arm64VecName('v20', kind)
         when 'v4_b'
             arm64VecName('v20.b', kind)
@@ -348,7 +349,8 @@ class VecRegisterID
             arm64VecName('v23.s', kind)
         when 'v7_q'
             arm64VecName('v23.d', kind)
-        else "Bad register name #{@name} at #{codeOriginString}"
+        else
+            raise "Bad register name #{@name} at #{codeOriginString}"
         end
     end
 end
@@ -362,16 +364,18 @@ end
 class Address
     def arm64Operand(kind)
         case kind
+        when :vector, :vector_with_interpretation
+            raise "Invalid offset #{offset.value} at #{codeOriginString}" if offset.value < -256 or offset.value > 65520
         when :quad, :ptr, :double
             if $currentSettings["ADDRESS64"]
-                raise "Invalid offset #{offset.value} at #{codeOriginString}" if offset.value < -255 or offset.value > 32760
+                raise "Invalid offset #{offset.value} at #{codeOriginString}" if offset.value < -256 or offset.value > 32760
             else
-                raise "Invalid offset #{offset.value} at #{codeOriginString}" if offset.value < -255 or offset.value > 16380
+                raise "Invalid offset #{offset.value} at #{codeOriginString}" if offset.value < -256 or offset.value > 16380
             end
         when :word, :int, :float
-            raise "Invalid offset #{offset.value} at #{codeOriginString}" if offset.value < -255 or offset.value > 16380
+            raise "Invalid offset #{offset.value} at #{codeOriginString}" if offset.value < -256 or offset.value > 16380
         else
-            raise "Invalid offset #{offset.value} at #{codeOriginString}" if offset.value < -255 or offset.value > 4095
+            raise "Invalid offset #{offset.value} at #{codeOriginString}" if offset.value < -256 or offset.value > 8190
         end
         offset.value.zero? \
             ? "[#{base.arm64Operand(:quad)}]"
@@ -453,24 +457,31 @@ end
 def isMalformedArm64LoadStoreAddress(opcode, operand)
     malformed = false
     if operand.is_a? Address
+        offset = operand.offset.value
         case opcode
+        when "loadv", "storev"
+            malformed ||= !( (-256..255).include?(offset) || ((0..65520).include?(offset) && (offset % 16).zero?) )
         when "loadp", "storep", "loadq", "storeq"
-            if $currentSettings["ADDRESS64"]
-                malformed ||= (not (-255..32760).include? operand.offset.value)
-                malformed ||= (not (operand.offset.value % 8).zero?)
+            if $currentSettings["ADDRESS64"] or opcode =~ /q$/
+                malformed ||= !( (-256..255).include?(offset) || ((0..32760).include?(offset) && (offset % 8).zero?) )
             else
-                malformed ||= (not (-255..16380).include? operand.offset.value)
+                malformed ||= !( (-256..255).include?(offset) || ((0..16380).include?(offset) && (offset % 4).zero?) )
             end
         when "loadd", "stored"
-            malformed ||= (not (-255..32760).include? operand.offset.value)
-            malformed ||= (not (operand.offset.value % 8).zero?)
-        when "loadi", "loadis", "storei"
-            malformed ||= (not (-255..16380).include? operand.offset.value)
+            malformed ||= !( (-256..255).include?(offset) || ((0..32760).include?(offset) && (offset % 8).zero?) )
+        when "loadi", "loadis", "storei", "loadf", "storef"
+            malformed ||= !( (-256..255).include?(offset) || ((0..16380).include?(offset) && (offset % 4).zero?) )
+        when "loadh", "loadhsi", "loadhsq", "storeh"
+            malformed ||= !( (-256..255).include?(offset) || ((0..8190).include?(offset) && (offset % 2).zero?) )
+        when "loadb", "loadbsi", "loadbsq", "storeb"
+            malformed ||= !(-256..4095).include?(offset)
+        when /^atomic/, /^loadlinkacq/, /^storecondrel/
+            malformed ||= (offset != 0)
         when *ARM64_INDEXED_LOAD_STORE_OFFSETS.keys
-            malformed ||= (not ARM64_INDEXED_LOAD_STORE_OFFSETS[opcode].include? operand.offset.value)
+            malformed ||= (not ARM64_INDEXED_LOAD_STORE_OFFSETS[opcode].include? offset)
         else
             # This is just a conservative estimate of the max offset.
-            malformed ||= (not (-255..4095).include? operand.offset.value)
+            malformed ||= (not (-256..4095).include? offset)
         end
     end
     malformed
@@ -549,17 +560,39 @@ def arm64LowerLabelReferences(list)
         | node |
         if node.is_a? Instruction
             case node.opcode
-            when "loadi", "loadis", "loadp", "loadq", "loadb", "loadbsi", "loadbsq", "loadh", "loadhsi", "loadhsq", "leap", "loadv"
+            when "loadi", "loadis", "loadp", "loadq", "loadb", "loadbsi", "loadbsq", "loadh", "loadhsi", "loadhsq", "leap", "loadd", "loadf", "loadv"
                 labelRef = node.operands[0]
                 if labelRef.is_a? LabelReference
                     dest = node.operands[1]
-                    newList << Instruction.new(codeOrigin, "globaladdr", [LabelReference.new(node.codeOrigin, labelRef.label), dest])
+                    addrReg = (dest.is_a?(FPRegisterID) or dest.is_a?(VecRegisterID) or (dest.is_a?(Tmp) and dest.fpr?)) ? Tmp.new(node.codeOrigin, :gpr) : dest
+                    newList << Instruction.new(codeOrigin, "globaladdr", [LabelReference.new(node.codeOrigin, labelRef.label), addrReg])
                     if node.opcode != "leap" or labelRef.offset != 0
-                        newList << Instruction.new(codeOrigin, node.opcode, [Address.new(node.codeOrigin, dest, Immediate.new(node.codeOrigin, labelRef.offset)), dest])
+                        newList << Instruction.new(codeOrigin, node.opcode, [Address.new(node.codeOrigin, addrReg, Immediate.new(node.codeOrigin, labelRef.offset)), dest])
                     end
                 else
                     newList << node
                 end
+            else
+                newList << node
+            end
+        else
+            newList << node
+        end
+    }
+    newList
+end
+
+def arm64LowerTransfers(list)
+    newList = []
+    list.each {
+        | node |
+        if node.is_a? Instruction
+            case node.opcode
+            when "transferi", "transferq", "transferp"
+                suffix = node.opcode[-1, 1]
+                tmp = Tmp.new(node.codeOrigin, :gpr)
+                newList << Instruction.new(node.codeOrigin, "load" + suffix, [node.operands[0], tmp], node.annotation)
+                newList << Instruction.new(node.codeOrigin, "store" + suffix, [tmp, node.operands[1]], node.annotation)
             else
                 newList << node
             end
@@ -618,6 +651,7 @@ class Sequence
 
         result = $currentSettings["ADDRESS64"] ? riscLowerHardBranchOps64(result) : riscLowerHardBranchOps(result)
         result = riscLowerShiftOps(result)
+        result = arm64LowerTransfers(result)
         result = arm64LowerMalformedLoadStoreAddresses(result)
         result = arm64LowerLabelReferences(result)
         result = riscLowerMalformedAddresses(result) {
@@ -674,14 +708,15 @@ class Sequence
 
         # The rules for which immediates are valid for and/or/xor instructions are fairly involved, see https://dinfuehr.github.io/blog/encoding-of-immediate-values-on-aarch64/
         validLogicalImmediates = []
+        validLogicalImmediates32 = []
         def rotate(value, n, size)
             mask = (1 << size) - 1
             shiftedValue = value << n
             result = (shiftedValue & mask) | ((shiftedValue & ~mask) >> size)
             return result
         end
-        def replicate(value, size)
-            until size == 64 do
+        def replicate(value, size, targetSize = 64)
+            until size == targetSize do
                 value = value | (value << size)
                 size *= 2
             end
@@ -696,13 +731,17 @@ class Sequence
                         immediate = immediate*2 + 1
                     end
                     immediate = rotate(immediate, rotation, size)
-                    immediate = replicate(immediate, size)
-                    validLogicalImmediates << immediate
+                    imm64 = replicate(immediate, size, 64)
+                    validLogicalImmediates << imm64
+                    if size <= 32
+                        imm32 = replicate(immediate, size, 32)
+                        validLogicalImmediates32 << imm32
+                    end
                 end
             end
             size *= 2
         end
-        result = riscLowerMalformedImmediates(result, 0..4095, validLogicalImmediates)
+        result = riscLowerMalformedImmediates(result, 0..4095, validLogicalImmediates, validLogicalImmediates32)
 
         result = riscLowerMisplacedAddresses(result)
         result = riscLowerMalformedAddresses(result) {
@@ -712,11 +751,11 @@ class Sequence
                 true
             when /^loadpair/, /^storepair/
                 not address.is_a? Address or not isMalformedArm64LoadStorePairAddress(node.opcode, address)
+            when /^loadlinkacq/, /^storecondrel/, /^atomic/
+                not address.is_a? Address or address.offset.value == 0
             when /^load/, /^store/, /^transfer/
                 not address.is_a? Address or not isMalformedArm64LoadStoreAddress(node.opcode, address)
             when /^lea/
-                true
-            when /^atomic/
                 true
             else
                 raise "Bad instruction #{node.opcode} for heap access at #{node.codeOriginString}"
@@ -891,15 +930,41 @@ def emitARM64Access(opcode, opcodeNegativeOffset, register, memory, kind)
     $asm.puts "#{opcode} #{register.arm64Operand(kind)}, #{memory.arm64Operand(kind)}"
 end
 
+def arm64BitSizeForKind(kind)
+    case kind
+    when :word
+        32
+    when :ptr
+        $currentSettings["ADDRESS64"] ? 64 : 32
+    when :quad
+        64
+    else
+        raise "Unexpected shift kind #{kind}"
+    end
+end
+
 def emitARM64Shift(opcodeRegs, opcodeImmediate, operands, kind)
+    bitSize = arm64BitSizeForKind(kind)
     if operands.size == 3 and operands[1].immediate?
-        magicNumbers = yield operands[1].value
+        maskedAmount = operands[1].value & (bitSize - 1)
+        if maskedAmount == 0
+            $asm.puts "mov #{operands[2].arm64Operand(kind)}, #{operands[0].arm64Operand(kind)}"
+            return
+        end
+        magicNumbers = yield maskedAmount
         $asm.puts "#{opcodeImmediate} #{operands[2].arm64Operand(kind)}, #{operands[0].arm64Operand(kind)}, \##{magicNumbers[0]}, \##{magicNumbers[1]}"
         return
     end
     
     if operands.size == 2 and operands[0].immediate?
-        magicNumbers = yield operands[0].value
+        maskedAmount = operands[0].value & (bitSize - 1)
+        if maskedAmount == 0
+            if bitSize == 32
+                $asm.puts "mov #{operands[1].arm64Operand(kind)}, #{operands[1].arm64Operand(kind)}"
+            end
+            return
+        end
+        magicNumbers = yield maskedAmount
         $asm.puts "#{opcodeImmediate} #{operands[1].arm64Operand(kind)}, #{operands[1].arm64Operand(kind)}, \##{magicNumbers[0]}, \##{magicNumbers[1]}"
         return
     end
@@ -1466,7 +1531,7 @@ class Instruction
         when "peek"
             $asm.puts "ldr #{operands[1].arm64Operand(:quad)}, [sp, \##{operands[0].value * 8}]"
         when "poke"
-            $asm.puts "str #{operands[1].arm64Operand(:quad)}, [sp, \##{operands[0].value * 8}]"
+            $asm.puts "str #{operands[0].arm64Operand(:quad)}, [sp, \##{operands[1].value * 8}]"
         when "fp2d"
             emitARM64("fmov", operands, [:ptr, :double])
         when "fq2d"
@@ -1502,7 +1567,7 @@ class Instruction
         when "pcrtoaddr"
             labelRef = operands[0]
             register = operands[1].arm64Operand(:quad)
-            if labelRef.externOrGlobal?
+            if labelRef.is_a?(LabelReference) and labelRef.externOrGlobal?
                 $asm.putStr("#if OS(DARWIN)")
                 $asm.puts "adrp #{register}, #{labelRef.asmLabel}@PAGE"
                 $asm.puts "add #{register}, #{register}, #{labelRef.asmLabel}@PAGEOFF"
@@ -1511,7 +1576,7 @@ class Instruction
                 $asm.puts "add #{register}, #{register}, :lo12:#{labelRef.asmLabel}"
                 $asm.putStr("#endif")
             else
-                $asm.puts "adr #{register}, #{labelRef.value}"
+                $asm.puts "adr #{register}, #{labelRef.asmLabel}"
             end
 
         when "globaladdr"
@@ -1681,14 +1746,14 @@ class Instruction
         when "cdeq"
             emitARM64CompareFP(operands, :double, "eq")
         when "cfneq"
-            $asm.puts "move $0, #{operands[2].arm64Operand(:word)}"
+            $asm.puts "mov #{operands[2].arm64Operand(:word)}, wzr"
             emitARM64Unflipped("fcmp", operands[0..1], :float)
             isUnordered = LocalLabel.unique(codeOrigin, "cdneq")
             $asm.puts "b.vs #{LocalLabelReference.new(codeOrigin, isUnordered).asmLabel}"
             $asm.puts "cset #{operands[2].arm64Operand(:word)}, ne"
             isUnordered.lower($activeBackend)
         when "cdneq"
-            $asm.puts "move $0, #{operands[2].arm64Operand(:word)}"
+            $asm.puts "mov #{operands[2].arm64Operand(:word)}, wzr"
             emitARM64Unflipped("fcmp", operands[0..1], :double)
             isUnordered = LocalLabel.unique(codeOrigin, "cdneq")
             $asm.puts "b.vs #{LocalLabelReference.new(codeOrigin, isUnordered).asmLabel}"
@@ -1723,7 +1788,7 @@ class Instruction
             if operands[0].immediate?
               offset = "\##{operands[0].value * 8}"
             else
-              offset = operands[0].arm64Operand(:word)
+              offset = "#{operands[0].arm64Operand(:quad)}, lsl #3"
             end
             $asm.puts "mrs #{tmp}, tpidrro_el0"
             $asm.puts "#if !HAVE(SIMPLIFIED_FAST_TLS_BASE)"
@@ -1736,7 +1801,7 @@ class Instruction
             if operands[1].immediate?
               offset = "\##{operands[1].value * 8}"
             else
-              offset = operands[1].arm64Operand(:word)
+              offset = "#{operands[1].arm64Operand(:quad)}, lsl #3"
             end
             $asm.puts "mrs #{tmp}, tpidrro_el0"
             $asm.puts "#if !HAVE(SIMPLIFIED_FAST_TLS_BASE)"
