@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CSSDeclarationValue.h"
 
+#include <wtf/Hasher.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextStream.h>
 
@@ -43,6 +44,13 @@ void Serialize<DeclarationValue>::operator()(StringBuilder& builder, const Seria
 {
     Ref value = declarationValue.value;
     builder.append(value->serialize());
+}
+
+// MARK: - Hashing
+
+void add(Hasher& hasher, const DeclarationValue& declarationValue)
+{
+    add(hasher, declarationValue.value->serialize());
 }
 
 // MARK: - Logging

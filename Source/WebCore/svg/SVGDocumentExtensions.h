@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include "StyleURL.h"
 #include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -43,6 +44,32 @@ class SVGSMILElement;
 class SVGSVGElement;
 class SVGUseElement;
 class WeakPtrImplWithEventTargetData;
+
+struct SVGExternalResourceKey {
+    URL url;
+    CSS::URLModifiers modifiers;
+
+    friend bool operator==(const SVGExternalResourceKey&, const SVGExternalResourceKey&) = default;
+};
+
+inline void add(Hasher& hasher, const SVGExternalResourceKey& key)
+{
+    add(hasher, key.url, key.modifiers);
+}
+
+} // namespace WebCore
+
+namespace WTF {
+
+template<> struct HashTraits<WebCore::SVGExternalResourceKey> : GenericHashTraits<WebCore::SVGExternalResourceKey> {
+    static constexpr bool emptyValueIsZero = false;
+    static void constructDeletedValue(WebCore::SVGExternalResourceKey& slot) { new (NotNull, &slot.url) URL(WTF::HashTableDeletedValue); }
+    static bool isDeletedValue(const WebCore::SVGExternalResourceKey& slot) { return slot.url.isHashTableDeletedValue(); }
+};
+
+} // namespace WTF
+
+namespace WebCore {
 
 class SVGDocumentExtensions final : public CanMakeCheckedPtr<SVGDocumentExtensions> {
     WTF_MAKE_TZONE_ALLOCATED(SVGDocumentExtensions);
@@ -78,15 +105,15 @@ public:
     void registerSVGFontFaceElement(SVGFontFaceElement&);
     void unregisterSVGFontFaceElement(SVGFontFaceElement&);
 
-    bool hasExternalSVGResource(const URL&) const;
-    void addExternalSVGResource(const URL&, CachedImage&, Document&);
-    IsolatedSVGDocumentContext* isolatedSVGDocumentContext(const URL&) const;
+    bool hasExternalSVGResource(const Style::URL&) const;
+    void addExternalSVGResource(const Style::URL&, CachedImage&, Document&);
+    IsolatedSVGDocumentContext* isolatedSVGDocumentContext(const Style::URL&) const;
 
     // The return value is tri-state because callers need to distinguish whether the reference is external
     // at all, and if so whether it's loaded yet: nullopt = not an external/data reference (resolve
     // locally); null RefPtr = external but not loaded yet (resolve to nothing); non-null = the isolated
     // document to resolve in. Requires the SVGExternalResourcesEnabled setting.
-    std::optional<RefPtr<SVGDocument>> externalResourceDocument(const URL&) const;
+    std::optional<RefPtr<SVGDocument>> externalResourceDocument(const Style::URL&) const;
 
 private:
     WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
@@ -97,7 +124,7 @@ private:
     Vector<Ref<SVGElement>> m_rebuildElements;
     bool m_areAnimationsPaused { false };
 
-    HashMap<URL, Ref<IsolatedSVGDocumentContext>> m_externalSVGDocuments;
+    HashMap<SVGExternalResourceKey, Ref<IsolatedSVGDocumentContext>> m_externalSVGDocuments;
 };
 
 } // namespace WebCore

@@ -14843,6 +14843,7 @@
 		7AB1C0312FD20002008AF649 /* CSSParamValue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSParamValue.cpp; sourceTree = "<group>"; };
 		7AB1C0332FD20004008AF649 /* CSSPropertyParserConsumer+LinkParameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CSSPropertyParserConsumer+LinkParameters.h"; sourceTree = "<group>"; };
 		7AB1C0342FD20005008AF649 /* CSSPropertyParserConsumer+LinkParameters.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "CSSPropertyParserConsumer+LinkParameters.cpp"; sourceTree = "<group>"; };
+		0DF5EE74BB8F16E89416B3C0 /* CSSLinkParameter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSLinkParameter.cpp; sourceTree = "<group>"; };
 		7AB1C0402FD30001008AF649 /* CSSLinkParameter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSLinkParameter.h; sourceTree = "<group>"; };
 		7AB1C0502FD40001008AF649 /* CSSDeclarationValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSDeclarationValue.h; sourceTree = "<group>"; };
 		7AB1C0512FD40002008AF649 /* CSSDeclarationValue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSDeclarationValue.cpp; sourceTree = "<group>"; };
@@ -32425,6 +32426,7 @@
 		7AB1C0412FD30002008AF649 /* link-params */ = {
 			isa = PBXGroup;
 			children = (
+				0DF5EE74BB8F16E89416B3C0 /* CSSLinkParameter.cpp */,
 				7AB1C0402FD30001008AF649 /* CSSLinkParameter.h */,
 			);
 			path = "link-params";
