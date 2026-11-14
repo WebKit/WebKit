@@ -30,7 +30,7 @@ from unittest.mock import patch
 from webkitpy.common.host_mock import MockHost
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.executive_mock import MockExecutive2
-from webkitpy.w3c.test_exporter import WebPlatformTestExporter, diff_without_webkit_test_runner_headers, parse_args, wpt_commit_message
+from webkitpy.w3c.test_exporter import WebPlatformTestExporter, diff_without_webkit_test_runner_headers, parse_args, webkit_path, wpt_commit_message
 from webkitbugspy import mocks as bmocks, Tracker, bugzilla
 from webkitcorepy import mocks as wkmocks, run, testing, OutputCapture
 from webkitscmpy import mocks as mocks
@@ -141,6 +141,40 @@ class TestExporterTest(testing.PathTestCase):
                 'Removing local branch wpt-export-for-webkit-1',
                 'WPT Pull Request: https://github.com/web-platform-tests/wpt/pull/1'],
         )
+
+    def test_export_with_remote_and_no_triage_access(self):
+        with OutputCapture(level=logging.INFO) as captured, bmocks.Bugzilla(self.BUGZILLA_URL.split('://')[1], issues=bmocks.ISSUES, environment=wkmocks.Environment(
+            BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+            BUGS_EXAMPLE_COM_PASSWORD='password',
+        )), mocks.remote.GitHub(remote='github.com/web-platform-tests/wpt', labels={
+            'webkit-export': dict(color='00000', description=''),
+        }) as wpt_remote, mocks.local.Git(
+            self.path,
+            remote='https://{}'.format(wpt_remote.remote)
+        ) as git_mock, patch(
+            'webkitpy.common.webkit_finder.WebKitFinder.webkit_base', return_value=self.path,
+        ), patch(
+            'webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA_URL)],
+        ), patch(
+            'webkitpy.w3c.test_exporter.WPTLinter', autospec=True, spec_set=True,
+        ), patch(
+            # Without triage access to web-platform-tests, a pull request can't be assigned to its author.
+            'webkitbugspy.issue.Issue.assign', return_value=None,
+        ):
+            git_mock.head.message = f'Test\n{self.BUGZILLA_URL}/show_bug.cgi?id=1\n'
+            host = TestExporterTest.MyMockHost()
+            host.filesystem.maybe_make_directory(self.path)
+            host.filesystem.write_binary_file(f'{self.path}/resources/testharness.js', '')
+            host.filesystem.write_binary_file(f'{self.path}/wpt', '')
+            options = parse_args(['test_exporter.py', '-g', 'HEAD', '-c', '-r', 'fork', '-d', self.path])
+            WebPlatformTestExporter(host, options).do_export()
+
+            self.assertEqual(wpt_remote.pull_requests[0]['head']['label'], 'username:wpt-export-for-webkit-1')
+            issue = Tracker.from_string('{}/show_bug.cgi?id=1'.format(self.BUGZILLA_URL))
+            self.assertEqual(issue.comments[-1].content, 'Submitted web-platform-tests pull request: https://github.com/web-platform-tests/wpt/pull/1')
+            self.assertEqual(issue.related_links, ['https://github.com/web-platform-tests/wpt/pull/1'])
+
+        self.assertEqual(captured.stderr.getvalue(), "Failed to assign 'PR 1 | WebKit export of https://bugs.example.com/show_bug.cgi?id=1' to 'username'\n")
 
     def test_export_with_message(self):
         with OutputCapture(level=logging.INFO), bmocks.Bugzilla(self.BUGZILLA_URL.split('://')[1], issues=bmocks.ISSUES, environment=wkmocks.Environment(
@@ -289,6 +323,35 @@ class TestExporterTest(testing.PathTestCase):
                 '    WebKit-Bug: https://bugs.example.com/show_bug.cgi?id=1',
                 'Skipping pushing to remote since this is a dry run',
                 'Removing local branch wpt-export-for-webkit-1'],
+        )
+
+    def test_export_lint_error(self):
+        with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub(remote='github.com/web-platform-tests/wpt', labels={
+            'webkit-export': dict(color='00000', description=''),
+        }) as wpt_remote, mocks.local.Git(
+            self.path,
+            remote='https://{}'.format(wpt_remote.remote)
+        ) as git_mock, patch(
+            'webkitpy.common.webkit_finder.WebKitFinder.webkit_base', return_value=self.path,
+        ), patch(
+            'webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA_URL)],
+        ), patch(
+            'webkitpy.w3c.test_exporter.WPTLinter', autospec=True, spec_set=True,
+        ) as mock_linter_class:
+            mock_linter_class.return_value.lint.return_value = [
+                dict(rule='TRAILING WHITESPACE', path='webdriver/tests/bidi/test.py', lineno=1, message='Whitespace at EOL'),
+            ]
+            git_mock.head.message = f'Test\n{self.BUGZILLA_URL}/show_bug.cgi?id=1\n'
+            host = TestExporterTest.MyMockHost()
+            host.filesystem.maybe_make_directory(self.path)
+            host.filesystem.write_binary_file(f'{self.path}/resources/testharness.js', '')
+            host.filesystem.write_binary_file(f'{self.path}/wpt', '')
+            options = parse_args(['test_exporter.py', '-g', 'HEAD', '-c', '--dry-run', '-d', self.path])
+            self.assertEqual(WebPlatformTestExporter(host, options).do_export(), 1)
+
+        self.assertIn(
+            '[TRAILING WHITESPACE] WebDriverTests/imported/w3c/webdriver/tests/bidi/test.py:1 Whitespace at EOL',
+            captured.root.log.getvalue().splitlines(),
         )
 
     def test_export_escapes_bug_title(self):
@@ -858,7 +921,7 @@ class TestExporterTest(testing.PathTestCase):
         log = captured.root.log.getvalue()
         self.assertIn('Failed to push to WPT fork', log)
 
-    def test_export_case_mismatch(self):
+    def export_with_case_mismatch(self, path, upstream_path):
         with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub(remote='github.com/web-platform-tests/wpt', labels={
             'webkit-export': dict(color='00000', description=''),
         }) as wpt_remote, mocks.local.Git(
@@ -877,7 +940,7 @@ class TestExporterTest(testing.PathTestCase):
 
             # Like git apply on a case-insensitive file system: the index keeps the case of the patch.
             def apply(patch=None):
-                git_mock.staged['WebIDL/ecmascript-binding/test.html'] = 'added'
+                git_mock.staged[path] = 'added'
                 return wkmocks.ProcessCompletion(returncode=0)
             git_mock.apply = apply
 
@@ -885,16 +948,18 @@ class TestExporterTest(testing.PathTestCase):
             host.filesystem.maybe_make_directory(self.path)
             host.filesystem.write_binary_file(f'{self.path}/resources/testharness.js', '')
             host.filesystem.write_binary_file(f'{self.path}/wpt', '')
-            host.filesystem.write_binary_file(f'{self.path}/webidl/ecmascript-binding/test.html', '')
+            host.filesystem.write_binary_file(f'{self.path}/{upstream_path}', '')
             host.web.responses.append({'status_code': 200, 'body': '{"login": "USER"}'})
             options = parse_args(['test_exporter.py', '-g', 'HEAD', '-c', '-d', self.path])
             self.assertEqual(WebPlatformTestExporter(host, options).do_export(), 1)
             self.assertEqual(wpt_remote.pull_requests, [])
             self.assertEqual([call for call in run_mock.call_args_list if call.args[0][1] == 'commit'], [])
 
-        log = captured.root.log.getvalue().splitlines()
+        return [line for line in captured.root.log.getvalue().splitlines() if 'Mock process' not in line]
+
+    def test_export_case_mismatch(self):
         self.assertEqual(
-            [line for line in log if 'Mock process' not in line], [
+            self.export_with_case_mismatch('WebIDL/ecmascript-binding/test.html', 'webidl/ecmascript-binding/test.html'), [
                 f'Using the WPT repository found at `{self.path}`',
                 'Fetching web-platform-tests repository',
                 'Cleaning web-platform-tests master branch',
@@ -902,6 +967,12 @@ class TestExporterTest(testing.PathTestCase):
                 'LayoutTests/imported/w3c/web-platform-tests/WebIDL differs only in case from webidl in web-platform-tests. Rename it to match before exporting.',
                 "Cannot create web-platform-tests local branch from the patch '/__im_tmp/tmp_0_wpt_export_patch'",
                 'Keeping local branch wpt-export-for-webkit-1'],
+        )
+
+    def test_export_case_mismatch_in_webdriver_tests(self):
+        self.assertEqual(
+            self.export_with_case_mismatch('webdriver/tests/bidi/Script/test.py', 'webdriver/tests/bidi/script/test.py')[4],
+            'WebDriverTests/imported/w3c/webdriver/tests/bidi/Script differs only in case from webdriver/tests/bidi/script in web-platform-tests. Rename it to match before exporting.',
         )
 
     def test_export_open_pr_errors_without_flag(self):
@@ -1456,6 +1527,53 @@ diff --git a/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/heade
             exporter = WebPlatformTestExporter(host, options)
         self.assertFalse(exporter.has_wpt_changes())
 
+    def test_webdriver_tests(self):
+        host = TestExporterTest.MyMockHost()
+        host.filesystem.maybe_make_directory(self.path)
+        host._mockSCM.mock_format_patch_result = b"""diff --git a/LayoutTests/imported/w3c/web-platform-tests/dom/test.html b/LayoutTests/imported/w3c/web-platform-tests/dom/test.html
++change to dom test
+diff --git a/WebDriverTests/imported/w3c/importer.json b/WebDriverTests/imported/w3c/importer.json
++change to importer.json
+diff --git a/WebDriverTests/imported/w3c/tools/webdriver/webdriver/bidi/client.py b/WebDriverTests/imported/w3c/tools/webdriver/webdriver/bidi/client.py
++change to client
+diff --git a/WebDriverTests/imported/w3c/tools/wptrunner/wptrunner/environment.py b/WebDriverTests/imported/w3c/tools/wptrunner/wptrunner/environment.py
++change to wptrunner
+diff --git a/WebDriverTests/imported/w3c/webdriver/tests/bidi/script/evaluate/window_proxy.py b/WebDriverTests/imported/w3c/webdriver/tests/bidi/script/evaluate/window_proxy.py
++change to webdriver test
+"""
+        options = parse_args(['test_exporter.py', '-g', 'HEAD', '-c', '-n', 'USER', '-t', 'TOKEN', '-d', self.path])
+        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path) as git_mock, patch(
+            'webkitpy.common.webkit_finder.WebKitFinder.webkit_base', return_value=self.path,
+        ), patch(
+            'webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA_URL)],
+        ), patch(
+            'webkitpy.w3c.test_exporter.WPTLinter', autospec=True, spec_set=True,
+        ):
+            git_mock.head.message = f'Test\n{self.BUGZILLA_URL}/show_bug.cgi?id=1\n'
+            exporter = WebPlatformTestExporter(host, options)
+            patch_file = exporter.write_git_patch_file()
+
+        self.assertEqual(host._mockSCM.calls[1:], [f"create_patch {git_mock.head.hash} ['LayoutTests/imported/w3c/web-platform-tests', 'WebDriverTests/imported/w3c']"])
+        self.assertEqual(host.filesystem.read_binary_file(patch_file), b"""diff --git a/dom/test.html b/dom/test.html
++change to dom test
+diff --git a/tools/webdriver/webdriver/bidi/client.py b/tools/webdriver/webdriver/bidi/client.py
++change to client
+diff --git a/webdriver/tests/bidi/script/evaluate/window_proxy.py b/webdriver/tests/bidi/script/evaluate/window_proxy.py
++change to webdriver test
+
+""")
+        self.assertEqual(
+            [line for line in captured.root.log.getvalue().splitlines() if 'Mock process' not in line],
+            ['Leaving out WebDriverTests/imported/w3c/tools/wptrunner/wptrunner/environment.py, because WebKit keeps local changes in its copy of wptrunner. Make the change in web-platform-tests directly.'],
+        )
+
+    def test_webkit_path(self):
+        self.assertEqual(webkit_path('WebIDL'), 'LayoutTests/imported/w3c/web-platform-tests/WebIDL')
+        self.assertEqual(webkit_path('tools/wptserve/wptserve/server.py'), 'LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/wptserve/server.py')
+        self.assertEqual(webkit_path('tools/webdriver/webdriver/client.py'), 'WebDriverTests/imported/w3c/tools/webdriver/webdriver/client.py')
+        self.assertEqual(webkit_path('webdriver/tests/bidi/Script'), 'WebDriverTests/imported/w3c/webdriver/tests/bidi/Script')
+        self.assertEqual(webkit_path('webdriver-like/test.html'), 'LayoutTests/imported/w3c/web-platform-tests/webdriver-like/test.html')
+
 
 class WPTCommitMessageTest(unittest.TestCase):
     BUGZILLA_URL = 'https://bugs.example.com'
@@ -1620,6 +1738,34 @@ class WPTCommitMessageTest(unittest.TestCase):
             'WebKit-Bug: https://bugs.example.com/show_bug.cgi?id=1',
         ]))
 
+    def test_webdriver(self):
+        message = '\n'.join([
+            '[WebDriver BiDi] Fix imported/w3c/webdriver/tests/bidi/script/evaluate/window_proxy.py',
+            'https://bugs.example.com/show_bug.cgi?id=1',
+            '',
+            'Reviewed by BJ Burg.',
+            '',
+            'Like WebDriverTests/imported/w3c/webdriver/tests/bidi/script/call_function/, using',
+            'WebDriverTests/imported/w3c/tools/webdriver/webdriver/bidi/client.py, and unlike the rest of',
+            'imported/w3c/webdriver. See WebDriverTests/imported/w3c/importer.json and',
+            'https://github.com/WebKit/WebKit/tree/main/WebDriverTests/imported/w3c/webdriver.',
+            '',
+            '* WebDriverTests/imported/w3c/webdriver/tests/bidi/script/evaluate/window_proxy.py:',
+            '',
+            'Canonical link: https://commits.webkit.org/326723@main',
+        ])
+        self.assertEqual(wpt_commit_message(message, self.bugs(1)), '\n'.join([
+            '[WebDriver BiDi] Fix webdriver/tests/bidi/script/evaluate/window_proxy.py',
+            '',
+            'Like webdriver/tests/bidi/script/call_function/, using',
+            'tools/webdriver/webdriver/bidi/client.py, and unlike the rest of',
+            'webdriver. See WebDriverTests/imported/w3c/importer.json and',
+            'https://github.com/WebKit/WebKit/tree/main/WebDriverTests/imported/w3c/webdriver.',
+            '',
+            'WebKit-Bug: https://bugs.example.com/show_bug.cgi?id=1',
+            'WebKit-Canonical-Link: https://commits.webkit.org/326723@main',
+        ]))
+
 
 class DiffWithoutWebKitTestRunnerHeadersTest(unittest.TestCase):
     def setUp(self):
@@ -1630,7 +1776,7 @@ class DiffWithoutWebKitTestRunnerHeadersTest(unittest.TestCase):
         self.directory.cleanup()
 
     def git(self, *args):
-        return subprocess.run(['git', '-c', 'user.name=Tester', '-c', 'user.email=tester@example.com', *args], cwd=self.directory.name, capture_output=True, check=True).stdout
+        return subprocess.run(['git', '-c', 'user.name=Tester', '-c', 'user.email=tester@example.com', '-c', 'commit.gpgsign=false', *args], cwd=self.directory.name, capture_output=True, check=True).stdout
 
     def commit(self, files):
         for path, content in files.items():

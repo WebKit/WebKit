@@ -49,6 +49,10 @@ from webkitpy.common.memoized import memoized
 _log = logging.getLogger(__name__)
 
 WEBKIT_WPT_DIR = 'LayoutTests/imported/w3c/web-platform-tests'
+# A copy of WPT's webdriver directory, and of the tools it runs with. Changes to tools/wptrunner aren't exported, because
+# WebKit keeps local changes in it.
+WEBKIT_WEBDRIVER_WPT_DIR = 'WebDriverTests/imported/w3c'
+WEBDRIVER_WPT_DIRS = ['webdriver', 'tools/webdriver']
 WPT_PR_URL = f'{WPT_GH_URL}/pull/'
 WEBKIT_EXPORT_PR_LABEL = 'webkit-export'
 
@@ -60,9 +64,17 @@ CHANGED_FILE_RE = re.compile(r'^\* [^\s:]*[/.][^\s:]*:')
 CANONICAL_LINK_RE = re.compile(r'^Canonical[ -]link:\s*(?P<link>\S+)$', re.IGNORECASE)
 CO_AUTHORED_BY_RE = re.compile(r'^Co-authored-by:', re.IGNORECASE)
 WEBKIT_ONLY_TRAILER_RE = re.compile(r'^(Originally-landed-as|Identifier|git-svn-id):')
-WEBKIT_WPT_PATH_RE = re.compile(r'(?<![/\w])(LayoutTests/)?imported/w3c/web-platform-tests/')
+WEBKIT_WPT_PATH_RE = re.compile(r'(?<![/\w])((LayoutTests/)?imported/w3c/web-platform-tests/|(WebDriverTests/)?imported/w3c/(?=webdriver\b|tools/))')
 MARKDOWN_ESCAPE_TABLE = str.maketrans({c: rf'\{c}<!---->' for c in string.punctuation})
 WEBKIT_TEST_RUNNER_HEADER_RE = re.compile(rb'\s*<!--\s*webkit-test-runner\s*\[[^\]]*\]\s*-->')
+
+
+def webkit_path(wpt_path):
+    # LayoutTests doesn't import WPT's webdriver directory, and WebDriver tests run with the copy of tools/webdriver in
+    # WebDriverTests.
+    if any(wpt_path == directory or wpt_path.startswith(f'{directory}/') for directory in WEBDRIVER_WPT_DIRS):
+        return f'{WEBKIT_WEBDRIVER_WPT_DIR}/{wpt_path}'
+    return f'{WEBKIT_WPT_DIR}/{wpt_path}'
 
 
 def diff_without_webkit_test_runner_headers(repository_path, commit, paths):
@@ -213,7 +225,7 @@ class WebPlatformTestExporter(object):
     @property
     @memoized
     def _wpt_patch(self):
-        patch_data = self._host.scm().create_patch(self._options.git_commit, [WEBKIT_WPT_DIR], commit_message=False) or b''
+        patch_data = self._host.scm().create_patch(self._options.git_commit, [WEBKIT_WPT_DIR, WEBKIT_WEBDRIVER_WPT_DIR], commit_message=False) or b''
         patch_data = self._strip_ignored_files_from_diff(patch_data)
         if b'webkit-test-runner' in patch_data:
             paths = [line[len(b'diff --git a/'):].split(b' b/')[0].decode() for line in patch_data.splitlines() if line.startswith(b'diff --git a/')]
@@ -249,7 +261,10 @@ class WebPlatformTestExporter(object):
 
     def _is_ignored_file(self, filename):
         filename = string_utils.decode(filename, target_type=str)
-        if not filename.startswith(WEBKIT_WPT_DIR):
+        if filename.startswith(f'{WEBKIT_WEBDRIVER_WPT_DIR}/tools/wptrunner/'):
+            _log.warning(f'Leaving out {filename}, because WebKit keeps local changes in its copy of wptrunner. Make the change in web-platform-tests directly.')
+            return True
+        if not filename.startswith(f'{WEBKIT_WPT_DIR}/') and not any(filename.startswith(f'{WEBKIT_WEBDRIVER_WPT_DIR}/{directory}/') for directory in WEBDRIVER_WPT_DIRS):
             return True
         for suffix in EXCLUDED_FILE_SUFFIXES:
             if filename.endswith(suffix):
@@ -278,7 +293,7 @@ class WebPlatformTestExporter(object):
             _log.info(f'No changes to upstream, patch data is: "{string_utils.decode(patch_data, target_type=str)}"')
             return b''
         # FIXME: We can probably try to use --relative git parameter to not do that replacement.
-        patch_data = patch_data.replace(string_utils.encode(WEBKIT_WPT_DIR) + b'/', b'')
+        patch_data = patch_data.replace(string_utils.encode(WEBKIT_WPT_DIR) + b'/', b'').replace(string_utils.encode(WEBKIT_WEBDRIVER_WPT_DIR) + b'/', b'')
 
         self.has_webkit_test_runner_specific_changes = b'webkit-test-runner' in patch_data
         if self.has_webkit_test_runner_specific_changes:
@@ -343,7 +358,7 @@ class WebPlatformTestExporter(object):
         # git apply keeps the case of the patch, even where the file system resolves a path in another case.
         mismatches = case_mismatches(self._filesystem, self._wpt_repo.path, self._wpt_repo.modified(staged=True))
         for path, upstream_path in sorted(mismatches.items()):
-            _log.error(f'{WEBKIT_WPT_DIR}/{path} differs only in case from {upstream_path} in web-platform-tests. Rename it to match before exporting.')
+            _log.error(f'{webkit_path(path)} differs only in case from {upstream_path} in web-platform-tests. Rename it to match before exporting.')
         if mismatches:
             return False
 
@@ -403,7 +418,8 @@ class WebPlatformTestExporter(object):
         # wpt-pr-bot identifies WebKit exports by pr_title: https://github.com/web-platform-tests/wpt-pr-bot/blob/main/lib/metadata/webkit.js
         pr_title = f'WebKit export of {self._bug.link}'
         description = f'WebKit export from bug: [{title}]({self._bug.link})\n\n<pre>\n{PullRequest.escape_html(self._commit_message)}\n</pre>'
-        pr = self.create_wpt_pull_request(self._wpt_fork_remote + ':' + self._public_branch_name, pr_title, description)
+        # GitHub names the fork by its owner, whatever its remote is called here.
+        pr = self.create_wpt_pull_request(self.username + ':' + self._public_branch_name, pr_title, description)
         if pr and pr._metadata and pr._metadata.get('issue'):
             pr_issue = pr._metadata['issue']
             labels = pr_issue.labels
@@ -497,7 +513,7 @@ class WebPlatformTestExporter(object):
             lint_errors = 0
             for error in self._linter.lint():
                 _log.error("[%s] %s:%s %s",
-                           error['rule'], error['path'],
+                           error['rule'], webkit_path(error['path']),
                            error['lineno'] or '?', error['message'])
                 lint_errors += 1
             if lint_errors:
@@ -532,6 +548,7 @@ class WebPlatformTestExporter(object):
 
 def parse_args(args):
     description = f"""Script to generate a pull request to W3C web-platform-tests repository
+    It exports the changes to {WEBKIT_WPT_DIR}, {WEBKIT_WEBDRIVER_WPT_DIR}/webdriver and {WEBKIT_WEBDRIVER_WPT_DIR}/tools/webdriver.
     'Tools/Scripts/export-w3c-test-changes -c -g HEAD' will do the following:
     - Clone web-platform-tests repository if not done already and set it up for pushing branches. By default, the repository will be cloned into the parent directory of your WebKit checkout (e.g. ~/WebKit/../wpt).
     - Gather the bug and changes to apply to web-platform-tests repository based on the HEAD commit
