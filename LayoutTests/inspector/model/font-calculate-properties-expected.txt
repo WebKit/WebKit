@@ -25,6 +25,20 @@ PASS: Font size property value should be 'italic'.
 PASS: Font size property value should be '700'.
 PASS: Font size property value should be '150%'.
 
+-- Running test case: WI.FontStyles.ComputedValuesTest
+PASS: A font size function should use its computed value.
+PASS: A variable font weight should use its computed value.
+PASS: Default width should be read from the canonical computed property.
+PASS: Reading the computed weight should preserve the authored variable.
+PASS: Font weight set to initial should use its computed value.
+PASS: Reading the computed weight should preserve the authored initial keyword.
+PASS: Font weight set to revert should use its computed value.
+PASS: Reading the computed weight should preserve the authored revert keyword.
+PASS: Font weight set to revert-layer should use its computed value.
+PASS: Reading the computed weight should preserve the authored revert-layer keyword.
+PASS: Font weight set to unset should use its computed value.
+PASS: Reading the computed weight should preserve the authored unset keyword.
+
 -- Running test case: WI.FontStyles.FeaturePropertyLigaturesTest
 PASS: Property value should be 'no-common-ligatures'.
 PASS: 'calt' feature value should be '1'.

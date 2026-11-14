@@ -286,7 +286,7 @@ WI.FontStyles = class FontStyles
         let effectivePropertyForName = style.domNodeStyle.effectivePropertyForName(name);
         let value = effectivePropertyForName?.value || "";
 
-        if (!value || value === "inherit" || keywordComputedReplacements.includes(value))
+        if (!value || value === "inherit" || WI.CSSKeywordCompletions.UniversalKeywords.has(value) || value.includes("(") || keywordComputedReplacements.includes(value))
             value = this._computedPropertyValueForName(style.domNodeStyle, name);
 
         if (keywordReplacements.has(value))
@@ -347,6 +347,12 @@ WI.FontStyles = class FontStyles
 
     _computedPropertyValueForName(domNodeStyle, name)
     {
+        if (name === "font-stretch") {
+            let widthProperty = domNodeStyle.computedStyle?.propertyForName("font-width");
+            if (widthProperty)
+                return widthProperty.value;
+        }
+
         return domNodeStyle.computedStyle?.propertyForName(name)?.value || "";
     }
 };
