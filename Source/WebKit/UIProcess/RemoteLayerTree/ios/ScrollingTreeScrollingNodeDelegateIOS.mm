@@ -48,6 +48,7 @@
 #import <WebCore/ScrollingTreeFrameScrollingNode.h>
 #import <WebCore/ScrollingTreeScrollingNode.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/Scope.h>
 #import <wtf/SetForScope.h>
 #import <wtf/SystemTracing.h>
 #import <wtf/TZoneMallocInlines.h>
@@ -585,6 +586,14 @@ void ScrollingTreeScrollingNodeDelegateIOS::scrollViewDidScroll(const FloatPoint
         return;
 
     auto scrollPosition = ScrollableArea::scrollPositionFromOffset(scrollOffset, toFloatSize(scrollOrigin()));
+
+    // Scroll updates sent to the web process carry only a position, so mark user scrolls as
+    // delta scrolls here.
+    scrollingTree()->setIsApplyingDeltaScroll(inUserInteraction);
+    auto clearApplyingDeltaScroll = WTF::makeScopeExit([&] {
+        scrollingTree()->setIsApplyingDeltaScroll(false);
+    });
+
     scrollingNode()->wasScrolledByDelegatedScrolling(scrollPosition, { }, inUserInteraction ? ScrollingLayerPositionAction::Sync : ScrollingLayerPositionAction::Set);
 }
 

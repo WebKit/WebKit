@@ -64,6 +64,8 @@ struct SameSizeAsScrollableArea : public CanMakeWeakPtr<SameSizeAsScrollableArea
     uint8_t scrollbarOverlayStyle;
     bool currentScrollType;
     uint8_t scrollAnimationStatus;
+    uint8_t scrolledDirections[4];
+    uint8_t currentScrollRelativity;
     bool bytes[4];
     Markable<ScrollingNodeID> scrollingNodeIDForTesting;
 };
@@ -135,6 +137,8 @@ bool ScrollableArea::scroll(ScrollDirection direction, ScrollGranularity granula
     RefPtr scrollbar = scrollbarForDirection(direction);
     if (!scrollbar)
         return false;
+
+    setCurrentScrollRelativity(scrollRelativityFor(granularity));
 
     float step = 0;
     switch (granularity) {
@@ -232,6 +236,8 @@ void ScrollableArea::scrollToOffsetWithoutAnimation(const FloatPoint& offset, Sc
 {
     LOG_WITH_STREAM(Scrolling, stream << "ScrollableArea " << this << " scrollToOffsetWithoutAnimation " << offset);
 
+    setCurrentScrollRelativity(ScrollRelativity::Absolute);
+
     auto position = scrollPositionFromOffset(offset, toFloatSize(scrollOrigin()));
     scrollAnimator().scrollToPositionWithoutAnimation(position, clamping);
 }
@@ -286,7 +292,31 @@ void ScrollableArea::scrollPositionChanged(const ScrollPosition& position)
         if (CheckedPtr controller = scrollAnchoringController())
             controller->scrollPositionDidChange();
 
+        if (shouldTrackScrolledDirections())
+            updateScrolledDirections(oldPosition, scrollPosition());
+
         updateAnchorPositionedAfterScroll();
+    }
+}
+
+void ScrollableArea::updateScrolledDirections(const ScrollPosition& oldPosition, const ScrollPosition& newPosition)
+{
+    // Scrolling along an axis clears the opposite edge on that axis, but leaves the other axis alone,
+    // so scroll-state(scrolled: top) and (scrolled: left) can hold at the same time.
+    if (newPosition.y() < oldPosition.y()) {
+        m_scrolledDirections.setTop(true);
+        m_scrolledDirections.setBottom(false);
+    } else if (newPosition.y() > oldPosition.y()) {
+        m_scrolledDirections.setBottom(true);
+        m_scrolledDirections.setTop(false);
+    }
+
+    if (newPosition.x() < oldPosition.x()) {
+        m_scrolledDirections.setLeft(true);
+        m_scrolledDirections.setRight(false);
+    } else if (newPosition.x() > oldPosition.x()) {
+        m_scrolledDirections.setRight(true);
+        m_scrolledDirections.setLeft(false);
     }
 }
 
@@ -306,6 +336,8 @@ bool ScrollableArea::handleWheelEventForScrolling(const PlatformWheelEvent& whee
 {
     if (!isScrollableOrRubberbandable())
         return false;
+
+    setCurrentScrollRelativity(ScrollRelativity::Delta);
 
     bool handledEvent = scrollAnimator().handleWheelEvent(wheelEvent);
     
@@ -719,6 +751,8 @@ void ScrollableArea::doPostThumbMoveSnapping(ScrollbarOrientation orientation)
         return;
 
     LOG_WITH_STREAM(ScrollSnap, stream << "ScrollableArea::doPostThumbMoveSnapping - adjusting scroll position from " << currentOffset << " to " << newOffset);
+
+    setCurrentScrollRelativity(scrollRelativityFor(ScrollSnapPointSelectionMethod::Closest));
 
     auto position = scrollPositionFromOffset(newOffset);
     scrollAnimator->scrollToPositionWithAnimation(position);

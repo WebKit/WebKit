@@ -206,6 +206,14 @@ public:
     bool isHandlingProgrammaticScroll() const { return m_isHandlingProgrammaticScroll; }
     void setIsHandlingProgrammaticScroll(bool isHandlingProgrammaticScroll) { m_isHandlingProgrammaticScroll = isHandlingProgrammaticScroll; }
 
+    void setIsApplyingDeltaScroll(bool isApplyingDeltaScroll) { m_isApplyingDeltaScroll = isApplyingDeltaScroll; }
+    std::optional<ScrollRelativity> relativityForScrollUpdate() const
+    {
+        if (!m_isApplyingDeltaScroll)
+            return std::nullopt;
+        return ScrollRelativity::Delta;
+    }
+
     NODELETE void setScrollPinningBehavior(ScrollPinningBehavior);
     NODELETE WEBCORE_EXPORT ScrollPinningBehavior scrollPinningBehavior();
 
@@ -430,6 +438,7 @@ protected:
 private:
     ThreadSafeWeakHashSet<ScrollingTreeNode> m_fixedOrStickyNodes;
     std::atomic<bool> m_isHandlingProgrammaticScroll { false };
+    std::atomic<bool> m_isApplyingDeltaScroll { false };
     std::atomic<bool> m_needsApplyLayerPositions { false };
     bool m_isMonitoringWheelEvents { false };
     bool m_scrollingPerformanceTestingEnabled { false };

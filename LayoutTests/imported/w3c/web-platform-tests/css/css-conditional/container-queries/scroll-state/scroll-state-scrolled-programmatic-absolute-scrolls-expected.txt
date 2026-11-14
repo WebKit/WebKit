@@ -1,4 +1,5 @@
 
-Harness Error (FAIL), message = Error: assert_implements: Basic support for scroll-state container queries required undefined
-
+PASS Check that scroll-state(scrolled) state before scrolling
+PASS scrollTop and scrollLeft scrolls should not affect scroll-state(scrolled)
+PASS scrollTo scrolls should not affect scroll-state(scrolled)
 

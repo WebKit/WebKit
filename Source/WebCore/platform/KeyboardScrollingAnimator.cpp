@@ -224,6 +224,10 @@ bool KeyboardScrollingAnimator::beginKeyboardScrollGesture(ScrollDirection direc
     if (!scrollingDirections().at(boxSideForDirection(direction)))
         return false;
 
+    // Each branch below starts an animation that applies its positions after this function
+    // returns, so set the relativity now.
+    scrollableArea->setCurrentScrollRelativity(scrollRelativityFor(granularity));
+
 #if PLATFORM(MAC)
     // Scroll to the edge of the document the same way as the Home and End keys.
     if (granularity == ScrollGranularity::Document) {
