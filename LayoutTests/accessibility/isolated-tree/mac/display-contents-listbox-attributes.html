@@ -1,0 +1,176 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+.input-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+    padding: 4px;
+}
+/* The listbox generates no box, so its options are flex items of .input-container. */
+.tokens-listbox {
+    display: contents;
+}
+.token, .token-content, .remove-token {
+    display: flex;
+    align-items: center;
+}
+.truncate {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+}
+.input-wrapper {
+    flex: auto;
+}
+</style>
+</head>
+<body>
+
+<div id="content">
+<div id="field" role="group" aria-label="Translation languages field">
+    <div id="multi-select">
+        <div id="container" role="none" class="input-container">
+            <div id="listbox" role="listbox" aria-label="Items" tabindex="-1" class="tokens-listbox">
+                <div id="english" role="option" aria-selected="false" tabindex="-1"><span class="token" contenteditable="false"><span class="token-content"><span class="truncate"><span>English</span></span><span hidden></span></span><span class="remove-token" aria-hidden="true"><svg viewBox="0 0 20 20" width="16" height="16"><path d="M4 4L16 16M16 4L4 16" stroke="currentColor"/></svg></span></span></div>
+                <div id="french" role="option" aria-selected="false" aria-disabled="true" tabindex="-1"><span class="token" contenteditable="false"><span class="token-content"><span class="truncate"><span>French</span></span><span hidden></span></span></span></div>
+                <div id="portuguese" role="option" aria-selected="false" tabindex="0"><span class="token" contenteditable="false"><span class="token-content"><span class="truncate"><span>Portuguese</span></span><span hidden></span></span><span class="remove-token" aria-hidden="true"><svg viewBox="0 0 20 20" width="16" height="16"><path d="M4 4L16 16M16 4L4 16" stroke="currentColor"/></svg></span></span></div>
+            </div>
+            <div class="input-wrapper">
+                <div id="combobox" role="combobox" tabindex="0" contenteditable="plaintext-only" aria-autocomplete="list" aria-expanded="false" aria-label="Translation languages, 3 items"></div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<script>
+var output = "This test ensures that a display:contents listbox whose options are flex items of an ancestor, like the selected items of a multi-select combobox, exposes the right attributes.\n\n";
+
+var invalidStatusNotifications = [];
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var listbox, field, option;
+    var listboxElement = document.getElementById("listbox");
+    setTimeout(async function() {
+        listbox = await waitForElementById("listbox");
+        field = accessibilityController.accessibleElementById("field");
+
+        output += expect("listbox.role", "'AXRole: AXList'");
+        // A listbox with options is not a static list, so it should not have the AXContentList subrole.
+        output += expect("listbox.subrole", "'AXSubrole: '");
+        output += expect("listbox.roleDescription", "'AXRoleDescription: list'");
+        output += `${platformTextAlternatives(listbox)}\n`;
+        output += expect("listbox.orientation", "'AXOrientation: AXVerticalOrientation'");
+        output += expect("listbox.isMultiSelectable", "false");
+        output += expect("listbox.isEnabled", "true");
+        output += expect("listbox.isRequired", "false");
+        output += expect("listbox.stringAttributeValue('AXInvalid')", "'false'");
+        output += expect("listbox.selectedChildrenCount", "0");
+        output += expect("listbox.uiElementAttributeValue('AXActiveElement')", "null");
+        output += expect("domIdentifiers(listbox.uiElementArrayAttributeValue('AXVisibleChildren'))", "'english, french, portuguese'");
+
+        output += "\nThe generic and role=\"none\" containers are ignored, so the listbox and combobox are children of the group, in DOM order.\n";
+        output += expect("listbox.parentElement().domIdentifier", "'field'");
+        output += expect("childDOMIdentifiers(field)", "'listbox, combobox'");
+        output += expect("childDOMIdentifiers(listbox)", "'english, french, portuguese'");
+        output += expect("domIdentifiers(listbox.uiElementArrayAttributeValue('AXChildrenInNavigationOrder'))", "'english, french, portuguese'");
+        output += expect("forwardSearchResultDOMIdentifiers(field, 'AXAnyTypeSearchKey')", "'listbox, english, french, portuguese, combobox'");
+        // Like any other element that can't take focus because it generates no box, the listbox isn't keyboard focusable.
+        output += expect("forwardSearchResultDOMIdentifiers(field, 'AXKeyboardFocusableSearchKey')", "'english, french, portuguese, combobox'");
+        output += expect("forwardSearchResultDOMIdentifiers(field, 'AXControlSearchKey')", "'listbox, combobox'");
+        output += expect("field.uiElementForSearchPredicate(accessibilityController.accessibleElementById('english'), true, 'AXSameTypeSearchKey', '', false).domIdentifier", "'french'");
+        output += expect("textMarkerRangeStringForElement(listbox)", "'English\\nFrench\\nPortuguese'");
+
+        for (const id of ["english", "french", "portuguese"]) {
+            output += `\n#${id}:\n`;
+            option = accessibilityController.accessibleElementById(id);
+            output += expect("option.role", "'AXRole: AXStaticText'");
+            output += `${platformTextAlternatives(option)}\n`;
+            output += expect("option.parentElement().isEqual(listbox)", "true");
+            output += expect("option.childrenCount", "0");
+            output += expect("option.isSelected", "false");
+            output += expect("option.isEnabled", id === "french" ? "false" : "true");
+            output += expect("option.isAttributeSettable('AXFocused')", "true");
+        }
+
+        output += "\nDisabling the listbox.\n";
+        listboxElement.setAttribute("aria-disabled", "true");
+        output += await expectAsync("listbox.isEnabled", "false");
+        output += await expectAsync("accessibilityController.accessibleElementById('english').isEnabled", "false");
+        output += await expectAsync("accessibilityController.accessibleElementById('portuguese').isEnabled", "false");
+
+        output += "\nEnabling the listbox.\n";
+        listboxElement.removeAttribute("aria-disabled");
+        output += await expectAsync("listbox.isEnabled", "true");
+        output += await expectAsync("accessibilityController.accessibleElementById('english').isEnabled", "true");
+        output += await expectAsync("accessibilityController.accessibleElementById('portuguese').isEnabled", "true");
+        output += expect("accessibilityController.accessibleElementById('french').isEnabled", "false");
+
+        output += "\nMarking the listbox invalid.\n";
+        accessibilityController.addNotificationListener((element, notification) => {
+            if (notification == "AXInvalidStatusChanged")
+                invalidStatusNotifications.push(element.domIdentifier);
+        });
+        listboxElement.setAttribute("aria-invalid", "true");
+        output += await expectAsync("invalidStatusNotifications.includes('listbox')", "true");
+        output += await expectAsync("listbox.stringAttributeValue('AXInvalid')", "'true'");
+        accessibilityController.removeNotificationListener();
+
+        output += "\nChanging the listbox's aria-label.\n";
+        listboxElement.setAttribute("aria-label", "Selected languages");
+        output += await expectAsync("listbox.description", "'AXDescription: Selected languages'");
+        output += `${platformTextAlternatives(listbox)}\n`;
+
+        output += "\nSetting aria-orientation=\"horizontal\" on the listbox, matching how its options are laid out.\n";
+        listboxElement.setAttribute("aria-orientation", "horizontal");
+        output += await expectAsync("listbox.orientation", "'AXOrientation: AXHorizontalOrientation'");
+
+        output += "\nSetting aria-multiselectable=\"true\" on the listbox.\n";
+        listboxElement.setAttribute("aria-multiselectable", "true");
+        output += await expectAsync("listbox.isMultiSelectable", "true");
+
+        output += "\nSetting aria-required=\"true\" on the listbox.\n";
+        listboxElement.setAttribute("aria-required", "true");
+        output += await expectAsync("listbox.isRequired", "true");
+
+        output += "\nSetting aria-activedescendant=\"french\" on the listbox.\n";
+        listboxElement.setAttribute("aria-activedescendant", "french");
+        output += await expectAsync("listbox.uiElementAttributeValue('AXActiveElement')?.domIdentifier", "'french'");
+
+        output += "\nRemoving the listbox, like a multi-select combobox does when nothing is selected.\n";
+        listboxElement.remove();
+        output += await expectAsync("childDOMIdentifiers(field)", "'combobox'");
+
+        output += "\nInserting a new listbox before the combobox.\n";
+        var newListboxElement = document.createElement("div");
+        newListboxElement.id = "new-listbox";
+        newListboxElement.setAttribute("role", "listbox");
+        newListboxElement.setAttribute("aria-label", "Items");
+        newListboxElement.tabIndex = -1;
+        newListboxElement.className = "tokens-listbox";
+        newListboxElement.innerHTML = `<div id="german" role="option" aria-selected="false" tabindex="0"><span class="token" contenteditable="false"><span class="token-content"><span class="truncate"><span>German</span></span><span hidden></span></span></span></div>`;
+        document.getElementById("container").insertBefore(newListboxElement, document.querySelector(".input-wrapper"));
+        output += await expectAsync("childDOMIdentifiers(field)", "'new-listbox, combobox'");
+        listbox = accessibilityController.accessibleElementById("new-listbox");
+        output += expect("listbox.role", "'AXRole: AXList'");
+        output += expect("childDOMIdentifiers(listbox)", "'german'");
+        output += expect("accessibilityController.accessibleElementById('german').parentElement().isEqual(listbox)", "true");
+        output += expect("forwardSearchResultDOMIdentifiers(field, 'AXAnyTypeSearchKey')", "'new-listbox, german, combobox'");
+        output += expect("textMarkerRangeStringForElement(listbox)", "'German'");
+
+        document.getElementById("content").style.display = "none";
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
