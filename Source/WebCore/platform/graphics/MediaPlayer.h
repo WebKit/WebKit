@@ -415,6 +415,7 @@ public:
     using HostingContextPromise = NativePromise<HostingContext, void, WTF::PromiseOption::Default | WTF::PromiseOption::WithoutCrossThreadCopy>;
     Ref<HostingContextPromise> requestHostingContext();
     HostingContext hostingContext() const;
+    bool supportsUIProcessVideoLayerHosting() const;
     FloatSize videoLayerSize() const;
     void videoLayerSizeDidChange(const FloatSize&);
     void setVideoLayerSizeFenced(const FloatSize&, WTF::MachSendRightAnnotated&&);

@@ -92,6 +92,7 @@ public:
             WebCore::HTMLMediaElementIdentifier playerIdentifier;
             WebCore::FloatSize initialSize;
             WebCore::FloatSize naturalSize;
+            bool hostedByUIProcess { false };
         };
         using AdditionalData = Variant<
             NoAdditionalData, // PlatformCALayerRemote and PlatformCALayerRemoteTiledBacking

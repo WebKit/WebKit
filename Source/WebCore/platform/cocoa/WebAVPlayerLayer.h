@@ -51,6 +51,7 @@ WEBCORE_EXPORT @interface WebAVPlayerLayer : CALayer
 @property (nonatomic, copy, nullable) NSDictionary *pixelBufferAttributes;
 @property CGSize videoDimensions;
 @property (nonatomic) NSEdgeInsets legibleContentInsets;
+@property (nonatomic) BOOL previewsResizeWithTransform;
 @property (nonatomic, readonly) BOOL showingCaptionPreview;
 - (WebCore::FloatRect)calculateTargetVideoFrame;
 

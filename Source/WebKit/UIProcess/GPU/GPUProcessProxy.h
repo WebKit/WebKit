@@ -80,6 +80,7 @@ class WebPageProxy;
 class WebProcessPool;
 class WebProcessProxy;
 class WebsiteDataStore;
+class RemoteLayerHostingManagerProxy;
 
 struct CoreIPCAuditToken;
 struct GPUProcessConnectionParameters;
@@ -204,6 +205,8 @@ public:
     std::optional<IPC::Connection::AsyncReplyID> sinkCompletedSnapshotToBitmap(RemoteSnapshotIdentifier, WebCore::FrameIdentifier root, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&);
 #if HAVE(IOSURFACE)
     void sinkCompletedSnapshotToIOSurface(RemoteSnapshotIdentifier, float scale, const WebCore::ColorSpace&, WebCore::FrameIdentifier root, CompletionHandler<void(std::optional<ImageBufferBackendHandle>&&)>&&);
+
+    RemoteLayerHostingManagerProxy& remoteLayerHostingManagerProxy() LIFETIME_BOUND;
 #endif
     void releaseSnapshot(RemoteSnapshotIdentifier);
     void abandonSnapshotFrame(RemoteSnapshotIdentifier, WebCore::FrameIdentifier);
@@ -241,6 +244,7 @@ private:
 
     // IPC::Connection::Client
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
     void didClose(IPC::Connection&) override;
     void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, const Vector<uint32_t>& indicesOfObjectsFailingDecoding) override;
 
@@ -310,6 +314,7 @@ private:
 #if PLATFORM(COCOA)
     static bool s_enableMetalDebugDeviceInNewGPUProcessesForTesting;
     static bool s_enableMetalShaderValidationInNewGPUProcessesForTesting;
+    const Ref<RemoteLayerHostingManagerProxy> m_remoteLayerHostingManagerProxy;
 #endif
 
     HashSet<PAL::SessionID> m_sessionIDs;

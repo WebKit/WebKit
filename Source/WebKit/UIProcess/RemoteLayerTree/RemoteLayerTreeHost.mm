@@ -638,8 +638,10 @@ RefPtr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const IPC::Connection&
             RefPtr page = drawingArea().page();
             if (RefPtr videoManager = page ? page->videoPresentationManager() : nullptr) {
                 auto playerIdentifier = PlaybackSessionContextIdentifier { properties.videoElementData->playerIdentifier, WebProcessProxy::fromConnection(connection)->coreProcessIdentifier() };
-                m_videoLayers.add(*properties.layerID, playerIdentifier);
-                return makeWithLayer(videoManager->createLayerWithID(playerIdentifier, { properties.hostingContextID() }, properties.videoElementData->initialSize, properties.videoElementData->naturalSize, properties.hostingDeviceScaleFactor()));
+                if (auto playerLayer = videoManager->createLayerWithID(playerIdentifier, { properties.hostingContextID() }, properties.videoElementData->initialSize, properties.videoElementData->naturalSize, properties.hostingDeviceScaleFactor(), properties.videoElementData->hostedByUIProcess)) {
+                    m_videoLayers.add(*properties.layerID, playerIdentifier);
+                    return makeWithLayer(WTF::move(playerLayer));
+                }
             }
         }
 #endif

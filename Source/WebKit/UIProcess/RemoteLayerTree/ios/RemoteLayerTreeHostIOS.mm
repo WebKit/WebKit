@@ -115,7 +115,7 @@ RefPtr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const IPC::Connection&
                 if (auto sendRightAnnotated = properties.sendRightAnnotated())
                     hostingContext.sendRightAnnotated = WTF::move(*sendRightAnnotated);
 #endif
-                return makeWithView(videoManager->createViewWithID(playerIdentifier, WTF::move(hostingContext), properties.videoElementData->initialSize, properties.videoElementData->naturalSize, properties.hostingDeviceScaleFactor()));
+                return makeWithView(videoManager->createViewWithID(playerIdentifier, WTF::move(hostingContext), properties.videoElementData->initialSize, properties.videoElementData->naturalSize, properties.hostingDeviceScaleFactor(), properties.videoElementData->hostedByUIProcess));
                 }
             }
         }
