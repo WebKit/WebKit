@@ -1,0 +1,36 @@
+<!DOCTYPE html><!-- webkit-test-runner [ JavaScriptCanOpenWindowsAutomatically=false ] -->
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<button id="button" onclick="insertScript()">Click</button>
+<script>
+description("A script inserted from a click handler runs with the click's user gesture, so it can open a pop-up.");
+jsTestIsAsync = true;
+
+var newWindow;
+
+function insertScript()
+{
+    let script = document.createElement("script");
+    script.src = "resources/open-popup-from-script-body.js";
+    document.body.appendChild(script);
+}
+
+function didOpenPopup(openedWindow)
+{
+    newWindow = openedWindow;
+    shouldBeNonNull("newWindow");
+    finishJSTest();
+}
+
+if (window.eventSender) {
+    let button = document.getElementById("button");
+    eventSender.mouseMoveTo(button.offsetLeft + button.offsetWidth / 2, button.offsetTop + button.offsetHeight / 2);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+</script>
+</body>
+</html>

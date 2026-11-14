@@ -124,6 +124,7 @@ protected:
 
 private:
     void executeScriptAndDispatchEvent(LoadableScript&);
+    void executeScriptRespectingUserGestureIndicator(LoadableScript&);
 
     std::optional<ScriptType> determineScriptType() const;
     NODELETE bool ignoresLoadRequest() const;
