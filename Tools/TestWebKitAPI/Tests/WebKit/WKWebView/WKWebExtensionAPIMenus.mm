@@ -1715,6 +1715,94 @@ TEST(WKWebExtensionAPIMenus, RemoveAfterBackgroundPageReload)
     [manager runUntilTestMessage:@"Removed"];
 }
 
+TEST(WKWebExtensionAPIMenus, Remove)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.menus.create({ id: 'item-1', title: 'Item 1', contexts: [ 'all' ] })",
+        @"browser.menus.create({ id: 'item-2', title: 'Item 2', contexts: [ 'all' ] })",
+        @"browser.menus.create({ id: 'item-3', title: 'Item 3', contexts: [ 'all' ] })",
+
+        @"await browser.menus.remove('item-2')",
+
+        @"browser.test.sendMessage('Menu Item Removed')"
+    ]);
+
+    auto manager = Util::loadExtension(menusManifest, @{ @"background.js": backgroundScript });
+
+    [manager runUntilTestMessage:@"Menu Item Removed"];
+
+    auto *menuItems = [manager.get().context menuItemsForTab:manager.get().defaultTab];
+
+#if USE(APPKIT)
+    menuItems = menuItems.firstObject.submenu.itemArray;
+#else
+    auto *parentMenu = dynamic_objc_cast<UIMenu>(menuItems.firstObject);
+    menuItems = parentMenu.children;
+#endif
+
+    EXPECT_EQ(menuItems.count, 2lu);
+
+    EXPECT_NS_EQUAL(menuItems.firstObject.title, @"Item 1");
+    EXPECT_NS_EQUAL(menuItems.lastObject.title, @"Item 3");
+}
+
+TEST(WKWebExtensionAPIMenus, RemoveWithSubmenuItems)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.menus.create({ id: 'parent', title: 'Parent', contexts: [ 'all' ] })",
+        @"browser.menus.create({ id: 'child-1', parentId: 'parent', title: 'Child 1', contexts: [ 'all' ] })",
+        @"browser.menus.create({ id: 'child-2', parentId: 'parent', title: 'Child 2', contexts: [ 'all' ] })",
+        @"browser.menus.create({ id: 'sibling', title: 'Sibling', contexts: [ 'all' ] })",
+
+        @"await browser.menus.remove('parent')",
+
+        // The submenu items were removed along with their parent.
+        @"await browser.test.assertRejects(browser.menus.remove('child-1'), /menu item not found/i)",
+        @"await browser.test.assertRejects(browser.menus.remove('child-2'), /menu item not found/i)",
+        @"await browser.test.assertRejects(browser.menus.remove('parent'), /menu item not found/i)",
+
+        @"browser.test.sendMessage('Menu Item Removed')"
+    ]);
+
+    auto manager = Util::loadExtension(menusManifest, @{ @"background.js": backgroundScript });
+
+    [manager runUntilTestMessage:@"Menu Item Removed"];
+
+    auto *menuItems = [manager.get().context menuItemsForTab:manager.get().defaultTab];
+    EXPECT_EQ(menuItems.count, 1lu);
+
+    EXPECT_NS_EQUAL(menuItems.firstObject.title, @"Sibling");
+}
+
+TEST(WKWebExtensionAPIMenus, RemoveAll)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.menus.create({ id: 'parent', title: 'Parent', contexts: [ 'all' ] })",
+        @"browser.menus.create({ id: 'child', parentId: 'parent', title: 'Child', contexts: [ 'all' ] })",
+        @"browser.menus.create({ id: 'item', title: 'Item', contexts: [ 'all' ] })",
+
+        @"await browser.menus.removeAll()",
+
+        @"await browser.test.assertRejects(browser.menus.remove('item'), /menu item not found/i)",
+        @"await browser.test.assertRejects(browser.menus.remove('child'), /menu item not found/i)",
+
+        // Removing from an empty set succeeds, and the same identifiers can be created again.
+        @"await browser.menus.removeAll()",
+        @"browser.menus.create({ id: 'item', title: 'Recreated Item', contexts: [ 'all' ] })",
+
+        @"browser.test.sendMessage('Menu Items Removed')"
+    ]);
+
+    auto manager = Util::loadExtension(menusManifest, @{ @"background.js": backgroundScript });
+
+    [manager runUntilTestMessage:@"Menu Items Removed"];
+
+    auto *menuItems = [manager.get().context menuItemsForTab:manager.get().defaultTab];
+    EXPECT_EQ(menuItems.count, 1lu);
+
+    EXPECT_NS_EQUAL(menuItems.firstObject.title, @"Recreated Item");
+}
+
 TEST(WKWebExtensionAPIMenus, ContextMenusNamespace)
 {
     auto *backgroundScript = Util::constructScript(@[
