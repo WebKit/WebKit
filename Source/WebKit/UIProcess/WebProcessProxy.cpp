@@ -1943,6 +1943,9 @@ void WebProcessProxy::processDidTerminateOrFailedToLaunch(ProcessTerminationReas
     if (isStandaloneServiceWorkerProcess())
         protect(processPool())->serviceWorkerProcessCrashed(*this, reason);
 
+    for (auto& page : pages)
+        page->markProcessesIneligibleForWebProcessCache();
+
     shutDown();
 
     // FIXME: Perhaps this should consider ProcessTerminationReasons ExceededMemoryLimit, ExceededCPULimit, Unresponsive as well.
@@ -1985,6 +1988,16 @@ void WebProcessProxy::processDidTerminateOrFailedToLaunch(ProcessTerminationReas
     // close other pages.
     for (const auto& termination : borrow(affectedPages))
         protect(termination.page)->dispatchProcessDidTerminate(pid, termination.scope, reason);
+}
+
+bool WebProcessProxy::detectAndHandleTermination()
+{
+    if (state() != State::Running || !wasTerminated())
+        return false;
+
+    WEBPROCESSPROXY_RELEASE_LOG_ERROR(Process, "detectAndHandleTermination: process exited before its connection was closed");
+    processDidTerminateOrFailedToLaunch(terminationReason());
+    return true;
 }
 
 void WebProcessProxy::didReceiveInvalidMessage(IPC::Connection& connection, IPC::MessageName messageName, const Vector<uint32_t>& indexOfObjectFailingDecoding)
