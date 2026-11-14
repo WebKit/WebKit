@@ -191,11 +191,6 @@ WI.SourceCode = class SourceCode extends WI.Object
         return new WI.SourceCodeLocation(this, lineNumber, columnNumber);
     }
 
-    createLazySourceCodeLocation(lineNumber, columnNumber)
-    {
-        return new WI.LazySourceCodeLocation(this, lineNumber, columnNumber);
-    }
-
     createSourceCodeTextRange(textRange)
     {
         return new WI.SourceCodeTextRange(this, textRange);

@@ -347,7 +347,7 @@ WI.Script = class Script extends WI.SourceCode
         return locations.map((location) => {
             console.assert(location.scriptId === this._id, location);
             let sourceCode = this._resource || this;
-            return sourceCode.createLazySourceCodeLocation(location.lineNumber, location.columnNumber);
+            return sourceCode.createSourceCodeLocation(location.lineNumber, location.columnNumber);
         });
     }
 
