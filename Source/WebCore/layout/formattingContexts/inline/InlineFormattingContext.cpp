@@ -326,7 +326,28 @@ UniqueRef<InlineLayoutResult> InlineFormattingContext::lineLayout(AbstractLineBu
     auto leadingInlineItemPosition = needsLayoutRange.start;
     auto isFirstFormattedLineCandidate = !previousLine;
 
+    // Large content would otherwise grow the lines and boxes in many steps that each copy them. Reserve once at the rates measured so far, with room for the lines the result is merged after.
+    constexpr size_t minimumLineCountForPresizing = 4096;
+    auto firstLineIndex = previousLine ? previousLine->lineIndex + 1 : 0lu;
+    bool hasPresizedDisplayContent = false;
+    auto presizeDisplayContentIfNeeded = [&] {
+        auto& displayContent = layoutResult->displayContent;
+        if (hasPresizedDisplayContent || displayContent.lines.size() < minimumLineCountForPresizing)
+            return;
+        hasPresizedDisplayContent = true;
+        auto laidOutItemCount = leadingInlineItemPosition.index - needsLayoutRange.start.index;
+        if (!laidOutItemCount)
+            return;
+        auto linesPerItem = static_cast<double>(displayContent.lines.size()) / laidOutItemCount;
+        auto boxesPerLine = static_cast<double>(displayContent.boxes.size()) / displayContent.lines.size();
+        auto remainingItemCount = needsLayoutRange.end.index - leadingInlineItemPosition.index;
+        auto estimatedLineCount = firstLineIndex + displayContent.lines.size() + static_cast<size_t>(remainingItemCount * linesPerItem * 1.1) + 1;
+        displayContent.lines.reserveCapacity(estimatedLineCount);
+        displayContent.boxes.reserveCapacity(static_cast<size_t>(estimatedLineCount * boxesPerLine * 1.05) + 1);
+    };
+
     while (true) {
+        presizeDisplayContentIfNeeded();
 
         auto lineInitialRect = InlineRect { lineLogicalTop, constraints.horizontal().logicalLeft, constraints.horizontal().logicalWidth, formattingUtils().initialLineHeight(!previousLine.has_value()) };
         auto lineInput = LineInput { { leadingInlineItemPosition, needsLayoutRange.end }, lineInitialRect, formattingUtils().blockEllipsisForLine() };

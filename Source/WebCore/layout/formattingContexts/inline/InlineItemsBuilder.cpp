@@ -405,6 +405,32 @@ InlineItemsBuilder::LayoutQueue InlineItemsBuilder::traverseUntilDamaged(const B
     return queue;
 }
 
+// Text length of the given text box and all content after it.
+static size_t textLengthFromTextBoxToEnd(const InlineTextBox& inlineTextBox, std::span<const CheckedRef<const Box>> enclosingInlineBoxes)
+{
+    size_t textLength = inlineTextBox.content().length();
+    Vector<CheckedRef<const Box>, 16> boxesToVisit;
+    auto appendNextSibling = [&](const Box& box) {
+        if (CheckedPtr nextSibling = box.nextSibling())
+            boxesToVisit.append(*nextSibling);
+    };
+    appendNextSibling(inlineTextBox);
+    for (auto& enclosingInlineBox : enclosingInlineBoxes)
+        appendNextSibling(enclosingInlineBox);
+
+    while (!boxesToVisit.isEmpty()) {
+        auto box = boxesToVisit.takeLast();
+        appendNextSibling(box);
+        if (CheckedPtr textBox = dynamicDowncast<InlineTextBox>(box))
+            textLength += textBox->content().length();
+        else if (isInlineBoxWithInlineContent(box)) {
+            if (CheckedPtr firstChild = downcast<ElementBox>(box).firstChild())
+                boxesToVisit.append(*firstChild);
+        }
+    }
+    return textLength;
+}
+
 InlineItemsBuilder::LayoutQueue InlineItemsBuilder::initializeLayoutQueue(InlineItemPosition startPosition)
 {
     CheckedRef root = this->root();
@@ -444,6 +470,21 @@ void InlineItemsBuilder::collectInlineItems(InlineItemList& inlineItemList, Inli
     auto layoutQueue = initializeLayoutQueue(startPosition);
     auto& inlineItemCache = this->inlineContentCache().inlineItems();
 
+    // Large content would otherwise grow the list in many steps that each copy it. Reserve once at the rate measured so far, with room for the cached items the list is merged into.
+    constexpr size_t minimumTextLengthForPresizing = 64 * 1024;
+    auto initialItemCount = inlineItemList.size();
+    size_t processedTextLength = 0;
+    bool hasPresized = false;
+    auto presizeForRemainingContentIfNeeded = [&](const InlineTextBox& inlineTextBox) {
+        if (hasPresized || processedTextLength < minimumTextLengthForPresizing)
+            return;
+        hasPresized = true;
+        auto itemsPerCharacter = static_cast<double>(inlineItemList.size() - initialItemCount) / processedTextLength;
+        auto remainingItemCount = static_cast<size_t>(textLengthFromTextBoxToEnd(inlineTextBox, layoutQueue.span()) * itemsPerCharacter * 1.1);
+        auto cachedItemCount = startPosition ? startPosition.index + 1 : 0;
+        inlineItemList.reserveCapacity(inlineItemList.size() + remainingItemCount + cachedItemCount);
+    };
+
     auto partialContentOffset = [&](auto& inlineTextBox) -> std::optional<size_t> {
         if (!startPosition)
             return { };
@@ -482,8 +523,12 @@ void InlineItemsBuilder::collectInlineItems(InlineItemList& inlineItemList, Inli
             m_hasTextWithStyleOfItsOwn |= isTextWithStyleOfItsOwn(layoutBox);
             if (layoutBox->isOutOfFlowPositioned())
                 inlineItemList.append({ layoutBox, InlineItem::Type::OutOfFlow });
-            else if (CheckedPtr inlineTextBox = dynamicDowncast<InlineTextBox>(layoutBox))
-                handleTextContent(*inlineTextBox, inlineItemList, partialContentOffset(*inlineTextBox));
+            else if (CheckedPtr inlineTextBox = dynamicDowncast<InlineTextBox>(layoutBox)) {
+                presizeForRemainingContentIfNeeded(*inlineTextBox);
+                auto contentOffset = partialContentOffset(*inlineTextBox);
+                handleTextContent(*inlineTextBox, inlineItemList, contentOffset);
+                processedTextLength += inlineTextBox->content().length() - contentOffset.value_or(0);
+            }
             else if (layoutBox->isAtomicInlineBox() || layoutBox->isLineBreakBox())
                 handleInlineLevelBox(layoutBox, inlineItemList);
             else if (layoutBox->isInlineBox())

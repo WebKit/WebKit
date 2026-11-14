@@ -46,8 +46,8 @@ void Content::set(Content&& newContent)
 void Content::append(Content&& newContent)
 {
     auto oldLineCount = lines.size();
-    lines.appendVector(WTF::move(newContent.lines));
-    boxes.appendVector(WTF::move(newContent.boxes));
+    appendReusingLargerBuffer(lines, WTF::move(newContent.lines));
+    appendReusingLargerBuffer(boxes, WTF::move(newContent.boxes));
 
     if (newContent.lineEllipses) {
         if (!lineEllipses)

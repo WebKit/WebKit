@@ -57,7 +57,7 @@ public:
         void replace(size_t insertionPosition, InlineItemList&&, ContentAttributes, IsPopulatedFromCache);
         // Drops the items that rebuilding from this position replaces. Partial rebuild starts at the item at the position, so that one stays.
         void removeItemsReplacedByRebuild(InlineItemPosition rebuildStartPosition);
-        void shrinkToFit() { m_inlineItemList.shrinkToFit(); }
+        void shrinkToFit() { shrinkToFitUnlessLarge(m_inlineItemList); }
 
         bool isEmpty() const { return content().isEmpty(); }
         size_t size() const { return content().size(); }
@@ -131,7 +131,7 @@ inline void InlineContentCache::InlineItems::removeItemsReplacedByRebuild(Inline
 inline void InlineContentCache::InlineItems::replace(size_t insertionPosition, InlineItemList&& inlineItemList, ContentAttributes contentAttributes, IsPopulatedFromCache isPopulatedFromCache)
 {
     m_inlineItemList.removeAt(insertionPosition, m_inlineItemList.size() - insertionPosition);
-    m_inlineItemList.appendVector(WTF::move(inlineItemList));
+    appendReusingLargerBuffer(m_inlineItemList, WTF::move(inlineItemList));
     m_contentAttributes = contentAttributes;
     if (isPopulatedFromCache == IsPopulatedFromCache::No)
         m_isPopulatedFromCache = false;
