@@ -77,6 +77,7 @@ public:
     bool isFolder() const;
     FolderType folderType() const;
     bool isManaged() const;
+    bool isSynced() const;
 
     RefPtr<WebExtensionBookmark> parent() const;
     std::optional<size_t> index() const;
@@ -129,6 +130,7 @@ private:
     bool m_respondsToDateAdded : 1 { false };
     bool m_respondsToFolderType : 1 { false };
     bool m_respondsToIsManaged : 1 { false };
+    bool m_respondsToIsSynced : 1 { false };
     bool m_respondsToCreateChild : 1 { false };
     bool m_respondsToSetTitle : 1 { false };
     bool m_respondsToSetURL : 1 { false };
