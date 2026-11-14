@@ -39,6 +39,7 @@
 #include "CSSCursorImageValue.h"
 #include "CSSFilterImageValue.h"
 #include "CSSFontSelector.h"
+#include "CSSFreeformGradientValue.h"
 #include "CSSFunctionValue.h"
 #include "CSSGradientValue.h"
 #include "CSSImageSetValue.h"
@@ -153,6 +154,8 @@ RefPtr<Image> BuilderState::createStyleImage(const CSSValue& value) const
         return gradientValue->createStyleImage(*this);
     if (auto* meshGradientValue = dynamicDowncast<CSSMeshGradientValue>(value))
         return meshGradientValue->createStyleImage(*this);
+    if (auto* freeformGradientValue = dynamicDowncast<CSSFreeformGradientValue>(value))
+        return freeformGradientValue->createStyleImage(*this);
     if (auto* colorImageValue = dynamicDowncast<CSSColorImageValue>(value))
         return colorImageValue->createStyleImage(*this);
     if (auto* lightDarkImageValue = dynamicDowncast<CSSLightDarkImageValue>(value))
