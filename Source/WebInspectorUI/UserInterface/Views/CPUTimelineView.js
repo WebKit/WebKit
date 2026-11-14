@@ -481,11 +481,6 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
         let webkitThreadMin = Infinity;
         let unknownThreadMin = Infinity;
 
-        let average = 0;
-        let mainThreadAverage = 0;
-        let webkitThreadAverage = 0;
-        let unknownThreadAverage = 0;
-
         for (let record of visibleRecords) {
             let time = record.timestamp;
             let {usage, mainThreadUsage, workerThreadUsage, webkitThreadUsage, unknownThreadUsage} = record;
@@ -525,13 +520,10 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
             webkitThreadMin = Math.min(webkitThreadMin, webkitThreadUsage);
             unknownThreadMin = Math.min(unknownThreadMin, unknownThreadUsage);
 
-            average += usage;
-            mainThreadAverage += mainThreadUsage;
-            webkitThreadAverage += webkitThreadUsage;
-            unknownThreadAverage += unknownThreadUsage;
-
             let workersSeenInLastRecord = workersSeenInCurrentRecord;
             workersSeenInCurrentRecord = new Set;
+
+            let timeInRange = Math.max(Math.min(record.endTime, visibleEndTime) - Math.max(record.startTime, graphStartTime), 0);
 
             if (record.workersData && record.workersData.length) {
                 for (let {targetId, usage} of record.workersData) {
@@ -541,6 +533,8 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
                         workerData = {
                             discontinuities: originalDiscontinuities.slice(),
                             recordsCount: 0,
+                            weightedSum: 0,
+                            totalTime: 0,
                             dataPoints: [],
                             min: Infinity,
                             max: -Infinity,
@@ -570,6 +564,8 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
 
                     workerData.dataPoints.push({time, usage});
                     workerData.recordsCount += 1;
+                    workerData.weightedSum += usage * timeInRange;
+                    workerData.totalTime += timeInRange;
                     workerData.max = Math.max(workerData.max, usage);
                     workerData.min = Math.min(workerData.min, usage);
                     workerData.average += usage;
@@ -587,13 +583,16 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
             }
         }
 
-        average /= visibleRecords.length;
-        mainThreadAverage /= visibleRecords.length;
-        webkitThreadAverage /= visibleRecords.length;
-        unknownThreadAverage /= visibleRecords.length;
+        // Weight each record by the time it overlaps the visible range, instead of a plain mean of
+        // records, so the records before the start and after the end don't count as if fully visible.
+        let average = WI.Timeline.timeWeightedAverage(visibleRecords, graphStartTime, visibleEndTime, (record) => record.usage);
+        let mainThreadAverage = WI.Timeline.timeWeightedAverage(visibleRecords, graphStartTime, visibleEndTime, (record) => record.mainThreadUsage);
+        let webkitThreadAverage = WI.Timeline.timeWeightedAverage(visibleRecords, graphStartTime, visibleEndTime, (record) => record.webkitThreadUsage);
+        let unknownThreadAverage = WI.Timeline.timeWeightedAverage(visibleRecords, graphStartTime, visibleEndTime, (record) => record.unknownThreadUsage);
 
         for (let workerData of workersDataMap.values()) {
-            workerData.average = workerData.average / workerData.recordsCount;
+            // Weight each record by the time it overlaps the visible range, like `WI.Timeline.timeWeightedAverage`.
+            workerData.average = workerData.totalTime ? workerData.weightedSum / workerData.totalTime : (workerData.recordsCount ? workerData.average / workerData.recordsCount : 0);
             if (workerData.max > workerMax)
                 workerMax = workerData.max;
         }

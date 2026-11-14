@@ -1,0 +1,25 @@
+Testing the time-weighted average of WI.Timeline records in a time range.
+
+
+== Running test suite: WI.Timeline.timeWeightedAverage
+-- Running test case: WI.Timeline.timeWeightedAverage.RecordsCoverRange
+PASS: Average of records covering the whole range should be the mean.
+
+-- Running test case: WI.Timeline.timeWeightedAverage.RecordsExtendBeyondRange
+PASS: Average should weight each record by its time inside the range.
+
+-- Running test case: WI.Timeline.timeWeightedAverage.RecordsOutsideRange
+PASS: Records entirely outside the range should not affect the average.
+
+-- Running test case: WI.Timeline.timeWeightedAverage.NoRecordsOverlapRange
+PASS: Average should fall back to the plain mean when no record overlaps the range.
+PASS: Average should be 0 with no records.
+
+-- Running test case: WI.Timeline.timeWeightedAverage.SelectionInsideGap
+PASS: Average of a selection inside a gap should be the plain mean of the neighboring records.
+PASS: Plain mean fallback should stay between the min and max of the same records.
+
+-- Running test case: WI.Timeline.timeWeightedAverage.CPUTimelineRecords
+PASS: Average should only count CPU records overlapping the range.
+PASS: Average should weight CPU records by their overlap with the range.
+

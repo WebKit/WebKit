@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("WI.Timeline.timeWeightedAverage");
+
+    function makeRecords(values) {
+        // Each record spans half a second, like CPU timeline records.
+        return values.map((value, index) => {
+            let timestamp = (index + 1) * 0.5;
+            return {startTime: timestamp - 0.5, endTime: timestamp, value};
+        });
+    }
+
+    let getValue = (record) => record.value;
+
+    suite.addTestCase({
+        name: "WI.Timeline.timeWeightedAverage.RecordsCoverRange",
+        test() {
+            let records = [{startTime: 0, endTime: 1, value: 10}, {startTime: 1, endTime: 2, value: 20}, {startTime: 2, endTime: 3, value: 30}];
+            InspectorTest.expectEqual(WI.Timeline.timeWeightedAverage(records, 0, 3, getValue), 20, "Average of records covering the whole range should be the mean.");
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "WI.Timeline.timeWeightedAverage.RecordsExtendBeyondRange",
+        test() {
+            // The first and last records are mostly outside the range [0.75, 1.75] and must
+            // count less than the records inside it. A plain mean of all records would be 38.
+            let records = makeRecords([100, 20, 30, 40, 0]);
+            InspectorTest.expectEqual(WI.Timeline.timeWeightedAverage(records, 0.75, 1.75, getValue), 30, "Average should weight each record by its time inside the range.");
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "WI.Timeline.timeWeightedAverage.RecordsOutsideRange",
+        test() {
+            // The first two records are entirely outside the range [1, 2] and must not count.
+            // A plain mean of all records would be 50.
+            let records = makeRecords([100, 40, 60, 0]);
+            InspectorTest.expectEqual(WI.Timeline.timeWeightedAverage(records, 1, 2, getValue), 30, "Records entirely outside the range should not affect the average.");
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "WI.Timeline.timeWeightedAverage.NoRecordsOverlapRange",
+        test() {
+            let records = makeRecords([10, 20]);
+            InspectorTest.expectEqual(WI.Timeline.timeWeightedAverage(records, 2, 3, getValue), 15, "Average should fall back to the plain mean when no record overlaps the range.");
+            InspectorTest.expectEqual(WI.Timeline.timeWeightedAverage([], 0, 1, getValue), 0, "Average should be 0 with no records.");
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "WI.Timeline.timeWeightedAverage.SelectionInsideGap",
+        test() {
+            // The selection [2, 3] lies entirely inside the gap between the two records, as when the
+            // user selects the empty band between two capture segments. The average must stay
+            // consistent with the min and max computed from the same records.
+            let records = [{startTime: 0, endTime: 1, value: 50}, {startTime: 5, endTime: 6, value: 80}];
+            InspectorTest.expectEqual(WI.Timeline.timeWeightedAverage(records, 2, 3, getValue), 65, "Average of a selection inside a gap should be the plain mean of the neighboring records.");
+            InspectorTest.expectThat(65 >= 50 && 65 <= 80, "Plain mean fallback should stay between the min and max of the same records.");
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "WI.Timeline.timeWeightedAverage.CPUTimelineRecords",
+        test() {
+            let records = [
+                new WI.CPUTimelineRecord({timestamp: 1, usage: 30}),
+                new WI.CPUTimelineRecord({timestamp: 1.5, usage: 50}),
+                new WI.CPUTimelineRecord({timestamp: 2, usage: 90}),
+            ];
+            let getUsage = (record) => record.usage;
+            // The record with timestamp 1 covers [0.5, 1], which ends at the range start and must not count.
+            InspectorTest.expectEqual(WI.Timeline.timeWeightedAverage(records, 1, 2, getUsage), 70, "Average should only count CPU records overlapping the range.");
+            InspectorTest.expectEqual(WI.Timeline.timeWeightedAverage(records, 1.25, 1.75, getUsage), 70, "Average should weight CPU records by their overlap with the range.");
+            return true;
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Testing the time-weighted average of WI.Timeline records in a time range.</p>
+</body>
+</html>
