@@ -49,7 +49,7 @@ private:
     using HashTableType = OrderedHashTable<ValueType, ValueType, IdentityExtractor, HashFunctions, ValueTraits, ValueTraits, Malloc>;
 
 public:
-    struct AddResult {
+    struct WTF_VIEW_TYPE AddResult {
         using IteratorType = OrderedHashTableConstIterator<HashTableType, ValueType>;
         IteratorType iterator;
         bool isNewEntry;

@@ -41,7 +41,7 @@ namespace WTF {
     template<typename HashTableType, typename ValueType> struct HashTableConstIteratorAdapter;
     template<typename HashTableType, typename ValueType> struct HashTableIteratorAdapter;
 
-    template<typename HashTableType, typename KeyType, typename MappedType> struct HashTableConstIteratorAdapter<HashTableType, KeyValuePair<KeyType, MappedType>> {
+    template<typename HashTableType, typename KeyType, typename MappedType> struct WTF_VIEW_TYPE HashTableConstIteratorAdapter<HashTableType, KeyValuePair<KeyType, MappedType>> {
     public:
         using iterator_category = std::forward_iterator_tag;
         using value_type = KeyValuePair<KeyType, MappedType>;
@@ -71,7 +71,7 @@ namespace WTF {
         typename HashTableType::const_iterator m_impl;
     };
 
-    template<typename HashTableType, typename KeyType, typename MappedType> struct HashTableIteratorAdapter<HashTableType, KeyValuePair<KeyType, MappedType>> {
+    template<typename HashTableType, typename KeyType, typename MappedType> struct WTF_VIEW_TYPE HashTableIteratorAdapter<HashTableType, KeyValuePair<KeyType, MappedType>> {
     public:
         using iterator_category = std::forward_iterator_tag;
         using value_type = KeyValuePair<KeyType, MappedType>;
@@ -106,7 +106,7 @@ namespace WTF {
         typename HashTableType::iterator m_impl;
     };
 
-    template<typename HashTableType, typename KeyType, typename MappedType> struct HashTableConstKeysIterator {
+    template<typename HashTableType, typename KeyType, typename MappedType> struct WTF_VIEW_TYPE HashTableConstKeysIterator {
     public:
         using iterator_category = std::forward_iterator_tag;
         using value_type = KeyType;
@@ -131,7 +131,7 @@ namespace WTF {
         ConstIterator m_impl;
     };
 
-    template<typename HashTableType, typename KeyType, typename MappedType> struct HashTableConstValuesIterator {
+    template<typename HashTableType, typename KeyType, typename MappedType> struct WTF_VIEW_TYPE HashTableConstValuesIterator {
     public:
         using iterator_category = std::forward_iterator_tag;
         using value_type = MappedType;
@@ -156,7 +156,7 @@ namespace WTF {
         ConstIterator m_impl;
     };
 
-    template<typename HashTableType, typename KeyType, typename MappedType> struct HashTableKeysIterator {
+    template<typename HashTableType, typename KeyType, typename MappedType> struct WTF_VIEW_TYPE HashTableKeysIterator {
     public:
         using iterator_category = std::forward_iterator_tag;
         using value_type = KeyType;
@@ -187,7 +187,7 @@ namespace WTF {
         Iterator m_impl;
     };
 
-    template<typename HashTableType, typename KeyType, typename MappedType> struct HashTableValuesIterator {
+    template<typename HashTableType, typename KeyType, typename MappedType> struct WTF_VIEW_TYPE HashTableValuesIterator {
     public:
         using iterator_category = std::forward_iterator_tag;
         using value_type = MappedType;

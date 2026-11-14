@@ -291,6 +291,18 @@
 #define LIFETIME_BOUND
 #endif
 
+/* WTF_VIEW_TYPE: marks a class as a non-owning view, so Clang's lifetime analysis and the Unborrowed checkers treat it as a loan. */
+
+#if !defined(WTF_VIEW_TYPE) && defined(__cplusplus)
+#if COMPILER_HAS_CPP_ATTRIBUTE(gsl::Pointer)
+#define WTF_VIEW_TYPE [[gsl::Pointer]]
+#endif
+#endif
+
+#if !defined(WTF_VIEW_TYPE)
+#define WTF_VIEW_TYPE
+#endif
+
 /* NEVER_INLINE */
 
 #if !defined(NEVER_INLINE)

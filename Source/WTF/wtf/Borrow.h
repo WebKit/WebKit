@@ -132,6 +132,16 @@ public:
         return m_ref.end();
     }
 
+    auto keys() const LIFETIME_BOUND requires requires (T& t) { t.keys(); }
+    {
+        return m_ref.keys();
+    }
+
+    auto values() const LIFETIME_BOUND requires requires (T& t) { t.values(); }
+    {
+        return m_ref.values();
+    }
+
     template<typename I>
     decltype(auto) operator[](I&& index) const LIFETIME_BOUND
         requires requires (T& t, I&& i) { t[std::forward<I>(i)]; }

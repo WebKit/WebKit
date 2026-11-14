@@ -62,7 +62,7 @@ public:
     using KeyType = Key;
     using ValueType = Value;
 
-    struct AddResult {
+    struct WTF_VIEW_TYPE AddResult {
         using IteratorType = OrderedHashTableIterator<OrderedHashTable, ValueType>;
         IteratorType iterator;
         bool isNewEntry;
@@ -635,7 +635,7 @@ private:
 };
 
 template<typename TableType, typename ValueType>
-class OrderedHashTableIterator {
+class WTF_VIEW_TYPE OrderedHashTableIterator {
 public:
     using iterator_category = std::bidirectional_iterator_tag;
     using value_type = ValueType;
@@ -718,7 +718,7 @@ private:
 };
 
 template<typename TableType, typename ValueType>
-class OrderedHashTableConstIterator {
+class WTF_VIEW_TYPE OrderedHashTableConstIterator {
 public:
     using iterator_category = std::bidirectional_iterator_tag;
     using value_type = ValueType;
@@ -805,7 +805,7 @@ private:
 };
 
 template<typename TableType, typename ValueType>
-class OrderedHashTableReverseIterator {
+class WTF_VIEW_TYPE OrderedHashTableReverseIterator {
 public:
     using iterator_category = std::forward_iterator_tag;
     using value_type = ValueType;
@@ -869,7 +869,7 @@ private:
 };
 
 template<typename TableType, typename ValueType>
-class OrderedHashTableConstReverseIterator {
+class WTF_VIEW_TYPE OrderedHashTableConstReverseIterator {
 public:
     using iterator_category = std::forward_iterator_tag;
     using value_type = ValueType;

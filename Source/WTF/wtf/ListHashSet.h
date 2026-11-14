@@ -284,7 +284,7 @@ inline void ListHashSetLink::insertBefore(ListHashSetLink* next)
     m_next->m_prev = this;
 }
 
-template<typename ValueArg, typename HashArg> class ListHashSetIterator {
+template<typename ValueArg, typename HashArg> class WTF_VIEW_TYPE ListHashSetIterator {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ListHashSetIterator);
 private:
     typedef ListHashSet<ValueArg, HashArg> ListHashSetType;
@@ -344,7 +344,7 @@ private:
     const_iterator m_iterator;
 };
 
-template<typename ValueArg, typename HashArg> class ListHashSetConstIterator {
+template<typename ValueArg, typename HashArg> class WTF_VIEW_TYPE ListHashSetConstIterator {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ListHashSetConstIterator);
 private:
     typedef ListHashSet<ValueArg, HashArg> ListHashSetType;

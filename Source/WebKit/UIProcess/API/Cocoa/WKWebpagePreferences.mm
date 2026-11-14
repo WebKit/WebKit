@@ -815,7 +815,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             continue;
         }
 
-        for (auto& selector : elementSelectors.first())
+        for (auto& selector : borrow(elementSelectors)->first())
             [selectors addObject:selector.createNSString().get()];
     }
     return selectors.autorelease();

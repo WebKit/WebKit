@@ -196,7 +196,7 @@ static_assert(std::is_trivial_v<StatusBytes>);
     typedef enum { HashItemKnownGood } HashItemKnownGoodTag;
 
     template<typename HashTable, typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
-    class HashTableConstIterator {
+    class WTF_VIEW_TYPE HashTableConstIterator {
         WTF_DEPRECATED_MAKE_FAST_ALLOCATED(HashTableConstIterator);
     public:
         using iterator_category = std::forward_iterator_tag;
@@ -382,7 +382,7 @@ static_assert(std::is_trivial_v<StatusBytes>);
     };
 
     template<typename HashTable, typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
-    class HashTableIterator {
+    class WTF_VIEW_TYPE HashTableIterator {
         WTF_DEPRECATED_MAKE_FAST_ALLOCATED(HashTableIterator);
     public:
         using iterator_category = std::forward_iterator_tag;
@@ -445,7 +445,7 @@ static_assert(std::is_trivial_v<StatusBytes>);
         }
     };
 
-    template<typename IteratorType> struct HashTableAddResult {
+    template<typename IteratorType> struct WTF_VIEW_TYPE HashTableAddResult {
         HashTableAddResult() : isNewEntry(false) { }
         HashTableAddResult(IteratorType iter, bool isNewEntry) : iterator(iter), isNewEntry(isNewEntry) { }
         IteratorType iterator;
@@ -1612,7 +1612,7 @@ static_assert(std::is_trivial_v<StatusBytes>);
 
     // iterator adapters
 
-    template<typename HashTableType, typename ValueType> struct HashTableConstIteratorAdapter {
+    template<typename HashTableType, typename ValueType> struct WTF_VIEW_TYPE HashTableConstIteratorAdapter {
         using iterator_category = std::forward_iterator_tag;
         using value_type = ValueType;
         using difference_type = ptrdiff_t;
@@ -1632,7 +1632,7 @@ static_assert(std::is_trivial_v<StatusBytes>);
         typename HashTableType::const_iterator m_impl;
     };
 
-    template<typename HashTableType, typename ValueType> struct HashTableIteratorAdapter {
+    template<typename HashTableType, typename ValueType> struct WTF_VIEW_TYPE HashTableIteratorAdapter {
         using iterator_category = std::forward_iterator_tag;
         using value_type = ValueType;
         using difference_type = ptrdiff_t;

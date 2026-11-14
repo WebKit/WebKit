@@ -47,7 +47,7 @@ struct OrderedHashTableValuesIterator;
 // Iterator adapters for OrderedHashMap (KeyValuePair specialization)
 
 template<typename HashTableType, typename KeyType, typename MappedType>
-struct OrderedHashTableConstIteratorAdapter {
+struct WTF_VIEW_TYPE OrderedHashTableConstIteratorAdapter {
     using iterator_category = std::forward_iterator_tag;
     using value_type = KeyValuePair<KeyType, MappedType>;
     using difference_type = ptrdiff_t;
@@ -76,7 +76,7 @@ struct OrderedHashTableConstIteratorAdapter {
 };
 
 template<typename HashTableType, typename KeyType, typename MappedType>
-struct OrderedHashTableIteratorAdapter {
+struct WTF_VIEW_TYPE OrderedHashTableIteratorAdapter {
     using iterator_category = std::forward_iterator_tag;
     using value_type = KeyValuePair<KeyType, MappedType>;
     using difference_type = ptrdiff_t;
@@ -137,7 +137,7 @@ inline bool operator==(const OrderedHashTableConstIteratorAdapter<T, U, V>& a, c
 // Keys iterators
 
 template<typename HashTableType, typename KeyType, typename MappedType>
-struct OrderedHashTableConstKeysIterator {
+struct WTF_VIEW_TYPE OrderedHashTableConstKeysIterator {
     using iterator_category = std::forward_iterator_tag;
     using value_type = KeyType;
     using difference_type = ptrdiff_t;
@@ -159,7 +159,7 @@ struct OrderedHashTableConstKeysIterator {
 };
 
 template<typename HashTableType, typename KeyType, typename MappedType>
-struct OrderedHashTableKeysIterator {
+struct WTF_VIEW_TYPE OrderedHashTableKeysIterator {
     using iterator_category = std::forward_iterator_tag;
     using value_type = KeyType;
     using difference_type = ptrdiff_t;
@@ -188,7 +188,7 @@ struct OrderedHashTableKeysIterator {
 // Values iterators
 
 template<typename HashTableType, typename KeyType, typename MappedType>
-struct OrderedHashTableConstValuesIterator {
+struct WTF_VIEW_TYPE OrderedHashTableConstValuesIterator {
     using iterator_category = std::forward_iterator_tag;
     using value_type = MappedType;
     using difference_type = ptrdiff_t;
@@ -210,7 +210,7 @@ struct OrderedHashTableConstValuesIterator {
 };
 
 template<typename HashTableType, typename KeyType, typename MappedType>
-struct OrderedHashTableValuesIterator {
+struct WTF_VIEW_TYPE OrderedHashTableValuesIterator {
     using iterator_category = std::forward_iterator_tag;
     using value_type = MappedType;
     using difference_type = ptrdiff_t;
@@ -291,7 +291,7 @@ private:
     using HashTableType = OrderedHashTable<KeyType, KeyValuePairType, KeyValuePairKeyExtractor<KeyValuePairType>, HashFunctions, KeyValuePairTraits, KeyTraits, Malloc>;
 
 public:
-    struct AddResult {
+    struct WTF_VIEW_TYPE AddResult {
         using IteratorType = OrderedHashTableIteratorAdapter<HashTableType, KeyType, MappedType>;
         IteratorType iterator;
         bool isNewEntry;
