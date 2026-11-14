@@ -243,8 +243,7 @@
     "TestWebKitPolicyClient": {
         "subtests": {
             "/webkit/WebKitPolicyClient/autoplay-policy": {
-                "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/222091"},
-                             "wpe": {"status": ["PASS", "FAIL", "TIMEOUT"], "bug": "webkit.org/b/281986"}}
+                "expected": {"all": {"status": ["PASS", "TIMEOUT"], "bug": "webkit.org/b/222091"}}
             },
             "/webkit/WebKitPolicyClient/new-window-policy": {
                 "expected": {"all": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/281812"}}
