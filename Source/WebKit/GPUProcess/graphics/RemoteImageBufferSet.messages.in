@@ -35,6 +35,10 @@ messages -> RemoteImageBufferSet Stream {
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     DynamicContentScalingDisplayList() -> (std::optional<WebCore::DynamicContentScalingDisplayList> displayList) Synchronous NotStreamEncodableReply
 #endif
+
+#if ENABLE(MODEL_PROCESS) && ENABLE(SPATIAL_PORTAL)
+    FrontBufferForExternalRead() -> (std::optional<MachSendRight> surface)
+#endif
 }
 
 #endif

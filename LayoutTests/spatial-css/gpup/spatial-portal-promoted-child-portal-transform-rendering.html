@@ -1,0 +1,51 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ] -->
+<html>
+<head>
+<meta name="fuzzy" content="maxDifference=0-30; totalPixels=0-6700">
+<style>
+    body {
+        margin: 0;
+    }
+    .portal {
+        spatial: portal;
+        portal-transform: auto rotate3d(0, 1, 0, 40deg);
+        position: relative;
+        width: 400px;
+        height: 300px;
+        background-color: #ddd;
+    }
+    .content {
+        position: absolute;
+        inset: 0;
+        transform: translateZ(-80px);
+        transform-style: preserve-3d;
+    }
+    .box {
+        position: absolute;
+        left: 230px;
+        top: 150px;
+        width: 120px;
+        height: 80px;
+        box-sizing: border-box;
+        border: 8px solid rgb(70, 70, 140);
+        background-color: rgb(60, 140, 70);
+    }
+</style>
+</head>
+<body>
+<div class="portal">
+    <div class="content"><div class="box"></div></div>
+</div>
+<script src="../../resources/ui-helper.js"></script>
+<script src="../resources/spatial-portal-utils.js"></script>
+<script>
+window.testRunner?.waitUntilDone();
+
+window.onload = async () => {
+    await waitForHostedPromotedChildren(document.querySelector(".portal"), 1);
+    await waitForPortalSceneToDisplay();
+    window.testRunner?.notifyDone();
+};
+</script>
+</body>
+</html>

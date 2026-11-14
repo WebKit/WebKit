@@ -39,6 +39,14 @@
 #include <wtf/MachSendRight.h>
 #endif
 
+#if ENABLE(SPATIAL_PORTAL) && PLATFORM(COCOA)
+#include "ImageBufferSetIdentifier.h"
+#include <IOSurface/IOSurfaceRef.h>
+#include <WebCore/FloatRect.h>
+#include <WebCore/FloatSize.h>
+#include <WebCore/TransformationMatrix.h>
+#endif
+
 namespace WebModel {
 struct ResizeMeshDescriptor;
 }
@@ -63,6 +71,20 @@ struct UpdateTextureDescriptor;
 }
 
 namespace WebKit {
+
+#if ENABLE(SPATIAL_PORTAL) && PLATFORM(COCOA)
+struct PortalChildQuad {
+    WebCore::NodeIdentifier nodeID;
+    WebCore::NodeIdentifier rootNodeID;
+    ImageBufferSetIdentifier bufferSet;
+    bool isOpaque { false };
+    WebCore::FloatRect quadRectInChildSpace;
+    WebCore::FloatPoint childOriginInPortal;
+    WebCore::TransformationMatrix transform;
+
+    bool operator==(const PortalChildQuad&) const = default;
+};
+#endif
 
 class Mesh : public RefCountedAndCanMakeWeakPtr<Mesh> {
 public:
@@ -90,6 +112,13 @@ public:
 #if ENABLE(SPATIAL_PORTAL)
     virtual void setPortalTransform(const WebCore::UsedPortalTransform&) { }
     virtual void setPortalChildTransform(WebCore::NodeIdentifier, const WebModel::Float4x4&) { }
+#if PLATFORM(COCOA)
+    virtual void setPortalChildQuads(Vector<PortalChildQuad>&&) { }
+    virtual bool updatePortalContentTexture(const WebModel::TypedResourceId&, IOSurfaceRef, bool, uint64_t) { return false; }
+    virtual void removePortalContentTexture(uint64_t) { }
+    virtual void clearPortalContentTextures() { }
+    virtual void setPortalContentOrder(Vector<WebModel::TypedResourceId>&&) { }
+#endif
 #endif
     virtual void play(bool) = 0;
     virtual void setEnvironmentMap(WebModel::UpdateTextureDescriptor&&) = 0;

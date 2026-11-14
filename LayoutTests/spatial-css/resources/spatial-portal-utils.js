@@ -89,6 +89,23 @@ async function waitForEntityTransform(model, predicate, description, timeout = 5
     }
 }
 
+async function waitForHostedPromotedChildren(portal, count, timeout = 5000) {
+    const startTime = Date.now();
+
+    while (internals.numberOfHostedPromotedChildrenInSpatialPortal(portal) !== count) {
+        if (Date.now() - startTime > timeout)
+            throw new Error(`Timeout waiting for ${count} promoted children to be hosted in the portal`);
+
+        await new Promise(resolve => setTimeout(resolve, 50));
+    }
+}
+
+async function waitForPortalSceneToDisplay() {
+    await UIHelper.ensureStablePresentationUpdate();
+    await UIHelper.ensureStablePresentationUpdate();
+    await UIHelper.renderingUpdate();
+}
+
 async function snapshotOnceModelsRender(afterReady)
 {
     window.testRunner?.waitUntilDone();
@@ -153,7 +170,7 @@ const parseSceneGraph = text => {
         if (entityMatch) {
             while (openEntities.length && openEntities.at(-1).depth >= depth)
                 openEntities.pop();
-            const entity = { name: entityMatch[1] ?? "", element: null, rotation: [0, 0, 0, 1], parent: openEntities.at(-1) ?? null, depth };
+            const entity = { name: entityMatch[1] ?? "", element: null, rotation: [0, 0, 0, 1], translation: [0, 0, 0], parent: openEntities.at(-1) ?? null, depth };
             entities.push(entity);
             openEntities.push(entity);
             continue;
@@ -166,6 +183,10 @@ const parseSceneGraph = text => {
         const rotationMatch = /^\s*\(rotation (.+)\)$/.exec(line);
         if (rotationMatch && openEntities.length)
             openEntities.at(-1).rotation = rotationMatch[1].split(" ").map(Number);
+
+        const translationMatch = /^\s*\(translation (.+)\)$/.exec(line);
+        if (translationMatch && openEntities.length)
+            openEntities.at(-1).translation = translationMatch[1].split(" ").map(Number);
     }
     return entities;
 };
@@ -173,3 +194,19 @@ const parseSceneGraph = text => {
 const parentOfElement = (entities, label) => entities.find(entity => entity.element === label)?.parent;
 
 const modelSceneGraph = async element => parseSceneGraph(await internals.modelSceneGraphAsText(element));
+
+// The entities of hosted layers follow them as Core Animation commits, so a test waits for the scene graph it expects.
+async function waitForSceneGraph(element, predicate, description, timeout = 5000) {
+    const startTime = Date.now();
+
+    while (true) {
+        const entities = await modelSceneGraph(element);
+        if (predicate(entities))
+            return entities;
+
+        if (Date.now() - startTime > timeout)
+            throw new Error(`Timeout waiting for the scene graph: ${description}`);
+
+        await sleepForSeconds(0.1);
+    }
+}

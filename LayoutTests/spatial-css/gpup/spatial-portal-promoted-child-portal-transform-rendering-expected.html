@@ -1,0 +1,45 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ] -->
+<html>
+<head>
+<style>
+    body {
+        margin: 0;
+    }
+    .portal {
+        position: relative;
+        width: 400px;
+        height: 300px;
+        overflow: hidden;
+        background-color: #ddd;
+        perspective: 1889.76px;
+    }
+    .scene {
+        position: absolute;
+        inset: 0;
+        transform: rotate3d(0, 1, 0, 40deg);
+        transform-style: preserve-3d;
+    }
+    .content {
+        position: absolute;
+        inset: 0;
+        transform: translateZ(-80px);
+        transform-style: preserve-3d;
+    }
+    .box {
+        position: absolute;
+        left: 230px;
+        top: 150px;
+        width: 120px;
+        height: 80px;
+        box-sizing: border-box;
+        border: 8px solid rgb(70, 70, 140);
+        background-color: rgb(60, 140, 70);
+    }
+</style>
+</head>
+<body>
+<div class="portal">
+    <div class="scene"><div class="content"><div class="box"></div></div></div>
+</div>
+</body>
+</html>

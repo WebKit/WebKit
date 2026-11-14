@@ -36,6 +36,7 @@
 #include "RemoteCompositorIntegration.h"
 #include "RemoteGPUMessages.h"
 #include "RemoteGPUProxyMessages.h"
+#include "RemoteImageBufferSet.h"
 #include "RemoteMesh.h"
 #include "RemotePresentationContext.h"
 #include "RemoteRenderingBackend.h"
@@ -249,6 +250,29 @@ RefPtr<WebCore::ImageBuffer> RemoteGPU::imageBuffer(WebCore::RenderingResourceId
     return result;
 }
 
+#if ENABLE(GPU_PROCESS_MODEL) && ENABLE(SPATIAL_PORTAL) && HAVE(IOSURFACE)
+Vector<RemoteImageBufferSet::ExternalReadResult> RemoteGPU::fetchPortalContentSurfaces(const Vector<PortalContentRequest>& requests)
+{
+    assertIsCurrent(workQueue());
+    BinarySemaphore semaphore;
+
+    Vector<RemoteImageBufferSet::ExternalReadResult> surfaces;
+    Ref renderingBackend = m_renderingBackend;
+    renderingBackend->dispatch([&] mutable {
+        surfaces = requests.map([&](auto& request) -> RemoteImageBufferSet::ExternalReadResult {
+            RefPtr bufferSet = renderingBackend->imageBufferSet(request.bufferSet);
+            if (!bufferSet)
+                return { };
+
+            return bufferSet->frontBufferSurfaceForExternalRead(request.mappedBuffers);
+        });
+        semaphore.signal();
+    });
+    semaphore.wait();
+
+    return surfaces;
+}
+#endif
 
 #if ENABLE(GPU_PROCESS_MODEL)
 Vector<UniqueRef<WebCore::IOSurface>> RemoteGPU::createRenderBuffers(unsigned width, unsigned height, const WebCore::ProcessIdentity& processIdentity, bool standardDynamicRange)

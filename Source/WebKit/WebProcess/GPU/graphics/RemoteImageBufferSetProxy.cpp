@@ -349,6 +349,23 @@ std::optional<WebCore::DynamicContentScalingDisplayList> RemoteImageBufferSetPro
 }
 #endif
 
+#if ENABLE(MODEL_PROCESS) && ENABLE(SPATIAL_PORTAL)
+void RemoteImageBufferSetProxy::frontBufferForExternalRead(CompletionHandler<void(std::optional<MachSendRight>&&)>&& completionHandler)
+{
+    RefPtr connection = this->connection();
+    if (!connection) [[unlikely]] {
+        completionHandler(std::nullopt);
+        return;
+    }
+
+    // Unlike sendWithAsyncReply(), this replies on the connection's dispatcher, the main run loop.
+    auto replyID = connection->sendWithAsyncReply(Messages::RemoteImageBufferSet::FrontBufferForExternalRead(), WTF::move(completionHandler), identifier());
+
+    // A send that fails early leaves the completion handler with the caller.
+    if (!replyID && completionHandler)
+        completionHandler(std::nullopt);
+}
+#endif
 
 } // namespace WebKit
 

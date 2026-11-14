@@ -128,6 +128,63 @@ void RemoteImageBufferSet::endPrepareForDisplay(RenderingUpdateID renderingUpdat
     completionHandler(WTF::move(outputData), renderingUpdateID);
 }
 
+#if HAVE(IOSURFACE)
+auto RemoteImageBufferSet::frontBufferSendRightForExternalRead(const Vector<uint64_t>& alreadyMappedBuffers) -> ExternalReadSendRight
+{
+    assertIsCurrent(workQueue());
+
+    if (isPreparingForDisplay())
+        return { .isBusy = true };
+
+    RefPtr frontBuffer = m_frontBuffer;
+    if (!frontBuffer)
+        return { };
+
+    if (frontBuffer->setNonVolatile() == WebCore::SetNonVolatileResult::Empty)
+        return { };
+
+    auto bufferIdentifier = frontBuffer->renderingResourceIdentifier().toUInt64();
+    frontBuffer->flushDrawingContext();
+
+    if (alreadyMappedBuffers.contains(bufferIdentifier))
+        return { std::nullopt, bufferIdentifier };
+
+    auto* sharing = dynamicDowncast<ImageBufferBackendHandleSharing>(frontBuffer->toBackendSharing());
+    if (!sharing)
+        return { };
+
+    auto handle = sharing->createBackendHandle();
+    if (!handle)
+        return { };
+
+    auto* sendRight = std::get_if<MachSendRight>(&*handle);
+    if (!sendRight)
+        return { };
+
+    return { WTF::move(*sendRight), bufferIdentifier };
+}
+
+RemoteImageBufferSet::ExternalReadResult RemoteImageBufferSet::frontBufferSurfaceForExternalRead(const Vector<uint64_t>& alreadyMappedBuffers)
+{
+    auto [sendRight, bufferIdentifier, isBusy] = frontBufferSendRightForExternalRead(alreadyMappedBuffers);
+    if (!sendRight)
+        return { nullptr, bufferIdentifier, isBusy };
+
+    RetainPtr surface = adoptCF(IOSurfaceLookupFromMachPort(sendRight->sendRight()));
+    if (!surface)
+        return { };
+
+    return { WTF::move(surface), bufferIdentifier };
+}
+#endif
+
+#if ENABLE(MODEL_PROCESS) && ENABLE(SPATIAL_PORTAL)
+void RemoteImageBufferSet::frontBufferForExternalRead(CompletionHandler<void(std::optional<MachSendRight>&&)>&& completionHandler)
+{
+    completionHandler(frontBufferSendRightForExternalRead({ }).sendRight);
+}
+#endif
+
 SwapBuffersDisplayRequirement RemoteImageBufferSet::swapBuffersForDisplay(bool hasEmptyDirtyRegion, bool supportsPartialRepaint)
 {
     auto displayRequirement = SwapBuffersDisplayRequirement::NeedsNoDisplay;

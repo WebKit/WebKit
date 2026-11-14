@@ -9655,6 +9655,12 @@ unsigned Internals::numberOfHostedModelsInSpatialPortal(Element& element)
     return controller ? controller->numberOfHostedModels() : 0;
 }
 
+unsigned Internals::numberOfHostedPromotedChildrenInSpatialPortal(Element& element)
+{
+    CheckedPtr controller = element.spatialPortalController();
+    return controller ? controller->numberOfHostedPromotedChildren() : 0;
+}
+
 bool Internals::establishesSpatialPortal(Element& element)
 {
     return element.establishesSpatialPortal();
@@ -9667,6 +9673,16 @@ RefPtr<Element> Internals::spatialPortalAnchorForModel(HTMLModelElement& model)
         return nullptr;
 
     return controller->anchorModelForChild(model.nodeIdentifier());
+}
+
+RefPtr<Element> Internals::spatialPortalAnchorForPromotedChild(Element& element)
+{
+    RefPtr portal = element.parentElement();
+    CheckedPtr controller = portal ? portal->spatialPortalController() : nullptr;
+    if (!controller)
+        return nullptr;
+
+    return controller->anchorModelForPromotedChild(element.nodeIdentifier());
 }
 
 // Returned as column-major values.

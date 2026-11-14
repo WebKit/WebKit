@@ -49,7 +49,19 @@
 #include <WebCore/Settings.h>
 #include <WebCore/TransformationMatrix.h>
 
+#if ENABLE(SPATIAL_PORTAL)
+#include "GraphicsLayerCARemote.h"
+#include "PlatformCALayerRemote.h"
+#include "RemoteImageBufferSetProxy.h"
+#include "RemoteLayerBackingStore.h"
+#endif
+
 namespace WebKit {
+
+#if ENABLE(SPATIAL_PORTAL)
+static constexpr Seconds portalFrameInterval { 1_s / 60 };
+static constexpr unsigned portalFrameRetryLimit = 60;
+#endif
 
 Ref<ModelProcessModelPlayer> ModelProcessModelPlayer::create(WebCore::ModelPlayerIdentifier identifier, WebPage& page, WebCore::ModelPlayerClient& client)
 {
@@ -60,6 +72,9 @@ ModelProcessModelPlayer::ModelProcessModelPlayer(WebCore::ModelPlayerIdentifier 
     : m_id { identifier }
     , m_page { page }
     , m_client { client }
+#if ENABLE(SPATIAL_PORTAL)
+    , m_portalFrameTimer { RunLoop::mainSingleton(), "ModelProcessModelPlayer::PortalFrameTimer"_s, this, &ModelProcessModelPlayer::portalFrameTimerFired }
+#endif
 {
     RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayer spawned id=%" PRIu64, this, m_id.toUInt64());
     send(Messages::ModelProcessModelPlayerProxy::CreateLayer());
@@ -172,6 +187,28 @@ void ModelProcessModelPlayer::didUpdatePortalTransform(const WebCore::Transforma
     RELEASE_ASSERT(modelProcessEnabled());
 
     protect(client())->didUpdatePortalTransform(*this, transform);
+}
+
+void ModelProcessModelPlayer::didUpdateAnchoredPortalChildTransforms(Vector<std::pair<WebCore::NodeIdentifier, WebCore::TransformationMatrix>>&& transforms)
+{
+    // Hit testing reads these when it needs them, so there is nothing to update in the page.
+    m_anchoredPortalChildTransforms.clear();
+    for (auto& [rootNodeID, transform] : transforms)
+        m_anchoredPortalChildTransforms.set(rootNodeID, transform);
+}
+
+void ModelProcessModelPlayer::didUpdateDisplayedPortalChildren(Vector<WebCore::NodeIdentifier>&& rootNodeIDs)
+{
+    RELEASE_ASSERT(modelProcessEnabled());
+
+    // A child that left the scene after this was sent is already drawn flat again.
+    rootNodeIDs.removeAllMatching([&](auto rootNodeID) {
+        return !m_portalHostedLayers.containsIf([&](auto& layer) {
+            return layer.rootNodeID == rootNodeID;
+        });
+    });
+
+    setDisplayedPortalChildren(WTF::move(rootNodeIDs));
 }
 
 #endif
@@ -574,6 +611,249 @@ void ModelProcessModelPlayer::setPortalAction(WebCore::PortalActionKind kind)
 void ModelProcessModelPlayer::setAnchor(WebCore::NodeIdentifier nodeID, std::optional<WebCore::NodeIdentifier> anchorNode, const String& placement)
 {
     send(Messages::ModelProcessModelPlayerProxy::SetAnchor(nodeID, anchorNode, placement));
+}
+
+struct PortalLayerBacking {
+    RefPtr<RemoteImageBufferSetProxy> bufferSet;
+    bool isOpaque { false };
+};
+
+static std::optional<PortalLayerBacking> portalLayerBacking(WebCore::GraphicsLayer* layer)
+{
+    RefPtr graphicsLayer = dynamicDowncast<GraphicsLayerCARemote>(layer);
+    if (!graphicsLayer)
+        return std::nullopt;
+
+    RefPtr platformLayer = dynamicDowncast<PlatformCALayerRemote>(graphicsLayer->platformCALayerIgnoringStructuralLayer());
+    if (!platformLayer)
+        return std::nullopt;
+
+    CheckedPtr backingStore = platformLayer->properties().backingStoreOrProperties.store.get();
+    if (!backingStore || backingStore->type() != RemoteLayerBackingStore::Type::IOSurface)
+        return std::nullopt;
+
+    RefPtr bufferSet = backingStore->bufferSet();
+    if (!bufferSet)
+        return std::nullopt;
+
+    return PortalLayerBacking { WTF::move(bufferSet), backingStore->isOpaque() };
+}
+
+void ModelProcessModelPlayer::setPortalPromotedChildren(const Vector<WebCore::PortalPromotedChild>& children)
+{
+    m_portalPromotedChildren = children;
+    m_portalFrameRetries = 0;
+    resolvePortalHostedLayers();
+}
+
+void ModelProcessModelPlayer::portalPromotedChildDidPaint()
+{
+    // The paint reaches a front buffer only once its rendering update is flushed, so the fetch waits for a frame.
+    for (auto& state : m_portalHostedLayerContents.values())
+        state.needsUpdate = true;
+
+    m_portalFrameRetries = 0;
+    startPortalFrameTimerIfNeeded();
+}
+
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+void ModelProcessModelPlayer::portalPromotedChildEventRegionDidChange()
+{
+    // The hosted layers carry their interaction regions, which the next frame sends again, once every layer has updated.
+    m_portalHostedLayersNeedResolution = true;
+    m_portalFrameRetries = 0;
+    startPortalFrameTimerIfNeeded();
+}
+#endif
+
+bool ModelProcessModelPlayer::hostsPortalPromotedChild(WebCore::NodeIdentifier rootNodeID) const
+{
+    return m_displayedPortalChildren.contains(rootNodeID);
+}
+
+void ModelProcessModelPlayer::setPromotedChildAnchor(WebCore::NodeIdentifier rootNodeID, std::optional<WebCore::NodeIdentifier> anchorNode, const String& placement)
+{
+    send(Messages::ModelProcessModelPlayerProxy::SetPromotedChildAnchor(rootNodeID, anchorNode, placement));
+}
+
+std::optional<WebCore::TransformationMatrix> ModelProcessModelPlayer::anchoredPromotedChildTransform(WebCore::NodeIdentifier rootNodeID) const
+{
+    // Only a child the scene draws is placed by its anchor; until then, it is drawn flat where layout puts it.
+    if (!m_displayedPortalChildren.contains(rootNodeID))
+        return std::nullopt;
+
+    auto it = m_anchoredPortalChildTransforms.find(rootNodeID);
+    if (it == m_anchoredPortalChildTransforms.end())
+        return std::nullopt;
+    return it->value;
+}
+
+void ModelProcessModelPlayer::resolvePortalHostedLayers()
+{
+    Vector<WebCore::PortalHostedLayer> layers;
+    layers.reserveInitialCapacity(m_portalPromotedChildren.size());
+    Vector<WebCore::NodeIdentifier> unresolvedRoots;
+    for (auto& child : m_portalPromotedChildren) {
+        auto backing = portalLayerBacking(child.layer.get());
+        if (!backing) {
+            if (!unresolvedRoots.contains(child.rootNodeID))
+                unresolvedRoots.append(child.rootNodeID);
+            continue;
+        }
+
+        layers.append({
+            .nodeID = child.nodeID,
+            .rootNodeID = child.rootNodeID,
+            .quadRectInChildSpace = child.quadRectInChildSpace,
+            .childOriginInPortal = child.childOriginInPortal,
+            .childSize = child.childSize,
+            .transform = child.transform,
+            .isOpaque = backing->isOpaque,
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+            // The layer is hidden in the page while the scene draws it, and with it the glow of its regions.
+            .interactionRegions = child.layer->eventRegion().interactionRegions(),
+#endif
+        });
+    }
+
+    // A child is hosted with all of its layers or not at all, so one with a layer that has no backing store yet stays flat.
+    layers.removeAllMatching([&](auto& layer) {
+        return unresolvedRoots.contains(layer.rootNodeID);
+    });
+    m_portalHostedLayersNeedResolution = !unresolvedRoots.isEmpty();
+
+    // So do the children that come after the most layers the model process accepts.
+    if (layers.size() > ModelProcessModelPlayerProxy::maximumPortalHostedLayers) {
+        auto firstRootOverLimit = layers[ModelProcessModelPlayerProxy::maximumPortalHostedLayers].rootNodeID;
+        auto firstLayerOfThatRoot = layers.findIf([&](auto& layer) {
+            return layer.rootNodeID == firstRootOverLimit;
+        });
+        layers.shrink(firstLayerOfThatRoot);
+    }
+
+    m_portalHostedLayerContents.removeIf([&](auto& entry) {
+        return !layers.containsIf([&](auto& layer) {
+            return layer.nodeID == entry.key;
+        });
+    });
+    for (auto& layer : layers)
+        m_portalHostedLayerContents.add(layer.nodeID, PortalHostedLayerContentsState { });
+
+    if (layers != m_portalHostedLayers) {
+        // A child that leaves the scene is drawn flat again without waiting for the model process.
+        auto displayedChildren = m_displayedPortalChildren;
+        displayedChildren.removeAllMatching([&](auto rootNodeID) {
+            return !layers.containsIf([&](auto& layer) {
+                return layer.rootNodeID == rootNodeID;
+            });
+        });
+        setDisplayedPortalChildren(WTF::move(displayedChildren));
+
+        m_portalHostedLayers = layers;
+        send(Messages::ModelProcessModelPlayerProxy::SetPortalHostedLayers(WTF::move(layers)));
+    }
+
+    updatePortalHostedLayerContents();
+    startPortalFrameTimerIfNeeded();
+}
+
+void ModelProcessModelPlayer::updatePortalHostedLayerContents()
+{
+    for (auto& child : m_portalPromotedChildren) {
+        auto it = m_portalHostedLayerContents.find(child.nodeID);
+        if (it == m_portalHostedLayerContents.end() || !it->value.needsUpdate || it->value.isRequestPending)
+            continue;
+
+        auto backing = portalLayerBacking(child.layer.get());
+        if (!backing)
+            continue;
+
+        it->value.needsUpdate = false;
+        it->value.isRequestPending = true;
+        backing->bufferSet->frontBufferForExternalRead([weakThis = WeakPtr { *this }, nodeID = child.nodeID](std::optional<MachSendRight>&& surface) mutable {
+            if (RefPtr protectedThis = weakThis)
+                protectedThis->didFetchPortalHostedLayerContents(nodeID, WTF::move(surface));
+        });
+    }
+}
+
+void ModelProcessModelPlayer::didFetchPortalHostedLayerContents(WebCore::NodeIdentifier nodeID, std::optional<MachSendRight>&& surface)
+{
+    auto it = m_portalHostedLayerContents.find(nodeID);
+    if (it == m_portalHostedLayerContents.end())
+        return;
+
+    it->value.isRequestPending = false;
+
+    // Nothing is shared while the buffers are being prepared for display, or before the first paint, so try again later.
+    if (!surface) {
+        it->value.needsUpdate = true;
+        startPortalFrameTimerIfNeeded();
+        return;
+    }
+
+    send(Messages::ModelProcessModelPlayerProxy::SetPortalHostedLayerContents(nodeID, WTF::move(*surface)));
+
+    // A paint during the fetch may not be in the buffer that was sent.
+    if (it->value.needsUpdate)
+        startPortalFrameTimerIfNeeded();
+}
+
+void ModelProcessModelPlayer::setDisplayedPortalChildren(Vector<WebCore::NodeIdentifier>&& rootNodeIDs)
+{
+    if (m_displayedPortalChildren == rootNodeIDs)
+        return;
+
+    m_displayedPortalChildren = WTF::move(rootNodeIDs);
+
+    if (RefPtr client = m_client)
+        client->didUpdateHostedPortalChildren(*this);
+}
+
+bool ModelProcessModelPlayer::hasPendingPortalWork() const
+{
+    if (m_portalHostedLayersNeedResolution)
+        return true;
+
+    for (auto& state : m_portalHostedLayerContents.values()) {
+        if (state.needsUpdate && !state.isRequestPending)
+            return true;
+    }
+    return false;
+}
+
+void ModelProcessModelPlayer::startPortalFrameTimerIfNeeded()
+{
+    // Promoted children alone are reason enough for one frame, which finds out whether they are animating.
+    if (m_portalFrameTimer.isActive() || m_portalFrameRetries > portalFrameRetryLimit || (m_portalPromotedChildren.isEmpty() && !hasPendingPortalWork()))
+        return;
+
+    m_portalFrameTimer.startRepeating(portalFrameInterval);
+}
+
+void ModelProcessModelPlayer::portalFrameTimerFired()
+{
+    bool isAnimating = false;
+    if (!m_portalPromotedChildren.isEmpty()) {
+        // Animated transforms run in the UI process, so WebCore samples them here and calls back with any that changed.
+        if (RefPtr client = m_client)
+            isAnimating = client->willRenderPortalFrame(*this);
+    }
+
+    if (m_portalHostedLayersNeedResolution)
+        resolvePortalHostedLayers();
+    else
+        updatePortalHostedLayerContents();
+
+    if (isAnimating) {
+        m_portalFrameRetries = 0;
+        return;
+    }
+
+    if (hasPendingPortalWork() && ++m_portalFrameRetries <= portalFrameRetryLimit)
+        return;
+
+    m_portalFrameTimer.stop();
 }
 
 #endif

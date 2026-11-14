@@ -457,13 +457,16 @@ extension WKBridgeUpdateTexture {
 extension WKBridgeUpdateMaterial {
     let materialGraph: WKBridgeMaterialGraph?
     let identifier: WKBridgeTypedResourceId
+    let portalContentTextureIdentifier: WKBridgeTypedResourceId?
 
     init(
         materialGraph: WKBridgeMaterialGraph?,
         identifier: WKBridgeTypedResourceId,
+        portalContentTextureIdentifier: WKBridgeTypedResourceId?,
     ) {
         self.materialGraph = materialGraph
         self.identifier = identifier
+        self.portalContentTextureIdentifier = portalContentTextureIdentifier
     }
 }
 

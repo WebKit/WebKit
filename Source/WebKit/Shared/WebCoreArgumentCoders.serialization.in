@@ -7344,6 +7344,20 @@ header: <WebCore/PortalTransform.h>
     WebCore::TransformationMatrix transformAfterAuto;
 };
 
+header: <WebCore/PortalTransform.h>
+[CustomHeader] struct WebCore::PortalHostedLayer {
+    WebCore::NodeIdentifier nodeID;
+    WebCore::NodeIdentifier rootNodeID;
+    WebCore::FloatRect quadRectInChildSpace;
+    WebCore::FloatPoint childOriginInPortal;
+    WebCore::FloatSize childSize;
+    WebCore::TransformationMatrix transform;
+    bool isOpaque;
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    Vector<WebCore::InteractionRegion> interactionRegions;
+#endif
+};
+
 header: <WebCore/PortalAction.h>
 enum class WebCore::PortalActionKind : bool;
 #endif

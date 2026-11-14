@@ -157,6 +157,7 @@
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "SourceGraphic.h"
+#include "SpatialPortalController.h"
 #include "StyleAdjuster.h"
 #include "StyleAttributeMutationScope.h"
 #include "StyleComputedStyle+SettersInlines.h"
@@ -4844,6 +4845,11 @@ Ref<HitTestingTransformState> RenderLayer::createLocalTransformState(RenderLayer
     }
     offset += translationOffset;
 
+#if ENABLE(SPATIAL_PORTAL)
+    if (auto projection = hostedPortalContentProjection(containerTransformState ? *containerLayer : *rootLayer))
+        transformState->applyTransform(*projection);
+#endif
+
     if (renderer().shouldUseTransformFromContainer(containerLayer ? &containerLayer->renderer() : nullptr)) {
         TransformationMatrix containerTransform;
         renderer().getTransformFromContainer(offset, containerTransform);
@@ -4854,6 +4860,37 @@ Ref<HitTestingTransformState> RenderLayer::createLocalTransformState(RenderLayer
     
     return transformState.releaseNonNull();
 }
+
+#if ENABLE(SPATIAL_PORTAL)
+bool RenderLayer::isHostedInSpatialPortalScene() const
+{
+    return m_backing && m_backing->hostingSpatialPortalController();
+}
+
+std::optional<TransformationMatrix> RenderLayer::hostedPortalContentProjection(const RenderLayer& space) const
+{
+    CheckedPtr controller = m_backing ? m_backing->hostingSpatialPortalController() : nullptr;
+    CheckedPtr portalLayer = parent();
+    if (!controller || !portalLayer)
+        return std::nullopt;
+
+    auto portalOffset = offsetFromAncestor(&space) - offsetFromAncestor(portalLayer.get());
+    TransformationMatrix projection;
+    projection.translate(portalOffset.width(), portalOffset.height());
+
+    // A child anchored to a model is placed by its anchor, in place of where layout puts it in the portal.
+    RefPtr element = renderer().element();
+    if (auto anchoredProjection = element ? controller->anchoredPromotedChildProjection(element->nodeIdentifier()) : std::nullopt) {
+        projection.multiply(*anchoredProjection);
+        auto offsetInPortal = offsetFromAncestor(portalLayer.get());
+        projection.translate(-offsetInPortal.width(), -offsetInPortal.height());
+    } else
+        projection.multiply(controller->hostedContentProjection());
+
+    projection.translate(-portalOffset.width(), -portalOffset.height());
+    return projection;
+}
+#endif
 
 static RefPtr<Element> flattenedParent(Element* element)
 {
@@ -4963,8 +5000,13 @@ RenderLayer::HitLayer RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLa
 
     // The natural thing would be to keep HitTestingTransformState on the stack, but it's big, so we heap-allocate.
 
+    bool hasTransform = transform();
+#if ENABLE(SPATIAL_PORTAL)
+    hasTransform = hasTransform || isHostedInSpatialPortalScene();
+#endif
+
     // Apply a transform if we have one.
-    if (transform() && !appliedTransform) {
+    if (hasTransform && !appliedTransform) {
         if (enclosingPaginationLayer(IncludeCompositedPaginatedLayers))
             return hitTestTransformedLayerInFragments(rootLayer, containerLayer, request, result, hitTestRect, hitTestLocation, transformState, zOffset);
 
@@ -5287,6 +5329,13 @@ RenderLayer::HitLayer RenderLayer::hitTestList(LayerList layerIterator, RenderLa
         HitTestResult tempResult(result.hitTestLocation());
         auto hitLayer = childLayer->hitTestLayer(rootLayer, this, request, tempResult, hitTestRect, hitTestLocation, false, transformStateForChild, zOffsetForDescendants);
 
+#if ENABLE(SPATIAL_PORTAL)
+        if (hitLayer.layer && !depthSortDescendants && !request.resultIsElementList() && childLayer->isHostedInSpatialPortalScene()) {
+            if (auto frontmost = hitTestFrontmostHostedChild(rootLayer, request, tempResult, hitTestRect, hitTestLocation, transformStateForChild); frontmost.layer)
+                hitLayer = frontmost;
+        }
+#endif
+
         // If it is a list-based test, we can safely append the temporary result since it might had hit
         // nodes but not necessarily had hitLayer set.
         ASSERT(!result.isRectBasedTest() || request.resultIsElementList());
@@ -5311,6 +5360,34 @@ RenderLayer::HitLayer RenderLayer::hitTestList(LayerList layerIterator, RenderLa
 
     return resultLayer;
 }
+
+#if ENABLE(SPATIAL_PORTAL)
+RenderLayer::HitLayer RenderLayer::hitTestFrontmostHostedChild(RenderLayer* rootLayer, const HitTestRequest& request, HitTestResult& result, const LayoutRect& hitTestRect, const HitTestLocation& hitTestLocation, const HitTestingTransformState* transformState)
+{
+    static constexpr double coplanarTolerance = 0.01;
+
+    auto frontmost = HitLayer { nullptr, -std::numeric_limits<double>::infinity() };
+    for (auto layers : { negativeZOrderLayers(), normalFlowLayers(), positiveZOrderLayers() }) {
+        for (auto* childLayer : layers) {
+            if (!childLayer->isHostedInSpatialPortalScene())
+                continue;
+
+            HitTestResult childResult(result.hitTestLocation());
+            auto hitLayer = childLayer->hitTestLayer(rootLayer, this, request, childResult, hitTestRect, hitTestLocation, false, transformState, nullptr);
+            if (!hitLayer.layer)
+                continue;
+
+            auto depth = computeZOffset(childLayer->createLocalTransformState(rootLayer, this, hitTestRect, hitTestLocation, transformState).get());
+            if (frontmost.layer && depth < frontmost.zOffset - coplanarTolerance)
+                continue;
+
+            frontmost = { hitLayer.layer, depth };
+            result = childResult;
+        }
+    }
+    return frontmost;
+}
+#endif
 
 RenderLayer::HitLayer RenderLayer::hitTestPositiveAndNormalFlowLists(RenderLayer* rootLayer, const HitTestRequest& request, HitTestResult& result, const LayoutRect& hitTestRect, const HitTestLocation& hitTestLocation, const HitTestingTransformState* transformState, double* zOffsetForDescendants, bool depthSortDescendants, HitLayer& candidateLayer)
 {

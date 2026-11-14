@@ -821,6 +821,12 @@ void RemoteRenderingBackend::releaseTextDetector(ShapeDetectionIdentifier identi
 #endif
 }
 
+RefPtr<RemoteImageBufferSet> RemoteRenderingBackend::imageBufferSet(ImageBufferSetIdentifier identifier)
+{
+    assertIsCurrent(workQueue());
+    return m_remoteImageBufferSets.get(identifier);
+}
+
 RefPtr<ImageBuffer> RemoteRenderingBackend::imageBuffer(RenderingResourceIdentifier renderingResourceIdentifier)
 {
     assertIsCurrent(workQueue());

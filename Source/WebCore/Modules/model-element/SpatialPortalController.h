@@ -40,6 +40,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
+#include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -64,6 +65,8 @@ class PlaceholderModelPlayer;
 class PortalModelPlayerClient;
 class PortalVisibilityChangeClient;
 class RenderBox;
+class RenderLayer;
+class RenderLayerModelObject;
 class ResourceError;
 class SharedBuffer;
 class SpatialPortalEventListener;
@@ -104,6 +107,7 @@ public:
     bool childIsLoaded(NodeIdentifier) const;
     ModelPlayer* playerForChild(NodeIdentifier) const;
     WEBCORE_EXPORT HTMLModelElement* anchorModelForChild(NodeIdentifier) const;
+    WEBCORE_EXPORT HTMLModelElement* anchorModelForPromotedChild(NodeIdentifier) const;
     void configureGraphicsLayer(GraphicsLayer&, const Color& backgroundColor);
     void sizeMayHaveChanged();
 
@@ -112,6 +116,19 @@ public:
     const std::optional<TransformationMatrix>& resolvedPortalTransform() const { return m_resolvedPortalTransform; }
 
     void setPortalAction(PortalActionKind);
+
+    bool hasPortalContent() const { return !m_hostedModels.isEmpty() || !m_promotedChildren.isEmpty(); }
+    WEBCORE_EXPORT unsigned numberOfHostedPromotedChildren() const;
+    void updatePromotedChildren(Vector<PortalPromotedChild>&&);
+    bool hostsPromotedChild(NodeIdentifier) const;
+    void promotedChildDidPaint();
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    void promotedChildEventRegionDidChange();
+#endif
+    TransformationMatrix hostedContentProjection() const;
+    std::optional<TransformationMatrix> anchoredPromotedChildProjection(NodeIdentifier rootNodeID) const;
+    static std::optional<TransformationMatrix> transformForHostedLayer(RenderLayer&, RenderLayer& promotedChild, bool* isAnimating = nullptr);
+    static bool canHostPromotedChild(RenderLayerModelObject&);
 
 #if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
     void environmentMapStyleDidChange();
@@ -153,6 +170,18 @@ private:
         String warning;
     };
 
+    struct ResolvedAnchor {
+        std::optional<NodeIdentifier> node;
+        String placement;
+    };
+
+    // A promoted child anchored to a <model> of the portal, which the scene places it on.
+    struct PromotedChildAnchor {
+        std::optional<NodeIdentifier> anchorNode;
+        String anchorPlacement;
+        bool anchorWarningIssued { false };
+    };
+
     using AnchorsByName = HashMap<Style::ResolvedScopedName, Vector<NodeIdentifier>>;
 
     void modelDidFinishLoading(ModelPlayer&, NodeIdentifier);
@@ -177,18 +206,25 @@ private:
     Vector<Ref<HTMLModelElement>> hostedModelsInTreeOrder() const;
     void updateAnchors();
     static AnchorsByName collectAnchorNames(const Vector<Ref<HTMLModelElement>>& modelsInTreeOrder);
-    AnchorResolution resolvedAnchorNode(const HTMLModelElement&, const Style::ComputedStyle&, const AnchorsByName&) const;
+    AnchorResolution resolvedAnchorNode(const Element&, const Style::ComputedStyle&, const AnchorsByName&) const;
+    ResolvedAnchor resolvedAnchor(const Element&, const Style::ComputedStyle&, const AnchorsByName&, bool& warningIssued) const;
     void updateAnchorForChild(const HTMLModelElement&, HostedModel&, const Style::ComputedStyle&, const AnchorsByName&);
-    static std::optional<NodeIdentifier> anchorNodeForName(const HTMLModelElement&, const Style::ScopedName&, const AnchorsByName&);
+    void updatePromotedChildAnchors(const AnchorsByName&);
+    static std::optional<NodeIdentifier> anchorNodeForName(const Element&, const Style::ScopedName&, const AnchorsByName&);
     bool anchorChainReaches(NodeIdentifier startNode, NodeIdentifier targetNode, const AnchorsByName&) const;
     void addConsoleWarning(const String&) const;
     void reconfigurePortalLayer();
     void observePortalVisibility();
     void stopObservingPortalVisibility();
     LayoutSize portalContentSize() const;
+    static TransformationMatrix transformForPromotedChild(RenderLayerModelObject&, bool* isAnimating = nullptr);
     void updateGestureHandling();
     void handleGestureEvent(Event&);
     void cancelGesture();
+    void pushPromotedChildrenToPlayer();
+    bool refreshPromotedChildTransforms();
+    void hostedPromotedChildrenDidChange();
+    Vector<NodeIdentifier> promotedChildRoots() const;
 
 #if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
 
@@ -206,6 +242,8 @@ private:
     const WeakPtr<Element, WeakPtrImplWithEventTargetData> m_portalElement;
 
     HashMap<NodeIdentifier, HostedModel> m_hostedModels;
+    Vector<PortalPromotedChild> m_promotedChildren;
+    HashMap<NodeIdentifier, PromotedChildAnchor> m_promotedChildAnchors;
 
     WeakPtr<ModelPlayerProvider> m_modelPlayerProvider;
 #if ENABLE(MODEL_PROCESS)

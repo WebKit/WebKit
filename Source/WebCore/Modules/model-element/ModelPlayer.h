@@ -177,6 +177,16 @@ public:
     virtual void setPortalTransform(const UsedPortalTransform&);
     virtual void setPortalAction(PortalActionKind);
     virtual void setAnchor(NodeIdentifier, std::optional<NodeIdentifier> anchorNode, const String& placement);
+    virtual void setPortalPromotedChildren(const Vector<PortalPromotedChild>&);
+    virtual void portalPromotedChildDidPaint();
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    virtual void portalPromotedChildEventRegionDidChange();
+#endif
+    virtual bool hostsPortalPromotedChild(NodeIdentifier) const;
+    virtual void setPromotedChildAnchor(NodeIdentifier rootNodeID, std::optional<NodeIdentifier> anchorNode, const String& placement);
+    // Maps the border box of a promoted child that the scene places on its anchor to the portal's padding box, as the
+    // scene's orbit and `portal-transform` turn it, before perspective.
+    virtual std::optional<TransformationMatrix> anchoredPromotedChildTransform(NodeIdentifier rootNodeID) const;
 #endif
 
 #if ENABLE(MODEL_ELEMENT_STAGE_MODE)

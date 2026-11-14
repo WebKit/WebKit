@@ -319,6 +319,8 @@
 
 [UnsafeWrapper] std::optional<MachSendRight> {
     [Legacy] MessageParamReply RemoteMediaPlayerProxy.NativeImageForCurrentTime sendRight
+
+    [NotSentFromWebContent] MessageParamReply RemoteImageBufferSet.FrontBufferForExternalRead surface
 }
 
 [UnsafeWrapper] MachSendRight {
@@ -344,6 +346,7 @@
     [NotSentFromWebContent] MessageParamReply RemoteImageBuffer.PrepareForDisplay displayBuffer
 
     [NeedsReview] MessageParam WebProcessProxy.SetTaskNamePort taskNamePort
+    [NeedsReview] MessageParam ModelProcessModelPlayerProxy.SetPortalHostedLayerContents surface
 }
 
 [UnsafeWrapper] Vector<MachSendRight> {

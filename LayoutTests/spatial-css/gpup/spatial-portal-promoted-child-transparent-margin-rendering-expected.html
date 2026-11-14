@@ -1,0 +1,50 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ] -->
+<html>
+<head>
+<style>
+    body {
+        margin: 0;
+    }
+    .portal {
+        spatial: portal;
+        position: relative;
+        width: 500px;
+        height: 300px;
+        background-color: #ddd;
+    }
+    .card {
+        position: absolute;
+        top: 80px;
+        width: 140px;
+        height: 140px;
+        background-color: rgb(60, 140, 70);
+        transform-style: preserve-3d;
+    }
+    .rotated {
+        left: 60px;
+        transform: rotateY(-30deg);
+    }
+    .neighbor {
+        left: 215px;
+        background-color: rgb(70, 70, 140);
+    }
+</style>
+</head>
+<body>
+<div class="portal">
+    <div class="card rotated"></div>
+    <div class="card neighbor"></div>
+</div>
+<script src="../../resources/ui-helper.js"></script>
+<script src="../resources/spatial-portal-utils.js"></script>
+<script>
+window.testRunner?.waitUntilDone();
+
+window.onload = async () => {
+    await waitForHostedPromotedChildren(document.querySelector(".portal"), 2);
+    await waitForPortalSceneToDisplay();
+    window.testRunner?.notifyDone();
+};
+</script>
+</body>
+</html>

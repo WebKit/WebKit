@@ -40,6 +40,12 @@
 #import <wtf/Compiler.h>
 #import <wtf/HashMap.h>
 
+#if ENABLE(SPATIAL_PORTAL)
+#import <WebCore/PortalTransform.h>
+#import <wtf/MachSendRight.h>
+#import <wtf/RunLoop.h>
+#endif
+
 namespace WebKit {
 
 class ModelProcessModelPlayer
@@ -90,6 +96,8 @@ private:
     void didUpdateEntityTransform(WebCore::NodeIdentifier, const WebCore::TransformationMatrix&);
 #if ENABLE(SPATIAL_PORTAL)
     void didUpdatePortalTransform(const WebCore::TransformationMatrix&);
+    void didUpdateDisplayedPortalChildren(Vector<WebCore::NodeIdentifier>&&);
+    void didUpdateAnchoredPortalChildTransforms(Vector<std::pair<WebCore::NodeIdentifier, WebCore::TransformationMatrix>>&&);
 #endif
 #if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
     void didUpdateVolumetricHitSphere(const WebCore::FloatPoint3D& center, float radius);
@@ -145,6 +153,28 @@ private:
     void setPortalTransform(const WebCore::UsedPortalTransform&) final;
     void setPortalAction(WebCore::PortalActionKind) final;
     void setAnchor(WebCore::NodeIdentifier, std::optional<WebCore::NodeIdentifier> anchorNode, const String& placement) final;
+    void setPortalPromotedChildren(const Vector<WebCore::PortalPromotedChild>&) final;
+    void portalPromotedChildDidPaint() final;
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    void portalPromotedChildEventRegionDidChange() final;
+#endif
+    bool hostsPortalPromotedChild(WebCore::NodeIdentifier) const final;
+    void setPromotedChildAnchor(WebCore::NodeIdentifier rootNodeID, std::optional<WebCore::NodeIdentifier> anchorNode, const String& placement) final;
+    std::optional<WebCore::TransformationMatrix> anchoredPromotedChildTransform(WebCore::NodeIdentifier rootNodeID) const final;
+
+    // The model process draws each hosted layer of a promoted child from that layer's front buffer.
+    struct PortalHostedLayerContentsState {
+        bool needsUpdate { true };
+        bool isRequestPending { false };
+    };
+
+    void resolvePortalHostedLayers();
+    void updatePortalHostedLayerContents();
+    void didFetchPortalHostedLayerContents(WebCore::NodeIdentifier, std::optional<MachSendRight>&&);
+    void setDisplayedPortalChildren(Vector<WebCore::NodeIdentifier>&&);
+    bool hasPendingPortalWork() const;
+    void startPortalFrameTimerIfNeeded();
+    void portalFrameTimerFired();
 #endif
     void setStageMode(WebCore::StageModeOperation) final;
     void beginStageModeTransform(const WebCore::TransformationMatrix&) final;
@@ -181,6 +211,14 @@ private:
 #if ENABLE(SPATIAL_PORTAL)
     WebCore::UsedPortalTransform m_portalTransform;
     WebCore::PortalActionKind m_portalAction { WebCore::PortalActionKind::None };
+    Vector<WebCore::PortalPromotedChild> m_portalPromotedChildren;
+    Vector<WebCore::PortalHostedLayer> m_portalHostedLayers;
+    HashMap<WebCore::NodeIdentifier, PortalHostedLayerContentsState> m_portalHostedLayerContents;
+    Vector<WebCore::NodeIdentifier> m_displayedPortalChildren;
+    HashMap<WebCore::NodeIdentifier, WebCore::TransformationMatrix> m_anchoredPortalChildTransforms;
+    RunLoop::Timer m_portalFrameTimer;
+    unsigned m_portalFrameRetries { 0 };
+    bool m_portalHostedLayersNeedResolution { false };
 #endif
     WebCore::StageModeOperation m_stageModeOperation { WebCore::StageModeOperation::None };
     HashMap<WebCore::NodeIdentifier, NodeAnimationState> m_animationStates;

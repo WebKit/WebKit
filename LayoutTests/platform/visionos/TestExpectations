@@ -123,6 +123,8 @@ fast/forms/ios/inputmode-removing-none.html [ Skip ]
 fast/forms/ios/inputmode-change-update-keyboard.html [ Skip ]
 
 model-element/gpup [ Skip ]
+# The GPU process portal scene; visionOS draws portals in the model process, covered by spatial-css/model-process.
+spatial-css/gpup [ Skip ]
 
 # WebXR - Missing modules.
 imported/w3c/web-platform-tests/webxr/anchors [ Skip ]
