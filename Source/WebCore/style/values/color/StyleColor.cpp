@@ -109,11 +109,6 @@ Color::Color(ResolvedColor&& color)
 {
 }
 
-Color::Color(CurrentAccentColor&& color)
-    : value { WTF::move(color) }
-{
-}
-
 Color::Color(CurrentColor&& color)
     : value { WTF::move(color) }
 {
@@ -396,7 +391,9 @@ auto ToStyle<CSS::Color>::operator()(const CSS::Color& value, const BuilderState
     auto resolutionState = ColorResolutionState {
         .document = builderState.document(),
         .style = builderState.style(),
+        .parentStyle = builderState.parentStyleIfExists(),
         .conversionData = builderState.cssToLengthConversionData(),
+        .propertyToResolve = builderState.cssPropertyID(),
         .forVisitedLink = forVisitedLink
     };
     return toStyleColor(value, resolutionState);

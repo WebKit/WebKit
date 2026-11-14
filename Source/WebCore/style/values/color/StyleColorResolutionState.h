@@ -41,7 +41,9 @@ enum class ForVisitedLink : bool;
 struct ColorResolutionState {
     const Ref<const Document> document;
     const CheckedRef<const ComputedStyle> style;
+    const CheckedPtr<const ComputedStyle> parentStyle;
     CSSToLengthConversionData conversionData;
+    CSSPropertyID propertyToResolve;
     ForVisitedLink forVisitedLink;
 
     unsigned nestingLevel = 0;
