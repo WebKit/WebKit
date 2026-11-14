@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -201,10 +201,6 @@ ExceptionOr<void> MessagePort::postMessage(JSC::JSGlobalObject& globalObject, JS
     if (messageData.hasException())
         return messageData.releaseException();
 
-    if (isDetached())
-        return { };
-    ASSERT(scriptExecutionContext());
-
     Vector<TransferredMessagePort> transferredPorts;
     if (!ports.isEmpty()) {
         auto disentangleResult = MessagePort::disentanglePorts(WTF::move(ports));
@@ -213,14 +209,16 @@ ExceptionOr<void> MessagePort::postMessage(JSC::JSGlobalObject& globalObject, JS
         transferredPorts = disentangleResult.releaseReturnValue();
     }
 
-    if (isDoomed) {
-        protect(scriptExecutionContext())->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "MessagePort was posted to itself, causing the communication channel to be lost."_s);
+    if (isDetached() || isDoomed) {
+        if (isDoomed && !isDetached())
+            protect(scriptExecutionContext())->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "MessagePort was posted to itself, causing the communication channel to be lost."_s);
         ensureOnMainThread([transferredPorts = WTF::move(transferredPorts)] {
             for (auto& port : transferredPorts)
                 MessagePortChannelProvider::singleton().messagePortClosed(port.first);
         });
         return { };
     }
+    ASSERT(scriptExecutionContext());
 
     MessageWithMessagePorts message { messageData.releaseReturnValue(), WTF::move(transferredPorts) };
 
