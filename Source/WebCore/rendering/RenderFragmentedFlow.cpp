@@ -787,12 +787,12 @@ LayoutRect RenderFragmentedFlow::fragmentsBoundingBox(const LayoutRect& layerBou
     return result;
 }
 
-LayoutUnit RenderFragmentedFlow::offsetFromLogicalTopOfFirstFragment(const RenderBlock* currentBlock) const
+LayoutUnit RenderFragmentedFlow::offsetFromLogicalTopOfFirstFragment(const RenderBox* box) const
 {
     // As a last resort, take the slow path.
     // Use container() rather than containingBlock() since containingBlock()
     // skips non-RenderBlock ancestors like RenderTableSection.
-    CheckedPtr<const RenderBox> currentBox = currentBlock;
+    CheckedPtr currentBox = box;
     LayoutRect blockRect(0_lu, 0_lu, currentBox->borderBoxWidth(), currentBox->borderBoxHeight());
     auto nextBoxContainer = [](const RenderElement& renderer) -> const RenderElement* {
         auto* container = renderer.container();
