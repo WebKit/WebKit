@@ -33,8 +33,32 @@ from webkitpy.thirdparty.wpt.manifest.sourcefile import SourceFile
 from webkitpy.w3c.common import TEMPLATED_TEST_HEADER
 
 IMPORTED_WPT_DIR = "imported/w3c/web-platform-tests"
-LOCAL_WPT_PATH = "http/wpt"
 
+<<<<<<< HEAD
+=======
+
+def _is_http_test_path(path):
+    """Classify `path` as an HTTP test against Port.HTTP_TEST_ROOTS -- the same
+    ordered list of roots Driver.is_http_test() consults -- via a directory-segment
+    match, so a root matches both at the start of the path and nested under a
+    platform-specific override directory (e.g. "platform/mac/http/tests/...")."""
+    return any(("/" + root + "/") in ("/" + path) for root in Port.HTTP_TEST_ROOTS)
+
+
+def _local_wpt_root_for_path(path):
+    """Return the Port.WEB_PLATFORM_TEST_ROOTS entry `path` lives under, or None.
+
+    Matches on a directory-segment boundary (like _is_http_test_path), so a root
+    matches both at the start of the path and nested under a platform-specific
+    override directory. Most-specific root first, so "sar3/http/wpt" wins over the
+    "http/wpt" substring it contains."""
+    for root in sorted(Port.WEB_PLATFORM_TEST_ROOTS, key=len, reverse=True):
+        if ("/" + root + "/") in ("/" + path):
+            return root
+    return None
+
+
+>>>>>>> bf78f1f34f56 (Serve LayoutTests/sar3/http/wpt Web Platform Tests)
 supported_test_extensions = (
     ".htm",
     ".html",
@@ -451,7 +475,7 @@ class LayoutTestFinder(object):
                 ),
                 is_wpt_test=(
                     IMPORTED_WPT_DIR + "/" in trimmed_path
-                    or LOCAL_WPT_PATH + "/" in trimmed_path
+                    or _local_wpt_root_for_path(trimmed_path) is not None
                 ),
                 is_wpt_crash_test=self.is_wpt_crash_test(trimmed_path),
                 is_wpt_print_reftest=self.is_wpt_print_reftest(trimmed_path),
@@ -623,11 +647,21 @@ class LayoutTestFinder(object):
         if IMPORTED_WPT_DIR + "/" in name:
             wpt_dir = IMPORTED_WPT_DIR
             url_base = "/"
+<<<<<<< HEAD
         elif LOCAL_WPT_PATH + "/" in name:
             wpt_dir = LOCAL_WPT_PATH
             url_base = "/WebKit/"
         else:
             return None
+=======
+        else:
+            root = _local_wpt_root_for_path(name)
+            if root is None:
+                return False
+            base_dir = self.fs.join(self.layout_tests_base_dir, *root.split('/'))
+            # e.g. "http/wpt" -> "/WebKit/", "sar3/http/wpt" -> "/sar3/WebKit/".
+            url_base = "/" + Port.url_prefix_for_web_platform_test_root(root) + "WebKit/"
+>>>>>>> bf78f1f34f56 (Serve LayoutTests/sar3/http/wpt Web Platform Tests)
 
         base_dir = self.fs.join(self.layout_tests_base_dir, *wpt_dir.split('/'))
         return SourceFile(base_dir, name.split(wpt_dir + "/", 1)[1], url_base)
