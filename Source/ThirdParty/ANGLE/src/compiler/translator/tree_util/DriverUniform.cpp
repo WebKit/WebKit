@@ -305,17 +305,20 @@ TIntermTyped *DriverUniform::getDepthRange() const
     return TIntermAggregate::CreateConstructor(*mEmulatedDepthRangeType, &args);
 }
 
-TIntermTyped *DriverUniform::getViewportZScale() const
+TIntermTyped *DriverUniform::getDepthRangeReversed() const
 {
-    ASSERT(mEmulatedDepthRangeType != nullptr);
-
     TIntermTyped *depthRangeRef = createDriverUniformRef(kDepthRange);
     TIntermTyped *nearRef       = new TIntermSwizzle(depthRangeRef, {0});
     TIntermTyped *farRef        = new TIntermSwizzle(depthRangeRef->deepCopy(), {1});
 
-    TIntermTyped *isNegative = new TIntermBinary(EOpLessThan, farRef, nearRef);
+    return new TIntermBinary(EOpLessThan, farRef, nearRef);
+}
 
-    return new TIntermTernary(isNegative, CreateFloatNode(-1, EbpMedium),
+TIntermTyped *DriverUniform::getViewportZScale() const
+{
+    ASSERT(mEmulatedDepthRangeType != nullptr);
+
+    return new TIntermTernary(getDepthRangeReversed(), CreateFloatNode(-1, EbpMedium),
                               CreateFloatNode(1, EbpMedium));
 }
 
