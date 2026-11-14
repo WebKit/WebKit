@@ -535,11 +535,8 @@ SUPPRESS_NODELETE void MessagePort::entangleLocally(MessagePort& port1, MessageP
 
 bool MessagePort::addEventListener(const AtomString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
 {
-    if (eventType == eventNames().messageEvent) {
-        if (listener->isAttribute())
-            start();
+    if (eventType == eventNames().messageEvent)
         m_hasMessageEventListener = true;
-    }
 
     return EventTarget::addEventListener(eventType, WTF::move(listener), options);
 }

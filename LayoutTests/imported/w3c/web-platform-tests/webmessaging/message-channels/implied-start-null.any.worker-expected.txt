@@ -1,0 +1,6 @@
+
+PASS Setting onmessage to null enables the port message queue
+PASS Setting onmessage to a non-callable value enables the port message queue
+PASS Clearing onmessage after setting it does not disable the port message queue
+PASS Setting onmessageerror does not enable the port message queue
+
