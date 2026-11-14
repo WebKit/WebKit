@@ -56,12 +56,11 @@ public:
 
     using GraphicsContext::drawNativeImage;
     void drawNativeImage(const NativeImage&, const FloatRect& destRect, const FloatRect& srcRect, RasterDrawingOptions = { }) final;
+    void drawGlyphsImmediate(const FontBase&, std::span<const GlyphBufferGlyph>, std::span<const GlyphBufferAdvance>, const FloatPoint&, FontSmoothingMode) final;
     void drawRect(const FloatRect&, float borderThickness = 1) final;
     void drawLine(const FloatPoint&, const FloatPoint&) final;
     void drawEllipse(const FloatRect&) final;
 
-    void applyStrokePattern() final;
-    void applyFillPattern() final;
     void drawPath(const Path&) final;
     void fillPath(const Path&) final;
     void strokePath(const Path&) final;
@@ -186,6 +185,9 @@ private:
 #if !HAVE(CGSTYLE_FIXES_DROP_SHADOW_BLUR)
     void paintGradientInCGLayer(Gradient&, const AffineTransform& gradientSpaceTransform, const FloatRect& contentBounds, NOESCAPE const Invocable<void(CGContextRef)> auto& clip);
 #endif
+
+    void applyStrokePattern();
+    void applyFillPattern();
 
     const RetainPtr<CGContextRef> m_cgContext;
     mutable std::optional<ColorSpace> m_colorSpace;

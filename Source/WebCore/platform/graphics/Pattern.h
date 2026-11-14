@@ -94,6 +94,8 @@ public:
     bool repeatX() const { return m_parameters.repeatX; }
     bool repeatY() const { return m_parameters.repeatY; }
 
+    Ref<Pattern> scaled(float scale);
+
 private:
     Pattern(SourceImage&&, const Parameters&);
 
@@ -101,5 +103,20 @@ private:
     Parameters m_parameters;
 };
 
+inline Ref<Pattern> Pattern::scaled(float scale)
+{
+#if !USE(SKIA) && !USE(CAIRO)
+    if (scale == 1.)
+        return Ref { *this };
+    // The scale is prepended: patternSpaceTransform maps the tile into user space, and the caller
+    // has scaled user space by 1 / scale. Appending the scale would compensate the tile size but
+    // leave the tile origin divided by scale.
+    return withPatternSpaceTransform(AffineTransform::makeScale({ scale, scale }) * patternSpaceTransform());
+#else
+    // Skia and Cairo patterns are relative to the CTM, see their createPlatformPattern().
+    UNUSED_PARAM(scale);
+    return Ref { *this };
+#endif
+}
 
 } //namespace

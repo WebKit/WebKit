@@ -93,10 +93,6 @@ using DisplayListDataItem = Variant
     , WebCore::DisplayList::StrokePath
     , WebCore::DisplayList::StrokeRect
     , WebCore::DisplayList::Translate
-#if USE(CG)
-    , WebCore::DisplayList::ApplyFillPattern
-    , WebCore::DisplayList::ApplyStrokePattern
-#endif
     , WebCore::DisplayList::BeginPage
     , WebCore::DisplayList::EndPage
     , WebCore::DisplayList::SetURLForRect
