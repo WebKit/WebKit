@@ -182,7 +182,7 @@ static bool shouldInheritTextDecorationsInEffect(const Style::ComputedStyle& sty
     return true;
 }
 
-NODELETE static bool isScrollableOverflow(Overflow overflow)
+NODELETE static bool isUserScrollableOverflow(Overflow overflow)
 {
     return overflow == Overflow::Scroll || overflow == Overflow::Auto;
 }
@@ -194,7 +194,7 @@ static TouchAction computeUsedTouchAction(const Style::ComputedStyle& style, Tou
     // the hit tested element and its nearest ancestor with the default touch behavior (including both the
     // hit tested element and the element with the default touch behavior)."
 
-    bool hasDefaultTouchBehavior = isScrollableOverflow(style.overflowX()) || isScrollableOverflow(style.overflowY());
+    bool hasDefaultTouchBehavior = isUserScrollableOverflow(style.overflowX()) || isUserScrollableOverflow(style.overflowY());
     if (hasDefaultTouchBehavior)
         usedTouchAction = ComputedStyle::initialTouchAction();
 
@@ -695,18 +695,18 @@ void Adjuster::adjust(Style::ComputedStyle& style) const
         // FIXME: Once we implement pagination controls, overflow-x should default to hidden
         // if overflow-y is set to -webkit-paged-x or -webkit-page-y. For now, we'll let it
         // default to auto so we can at least scroll through the pages.
-        // Values of 'clip' and 'visible' can only be used with 'clip' and 'visible'.
-        // If they aren't, 'clip' and 'visible' is reset.
+        // 'visible' computes to 'auto' if the other axis is scrollable. 'clip' is preserved
+        // when single-axis scroll containers are enabled, making a scroll container that only
+        // scrolls in the other axis; otherwise it computes to 'hidden'.
+        // https://drafts.csswg.org/css-overflow-3/#overflow-control
         if (style.overflowX() == Overflow::Visible)
             style.setOverflowX(Overflow::Auto);
-        else if (style.overflowX() == Overflow::Clip)
+        else if (style.overflowX() == Overflow::Clip && !m_document->settings().cssSingleAxisScrollContainersEnabled())
             style.setOverflowX(Overflow::Hidden);
     } else if (!isOverflowClipOrVisible(style.overflowX())) {
-        // Values of 'clip' and 'visible' can only be used with 'clip' and 'visible'.
-        // If they aren't, 'clip' and 'visible' is reset.
         if (style.overflowY() == Overflow::Visible)
             style.setOverflowY(Overflow::Auto);
-        else if (style.overflowY() == Overflow::Clip)
+        else if (style.overflowY() == Overflow::Clip && !m_document->settings().cssSingleAxisScrollContainersEnabled())
             style.setOverflowY(Overflow::Hidden);
     }
 
@@ -718,7 +718,7 @@ void Adjuster::adjust(Style::ComputedStyle& style) const
 
 #if ENABLE(WEBKIT_OVERFLOW_SCROLLING_CSS_PROPERTY)
     // Touch overflow scrolling creates a stacking context.
-    if (style.usedZIndex().isAuto() && style.overflowScrolling() == WebkitOverflowScrolling::Touch && (isScrollableOverflow(style.overflowX()) || isScrollableOverflow(style.overflowY())))
+    if (style.usedZIndex().isAuto() && style.overflowScrolling() == WebkitOverflowScrolling::Touch && (isUserScrollableOverflow(style.overflowX()) || isUserScrollableOverflow(style.overflowY())))
         style.setUsedZIndex(0);
 #endif
 

@@ -1335,8 +1335,7 @@ bool RenderBlock::establishesIndependentFormattingContextIgnoringDisplayType(con
         return style.display().isBlockType()
             && style.display().doesGenerateBlockContainer()
             && hasNonVisibleOverflow()
-            && style.overflowX() != Overflow::Clip
-            && style.overflowX() != Overflow::Visible;
+            && (isScrollableOverflow(style.overflowX()) || isScrollableOverflow(style.overflowY()));
     };
 
     return style.floating() != Float::None

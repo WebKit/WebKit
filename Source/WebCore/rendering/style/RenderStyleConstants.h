@@ -275,6 +275,13 @@ constexpr bool isNonVisibleOverflow(Overflow overflow)
         || overflow == Overflow::Clip;
 }
 
+// Whether this value makes its axis a scrollable axis of a scroll container.
+// https://drafts.csswg.org/css-overflow-3/#scrollable
+constexpr bool isScrollableOverflow(Overflow overflow)
+{
+    return overflow != Overflow::Visible && overflow != Overflow::Clip;
+}
+
 enum class Clear : uint8_t {
     None,
     Left,

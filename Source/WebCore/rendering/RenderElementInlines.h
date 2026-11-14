@@ -100,9 +100,9 @@ inline bool RenderElement::isBlockBox() const
 
 inline bool RenderElement::hasPotentiallyScrollableOverflow() const
 {
-    // We only need to test one overflow dimension since 'visible' and 'clip' always get accompanied
-    // with 'clip' or 'visible' in the other dimension (see Style::Adjuster::adjust).
-    return hasNonVisibleOverflow() && style().overflowX() != Overflow::Clip && style().overflowX() != Overflow::Visible;
+    // 'visible' is only ever paired with 'visible' or 'clip' (see Style::Adjuster::adjust), but 'clip'
+    // may be paired with a scrollable value in the other axis (a single-axis scroll container).
+    return hasNonVisibleOverflow() && (isScrollableOverflow(style().overflowX()) || isScrollableOverflow(style().overflowY()));
 }
 
 inline bool RenderElement::isBeforeContent() const

@@ -1251,6 +1251,14 @@ CSSSelectorJITCompilerEnabled:
   condition: ENABLE(CSS_SELECTOR_JIT)
   defaultValue: true
 
+CSSSingleAxisScrollContainersEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "CSS single-axis scroll containers"
+  humanReadableDescription: "Allow overflow: clip in the other axis of a scroll container"
+  defaultValue: false
+
 CSSSizeShorthandEnabled:
   type: bool
   status: stable
