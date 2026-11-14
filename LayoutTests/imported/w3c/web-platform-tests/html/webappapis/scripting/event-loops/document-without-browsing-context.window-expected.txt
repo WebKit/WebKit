@@ -1,6 +1,7 @@
 
 PASS Mutation observer watching template contents
 PASS Mutation observer watching a createHTMLDocument() document
+PASS Mutation observer watching a createHTMLDocument() document with a title
 PASS Mutation observer watching a DOMParser document
 PASS Mutation observer watching a new Document()
 PASS Mutation observer watching a Document.parseHTMLUnsafe() document
