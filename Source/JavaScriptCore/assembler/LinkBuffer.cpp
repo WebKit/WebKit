@@ -154,11 +154,11 @@ LinkBuffer::CodeRef<LinkBufferPtrTag> LinkBuffer::finalizeCodeWithDisassemblyImp
 
         constexpr auto prefix = "thunk: "_s;
         std::span<char> buffer;
-        size_t length = stringLength + prefix.length() + 1;
+        size_t length = stringLength + prefix.length();
         auto label = ASCIICString::newUninitialized(length, buffer);
         memcpySpan(buffer, prefix.span8());
-        vsnprintf(buffer.subspan(prefix.length()).data(), stringLength + 1, format, argList);
-        out.printf("%s", buffer.data());
+        vsnprintf(label.mutableSpanIncludingNullTerminator().subspan(prefix.length()).data(), stringLength + 1, format, argList);
+        out.printf("%s", label.data());
 
         registerLabel(result.code().untaggedPtr(), WTF::move(label));
     } else
@@ -305,7 +305,7 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
 
     uint8_t* codeOutData = m_code.dataLocation<uint8_t*>();
 // It is important not to spill this to the stack, so we don't make a local.
-#define shouldCopyDirectlyToJITRegion (!m_shouldPerformBranchCompaction || g_jscConfig.useFastJITPermissions)
+#define shouldCopyDirectlyToJITRegion (g_jscConfig.useFastJITPermissions)
 
     BranchCompactionLinkBuffer outBuffer(m_size, shouldCopyDirectlyToJITRegion ? codeOutData : 0);
     uint8_t* outData = outBuffer.data();
@@ -332,7 +332,7 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
     if (g_jscConfig.useFastJITPermissions)
         threadSelfRestrict<MemoryRestriction::kRwxToRw>();
 #if ENABLE(MPROTECT_RX_TO_RWX)
-    ExecutableAllocator::singleton().startWriting(outData, initialSize);
+    ExecutableAllocator::singleton().startWriting(codeOutData, initialSize);
 #endif
 
     if (m_shouldPerformBranchCompaction) {
@@ -381,9 +381,12 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
             linkRecord.setFrom(&macroAssembler.m_assembler, writePtr);
         }
     } else {
-        if (ASSERT_ENABLED) {
-            for (unsigned i = 0; i < jumpCount; ++i)
-                ASSERT(!MacroAssembler::canCompact(jumpsToLink[i].type()));
+        for (unsigned i = 0; i < jumpCount; ++i) {
+            auto& linkRecord = jumpsToLink[i];
+            ASSERT(!MacroAssembler::canCompact(linkRecord.type()));
+            const intptr_t to = linkRecord.to(&macroAssembler.m_assembler);
+            const uint8_t* target = linkRecord.isThunk() ? std::bit_cast<uint8_t*>(to) : codeOutData + to;
+            MacroAssembler::computeJumpType(linkRecord, codeOutData + linkRecord.from(), target);
         }
     }
 
@@ -455,7 +458,7 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
 #endif
 
 #if ENABLE(MPROTECT_RX_TO_RWX)
-    ExecutableAllocator::singleton().finishWriting(outData, initialSize);
+    ExecutableAllocator::singleton().finishWriting(codeOutData, initialSize);
 #endif
 
     jumpsToLink.clear();

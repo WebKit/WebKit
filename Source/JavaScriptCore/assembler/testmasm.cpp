@@ -27,6 +27,7 @@
 
 #include "CCallHelpers.h"
 #include "CPU.h"
+#include "Disassembler.h"
 #include "FPRInfo.h"
 #include "GPRInfo.h"
 #include "InitializeThreading.h"
@@ -42,6 +43,7 @@
 #include <wtf/Lock.h>
 #include <wtf/NumberOfCores.h>
 #include <wtf/PtrTag.h>
+#include <wtf/StringPrintStream.h>
 #include <wtf/Threading.h>
 #include <wtf/WTFProcess.h>
 #include <wtf/WeakRandom.h>
@@ -9862,6 +9864,94 @@ static void testARM64ZeroRegisterEncoding()
     CHECK_ARM64_ENCODING(0x4e040fe0U, dupGeneral(q0, zr, SIMDLane::i32x4));
 }
 
+#if CPU(ARM64E)
+template<typename Functor>
+static uint32_t encodeARM64EInstruction(const Functor& functor)
+{
+    ARM64EAssembler assembler;
+    functor(assembler);
+    CHECK_EQ(assembler.buffer().codeSize(), sizeof(uint32_t));
+    AssemblerData data = assembler.buffer().releaseAssemblerData();
+#if ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
+    AssemblerHashes hashes = assembler.buffer().releaseAssemblerHashes();
+#endif
+    return *reinterpret_cast<const uint32_t*>(data.buffer());
+}
+
+#define CHECK_ARM64E_ENCODING(expected, ...) \
+    CHECK_EQ(encodeARM64EInstruction([](ARM64EAssembler& assembler) { \
+        assembler.__VA_ARGS__; \
+    }), expected)
+
+static void testARM64EPACEncoding()
+{
+    using namespace ARM64Registers;
+    CHECK_ARM64E_ENCODING(0xdac1001fU, pacia(zr, x0));
+    CHECK_ARM64E_ENCODING(0xdac103e2U, pacia(x2, sp));
+    CHECK_ARM64E_ENCODING(0xdac107ffU, pacib(zr, sp));
+    CHECK_ARM64E_ENCODING(0xdac10bffU, pacda(zr, sp));
+    CHECK_ARM64E_ENCODING(0xdac10fffU, pacdb(zr, sp));
+    CHECK_ARM64E_ENCODING(0xdac113ffU, autia(zr, sp));
+    CHECK_ARM64E_ENCODING(0xdac117ffU, autib(zr, sp));
+    CHECK_ARM64E_ENCODING(0xdac11bffU, autda(zr, sp));
+    CHECK_ARM64E_ENCODING(0xdac11fffU, autdb(zr, sp));
+    CHECK_ARM64E_ENCODING(0xdac123ffU, paciza(zr));
+    CHECK_ARM64E_ENCODING(0xdac127ffU, pacizb(zr));
+    CHECK_ARM64E_ENCODING(0xdac12bffU, pacdza(zr));
+    CHECK_ARM64E_ENCODING(0xdac12fffU, pacdzb(zr));
+    CHECK_ARM64E_ENCODING(0xdac133ffU, autiza(zr));
+    CHECK_ARM64E_ENCODING(0xdac137ffU, autizb(zr));
+    CHECK_ARM64E_ENCODING(0xdac13bffU, autdza(zr));
+    CHECK_ARM64E_ENCODING(0xdac13fffU, autdzb(zr));
+    CHECK_ARM64E_ENCODING(0xdac143ffU, xpaci(zr));
+    CHECK_ARM64E_ENCODING(0xdac147ffU, xpacd(zr));
+    CHECK_ARM64E_ENCODING(0x9ac2303fU, pacga(zr, x1, x2));
+    CHECK_ARM64E_ENCODING(0x9ac233e0U, pacga(x0, zr, x2));
+    CHECK_ARM64E_ENCODING(0x9adf3020U, pacga(x0, x1, sp));
+    CHECK_ARM64E_ENCODING(0xd71f0be0U, braa(zr, x0));
+    CHECK_ARM64E_ENCODING(0xd71f085fU, braa(x2, sp));
+    CHECK_ARM64E_ENCODING(0xd71f0fffU, brab(zr, sp));
+    CHECK_ARM64E_ENCODING(0xd73f0bffU, blraa(zr, sp));
+    CHECK_ARM64E_ENCODING(0xd73f0fffU, blrab(zr, sp));
+    CHECK_ARM64E_ENCODING(0xd61f0bffU, braaz(zr));
+    CHECK_ARM64E_ENCODING(0xd61f0fffU, brabz(zr));
+    CHECK_ARM64E_ENCODING(0xd63f0bffU, blraaz(zr));
+    CHECK_ARM64E_ENCODING(0xd63f0fffU, blrabz(zr));
+    CHECK_ARM64E_ENCODING(0xd65f0bffU, retaa());
+    CHECK_ARM64E_ENCODING(0xd65f0fffU, retab());
+    CHECK_ARM64E_ENCODING(0xd69f0bffU, eretaa());
+    CHECK_ARM64E_ENCODING(0xd69f0fffU, eretab());
+}
+#endif
+
+static void testLinkBufferWithoutBranchCompaction()
+{
+    auto backing = compile([](CCallHelpers& jit) {
+        for (unsigned i = 0; i < 64; ++i)
+            jit.nop();
+        jit.ret();
+    });
+
+    CCallHelpers jit;
+    emitFunctionPrologue(jit);
+    auto branch = jit.patchableBranch32(CCallHelpers::Equal, GPRInfo::argumentGPR0, CCallHelpers::TrustedImm32(42));
+    jit.move(CCallHelpers::TrustedImm32(10), GPRInfo::returnValueGPR);
+    auto done = jit.jump();
+    CCallHelpers::Label taken = jit.label();
+    jit.move(CCallHelpers::TrustedImm32(99), GPRInfo::returnValueGPR);
+    done.link(&jit);
+    emitFunctionEpilogue(jit);
+    jit.ret();
+    branch.m_jump.linkTo(taken, &jit);
+
+    LinkBuffer rewriteBuffer(jit, backing.code().retagged<NoPtrTag>(), backing.size(), LinkBuffer::Profile::InlineCache, JITCompilationMustSucceed, false);
+    CHECK_EQ(rewriteBuffer.isValid(), true);
+    FINALIZE_CODE(rewriteBuffer, NoPtrTag, nullptr, "testmasm non-compacting rewrite");
+
+    CHECK_EQ(invoke<int>(backing, 42), 99);
+    CHECK_EQ(invoke<int>(backing, 7), 10);
+}
+
 static void testARM64FmovTopEncoding()
 {
     CHECK_ARM64_ENCODING(0x9eaf00c5U, fmov_top(ARM64Registers::q5, ARM64Registers::x6));
@@ -9903,8 +9993,16 @@ static void testARM64SIMDStackPointerBaseEncoding()
 class TestableARM64Assembler : public ARM64Assembler {
 public:
     using ARM64Assembler::disassembleAddSubtractImmediate;
+    using ARM64Assembler::disassembleCompareAndBranchImmediate;
+    using ARM64Assembler::disassembleConditionalBranchImmediate;
+    using ARM64Assembler::disassembleLoadStoreRegisterUnsignedImmediate;
+    using ARM64Assembler::disassembleMoveWideImediate;
+    using ARM64Assembler::disassembleTestAndBranchImmediate;
     using ARM64Assembler::Datasize;
     using ARM64Assembler::AddOp;
+    using ARM64Assembler::MemOpSize;
+    using ARM64Assembler::MemOp;
+    using ARM64Assembler::MoveWideOp;
 };
 
 // Verifies that disassembleAddSubtractImmediate recovers every field of an ADD/SUB (immediate)
@@ -9952,6 +10050,190 @@ static void testARM64AddSubtractImmediateDecoding()
         a.cmp<64>(x1, UInt12(0x42));
     }), 1, 1, 1, 0, 0x42, x1, zr);
 }
+
+static void testARM64AssemblerEncodingAndDecoding()
+{
+    using namespace ARM64Registers;
+
+    CHECK_EQ(ARM64Assembler::gprName(zr), "zr"_s);
+
+    CHECK_ARM64_ENCODING(0x1ee70000U, fmov<16>(q0, x0));
+    CHECK_ARM64_ENCODING(0x1ee60000U, fmov<16>(x0, q0));
+    CHECK_ARM64_ENCODING(0x1ee70263U, fmov<16>(q3, x19));
+    CHECK_ARM64_ENCODING(0x1ee60147U, fmov<16>(x7, q10));
+    CHECK_ARM64_ENCODING(0x1ee703e0U, fmov<16>(q0, zr));
+    CHECK_ARM64_ENCODING(0x1ee6001fU, fmov<16>(zr, q0));
+
+    CHECK_ARM64_ENCODING(0x90400000U, adrp(x0, 0x80000000LL));
+    CHECK_ARM64_ENCODING(0xf07fffe0U, adrp(x0, 0xfffff000LL));
+    CHECK_ARM64_ENCODING(0x90800000U, adrp(x0, -0x100000000LL));
+
+    CHECK_ARM64_ENCODING(0x8b2063e0U, add<64>(x0, x0, sp));
+    CHECK_ARM64_ENCODING(0xab2063e1U, add<64, ARM64Assembler::S>(x1, x0, sp));
+    CHECK_ARM64_ENCODING(0xcb206bffU, sub<64>(sp, sp, x0, ARM64Assembler::LSL, 2));
+    CHECK_ARM64_ENCODING(0xeb206bffU, cmp<64>(sp, x0, ARM64Assembler::LSL, 2));
+    CHECK_ARM64_ENCODING(0x0b2043ffU, add<32>(sp, sp, x0));
+    CHECK_ARM64_ENCODING(0x4b2043ffU, sub<32>(sp, sp, x0));
+    CHECK_ARM64_ENCODING(0x2b2043ffU, cmn<32>(sp, x0));
+    CHECK_ARM64_ENCODING(0x6b2043ffU, cmp<32>(sp, x0));
+
+    CHECK_ARM64_ENCODING(0xad410440U, ldp<128>(q0, q1, x2, 32));
+    CHECK_ARM64_ENCODING(0xadff0440U, ldp<128>(q0, q1, x2, PairPreIndex(-32)));
+    CHECK_ARM64_ENCODING(0xacc10440U, ldp<128>(q0, q1, x2, PairPostIndex(32)));
+    CHECK_ARM64_ENCODING(0xac408440U, ldnp<128>(q0, q1, x2, 16));
+    CHECK_ARM64_ENCODING(0xad010440U, stp<128>(q0, q1, x2, 32));
+    CHECK_ARM64_ENCODING(0xadbf0440U, stp<128>(q0, q1, x2, PairPreIndex(-32)));
+    CHECK_ARM64_ENCODING(0xac810440U, stp<128>(q0, q1, x2, PairPostIndex(32)));
+    CHECK_ARM64_ENCODING(0xac008440U, stnp<128>(q0, q1, x2, 16));
+    CHECK_EQ(ARM64Assembler::isValidLDPFPImm<128>(1008), true);
+    CHECK_EQ(ARM64Assembler::isValidLDPFPImm<128>(1024), false);
+
+    CHECK_ARM64_ENCODING(0xc8fffc41U, casal<64>(zr, x1, x2));
+    CHECK_ARM64_ENCODING(0x88fffc41U, casal<32>(zr, x1, x2));
+
+#if ENABLE(FAST_TLS_JIT)
+    CHECK_ARM64_ENCODING(0xd53bd07fU, mrs_TPIDRRO_EL0(zr));
+#endif
+
+    {
+        uint32_t cbzZr = encodeARM64Instruction([](ARM64Assembler& a) {
+            a.cbz<64>(zr);
+        });
+        TestableARM64Assembler::Datasize sf;
+        bool op;
+        int imm19;
+        MacroAssembler::RegisterID rt;
+        CHECK_EQ(TestableARM64Assembler::disassembleCompareAndBranchImmediate(&cbzZr, sf, op, imm19, rt), true);
+        CHECK_EQ(rt, zr);
+
+        uint32_t tbzZr = encodeARM64Instruction([](ARM64Assembler& a) {
+            a.tbz(zr, 7, 0);
+        });
+        unsigned bitNumber;
+        int imm14;
+        CHECK_EQ(TestableARM64Assembler::disassembleTestAndBranchImmediate(&tbzZr, op, bitNumber, imm14, rt), true);
+        CHECK_EQ(rt, zr);
+        CHECK_EQ(bitNumber, 7U);
+
+        uint32_t ldrQ31 = encodeARM64Instruction([](ARM64Assembler& a) {
+            a.ldr<128>(q31, x0, 0U);
+        });
+        TestableARM64Assembler::MemOpSize memSize;
+        bool isVector;
+        TestableARM64Assembler::MemOp memOp;
+        int imm12;
+        MacroAssembler::RegisterID rn;
+        CHECK_EQ(TestableARM64Assembler::disassembleLoadStoreRegisterUnsignedImmediate(&ldrQ31, memSize, isVector, memOp, imm12, rn, rt), true);
+        CHECK_EQ(isVector, true);
+        CHECK_EQ(static_cast<int>(rt), static_cast<int>(q31));
+
+        uint32_t addgInsn = 0x91800000U;
+        TestableARM64Assembler::AddOp addOp;
+        ARM64Assembler::SetFlags setFlags;
+        int shift;
+        CHECK_EQ(TestableARM64Assembler::disassembleAddSubtractImmediate(&addgInsn, sf, addOp, setFlags, shift, imm12, rn, rt), false);
+
+        uint32_t unallocatedMoveWide = 0x32800000U;
+        TestableARM64Assembler::MoveWideOp moveOp;
+        int hw;
+        uint16_t imm16;
+        CHECK_EQ(TestableARM64Assembler::disassembleMoveWideImediate(&unallocatedMoveWide, sf, moveOp, hw, imm16, rt), false);
+
+        uint32_t bcEqInsn = 0x54000010U;
+        unsigned op01;
+        ARM64Assembler::Condition cond;
+        CHECK_EQ(TestableARM64Assembler::disassembleConditionalBranchImmediate(&bcEqInsn, op01, imm19, cond), false);
+    }
+
+    {
+        CCallHelpers jit;
+        emitFunctionPrologue(jit);
+        auto cbzPatchable = jit.patchableBranch32(CCallHelpers::Equal, zr, CCallHelpers::TrustedImm32(0));
+        CCallHelpers::Label afterCbz = jit.label();
+        auto tbzPatchable = jit.patchableBranchTest32(CCallHelpers::Zero, zr, CCallHelpers::TrustedImm32(1));
+        jit.move(CCallHelpers::TrustedImm32(1), GPRInfo::returnValueGPR);
+        auto done1 = jit.jump();
+        CCallHelpers::Label target1 = jit.label();
+        jit.move(CCallHelpers::TrustedImm32(2), GPRInfo::returnValueGPR);
+        auto done2 = jit.jump();
+        CCallHelpers::Label target2 = jit.label();
+        jit.move(CCallHelpers::TrustedImm32(3), GPRInfo::returnValueGPR);
+        done1.link(&jit);
+        done2.link(&jit);
+        emitFunctionEpilogue(jit);
+        jit.ret();
+        cbzPatchable.m_jump.linkTo(target1, &jit);
+        tbzPatchable.m_jump.linkTo(target2, &jit);
+
+        LinkBuffer linkBuffer(jit, nullptr);
+        CodeLocationJump<JSInternalPtrTag> cbzLoc(linkBuffer.locationOf<JSInternalPtrTag>(cbzPatchable));
+        CodeLocationJump<JSInternalPtrTag> tbzLoc(linkBuffer.locationOf<JSInternalPtrTag>(tbzPatchable));
+        auto afterCbzLoc = linkBuffer.locationOf<JSInternalPtrTag>(afterCbz);
+        auto target1Loc = linkBuffer.locationOf<JSInternalPtrTag>(target1);
+        auto target2Loc = linkBuffer.locationOf<JSInternalPtrTag>(target2);
+        auto code = FINALIZE_CODE(linkBuffer, JSEntryPtrTag, nullptr, "testmasm zr relink");
+
+        CHECK_EQ(invoke<int>(code), 2);
+        CCallHelpers::repatchJump(cbzLoc, target2Loc);
+        CHECK_EQ(invoke<int>(code), 3);
+        CCallHelpers::repatchJump(tbzLoc, target1Loc);
+        CCallHelpers::repatchJump(cbzLoc, afterCbzLoc);
+        CHECK_EQ(invoke<int>(code), 2);
+    }
+}
+
+#if ENABLE(ARM64_DISASSEMBLER)
+static void testARM64Disassembler()
+{
+    using namespace ARM64Registers;
+
+    {
+        uint32_t insns[2] = { 0xd503201fU, 0xd65f03c0U };
+        for (size_t size : { static_cast<size_t>(0), static_cast<size_t>(1), static_cast<size_t>(2), static_cast<size_t>(3), static_cast<size_t>(5), static_cast<size_t>(7) }) {
+            StringPrintStream out;
+            CHECK_EQ(tryToDisassemble(CodePtr<DisassemblyPtrTag>::fromTaggedPtr(tagCodePtr<DisassemblyPtrTag>(insns)), size, "", out), true);
+            String text = out.toString();
+            if (size < 4)
+                CHECK_EQ(text.isEmpty(), true);
+            else
+                CHECK_EQ(text.contains("nop"_s), true);
+        }
+    }
+
+    {
+        alignas(4096) uint32_t pageBuffer[2048] = { };
+        pageBuffer[11] = encodeARM64Instruction([](ARM64Assembler& a) {
+            a.adrp(x0, 4096);
+        });
+        pageBuffer[12] = encodeARM64Instruction([](ARM64Assembler& a) {
+            a.adr(x1, 6);
+        });
+        pageBuffer[13] = encodeARM64Instruction([](ARM64Assembler& a) {
+            a.movn<32>(x16, static_cast<uint16_t>(~0x1234U), 0);
+        });
+        pageBuffer[14] = encodeARM64Instruction([](ARM64Assembler& a) {
+            a.movz<32>(x17, 0x8001U, 16);
+        });
+        pageBuffer[15] = 0xd503213fU;
+
+        StringPrintStream out;
+        CHECK_EQ(tryToDisassemble(
+            CodePtr<DisassemblyPtrTag>::fromTaggedPtr(tagCodePtr<DisassemblyPtrTag>(&pageBuffer[11])),
+            5 * sizeof(uint32_t),
+            &pageBuffer[0],
+            &pageBuffer[2048],
+            "",
+            out), true);
+        String text = out.toString();
+        CHECK_EQ(text.contains("-> <4096>"_s), true);
+        CHECK_EQ(text.contains("-> <54>"_s), true);
+        CHECK_EQ(text.contains("-> 0xffff1234"_s), true);
+        CHECK_EQ(text.contains("0xffffffffffff1234"_s), false);
+        CHECK_EQ(text.contains("-> 0x80010000"_s), true);
+        CHECK_EQ(text.contains("0xffffffff80010000"_s), false);
+    }
+}
+#endif
 
 // Test half-precision FMOV encoding (cmode=0b1110, op=1)
 // Verifies that 16-bit, 32-bit, and 64-bit FMOV use correct encodings
@@ -10479,6 +10761,34 @@ static void testGPRInfoConsistency()
     }
 }
 
+static void testAssemblerCommonAndCodeRef()
+{
+    static_assert(isInt<1>(static_cast<int8_t>(0)));
+    static_assert(isInt<1>(static_cast<int8_t>(-1)));
+    static_assert(!isInt<1>(static_cast<int8_t>(1)));
+    static_assert(!isInt<1>(static_cast<int8_t>(127)));
+    static_assert(isInt<9>(static_cast<int16_t>(255)));
+    static_assert(isInt<9>(static_cast<int16_t>(-256)));
+    static_assert(!isInt<9>(static_cast<int16_t>(256)));
+    static_assert(!isInt<9>(static_cast<int16_t>(-257)));
+    static_assert(!isInt<9>(static_cast<int16_t>(1000)));
+    static_assert(isUInt12(static_cast<int8_t>(0)));
+    static_assert(isUInt12(static_cast<int8_t>(127)));
+    static_assert(!isUInt12(static_cast<int8_t>(-1)));
+    static_assert(!isUInt12(static_cast<int8_t>(-128)));
+
+    MacroAssemblerCodeRef<JSEntryPtrTag> emptyCodeRef;
+    MacroAssemblerCodeRef<JITThunkPtrTag> retaggedEmpty = emptyCodeRef.retagged<JITThunkPtrTag>();
+    CHECK_EQ(static_cast<bool>(retaggedEmpty), false);
+    MacroAssemblerCodeRef<JSEntrySlowPathPtrTag> assignedEmpty;
+    assignedEmpty = emptyCodeRef;
+    CHECK_EQ(static_cast<bool>(assignedEmpty), false);
+
+    const CodeLocationLabel<JSEntryPtrTag> emptyLabel;
+    CodeLocationJump<JSEntryPtrTag> convertedJump = emptyLabel;
+    CHECK_EQ(static_cast<bool>(convertedJump), false);
+}
+
 #define RUN(test) do {                          \
         if (!shouldRun(#test))                  \
             break;                              \
@@ -10865,10 +11175,19 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     RUN(testARM64SIMDShiftAndTableEncoding());
     RUN(testARM64SIMDStackPointerBaseEncoding());
     RUN(testARM64AddSubtractImmediateDecoding());
+#if CPU(ARM64E)
+    RUN(testARM64EPACEncoding());
+#endif
+    RUN(testLinkBufferWithoutBranchCompaction());
+    RUN(testARM64AssemblerEncodingAndDecoding());
+#if ENABLE(ARM64_DISASSEMBLER)
+    RUN(testARM64Disassembler());
+#endif
 #endif
 
     RUN(testProbeStackSetFlushesStraddlingWrite());
     RUN(testGPRInfoConsistency());
+    RUN(testAssemblerCommonAndCodeRef());
 
     if (tasks.isEmpty())
         usage();

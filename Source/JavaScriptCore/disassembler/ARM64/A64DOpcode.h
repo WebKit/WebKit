@@ -51,7 +51,7 @@ private:
     void bufferPrintf(const char* format, ...) WTF_ATTRIBUTE_PRINTF(2, 3);
 
     // Append PC-relative target address with JSC-specific metadata
-    void appendPCRelativeOffset(uint32_t* pc, int32_t immediate);
+    void appendPCRelativeOffset(uint32_t* pc, int64_t byteOffset);
 
     // MoveWide constant tracking across instruction sequences
     NODELETE void trackMoveWideConstant(int category, int64_t immediate, uint8_t shiftAmount, uint8_t destRegister, uint8_t is64Bit);

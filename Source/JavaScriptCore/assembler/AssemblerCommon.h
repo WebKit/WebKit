@@ -57,9 +57,11 @@ ALWAYS_INLINE constexpr RepatchingInfo noFlush(RepatchingInfo i)
 template<size_t bits, typename Type>
 ALWAYS_INLINE constexpr bool isInt(Type t)
 {
+    static_assert(std::is_signed_v<Type>);
     constexpr size_t shift = sizeof(Type) * CHAR_BIT - bits;
     static_assert(sizeof(Type) * CHAR_BIT > shift, "shift is larger than the size of the value");
-    return ((t << shift) >> shift) == t;
+    using UnsignedType = std::make_unsigned_t<Type>;
+    return (static_cast<Type>(static_cast<UnsignedType>(t) << shift) >> shift) == t;
 }
 
 ALWAYS_INLINE bool isInt9(int32_t value)
@@ -68,9 +70,10 @@ ALWAYS_INLINE bool isInt9(int32_t value)
 }
 
 template<typename Type>
-ALWAYS_INLINE bool isUInt12(Type value)
+ALWAYS_INLINE constexpr bool isUInt12(Type value)
 {
-    return !(value & ~static_cast<Type>(0xfff));
+    using Promoted = std::common_type_t<Type, int>;
+    return !(static_cast<Promoted>(value) & ~static_cast<Promoted>(0xfff));
 }
 
 template<int datasize>
@@ -178,6 +181,7 @@ public:
 
     bool is64bit() const
     {
+        ASSERT(isValid());
         return m_value & (1 << 12);
     }
 

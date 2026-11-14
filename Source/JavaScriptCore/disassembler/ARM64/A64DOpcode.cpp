@@ -70,13 +70,9 @@ const char* A64DOpcode::disassemble(uint32_t* currentPC)
     case ARM64_CATEGORY_BRANCH_CONDITIONAL:
     case ARM64_CATEGORY_BRANCH_COMPARE:
     case ARM64_CATEGORY_BRANCH_TEST:
-        // For branches, immediate is the byte offset from PC
-        appendPCRelativeOffset(currentPC, static_cast<int32_t>(info.immediate / 4));
-        break;
-
     case ARM64_CATEGORY_ADR:
     case ARM64_CATEGORY_ADRP:
-        appendPCRelativeOffset(currentPC, static_cast<int32_t>(info.immediate / 4));
+        appendPCRelativeOffset(currentPC, info.immediate);
         break;
 
     case ARM64_CATEGORY_MOVZ:
@@ -111,34 +107,29 @@ void A64DOpcode::bufferPrintf(const char* format, ...)
     va_end(argList);
 }
 
-void A64DOpcode::appendPCRelativeOffset(uint32_t* pc, int32_t immediate)
+void A64DOpcode::appendPCRelativeOffset(uint32_t* pc, int64_t byteOffset)
 {
-    uint32_t* targetPC = pc + immediate;
-    constexpr size_t localBufferSize = 101;
-    char buffer[localBufferSize];
-    const char* targetInfo = buffer;
+    uint8_t* targetPC = reinterpret_cast<uint8_t*>(pc) + byteOffset;
 
     if (!m_startPC)
         return;
 
-    if (targetPC >= m_startPC && targetPC < m_endPC)
-        snprintf(buffer, localBufferSize - 1, " -> <%u>", static_cast<unsigned>((targetPC - m_startPC) * sizeof(uint32_t)));
+    uint8_t* startBytes = reinterpret_cast<uint8_t*>(m_startPC);
+    uint8_t* endBytes = reinterpret_cast<uint8_t*>(m_endPC);
+    if (targetPC >= startBytes && targetPC < endBytes)
+        bufferPrintf(" -> <%u>", static_cast<unsigned>(targetPC - startBytes));
     else if (const char* label = labelFor(targetPC))
-        snprintf(buffer, localBufferSize - 1, " -> %s", label);
+        bufferPrintf(" -> %s", label);
     else if (isJITPC(targetPC))
-        targetInfo = " -> JIT PC";
+        bufferPrintf(" -> JIT PC");
     else if (LLInt::isLLIntPC(targetPC))
-        targetInfo = " -> LLInt PC";
+        bufferPrintf(" -> LLInt PC");
     else
-        targetInfo = " -> <unknown>";
-
-    bufferPrintf("%s", targetInfo);
+        bufferPrintf(" -> <unknown>");
 }
 
 void A64DOpcode::trackMoveWideConstant(int category, int64_t immediate, uint8_t shiftAmount, uint8_t destRegister, uint8_t is64Bit)
 {
-    UNUSED_PARAM(is64Bit);
-
     switch (category) {
     case ARM64_CATEGORY_MOVZ:
     case ARM64_CATEGORY_MOV: {
@@ -168,6 +159,9 @@ void A64DOpcode::trackMoveWideConstant(int category, int64_t immediate, uint8_t 
         RELEASE_ASSERT_NOT_REACHED();
         break;
     }
+
+    if (!is64Bit && m_moveWideDestReg != 255)
+        m_builtConstant &= 0xFFFFFFFFULL;
 }
 
 void A64DOpcode::maybeAnnotateBuiltConstant()

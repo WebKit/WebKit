@@ -101,13 +101,15 @@ void initializeWithOptionsCustomization(NOESCAPE const ScopedLambda<void()>& opt
             JITOperationList::initialize();
             ExecutableAllocator::initialize();
             VM::computeCanUseJIT();
+#if CPU(ARM64E)
+            isARM64E_FPAC();
+#endif
             if (!g_jscConfig.vm.canUseJIT) {
                 Options::useJIT() = false;
                 Options::notifyOptionsChanged();
             } else {
 #if CPU(ARM64E) && ENABLE(JIT)
                 g_jscConfig.arm64eHashPins.initializeAtStartup();
-                isARM64E_FPAC(); // Call this to initialize g_jscConfig.canUseFPAC.
 #endif
             }
             StructureAlignedMemoryAllocator::initializeStructureAddressSpace();
