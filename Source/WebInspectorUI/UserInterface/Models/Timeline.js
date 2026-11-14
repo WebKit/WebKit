@@ -134,6 +134,19 @@ WI.Timeline = class Timeline extends WI.Object
         return this._records.slice(lowerIndex, upperIndex);
     }
 
+    mainThreadRecordsInTimeRange(startTime, endTime, options, recording)
+    {
+        // The CPU graph shows only the processes that send CPU samples, so only their records are main thread
+        // work. Without per-process data, such as an imported recording, or for a target whose process is
+        // unknown, every record keeps counting.
+        let processRecords = recording?.timelineForRecordType(WI.TimelineRecord.Type.CPU)?.processRecords;
+        return this.recordsInTimeRange(startTime, endTime, options).filter((record) => {
+            if (!record.target || !record.target.processIdentifier || !processRecords?.size)
+                return true;
+            return processRecords.has(WI.ProcessSampleTimeline.processKeyForTarget(record.target));
+        });
+    }
+
     // Private
 
     _updateTimesIfNeeded(record)
