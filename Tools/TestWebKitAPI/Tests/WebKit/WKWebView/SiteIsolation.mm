@@ -23666,7 +23666,7 @@ TEST(SiteIsolation, PrintProcessDrawsDuringDOMPrint)
     EXPECT_EQ(counts.second, drawnAfterPrintProcessFailed);
 }
 
-TEST(SiteIsolation, GPUProcessDrawsWhatPrintProcessCannot)
+TEST(SiteIsolation, PrintProcessDrawsImages)
 {
     HTTPServer server({
         { "/mainframe"_s, { "<body>Mainframe<iframe src='https://b.com/subframe'></iframe></body>"_s } },
@@ -23680,6 +23680,35 @@ TEST(SiteIsolation, GPUProcessDrawsWhatPrintProcessCannot)
     expectPDFText(data.get(), @[ @"Mainframe", @"Subframe" ]);
 
     auto counts = printProcessDrawingCounts(webView.get());
+    EXPECT_EQ(counts.first, drawnInPrintProcess + 1);
+    EXPECT_EQ(counts.second, drawnAfterPrintProcessFailed);
+}
+
+TEST(SiteIsolation, GPUProcessDrawsWhenPrintProcessDoesNotReply)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body>Mainframe<iframe src='https://b.com/subframe'></iframe></body>"_s } },
+        { "/subframe"_s, { "<body>Subframe</body>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = loadPageForPrintProcess(server);
+
+    computePagesForPrinting(webView.get());
+    auto printProcess = printProcessIdentifier(webView.get());
+    ASSERT_NE(printProcess, 0);
+
+    auto [drawnInPrintProcess, drawnAfterPrintProcessFailed] = printProcessDrawingCounts(webView.get());
+    kill(printProcess, SIGSTOP);
+    RetainPtr data = createPDF(webView.get());
+    kill(printProcess, SIGCONT);
+    ASSERT_NOT_NULL(data.get());
+    expectPDFText(data.get(), @[ @"Mainframe", @"Subframe" ]);
+
+    auto counts = printProcessDrawingCounts(webView.get());
+    EXPECT_EQ(counts.first, drawnInPrintProcess);
+    EXPECT_EQ(counts.second, drawnAfterPrintProcessFailed + 1);
+
+    Util::runFor(100_ms);
+    counts = printProcessDrawingCounts(webView.get());
     EXPECT_EQ(counts.first, drawnInPrintProcess);
     EXPECT_EQ(counts.second, drawnAfterPrintProcessFailed + 1);
 }
