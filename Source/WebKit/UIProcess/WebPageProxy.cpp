@@ -9831,7 +9831,21 @@ void WebPageProxy::didDestroyNavigationShared(Ref<WebProcessProxy>&& process, We
 
 void WebPageProxy::didStartProvisionalLoadForFrame(IPC::Connection& connection, FrameIdentifier frameID, FrameInfoData&& frameInfo, ResourceRequest&& request, std::optional<WebCore::NavigationIdentifier> navigationID, URL&& url, URL&& unreachableURL, const UserData& userData, WallTime timestamp)
 {
+    if (auto didDelay = std::exchange(m_didDelayDidStartProvisionalLoadForTesting, nullptr)) {
+        m_delayedDidStartProvisionalLoadForTesting = [this, protectedThis = Ref { *this }, process = WebProcessProxy::fromConnection(connection), frameID, frameInfo = WTF::move(frameInfo), request = WTF::move(request), navigationID, url = WTF::move(url), unreachableURL = WTF::move(unreachableURL), userData, timestamp] mutable {
+            didStartProvisionalLoadForFrameShared(WTF::move(process), frameID, WTF::move(frameInfo), WTF::move(request), navigationID, WTF::move(url), WTF::move(unreachableURL), userData, timestamp);
+        };
+        didDelay();
+        return;
+    }
+
     didStartProvisionalLoadForFrameShared(WebProcessProxy::fromConnection(connection), frameID, WTF::move(frameInfo), WTF::move(request), navigationID, WTF::move(url), WTF::move(unreachableURL), userData, timestamp);
+}
+
+void WebPageProxy::resumeDelayedDidStartProvisionalLoadForTesting()
+{
+    if (auto delayedDidStartProvisionalLoad = std::exchange(m_delayedDidStartProvisionalLoadForTesting, nullptr))
+        delayedDidStartProvisionalLoad();
 }
 
 static bool shouldPrewarmWebProcessOnProvisionalLoad()
@@ -9873,6 +9887,15 @@ void WebPageProxy::didStartProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& 
     MESSAGE_CHECK_URL(process, url);
     MESSAGE_CHECK_URL(process, unreachableURL);
 
+    // FIXME: We should message check that navigationID is not zero here, but it's currently zero for some navigations through the back/forward cache.
+    RefPtr<API::Navigation> navigation;
+    if (frame->isMainFrame() && navigationID)
+        navigation = m_navigationState->navigation(*navigationID);
+
+    // The navigation has since moved to another process, see performProcessSwapForNavigationResponse().
+    if (navigation && navigation->processID() != process->coreProcessIdentifier())
+        return;
+
     if (frame->isMainFrame()) {
         m_pageLoadTiming = nullptr;
         m_pageLoadTimingPendingCommit = makeUnique<WebPageLoadTiming>(timestamp);
@@ -9905,13 +9928,11 @@ void WebPageProxy::didStartProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& 
         m_provisionalPage = nullptr;
     }
 
-    // FIXME: We should message check that navigationID is not zero here, but it's currently zero for some navigations through the back/forward cache.
-    RefPtr<API::Navigation> navigation;
-    if (frame->isMainFrame() && navigationID)
-        navigation = m_navigationState->navigation(*navigationID);
-
     if (navigation && frame->isMainFrame() && navigation->currentRequest().url().isValid())
         MESSAGE_CHECK(process, navigation->currentRequest().url() == url);
+
+    if (navigation)
+        navigation->setDidStartProvisionalLoad();
 
     // When navigationID is null for a main frame we don't have a Navigation
     // object to check the URL against. To avoid URL spoofing by a compromised
@@ -12697,6 +12718,14 @@ void WebPageProxy::performProcessSwapForNavigationResponse(API::Navigation& navi
         RefPtr processLoadingNavigation = navigation && mainFrame ? this->processLoadingNavigation(*navigation, *mainFrame, loadingWebProcess) : nullptr;
         if (!processLoadingNavigation)
             return completionHandler(NavigationResponseWithoutProcessSwap::CancelLoad);
+
+        // The web process's DidStartProvisionalLoadForFrame may not have been handled yet and will be ignored after the swap.
+        if (!navigation->didStartProvisionalLoad() && navigation->lastNavigationAction()) {
+            if (RefPtr provisionalPage = m_provisionalPage; provisionalPage && provisionalPage->navigationID() == navigationID)
+                provisionalPage->didStartProvisionalLoadForNavigation(*navigation);
+            else
+                didStartProvisionalLoadForFrameShared(*processLoadingNavigation, mainFrame->frameID(), FrameInfoData { navigation->lastNavigationAction()->frameInfo }, ResourceRequest { navigation->currentRequest() }, navigationID, URL { navigation->currentRequest().url() }, { }, { }, WallTime::now());
+        }
 
         // A provisional page that is loading the navigation is cancelled when the navigation continues in the new process.
         if (processLoadingNavigation == m_legacyMainFrameProcess.ptr())

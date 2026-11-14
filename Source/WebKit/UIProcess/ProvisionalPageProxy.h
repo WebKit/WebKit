@@ -117,6 +117,7 @@ public:
     ProcessSwapRequestedByClient processSwapRequestedByClient() const { return m_processSwapRequestedByClient; }
     WebCore::NavigationIdentifier navigationID() const { return m_navigationID; }
     const URL& provisionalURL() const LIFETIME_BOUND { return m_provisionalLoadURL; }
+    void didStartProvisionalLoadForNavigation(API::Navigation&);
     RefPtr<WebsiteDataStore> replacedDataStoreForWebArchiveLoad() const { return m_replacedDataStoreForWebArchiveLoad; }
 
     bool isProcessSwappingOnNavigationResponse() const { return m_isProcessSwappingOnNavigationResponse; }

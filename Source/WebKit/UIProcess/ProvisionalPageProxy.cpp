@@ -504,6 +504,18 @@ void ProvisionalPageProxy::didStartProvisionalLoadForFrame(FrameIdentifier frame
     page->didStartProvisionalLoadForFrameShared(protect(process()), frameID, WTF::move(frameInfo), WTF::move(request), navigationID, WTF::move(url), WTF::move(unreachableURL), userData, timestamp);
 }
 
+void ProvisionalPageProxy::didStartProvisionalLoadForNavigation(API::Navigation& navigation)
+{
+    ASSERT(navigation.navigationID() == m_navigationID);
+    if (!m_mainFrame || !navigation.lastNavigationAction())
+        return;
+
+    auto frameID = m_mainFrame->frameID();
+    FrameInfoData frameInfo { navigation.lastNavigationAction()->frameInfo };
+    frameInfo.frameID = frameID;
+    didStartProvisionalLoadForFrame(frameID, WTF::move(frameInfo), ResourceRequest { navigation.currentRequest() }, m_navigationID, URL { navigation.currentRequest().url() }, { }, { }, WallTime::now());
+}
+
 void ProvisionalPageProxy::didFailProvisionalLoadForFrame(FrameInfoData&& frameInfo, ResourceRequest&& request, std::optional<WebCore::NavigationIdentifier> navigationID, String&& provisionalURL, WebCore::ResourceError&& error, WebCore::WillContinueLoading willContinueLoading, const UserData& userData, WebCore::WillInternallyHandleFailure willInternallyHandleFailure)
 {
     didFailProvisionalLoad(WTF::move(frameInfo), WTF::move(request), navigationID, WTF::move(provisionalURL), WTF::move(error), willContinueLoading, userData, willInternallyHandleFailure, ProvisionalLoadIsReplaced::No);
