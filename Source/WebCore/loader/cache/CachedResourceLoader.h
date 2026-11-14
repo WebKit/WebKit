@@ -194,7 +194,7 @@ private:
     Ref<CachedResource> loadResource(CachedResource::Type, PAL::SessionID, CachedResourceRequest&&, const CookieJar&, const Settings&, MayAddToMemoryCache);
 
     void prepareFetch(CachedResource::Type, CachedResourceRequest&);
-    void updateHTTPRequestHeaders(FrameLoader&, CachedResource::Type, CachedResourceRequest&);
+    void prepareHTTPNetworkOrCacheFetch(FrameLoader&, CachedResource::Type, CachedResourceRequest&);
 
     bool canRequest(CachedResource::Type, const URL&, const ResourceLoaderOptions&, ForPreload, MixedContentChecker::IsUpgradable, bool isLinkPreload, IPAddressSpace targetAddressSpace);
 

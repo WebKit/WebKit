@@ -744,6 +744,17 @@ std::expected<void, String> SubresourceLoader::checkRedirectionCrossOriginAccess
     // Implementing https://fetch.spec.whatwg.org/#concept-http-redirect-fetch step 14.
     updateReferrerPolicy(redirectResponse.httpHeaderField(HTTPHeaderName::ReferrerPolicy));
 
+    // Implementing https://fetch.spec.whatwg.org/#concept-http-redirect-fetch step 22, which runs main fetch again. That updates
+    // the request's response tainting, and https://fetch.spec.whatwg.org/#http-network-or-cache-fetch step 8.3 then recomputes
+    // includeCredentials. Like the initial request, this only ever restricts the stored credentials policy.
+    if (options().storedCredentialsPolicy == StoredCredentialsPolicy::Use) {
+        auto responseTainting = !newCrossOriginFlag ? ResourceResponse::Tainting::Basic : options().mode == FetchOptions::Mode::Cors ? ResourceResponse::Tainting::Cors : ResourceResponse::Tainting::Opaque;
+        if (storedCredentialsPolicyForCredentialsMode(options().credentials, responseTainting) == StoredCredentialsPolicy::DoNotUse) {
+            setStoredCredentialsPolicy(StoredCredentialsPolicy::DoNotUse);
+            newRequest.setAllowCookies(false);
+        }
+    }
+
     if (options().mode == FetchOptions::Mode::Cors && redirectingToNewOrigin) {
         cleanHTTPRequestHeadersForAccessControl(newRequest, options().httpHeadersToKeep);
         updateRequestForAccessControl(newRequest, *protect(m_origin), options().storedCredentialsPolicy);

@@ -146,6 +146,14 @@ ResourceRequest createAccessControlPreflightRequest(const ResourceRequest& reque
     return preflightRequest;
 }
 
+// https://fetch.spec.whatwg.org/#http-network-or-cache-fetch, step 8.3.
+StoredCredentialsPolicy storedCredentialsPolicyForCredentialsMode(FetchOptions::Credentials credentials, ResourceResponse::Tainting responseTainting)
+{
+    if (credentials == FetchOptions::Credentials::Include || (credentials == FetchOptions::Credentials::SameOrigin && responseTainting == ResourceResponse::Tainting::Basic))
+        return StoredCredentialsPolicy::Use;
+    return StoredCredentialsPolicy::DoNotUse;
+}
+
 // https://html.spec.whatwg.org/multipage/urls-and-fetching.html#create-a-potential-cors-request
 CachedResourceRequest createPotentialAccessControlRequest(ResourceRequest&& request, ResourceLoaderOptions&& options, Document& document, const String& crossOriginAttribute, SameOriginFlag sameOriginFlag)
 {
@@ -175,16 +183,8 @@ CachedResourceRequest createPotentialAccessControlRequest(ResourceRequest&& requ
         ? FetchOptions::Credentials::Omit : equalLettersIgnoringASCIICase(crossOriginAttribute, "use-credentials"_s)
         ? FetchOptions::Credentials::Include : FetchOptions::Credentials::SameOrigin;
     options.credentials = credentials;
-    switch (credentials) {
-    case FetchOptions::Credentials::Include:
-        options.storedCredentialsPolicy = StoredCredentialsPolicy::Use;
-        break;
-    case FetchOptions::Credentials::SameOrigin:
-        options.storedCredentialsPolicy = protect(document.securityOrigin())->canRequest(request.url(), OriginAccessPatternsForWebProcess::singleton()) ? StoredCredentialsPolicy::Use : StoredCredentialsPolicy::DoNotUse;
-        break;
-    case FetchOptions::Credentials::Omit:
-        options.storedCredentialsPolicy = StoredCredentialsPolicy::DoNotUse;
-    }
+    auto responseTainting = protect(document.securityOrigin())->canRequest(request.url(), OriginAccessPatternsForWebProcess::singleton()) ? ResourceResponse::Tainting::Basic : ResourceResponse::Tainting::Cors;
+    options.storedCredentialsPolicy = storedCredentialsPolicyForCredentialsMode(credentials, responseTainting);
 
     auto storedCredentialsPolicy = options.storedCredentialsPolicy;
     CachedResourceRequest cachedRequest { WTF::move(request), WTF::move(options) };

@@ -1063,6 +1063,15 @@ void CachedResourceLoader::prepareFetch(CachedResource::Type type, CachedResourc
     // FIXME: Decide whether to support client hints
 }
 
+// https://fetch.spec.whatwg.org/#main-fetch, step 12.
+static ResourceResponse::Tainting responseTainting(const CachedResourceRequest& request, const SecurityOrigin& origin)
+{
+    auto& url = request.resourceRequest().url();
+    if (origin.canRequest(url, OriginAccessPatternsForWebProcess::singleton()) || url.protocolIsData() || request.options().mode == FetchOptions::Mode::Navigate)
+        return ResourceResponse::Tainting::Basic;
+    return request.options().mode == FetchOptions::Mode::Cors ? ResourceResponse::Tainting::Cors : ResourceResponse::Tainting::Opaque;
+}
+
 static bool shouldReuseExistingFetchMetadata(const LocalFrame& frame, const ResourceRequest& request, CachedResource::Type type, FetchOptions::Mode mode)
 {
     if (mode != FetchOptions::Mode::Navigate || type != CachedResource::Type::MainResource)
@@ -1088,13 +1097,68 @@ static bool shouldUpdateFetchMetadata(const LocalFrame& frame, const ResourceReq
         && !shouldReuseExistingFetchMetadata(frame, request, type, mode);
 }
 
-void CachedResourceLoader::updateHTTPRequestHeaders(FrameLoader& frameLoader, CachedResource::Type type, CachedResourceRequest& request)
+void CachedResourceLoader::prepareHTTPNetworkOrCacheFetch(FrameLoader& frameLoader, CachedResource::Type type, CachedResourceRequest& request)
 {
-    // Implementing steps 11 to 19 of https://fetch.spec.whatwg.org/#http-network-or-cache-fetch as of 22 Feb 2022.
+    // https://fetch.spec.whatwg.org/#http-network-or-cache-fetch
+    //
+    // This implements the parts of step 8 that happen before the request is handed to the network layer. Comments that
+    // begin with a step number quote the spec; "[...]" marks text left out.
+
+    // 8.1. If request's traversable for user prompts is "no-traversable" and request's redirect mode is "error", then
+    //      set httpFetchParams to fetchParams and httpRequest to request.
+    // 8.2. Otherwise: [...] Set httpRequest to a clone of request.
+    //
+    // `request` is used as httpRequest.
+
+    // 8.3. Let includeCredentials be true if one of
+    //       - request's credentials mode is "include"
+    //       - request's credentials mode is "same-origin" and request's response tainting is "basic"
+    //      is true; otherwise false.
+    // 8.4. If Cross-Origin-Embedder-Policy allows credentials with request returns false, then set includeCredentials
+    //      to false.
+    //
+    // includeCredentials only ever restricts the stored credentials policy the caller chose.
+    //
+    // FIXME: Implement step 8.4, which COEP credentialless needs before CrossOriginEmbedderPolicyCredentiallessEnabled can be on by default.
+    RefPtr origin = request.origin();
+    auto tainting = origin ? responseTainting(request, *origin) : ResourceResponse::Tainting::Basic;
+    if (origin && request.options().storedCredentialsPolicy == StoredCredentialsPolicy::Use) {
+        if (storedCredentialsPolicyForCredentialsMode(request.options().credentials, tainting) == StoredCredentialsPolicy::DoNotUse) {
+            auto options = request.options();
+            options.storedCredentialsPolicy = StoredCredentialsPolicy::DoNotUse;
+            request.setOptions(options);
+            request.resourceRequest().setAllowCookies(false);
+        }
+    }
+
+    // 8.5. Let contentLength be httpRequest's body's length, if httpRequest's body is non-null; otherwise null.
+    // [...]
+    // 8.9. If contentLengthHeaderValue is non-null, then append (`Content-Length`, contentLengthHeaderValue) to
+    //      httpRequest's header list.
+    //
+    // The network layer adds `Content-Length`.
+
+    // 8.10. If contentLength is non-null and httpRequest's keepalive is true, then: [...]
+    //
+    // KeepaliveRequestTracker enforces the keepalive limit.
+
+    // 8.11. If httpRequest's referrer is a URL, then: [...] Append (`Referer`, referrerValue) to httpRequest's header
+    //       list.
+    // 8.12. Append a request `Origin` header for httpRequest.
+    //
+    // From https://fetch.spec.whatwg.org/#append-a-request-origin-header:
+    //
+    // 3. If request's response tainting is "cors" or request's mode is either "websocket" or "webtransport", then
+    //    append (`Origin`, serializedOrigin) to request's header list.
+    if (origin && tainting == ResourceResponse::Tainting::Cors && request.resourceRequest().httpOrigin().isEmpty())
+        request.resourceRequest().setHTTPOrigin(origin->toString());
 
     // FIXME: We should reconcile handling of MainResource with other resources.
     if (type != CachedResource::Type::MainResource && request.options().cachingPolicy != CachingPolicy::AllowCachingMainResourcePrefetch)
         request.updateReferrerAndOriginHeaders(frameLoader);
+
+    // 8.13. Append the Fetch metadata headers for httpRequest.
+    //
     // FetchMetadata depends on PSL to determine same-site relationships and without this
     // ability it is best to not set any FetchMetadata headers as sites generally expect
     // all of them or none.
@@ -1103,12 +1167,40 @@ void CachedResourceLoader::updateHTTPRequestHeaders(FrameLoader& frameLoader, Ca
         auto site = computeFetchMetadataSite(request.resourceRequest(), type, request.options().mode, frame, frame->isMainFrame() && m_documentLoader && m_documentLoader->isRequestFromClientOrUserInput(), protect(m_documentLoader));
         updateRequestFetchMetadataHeaders(request.resourceRequest(), request.options(), site);
     }
+
+    // 8.14. If httpRequest's initiator is "prefetch", then set a structured field value given (`Sec-Purpose`, the
+    //       token prefetch) in httpRequest's header list.
+    //
+    // CachedResource sets `Sec-Purpose` for link prefetches.
+
+    // 8.15. If httpRequest's header list does not contain `User-Agent`, then user agents should: [...] Append
+    //       (`User-Agent`, userAgent) to httpRequest's header list.
     request.updateUserAgentHeader(frameLoader);
 
+    // 8.16. If httpRequest's cache mode is "default" and httpRequest's header list contains `If-Modified-Since`,
+    //       `If-None-Match`, `If-Unmodified-Since`, `If-Match`, or `If-Range`, then set httpRequest's cache mode to
+    //       "no-store".
+    // 8.17. If httpRequest's cache mode is "no-cache", httpRequest's prevent no-cache cache-control header modification
+    //       flag is unset, and httpRequest's header list does not contain `Cache-Control`, then append
+    //       (`Cache-Control`, `max-age=0`) to httpRequest's header list.
+    // 8.18. If httpRequest's cache mode is "no-store" or "reload", then: [...] append (`Pragma`, `no-cache`) [...]
+    //       append (`Cache-Control`, `no-cache`) to httpRequest's header list.
     if (frame->loader().loadType() == FrameLoadType::ReloadFromOrigin)
         request.updateCacheModeIfNeeded(cachePolicy(type, request.resourceRequest().url()));
     request.updateAccordingCacheMode();
+
+    // 8.19. If httpRequest's header list contains `Range`, then append (`Accept-Encoding`, `identity`) to httpRequest's
+    //       header list.
     request.updateAcceptEncodingHeader();
+
+    // 8.20. Modify httpRequest's header list per HTTP. [...]
+    // 8.21. If includeCredentials is true, then: [...] Append a request `Cookie` header for httpRequest. [...]
+    // 8.22. If there's a proxy-authentication entry, use it as appropriate.
+    // 8.23. Run the WebDriver BiDi before request sent steps with request.
+    // 8.24. Set httpCache to the result of determining the HTTP cache partition, given httpRequest.
+    // [...]
+    //
+    // The network layer does these, using the stored credentials policy and allowCookies set for step 8.3.
 }
 
 NODELETE static FetchOptions::Destination destinationForType(CachedResource::Type type, LocalFrame& frame)
@@ -1349,7 +1441,7 @@ ResourceErrorOr<Ref<CachedResource>> CachedResourceLoader::requestResource(Cache
     InitiatorContext initiatorContext = request.options().initiatorContext;
 
     if (request.resourceRequest().url().protocolIsInHTTPFamily())
-        updateHTTPRequestHeaders(frame->loader(), type, request);
+        prepareHTTPNetworkOrCacheFetch(frame->loader(), type, request);
     request.disableCachingIfNeeded();
 
     Ref memoryCache = MemoryCache::singleton();
