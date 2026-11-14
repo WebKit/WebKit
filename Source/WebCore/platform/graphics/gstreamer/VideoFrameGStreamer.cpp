@@ -39,6 +39,7 @@
 #include <JavaScriptCore/TypedArrayInlines.h>
 #include <skia/core/SkData.h>
 #include <skia/core/SkImage.h>
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/glib/GMallocString.h>
 
 #if USE(GBM)
@@ -236,21 +237,31 @@ RefPtr<VideoFrame> VideoFrame::fromNativeImage(NativeImage& image)
     return VideoFrameGStreamer::create(WTF::move(sample), { { width, height }, WTF::move(info) });
 }
 
-static void copyToGstBufferPlane(std::span<uint8_t> destination, const GstVideoInfo& info, size_t planeIndex, std::span<const uint8_t> source, size_t height, uint32_t bytesPerRowSource)
+// Whether rowCount rows of rowBytes bytes, stride bytes apart from offset, fit in size bytes.
+static bool planeRowsFit(size_t size, size_t offset, size_t stride, size_t rowCount, size_t rowBytes)
+{
+    if (!rowCount || !rowBytes || stride < rowBytes)
+        return false;
+    size_t end;
+    if (!WTF::safeMultiply(stride, rowCount - 1, end) || !WTF::safeAdd(end, rowBytes, end) || !WTF::safeAdd(end, offset, end))
+        return false;
+    return end <= size;
+}
+
+static bool copyToGstBufferPlane(std::span<uint8_t> destination, const GstVideoInfo& info, size_t planeIndex, std::span<const uint8_t> source, const ComputedPlaneLayout& layout, size_t rowCount)
 {
     WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN; // GLib port
-    auto destinationOffset = GST_VIDEO_INFO_PLANE_OFFSET(&info, planeIndex);
-    uint32_t bytesPerRowDestination = GST_VIDEO_INFO_PLANE_STRIDE(&info, planeIndex);
+    size_t destinationOffset = GST_VIDEO_INFO_PLANE_OFFSET(&info, planeIndex);
+    size_t destinationStride = GST_VIDEO_INFO_PLANE_STRIDE(&info, planeIndex);
     WTF_ALLOW_UNSAFE_BUFFER_USAGE_END; // GLib port
-    gsize sourceOffset = 0;
-    auto count = std::min(bytesPerRowSource, bytesPerRowDestination);
-    for (size_t i = 0; i < height; ++i) {
-        auto sourceSpan = source.subspan(sourceOffset, count);
-        auto destinationSpan = destination.subspan(destinationOffset, count);
-        memcpySpan(destinationSpan, sourceSpan);
-        sourceOffset += bytesPerRowSource;
-        destinationOffset += bytesPerRowDestination;
+    size_t rowBytes = std::min(layout.sourceWidthBytes, destinationStride);
+    if (!planeRowsFit(destination.size(), destinationOffset, destinationStride, rowCount, rowBytes) || !planeRowsFit(source.size(), layout.destinationOffset, layout.destinationStride, rowCount, rowBytes)) {
+        GST_WARNING("Plane %zu doesn't fit in the source or destination buffer", planeIndex);
+        return false;
     }
+    for (size_t row = 0; row < rowCount; ++row)
+        memcpySpan(destination.subspan(destinationOffset + row * destinationStride, rowBytes), source.subspan(layout.destinationOffset + row * layout.destinationStride, rowBytes));
+    return true;
 }
 
 static VideoFrameGStreamer::CreateOptions createOptionsWithInit(size_t width, size_t height, const GstVideoInfo& info, const VideoFrame::Init& init)
@@ -275,8 +286,9 @@ RefPtr<VideoFrame> VideoFrame::createNV12(std::span<const uint8_t> span, size_t 
     {
         GstMappedBuffer mappedBuffer(buffer, GST_MAP_WRITE);
         auto destinationSpan = mappedBuffer.mutableSpan<uint8_t>();
-        copyToGstBufferPlane(destinationSpan, info, 0, span, height, planeY.sourceWidthBytes);
-        copyToGstBufferPlane(destinationSpan, info, 1, span.subspan(planeUV.destinationOffset), (height + 1) / 2, planeUV.sourceWidthBytes);
+        if (!copyToGstBufferPlane(destinationSpan, info, 0, span, planeY, height)
+            || !copyToGstBufferPlane(destinationSpan, info, 1, span, planeUV, (height + 1) / 2))
+            return nullptr;
     }
     gst_buffer_add_video_meta(buffer.get(), GST_VIDEO_FRAME_FLAG_NONE, GST_VIDEO_FORMAT_NV12, width, height);
 
@@ -298,7 +310,8 @@ static RefPtr<VideoFrame> createRGBFrame(GstVideoFormat format, std::span<const 
     {
         GstMappedBuffer mappedBuffer(buffer, GST_MAP_WRITE);
         auto destinationSpan = mappedBuffer.mutableSpan<uint8_t>();
-        copyToGstBufferPlane(destinationSpan, info, 0, span, height, plane.sourceWidthBytes);
+        if (!copyToGstBufferPlane(destinationSpan, info, 0, span, plane, height))
+            return nullptr;
     }
 
     gst_buffer_add_video_meta(buffer.get(), GST_VIDEO_FRAME_FLAG_NONE, format, width, height);
@@ -341,13 +354,11 @@ RefPtr<VideoFrame> VideoFrame::createI420(std::span<const uint8_t> span, size_t 
     {
         GstMappedBuffer mappedBuffer(buffer, GST_MAP_WRITE);
         auto destinationSpan = mappedBuffer.mutableSpan<uint8_t>();
-        auto stride = ((height + 1) / 2);
-        // The source planes are laid out for the coded size; use each plane's coded offset (as the
-        // NV12 path does) rather than deriving it from the visible height, otherwise a frame whose
-        // codedHeight exceeds visibleRect.height reads the chroma planes from the wrong offset.
-        copyToGstBufferPlane(destinationSpan, info, GST_VIDEO_COMP_Y, span, height, planeY.sourceWidthBytes);
-        copyToGstBufferPlane(destinationSpan, info, GST_VIDEO_COMP_U, span.subspan(planeU.destinationOffset), stride, planeU.sourceWidthBytes);
-        copyToGstBufferPlane(destinationSpan, info, GST_VIDEO_COMP_V, span.subspan(planeV.destinationOffset), stride, planeV.sourceWidthBytes);
+        auto chromaHeight = (height + 1) / 2;
+        if (!copyToGstBufferPlane(destinationSpan, info, GST_VIDEO_COMP_Y, span, planeY, height)
+            || !copyToGstBufferPlane(destinationSpan, info, GST_VIDEO_COMP_U, span, planeU, chromaHeight)
+            || !copyToGstBufferPlane(destinationSpan, info, GST_VIDEO_COMP_V, span, planeV, chromaHeight))
+            return nullptr;
     }
     gst_buffer_add_video_meta(buffer.get(), GST_VIDEO_FRAME_FLAG_NONE, GST_VIDEO_FORMAT_I420, width, height);
 
@@ -367,12 +378,12 @@ RefPtr<VideoFrame> VideoFrame::createI420A(std::span<const uint8_t> span, size_t
     {
         GstMappedBuffer mappedBuffer(buffer, GST_MAP_WRITE);
         auto destinationSpan = mappedBuffer.mutableSpan<uint8_t>();
-        auto stride = ((height + 1) / 2);
-        // Use each plane's coded offset rather than deriving it from the visible height (see createI420).
-        copyToGstBufferPlane(destinationSpan, info, GST_VIDEO_COMP_Y, span, height, planeY.sourceWidthBytes);
-        copyToGstBufferPlane(destinationSpan, info, GST_VIDEO_COMP_U, span.subspan(planeU.destinationOffset), stride, planeU.sourceWidthBytes);
-        copyToGstBufferPlane(destinationSpan, info, GST_VIDEO_COMP_V, span.subspan(planeV.destinationOffset), stride, planeV.sourceWidthBytes);
-        copyToGstBufferPlane(destinationSpan, info, GST_VIDEO_COMP_A, span.subspan(planeA.destinationOffset), height, planeA.sourceWidthBytes);
+        auto chromaHeight = (height + 1) / 2;
+        if (!copyToGstBufferPlane(destinationSpan, info, GST_VIDEO_COMP_Y, span, planeY, height)
+            || !copyToGstBufferPlane(destinationSpan, info, GST_VIDEO_COMP_U, span, planeU, chromaHeight)
+            || !copyToGstBufferPlane(destinationSpan, info, GST_VIDEO_COMP_V, span, planeV, chromaHeight)
+            || !copyToGstBufferPlane(destinationSpan, info, GST_VIDEO_COMP_A, span, planeA, height))
+            return nullptr;
     }
     gst_buffer_add_video_meta(buffer.get(), GST_VIDEO_FRAME_FLAG_NONE, GST_VIDEO_FORMAT_A420, width, height);
 
