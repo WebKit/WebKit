@@ -204,7 +204,7 @@ ExceptionOr<void> WebCodecsVideoDecoder::configure(ScriptExecutionContext& conte
                 frame = frame->updateOrientation(rotation, isMirrored, VideoFrame::ShouldClone::No);
                 auto presentationSize = frame->presentationSize();
                 WebCodecsVideoFrame::BufferInit init {
-                    .format = convertVideoFramePixelFormat(frame->pixelFormat()),
+                    .format = WebCodecsVideoFrame::videoPixelFormatForContext(protect(*decoder.scriptExecutionContext()), frame),
                     .codedWidth = static_cast<size_t>(presentationSize.width()),
                     .codedHeight = static_cast<size_t>(presentationSize.height()),
                     .timestamp = decodedResult.timestamp,

@@ -1,0 +1,185 @@
+<!DOCTYPE html><!-- webkit-test-runner [ WebCodecsHighBitDepthEnabled=true ] -->
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+// Planar Y'CbCr VideoFrames keep every sample exactly through construction and copyTo().
+// Samples above 8 bits are 16-bit little-endian, LSB aligned.
+
+const formats = [
+    { format: "I422", bitDepth: 8, subsampleX: 2, subsampleY: 1 },
+    { format: "I444", bitDepth: 8, subsampleX: 1, subsampleY: 1 },
+    { format: "I420P10", bitDepth: 10, subsampleX: 2, subsampleY: 2 },
+    { format: "I420P12", bitDepth: 12, subsampleX: 2, subsampleY: 2 },
+    { format: "I422P10", bitDepth: 10, subsampleX: 2, subsampleY: 1 },
+    { format: "I422P12", bitDepth: 12, subsampleX: 2, subsampleY: 1 },
+    { format: "I444P10", bitDepth: 10, subsampleX: 1, subsampleY: 1 },
+    { format: "I444P12", bitDepth: 12, subsampleX: 1, subsampleY: 1 },
+];
+
+function sampleBytes(info)
+{
+    return info.bitDepth > 8 ? 2 : 1;
+}
+
+function planeSizes(info, width, height)
+{
+    const chroma = { width: Math.ceil(width / info.subsampleX), height: Math.ceil(height / info.subsampleY) };
+    return [{ width, height }, chroma, { ...chroma }];
+}
+
+// Distinct samples in every plane; each plane starts with the largest value of the bit depth.
+function makePlanes(info, width, height)
+{
+    const maximum = (1 << info.bitDepth) - 1;
+    return planeSizes(info, width, height).map((size, plane) => {
+        const samples = [];
+        for (let i = 0; i < size.width * size.height; ++i)
+            samples.push(!i ? maximum : (plane * 517 + i * 37 + 1) & maximum);
+        return { ...size, samples };
+    });
+}
+
+// Pads every row. With misaligned, offsets and strides are odd so that 16-bit samples aren't 2-byte aligned.
+function makeLayout(info, sizes, misaligned)
+{
+    let offset = misaligned ? 1 : 0;
+    return sizes.map(size => {
+        const plane = { offset, stride: size.width * sampleBytes(info) + (misaligned ? 3 : 4) };
+        offset += plane.stride * size.height;
+        return plane;
+    });
+}
+
+function tightLayout(info, sizes)
+{
+    let offset = 0;
+    return sizes.map(size => {
+        const plane = { offset, stride: size.width * sampleBytes(info) };
+        offset += plane.stride * size.height;
+        return plane;
+    });
+}
+
+function byteLength(layout, sizes)
+{
+    return Math.max(...layout.map((plane, index) => plane.offset + plane.stride * sizes[index].height));
+}
+
+function writePlanes(info, planes, layout)
+{
+    const bytes = new Uint8Array(byteLength(layout, planes));
+    planes.forEach((plane, index) => {
+        for (let y = 0; y < plane.height; ++y) {
+            for (let x = 0; x < plane.width; ++x) {
+                const value = plane.samples[y * plane.width + x];
+                const position = layout[index].offset + y * layout[index].stride + x * sampleBytes(info);
+                bytes[position] = value & 0xff;
+                if (sampleBytes(info) == 2)
+                    bytes[position + 1] = value >> 8;
+            }
+        }
+    });
+    return bytes;
+}
+
+function readPlanes(info, bytes, layout, sizes)
+{
+    return sizes.map((size, index) => {
+        const samples = [];
+        for (let y = 0; y < size.height; ++y) {
+            for (let x = 0; x < size.width; ++x) {
+                const position = layout[index].offset + y * layout[index].stride + x * sampleBytes(info);
+                samples.push(sampleBytes(info) == 2 ? bytes[position] | (bytes[position + 1] << 8) : bytes[position]);
+            }
+        }
+        return { ...size, samples };
+    });
+}
+
+// The planes of rect, which is given in luma samples.
+function cropPlanes(info, planes, rect)
+{
+    return planes.map((plane, index) => {
+        const subsampleX = index ? info.subsampleX : 1;
+        const subsampleY = index ? info.subsampleY : 1;
+        const left = Math.ceil(rect.x / subsampleX);
+        const top = Math.ceil(rect.y / subsampleY);
+        const width = Math.ceil(rect.width / subsampleX);
+        const height = Math.ceil(rect.height / subsampleY);
+        const samples = [];
+        for (let y = top; y < top + height; ++y)
+            samples.push(...plane.samples.slice(y * plane.width + left, y * plane.width + left + width));
+        return { width, height, samples };
+    });
+}
+
+function assertPlanesEqual(actual, expected)
+{
+    assert_equals(actual.length, expected.length, "plane count");
+    actual.forEach((plane, index) => assert_array_equals(plane.samples, expected[index].samples, `plane ${index}`));
+}
+
+function makeFrame(info, planes, layout, width, height, extraInit = { })
+{
+    return new VideoFrame(writePlanes(info, planes, layout), { format: info.format, codedWidth: width, codedHeight: height, timestamp: 0, layout, ...extraInit });
+}
+
+async function copyPlanes(info, frame, sizes, options = { })
+{
+    const layout = options.layout ?? tightLayout(info, sizes);
+    const bytes = new Uint8Array(byteLength(layout, sizes));
+    const result = await frame.copyTo(bytes, options);
+    assert_array_equals(result.map(plane => plane.offset), layout.map(plane => plane.offset), "plane offsets");
+    assert_array_equals(result.map(plane => plane.stride), layout.map(plane => plane.stride), "plane strides");
+    return readPlanes(info, bytes, layout, sizes);
+}
+
+for (const info of formats) {
+    promise_test(async () => {
+        // Odd dimensions round the chroma planes up.
+        const width = 5;
+        const height = 3;
+        const planes = makePlanes(info, width, height);
+        const frame = makeFrame(info, planes, tightLayout(info, planes), width, height);
+        assert_equals(frame.format, info.format);
+        assert_equals(frame.codedWidth, width);
+        assert_equals(frame.codedHeight, height);
+        assert_equals(frame.allocationSize(), byteLength(tightLayout(info, planes), planes));
+        assertPlanesEqual(await copyPlanes(info, frame, planes), planes);
+        frame.close();
+    }, `${info.format}: tightly packed round trip`);
+
+    promise_test(async () => {
+        const planes = makePlanes(info, 6, 4);
+        const frame = makeFrame(info, planes, makeLayout(info, planes, false), 6, 4);
+        assertPlanesEqual(await copyPlanes(info, frame, planes, { layout: makeLayout(info, planes, true) }), planes);
+        frame.close();
+    }, `${info.format}: padded source, misaligned destination`);
+
+    promise_test(async () => {
+        const planes = makePlanes(info, 6, 4);
+        const frame = makeFrame(info, planes, makeLayout(info, planes, true), 6, 4);
+        assertPlanesEqual(await copyPlanes(info, frame, planes), planes);
+        frame.close();
+    }, `${info.format}: misaligned source, tightly packed destination`);
+
+    promise_test(async () => {
+        const planes = makePlanes(info, 6, 4);
+        const visibleRect = { x: 0, y: 0, width: 6, height: 2 };
+        const frame = makeFrame(info, planes, tightLayout(info, planes), 6, 4, { visibleRect });
+        assert_equals(frame.visibleRect.height, 2);
+        const expected = cropPlanes(info, planes, visibleRect);
+        assertPlanesEqual(await copyPlanes(info, frame, expected), expected);
+        frame.close();
+    }, `${info.format}: visibleRect smaller than the coded size`);
+
+    promise_test(async () => {
+        const planes = makePlanes(info, 6, 4);
+        const frame = makeFrame(info, planes, tightLayout(info, planes), 6, 4);
+        const rect = { x: 2, y: 2, width: 4, height: 2 };
+        const expected = cropPlanes(info, planes, rect);
+        assertPlanesEqual(await copyPlanes(info, frame, expected, { rect }), expected);
+        frame.close();
+    }, `${info.format}: copyTo() with a rect`);
+}
+</script>

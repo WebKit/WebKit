@@ -71,6 +71,14 @@ bool SharedVideoFrameInfo::isReadWriteSupported() const
         || m_bufferType == kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange
         || m_bufferType == kCVPixelFormatType_420YpCbCr10BiPlanarFullRange
         || m_bufferType == kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange
+        || m_bufferType == kCVPixelFormatType_422YpCbCr8BiPlanarFullRange
+        || m_bufferType == kCVPixelFormatType_422YpCbCr8BiPlanarVideoRange
+        || m_bufferType == kCVPixelFormatType_422YpCbCr10BiPlanarFullRange
+        || m_bufferType == kCVPixelFormatType_422YpCbCr10BiPlanarVideoRange
+        || m_bufferType == kCVPixelFormatType_444YpCbCr8BiPlanarFullRange
+        || m_bufferType == kCVPixelFormatType_444YpCbCr8BiPlanarVideoRange
+        || m_bufferType == kCVPixelFormatType_444YpCbCr10BiPlanarFullRange
+        || m_bufferType == kCVPixelFormatType_444YpCbCr10BiPlanarVideoRange
         || m_bufferType == kCVPixelFormatType_420YpCbCr8VideoRange_8A_TriPlanar;
 }
 

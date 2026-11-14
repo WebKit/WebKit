@@ -61,15 +61,14 @@ promise_test(async (test) => {
     decoder.decode(chunk);
 
     const decodedFrame = await decoderPromise;
-    assert_equals(decodedFrame.format, null);
+    assert_equals(decodedFrame.format, "I420P10");
 
     const rgba = new Uint8Array(decodedFrame.allocationSize({format: "RGBA"}));
-    await promise_rejects_dom(test, 'NotSupportedError', decodedFrame.copyTo(rgba));
 
     promise_test(async t => {
         t.add_cleanup(() => frame.close());
         await decodedFrame.copyTo(rgba, {format: "RGBA"});
-    }, "copyTo with RGBA works on VideoFrame with null format");
+    }, "copyTo with RGBA works on an I420P10 VideoFrame");
 }, "Test copyTo on different contexts");
 </script>
 </body>

@@ -1,0 +1,6 @@
+
+PASS I420P10 frame decoded from vp09.02.10.10 with prefer-software
+PASS I420P10 frame decoded from vp09.02.10.10 with no-preference
+NOTRUN I422P10 frame decoded from vp09.03.10.10.02 with prefer-software vp09.03.10.10.02 is not supported
+NOTRUN I422P10 frame decoded from vp09.03.10.10.02 with no-preference vp09.03.10.10.02 is not supported
+

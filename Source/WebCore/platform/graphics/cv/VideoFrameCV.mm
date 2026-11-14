@@ -29,6 +29,7 @@
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 #include "CMUtilities.h"
 #include "CVUtilities.h"
+#include "FourCC.h"
 #include "GraphicsContext.h"
 #include "ImageTransferSessionVT.h"
 #include "Logging.h"
@@ -37,7 +38,9 @@
 #include "PixelBufferConformerCV.h"
 #include "ProcessIdentity.h"
 #include "WebRTCProvider.h"
+#include "libYUV.h"
 #include <Accelerate/Accelerate.h>
+#include <limits>
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/Scope.h>
@@ -305,6 +308,204 @@ RefPtr<VideoFrame> VideoFrame::createI420A(std::span<const uint8_t> buffer, size
 #endif
 }
 
+#if USE(LIBWEBRTC)
+// 12-bit samples also use the 10-bit formats: MSB aligned, all 12 bits are kept.
+static OSType biPlanarPixelFormatForPlanarYUV(const PlanarYUVFormatLayout& layout, bool isFullRange)
+{
+    bool isHighBitDepth = layout.bitDepth > 8;
+    if (layout.isChromaVerticallySubsampled) {
+        if (isHighBitDepth)
+            return isFullRange ? kCVPixelFormatType_420YpCbCr10BiPlanarFullRange : kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange;
+        return isFullRange ? kCVPixelFormatType_420YpCbCr8BiPlanarFullRange : kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange;
+    }
+    if (layout.isChromaHorizontallySubsampled) {
+        if (isHighBitDepth)
+            return isFullRange ? kCVPixelFormatType_422YpCbCr10BiPlanarFullRange : kCVPixelFormatType_422YpCbCr10BiPlanarVideoRange;
+        return isFullRange ? kCVPixelFormatType_422YpCbCr8BiPlanarFullRange : kCVPixelFormatType_422YpCbCr8BiPlanarVideoRange;
+    }
+    if (isHighBitDepth)
+        return isFullRange ? kCVPixelFormatType_444YpCbCr10BiPlanarFullRange : kCVPixelFormatType_444YpCbCr10BiPlanarVideoRange;
+    return isFullRange ? kCVPixelFormatType_444YpCbCr8BiPlanarFullRange : kCVPixelFormatType_444YpCbCr8BiPlanarVideoRange;
+}
+
+static size_t planarYUVSampleBytes(const PlanarYUVFormatLayout& layout)
+{
+    return layout.bitDepth > 8 ? sizeof(uint16_t) : 1;
+}
+
+static size_t planarYUVChromaWidth(const PlanarYUVFormatLayout& layout, size_t width)
+{
+    return layout.isChromaHorizontallySubsampled ? (width + 1) / 2 : width;
+}
+
+static size_t planarYUVChromaHeight(const PlanarYUVFormatLayout& layout, size_t height)
+{
+    return layout.isChromaVerticallySubsampled ? (height + 1) / 2 : height;
+}
+
+static bool fitsInInt(size_t value)
+{
+    return value <= static_cast<size_t>(std::numeric_limits<int>::max());
+}
+
+// Only rowBytes of the last row needs to fit.
+template<typename T>
+static std::optional<std::span<T>> planeRows(std::span<T> buffer, size_t offset, size_t stride, size_t rowCount, size_t rowBytes)
+{
+    if (!rowCount || !rowBytes || stride < rowBytes || !fitsInInt(stride))
+        return { };
+    size_t size;
+    size_t end;
+    if (!WTF::safeMultiply(stride, rowCount - 1, size) || !WTF::safeAdd(size, rowBytes, size) || !WTF::safeAdd(offset, size, end) || end > buffer.size())
+        return { };
+    return buffer.subspan(offset, size);
+}
+
+// libyuv accesses 16-bit samples through uint16_t pointers, with strides counted in samples.
+static bool isSixteenBitAddressable(std::span<const uint8_t> rows, size_t stride)
+{
+    return !(reinterpret_cast<uintptr_t>(rows.data()) % alignof(uint16_t)) && !(stride % sizeof(uint16_t));
+}
+
+struct SixteenBitPlane {
+    const uint16_t* data { nullptr };
+    int stride { 0 };
+};
+
+// Rows that can't be read as 16-bit samples in place are packed into storage.
+static SixteenBitPlane sixteenBitSourcePlane(std::span<const uint8_t> rows, size_t stride, size_t width, size_t height, Vector<uint16_t>& storage)
+{
+    if (isSixteenBitAddressable(rows, stride))
+        return { spanReinterpretCast<const uint16_t>(rows).data(), static_cast<int>(stride / sizeof(uint16_t)) };
+
+    size_t rowBytes = width * sizeof(uint16_t);
+    storage = Vector<uint16_t>(width * height);
+    auto storageBytes = asMutableByteSpan(storage.mutableSpan());
+    for (size_t row = 0; row < height; ++row)
+        memcpySpan(storageBytes.subspan(row * rowBytes, rowBytes), rows.subspan(row * stride, rowBytes));
+    return { storage.span().data(), static_cast<int>(width) };
+}
+
+static void copyPackedRows(std::span<const uint16_t> storage, size_t width, size_t height, std::span<uint8_t> rows, size_t stride)
+{
+    size_t rowBytes = width * sizeof(uint16_t);
+    auto storageBytes = asByteSpan(storage);
+    for (size_t row = 0; row < height; ++row)
+        memcpySpan(rows.subspan(row * stride, rowBytes), storageBytes.subspan(row * rowBytes, rowBytes));
+}
+
+struct BiPlanarPlanes {
+    std::span<uint8_t> y { };
+    size_t strideY { 0 };
+    size_t width { 0 };
+    size_t height { 0 };
+    std::span<uint8_t> uv { };
+    size_t strideUV { 0 };
+    size_t chromaWidth { 0 };
+    size_t chromaHeight { 0 };
+};
+
+// The pixel buffer must be locked.
+static std::optional<BiPlanarPlanes> biPlanarPlanes(CVPixelBufferRef pixelBuffer, const PlanarYUVFormatLayout& layout)
+{
+    if (CVPixelBufferGetPlaneCount(pixelBuffer) != 2)
+        return { };
+
+    size_t sampleBytes = planarYUVSampleBytes(layout);
+    BiPlanarPlanes planes {
+        .strideY = CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 0),
+        .width = CVPixelBufferGetWidthOfPlane(pixelBuffer, 0),
+        .height = CVPixelBufferGetHeightOfPlane(pixelBuffer, 0),
+        .strideUV = CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 1),
+        .chromaWidth = CVPixelBufferGetWidthOfPlane(pixelBuffer, 1),
+        .chromaHeight = CVPixelBufferGetHeightOfPlane(pixelBuffer, 1),
+    };
+    if (!fitsInInt(planes.width) || !fitsInInt(planes.height)
+        || planes.chromaWidth != planarYUVChromaWidth(layout, planes.width) || planes.chromaHeight != planarYUVChromaHeight(layout, planes.height))
+        return { };
+
+    auto y = planeRows(CVPixelBufferGetSpanOfPlane(pixelBuffer, 0), 0, planes.strideY, planes.height, planes.width * sampleBytes);
+    auto uv = planeRows(CVPixelBufferGetSpanOfPlane(pixelBuffer, 1), 0, planes.strideUV, planes.chromaHeight, 2 * planes.chromaWidth * sampleBytes);
+    if (!y || !uv)
+        return { };
+    if (sampleBytes > 1 && (!isSixteenBitAddressable(*y, planes.strideY) || !isSixteenBitAddressable(*uv, planes.strideUV)))
+        return { };
+    planes.y = *y;
+    planes.uv = *uv;
+    return planes;
+}
+#endif
+
+RefPtr<VideoFrame> VideoFrame::createPlanarYUV(VideoPixelFormat format, std::span<const uint8_t> buffer, size_t width, size_t height, std::span<const ComputedPlaneLayout, 3> layouts, Init&& init)
+{
+#if USE(LIBWEBRTC)
+    ASSERT(libYUVAvailable());
+    if (!libYUVAvailable())
+        return nullptr;
+
+    auto layout = planarYUVFormatLayout(format);
+    if (!layout || !width || !height)
+        return nullptr;
+
+    size_t sampleBytes = planarYUVSampleBytes(*layout);
+    size_t chromaWidth = planarYUVChromaWidth(*layout, width);
+    size_t chromaHeight = planarYUVChromaHeight(*layout, height);
+    auto& layoutY = layouts[0];
+    auto& layoutU = layouts[1];
+    auto& layoutV = layouts[2];
+    auto sourceY = planeRows(buffer, layoutY.destinationOffset, layoutY.destinationStride, height, width * sampleBytes);
+    auto sourceU = planeRows(buffer, layoutU.destinationOffset, layoutU.destinationStride, chromaHeight, chromaWidth * sampleBytes);
+    auto sourceV = planeRows(buffer, layoutV.destinationOffset, layoutV.destinationStride, chromaHeight, chromaWidth * sampleBytes);
+    if (!sourceY || !sourceU || !sourceV)
+        return nullptr;
+
+    CVPixelBufferRef rawPixelBuffer = nullptr;
+    auto status = CVPixelBufferCreate(kCFAllocatorDefault, width, height, biPlanarPixelFormatForPlanarYUV(*layout, init.colorSpace.fullRange.value_or(false)), nullptr, &rawPixelBuffer);
+    if (status != kCVReturnSuccess || !rawPixelBuffer)
+        return nullptr;
+    RetainPtr pixelBuffer = adoptCF(rawPixelBuffer);
+
+    {
+        PixelBufferLock lock { pixelBuffer, 0 };
+        if (!lock)
+            return nullptr;
+        auto planes = biPlanarPlanes(pixelBuffer, *layout);
+        if (!planes || planes->width != width || planes->height != height)
+            return nullptr;
+
+        // planeRows() and biPlanarPlanes() checked that the strides and sizes fit in an int.
+        int lumaWidth = static_cast<int>(width);
+        int lumaHeight = static_cast<int>(height);
+        int chromaSamplesPerRow = static_cast<int>(chromaWidth);
+        int chromaRows = static_cast<int>(chromaHeight);
+        if (sampleBytes == 1) {
+            libyuv::CopyPlane(sourceY->data(), static_cast<int>(layoutY.destinationStride), planes->y.data(), static_cast<int>(planes->strideY), lumaWidth, lumaHeight);
+            libyuv::MergeUVPlane(sourceU->data(), static_cast<int>(layoutU.destinationStride), sourceV->data(), static_cast<int>(layoutV.destinationStride), planes->uv.data(), static_cast<int>(planes->strideUV), chromaSamplesPerRow, chromaRows);
+        } else {
+            Vector<uint16_t> storageY;
+            Vector<uint16_t> storageU;
+            Vector<uint16_t> storageV;
+            auto y = sixteenBitSourcePlane(*sourceY, layoutY.destinationStride, width, height, storageY);
+            auto u = sixteenBitSourcePlane(*sourceU, layoutU.destinationStride, chromaWidth, chromaHeight, storageU);
+            auto v = sixteenBitSourcePlane(*sourceV, layoutV.destinationStride, chromaWidth, chromaHeight, storageV);
+            int bitDepth = layout->bitDepth;
+            libyuv::ConvertToMSBPlane_16(y.data, y.stride, spanReinterpretCast<uint16_t>(planes->y).data(), static_cast<int>(planes->strideY / sizeof(uint16_t)), lumaWidth, lumaHeight, bitDepth);
+            libyuv::MergeUVPlane_16(u.data, u.stride, v.data, v.stride, spanReinterpretCast<uint16_t>(planes->uv).data(), static_cast<int>(planes->strideUV / sizeof(uint16_t)), chromaSamplesPerRow, chromaRows, bitDepth);
+        }
+    }
+
+    return VideoFrameCV::create(init.presentationTime, init.isMirrored, init.rotation, WTF::move(pixelBuffer), WTF::move(init.colorSpace), VideoFrameCV::ShouldIgnoreAlpha::No);
+#else
+    UNUSED_PARAM(format);
+    UNUSED_PARAM(buffer);
+    UNUSED_PARAM(width);
+    UNUSED_PARAM(height);
+    UNUSED_PARAM(layouts);
+    UNUSED_PARAM(init);
+    return nullptr;
+#endif
+}
+
 static void copyPlane(std::span<uint8_t> destination, std::span<const uint8_t> source, uint64_t sourceStride, const ComputedPlaneLayout& spanPlaneLayout, NOESCAPE const Function<void(std::span<uint8_t>, std::span<const uint8_t>)>& copyRow)
 {
     uint64_t sourceOffset = spanPlaneLayout.sourceTop * sourceStride;
@@ -502,6 +703,112 @@ static Vector<PlaneLayout> copyI420OrI420A(std::span<uint8_t> span, const Comput
     return planeLayouts;
 }
 
+#if USE(LIBWEBRTC)
+// rect is in bytes of planar samples; interleaved chroma has 2 bytes per planar byte.
+static std::optional<std::span<uint8_t>> pixelBufferRect(std::span<uint8_t> plane, size_t stride, size_t planeWidthBytes, size_t planeHeight, const ComputedPlaneLayout& rect, size_t bytesPerPlanarByte)
+{
+    size_t left;
+    size_t width;
+    size_t right;
+    size_t bottom;
+    size_t offset;
+    if (!WTF::safeMultiply(rect.sourceLeftBytes, bytesPerPlanarByte, left) || !WTF::safeMultiply(rect.sourceWidthBytes, bytesPerPlanarByte, width)
+        || !WTF::safeAdd(left, width, right) || right > planeWidthBytes
+        || !WTF::safeAdd(rect.sourceTop, rect.sourceHeight, bottom) || bottom > planeHeight
+        || !WTF::safeMultiply(rect.sourceTop, stride, offset) || !WTF::safeAdd(offset, left, offset))
+        return { };
+    return planeRows(plane, offset, stride, rect.sourceHeight, width);
+}
+
+static Vector<PlaneLayout> copyPlanarYUV(std::span<uint8_t> span, const PlanarYUVFormatLayout& layout, std::span<const ComputedPlaneLayout> computedPlaneLayout, CVPixelBufferRef pixelBuffer)
+{
+    if (!libYUVAvailable() || computedPlaneLayout.size() != 3)
+        return { };
+
+    auto pixelFormat = CVPixelBufferGetPixelFormatType(pixelBuffer);
+    if (pixelFormat != biPlanarPixelFormatForPlanarYUV(layout, false) && pixelFormat != biPlanarPixelFormatForPlanarYUV(layout, true)) {
+        RELEASE_LOG_ERROR(WebRTC, "VideoFrame::copyTo pixel buffer format %" PUBLIC_LOG_STRING " doesn't match the requested format", FourCC(pixelFormat).string().data());
+        return { };
+    }
+
+    auto& layoutY = computedPlaneLayout[0];
+    auto& layoutU = computedPlaneLayout[1];
+    auto& layoutV = computedPlaneLayout[2];
+    // U and V are read together from the interleaved plane.
+    if (layoutU.sourceTop != layoutV.sourceTop || layoutU.sourceHeight != layoutV.sourceHeight || layoutU.sourceLeftBytes != layoutV.sourceLeftBytes || layoutU.sourceWidthBytes != layoutV.sourceWidthBytes)
+        return { };
+    size_t sampleBytes = planarYUVSampleBytes(layout);
+    if (layoutY.sourceWidthBytes % sampleBytes || layoutU.sourceWidthBytes % sampleBytes || layoutY.sourceLeftBytes % sampleBytes || layoutU.sourceLeftBytes % sampleBytes)
+        return { };
+    size_t width = layoutY.sourceWidthBytes / sampleBytes;
+    size_t height = layoutY.sourceHeight;
+    size_t chromaWidth = layoutU.sourceWidthBytes / sampleBytes;
+    size_t chromaHeight = layoutU.sourceHeight;
+
+    auto destinationY = planeRows(span, layoutY.destinationOffset, layoutY.destinationStride, height, layoutY.sourceWidthBytes);
+    auto destinationU = planeRows(span, layoutU.destinationOffset, layoutU.destinationStride, chromaHeight, layoutU.sourceWidthBytes);
+    auto destinationV = planeRows(span, layoutV.destinationOffset, layoutV.destinationStride, chromaHeight, layoutV.sourceWidthBytes);
+    if (!destinationY || !destinationU || !destinationV)
+        return { };
+
+    PixelBufferLock lock { pixelBuffer, kCVPixelBufferLock_ReadOnly };
+    if (!lock) {
+        RELEASE_LOG_ERROR(WebRTC, "VideoFrame::copyTo lock failed");
+        return { };
+    }
+    auto planes = biPlanarPlanes(pixelBuffer, layout);
+    if (!planes)
+        return { };
+    auto sourceY = pixelBufferRect(planes->y, planes->strideY, planes->width * sampleBytes, planes->height, layoutY, 1);
+    auto sourceUV = pixelBufferRect(planes->uv, planes->strideUV, 2 * planes->chromaWidth * sampleBytes, planes->chromaHeight, layoutU, 2);
+    if (!sourceY || !sourceUV)
+        return { };
+
+    // planeRows(), pixelBufferRect() and biPlanarPlanes() checked that the strides and sizes fit in an int.
+    int lumaWidth = static_cast<int>(width);
+    int lumaHeight = static_cast<int>(height);
+    int chromaSamplesPerRow = static_cast<int>(chromaWidth);
+    int chromaRows = static_cast<int>(chromaHeight);
+    int destinationStrideY = static_cast<int>(layoutY.destinationStride);
+    int destinationStrideU = static_cast<int>(layoutU.destinationStride);
+    int destinationStrideV = static_cast<int>(layoutV.destinationStride);
+
+    if (sampleBytes == 1) {
+        libyuv::CopyPlane(sourceY->data(), static_cast<int>(planes->strideY), destinationY->data(), destinationStrideY, lumaWidth, lumaHeight);
+        libyuv::SplitUVPlane(sourceUV->data(), static_cast<int>(planes->strideUV), destinationU->data(), destinationStrideU, destinationV->data(), destinationStrideV, chromaSamplesPerRow, chromaRows);
+    } else {
+        auto* y = spanReinterpretCast<const uint16_t>(std::span<const uint8_t> { *sourceY }).data();
+        auto* uv = spanReinterpretCast<const uint16_t>(std::span<const uint8_t> { *sourceUV }).data();
+        int strideY = static_cast<int>(planes->strideY / sizeof(uint16_t));
+        int strideUV = static_cast<int>(planes->strideUV / sizeof(uint16_t));
+        int bitDepth = layout.bitDepth;
+
+        if (isSixteenBitAddressable(*destinationY, layoutY.destinationStride))
+            libyuv::ConvertToLSBPlane_16(y, strideY, spanReinterpretCast<uint16_t>(*destinationY).data(), destinationStrideY / 2, lumaWidth, lumaHeight, bitDepth);
+        else {
+            Vector<uint16_t> storage(width * height);
+            libyuv::ConvertToLSBPlane_16(y, strideY, storage.mutableSpan().data(), lumaWidth, lumaWidth, lumaHeight, bitDepth);
+            copyPackedRows(storage.span(), width, height, *destinationY, layoutY.destinationStride);
+        }
+
+        if (isSixteenBitAddressable(*destinationU, layoutU.destinationStride) && isSixteenBitAddressable(*destinationV, layoutV.destinationStride))
+            libyuv::SplitUVPlane_16(uv, strideUV, spanReinterpretCast<uint16_t>(*destinationU).data(), destinationStrideU / 2, spanReinterpretCast<uint16_t>(*destinationV).data(), destinationStrideV / 2, chromaSamplesPerRow, chromaRows, bitDepth);
+        else {
+            Vector<uint16_t> storageU(chromaWidth * chromaHeight);
+            Vector<uint16_t> storageV(chromaWidth * chromaHeight);
+            libyuv::SplitUVPlane_16(uv, strideUV, storageU.mutableSpan().data(), chromaSamplesPerRow, storageV.mutableSpan().data(), chromaSamplesPerRow, chromaSamplesPerRow, chromaRows, bitDepth);
+            copyPackedRows(storageU.span(), chromaWidth, chromaHeight, *destinationU, layoutU.destinationStride);
+            copyPackedRows(storageV.span(), chromaWidth, chromaHeight, *destinationV, layoutV.destinationStride);
+        }
+    }
+
+    Vector<PlaneLayout> planeLayouts;
+    for (auto& plane : computedPlaneLayout)
+        planeLayouts.append({ plane.destinationOffset, plane.destinationStride });
+    return planeLayouts;
+}
+#endif
+
 void VideoFrame::copyTo(std::span<uint8_t> span, VideoPixelFormat format, ColorSpace colorSpace, Vector<ComputedPlaneLayout>&& computedPlaneLayout, CompletionHandler<void(std::optional<Vector<PlaneLayout>>&&)>&& callback)
 {
     // FIXME: We should get the pixel buffer and copy the bytes asynchronously.
@@ -556,6 +863,13 @@ void VideoFrame::copyTo(std::span<uint8_t> span, VideoPixelFormat format, ColorS
         callback(copyI420OrI420A(span, computedPlaneLayout[0], computedPlaneLayout[1], computedPlaneLayout[2], &computedPlaneLayout[3], pixelBuffer));
         return;
     }
+
+#if USE(LIBWEBRTC)
+    if (auto layout = planarYUVFormatLayout(format)) {
+        callback(copyPlanarYUV(span, *layout, computedPlaneLayout.span(), pixelBuffer));
+        return;
+    }
+#endif
 
     if (format == VideoPixelFormat::RGBA || format == VideoPixelFormat::RGBX) {
         ComputedPlaneLayout planeLayout;

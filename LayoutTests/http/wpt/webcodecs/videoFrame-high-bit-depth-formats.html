@@ -17,8 +17,11 @@ const formats = [
 for (const { format, chromaSamples } of formats) {
     test(() => {
         const data = new Uint16Array(width * height + 2 * chromaSamples);
-        assert_throws_dom("NotSupportedError", () => new VideoFrame(data, { format, timestamp: 0, codedWidth: width, codedHeight: height }));
-    }, `${format} is a known format that cannot be constructed yet`);
+        const frame = new VideoFrame(data, { format, timestamp: 0, codedWidth: width, codedHeight: height });
+        assert_equals(frame.format, format);
+        assert_equals(frame.allocationSize(), data.byteLength);
+        frame.close();
+    }, `${format} can be constructed`);
 }
 
 test(() => {

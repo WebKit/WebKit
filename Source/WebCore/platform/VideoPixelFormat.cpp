@@ -45,6 +45,16 @@ std::optional<VideoPixelFormat> convertVideoFramePixelFormat(uint32_t format, bo
 #if PLATFORM(COCOA)
     if (format == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange || format == kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange || format == kCVPixelFormatType_Lossless_420YpCbCr8BiPlanarVideoRange)
         return VideoPixelFormat::NV12;
+    if (format == kCVPixelFormatType_420YpCbCr10BiPlanarFullRange || format == kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange)
+        return VideoPixelFormat::I420P10;
+    if (format == kCVPixelFormatType_422YpCbCr8BiPlanarFullRange || format == kCVPixelFormatType_422YpCbCr8BiPlanarVideoRange)
+        return VideoPixelFormat::I422;
+    if (format == kCVPixelFormatType_422YpCbCr10BiPlanarFullRange || format == kCVPixelFormatType_422YpCbCr10BiPlanarVideoRange)
+        return VideoPixelFormat::I422P10;
+    if (format == kCVPixelFormatType_444YpCbCr8BiPlanarFullRange || format == kCVPixelFormatType_444YpCbCr8BiPlanarVideoRange)
+        return VideoPixelFormat::I444;
+    if (format == kCVPixelFormatType_444YpCbCr10BiPlanarFullRange || format == kCVPixelFormatType_444YpCbCr10BiPlanarVideoRange)
+        return VideoPixelFormat::I444P10;
     if (format == kCVPixelFormatType_32BGRA)
         return shouldDiscardAlpha ? VideoPixelFormat::BGRX : VideoPixelFormat::BGRA;
     if (format == kCVPixelFormatType_32ARGB)
@@ -55,10 +65,22 @@ std::optional<VideoPixelFormat> convertVideoFramePixelFormat(uint32_t format, bo
         return VideoPixelFormat::I420;
     case GST_VIDEO_FORMAT_A420:
         return VideoPixelFormat::I420A;
+    case GST_VIDEO_FORMAT_I420_10LE:
+        return VideoPixelFormat::I420P10;
+    case GST_VIDEO_FORMAT_I420_12LE:
+        return VideoPixelFormat::I420P12;
     case GST_VIDEO_FORMAT_Y42B:
         return VideoPixelFormat::I422;
+    case GST_VIDEO_FORMAT_I422_10LE:
+        return VideoPixelFormat::I422P10;
+    case GST_VIDEO_FORMAT_I422_12LE:
+        return VideoPixelFormat::I422P12;
     case GST_VIDEO_FORMAT_Y444:
         return VideoPixelFormat::I444;
+    case GST_VIDEO_FORMAT_Y444_10LE:
+        return VideoPixelFormat::I444P10;
+    case GST_VIDEO_FORMAT_Y444_12LE:
+        return VideoPixelFormat::I444P12;
     case GST_VIDEO_FORMAT_NV12:
         return VideoPixelFormat::NV12;
     case GST_VIDEO_FORMAT_RGBA:
