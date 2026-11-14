@@ -182,6 +182,14 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
             instrument.startInstrumentationForTarget(target);
     }
 
+    startInstrumentationForProcessLeader(target)
+    {
+        console.assert(this._capturing, "Attempted to instrument a target in a stopped session.");
+
+        for (let instrument of this._instruments)
+            instrument.startInstrumentationForProcessLeader(target);
+    }
+
     stop()
     {
         console.assert(this._capturing, "Attempted to stop an already stopped session.");

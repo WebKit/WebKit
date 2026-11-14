@@ -1,0 +1,65 @@
+Tests that, under Site Isolation, the CPU, Memory and Media instruments record from the page target that a cross-origin navigation creates during a capture, and that capturing still stops.
+
+
+== Running test suite: Timeline.CrossOriginNavigation.CPUMemoryMedia
+-- Running test case: Timeline.CrossOriginNavigation.CPUMemoryMedia.RecordsFromNewPageTarget
+PASS: Capturing is active.
+PASS: The page target created by the navigation should be the main target.
+PASS: Site Isolation should be detected before the page target created by the navigation leads its process.
+PASS: Recorded CPU and Memory from the page target created by the navigation.
+PASS: Recorded a CSS animation from the page target created by the navigation.
+PASS: Capturing stopped.
+PASS: The page target created by the navigation should be started once for CPUProfiler.
+PASS: The page target created by the navigation should be started for CPUProfiler after it commits and the previous page target is removed.
+PASS: The page target created by the navigation should report once that CPUProfiler started.
+PASS: The page target created by the navigation should report once that CPUProfiler stopped.
+PASS: The page target created by the navigation should be started once for Memory.
+PASS: The page target created by the navigation should be started for Memory after it commits and the previous page target is removed.
+PASS: The page target created by the navigation should report once that Memory started.
+PASS: The page target created by the navigation should report once that Memory stopped.
+PASS: The page target created by the navigation should be started once for Animation.
+PASS: The page target created by the navigation should be started for Animation after it commits and the previous page target is removed.
+PASS: The page target created by the navigation should report once that Animation started.
+PASS: The page target created by the navigation should report once that Animation stopped.
+PASS: There should be no unhandled promise rejections.
+
+-- Running test case: Timeline.CrossOriginNavigation.CPUMemoryMedia.StopWhileStarting
+PASS: Capturing is active.
+PASS: The page target created by the navigation should be the main target.
+PASS: Site Isolation should be detected before the page target created by the navigation leads its process.
+PASS: Capturing should stop when the page target created by the navigation leads its process.
+PASS: Capturing stopped.
+PASS: The page target created by the navigation should be started once for CPUProfiler.
+PASS: The page target created by the navigation should be started for CPUProfiler after it commits and the previous page target is removed.
+PASS: The page target created by the navigation should report once that CPUProfiler started.
+PASS: The page target created by the navigation should report once that CPUProfiler stopped.
+PASS: The page target created by the navigation should be started once for Memory.
+PASS: The page target created by the navigation should be started for Memory after it commits and the previous page target is removed.
+PASS: The page target created by the navigation should report once that Memory started.
+PASS: The page target created by the navigation should report once that Memory stopped.
+PASS: The page target created by the navigation should be started once for Animation.
+PASS: The page target created by the navigation should be started for Animation after it commits and the previous page target is removed.
+PASS: The page target created by the navigation should report once that Animation started.
+PASS: The page target created by the navigation should report once that Animation stopped.
+PASS: There should be no unhandled promise rejections.
+
+-- Running test case: Timeline.CrossOriginNavigation.CPUMemoryMedia.AutoCapture
+PASS: The page target created by the navigation should be the main target.
+PASS: Site Isolation should be detected before the page target created by the navigation leads its process.
+PASS: Capturing is active.
+PASS: Recorded CPU and Memory from the page target created by the navigation.
+PASS: Capturing stopped.
+PASS: The page target created by the navigation should be started at most once for CPUProfiler.
+PASS: The page target created by the navigation should be started for CPUProfiler after it commits and the previous page target is removed.
+PASS: The page target created by the navigation should report once that CPUProfiler started.
+PASS: The page target created by the navigation should report once that CPUProfiler stopped.
+PASS: The page target created by the navigation should be started at most once for Memory.
+PASS: The page target created by the navigation should be started for Memory after it commits and the previous page target is removed.
+PASS: The page target created by the navigation should report once that Memory started.
+PASS: The page target created by the navigation should report once that Memory stopped.
+PASS: The page target created by the navigation should be started at most once for Animation.
+PASS: The page target created by the navigation should be started for Animation after it commits and the previous page target is removed.
+PASS: The page target created by the navigation should report once that Animation started.
+PASS: The page target created by the navigation should report once that Animation stopped.
+PASS: There should be no unhandled promise rejections.
+

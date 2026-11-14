@@ -127,6 +127,11 @@ WI.Instrument = class Instrument
         WI.Instrument.startLegacyTimelineAgentForTarget(target);
     }
 
+    startInstrumentationForProcessLeader(target)
+    {
+        // Implemented by subclasses that do not instrument every target.
+    }
+
     stopInstrumentation()
     {
         WI.Instrument.stopLegacyTimelineAgent();
