@@ -1,0 +1,30 @@
+<html>
+<head>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+
+document.cookie = 'cookie=parent';
+
+function log(msg) {
+  var line = document.createElement('div');
+  line.appendChild(document.createTextNode(msg));
+  document.getElementById('console').appendChild(line);
+}
+
+window.addEventListener('message', function(event) {
+  log('--- Test begins ---\n');
+  event.data.forEach(log);
+  log('--- Test ends ---\n');
+
+  testRunner.notifyDone();
+});
+</script>
+</head>
+<body>
+<div id="console"></div>
+<iframe style="display: none" src="http://localhost:8000/security/aboutBlank/resources/window-open-about-blank-and-read-cookie.html"></iframe>
+</body>
+</html>
