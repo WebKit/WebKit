@@ -95,11 +95,11 @@ public:
     std::optional<Type> sharedPrimitiveType(Type other) const;
     std::optional<Type> sharedPrimitiveType(const TransformFunctionBase* other) const;
 
-    virtual bool isIdentity() const = 0;
-    virtual bool isAffectedByTransformOrigin() const { return false; }
-    virtual bool isRepresentableIn2D() const { return true; }
+    NODELETE virtual bool isIdentity() const = 0;
+    NODELETE virtual bool isAffectedByTransformOrigin() const { return false; }
+    NODELETE virtual bool isRepresentableIn2D() const { return true; }
 
-    virtual TransformFunctionSizeDependencies computeSizeDependencies() const { return { }; }
+    NODELETE virtual TransformFunctionSizeDependencies computeSizeDependencies() const { return { }; }
 
     bool is3DOperation() const
     {

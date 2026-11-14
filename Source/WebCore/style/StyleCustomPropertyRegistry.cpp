@@ -79,7 +79,7 @@ bool CustomPropertyRegistry::registerFromAPI(CSSRegisteredCustomProperty&& prope
 
     if (success) {
         invalidate(property.name);
-        m_scope.documentScope().didChangeStyleSheetEnvironment();
+        protect(m_scope->documentScope())->didChangeStyleSheetEnvironment();
     }
 
     return success;
@@ -90,7 +90,7 @@ void CustomPropertyRegistry::registerFromStylesheet(const StyleRuleProperty::Des
     auto syntax = CSSCustomPropertySyntax::parse(descriptor.syntax);
     ASSERT(syntax);
 
-    auto& document = m_scope.document();
+    auto& document = m_scope->document();
 
     RefPtr<const Style::CustomProperty> initialValue;
     RefPtr<CSSVariableData> initialValueTokensForViewportUnits;
@@ -105,7 +105,7 @@ void CustomPropertyRegistry::registerFromStylesheet(const StyleRuleProperty::Des
         initialValue = parsedInitialValue->first;
         if (parsedInitialValue->second == ViewportUnitDependency::Yes) {
             initialValueTokensForViewportUnits = CSSVariableData::create(tokenRange);
-            m_scope.document().setHasStyleWithViewportUnits();
+            m_scope->document().setHasStyleWithViewportUnits();
         }
     } else if (syntax->isUniversal()) {
         // "If the value of the syntax descriptor is the universal syntax definition, then the initial-value descriptor is optional.
@@ -149,18 +149,19 @@ const Style::ComputedStyle& CustomPropertyRegistry::initialValuePrototypeStyle()
         m_hasInvalidPrototypeStyle = false;
 
         auto oldStyle = std::exchange(m_initialValuePrototypeStyle, Style::ComputedStyle::createPtr());
+        CheckedRef prototypeStyle = *m_initialValuePrototypeStyle;
 
         auto initializeToStyle = [&](auto& map) {
             for (auto& property : map.values()) {
                 if (property->initialValue && !property->initialValue->isGuaranteedInvalid())
-                    m_initialValuePrototypeStyle->setCustomPropertyValue(*property->initialValue, property->inherits);
+                    prototypeStyle->setCustomPropertyValue(*property->initialValue, property->inherits);
             }
         };
 
         initializeToStyle(m_propertiesFromStylesheet);
         initializeToStyle(m_propertiesFromAPI);
 
-        m_initialValuePrototypeStyle->deduplicateCustomProperties(*oldStyle);
+        prototypeStyle->deduplicateCustomProperties(*oldStyle);
     }
 
     return *m_initialValuePrototypeStyle;
@@ -170,7 +171,7 @@ void CustomPropertyRegistry::invalidate(const AtomString& customProperty)
 {
     m_hasInvalidPrototypeStyle = true;
     // Changing property registration may affect computed property values in the cache.
-    m_scope.invalidateMatchedDeclarationsCache();
+    m_scope->invalidateMatchedDeclarationsCache();
 
     // FIXME: Invalidate all?
     if (!customProperty.isNull())
@@ -179,7 +180,7 @@ void CustomPropertyRegistry::invalidate(const AtomString& customProperty)
 
 void CustomPropertyRegistry::notifyAnimationsOfCustomPropertyRegistration(const AtomString& customProperty)
 {
-    auto& document = m_scope.document();
+    auto& document = m_scope->document();
     for (auto& animation : WebAnimation::instances()) {
         if (RefPtr keyframeEffect = animation->keyframeEffect()) {
             if (RefPtr target = keyframeEffect->target()) {

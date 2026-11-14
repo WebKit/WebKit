@@ -593,13 +593,13 @@ Inspector::Protocol::DOM::NodeId FrameDOMAgent::pushStyleableElementToFrontend(c
 
 Inspector::Protocol::DOM::NodeId FrameDOMAgent::pushStyleableNodePathToFrontend(Inspector::Protocol::ErrorString& errorString, const Styleable& styleable)
 {
-    if (!boundNodeId(protect(styleable.element.document()).ptr())) {
+    if (!boundNodeId(protect(styleable.element->document()).ptr())) {
         errorString = "Document must have been requested"_s;
         return 0;
     }
 
     RefPtr element = InspectorDOMAgent::elementToPushForStyleable(styleable);
-    auto nodeId = pushNodePathToFrontend(errorString, protect(element ? element.get() : &styleable.element));
+    auto nodeId = pushNodePathToFrontend(errorString, protect(element ? element.get() : styleable.element.ptr()));
     if (!nodeId && errorString.isEmpty())
         errorString = "Unable to push node to frontend"_s;
 

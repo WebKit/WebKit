@@ -453,7 +453,7 @@ void Invalidator::invalidateStyleWithMatchElement(Element& element, MatchElement
         }();
         if (someRuleSetIsScopeBreaking) {
             SelectorMatchingState selectorMatchingState;
-            invalidateStyleForDescendants(*element.document().documentElement(), &selectorMatchingState);
+            invalidateStyleForDescendants(protect(*element.document().documentElement()), &selectorMatchingState);
             return;
         }
 

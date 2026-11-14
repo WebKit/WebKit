@@ -1119,7 +1119,7 @@ ExceptionOr<void> KeyframeEffect::setKeyframes(JSGlobalObject& lexicalGlobalObje
 
         // Need a full style invalidation since the new keyframes may interact differently with the base style.
         if (auto target = targetStyleable())
-            protect(target->element)->invalidateStyle();
+            target->element->invalidateStyle();
     }
 
     return processKeyframesResult;
@@ -1581,7 +1581,7 @@ void KeyframeEffect::setTarget(RefPtr<Element>&& newTarget)
     auto& previousTargetStyleable = targetStyleable();
     RefPtr<Element> protector;
     if (previousTargetStyleable)
-        protector = previousTargetStyleable->element;
+        protector = previousTargetStyleable->element.ptr();
     m_target = WTF::move(newTarget);
     didChangeTargetStyleable(previousTargetStyleable);
 }

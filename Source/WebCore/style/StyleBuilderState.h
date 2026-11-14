@@ -34,6 +34,7 @@
 #include "SelectorChecker.h"
 #include "StyleComputedStyle.h"
 #include "StyleForVisitedLink.h"
+#include "StyleLocalPropertyRegistry.h"
 #include "StyleSubstitutionContext.h"
 #include "TextFlags.h"
 #include "TreeResolutionState.h"
@@ -58,7 +59,6 @@ class BuilderState;
 class Builder;
 class CustomPropertyRegistry;
 class Image;
-class LocalPropertyRegistry;
 class Scope;
 struct Color;
 struct FontFamilies;

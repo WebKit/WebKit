@@ -1219,7 +1219,7 @@ void Adjuster::adjustForSiteSpecificQuirks(Style::ComputedStyle& style) const
             static MainThreadNeverDestroyed<const AtomString> videoElementID("vjs_video_3_html5_api"_s);
 
             if (m_element->hasClassName(instreamNativeVideoDivClass)) {
-                RefPtr video = dynamicDowncast<HTMLVideoElement>(m_element->treeScope().getElementById(videoElementID));
+                RefPtr video = dynamicDowncast<HTMLVideoElement>(protect(m_element->treeScope())->getElementById(videoElementID));
                 if (video && video->isFullscreen())
                     style.setDisplayMaintainingOriginalDisplay(DisplayType::BlockFlow);
             }
@@ -1258,7 +1258,7 @@ void Adjuster::adjustForSiteSpecificQuirks(Style::ComputedStyle& style) const
 
 #if PLATFORM(IOS_FAMILY)
     if (documentQuirks.needsClaudeSidebarViewportUnitQuirk(protect(*m_element), style))
-        style.setHeight(PreferredSize::Fixed { m_document->renderView()->sizeForCSSDynamicViewportUnits().height() });
+        style.setHeight(PreferredSize::Fixed { protect(m_document->renderView())->sizeForCSSDynamicViewportUnits().height() });
 
     if (auto openRiceAdPopupHeight = documentQuirks.needsOpenRiceAdPopupHeightQuirk(protect(*m_element), style)) {
         style.setUsesViewportUnits();
@@ -1270,8 +1270,9 @@ void Adjuster::adjustForSiteSpecificQuirks(Style::ComputedStyle& style) const
     if (documentQuirks.needsAmazonDesignMenuViewportUnitQuirk(style, m_parentStyle)) {
         if (auto fixedHeight = style.height().tryFixed()) {
             auto resolvedHeight = fixedHeight->resolveZoom(ZoomFactor::none());
-            auto defaultViewportHeight = m_document->renderView()->sizeForCSSDefaultViewportUnits().height();
-            auto dynamicViewportHeight = m_document->renderView()->sizeForCSSDynamicViewportUnits().height();
+            CheckedPtr renderView = m_document->renderView();
+            auto defaultViewportHeight = renderView->sizeForCSSDefaultViewportUnits().height();
+            auto dynamicViewportHeight = renderView->sizeForCSSDynamicViewportUnits().height();
             style.setHeight(PreferredSize::Fixed { resolvedHeight - (defaultViewportHeight - dynamicViewportHeight) });
         }
     }
@@ -1338,8 +1339,8 @@ void Adjuster::adjustColumnStylesForPaginationMode(Style::ComputedStyle& style, 
 void Adjuster::propagateToDocumentElementAndInitialContainingBlock(Update& update, const Document& document)
 {
     RefPtr body = document.body();
-    auto* bodyStyle = body ? update.elementStyle(*body) : nullptr;
-    auto* documentElementStyle = update.elementStyle(*document.documentElement());
+    CheckedPtr bodyStyle = body ? update.elementStyle(*body) : nullptr;
+    CheckedPtr documentElementStyle = update.elementStyle(*document.documentElement());
 
     if (!documentElementStyle)
         return;
@@ -1372,7 +1373,7 @@ void Adjuster::propagateToDocumentElementAndInitialContainingBlock(Update& updat
     // https://drafts.csswg.org/css-writing-modes-3/#icb
     WritingMode viewWritingMode = document.renderView()->writingMode();
     if (writingMode != viewWritingMode.computedWritingMode() || direction != viewWritingMode.computedTextDirection()) {
-        auto newRootStyle = Style::ComputedStyle::clonePtr(document.renderView()->style());
+        auto newRootStyle = Style::ComputedStyle::clonePtr(protect(document.renderView()->style()));
         newRootStyle->setWritingMode(writingMode);
         newRootStyle->setDirection(direction);
         adjustColumnStylesForPaginationMode(*newRootStyle, document.view()->pagination().mode);

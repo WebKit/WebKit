@@ -109,14 +109,14 @@ TreeResolver::Scope::Scope(Document& document, Update& update)
     // Ensure all shadow tree resolvers exist so their construction doesn't depend on traversal.
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
     for (Ref shadowRoot : document.inDocumentShadowRoots()) {
-        const_cast<ShadowRoot&>(shadowRoot.get()).styleScope().resolver();
+        protect(const_cast<ShadowRoot&>(shadowRoot.get()).styleScope())->resolver();
     }
 
     selectorMatchingState.containerQueryEvaluationState.styleUpdate = &update;
 }
 
 TreeResolver::Scope::Scope(ShadowRoot& shadowRoot, Scope& enclosingScope)
-    : resolver(shadowRoot.styleScope().resolver())
+    : resolver(protect(shadowRoot.styleScope())->resolver())
     , shadowRoot(&shadowRoot)
     , enclosingScope(&enclosingScope)
 {
@@ -265,7 +265,7 @@ void TreeResolver::resetStyleForNonRenderedDescendants(Element& subtreeRoot)
 
     m_positionOptions.removeIf([&subtreeRoot] (const auto& kv) {
         auto styleable = kv.key.styleable();
-        return !styleable || styleable->element.isComposedTreeDescendantOf(subtreeRoot);
+        return !styleable || styleable->element->isComposedTreeDescendantOf(subtreeRoot);
     });
 
     subtreeRoot.clearChildNeedsStyleRecalc();
@@ -896,7 +896,7 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
         // A styleable gets its style resolved multiple times for anchor positioning.
         // Therefore when updating animation is deferred, save the old style so it's restored
         // (using beforeResolutionStyle) and can be used when animation is finally updated/applied.
-        saveBeforeResolutionStyleForInterleaving(protect(styleable.element), oldStyle);
+        saveBeforeResolutionStyleForInterleaving(styleable.element, oldStyle);
     }
 
     auto unanimatedDisplay = resolvedStyle.style->display();
@@ -971,7 +971,7 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
             styleable.setHasPropertiesOverridenAfterAnimation(!overriddenAnimatedProperties.isEmpty());
         }
 
-        Adjuster adjuster(document, *resolutionContext.parentStyle, resolutionContext.parentBoxStyle, !styleable.pseudoElementIdentifier ? &styleable.element : nullptr);
+        Adjuster adjuster(document, *resolutionContext.parentStyle, resolutionContext.parentBoxStyle, !styleable.pseudoElementIdentifier ? styleable.element.ptr() : nullptr);
         adjuster.adjustAnimatedStyle(*animatedStyle, animationImpact);
 
         return { WTF::move(animatedStyle), animationImpact };
@@ -1056,7 +1056,7 @@ std::unique_ptr<Style::ComputedStyle> TreeResolver::resolveStartingStyle(const R
         return nullptr;
 
     // "Starting style inherits from the parent’s after-change style just like after-change style does."
-    auto& parentStyle = parentAfterChangeStyle(styleable, resolutionContext);
+    CheckedRef parentStyle = parentAfterChangeStyle(styleable, resolutionContext);
 
     // We now resolve the starting style by applying all rules (including @starting-style ones) again.
     // We could compute it along with the primary style and include it in MatchedPropertiesCache but it is not
@@ -1081,7 +1081,7 @@ std::unique_ptr<Style::ComputedStyle> TreeResolver::resolveAfterChangeStyleForNo
         return nullptr;
 
     // "Likewise, define the after-change style as.. and inheriting from the after-change style of the parent."
-    auto& parentStyle = parentAfterChangeStyle(styleable, resolutionContext);
+    CheckedRef parentStyle = parentAfterChangeStyle(styleable, resolutionContext);
     return resolveAgainInDifferentContext(resolvedStyle, styleable, parentStyle, PropertyCascade::normalPropertyTypes(), { }, resolutionContext);
 }
 
@@ -1100,7 +1100,7 @@ std::unique_ptr<Style::ComputedStyle> TreeResolver::resolveAgainInDifferentConte
         .parentStyle = &parentStyle,
         .parentHighlightStyle = resolutionContext.parentHighlightStyle,
         .rootElementStyle = resolutionContext.documentElementStyle,
-        .element = &styleable.element,
+        .element = styleable.element.ptr(),
         .treeResolutionState = &m_treeResolutionState,
         .positionTryFallback = WTF::move(positionTryFallback)
     };
@@ -1108,7 +1108,7 @@ std::unique_ptr<Style::ComputedStyle> TreeResolver::resolveAgainInDifferentConte
     auto styleBuilder = Builder {
         *newStyle,
         WTF::move(builderContext),
-        *resolvedStyle.matchResult,
+        *protect(resolvedStyle.matchResult),
         { properties }
     };
 
@@ -1117,7 +1117,7 @@ std::unique_ptr<Style::ComputedStyle> TreeResolver::resolveAgainInDifferentConte
     if (newStyle->display() == DisplayType::None)
         return nullptr;
 
-    Adjuster adjuster(m_document, parentStyle, resolutionContext.parentBoxStyle, !styleable.pseudoElementIdentifier ? &styleable.element : nullptr);
+    Adjuster adjuster(m_document, parentStyle, resolutionContext.parentBoxStyle, !styleable.pseudoElementIdentifier ? styleable.element.ptr() : nullptr);
     adjuster.adjust(*newStyle);
 
     return newStyle;
@@ -1125,7 +1125,7 @@ std::unique_ptr<Style::ComputedStyle> TreeResolver::resolveAgainInDifferentConte
 
 const Style::ComputedStyle& TreeResolver::parentAfterChangeStyle(const Styleable& styleable, const ResolutionContext& resolutionContext) const
 {
-    if (auto* parentElement = !styleable.pseudoElementIdentifier ? parent().element : &styleable.element) {
+    if (auto* parentElement = !styleable.pseudoElementIdentifier ? parent().element : styleable.element.ptr()) {
         if (auto* afterChangeStyle = parentElement->lastStyleChangeEventStyle({ }))
             return *afterChangeStyle;
     }
@@ -1617,7 +1617,7 @@ std::unique_ptr<Update> TreeResolver::resolve()
 
     if (!m_update)
         m_update = makeUnique<Update>(m_document);
-    m_scopeStack.append(adoptRef(*new Scope(m_document, *m_update)));
+    m_scopeStack.append(adoptRef(*new Scope(m_document, *protect(m_update))));
     m_parentStack.append(Parent(m_document));
 
     resolveComposedTree();
@@ -1647,7 +1647,7 @@ std::unique_ptr<Update> TreeResolver::resolve()
 
         // Ensure that style resolution visits any unresolved anchor-positioned elements.
         if (state->stage < AnchorPositionResolutionStage::Resolved) {
-            protect(anchorPositioned->element)->invalidateForResumingAnchorPositionedElementResolution();
+            anchorPositioned->element->invalidateForResumingAnchorPositionedElementResolution();
             m_needsInterleavedLayout = true;
         }
     }
@@ -1658,7 +1658,7 @@ std::unique_ptr<Update> TreeResolver::resolve()
             continue;
 
         if (!options.chosen) {
-            protect(styleable->element)->invalidateForResumingAnchorPositionedElementResolution();
+            styleable->element->invalidateForResumingAnchorPositionedElementResolution();
             m_needsInterleavedLayout = true;
         }
     }
@@ -1684,7 +1684,7 @@ std::unique_ptr<Update> TreeResolver::resolve()
 
             if (anchorPositionedReferencesChangedAnchorNames) {
                 // Invalidate the anchor-positioned element, so subsequent style resolution rounds would visit it.
-                protect(anchorPositioned->element)->invalidateForResumingAnchorPositionedElementResolution();
+                anchorPositioned->element->invalidateForResumingAnchorPositionedElementResolution();
 
                 // Mark that additional style resolution round is needed.
                 m_needsInterleavedLayout = true;
@@ -1708,7 +1708,7 @@ std::unique_ptr<Update> TreeResolver::resolve()
     if (!m_didFirstInterleavedLayout && !m_document->styleScope().anchorPositionedToAnchorMap().computeIsEmpty())
         m_needsInterleavedLayout = true;
 
-    Adjuster::propagateToDocumentElementAndInitialContainingBlock(*m_update, m_document);
+    Adjuster::propagateToDocumentElementAndInitialContainingBlock(*protect(m_update), m_document);
 
     return WTF::move(m_update);
 }
@@ -1726,8 +1726,8 @@ auto TreeResolver::updateAnchorPositioningState(Element& element, const Style::C
 
     update(style);
     if (style->hasPseudoElementStyles()) {
-        update(style->pseudoElementStyle({ PseudoElementType::Before }));
-        update(style->pseudoElementStyle({ PseudoElementType::After }));
+        update(protect(style->pseudoElementStyle({ PseudoElementType::Before })));
+        update(protect(style->pseudoElementStyle({ PseudoElementType::After })));
     }
 
     if (m_treeResolutionState.anchorPositionedStates.isEmpty())
@@ -1768,15 +1768,16 @@ void TreeResolver::generatePositionOptionsIfNeeded(const ResolvedStyle& resolved
         return;
 
     auto generatePositionOptions = [&] {
+        CheckedRef style = *resolvedStyle.style;
         ResolvedStyle clonedResolvedStyle {
-            .style = Style::ComputedStyle::clonePtr(*resolvedStyle.style),
+            .style = Style::ComputedStyle::clonePtr(style),
             .relations = { },
             .matchResult = resolvedStyle.matchResult
         };
         PositionOptions options { .originalResolvedStyle = WTF::move(clonedResolvedStyle) };
 
         auto scrollContainerSizeOnGeneration = scrollContainerSizeForPositionOptions(styleable);
-        options.optionStyles.append({ Style::ComputedStyle::clonePtr(*resolvedStyle.style), { }, scrollContainerSizeOnGeneration });
+        options.optionStyles.append({ Style::ComputedStyle::clonePtr(style), { }, scrollContainerSizeOnGeneration });
 
         for (auto [i, fallback] : indexedRange(resolvedStyle.style->positionTryFallbacks())) {
             auto optionStyle = generatePositionOption(fallback, options.originalResolvedStyle, styleable, resolutionContext);
@@ -1817,7 +1818,7 @@ std::unique_ptr<Style::ComputedStyle> TreeResolver::generatePositionOption(const
 
         // "If an at-rule or property defines a name that other CSS constructs can refer to it by, ... it must be defined as a tree-scoped name."
         // https://drafts.csswg.org/css-scoping-1/#shadow-names
-        return Style::resolveTreeScopedReference(protect(styleable.element), *fallback.ruleAndTactics.rule, [](const Style::Scope& scope, const Style::ScopedName& scopedName) -> RefPtr<const StyleProperties> {
+        return Style::resolveTreeScopedReference(styleable.element, *fallback.ruleAndTactics.rule, [](const Style::Scope& scope, const Style::ScopedName& scopedName) -> RefPtr<const StyleProperties> {
             Ref ruleSet = scope.resolverIfExists()->ruleSets().authorStyle();
             RefPtr rule = ruleSet->positionTryRuleForName(scopedName.name);
             if (!rule)
@@ -1831,7 +1832,7 @@ std::unique_ptr<Style::ComputedStyle> TreeResolver::generatePositionOption(const
         .tactics = fallback.ruleAndTactics.tactics->value,
     };
 
-    return resolveAgainInDifferentContext(resolvedStyle, styleable, *resolutionContext.parentStyle, PropertyCascade::normalPropertyTypes(), WTF::move(builderFallback), resolutionContext);
+    return resolveAgainInDifferentContext(resolvedStyle, styleable, *protect(resolutionContext.parentStyle), PropertyCascade::normalPropertyTypes(), WTF::move(builderFallback), resolutionContext);
 }
 
 const Style::ComputedStyle& TreeResolver::PositionOptions::originalStyle() const
@@ -1845,7 +1846,7 @@ std::unique_ptr<Style::ComputedStyle> TreeResolver::PositionOptions::currentOpti
 {
     ASSERT(index < optionStyles.size());
     ASSERT(optionStyles[index].style);
-    return Style::ComputedStyle::clonePtr(*optionStyles[index].style);
+    return Style::ComputedStyle::clonePtr(*protect(optionStyles[index].style));
 }
 
 void TreeResolver::sortPositionOptionsIfNeeded(PositionOptions& options, const Styleable& styleable)
@@ -1872,7 +1873,7 @@ void TreeResolver::sortPositionOptionsIfNeeded(PositionOptions& options, const S
         Vector<SortingOption> optionsForSorting(ReserveCapacityTag { }, options.optionStyles.size());
 
         for (size_t i = 1; i < options.optionStyles.size(); ++i) {
-            auto constraints = PositionedLayoutConstraints { *box, *options.optionStyles[i].style, boxAxis };
+            auto constraints = PositionedLayoutConstraints { *box, *protect(options.optionStyles[i].style), boxAxis };
             constraints.computeInsets();
             optionsForSorting.append({ WTF::move(options.optionStyles[i]), constraints.insetModifiedContainingSize() });
         }
@@ -1926,13 +1927,13 @@ std::optional<ResolvedStyle> TreeResolver::tryChoosePositionOption(const Styleab
         iter->value.invalidated = false;
     };
 
-    auto renderer = dynamicDowncast<RenderBox>(styleable.renderer());
+    CheckedPtr renderer = dynamicDowncast<RenderBox>(styleable.renderer());
     if (!renderer) {
         invalidateQueryContainer();
 
         options.chosen = true;
         options.index = 0;
-        return ResolvedStyle { Style::ComputedStyle::clonePtr(options.originalStyle()) };
+        return ResolvedStyle { Style::ComputedStyle::clonePtr(protect(options.originalStyle())) };
     }
 
     // On the first try, we force apply the original style (which _could_ be different from

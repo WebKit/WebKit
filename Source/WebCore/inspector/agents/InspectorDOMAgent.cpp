@@ -603,17 +603,17 @@ RefPtr<Element> InspectorDOMAgent::elementToPushForStyleable(const Styleable& st
     // FIXME: We want to get rid of PseudoElement.
     if (styleable.pseudoElementIdentifier) {
         if (styleable.pseudoElementIdentifier->type == PseudoElementType::Before)
-            return element.beforePseudoElement();
+            return element->beforePseudoElement();
         if (styleable.pseudoElementIdentifier->type == PseudoElementType::After)
-            return element.afterPseudoElement();
+            return element->afterPseudoElement();
     }
-    return &element;
+    return element.ptr();
 }
 
 Inspector::Protocol::DOM::NodeId InspectorDOMAgent::pushStyleableElementToFrontend(const Styleable& styleable)
 {
     RefPtr element = elementToPushForStyleable(styleable);
-    return pushNodeToFrontend(protect(element ? element.get() : &styleable.element));
+    return pushNodeToFrontend(protect(element ? element.get() : styleable.element.ptr()));
 }
 
 Inspector::Protocol::DOM::NodeId InspectorDOMAgent::pushNodeToFrontend(Node* nodeToPush)
@@ -766,7 +766,7 @@ Inspector::Protocol::DOM::NodeId InspectorDOMAgent::pushNodePathToFrontend(Node*
 Ref<Inspector::Protocol::DOM::Styleable> InspectorDOMAgent::pushStyleablePathToFrontend(Inspector::Protocol::ErrorString errorString, const Styleable& styleable)
 {
     RefPtr element = elementToPushForStyleable(styleable);
-    auto nodeId = pushNodePathToFrontend(errorString, protect(element ? element.get() : &styleable.element));
+    auto nodeId = pushNodePathToFrontend(errorString, protect(element ? element.get() : styleable.element.ptr()));
     return buildObjectForStyleable(nodeId, styleable);
 }
 
