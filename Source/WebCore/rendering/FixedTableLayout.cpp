@@ -346,6 +346,20 @@ void FixedTableLayout::layout()
     auto colPositionsSize = m_table->columnPositions().size();
     if (colPositionsSize > 0)
         m_table->setColumnPosition(colPositionsSize - 1, LayoutUnit(pos));
+
+    if (!m_table->collapseBorders())
+        return;
+
+    float deviceScaleFactor = m_table->style().deviceScaleFactor();
+    bool isInlineFlipped = m_table->writingMode().isInlineFlipped();
+    LayoutUnit endPosition { pos };
+    for (unsigned i = 1; i < nEffCols; i++) {
+        LayoutUnit position = m_table->columnPositions()[i];
+        if (isInlineFlipped)
+            m_table->setColumnPosition(i, endPosition - LayoutUnit(floorToDevicePixel(endPosition - position, deviceScaleFactor)));
+        else
+            m_table->setColumnPosition(i, LayoutUnit(floorToDevicePixel(position, deviceScaleFactor)));
+    }
 }
 
 } // namespace WebCore

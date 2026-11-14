@@ -8108,7 +8108,6 @@ webkit.org/b/330245 imported/w3c/web-platform-tests/css/CSS2/pagination/table-pa
 webkit.org/b/330245 imported/w3c/web-platform-tests/css/CSS2/pagination/table-page-break-inside-avoid-8-print.html [ ImageOnlyFailure ]
 
 # css/CSS2/tables failures
-webkit.org/b/329821 imported/w3c/web-platform-tests/css/CSS2/tables/fixed-table-layout-027.xht [ ImageOnlyFailure ]
 webkit.org/b/288957 imported/w3c/web-platform-tests/css/CSS2/tables/border-collapse-006.html [ ImageOnlyFailure ]
 webkit.org/b/288957 imported/w3c/web-platform-tests/css/CSS2/tables/border-collapse-dynamic-column-002.xht [ ImageOnlyFailure ]
 webkit.org/b/288957 imported/w3c/web-platform-tests/css/CSS2/tables/column-visibility-004.xht [ ImageOnlyFailure ]
