@@ -38,7 +38,7 @@ struct TextOnlyLineBreakResult;
 class TextOnlySimpleLineBuilder final : public AbstractLineBuilder {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(TextOnlySimpleLineBuilder);
 public:
-    TextOnlySimpleLineBuilder(InlineFormattingContext&, const ElementBox& rootBox, HorizontalConstraints rootHorizontalConstraints, const InlineItemList&);
+    TextOnlySimpleLineBuilder(InlineFormattingContext&, const ElementBox& rootBox, HorizontalConstraints rootHorizontalConstraints, const InlineItemList&, std::span<const float> shapingAdjustments = { });
     LineLayoutResult layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&, bool isFirstFormattedLine) final;
 
     NODELETE static bool isEligibleForSimplifiedTextOnlyInlineLayoutByContent(const InlineContentCache::InlineItems&, const InlineLayoutState&);
@@ -50,20 +50,33 @@ public:
     static InlineLayoutUnit measuredInlineTextItem(const InlineTextItem&, const Style::ComputedStyle&, InlineLayoutUnit contentLogicalLeft);
 
 private:
-    InlineItemPosition placeInlineTextContent(const Style::ComputedStyle&, const InlineItemRange&);
-    InlineItemPosition placeNonWrappingInlineTextContent(const Style::ComputedStyle&, const InlineItemRange&);
+    template<bool hasShapingAdjustments> InlineItemPosition placeInlineTextContent(const Style::ComputedStyle&, const InlineItemRange&);
+    template<bool hasShapingAdjustments> InlineItemPosition placeNonWrappingInlineTextContent(const Style::ComputedStyle&, const InlineItemRange&);
     std::optional<LineLayoutResult> placeSingleCharacterContentIfApplicable(const LineInput&, bool isFirstFormattedLineCandidate);
     TextOnlyLineBreakResult handleOverflowingTextContent(const Style::ComputedStyle&, const InlineContentBreaker::ContinuousContent&, const InlineItemRange&);
-    TextOnlyLineBreakResult commitCandidateContent(const Style::ComputedStyle&, const CandidateTextContent&, const InlineItemRange&);
+    template<bool hasShapingAdjustments> TextOnlyLineBreakResult commitCandidateContent(const Style::ComputedStyle&, const CandidateTextContent&, const InlineItemRange&);
     void initialize(const InlineItemRange&, const InlineRect& initialLogicalRect, const std::optional<PreviousLine>&, bool isFirstFormattedLine);
     void handleLineEnding(const Style::ComputedStyle&, InlineItemPosition, size_t layoutRangeEndIndex);
     size_t revertToTrailingItem(const Style::ComputedStyle&, const InlineItemRange&, const InlineTextItem&);
     size_t revertToLastNonOverflowingItem(const Style::ComputedStyle&, const InlineItemRange&);
     NODELETE InlineLayoutUnit availableWidth() const;
+    // Most content has no adjustments, so keep the check inline.
+    InlineLayoutUnit leadingShapingAdjustment(const InlineTextItem& inlineTextItem) const { return m_shapingAdjustments.empty() ? 0.f : leadingShapingAdjustmentForLineStart(inlineTextItem); }
+    // The placement functions are specialized on whether there are adjustments, so content without them does none of this work.
+    template<bool hasShapingAdjustments> InlineLayoutUnit textItemWidth(const InlineTextItem& inlineTextItem, InlineLayoutUnit logicalWidth) const
+    {
+        if constexpr (hasShapingAdjustments)
+            return logicalWidth - leadingShapingAdjustmentForLineStart(inlineTextItem);
+        else
+            return logicalWidth;
+    }
+    InlineLayoutUnit leadingShapingAdjustmentForLineStart(const InlineTextItem&) const;
 
 private:
     InlineLayoutUnit m_trimmedTrailingWhitespaceWidth { 0.f };
     std::optional<InlineLayoutUnit> m_overflowContentLogicalWidth { };
+    std::span<const float> m_shapingAdjustments;
+    std::optional<size_t> m_lineStartItemIndex;
 };
 
 }
