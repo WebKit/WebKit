@@ -7,7 +7,6 @@ rendering/GridLayoutFunctions.cpp
 rendering/GridTrackSizingAlgorithm.cpp
 rendering/HitTestResult.cpp
 rendering/InlineBoxPainter.cpp
-rendering/MarkedText.cpp
 rendering/PositionedLayoutConstraints.cpp
 rendering/RenderBlock.cpp
 rendering/RenderBlockFlow.cpp

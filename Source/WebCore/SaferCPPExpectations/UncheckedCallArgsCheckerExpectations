@@ -21,8 +21,6 @@ rendering/ImageQualityController.cpp
 rendering/InlineBoxPainter.cpp
 rendering/LayoutRepainter.cpp
 rendering/LogicalSelectionOffsetCachesInlines.h
-rendering/MarkedText.cpp
-rendering/MarkedText.h
 rendering/PositionedLayoutConstraints.cpp
 rendering/RegionContext.h
 rendering/RenderBlock.cpp
@@ -73,7 +71,6 @@ rendering/RenderTextControlSingleLine.h
 rendering/RenderView.cpp
 rendering/RenderViewTransitionCapture.cpp
 rendering/RenderWidget.cpp
-rendering/StyledMarkedText.cpp
 rendering/TextAutoSizing.cpp
 rendering/TextBoxPainter.cpp
 rendering/TextBoxTrimmer.cpp

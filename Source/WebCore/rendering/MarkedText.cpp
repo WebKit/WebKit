@@ -40,7 +40,6 @@
 #include "TextBoxSelectableRange.h"
 #include <algorithm>
 #include <ranges>
-#include <wtf/HashSet.h>
 
 namespace WebCore {
 
@@ -53,7 +52,7 @@ Vector<MarkedText> MarkedText::subdivide(const Vector<MarkedText>& markedTexts, 
         enum Kind { Begin, End };
         Kind kind;
         unsigned value; // Copy of markedText.startOffset/endOffset to avoid the need to branch based on kind.
-        CheckedPtr<const MarkedText> markedText;
+        unsigned markedTextIndex;
     };
 
     // 1. Build table of all offsets.
@@ -61,42 +60,50 @@ Vector<MarkedText> MarkedText::subdivide(const Vector<MarkedText>& markedTexts, 
     unsigned numberOfMarkedTexts = markedTexts.size();
     unsigned numberOfOffsets = 2 * numberOfMarkedTexts;
     Vector<Offset> offsets(ReserveCapacityTag { }, numberOfOffsets);
-    for (auto& markedText : markedTexts) {
-        offsets.append({ Offset::Begin, markedText.startOffset, &markedText });
-        offsets.append({ Offset::End, markedText.endOffset, &markedText });
+    for (unsigned i = 0; i < numberOfMarkedTexts; ++i) {
+        offsets.append({ Offset::Begin, markedTexts[i].startOffset, i });
+        offsets.append({ Offset::End, markedTexts[i].endOffset, i });
     }
 
     // 2. Sort offsets such that begin offsets are in paint order and end offsets are in reverse paint order.
-    std::ranges::sort(offsets, [] (const Offset& a, const Offset& b) {
-        return a.value < b.value || (a.value == b.value && a.kind == b.kind && a.kind == Offset::Begin && a.markedText->type < b.markedText->type)
-        || (a.value == b.value && a.kind == b.kind && a.kind == Offset::End && a.markedText->type > b.markedText->type);
+    std::ranges::sort(offsets, [&](const Offset& a, const Offset& b) {
+        auto aType = markedTexts[a.markedTextIndex].type;
+        auto bType = markedTexts[b.markedTextIndex].type;
+        return a.value < b.value || (a.value == b.value && a.kind == b.kind && a.kind == Offset::Begin && aType < bType)
+        || (a.value == b.value && a.kind == b.kind && a.kind == Offset::End && aType > bType);
     });
 
     // 3. Compute intersection.
     Vector<MarkedText> result(ReserveCapacityTag { }, numberOfMarkedTexts);
-    HashSet<CheckedPtr<const MarkedText>> processedMarkedTexts;
+    Vector<bool> processedMarkedTexts(FillWith { }, numberOfMarkedTexts, false);
     unsigned offsetSoFar = offsets[0].value;
     for (unsigned i = 1; i < numberOfOffsets; ++i) {
         if (offsets[i].value > offsets[i - 1].value) {
             if (overlapStrategy == OverlapStrategy::Frontmost) {
                 std::optional<unsigned> frontmost;
                 for (unsigned j = 0; j < i; ++j) {
-                    if (!processedMarkedTexts.contains(offsets[j].markedText) && (!frontmost || offsets[j].markedText->type > offsets[*frontmost].markedText->type))
+                    auto index = offsets[j].markedTextIndex;
+                    if (!processedMarkedTexts[index] && (!frontmost || markedTexts[index].type > markedTexts[offsets[*frontmost].markedTextIndex].type))
                         frontmost = j;
                 }
-                if (frontmost)
-                    result.append({ offsetSoFar, offsets[i].value, offsets[*frontmost].markedText->type, offsets[*frontmost].markedText->marker, offsets[*frontmost].markedText->highlightName });
+                if (frontmost) {
+                    auto& frontmostMarkedText = markedTexts[offsets[*frontmost].markedTextIndex];
+                    result.append({ offsetSoFar, offsets[i].value, frontmostMarkedText.type, frontmostMarkedText.marker, frontmostMarkedText.highlightName });
+                }
             } else {
                 // The appended marked texts may not be in paint order. We will fix this up at the end of this function.
                 for (unsigned j = 0; j < i; ++j) {
-                    if (!processedMarkedTexts.contains(offsets[j].markedText))
-                        result.append({ offsetSoFar, offsets[i].value, offsets[j].markedText->type, offsets[j].markedText->marker, offsets[j].markedText->highlightName, offsets[j].markedText->priority });
+                    auto index = offsets[j].markedTextIndex;
+                    if (!processedMarkedTexts[index]) {
+                        auto& markedText = markedTexts[index];
+                        result.append({ offsetSoFar, offsets[i].value, markedText.type, markedText.marker, markedText.highlightName, markedText.priority });
+                    }
                 }
             }
             offsetSoFar = offsets[i].value;
         }
         if (offsets[i].kind == Offset::End)
-            processedMarkedTexts.add(offsets[i].markedText);
+            processedMarkedTexts[offsets[i].markedTextIndex] = true;
     }
     // Fix up; sort the marked texts so that they are in paint order.
     if (overlapStrategy == OverlapStrategy::None)

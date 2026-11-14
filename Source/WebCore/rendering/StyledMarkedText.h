@@ -41,7 +41,6 @@ class ComputedStyle;
 
 struct StyledMarkedText final : MarkedText {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(StyledMarkedText);
-    WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(StyledMarkedText);
 
     struct Style {
         Color backgroundColor;
