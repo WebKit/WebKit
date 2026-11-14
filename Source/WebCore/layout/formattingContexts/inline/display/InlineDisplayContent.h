@@ -60,4 +60,29 @@ private:
 };
 
 }
+
+// When only source has room for both, the result takes over source's buffer, so merging a large layout pass into small existing content does not allocate a third buffer.
+template<typename VectorType>
+void appendReusingLargerBuffer(VectorType& destination, VectorType&& source)
+{
+    auto combinedSize = destination.size() + source.size();
+    if (destination.capacity() >= combinedSize || source.capacity() < combinedSize) {
+        destination.appendVector(WTF::move(source));
+        return;
+    }
+    // Nothing to prepend.
+    if (!destination.isEmpty())
+        source.insertVector(0, destination);
+    destination = WTF::move(source);
+}
+
+// Shrinking a large vector reallocates and copies it, while its unused tail is usually untouched memory that costs nothing.
+template<typename VectorType>
+void shrinkToFitUnlessLarge(VectorType& vector)
+{
+    constexpr size_t largeVectorSizeInBytes = 1024 * 1024;
+    if (vector.capacity() * sizeof(typename VectorType::ValueType) < largeVectorSizeInBytes)
+        vector.shrinkToFit();
+}
+
 }

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+pre {
+    width: 200px;
+    font: 10px/12px monospace;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+</style>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<pre id="incremental"></pre>
+<pre id="oneshot"></pre>
+<script>
+description("Tests that large text built up across several layouts lays out the same as when laid out at once.");
+
+// Long words first and short words later, so rates measured early in a layout underestimate the rest.
+function makeChunk(index) {
+    const word = index < 4 ? "abcdefghijklmnopqrstuvwxyz" : "ab";
+    let text = "";
+    while (text.length < 65536)
+        text += word + " " + (text.length % 7 ? "" : "\n");
+    return text;
+}
+
+const chunkCount = 8;
+const incremental = document.getElementById("incremental");
+const oneshot = document.getElementById("oneshot");
+let allText = "";
+let lengthOfFirstThreeChunks = 0;
+for (let i = 0; i < chunkCount; ++i) {
+    const chunk = makeChunk(i);
+    allText += chunk;
+    if (i < 3)
+        lengthOfFirstThreeChunks += chunk.length;
+    incremental.appendChild(document.createTextNode(chunk));
+    incremental.offsetHeight;
+}
+oneshot.appendChild(document.createTextNode(allText));
+
+function lastCharacterRect(element) {
+    const range = document.createRange();
+    const lastText = element.lastChild;
+    range.setStart(lastText, lastText.length - 1);
+    range.setEnd(lastText, lastText.length);
+    return range.getBoundingClientRect();
+}
+
+shouldBeTrue("incremental.offsetHeight / 12 > 4096");
+shouldBe("incremental.offsetHeight", "oneshot.offsetHeight");
+shouldBe("lastCharacterRect(incremental).top - incremental.getBoundingClientRect().top", "lastCharacterRect(oneshot).top - oneshot.getBoundingClientRect().top");
+shouldBe("lastCharacterRect(incremental).left", "lastCharacterRect(oneshot).left");
+
+// Change content in the middle so the following layout is a partial rebuild merged with earlier content.
+incremental.childNodes[2].appendData(" inserted text ".repeat(100));
+oneshot.firstChild.insertData(lengthOfFirstThreeChunks, " inserted text ".repeat(100));
+shouldBe("incremental.offsetHeight", "oneshot.offsetHeight");
+shouldBe("lastCharacterRect(incremental).top - incremental.getBoundingClientRect().top", "lastCharacterRect(oneshot).top - oneshot.getBoundingClientRect().top");
+
+incremental.style.display = "none";
+oneshot.style.display = "none";
+</script>
+</body>
+</html>
