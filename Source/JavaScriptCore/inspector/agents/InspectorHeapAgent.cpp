@@ -103,6 +103,11 @@ InspectorHeapAgent::~InspectorHeapAgent()
         removeSnapshotUser(*this);
 }
 
+InspectorEnvironment& InspectorHeapAgent::environment() const
+{
+    return m_environment.get();
+}
+
 void InspectorHeapAgent::didCreateFrontendAndBackend()
 {
 }
@@ -123,7 +128,8 @@ Protocol::ErrorStringOr<void> InspectorHeapAgent::enable()
 
     m_enabled = true;
 
-    protect(m_environment)->vm().heap.addObserver(this);
+    if (observesGarbageCollections())
+        protect(m_environment)->vm().heap.addObserver(this);
 
     return { };
 }
@@ -136,6 +142,7 @@ Protocol::ErrorStringOr<void> InspectorHeapAgent::disable()
     m_enabled = false;
     m_tracking = false;
 
+    // Nothing happens if this agent isn't an observer.
     protect(m_environment)->vm().heap.removeObserver(this);
 
     clearHeapSnapshots();
@@ -229,6 +236,12 @@ std::optional<HeapSnapshotNode> InspectorHeapAgent::nodeForHeapObjectIdentifier(
         return std::nullopt;
     }
 
+    // The VM's snapshots also hold the cells that other agents of the VM report.
+    if (!includesCell(*optionalNode->cell)) {
+        errorString = "No object for identifier in this target"_s;
+        return std::nullopt;
+    }
+
     return optionalNode;
 }
 
@@ -264,6 +277,9 @@ Protocol::ErrorStringOr<std::tuple<String, RefPtr<Protocol::Debugger::FunctionDe
     JSGlobalObject* globalObject = structure->realm();
     if (!globalObject)
         return makeUnexpected("Unable to get object details - GlobalObject"_s);
+
+    if (!canCreateInjectedScript(*globalObject))
+        return makeUnexpected("Unable to get object details - Inaccessible GlobalObject"_s);
 
     auto injectedScript = m_injectedScriptManager->injectedScriptFor(globalObject);
     if (injectedScript.hasNoValue())
@@ -304,6 +320,9 @@ Protocol::ErrorStringOr<Ref<Protocol::Runtime::RemoteObject>> InspectorHeapAgent
     JSGlobalObject* globalObject = structure->realm();
     if (!globalObject)
         return makeUnexpected("Unable to get object details - GlobalObject"_s);
+
+    if (!canCreateInjectedScript(*globalObject))
+        return makeUnexpected("Unable to get object details - Inaccessible GlobalObject"_s);
 
     auto injectedScript = m_injectedScriptManager->injectedScriptFor(globalObject);
     if (injectedScript.hasNoValue())
@@ -358,13 +377,24 @@ void InspectorHeapAgent::didGarbageCollect(CollectionScope scope)
 
 bool InspectorHeapAgent::heapSnapshotBuilderIgnoreNode(const HeapSnapshotBuilder&, JSC::JSCell* cell)
 {
-    if (const Structure* structure = cell->structure()) {
-        if (JSGlobalObject* globalObject = structure->realm()) {
-            if (!protect(m_environment)->canAccessInspectedScriptState(globalObject))
-                return true;
-        }
+    return !includesCell(*cell);
+}
+
+bool InspectorHeapAgent::includesGlobalObject(JSGlobalObject& globalObject) const
+{
+    return protect(m_environment)->canAccessInspectedScriptState(&globalObject);
+}
+
+bool InspectorHeapAgent::includesCell(JSCell& cell) const
+{
+    if (const Structure* structure = cell.structure()) {
+        if (JSGlobalObject* globalObject = structure->realm())
+            return includesGlobalObject(*globalObject);
     }
-    return false;
+
+    // FIXME: <https://webkit.org/b/331565> Every agent of a VM includes the cells that belong to no realm, such as
+    // strings, also those that only other agents' realms use.
+    return true;
 }
 
 void InspectorHeapAgent::clearHeapSnapshots()

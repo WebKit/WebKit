@@ -23,11 +23,11 @@ function test()
         name: "HeapSnapshot",
         test(resolve, reject) {
             InspectorTest.evaluateInPage("triggerCreateObjects()");
-            HeapAgent.snapshot((error, timestamp, snapshotStringData) => {
+            InspectorTest.mainFrameTarget.HeapAgent.snapshot((error, timestamp, snapshotStringData) => {
                 InspectorTest.expectThat(!error, "Should not have an error creating a snapshot.");
                 let workerProxy = WI.HeapSnapshotWorkerProxy.singleton();
-                workerProxy.createSnapshot(WI.mainTarget.identifier, snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
-                    snapshot = WI.HeapSnapshotProxy.deserialize(WI.mainTarget, objectId, serializedSnapshot);
+                workerProxy.createSnapshot(InspectorTest.mainFrameTarget.identifier, snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
+                    snapshot = WI.HeapSnapshotProxy.deserialize(InspectorTest.mainFrameTarget, objectId, serializedSnapshot);
                     InspectorTest.expectThat(snapshot, "Should create HeapSnapshotProxy snapshot.");
                     resolve();
                 });
@@ -41,9 +41,9 @@ function test()
             InspectorTest.evaluateInPage("triggerRemoveObjects()");
 
             let workerProxy = WI.HeapSnapshotWorkerProxy.singleton();
-            HeapAgent.snapshot((error, timestamp, snapshotStringData) => {
+            InspectorTest.mainFrameTarget.HeapAgent.snapshot((error, timestamp, snapshotStringData) => {
                 InspectorTest.expectThat(!error, "Should not have an error creating a snapshot.");
-                workerProxy.createSnapshot(WI.mainTarget.identifier, snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
+                workerProxy.createSnapshot(InspectorTest.mainFrameTarget.identifier, snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
                     // Ignore result. This should trigger the collection event.
                 });
             });

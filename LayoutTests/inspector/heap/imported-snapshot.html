@@ -12,13 +12,13 @@ function test()
         name: "HeapSnapshot.imported",
         description: "createSnapshot() and createImportedSnapshot() differences.",
         test(resolve, reject) {
-            HeapAgent.snapshot((error, timestamp, snapshotStringData) => {
+            InspectorTest.mainFrameTarget.HeapAgent.snapshot((error, timestamp, snapshotStringData) => {
                 InspectorTest.expectThat(!error, "Should not have an error creating a snapshot.");
 
                 const importedTitle = "Imported Snapshot";
                 let workerProxy = WI.HeapSnapshotWorkerProxy.singleton();
-                workerProxy.createSnapshot(WI.mainTarget.identifier, snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
-                    let snapshot = WI.HeapSnapshotProxy.deserialize(WI.mainTarget, objectId, serializedSnapshot);
+                workerProxy.createSnapshot(InspectorTest.mainFrameTarget.identifier, snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
+                    let snapshot = WI.HeapSnapshotProxy.deserialize(InspectorTest.mainFrameTarget, objectId, serializedSnapshot);
                     snapshot.snapshotStringData = snapshotStringData;
                     workerProxy.createImportedSnapshot(snapshotStringData, importedTitle, ({objectId, snapshot: serializedSnapshot}) => {
                         const target = null;
