@@ -63,6 +63,7 @@
 #include "CSSFontStyleWithAngleValue.h"
 #include "CSSFontValue.h"
 #include "CSSFontVariationValue.h"
+#include "CSSFreeformGradientValue.h"
 #include "CSSFunctionValue.h"
 #include "CSSGradientValue.h"
 #include "CSSGridAutoFlowValue.h"
@@ -205,6 +206,8 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(NOESC
         return std::invoke(visitor, uncheckedDowncast<CSSGradientValue>(*this));
     case MeshGradient:
         return std::invoke(visitor, uncheckedDowncast<CSSMeshGradientValue>(*this));
+    case FreeformGradient:
+        return std::invoke(visitor, uncheckedDowncast<CSSFreeformGradientValue>(*this));
     case GridAutoFlow:
         return std::invoke(visitor, uncheckedDowncast<CSSGridAutoFlowValue>(*this));
     case GridLineValue:
