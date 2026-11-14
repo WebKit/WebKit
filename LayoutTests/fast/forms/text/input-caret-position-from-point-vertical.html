@@ -1,0 +1,78 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CSSInputSecurityEnabled=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<style>
+input {
+    position: absolute;
+    left: 40px;
+    top: 40px;
+    font: 20px/30px Ahem;
+    inline-size: 300px;
+    padding: 10px;
+    border: 4px solid gray;
+    margin: 0;
+    outline: none;
+    /* Masking characters in password fields are not in Ahem and their widths differ between platforms. */
+    input-security: none;
+}
+</style>
+</head>
+<body>
+<input id="input">
+<script>
+// Hit testing a point in a single-line text field should find the caret position at that character, and a point in
+// the padding before or after the line in the block direction should find the start or the end, in every writing mode.
+// Some input types wrap the inner text element in extra boxes, which must be accounted for in vertical-rl too.
+
+// Moving to the start or the end from the block-direction padding is not the Windows editing behavior.
+if (window.internals)
+    internals.settings.setEditingBehavior("mac");
+
+const glyphSize = 20;
+const border = 4;
+const padding = 10;
+const input = document.getElementById("input");
+
+// |blockFraction| is measured from the block-start edge of the border box.
+function pointAt(writingMode, inlineOffset, blockFraction)
+{
+    const rect = input.getBoundingClientRect();
+    const inlineStart = border + padding + inlineOffset;
+    if (writingMode == "horizontal-tb")
+        return { x: rect.left + inlineStart, y: rect.top + rect.height * blockFraction };
+    const x = writingMode == "vertical-lr" ? rect.left + rect.width * blockFraction : rect.right - rect.width * blockFraction;
+    return { x, y: rect.top + inlineStart };
+}
+
+const points = [
+    { description: "on the second character", inlineOffset: glyphSize * 1.25, blockFraction: 0.5, expected: 1 },
+    { description: "past the end of the text", inlineOffset: glyphSize * 7, blockFraction: 0.5, expected: 4 },
+    { description: "in the block-start padding", inlineOffset: glyphSize * 1.25, blockFraction: 0.1, expected: 0 },
+    { description: "in the block-end padding", inlineOffset: glyphSize * 1.25, blockFraction: 0.9, expected: 4 },
+];
+
+for (const type of ["text", "search", "password"]) {
+    for (const writingMode of ["horizontal-tb", "vertical-lr", "vertical-rl"]) {
+        test(() => {
+            input.type = type;
+            input.style.writingMode = writingMode;
+            input.value = "XXXX";
+            const results = [];
+            const expected = [];
+            for (const { description, inlineOffset, blockFraction, expected: expectedOffset } of points) {
+                const point = pointAt(writingMode, inlineOffset, blockFraction);
+                const position = document.caretPositionFromPoint(point.x, point.y);
+                assert_equals(position.offsetNode, input);
+                results.push(`${description}: ${position.offset}`);
+                expected.push(`${description}: ${expectedOffset}`);
+            }
+            assert_array_equals(results, expected);
+        }, `Caret position from a point in a ${writingMode} <input type=${type}>`);
+    }
+}
+</script>
+</body>
+</html>
