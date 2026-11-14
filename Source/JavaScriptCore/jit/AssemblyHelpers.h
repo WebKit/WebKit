@@ -88,25 +88,12 @@ public:
     void storeAndFence32(Tag&& tag, Payload&& payload, Dst&& dst)
     {
         static_assert(!PayloadOffset && TagOffset == 4, "Assumes little-endian system");
-
-        auto const finish = [&](auto&& tagDst) {
-            if (Options::useConcurrentJIT()) {
-                store32(TrustedImm32(JSValue::InvalidTag), tagDst);
-                storeFence();
-                store32(payload, dst);
-                storeFence();
-                store32(tag, tagDst);
-            } else {
-                store32(payload, dst);
-                store32(tag, tagDst);
-            }
-        };
-
-        if constexpr (std::is_pointer_v<std::remove_reference_t<Dst>>) {
-            void* tagAddr = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(dst) + TagOffset);
-            finish(tagAddr);
-        } else
-            finish(dst.withOffset(TagOffset));
+        // CJIT is only enabled when LPAE is enabled (such as for armv8l). In this case,
+        // 64-bit aligned stores are atomic: https://developer.arm.com/documentation/ddi0406/c/Application-Level-Architecture/Application-Level-Memory-Model/Memory-types-and-attributes-and-the-memory-order-model/Atomicity-in-the-ARM-architecture
+        // > In an implementation that includes the Large Physical Address Extension
+        // ... The system designer must ensure that all writable memory locations that
+        // might be used to hold translations, such as bulk SDRAM, can be accessed with 64-bit single-copy atomicity.
+        storePair32Aligned(payload, tag, dst);
     }
 #endif
 

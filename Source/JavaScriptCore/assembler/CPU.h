@@ -120,6 +120,15 @@ constexpr bool isX86_64_AVX()
 }
 #endif
 
+#if CPU(ARM_THUMB2) && OS(LINUX) && __has_include(<sys/auxv.h>)
+JS_EXPORT_PRIVATE bool isARMv7_LPAE();
+#else
+constexpr bool isARMv7_LPAE()
+{
+    return false;
+}
+#endif
+
 constexpr bool isRISCV64()
 {
 #if CPU(RISCV64)

@@ -84,6 +84,15 @@ public:
             return !(value & ~0x3fc);
         }
     };
+
+    struct AddressValidDoubleWordOffset : Address {
+        explicit AddressValidDoubleWordOffset(RegisterID base, int32_t offset = 0)
+            : Address(base, offset)
+        {
+            RELEASE_ASSERT(BoundsDoubleWordOffset::within(offset));
+        }
+        Address withOffset(int32_t) = delete;
+    };
 #define DUMMY_REGISTER_VALUE(id, name, r, cs) 0,
     static constexpr unsigned numGPRs = std::initializer_list<int>({ FOR_EACH_GP_REGISTER(DUMMY_REGISTER_VALUE) }).size();
     static constexpr unsigned numFPRs = std::initializer_list<int>({ FOR_EACH_FP_REGISTER(DUMMY_REGISTER_VALUE) }).size();
@@ -1672,6 +1681,110 @@ public:
         ArmAddress armAddress = setupArmAddress(AbsoluteAddress(address));
         ASSERT(armAddress.type == ArmAddress::HasOffset);
         storePair32(src1, src2, Address(armAddress.base, armAddress.u.offset));
+    }
+
+    void storePair32AlignedValidOffset(RegisterID src1, RegisterID src2, AddressValidDoubleWordOffset address)
+    {
+        m_assembler.strd(src1, src2, address.base, address.offset, true, false);
+    }
+
+    void storePair32Aligned(RegisterID src1, RegisterID src2, Address address)
+    {
+        if (BoundsDoubleWordOffset::within(address.offset))
+            m_assembler.strd(src1, src2, address.base, address.offset, true, false);
+        else {
+            RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
+            storePair32AlignedValidOffset(src1, src2, eliminateOffset(address, scratch));
+            cachedDataTempRegister().invalidate();
+        }
+    }
+
+    void storePair32Aligned(RegisterID src1, RegisterID src2, RegisterID dest, TrustedImm32 offset)
+    {
+        storePair32Aligned(src1, src2, Address(dest, offset.m_value));
+    }
+
+    void storePair32Aligned(RegisterID src1, TrustedImm32 imm, Address address)
+    {
+        AddressValidDoubleWordOffset newAddress = setupAddressDoubleWord(address);
+        RELEASE_ASSERT(address.base == newAddress.base || newAddress.base == dataTempRegister);
+        RegisterID scratch = newAddress.base == dataTempRegister ? addressTempRegister : dataTempRegister;
+        move(imm, scratch);
+        storePair32AlignedValidOffset(src1, scratch, newAddress);
+    }
+
+    void storePair32Aligned(TrustedImm32 imm1, TrustedImm32 imm2, Address address)
+    {
+        AddressValidDoubleWordOffset newAddress = setupAddressDoubleWord(address);
+        RELEASE_ASSERT(address.base == newAddress.base || newAddress.base == dataTempRegister);
+        if (newAddress.base != dataTempRegister) {
+            // dataTempRegister is available.
+            move(imm1, dataTempRegister);
+            move(imm2, addressTempRegister);
+            storePair32AlignedValidOffset(dataTempRegister, addressTempRegister, newAddress);
+            return;
+        }
+        // Select a live register to use as scratch.
+        RegisterID extraScratch;
+        for (extraScratch = firstRegister(); extraScratch == address.base; extraScratch = static_cast<RegisterID>(extraScratch + 1))
+            { }
+        move32ToFloat(extraScratch, fpTempRegister);
+        move(imm1, extraScratch);
+        move(imm2, addressTempRegister);
+        storePair32AlignedValidOffset(extraScratch, addressTempRegister, newAddress);
+        moveFloatTo32(fpTempRegister, extraScratch);
+    }
+
+    void storePair32Aligned(TrustedImm32 imm1, TrustedImm32 imm2, BaseIndex address)
+    {
+        RegisterID scratch;
+        Address newAddress = setupAddressDoubleWord(address);
+        RELEASE_ASSERT(newAddress.base == addressTempRegister);
+        if (!BoundsDoubleWordOffset::within(newAddress.offset)) {
+            add32(TrustedImm32(address.offset), newAddress.base, newAddress.base);
+            invalidateCachedAddressTempRegister();
+            newAddress = Address(newAddress.base, 0);
+        }
+        // We have the final address in addressTempRegister, so we need to find
+        // an extra scratch reg. We can find it in the first 3 registers, since
+        // we only need to avoid the incoming BaseIndex registers and the
+        // temporaries are higher.
+        for (scratch = firstRegister(); (scratch == address.base) || (scratch == address.index); scratch = static_cast<RegisterID>(scratch + 1))
+            { }
+        move32ToFloat(scratch, fpTempRegister);
+        move(imm1, scratch);
+        move(imm2, dataTempRegister);
+        storePair32Aligned(scratch, dataTempRegister, newAddress);
+        moveFloatTo32(fpTempRegister, scratch);
+    }
+
+    void storePair32Aligned(RegisterID src1, RegisterID src2, BaseIndex address)
+    {
+        Address newAddress = setupAddressDoubleWord(address);
+        RELEASE_ASSERT(newAddress.base == addressTempRegister);
+
+        if (BoundsDoubleWordOffset::within(newAddress.offset)) {
+            m_assembler.strd(src1, src2, newAddress.base, newAddress.offset, true, false);
+            return;
+        }
+        AddressValidDoubleWordOffset validAddress = eliminateOffset(newAddress, dataTempRegister);
+        cachedDataTempRegister().invalidate();
+        storePair32AlignedValidOffset(src1, src2, validAddress);
+    }
+
+    void storePair32Aligned(RegisterID src1, TrustedImm32 imm, const void* address)
+    {
+        AddressValidDoubleWordOffset newAddress = setupAddressDoubleWord(AbsoluteAddress(address));
+        RELEASE_ASSERT(newAddress.base == addressTempRegister || newAddress.base == dataTempRegister);
+        RegisterID scratch = newAddress.base == addressTempRegister ? dataTempRegister : addressTempRegister;
+        move(imm, scratch);
+        storePair32AlignedValidOffset(src1, scratch, newAddress);
+    }
+
+    void storePair32Aligned(RegisterID src1, RegisterID src2, const void* address)
+    {
+        AddressValidDoubleWordOffset newAddress = setupAddressDoubleWord(AbsoluteAddress(address));
+        storePair32AlignedValidOffset(src1, src2, newAddress);
     }
 
     void transfer32(Address src, Address dest)
@@ -4295,6 +4408,49 @@ protected:
 
         cachedAddressTempRegister().invalidate();
         return addressTempRegister;
+    }
+
+    AddressValidDoubleWordOffset setupAddressDoubleWord(AbsoluteAddress address, RegisterID scratch = addressTempRegister)
+    {
+        if (auto offset = absoluteAddressWithinShortOffset<BoundsDoubleWordOffset>(address, cachedAddressTempRegister()))
+            return AddressValidDoubleWordOffset(addressTempRegister, *offset);
+        if (auto offset = absoluteAddressWithinShortOffset<BoundsDoubleWordOffset>(address, cachedDataTempRegister()))
+            return AddressValidDoubleWordOffset(dataTempRegister, *offset);
+        move(TrustedImmPtr(address.m_ptr), scratch);
+        return AddressValidDoubleWordOffset(scratch);
+    }
+
+    // Can take addressTempRegister as base.
+    // May clobber dataTempRegister.
+    AddressValidDoubleWordOffset setupAddressDoubleWord(Address address)
+    {
+        if (BoundsDoubleWordOffset::within(address.offset))
+            return AddressValidDoubleWordOffset(address.base, address.offset);
+        eliminateOffset(address, dataTempRegister);
+        cachedDataTempRegister().invalidate();
+        return AddressValidDoubleWordOffset(dataTempRegister, 0);
+    }
+
+    // Can take {address,data}TempRegister in any position of the BaseIndex
+    // Clobbers addressTempRegister.
+    // Does not clobber dataTempRegister.
+    Address setupAddressDoubleWord(BaseIndex address)
+    {
+        RegisterID scratch = getCachedAddressTempRegisterIDAndInvalidate();
+        if (address.scale == TimesOne)
+            add32(address.base, address.index, scratch);
+        else {
+            ShiftTypeAndAmount shift { ARMShiftType::SRType_LSL, static_cast<unsigned>(address.scale) };
+            m_assembler.add(scratch, address.base, address.index, shift);
+        }
+        return Address(scratch, address.offset);
+    }
+
+    AddressValidDoubleWordOffset eliminateOffset(Address address, RegisterID target)
+    {
+        RELEASE_ASSERT(!BoundsDoubleWordOffset::within(address.offset));
+        add32(TrustedImm32(address.offset), address.base, target);
+        return AddressValidDoubleWordOffset(target, 0);
     }
 
     void moveFixedWidthEncoding(TrustedImm32 imm, RegisterID dst)

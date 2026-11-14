@@ -246,7 +246,7 @@ private:
 #if USE(JSVALUE64)
         m_jit.storePair64(reg1, reg2, m_baseGPR, TrustedImm32(offset));
 #else
-        m_jit.storePair32(reg1, reg2, m_baseGPR, TrustedImm32(offset));
+        m_jit.storePair32Aligned(reg1, reg2, m_baseGPR, TrustedImm32(offset));
 #endif
     }
     ALWAYS_INLINE void executePair(ptrdiff_t offset, FPRReg reg1, FPRReg reg2)
@@ -594,7 +594,7 @@ protected:
 #if USE(JSVALUE64)
         m_jit.storePair64(src1, src2, m_dstBufferGPR, TrustedImm32(offset));
 #else
-        m_jit.storePair32(src1, src2, m_dstBufferGPR, TrustedImm32(offset));
+        m_jit.storePair32Aligned(src1, src2, m_dstBufferGPR, TrustedImm32(offset));
 #endif
     }
 
