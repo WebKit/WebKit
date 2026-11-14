@@ -215,6 +215,7 @@ bool defaultIFrameResourceMonitoringEnabled();
 #endif
 
 bool defaultSearchInputResultsAttributeEnabled();
+bool defaultSiteIsolationEnabled();
 
 #if HAVE(SPATIAL_AUDIO_EXPERIENCE)
 bool defaultPreferSpatialAudioExperience();

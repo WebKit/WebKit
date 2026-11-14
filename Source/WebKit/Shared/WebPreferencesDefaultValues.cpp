@@ -398,6 +398,22 @@ bool defaultSearchInputResultsAttributeEnabled()
 #endif
 }
 
+bool defaultSiteIsolationEnabled()
+{
+#if ENABLE(SITE_ISOLATION_BY_DEFAULT)
+#if PLATFORM(MAC)
+    if (WTF::MacApplication::isSafariWebApp())
+        return true;
+#elif PLATFORM(IOS_FAMILY)
+    if (WTF::IOSApplication::isAppleWebApp())
+        return true;
+#endif
+    return isFullWebBrowserOrRunningTest();
+#else
+    return false;
+#endif
+}
+
 #if HAVE(SPATIAL_AUDIO_EXPERIENCE)
 bool defaultPreferSpatialAudioExperience()
 {
