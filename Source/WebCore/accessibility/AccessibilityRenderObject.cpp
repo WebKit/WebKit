@@ -556,8 +556,15 @@ String AccessibilityRenderObject::stringValue() const
         return text();
     }
 
-    if (RefPtr selectElement = dynamicDowncast<HTMLSelectElement>(node()); selectElement && selectElement->isDropdownBox())
+    if (RefPtr selectElement = dynamicDowncast<HTMLSelectElement>(node()); selectElement && selectElement->isDropdownBox()) {
+        // With base appearance the author's button renders, so its content gives the value.
+        if (RefPtr button = selectElement->buttonElement(); button && m_renderer->style().usedAppearance() == StyleAppearance::Base) {
+            CheckedPtr cache = axObjectCache();
+            if (RefPtr buttonObject = cache ? cache->getOrCreate(*button) : nullptr)
+                return buttonObject->textUnderElement();
+        }
         return selectElement->buttonText(HTMLSelectElement::ForAccessibility::Yes);
+    }
 
     if (RefPtr optGroup = optGroupForLabel(); optGroup && role() == AccessibilityRole::ListBoxOption)
         return optGroup->groupLabelText();

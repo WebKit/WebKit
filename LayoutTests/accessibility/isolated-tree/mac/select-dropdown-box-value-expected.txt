@@ -24,14 +24,30 @@ PASS: axSelect.stringValue === 'AXValue: Pick: Apple'
 baseNestedButton:
 PASS: axSelect.stringValue === 'AXValue: Fruit: Apple'
 PASS: axSelect.stringValue === 'AXValue: Pick: Apple'
+nativeHiddenContent:
+PASS: axSelect.stringValue === 'AXValue: Hidden Not rendered Fruit: Apple'
+PASS: axSelect.stringValue === 'AXValue: Hidden Not rendered Fruit: Banana'
+baseHiddenContent:
+PASS: axSelect.stringValue === 'AXValue: Fruit: Apple'
+PASS: axSelect.stringValue === 'AXValue: Fruit: Banana'
+nativeAlternativeText:
+PASS: axSelect.stringValue === 'AXValue: Fruit:Apple'
+PASS: axSelect.stringValue === 'AXValue: Fruit:Banana'
+baseAlternativeText:
+PASS: axSelect.stringValue === 'AXValue: Fruit: Red apple (ripe)'
+PASS: axSelect.stringValue === 'AXValue: Fruit: Banana (ripe)'
 nativeMultipleButton:
 PASS: axSelect.stringValue === 'AXValue: Toppings: 2 Items'
 PASS: axSelect.stringValue === 'AXValue: Toppings: Ham'
 PASS: axSelect.stringValue === 'AXValue: Toppings: 0 Items'
 baseMultipleButton:
-PASS: axSelect.stringValue === 'AXValue: Toppings: 2 Items'
+PASS: axSelect.stringValue === 'AXValue: Toppings: Cheese and Olives'
+PASS: axSelect.stringValue === 'AXValue: Toppings: Cheese and Ham'
+PASS: axSelect.stringValue === 'AXValue: Toppings: Cheese, Ham, and Olives'
 PASS: axSelect.stringValue === 'AXValue: Toppings: Ham'
-PASS: axSelect.stringValue === 'AXValue: Toppings: 0 Items'
+PASS: axSelect.stringValue === 'AXValue: Toppings:'
+baseMultipleButtonSpanish:
+PASS: axSelect.stringValue === 'AXValue: Ingredientes: Queso y Aceitunas'
 
 PASS successfullyParsed is true
 
