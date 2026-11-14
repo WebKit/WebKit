@@ -356,6 +356,9 @@ public:
     void runBidiInteractionSequence(WebPageProxy&, std::optional<WebCore::FrameIdentifier>, Vector<SimulatedInputKeyFrame>&&, const HashMap<String, Ref<SimulatedInputSource>>& inputSources, AutomationCompletionHandler&&);
 #endif
 #endif
+#if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
+    void forgetPressedMouseButton(MouseButton);
+#endif
 
 #if PLATFORM(MAC)
     bool wasEventSynthesizedForAutomation(NSEvent *);

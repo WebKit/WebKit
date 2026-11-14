@@ -3092,6 +3092,11 @@ void WebAutomationSession::clearDoubleClicks()
     m_lastClickPosition.reset();
 }
 
+void WebAutomationSession::forgetPressedMouseButton(MouseButton button)
+{
+    m_mouseButtonsCurrentlyDown.set(button, false);
+}
+
 void WebAutomationSession::simulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, MouseButton mouseButton, const WebCore::IntPoint& locationInViewport, const String& pointerType, CompletionHandler<void(std::optional<AutomationCommandError>)>&& completionHandler)
 {
     page.getWindowFrameWithCallback([this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler), page = protect(page), interaction, mouseButton, locationInViewport, pointerType](WebCore::FloatRect windowFrame) mutable {

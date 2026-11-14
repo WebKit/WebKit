@@ -871,6 +871,18 @@ Automation::BidiInputState& BidiInputAgent::inputStateForTopLevelContext(const S
 
 void BidiInputAgent::willClosePage(const String& pageHandle)
 {
+#if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
+    RefPtr session = m_session;
+    RefPtr inputState = m_inputStates.get(pageHandle);
+    if (session && inputState) {
+        for (auto& source : inputState->simulatedSources().values()) {
+            auto& sourceState = source->state;
+            if (sourceState.pressedMouseButton && sourceState.mouseInteraction != MouseInteraction::Up)
+                session->forgetPressedMouseButton(*sourceState.pressedMouseButton);
+        }
+    }
+#endif
+
     m_inputStates.remove(pageHandle);
 }
 
