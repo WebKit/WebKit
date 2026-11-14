@@ -1181,7 +1181,7 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
         let possibleRepeatingTimers = new Set;
 
         let scriptTimeline = this._recording.timelineForRecordType(WI.TimelineRecord.Type.Script);
-        let scriptRecords = scriptTimeline ? scriptTimeline.recordsInTimeRange(startTime, endTime, {includeRecordBeforeStart: true}) : [];
+        let scriptRecords = scriptTimeline ? scriptTimeline.mainThreadRecordsInTimeRange(startTime, endTime, {includeRecordBeforeStart: true}) : [];
         scriptRecords = scriptRecords.filter((record) => {
             // Return true for event types that define script entries/exits.
             // Return false for events with no time ranges or if they are contained in other events.
@@ -1600,7 +1600,7 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
         }
 
         let scriptTimeline = this._recording.timelineForRecordType(WI.TimelineRecord.Type.Script);
-        let scriptRecords = scriptTimeline ? scriptTimeline.recordsInTimeRange(startTime, endTime, {includeRecordBeforeStart: true}) : [];
+        let scriptRecords = scriptTimeline ? scriptTimeline.mainThreadRecordsInTimeRange(startTime, endTime, {includeRecordBeforeStart: true}) : [];
         scriptRecords = scriptRecords.filter((record) => {
             switch (record.eventType) {
             case WI.ScriptTimelineRecord.EventType.ScriptEvaluated:
