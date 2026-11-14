@@ -51,13 +51,11 @@ private:
     void computeLineBoxGeometry(LineBox&) const;
     InlineLevelBox::AscentAndDescent enclosingAscentDescentWithFallbackFonts(const InlineLevelBox&, const TextUtil::FallbackFontList& fallbackFontsForContent, FontBaseline) const;
     TextUtil::FallbackFontList collectFallbackFonts(const InlineLevelBox& parentInlineBox, const Line::Run&, const Style::ComputedStyle&);
-    void adjustMarginStartForListMarker(const ElementBox& listMarkerBox, LayoutUnit nestedListMarkerMarginStart, InlineLayoutUnit rootInlineBoxOffset) const;
     InlineLayoutUnit applyTextBoxTrimOnLineBoxIfNeeded(InlineLayoutUnit lineBoxLogicalHeight, LineBox&) const;
 
     void constructInlineLevelBoxes(LineBox&);
     void constructBlockContent(LineBox&);
     void adjustIdeographicBaselineIfApplicable(LineBox&);
-    void adjustOutsideListMarkersPosition(LineBox&);
     NODELETE void stretchRootInlineBoxForExcludedMarkers(LineBox&) const;
     NODELETE void expandAboveRootInlineBox(LineBox&, InlineLayoutUnit) const;
 
@@ -77,7 +75,6 @@ private:
     bool m_fallbackFontRequiresIdeographicBaseline { false };
     bool m_lineHasNonLineSpanningRubyContent { false };
     HashMap<const InlineLevelBox*, TextUtil::FallbackFontList> m_fallbackFontsForInlineBoxes;
-    Vector<size_t> m_outsideListMarkers;
 };
 
 }
