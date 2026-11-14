@@ -38,6 +38,7 @@
 namespace WebCore {
 
 class CachedPage;
+class Frame;
 class LocalFrame;
 class Page;
 
@@ -71,6 +72,8 @@ public:
 
     WEBCORE_EXPORT void removeAllItemsForPage(Page&);
     WEBCORE_EXPORT void removeAllItemsForMainFrame(LocalFrame&);
+    // Does not notify the client of eviction.
+    WEBCORE_EXPORT Vector<BackForwardFrameItemIdentifier> removeItemsContainingFrame(const Frame&);
 
     WEBCORE_EXPORT void clearEntriesForOrigins(const HashSet<Ref<SecurityOrigin>>&);
 

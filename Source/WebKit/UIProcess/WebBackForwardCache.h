@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "WebPageProxyIdentifier.h"
+#include <WebCore/BackForwardFrameItemIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <pal/SessionID.h>
 #include <wtf/Forward.h>
@@ -68,6 +70,7 @@ public:
     void addEntry(WebBackForwardListItem&, WebCore::ProcessIdentifier);
     void removeEntry(WebBackForwardListItem&);
     void removeEntry(SuspendedPageProxy&);
+    void removeEntriesForFrameItem(WebPageProxyIdentifier, WebCore::BackForwardFrameItemIdentifier);
     Ref<SuspendedPageProxy> takeSuspendedPage(WebBackForwardListItem&);
 
 private:

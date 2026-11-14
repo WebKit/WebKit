@@ -23013,6 +23013,12 @@ void WebPageProxy::didEvictBackForwardItem(BackForwardItemIdentifier itemID)
     protect(backForwardCache())->removeEntry(*item);
 }
 
+void WebPageProxy::didEvictBackForwardFrameItem(BackForwardFrameItemIdentifier frameItemID)
+{
+    WEBPAGEPROXY_RELEASE_LOG(BackForwardCache, "didEvictBackForwardFrameItem: frameItemID=%" PUBLIC_LOG_STRING, frameItemID.toString().utf8());
+    protect(backForwardCache())->removeEntriesForFrameItem(identifier(), frameItemID);
+}
+
 void WebPageProxy::didTakeBackForwardItemForRestoration(BackForwardItemIdentifier itemID)
 {
     // Explicit restore notification from WebProcess. Fired in commitProvisionalLoad
