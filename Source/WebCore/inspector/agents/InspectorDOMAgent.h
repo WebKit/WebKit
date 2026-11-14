@@ -68,6 +68,7 @@ class Element;
 class Event;
 class Exception;
 class FloatQuad;
+class Frame;
 class HTMLFrameOwnerElement;
 class InspectorHistory;
 #if ENABLE(VIDEO)
@@ -249,6 +250,7 @@ public:
     Node* assertNode(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
     Element* assertElement(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
     Document* assertDocument(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
+    RefPtr<Frame> assertFrame(Inspector::Protocol::ErrorString&, const Inspector::Protocol::Network::FrameId&);
 
     RefPtr<JSC::Breakpoint> breakpointForEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
     Inspector::Protocol::DOM::EventListenerId idForEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
