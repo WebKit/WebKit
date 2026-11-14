@@ -1243,9 +1243,15 @@ endfunction()
 # importer must use the same definitions. Normalize MSVC-style /D flags to -D
 # because these definitions are forwarded to Swift's clang importer.
 # Keep the real compile order so definitions from CMAKE_CXX_FLAGS take precedence
+# Reads the Source directory's definitions, or those of the directory passed as
+# the optional second argument when Source hasn't been processed yet.
 function(_webkit_cxx_preprocessor_definitions _outvar)
     set(_defs "")
-    get_directory_property(_dir_defs DIRECTORY "${CMAKE_SOURCE_DIR}/Source" COMPILE_DEFINITIONS)
+    set(_definitions_dir "${CMAKE_SOURCE_DIR}/Source")
+    if (ARGC GREATER 1)
+        set(_definitions_dir "${ARGV1}")
+    endif ()
+    get_directory_property(_dir_defs DIRECTORY "${_definitions_dir}" COMPILE_DEFINITIONS)
     foreach (_d IN LISTS _dir_defs)
         # This list becomes a literal clang command line, where COMPILE_LANGUAGE
         # is illegal, so drop the guard _webkit_definitions_for_swift adds. These
@@ -1286,9 +1292,14 @@ function(_webkit_cxx_preprocessor_definitions _outvar)
     set(${_outvar} ${_defs} PARENT_SCOPE)
 endfunction()
 
-# Shared clang preprocess prefix for the two functions below, so the clang-cl
-# workaround lives in one place. Each caller adds its own flags after this.
+# Shared clang preprocess prefix for the functions below, so the clang-cl
+# workaround lives in one place. Each caller adds its own flags after this. The
+# optional fifth argument is the directory holding the cmakeconfig.h to use.
 function(_webkit_platform_args_clang_prefix _outvar _depfile _mt_target _wtf_include_dir)
+    set(_config_dir "${CMAKE_BINARY_DIR}")
+    if (ARGC GREATER 4)
+        set(_config_dir "${ARGV4}")
+    endif ()
     set(_cmd ${CMAKE_CXX_COMPILER})
     if (COMPILER_IS_CLANG_CL)
         # clang-cl's default MSVC driver ignores the GCC-style flags below and
@@ -1297,14 +1308,16 @@ function(_webkit_platform_args_clang_prefix _outvar _depfile _mt_target _wtf_inc
     endif ()
     # Kept on one line: the style checker alphabetizes multi-line list items.
     # RELEASE_WITHOUT_OPTIMIZATIONS avoids wtf/Compiler.h's non-Debug #error.
+    # The -include paths are absolute because clang looks for a relative one in
+    # the working directory first, which can hold another cmakeconfig.h.
     list(APPEND _cmd -x c++ -std=c++2b -E -P -dM
         -MD -MF "${_depfile}" -MT "${_mt_target}"
         -D __WK_GENERATING_PLATFORM_ARGS__
         -D RELEASE_WITHOUT_OPTIMIZATIONS
         -I "${_wtf_include_dir}"
-        -I "${CMAKE_BINARY_DIR}"
-        -include cmakeconfig.h
-        -include wtf/Platform.h
+        -I "${_config_dir}"
+        -include "${_config_dir}/cmakeconfig.h"
+        -include "${_wtf_include_dir}/wtf/Platform.h"
     )
     # Custom commands don't inherit add_compile_options, so mirror the SDK stubs
     # and headers OptionsCocoa.cmake feeds C-family compiles, which Platform.h
@@ -1328,9 +1341,40 @@ function(webkit_generate_platform_feature_defines_file)
     _webkit_platform_args_empty_input(_empty_input)
     _webkit_platform_args_clang_prefix(_clang_cmd
         "${_depfile}" "${_defines_file}" "${CMAKE_SOURCE_DIR}/Source/WTF")
-    # Match what a real C-family compile sees (definitions, frameworks, arch, stubs).
-    _webkit_cxx_preprocessor_definitions(_cxx_defs)
-    list(APPEND _clang_cmd ${_cxx_defs})
+    _webkit_platform_feature_defines_flags(_flags "${CMAKE_SOURCE_DIR}/Source")
+    list(APPEND _clang_cmd ${_flags} "${_empty_input}")
+
+    # Platform.h reads WebKitAdditions headers, so wait for the target that stages them.
+    set(_command_deps "")
+    if (USE_APPLE_INTERNAL_SDK)
+        list(APPEND _command_deps WebKitAdditions_CopyHeaders)
+    endif ()
+    set(_check_args "")
+    if (WEBKIT_PLATFORM_H_READS_FILE)
+        set(_check_args --check-probe "${WEBKIT_PLATFORM_H_READS_FILE}")
+        list(APPEND _command_deps "${WEBKIT_PLATFORM_H_READS_FILE}")
+    endif ()
+
+    set(_script "${CMAKE_SOURCE_DIR}/Source/WTF/Scripts/generate-platform-args")
+    add_custom_command(
+        OUTPUT "${_defines_file}"
+        COMMAND ${Python_EXECUTABLE} "${_script}"
+            --print-feature-defines --output "${_defines_file}" ${_check_args} -- ${_clang_cmd}
+        DEPFILE "${_depfile}"
+        DEPENDS "${_script}" "${CMAKE_BINARY_DIR}/cmakeconfig.h" ${_command_deps}
+        COMMENT "Deriving generator feature defines from wtf/Platform.h"
+        VERBATIM
+    )
+    # A custom command's rule only exists if a target in its directory uses it.
+    add_custom_target(PlatformFeatureDefines DEPENDS "${_defines_file}")
+endfunction()
+
+# The flags that make a preprocess of wtf/Platform.h see what a real C-family
+# compile does (definitions, frameworks, arch, stubs), taking the global
+# definitions from _definitions_dir.
+function(_webkit_platform_feature_defines_flags _outvar _definitions_dir)
+    _webkit_cxx_preprocessor_definitions(_cxx_defs "${_definitions_dir}")
+    set(_clang_cmd ${_cxx_defs})
     if (CMAKE_OSX_SYSROOT)
         list(APPEND _clang_cmd "-isysroot" "${CMAKE_OSX_SYSROOT}"
             "-F" "${CMAKE_BINARY_DIR}"
@@ -1347,30 +1391,14 @@ function(webkit_generate_platform_feature_defines_file)
     if (WEBKIT_AVAILABILITY_VFS_OVERLAY_FILE)
         list(APPEND _clang_cmd "-ivfsoverlay" "${WEBKIT_AVAILABILITY_VFS_OVERLAY_FILE}")
     endif ()
-    # Platform.h reads WebKitAdditions headers; prefer the copies staged into the
-    # build directory over the SDK's, and wait for the target that stages them.
-    set(_command_deps "")
+    # Prefer the WebKitAdditions headers staged into the build directory over the SDK's.
     if (USE_APPLE_INTERNAL_SDK)
         list(APPEND _clang_cmd "-I" "${WebKitAdditions_FRAMEWORK_HEADERS_DIR}")
-        list(APPEND _command_deps WebKitAdditions_CopyHeaders)
     endif ()
     # -fsanitize=* drives ASAN_ENABLED -> ENABLE_IPC_TESTING_API. (NDEBUG and
     # ASSERT_ENABLED come from _webkit_cxx_preprocessor_definitions() above.)
     list(APPEND _clang_cmd ${ENABLED_COMPILER_SANITIZERS})
-    list(APPEND _clang_cmd "${_empty_input}")
-
-    set(_script "${CMAKE_SOURCE_DIR}/Source/WTF/Scripts/generate-platform-args")
-    add_custom_command(
-        OUTPUT "${_defines_file}"
-        COMMAND ${Python_EXECUTABLE} "${_script}"
-            --print-feature-defines --output "${_defines_file}" -- ${_clang_cmd}
-        DEPFILE "${_depfile}"
-        DEPENDS "${_script}" "${CMAKE_BINARY_DIR}/cmakeconfig.h" ${_command_deps}
-        COMMENT "Deriving generator feature defines from wtf/Platform.h"
-        VERBATIM
-    )
-    # A custom command's rule only exists if a target in its directory uses it.
-    add_custom_target(PlatformFeatureDefines DEPENDS "${_defines_file}")
+    set(${_outvar} ${_clang_cmd} PARENT_SCOPE)
 endfunction()
 
 function(_WEBKIT_COMPUTE_SWIFT_SHARED_CLANG_FLAGS _outvar)
