@@ -43,7 +43,7 @@ class InspectorCPUProfilerAgent final : public InspectorAgentBase, public Inspec
 public:
     OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
 
-    InspectorCPUProfilerAgent(PageAgentContext&);
+    InspectorCPUProfilerAgent(WebAgentContext&);
     ~InspectorCPUProfilerAgent();
 
     // InspectorAgentBase

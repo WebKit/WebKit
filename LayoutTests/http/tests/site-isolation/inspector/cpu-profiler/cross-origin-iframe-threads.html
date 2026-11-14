@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/cpu-profiler-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.CPUProfiler.CrossOriginIframeThreads");
+
+    let sameOriginFrameTarget;
+    let crossOriginFrameTarget;
+    let sameOriginWorkerTarget;
+    let crossOriginWorkerTarget;
+
+    function expectOnlyTargetSentEvents(target, description) {
+        let targets = CPUProfilerTest.targetsThatSentEvents();
+        InspectorTest.expectThat(targets.size === 1 && targets.has(target), `Only the ${description} should send CPUProfiler events.`);
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.CPUProfiler.CrossOriginIframeThreads.Setup",
+        description: "Find the frame targets of the iframes and their worker targets, and check which targets have the CPUProfiler domain.",
+        async test() {
+            let mainFrameTarget = InspectorTest.mainFrameTarget;
+            sameOriginFrameTarget = await waitForFrameTargetForURLContaining("worker-frame.html?cross-origin-iframe-threads-same-origin");
+            crossOriginFrameTarget = await waitForFrameTargetForURLContaining("worker-frame.html?cross-origin-iframe-threads-cross-origin");
+            InspectorTest.expectNotNull(sameOriginFrameTarget, "Should find the same-origin iframe target.");
+            InspectorTest.expectNotNull(crossOriginFrameTarget, "Should find the cross-origin iframe target.");
+            if (!sameOriginFrameTarget || !crossOriginFrameTarget)
+                throw new Error("Missing a frame target.");
+
+            InspectorTest.expectEqual(sameOriginFrameTarget.processIdentifier, mainFrameTarget.processIdentifier, "The same-origin iframe target should be in the main frame's process.");
+            InspectorTest.expectNotEqual(crossOriginFrameTarget.processIdentifier, mainFrameTarget.processIdentifier, "The cross-origin iframe target should be in another process.");
+
+            sameOriginWorkerTarget = await CPUProfilerTest.awaitWorkerTarget(sameOriginFrameTarget);
+            crossOriginWorkerTarget = await CPUProfilerTest.awaitWorkerTarget(crossOriginFrameTarget);
+            InspectorTest.pass("Found the worker target of each iframe.");
+
+            InspectorTest.expectThat(WI.mainTarget.hasDomain("CPUProfiler"), "The page target should have the CPUProfiler domain.");
+            let frameTargets = WI.targets.filter((target) => target.type === WI.TargetType.Frame);
+            InspectorTest.expectThat(frameTargets.every((target) => target.hasDomain("CPUProfiler")), "Every frame target should have the CPUProfiler domain.");
+            InspectorTest.expectFalse(sameOriginWorkerTarget.hasDomain("CPUProfiler"), "The same-origin iframe's worker target should not have the CPUProfiler domain.");
+            InspectorTest.expectFalse(crossOriginWorkerTarget.hasDomain("CPUProfiler"), "The cross-origin iframe's worker target should not have the CPUProfiler domain.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.CPUProfiler.CrossOriginIframeThreads.CrossOriginFrameTarget",
+        description: "Tracking on the cross-origin iframe target should sample the iframe's process, and only that target should report.",
+        async test() {
+            // The first update may come from before the worker thread existed for long, so check the second one.
+            let updates = await CPUProfilerTest.trackOnTarget(crossOriginFrameTarget, 2);
+            InspectorTest.pass("The cross-origin iframe target sent trackingStart, two trackingUpdate events and trackingComplete.");
+            InspectorTest.expectEqual(CPUProfilerTest.events(crossOriginFrameTarget, "trackingStart").length, 1, "The cross-origin iframe target should send one trackingStart.");
+            InspectorTest.expectEqual(CPUProfilerTest.events(crossOriginFrameTarget, "trackingComplete").length, 1, "The cross-origin iframe target should send one trackingComplete.");
+            expectOnlyTargetSentEvents(crossOriginFrameTarget, "cross-origin iframe target");
+
+            let update = updates[1];
+            InspectorTest.expectEqual(typeof update.usage, "number", "The update should have a usage.");
+            InspectorTest.expectEqual(CPUProfilerTest.mainThreadCount(update), 1, "The update should have one main thread.");
+            InspectorTest.expectThat(CPUProfilerTest.hasThreadForTarget(update, crossOriginWorkerTarget), "The update should include the thread of the cross-origin iframe's worker.");
+            InspectorTest.expectFalse(CPUProfilerTest.hasThreadForTarget(update, sameOriginWorkerTarget), "The update should not include the thread of the same-origin iframe's worker.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.CPUProfiler.CrossOriginIframeThreads.PageTarget",
+        description: "Tracking on the page target should still sample only the page's process, and only the page target should report.",
+        async test() {
+            let updates = await CPUProfilerTest.trackOnTarget(WI.mainTarget, 2);
+            InspectorTest.pass("The page target sent trackingStart, two trackingUpdate events and trackingComplete.");
+            InspectorTest.expectEqual(CPUProfilerTest.events(WI.mainTarget, "trackingStart").length, 1, "The page target should send one trackingStart.");
+            InspectorTest.expectEqual(CPUProfilerTest.events(WI.mainTarget, "trackingComplete").length, 1, "The page target should send one trackingComplete.");
+            expectOnlyTargetSentEvents(WI.mainTarget, "page target");
+
+            let update = updates[1];
+            InspectorTest.expectEqual(CPUProfilerTest.mainThreadCount(update), 1, "The update should have one main thread.");
+            InspectorTest.expectThat(CPUProfilerTest.hasThreadForTarget(update, sameOriginWorkerTarget), "The update should include the thread of the same-origin iframe's worker.");
+            InspectorTest.expectFalse(CPUProfilerTest.hasThreadForTarget(update, crossOriginWorkerTarget), "The update should not include the thread of the cross-origin iframe's worker.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that under Site Isolation, CPUProfiler tracking on a cross-origin iframe's frame target samples the iframe's process, and tracking on the page target still samples only the page's process.</p>
+<iframe src="resources/worker-frame.html?cross-origin-iframe-threads-same-origin"></iframe>
+<iframe src="http://localhost:8000/site-isolation/inspector/cpu-profiler/resources/worker-frame.html?cross-origin-iframe-threads-cross-origin"></iframe>
+</body>
