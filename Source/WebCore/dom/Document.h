@@ -64,6 +64,7 @@
 #include <WebCore/ViewportArguments.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Deque.h>
+#include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 #include <wtf/Logger.h>
 #include <wtf/Observer.h>
@@ -2545,7 +2546,7 @@ private:
     RefPtr<TextResourceDecoder> m_decoder;
 
     HashSet<LiveNodeList*> m_listsInvalidatedAtDocument;
-    HashSet<HTMLCollection*> m_collectionsInvalidatedAtDocument;
+    HashCountedSet<HTMLCollection*> m_collectionsInvalidatedAtDocument;
     std::array<unsigned, numNodeListInvalidationTypes> m_nodeListAndCollectionCounts = { };
 
     const RefPtr<XPathEvaluator> m_xpathEvaluator;

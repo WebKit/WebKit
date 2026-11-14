@@ -7164,20 +7164,28 @@ void Document::unregisterCollection(HTMLCollection& collection)
     if (!collection.isRootedAtTreeScope())
         return;
 
+    ASSERT(m_collectionsInvalidatedAtDocument.contains(&collection));
     m_collectionsInvalidatedAtDocument.remove(&collection);
 }
 
-void Document::collectionCachedIdNameMap(const HTMLCollection& collection)
+SUPPRESS_NODELETE void Document::collectionCachedIdNameMap(const HTMLCollection& collection)
 {
-    ASSERT_UNUSED(collection, collection.hasNamedElementCache());
+    ASSERT(collection.hasNamedElementCache());
     m_nodeListAndCollectionCounts[static_cast<unsigned>(NodeListInvalidationType::InvalidateOnIdNameAttrChange)]++;
+    if (collection.isRootedAtTreeScope())
+        m_collectionsInvalidatedAtDocument.add(const_cast<HTMLCollection*>(&collection));
 }
 
-void Document::collectionWillClearIdNameMap(const HTMLCollection& collection)
+SUPPRESS_NODELETE void Document::collectionWillClearIdNameMap(const HTMLCollection& collection)
 {
-    ASSERT_UNUSED(collection, collection.hasNamedElementCache());
+    ASSERT(collection.hasNamedElementCache());
     ASSERT(m_nodeListAndCollectionCounts[static_cast<unsigned>(NodeListInvalidationType::InvalidateOnIdNameAttrChange)]);
     m_nodeListAndCollectionCounts[static_cast<unsigned>(NodeListInvalidationType::InvalidateOnIdNameAttrChange)]--;
+    if (!collection.isRootedAtTreeScope())
+        return;
+
+    ASSERT(m_collectionsInvalidatedAtDocument.contains(const_cast<HTMLCollection*>(&collection)));
+    m_collectionsInvalidatedAtDocument.remove(const_cast<HTMLCollection*>(&collection));
 }
 
 void Document::attachNodeIterator(NodeIterator& iterator)
