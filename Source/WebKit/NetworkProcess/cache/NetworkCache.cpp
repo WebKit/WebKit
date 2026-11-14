@@ -123,11 +123,6 @@ static void dumpFileChanged(Cache* cache)
 }
 #endif
 
-NetworkProcess& Cache::networkProcess()
-{
-    return NetworkProcess::singleton();
-}
-
 Cache::Cache(const String& storageDirectory, Ref<Storage>&& storage, OptionSet<CacheOption> options, PAL::SessionID sessionID)
     : m_storage(WTF::move(storage))
     , m_sessionID(sessionID)

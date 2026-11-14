@@ -71,7 +71,6 @@ private:
     void didFinishLoading(const WebCore::NetworkLoadMetrics&) final;
     void didFailLoading(const WebCore::ResourceError&) final;
 
-    const Ref<NetworkProcess> m_networkProcess;
     const Ref<NetworkLoad> m_networkLoad;
     const std::unique_ptr<WebCore::Timer> m_timeoutTimer;
     const WebPageProxyIdentifier m_webPageID;

@@ -256,7 +256,6 @@ public:
 
     void browsingContextRemoved(WebPageProxyIdentifier, WebCore::PageIdentifier, WebCore::FrameIdentifier);
 
-    NetworkProcess& networkProcess();
     PAL::SessionID sessionID() const { return m_sessionID; }
     const String& storageDirectory() const LIFETIME_BOUND { return m_storageDirectory; }
     void fetchData(bool shouldComputeSize, CompletionHandler<void(Vector<WebsiteData::Entry>&&)>&&);

@@ -56,7 +56,6 @@ ServiceWorkerDownloadTask::ServiceWorkerDownloadTask(NetworkSession& session, Ne
     , m_serverConnectionIdentifier(serverConnectionIdentifier)
     , m_fetchIdentifier(fetchIdentifier)
     , m_downloadID(downloadID)
-    , m_networkProcess(*serviceWorkerConnection.networkProcess())
     , m_sharedPreferences(serviceWorkerConnection.sharedPreferencesForWebProcess())
 {
     auto expectedContentLength = response.expectedContentLength();
@@ -178,7 +177,7 @@ void ServiceWorkerDownloadTask::start()
 
     m_state = State::Running;
 
-    CheckedRef manager = m_networkProcess->downloadManager();
+    CheckedRef manager = NetworkProcess::singleton().downloadManager();
     Ref download = Download::create(manager.get(), m_downloadID, *this, CheckedRef { *networkSession() });
     manager->dataTaskBecameDownloadTask(m_downloadID, download.copyRef());
     download->didCreateDestination(m_pendingDownloadLocation);
@@ -200,7 +199,7 @@ void ServiceWorkerDownloadTask::didReceiveData(const IPC::SharedBufferReference&
 
     callOnMainRunLoop([this, protectedThis = Ref { *this }, bytesWritten = *bytesWritten] {
         m_downloadBytesWritten += bytesWritten;
-        if (RefPtr download = protect(m_networkProcess->downloadManager())->download(*m_pendingDownloadID))
+        if (RefPtr download = protect(NetworkProcess::singleton().downloadManager())->download(*m_pendingDownloadID))
             download->didReceiveData(bytesWritten, m_downloadBytesWritten, std::max(m_expectedContentLength.value_or(0), m_downloadBytesWritten));
     });
 }
@@ -229,7 +228,7 @@ void ServiceWorkerDownloadTask::didFinish()
             sandboxExtension->revoke();
 #endif
 
-        if (RefPtr download = protect(m_networkProcess->downloadManager())->download(*m_pendingDownloadID)) {
+        if (RefPtr download = protect(NetworkProcess::singleton().downloadManager())->download(*m_pendingDownloadID)) {
 #if HAVE(MODERN_DOWNLOADPROGRESS)
             if (RefPtr sandboxExtension = std::exchange(m_sandboxExtension, nullptr))
                 download->setSandboxExtension(WTF::move(sandboxExtension));
@@ -266,7 +265,7 @@ void ServiceWorkerDownloadTask::didFailDownload(std::optional<ResourceError>&& e
             sandboxExtension->revoke();
 
         auto resourceError = error.value_or(cancelledError(firstRequest()));
-        if (RefPtr download = protect(m_networkProcess->downloadManager())->download(*m_pendingDownloadID))
+        if (RefPtr download = protect(NetworkProcess::singleton().downloadManager())->download(*m_pendingDownloadID))
             download->didFail(resourceError, { });
 
         if (RefPtr client = m_client.get())

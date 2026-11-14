@@ -1800,7 +1800,7 @@ void NetworkConnectionToWebProcess::establishSharedWorkerContextConnection(WebPa
 {
     CONNECTION_RELEASE_LOG(SharedWorker, "establishSharedWorkerContextConnection:");
     if (CheckedPtr session = networkSession()) {
-        MESSAGE_CHECK_COMPLETION(session->networkProcess().allowsFirstPartyForCookies(webProcessIdentifier(), site.domain()), completionHandler());
+        MESSAGE_CHECK_COMPLETION(protect(NetworkProcess::singleton())->allowsFirstPartyForCookies(webProcessIdentifier(), site.domain()), completionHandler());
         if (CheckedPtr swServer = session->sharedWorkerServer())
             m_sharedWorkerContextConnection = WebSharedWorkerServerToContextConnection::create(*this, WTF::move(site), *swServer, crossOriginEmbedderPolicy);
     }
@@ -1819,7 +1819,7 @@ void NetworkConnectionToWebProcess::establishSharedWorkerServerConnection()
     CONNECTION_RELEASE_LOG(SharedWorker, "establishSharedWorkerServerConnection:");
 
     CheckedRef server = session->ensureSharedWorkerServer();
-    auto connection = WebSharedWorkerServerConnection::create(NetworkProcess::singleton(), server.get(), m_connection.get(), m_webProcessIdentifier);
+    auto connection = WebSharedWorkerServerConnection::create(server.get(), m_connection.get(), m_webProcessIdentifier);
 
     m_sharedWorkerConnection = connection;
     server->addConnection(WTF::move(connection));
@@ -1883,7 +1883,7 @@ void NetworkConnectionToWebProcess::establishSWContextConnection(WebPageProxyIde
 
     if (session) {
         Ref swServer = session->ensureSWServer();
-        MESSAGE_CHECK_COMPLETION(session->networkProcess().allowsFirstPartyForCookies(webProcessIdentifier(), site.domain()), completionHandler());
+        MESSAGE_CHECK_COMPLETION(protect(NetworkProcess::singleton())->allowsFirstPartyForCookies(webProcessIdentifier(), site.domain()), completionHandler());
 
         // FIXME: We should MESSAGE_CHECK m_swContextConnection.
 
