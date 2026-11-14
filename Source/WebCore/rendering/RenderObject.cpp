@@ -615,13 +615,16 @@ RenderElement* RenderObject::markContainingBlocksForLayout(RenderElement* layout
             simplifiedNormalFlowLayout = false;
 
         if (hasOutOfFlowPosition) {
-            bool willSkipRelativelyPositionedInlines = !ancestor->isRenderBlock() || ancestor->isAnonymousBlock();
-            // Skip relatively positioned inlines and anonymous blocks to get to the enclosing RenderBlock.
-            while (ancestor && (!ancestor->isRenderBlock() || ancestor->isAnonymousBlock()))
+            // The containing block keeps the out-of-flow box: skip anything that is not a non-anonymous block (e.g. a relatively positioned inline box).
+            auto keepsOutOfFlowBoxes = [](const RenderElement& renderer) {
+                return renderer.isRenderBlock() && !renderer.isAnonymousBlock();
+            };
+            bool willSkipAncestors = !keepsOutOfFlowBoxes(*ancestor);
+            while (ancestor && !keepsOutOfFlowBoxes(*ancestor))
                 ancestor = ancestor->container();
             if (!ancestor || ancestor->outOfFlowChildNeedsLayout())
                 return { };
-            if (willSkipRelativelyPositionedInlines)
+            if (willSkipAncestors)
                 container = ancestor->container();
             ancestor->setOutOfFlowChildNeedsLayoutBit(true);
             simplifiedNormalFlowLayout = true;
@@ -740,29 +743,29 @@ RenderBlock* RenderObject::containingBlockForPositionType(PositionType positionT
         return containingBlockForObjectInFlow();
     }
 
+    // The containing block of an out-of-flow box is established by its nearest ancestor that can contain it, which maps to its nearest
+    // non-anonymous block (e.g. a relatively positioned inline box forwards its out-of-flow descendants to its nearest non-anonymous containing block).
+    auto containingBlockForOutOfFlowBox = [](RenderElement* ancestor) -> RenderBlock* {
+        if (!ancestor)
+            return nullptr;
+        return ancestor->nearestNonAnonymousContainingBlockIncludingSelf();
+    };
+
     if (positionType == PositionType::Absolute) {
-        auto containingBlockForAbsolutePosition = [&] {
-            CheckedPtr ancestor = renderer.parent();
-            while (ancestor && !ancestor->canContainAbsolutelyPositionedObjects())
-                ancestor = ancestor->parent();
-            // Make sure we only return non-anonymous RenderBlock as containing block (e.g. a relatively positioned inline box
-            // forwards its absolute positioned descendants to its nearest non-anonymous containing block).
-            return ancestor ? ancestor->nearestNonAnonymousContainingBlockIncludingSelf() : nullptr;
-        };
-        return containingBlockForAbsolutePosition();
+        CheckedPtr ancestor = renderer.parent();
+        while (ancestor && !ancestor->canContainAbsolutelyPositionedObjects())
+            ancestor = ancestor->parent();
+        return containingBlockForOutOfFlowBox(ancestor.get());
     }
 
     if (positionType == PositionType::Fixed) {
-        auto containingBlockForFixedPosition = [&] () -> RenderBlock* {
-            CheckedPtr ancestor = renderer.parent();
-            while (ancestor && !ancestor->canContainFixedPositionObjects()) {
-                if (isInTopLayerOrBackdrop(ancestor->style(), ancestor->element()))
-                    return &renderer.view();
-                ancestor = ancestor->parent();
-            }
-            return ancestor ? ancestor->nearestNonAnonymousContainingBlockIncludingSelf() : nullptr;
-        };
-        return containingBlockForFixedPosition();
+        CheckedPtr ancestor = renderer.parent();
+        while (ancestor && !ancestor->canContainFixedPositionObjects()) {
+            if (isInTopLayerOrBackdrop(ancestor->style(), ancestor->element()))
+                return &renderer.view();
+            ancestor = ancestor->parent();
+        }
+        return containingBlockForOutOfFlowBox(ancestor.get());
     }
 
     ASSERT_NOT_REACHED();
