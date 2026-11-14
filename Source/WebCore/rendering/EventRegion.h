@@ -37,16 +37,20 @@
 #include <WebCore/RenderStyleConstants.h>
 #include <WebCore/TouchAction.h>
 #include <wtf/ArgumentCoder.h>
+#include <wtf/HashMap.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Ref.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
+class Document;
 class EventRegion;
 class Path;
+class RenderElement;
 class RenderObject;
 enum class TrackingType : uint8_t;
 
@@ -59,13 +63,18 @@ class EventRegionContext final : public RegionContext {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(EventRegionContext);
 public:
     WEBCORE_EXPORT explicit EventRegionContext(EventRegion&);
-    NODELETE WEBCORE_EXPORT virtual ~EventRegionContext();
+    WEBCORE_EXPORT virtual ~EventRegionContext();
 
     bool isEventRegionContext() const final { return true; }
 
     enum class ContributeToInteractionRegions : bool { No, Yes };
     WEBCORE_EXPORT void unite(const FloatRoundedRect&, const RenderObject&, const Style::ComputedStyle&, bool overrideUserModifyIsEditable = false, ContributeToInteractionRegions = ContributeToInteractionRegions::Yes);
     bool contains(const IntRect&) const;
+
+#if ENABLE(TOUCH_EVENT_REGIONS)
+    bool mayHaveDescendantTouchEventTargets(const RenderElement&);
+    bool touchEventListenerRegionsContain(const IntRect&, OptionSet<EventListenerRegionType>) const;
+#endif
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     void uniteInteractionRegions(const RenderObject&, const FloatRect&, const FloatSize&, const std::optional<AffineTransform>&);
@@ -81,6 +90,15 @@ public:
 
 private:
     EventRegion& m_eventRegion;
+
+#if ENABLE(TOUCH_EVENT_REGIONS)
+    // Lazily constructed per-document ancestor set of touch targets. std::nullopt means that any
+    // renderer may have descendant touch targets.
+    //
+    // Storing a Ref<Document> as a key here is safe as the only owner of EventRegionContext
+    // is a stack-local UniqueRef.
+    HashMap<Ref<const Document>, std::optional<SingleThreadWeakHashSet<const RenderElement>>> m_touchEventTargetAncestors;
+#endif
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     Vector<InteractionRegion> m_interactionRegions;
@@ -141,6 +159,9 @@ public:
     friend bool operator==(const EventRegion&, const EventRegion&) = default;
 
     void unite(const Region&, const RenderObject&, const Style::ComputedStyle&, bool overrideUserModifyIsEditable = false);
+#if ENABLE(TOUCH_EVENT_REGIONS)
+    bool touchEventListenerRegionsContain(const IntRect&, OptionSet<EventListenerRegionType>) const;
+#endif
     NODELETE void translate(const IntSize&);
 
     bool contains(const IntPoint& point) const { return m_region.contains(point); }

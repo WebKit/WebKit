@@ -26,11 +26,17 @@
 #include "config.h"
 #include "EventRegion.h"
 
+#include "ContainerNodeInlines.h"
+#include "DocumentQuirks.h"
+#include "ElementInlines.h"
 #include "EventTrackingRegions.h"
+#include "FrameTree.h"
 #include "HTMLFormControlElement.h"
+#include "LocalFrame.h"
 #include "Logging.h"
 #include "Path.h"
 #include "PathUtilities.h"
+#include "Quirks.h"
 #include "RenderAncestorIterator.h"
 #include "RenderBox.h"
 #include "RenderElementInlines.h"
@@ -107,6 +113,96 @@ bool EventRegionContext::contains(const IntRect& rect) const
 
     return m_eventRegion.contains(m_transformStack.last().mapRect(rect));
 }
+
+#if ENABLE(TOUCH_EVENT_REGIONS)
+static void addRendererAndAncestors(SingleThreadWeakHashSet<const RenderElement>& renderers, const RenderElement* renderer)
+{
+    for (CheckedPtr current = renderer; current; current = current->parent()) {
+        if (!renderers.add(*current).isNewEntry)
+            return;
+    }
+}
+
+static constexpr unsigned maximumTouchEventTargetCountForSubtreePruning = 64;
+
+static std::optional<SingleThreadWeakHashSet<const RenderElement>> computeTouchEventTargetAncestors(const Document& document)
+{
+    // Mouse listeners are not always in touchEventTargets() when the simulated mouse quirk applies.
+    if (document.quirks().mayDispatchSimulatedMouseEvents())
+        return std::nullopt;
+
+    SingleThreadWeakHashSet<const RenderElement> ancestors;
+    unsigned targetCount = 0;
+    // Returns false if subtree pruning must be disabled.
+    auto addTarget = [&](Node& target) {
+        if (++targetCount > maximumTouchEventTargetCountForSubtreePruning)
+            return false;
+
+        // Non-Element targets are Document (on root style, inherited by all renderers), subframe
+        // Documents (handled via frame tree below), or Text nodes (which never add region types).
+        RefPtr element = dynamicDowncast<Element>(target);
+        if (!element)
+            return true;
+
+        if (CheckedPtr renderer = element->renderer()) {
+            // Exclude renderer itself; its own style already carries its listener types.
+            CheckedPtr parent = renderer->parent();
+            addRendererAndAncestors(ancestors, parent.get());
+            return true;
+        }
+
+        // The children of a display: contents element can be in anonymous boxes, which don't
+        // inherit its types.
+        return !element->hasDisplayContents();
+    };
+
+    for (auto entry : document.touchEventTargets()) {
+        Ref target = entry.key;
+        if (!addTarget(target))
+            return std::nullopt;
+    }
+#if ENABLE(IOS_TOUCH_EVENTS)
+    for (auto entry : document.touchEventHandlers()) {
+        Ref target = entry.key;
+        if (!addTarget(target))
+            return std::nullopt;
+    }
+#endif
+
+    // Reach subframe owners so non-composited subframes still paint into this event region.
+    if (RefPtr frame = document.frame()) {
+        for (RefPtr child = frame->tree().firstChild(); child; child = child->tree().nextSibling()) {
+            if (CheckedPtr ownerRenderer = child->ownerRenderer()) {
+                CheckedPtr parent = ownerRenderer->parent();
+                addRendererAndAncestors(ancestors, parent.get());
+            }
+        }
+    }
+
+    return ancestors;
+}
+
+bool EventRegionContext::mayHaveDescendantTouchEventTargets(const RenderElement& renderer)
+{
+    Ref<const Document> document = renderer.document();
+    auto& ancestors = m_touchEventTargetAncestors.ensure(document, [&] {
+        return computeTouchEventTargetAncestors(document);
+    }).iterator->value;
+    return !ancestors || ancestors->contains(renderer);
+}
+
+bool EventRegionContext::touchEventListenerRegionsContain(const IntRect& rect, OptionSet<EventListenerRegionType> eventListenerRegionTypes) const
+{
+    // Descendants are clipped at least as much as this box.
+    auto mappedRect = m_transformStack.isEmpty() ? rect : m_transformStack.last().mapRect(rect);
+    if (!m_clipStack.isEmpty())
+        mappedRect.intersect(m_clipStack.last());
+    if (mappedRect.isEmpty())
+        return true;
+
+    return m_eventRegion.touchEventListenerRegionsContain(mappedRect, eventListenerRegionTypes);
+}
+#endif
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
 
@@ -835,6 +931,27 @@ void EventRegion::uniteEventListeners(const Region& region, OptionSet<EventListe
     UNUSED_PARAM(eventListenerRegionTypes);
 #endif
 }
+
+#if ENABLE(TOUCH_EVENT_REGIONS)
+bool EventRegion::touchEventListenerRegionsContain(const IntRect& rect, OptionSet<EventListenerRegionType> eventListenerRegionTypes) const
+{
+    if (!containsTouchEventType(eventListenerRegionTypes))
+        return true;
+
+    if (!m_touchEventListenerRegion.asynchronousDispatchRegion.contains(rect))
+        return false;
+
+    auto& synchronousRegions = m_touchEventListenerRegion.eventSpecificSynchronousDispatchRegions;
+    for (auto eventType : eventListenerRegionTypes) {
+        if (!isNonPassiveTouchEventType(eventType))
+            continue;
+        auto it = synchronousRegions.find(eventTypeForEventListenerType(eventType));
+        if (it == synchronousRegions.end() || !it->value.contains(rect))
+            return false;
+    }
+    return true;
+}
+#endif
 
 #if ENABLE(TOUCH_EVENT_REGIONS)
 TrackingType EventRegion::eventTrackingTypeForPoint(EventTrackingRegionsEventType event, const IntPoint& point) const

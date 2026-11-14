@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="resources/touch-regions-helper.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: Ahem;
+            font-size: 10px;
+            line-height: 20px;
+        }
+
+        .container {
+            width: 300px;
+            margin: 10px;
+            padding: 5px;
+        }
+
+        .box {
+            width: 100px;
+            height: 20px;
+            background-color: silver;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <p>Paragraph <span>with inline content</span> and more text.</p>
+        <div><div><div class="box"></div></div></div>
+    </div>
+
+    <div class="container" style="pointer-events: none">
+        <div class="box"></div>
+        <div class="box" style="pointer-events: auto"></div>
+        <p>Text that is not hit-testable <span style="pointer-events: auto">with a hit-testable span</span>.</p>
+    </div>
+
+    <div class="container" style="visibility: hidden">
+        <div class="box"></div>
+        <div class="box" style="visibility: visible"></div>
+    </div>
+
+    <div class="container" style="border-radius: 30px; border: 2px solid black">
+        <div class="box"></div>
+        <div class="box" style="margin-left: 250px"></div>
+    </div>
+
+    <div class="container" style="height: 30px; overflow: hidden">
+        <div class="box"></div>
+        <div class="box"></div>
+        <div class="box">Clipped</div>
+    </div>
+    <script>
+        document.addEventListener("touchstart", () => { }, { passive: true });
+        window.addEventListener("pointerdown", () => { }, { passive: false });
+
+        prepareForTest();
+        window.addEventListener("load", dumpRegions, false);
+    </script>
+</body>
+</html>

@@ -10063,6 +10063,13 @@ bool Document::hasTouchEventHandlers() const
 }
 #endif
 
+#if ENABLE(IOS_TOUCH_EVENTS) && ENABLE(TOUCH_EVENT_REGIONS)
+const EventTargetSet& Document::touchEventHandlers() const
+{
+    return m_touchEventHandlerCounts;
+}
+#endif
+
 DocumentLoader* Document::loader() const
 {
     if (!m_frame)

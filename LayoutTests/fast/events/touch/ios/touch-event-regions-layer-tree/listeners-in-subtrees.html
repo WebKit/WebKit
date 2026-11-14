@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="resources/touch-regions-helper.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: Ahem;
+            font-size: 10px;
+            line-height: 20px;
+        }
+
+        .container {
+            width: 300px;
+            margin: 10px;
+            padding: 5px;
+            border: 2px solid gray;
+        }
+
+        .float {
+            float: left;
+            width: 40px;
+            height: 40px;
+            background-color: silver;
+        }
+
+        .overflowing {
+            height: 20px;
+        }
+
+        .overflowing > div {
+            width: 400px;
+            height: 50px;
+            background-color: silver;
+        }
+
+        .transformed {
+            transform: rotate(10deg);
+            width: 100px;
+            height: 30px;
+            background-color: silver;
+        }
+
+        .outside {
+            margin-left: -40px;
+            width: 60px;
+            height: 20px;
+            background-color: silver;
+        }
+
+        .absolute {
+            position: absolute;
+            left: 350px;
+            width: 50px;
+            height: 50px;
+            background-color: silver;
+        }
+    </style>
+</head>
+<body>
+    <div id="target" class="container">
+        Target with a listener
+        <p>Paragraph <span>inside the target</span> with more text.</p>
+        <div><div><div>Deeply nested content inside the target.</div></div></div>
+        <div class="float"></div>
+        <div class="overflowing"><div></div></div>
+        <div class="transformed"></div>
+        <div class="outside"></div>
+    </div>
+
+    <div class="container">
+        <p>Paragraph <span id="inlineTarget">with an inline listener</span> and more text after it.</p>
+        <div><div><p>Deeply <b><i id="deepInlineTarget">nested inline</i></b> listener.</p></div></div>
+    </div>
+
+    <div class="container" style="pointer-events: none">
+        Not hit-testable
+        <div id="hitTestableTarget" style="pointer-events: auto; width: 100px; height: 30px; background-color: silver"></div>
+        <div style="width: 100px; height: 30px; background-color: gray"></div>
+    </div>
+
+    <div class="container">
+        <div id="contentsTarget" style="display: contents">
+            <div style="width: 80px; height: 20px; background-color: silver"></div>
+            Text in display: contents
+        </div>
+        <div id="host"></div>
+        <div id="textNodeTarget">Text node with a listener</div>
+    </div>
+
+    <div class="container">
+        <div id="floatTarget" class="float"></div>
+        <div class="overflowing"><div id="overflowTarget"></div></div>
+        <div class="transformed"><div id="transformedTarget" style="width: 50px; height: 10px"></div></div>
+        <div class="outside" id="outsideTarget"></div>
+        <div class="absolute"><div id="absoluteTarget" style="width: 20px; height: 20px"></div></div>
+    </div>
+
+    <div class="container">
+        <p>Container without any listener: <span>its content</span> only adds the base event region.</p>
+    </div>
+    <script>
+        target.addEventListener("touchstart", () => { }, { passive: false });
+        inlineTarget.addEventListener("pointerdown", () => { }, { passive: true });
+        deepInlineTarget.addEventListener("touchend", () => { }, { passive: false });
+        hitTestableTarget.addEventListener("touchmove", () => { }, { passive: false });
+        contentsTarget.addEventListener("touchstart", () => { }, { passive: true });
+        textNodeTarget.firstChild.addEventListener("touchstart", () => { }, { passive: false });
+
+        const shadowRoot = host.attachShadow({ mode: "open" });
+        shadowRoot.innerHTML = `<div id="shadowTarget" style="width: 60px; height: 20px; background-color: silver"></div><slot></slot>`;
+        shadowRoot.getElementById("shadowTarget").addEventListener("pointerup", () => { }, { passive: false });
+        const slotted = document.createElement("div");
+        slotted.textContent = "Slotted content";
+        host.appendChild(slotted);
+        shadowRoot.querySelector("slot").addEventListener("touchstart", () => { }, { passive: false });
+
+        floatTarget.addEventListener("touchstart", () => { }, { passive: true });
+        overflowTarget.addEventListener("touchstart", () => { }, { passive: false });
+        transformedTarget.addEventListener("touchstart", () => { }, { passive: false });
+        outsideTarget.addEventListener("pointermove", () => { }, { passive: true });
+        absoluteTarget.addEventListener("touchstart", () => { }, { passive: false });
+
+        prepareForTest();
+        window.addEventListener("load", dumpRegions, false);
+    </script>
+</body>
+</html>

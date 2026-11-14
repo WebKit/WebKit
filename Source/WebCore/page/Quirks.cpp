@@ -314,6 +314,20 @@ bool Quirks::shouldDispatchSimulatedMouseEvents(const EventTarget* target) const
     return behaviorAppliesToNode(QuirkBehaviorID::ShouldDispatchSimulatedMouseEventsQuirk, dynamicDowncast<Node>(target));
 }
 
+bool Quirks::mayDispatchSimulatedMouseEvents() const
+{
+    if (m_document->settings().mouseEventsSimulationEnabled())
+        return true;
+
+    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
+
+    RefPtr loader = m_document->loader();
+    if (!loader || loader->simulatedMouseEventsDispatchPolicy() != SimulatedMouseEventsDispatchPolicy::Allow)
+        return false;
+
+    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldDispatchSimulatedMouseEventsQuirk);
+}
+
 bool Quirks::shouldPreventDispatchOfTouchEvent(const AtomString& touchEventType, EventTarget* target) const
 {
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);

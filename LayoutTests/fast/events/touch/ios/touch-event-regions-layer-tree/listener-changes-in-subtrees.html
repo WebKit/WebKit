@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../../../../resources/ui-helper.js"></script>
+    <script src="resources/touch-regions-helper.js"></script>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        .container {
+            width: 300px;
+            margin: 10px;
+            padding: 5px;
+            border: 2px solid gray;
+        }
+
+        .box {
+            width: 100px;
+            height: 20px;
+            margin: 5px;
+            background-color: silver;
+        }
+    </style>
+</head>
+<body>
+    <div id="first" class="container">
+        <div><div><div id="deep" class="box"></div></div></div>
+        <div id="sibling" class="box"></div>
+    </div>
+    <div id="second" class="container">
+        <div><div id="secondDeep" class="box"></div></div>
+    </div>
+    <div id="third" class="container">
+        <div id="movedLater" class="box"></div>
+    </div>
+    <script>
+        prepareForTest();
+
+        async function runTest()
+        {
+            second.addEventListener("touchstart", () => { }, { passive: true });
+            await UIHelper.renderingUpdate();
+
+            deep.addEventListener("touchstart", () => { }, { passive: false });
+            await UIHelper.renderingUpdate();
+
+            const pointerListener = () => { };
+            secondDeep.addEventListener("pointerdown", pointerListener, { passive: false });
+            await UIHelper.renderingUpdate();
+            secondDeep.removeEventListener("pointerdown", pointerListener);
+            secondDeep.addEventListener("pointerup", () => { }, { passive: true });
+            await UIHelper.renderingUpdate();
+
+            movedLater.addEventListener("touchmove", () => { }, { passive: false });
+            await UIHelper.renderingUpdate();
+            first.appendChild(movedLater);
+            await UIHelper.renderingUpdate();
+
+            dumpRegions();
+        }
+
+        window.addEventListener("load", runTest, false);
+    </script>
+</body>
+</html>

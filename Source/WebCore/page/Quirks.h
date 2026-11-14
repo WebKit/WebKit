@@ -95,6 +95,7 @@ public:
 
 #if ENABLE(TOUCH_EVENTS) || ENABLE(TOUCH_EVENT_REGIONS)
     bool shouldDispatchSimulatedMouseEvents(const EventTarget*) const;
+    bool mayDispatchSimulatedMouseEvents() const;
     bool shouldPreventDispatchOfTouchEvent(const AtomString&, EventTarget*) const;
 #endif
 #if ENABLE(TOUCH_EVENTS)
