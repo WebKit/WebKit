@@ -321,6 +321,12 @@ NeedsSingleOwnerMainFrameCNAMECloakingCookieCapQuirk:
   conditionsRequired: true
   implementation: custom
 
+# nest.com, google.com: rdar://73582895
+NeedsSingleOwnerLoginStorageAccessQuirk:
+  conditions: [SecondaryURL]
+  conditionsRequired: true
+  implementation: custom
+
 NeedsSupportsProgressMonitoringQuirk:
   available: mediaSource
   accessor: needsSupportsProgressMonitoring

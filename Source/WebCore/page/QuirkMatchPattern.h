@@ -90,6 +90,7 @@ public:
     WEBCORE_EXPORT bool matches(const URLMatchContext&) const;
 
     const String& string() const LIFETIME_BOUND { return m_string; }
+    const String& host() const LIFETIME_BOUND { return m_pattern.host(); }
 
     friend bool operator==(const QuirkMatchPattern& a, const QuirkMatchPattern& b) { return a.m_string == b.m_string; }
 

@@ -118,6 +118,7 @@ public:
     WEBCORE_EXPORT static bool needsPartitionedCookies(const ResourceRequest&);
     WEBCORE_EXPORT static Vector<String> cnameCloakingCookieCapExemptTargetPatterns(const URL& firstPartyURL);
     WEBCORE_EXPORT static bool anyPatternMatchesCNAMETarget(const Vector<String>& patterns, const String& cnameHostName);
+    WEBCORE_EXPORT static bool isSingleOwnerLoginDomainPair(const RegistrableDomain& topFrameDomain, const RegistrableDomain& subResourceDomain);
     WEBCORE_EXPORT static bool shouldExemptCookieFromITPDataRemoval(const String& cookieName);
 
     NODELETE WEBCORE_EXPORT static std::optional<Vector<HashSet<String>>> defaultVisibilityAdjustmentSelectors(const URL&);
