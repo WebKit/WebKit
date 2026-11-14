@@ -29,7 +29,7 @@ function test()
             InspectorTest.assert(animation.animationType === WI.Animation.Type.WebAnimation, "Animation should be a web animation.");
 
             const objectGroup = "test";
-            let {object} = await AnimationAgent.resolveAnimation(animation.animationId, objectGroup);
+            let {object} = await animation.target.AnimationAgent.resolveAnimation(animation.animationId, objectGroup);
             InspectorTest.expectEqual(object.type, "object", `Payload should have type "object".`);
             InspectorTest.expectEqual(object.className, "Animation", `Payload should have className "Animation".`);
         },
@@ -45,7 +45,7 @@ function test()
             const objectGroup = "test";
 
             await InspectorTest.expectException(async () => {
-                await AnimationAgent.resolveAnimation(identifier, objectGroup);
+                await InspectorTest.mainFrameTarget.AnimationAgent.resolveAnimation(identifier, objectGroup);
             });
         },
     });

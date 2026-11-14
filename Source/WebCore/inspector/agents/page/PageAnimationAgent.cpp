@@ -31,6 +31,7 @@
 #include "InspectorDOMAgent.h"
 #include "InstrumentingAgents.h"
 #include "Page.h"
+#include "Settings.h"
 #include "Styleable.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -47,6 +48,35 @@ PageAnimationAgent::PageAnimationAgent(PageAgentContext& context)
 }
 
 PageAnimationAgent::~PageAnimationAgent() = default;
+
+bool PageAnimationAgent::isSiteIsolationEnabled() const
+{
+    return m_inspectedPage->settings().siteIsolationEnabled();
+}
+
+Inspector::Protocol::ErrorStringOr<void> PageAnimationAgent::enable()
+{
+    // Under site isolation each frame's FrameAnimationAgent reports its own animations, so binding them here would report them twice.
+    if (isSiteIsolationEnabled()) {
+        if (m_enabledUnderSiteIsolation)
+            return makeUnexpected("Animation domain already enabled"_s);
+
+        m_enabledUnderSiteIsolation = true;
+        return { };
+    }
+
+    return InspectorAnimationAgent::enable();
+}
+
+Inspector::Protocol::ErrorStringOr<void> PageAnimationAgent::disable()
+{
+    if (isSiteIsolationEnabled()) {
+        m_enabledUnderSiteIsolation = false;
+        return { };
+    }
+
+    return InspectorAnimationAgent::disable();
+}
 
 bool PageAnimationAgent::matchesCurrentContext(ScriptExecutionContext* scriptExecutionContext) const
 {

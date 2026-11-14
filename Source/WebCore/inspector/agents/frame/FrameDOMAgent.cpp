@@ -75,6 +75,7 @@
 #include "ScriptController.h"
 #include "ShadowRoot.h"
 #include "StaticNodeList.h"
+#include "Styleable.h"
 #include "Text.h"
 #include "TextNodeTraversal.h"
 #include "WebInjectedScriptManager.h"
@@ -572,6 +573,37 @@ Inspector::Protocol::DOM::NodeId FrameDOMAgent::pushNodePathToFrontend(Inspector
         pushChildNodesToFrontend(nodeId);
     }
     return boundNodeId(nodeToPush);
+}
+
+Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::Styleable>> FrameDOMAgent::pushStyleablePathToFrontend(const Styleable& styleable)
+{
+    Inspector::Protocol::ErrorString errorString;
+    auto nodeId = pushStyleableNodePathToFrontend(errorString, styleable);
+    if (!nodeId)
+        return makeUnexpected(errorString);
+
+    return InspectorDOMAgent::buildObjectForStyleable(nodeId, styleable);
+}
+
+Inspector::Protocol::DOM::NodeId FrameDOMAgent::pushStyleableElementToFrontend(const Styleable& styleable)
+{
+    Inspector::Protocol::ErrorString ignored;
+    return pushStyleableNodePathToFrontend(ignored, styleable);
+}
+
+Inspector::Protocol::DOM::NodeId FrameDOMAgent::pushStyleableNodePathToFrontend(Inspector::Protocol::ErrorString& errorString, const Styleable& styleable)
+{
+    if (!boundNodeId(protect(styleable.element.document()).ptr())) {
+        errorString = "Document must have been requested"_s;
+        return 0;
+    }
+
+    RefPtr element = InspectorDOMAgent::elementToPushForStyleable(styleable);
+    auto nodeId = pushNodePathToFrontend(errorString, protect(element ? element.get() : &styleable.element));
+    if (!nodeId && errorString.isEmpty())
+        errorString = "Unable to push node to frontend"_s;
+
+    return nodeId;
 }
 
 void FrameDOMAgent::setDocument(Document* document)

@@ -70,8 +70,8 @@ public:
     Inspector::Protocol::ErrorStringOr<RefPtr<Inspector::Protocol::Animation::Effect>> requestEffect(const Inspector::Protocol::Animation::AnimationId&);
     Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::Styleable>> requestEffectTarget(const Inspector::Protocol::Animation::AnimationId&);
     Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::Runtime::RemoteObject>> resolveAnimation(const Inspector::Protocol::Animation::AnimationId&, const String& objectGroup);
-    Inspector::Protocol::ErrorStringOr<void> startTracking();
-    Inspector::Protocol::ErrorStringOr<void> stopTracking();
+    virtual Inspector::Protocol::ErrorStringOr<void> startTracking();
+    virtual Inspector::Protocol::ErrorStringOr<void> stopTracking();
 
     // InspectorInstrumentation
     void willApplyKeyframeEffect(const Styleable&, KeyframeEffect&, const ComputedEffectTiming&);

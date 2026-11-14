@@ -1,0 +1,17 @@
+Test that the page target's tracking agent still learns that a CSS animation's effect was replaced when the Animation domain is enabled on frame targets.
+
+
+== Running test suite: SiteIsolation.Animation.TrackingCanceled
+-- Running test case: SiteIsolation.Animation.TrackingCanceled.EffectRemoved
+PASS: The main frame's target should have the Animation domain.
+PASS: The main frame's target should have Frame type.
+PASS: The first update should name the CSS animation.
+PASS: The canceled update should be for the animation that was active.
+
+-- Running test case: SiteIsolation.Animation.TrackingCanceled.FrameTargetRejectsTracking
+PASS: The main frame's target should have the Animation domain.
+PASS: Should produce an exception.
+Error: Not supported
+PASS: Should produce an exception.
+Error: Not supported
+

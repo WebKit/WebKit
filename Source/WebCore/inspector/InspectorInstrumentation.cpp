@@ -1731,10 +1731,11 @@ void InspectorInstrumentation::didChangeWebAnimationNameImpl(InstrumentingAgents
 
 void InspectorInstrumentation::didSetWebAnimationEffectImpl(InstrumentingAgents& instrumentingAgents, WebAnimation& animation)
 {
-    if (CheckedPtr animationAgent = instrumentingAgents.enabledAnimationAgent())
-        animationAgent->didSetWebAnimationEffect(animation);
-    else if (CheckedPtr animationAgent = instrumentingAgents.trackingAnimationAgent())
-        animationAgent->didSetWebAnimationEffect(animation);
+    CheckedPtr enabledAgent = instrumentingAgents.enabledAnimationAgent();
+    if (enabledAgent)
+        enabledAgent->didSetWebAnimationEffect(animation);
+    if (CheckedPtr trackingAgent = instrumentingAgents.trackingAnimationAgent(); trackingAgent && trackingAgent != enabledAgent)
+        trackingAgent->didSetWebAnimationEffect(animation);
 }
 
 void InspectorInstrumentation::didChangeWebAnimationEffectTimingImpl(InstrumentingAgents& instrumentingAgents, WebAnimation& animation)
@@ -1757,10 +1758,11 @@ void InspectorInstrumentation::didCreateWebAnimationImpl(InstrumentingAgents& in
 
 void InspectorInstrumentation::willDestroyWebAnimationImpl(InstrumentingAgents& instrumentingAgents, WebAnimation& animation)
 {
-    if (CheckedPtr animationAgent = instrumentingAgents.enabledAnimationAgent())
-        animationAgent->willDestroyWebAnimation(animation);
-    else if (CheckedPtr animationAgent = instrumentingAgents.trackingAnimationAgent())
-        animationAgent->willDestroyWebAnimation(animation);
+    CheckedPtr enabledAgent = instrumentingAgents.enabledAnimationAgent();
+    if (enabledAgent)
+        enabledAgent->willDestroyWebAnimation(animation);
+    if (CheckedPtr trackingAgent = instrumentingAgents.trackingAnimationAgent(); trackingAgent && trackingAgent != enabledAgent)
+        trackingAgent->willDestroyWebAnimation(animation);
 }
 
 #if ENABLE(RESOURCE_USAGE)

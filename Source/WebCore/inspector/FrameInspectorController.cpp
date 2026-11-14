@@ -32,6 +32,7 @@
 
 #include "CommonVM.h"
 #include "DocumentPage.h"
+#include "FrameAnimationAgent.h"
 #include "FrameCSSAgent.h"
 #include "FrameCanvasAgent.h"
 #include "FrameConsoleAgent.h"
@@ -216,6 +217,7 @@ void FrameInspectorController::createLazyAgents()
     m_agents.append(makeUniqueRef<FrameCanvasAgent>(context));
     m_agents.append(makeUniqueRef<FrameLayerTreeAgent>(context));
     m_agents.append(makeUniqueRef<FrameTimelineAgent>(context));
+    m_agents.append(makeUniqueRef<FrameAnimationAgent>(context));
     m_agents.append(makeUniqueRef<FrameWorkerAgent>(context));
 }
 

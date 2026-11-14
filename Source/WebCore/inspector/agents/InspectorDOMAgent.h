@@ -111,6 +111,9 @@ public:
     NODELETE static unsigned innerChildNodeCount(Node*);
     NODELETE static Node* innerParentNode(Node*);
 
+    NODELETE static RefPtr<Element> elementToPushForStyleable(const Styleable&);
+    static Ref<Inspector::Protocol::DOM::Styleable> buildObjectForStyleable(Inspector::Protocol::DOM::NodeId, const Styleable&);
+
     static Node* scriptValueAsNode(JSC::JSValue);
     static JSC::JSValue nodeAsScriptValue(JSC::JSGlobalObject&, Node*);
 
