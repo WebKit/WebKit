@@ -448,6 +448,20 @@ enum class WebCore::ViewportFit : uint8_t {
     Cover,
 };
 
+enum class WebCore::ViewportFitEdge : uint8_t {
+    Contain,
+    ImplicitCover,
+    ExplicitCover,
+};
+
+header: <WebCore/ViewportArguments.h>
+[CustomHeader] struct WebCore::ViewportFitEdges {
+    WebCore::ViewportFitEdge top;
+    WebCore::ViewportFitEdge left;
+    WebCore::ViewportFitEdge bottom;
+    WebCore::ViewportFitEdge right;
+};
+
 enum class WebCore::InteractiveWidgetValue : uint8_t {
     ResizesVisual,
     ResizesContent,
@@ -1145,6 +1159,10 @@ struct WebCore::ViewportArguments {
     WebCore::ViewportFit viewportFit;
     bool widthWasExplicit;
     WebCore::InteractiveWidgetValue interactiveWidgetValue;
+    std::optional<WebCore::ViewportFit> viewportFitTop;
+    std::optional<WebCore::ViewportFit> viewportFitLeft;
+    std::optional<WebCore::ViewportFit> viewportFitBottom;
+    std::optional<WebCore::ViewportFit> viewportFitRight;
 };
 #endif // ENABLE(META_VIEWPORT)
 

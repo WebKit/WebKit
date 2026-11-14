@@ -460,6 +460,7 @@ struct LiveResizeSnapshotState {
     BOOL _forcesInitialScaleFactor;
     BOOL _automaticallyAdjustsViewLayoutSizesWithObscuredInset;
     BOOL _avoidsUnsafeArea;
+    WebCore::ViewportFitEdges _viewportFitEdges;
 #endif
     CGRect _inputViewBoundsInWindow;
 

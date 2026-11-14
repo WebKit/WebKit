@@ -636,6 +636,8 @@ static CGSize roundScrollViewContentSize(const WebKit::WebPageProxy& page, CGSiz
         [_scrollView _setScrollEnabledInternal:YES];
 
         [self _setAvoidsUnsafeArea:NO];
+        constexpr auto implicitCover = WebCore::ViewportFitEdge::ImplicitCover;
+        [self _setViewportFitEdges:WebCore::ViewportFitEdges { implicitCover, implicitCover, implicitCover, implicitCover }];
     } else if (_customContentView) {
         [_customContentView removeFromSuperview];
         _customContentView = nullptr;
@@ -1387,6 +1389,7 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
 
         [self _updateScrollViewBackground];
         [self _setAvoidsUnsafeArea:mainFrameCommitData.avoidsUnsafeArea];
+        [self _setViewportFitEdges:mainFrameCommitData.viewportFitEdges];
 
         if (_gestureController)
             protect(_gestureController)->setRenderTreeSize(pageData.renderTreeSize);
@@ -3975,8 +3978,6 @@ static WebCore::IntDegrees activeOrientation(WKWebView *webView)
     if (_avoidsUnsafeArea == avoidsUnsafeArea)
         return;
 
-    [self willChangeValueForKey:@"_viewportFitEdges"];
-
     _avoidsUnsafeArea = avoidsUnsafeArea;
 
     if ([self _updateScrollViewContentInsetsIfNecessary] && !self._shouldDeferGeometryUpdates && !_overriddenLayoutParameters)
@@ -3985,11 +3986,19 @@ static WebCore::IntDegrees activeOrientation(WKWebView *webView)
     [self _updateScrollViewInsetAdjustmentBehavior];
     [self _scheduleVisibleContentRectUpdate];
 
-    [self didChangeValueForKey:@"_viewportFitEdges"];
-
     id <WKUIDelegatePrivate> uiDelegate = (id <WKUIDelegatePrivate>)[self UIDelegate];
     if ([uiDelegate respondsToSelector:@selector(_webView:didChangeSafeAreaShouldAffectObscuredInsets:)])
         [uiDelegate _webView:self didChangeSafeAreaShouldAffectObscuredInsets:avoidsUnsafeArea];
+}
+
+- (void)_setViewportFitEdges:(const WebCore::ViewportFitEdges&)viewportFitEdges
+{
+    if (_viewportFitEdges == viewportFitEdges)
+        return;
+
+    [self willChangeValueForKey:@"_viewportFitEdges"];
+    _viewportFitEdges = viewportFitEdges;
+    [self didChangeValueForKey:@"_viewportFitEdges"];
 }
 
 - (BOOL)_haveSetObscuredInsets
@@ -4787,13 +4796,23 @@ static bool isLockdownModeWarningNeeded()
     return _avoidsUnsafeArea;
 }
 
+static _WKViewportFitEdge wkViewportFitEdge(WebCore::ViewportFitEdge edge)
+{
+    switch (edge) {
+    case WebCore::ViewportFitEdge::Contain:
+        return _WKViewportFitEdgeContain;
+    case WebCore::ViewportFitEdge::ImplicitCover:
+        return _WKViewportFitEdgeImplicitCover;
+    case WebCore::ViewportFitEdge::ExplicitCover:
+        return _WKViewportFitEdgeExplicitCover;
+    }
+    ASSERT_NOT_REACHED();
+    return _WKViewportFitEdgeContain;
+}
+
 - (_WKViewportFitEdges *)_viewportFitEdges
 {
-    // FIXME: Report each edge separately, including _WKViewportFitEdgeExplicitCover, once
-    // viewport-fit-top and friends are parsed and sent to the UI process. For now, this only
-    // reflects viewport-fit.
-    auto fit = _avoidsUnsafeArea ? _WKViewportFitEdgeContain : _WKViewportFitEdgeImplicitCover;
-    return adoptNS([[_WKViewportFitEdges alloc] initWithTop:fit left:fit bottom:fit right:fit]).autorelease();
+    return adoptNS([[_WKViewportFitEdges alloc] initWithTop:wkViewportFitEdge(_viewportFitEdges.top) left:wkViewportFitEdge(_viewportFitEdges.left) bottom:wkViewportFitEdge(_viewportFitEdges.bottom) right:wkViewportFitEdge(_viewportFitEdges.right)]).autorelease();
 }
 
 - (BOOL)_allowsTouchPanningAtPoint:(CGPoint)point
@@ -5349,7 +5368,7 @@ static bool isLockdownModeWarningNeeded()
     _page->setMaximumUnobscuredSize({ });
 }
 
-static std::optional<WebCore::ViewportArguments> viewportArgumentsFromDictionary(NSDictionary<NSString *, NSString *> *viewportArgumentPairs, bool metaViewportInteractiveWidgetEnabled)
+static std::optional<WebCore::ViewportArguments> viewportArgumentsFromDictionary(NSDictionary<NSString *, NSString *> *viewportArgumentPairs, bool metaViewportInteractiveWidgetEnabled, bool perEdgeViewportFitEnabled)
 {
     if (!viewportArgumentPairs)
         return std::nullopt;
@@ -5361,7 +5380,7 @@ static std::optional<WebCore::ViewportArguments> viewportArgumentsFromDictionary
             [NSException raise:NSInvalidArgumentException format:@"-[WKWebView _overrideViewportWithArguments:]: Keys and values must all be NSStrings."];
         String keyString = key;
         String valueString = value;
-        WebCore::setViewportFeature(viewportArguments, keyString, valueString, metaViewportInteractiveWidgetEnabled, [] (WebCore::ViewportErrorCode, const String& errorMessage) {
+        WebCore::setViewportFeature(viewportArguments, keyString, valueString, metaViewportInteractiveWidgetEnabled, perEdgeViewportFitEnabled, [](WebCore::ViewportErrorCode, const String& errorMessage) {
             SAFE_WTFLOGALWAYS("-[WKWebView _overrideViewportWithArguments:]: Error parsing viewport argument: %s", errorMessage.utf8());
         });
     }).get()];
@@ -5374,7 +5393,8 @@ static std::optional<WebCore::ViewportArguments> viewportArgumentsFromDictionary
     if (!_page)
         return;
 
-    _page->setOverrideViewportArguments(viewportArgumentsFromDictionary(arguments, protect(_page->preferences())->metaViewportInteractiveWidgetEnabled()));
+    Ref preferences = _page->preferences();
+    _page->setOverrideViewportArguments(viewportArgumentsFromDictionary(arguments, preferences->metaViewportInteractiveWidgetEnabled(), preferences->perEdgeViewportFitEnabled()));
 }
 
 - (UIView *)_viewForFindUI

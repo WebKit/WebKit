@@ -28,6 +28,7 @@
 #pragma once
 
 #include <WebCore/FloatSize.h>
+#include <optional>
 #include <wtf/Forward.h>
 #include <wtf/Platform.h>
 
@@ -46,6 +47,24 @@ enum class ViewportFit : uint8_t {
     Auto,
     Contain,
     Cover
+};
+
+// How the page's content relates to the safe area at one edge of the viewport.
+enum class ViewportFitEdge : uint8_t {
+    Contain,
+    // viewport-fit=cover, without a value for this edge in particular.
+    ImplicitCover,
+    // A value for this edge in particular, such as viewport-fit-top=cover.
+    ExplicitCover,
+};
+
+struct ViewportFitEdges {
+    ViewportFitEdge top { ViewportFitEdge::Contain };
+    ViewportFitEdge left { ViewportFitEdge::Contain };
+    ViewportFitEdge bottom { ViewportFitEdge::Contain };
+    ViewportFitEdge right { ViewportFitEdge::Contain };
+
+    friend bool operator==(const ViewportFitEdges&, const ViewportFitEdges&) = default;
 };
 
 enum class InteractiveWidgetValue : uint8_t {
@@ -93,7 +112,7 @@ struct ViewportArguments {
     {
     }
 
-    ViewportArguments(float width, float height, float zoom, float minZoom, float maxZoom, float userZoom, float orientation, float shrinkToFit, Type type, ViewportFit viewportFit, bool widthWasExplicit, InteractiveWidgetValue interactiveWidgetValue)
+    ViewportArguments(float width, float height, float zoom, float minZoom, float maxZoom, float userZoom, float orientation, float shrinkToFit, Type type, ViewportFit viewportFit, bool widthWasExplicit, InteractiveWidgetValue interactiveWidgetValue, std::optional<ViewportFit> viewportFitTop, std::optional<ViewportFit> viewportFitLeft, std::optional<ViewportFit> viewportFitBottom, std::optional<ViewportFit> viewportFitRight)
         : width(width)
         , height(height)
         , zoom(zoom)
@@ -106,6 +125,10 @@ struct ViewportArguments {
         , viewportFit(viewportFit)
         , widthWasExplicit(widthWasExplicit)
         , interactiveWidgetValue(interactiveWidgetValue)
+        , viewportFitTop(viewportFitTop)
+        , viewportFitLeft(viewportFitLeft)
+        , viewportFitBottom(viewportFitBottom)
+        , viewportFitRight(viewportFitRight)
     {
     }
 
@@ -124,6 +147,11 @@ struct ViewportArguments {
     ViewportFit viewportFit { ViewportFit::Auto };
     bool widthWasExplicit { false };
     InteractiveWidgetValue interactiveWidgetValue { InteractiveWidgetValue::ResizesVisual };
+    // Unset when the page does not specify a value for that edge in particular.
+    std::optional<ViewportFit> viewportFitTop;
+    std::optional<ViewportFit> viewportFitLeft;
+    std::optional<ViewportFit> viewportFitBottom;
+    std::optional<ViewportFit> viewportFitRight;
 
     bool operator==(const ViewportArguments& other) const
     {
@@ -139,7 +167,11 @@ struct ViewportArguments {
             && shrinkToFit == other.shrinkToFit
             && viewportFit == other.viewportFit
             && widthWasExplicit == other.widthWasExplicit
-            && interactiveWidgetValue == other.interactiveWidgetValue;
+            && interactiveWidgetValue == other.interactiveWidgetValue
+            && viewportFitTop == other.viewportFitTop
+            && viewportFitLeft == other.viewportFitLeft
+            && viewportFitBottom == other.viewportFitBottom
+            && viewportFitRight == other.viewportFitRight;
     }
 
 #if PLATFORM(GTK)
@@ -157,8 +189,10 @@ NODELETE WEBCORE_EXPORT float computeMinimumScaleFactorForContentContained(const
 
 typedef Function<void(ViewportErrorCode, const String&)> ViewportErrorHandler;
 void setViewportFeature(ViewportArguments&, Document&, StringView key, StringView value);
-WEBCORE_EXPORT void setViewportFeature(ViewportArguments&, StringView key, StringView value, bool metaViewportInteractiveWidgetEnabled, NOESCAPE const ViewportErrorHandler&);
+WEBCORE_EXPORT void setViewportFeature(ViewportArguments&, StringView key, StringView value, bool metaViewportInteractiveWidgetEnabled, bool perEdgeViewportFitEnabled, NOESCAPE const ViewportErrorHandler&);
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const ViewportArguments&);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ViewportFitEdge);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const ViewportFitEdges&);
 
 } // namespace WebCore

@@ -299,7 +299,7 @@ static bool findBooleanValue(StringView key, StringView value, NOESCAPE const In
     return std::abs(numericPrefix(key, value, errorHandler)) >= 1;
 }
 
-static ViewportFit parseViewportFitValue(StringView key, StringView value, NOESCAPE const InternalViewportErrorHandler& errorHandler)
+static std::optional<ViewportFit> parseViewportFitValue(StringView key, StringView value, NOESCAPE const InternalViewportErrorHandler& errorHandler)
 {
     if (equalLettersIgnoringASCIICase(value, "auto"_s))
         return ViewportFit::Auto;
@@ -310,7 +310,15 @@ static ViewportFit parseViewportFitValue(StringView key, StringView value, NOESC
 
     errorHandler(ViewportErrorCode::UnrecognizedViewportArgumentValue, value, key);
 
-    return ViewportFit::Auto;
+    return std::nullopt;
+}
+
+static void setEdgeViewportFit(std::optional<ViewportFit>& edgeViewportFit, StringView key, StringView value, NOESCAPE const InternalViewportErrorHandler& errorHandler)
+{
+    // Ignore an invalid value, as the error message says, rather than treating it as auto, which
+    // would stop this edge from following viewport-fit.
+    if (auto viewportFit = parseViewportFitValue(key, value, errorHandler))
+        edgeViewportFit = *viewportFit;
 }
 
 static InteractiveWidgetValue parseInteractiveWidgetValue(StringView key, StringView value, NOESCAPE const InternalViewportErrorHandler& errorHandler)
@@ -383,7 +391,7 @@ static void reportViewportWarning(Document& document, ViewportErrorCode errorCod
     document.addConsoleMessage(MessageSource::Rendering, viewportErrorMessageLevel(errorCode), message);
 }
 
-void setViewportFeature(ViewportArguments& arguments, StringView key, StringView value, bool metaViewportInteractiveWidgetEnabled, NOESCAPE const ViewportErrorHandler& errorHandler)
+void setViewportFeature(ViewportArguments& arguments, StringView key, StringView value, bool metaViewportInteractiveWidgetEnabled, bool perEdgeViewportFitEnabled, NOESCAPE const ViewportErrorHandler& errorHandler)
 {
     InternalViewportErrorHandler internalErrorHandler = [&errorHandler] (ViewportErrorCode errorCode, StringView replacement1, StringView replacement2) {
         errorHandler(errorCode, viewportErrorMessage(errorCode, replacement1, replacement2));
@@ -410,7 +418,15 @@ void setViewportFeature(ViewportArguments& arguments, StringView key, StringView
     else if (equalLettersIgnoringASCIICase(key, "shrink-to-fit"_s))
         arguments.shrinkToFit = findBooleanValue(key, value, internalErrorHandler);
     else if (equalLettersIgnoringASCIICase(key, "viewport-fit"_s))
-        arguments.viewportFit = parseViewportFitValue(key, value, internalErrorHandler);
+        arguments.viewportFit = parseViewportFitValue(key, value, internalErrorHandler).value_or(ViewportFit::Auto);
+    else if (perEdgeViewportFitEnabled && equalLettersIgnoringASCIICase(key, "viewport-fit-top"_s))
+        setEdgeViewportFit(arguments.viewportFitTop, key, value, internalErrorHandler);
+    else if (perEdgeViewportFitEnabled && equalLettersIgnoringASCIICase(key, "viewport-fit-left"_s))
+        setEdgeViewportFit(arguments.viewportFitLeft, key, value, internalErrorHandler);
+    else if (perEdgeViewportFitEnabled && equalLettersIgnoringASCIICase(key, "viewport-fit-bottom"_s))
+        setEdgeViewportFit(arguments.viewportFitBottom, key, value, internalErrorHandler);
+    else if (perEdgeViewportFitEnabled && equalLettersIgnoringASCIICase(key, "viewport-fit-right"_s))
+        setEdgeViewportFit(arguments.viewportFitRight, key, value, internalErrorHandler);
     else if (metaViewportInteractiveWidgetEnabled && equalLettersIgnoringASCIICase(key, "interactive-widget"_s))
         arguments.interactiveWidgetValue = parseInteractiveWidgetValue(key, value, internalErrorHandler);
     else
@@ -420,7 +436,7 @@ void setViewportFeature(ViewportArguments& arguments, StringView key, StringView
 void setViewportFeature(ViewportArguments& arguments, Document& document, StringView key, StringView value)
 {
     bool interactiveWidgetEnabled = document.settings().metaViewportInteractiveWidgetEnabled() && !document.quirks().shouldIgnoreViewportInteractiveWidget();
-    setViewportFeature(arguments, key, value, interactiveWidgetEnabled, [&](ViewportErrorCode errorCode, const String& message) {
+    setViewportFeature(arguments, key, value, interactiveWidgetEnabled, document.settings().perEdgeViewportFitEnabled(), [&](ViewportErrorCode errorCode, const String& message) {
         reportViewportWarning(document, errorCode, message);
     });
 }
@@ -433,6 +449,25 @@ TextStream& operator<<(TextStream& ts, const ViewportArguments& viewportArgument
     ts << '\n' << indent << "(zoom "_s << viewportArguments.zoom << ", minZoom "_s << viewportArguments.minZoom << ", maxZoom "_s << viewportArguments.maxZoom << ')';
 
     return ts;
+}
+
+TextStream& operator<<(TextStream& ts, ViewportFitEdge edge)
+{
+    switch (edge) {
+    case ViewportFitEdge::Contain:
+        return ts << "contain"_s;
+    case ViewportFitEdge::ImplicitCover:
+        return ts << "implicit cover"_s;
+    case ViewportFitEdge::ExplicitCover:
+        return ts << "explicit cover"_s;
+    }
+    ASSERT_NOT_REACHED();
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const ViewportFitEdges& edges)
+{
+    return ts << "top "_s << edges.top << ", left "_s << edges.left << ", bottom "_s << edges.bottom << ", right "_s << edges.right;
 }
 
 } // namespace WebCore

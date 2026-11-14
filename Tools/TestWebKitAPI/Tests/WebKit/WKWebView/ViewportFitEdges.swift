@@ -33,6 +33,8 @@ private import WebKit_Private._WKViewportFitEdges
 
 import struct Swift.String
 
+private let edgeNames = ["top", "left", "bottom", "right"]
+
 private func fits(_ edges: _WKViewportFitEdges) -> [_WKViewportFitEdge] {
     [edges.top, edges.left, edges.bottom, edges.right]
 }
@@ -51,6 +53,26 @@ struct ViewportFitEdgesTests {
             "document.querySelector('meta[name=viewport]').content = content"
         }
         await webView.nextPresentationUpdate()
+    }
+
+    private func enablePerEdgeViewportFit() {
+        webView.configuration.setFeature("PerEdgeViewportFitEnabled", enabled: true)
+    }
+
+    private func viewportFitEdgesChanges(during body: () async throws -> Void) async throws -> [[_WKViewportFitEdge]] {
+        let (changes, continuation) = AsyncStream.makeStream(of: [_WKViewportFitEdge].self)
+        let observation = webView.observe(\._viewportFitEdges, options: .new) { _, change in
+            guard let edges = change.newValue ?? nil else {
+                return
+            }
+            continuation.yield(fits(edges))
+        }
+
+        try await body()
+
+        observation.invalidate()
+        continuation.finish()
+        return await Array(changes)
     }
 
     @Test(arguments: [
@@ -75,25 +97,87 @@ struct ViewportFitEdgesTests {
     func observersAreNotifiedWhenViewportFitChanges() async throws {
         try await load(viewport: "width=device-width")
 
-        let (changes, continuation) = AsyncStream.makeStream(of: [_WKViewportFitEdge].self)
-        let observation = webView.observe(\._viewportFitEdges, options: .new) { _, change in
-            guard let edges = change.newValue ?? nil else {
-                return
-            }
-            continuation.yield(fits(edges))
+        let changes = try await viewportFitEdgesChanges {
+            try await setViewport("width=device-width, viewport-fit=cover")
+            try await setViewport("width=device-width")
         }
-
-        try await setViewport("width=device-width, viewport-fit=cover")
-        try await setViewport("width=device-width")
-
-        observation.invalidate()
-        continuation.finish()
 
         let expectedChanges: [[_WKViewportFitEdge]] = [
             Array(repeating: .implicitCover, count: 4),
             Array(repeating: .contain, count: 4),
         ]
-        #expect(await Array(changes) == expectedChanges)
+        #expect(changes == expectedChanges)
+    }
+
+    @Test
+    func perEdgeViewportFitIsIgnoredWhenDisabled() async throws {
+        try await load(viewport: "width=device-width, viewport-fit-top=cover, viewport-fit-bottom=cover")
+
+        #expect(fits(webView._viewportFitEdges) == Array(repeating: .contain, count: 4))
+    }
+
+    @Test(arguments: edgeNames)
+    func perEdgeViewportFitExplicitlyCoversOnlyThatEdge(edge: String) async throws {
+        enablePerEdgeViewportFit()
+        try await load(viewport: "width=device-width, viewport-fit-\(edge)=cover")
+
+        let expected: [_WKViewportFitEdge] = edgeNames.map { $0 == edge ? .explicitCover : .contain }
+        #expect(fits(webView._viewportFitEdges) == expected)
+    }
+
+    @Test(arguments: ["contain", "auto"])
+    func perEdgeViewportFitOverridesViewportFitCover(value: String) async throws {
+        enablePerEdgeViewportFit()
+        try await load(viewport: "width=device-width, viewport-fit=cover, viewport-fit-bottom=\(value)")
+
+        let expected: [_WKViewportFitEdge] = [.implicitCover, .implicitCover, .contain, .implicitCover]
+        #expect(fits(webView._viewportFitEdges) == expected)
+    }
+
+    @Test
+    func perEdgeViewportFitCoverIsExplicitEvenWithViewportFitCover() async throws {
+        enablePerEdgeViewportFit()
+        try await load(viewport: "width=device-width, viewport-fit=cover, viewport-fit-top=cover")
+
+        let expected: [_WKViewportFitEdge] = [.explicitCover, .implicitCover, .implicitCover, .implicitCover]
+        #expect(fits(webView._viewportFitEdges) == expected)
+    }
+
+    @Test
+    func invalidPerEdgeViewportFitIsIgnored() async throws {
+        enablePerEdgeViewportFit()
+        try await load(viewport: "width=device-width, viewport-fit=cover, viewport-fit-bottom=invalid")
+
+        #expect(fits(webView._viewportFitEdges) == Array(repeating: .implicitCover, count: 4))
+    }
+
+    @Test
+    func overriddenViewportArgumentsCanSpecifyPerEdgeViewportFit() async throws {
+        enablePerEdgeViewportFit()
+        try await load(viewport: "width=device-width")
+
+        webView._overrideViewport(withArguments: ["width": "device-width", "viewport-fit-left": "cover"])
+        await webView.nextPresentationUpdate()
+
+        let expected: [_WKViewportFitEdge] = [.contain, .explicitCover, .contain, .contain]
+        #expect(fits(webView._viewportFitEdges) == expected)
+    }
+
+    @Test
+    func observersAreNotifiedWhenPerEdgeViewportFitChanges() async throws {
+        enablePerEdgeViewportFit()
+        try await load(viewport: "width=device-width")
+
+        let changes = try await viewportFitEdgesChanges {
+            try await setViewport("width=device-width, viewport-fit-top=cover")
+            try await setViewport("width=device-width, viewport-fit=cover, viewport-fit-top=cover")
+        }
+
+        let expectedChanges: [[_WKViewportFitEdge]] = [
+            [.explicitCover, .contain, .contain, .contain],
+            [.explicitCover, .implicitCover, .implicitCover, .implicitCover],
+        ]
+        #expect(changes == expectedChanges)
     }
 }
 

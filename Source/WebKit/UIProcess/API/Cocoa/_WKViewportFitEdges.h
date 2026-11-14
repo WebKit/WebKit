@@ -34,7 +34,9 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 /*! @enum _WKViewportFitEdge
  @abstract How the page's content relates to the safe area at one edge of the viewport.
  @constant _WKViewportFitEdgeContain The page lays out within the safe area at this edge. This is
- the case when the page does not specify viewport-fit, or specifies auto or contain.
+ the case when the page specifies auto or contain for this edge in particular, e.g. with
+ viewport-fit-top=contain, or specifies no value for this edge and does not specify
+ viewport-fit=cover.
  @constant _WKViewportFitEdgeImplicitCover The page extends underneath the safe area at this
  edge because it specified viewport-fit=cover, without specifying a value for this edge in
  particular.

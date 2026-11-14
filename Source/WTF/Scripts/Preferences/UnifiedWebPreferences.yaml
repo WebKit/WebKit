@@ -4929,6 +4929,14 @@ PeerConnectionVideoScalingAdaptationDisabled:
   condition: ENABLE(WEB_RTC)
   defaultValue: false
 
+PerEdgeViewportFitEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "Per-edge viewport-fit"
+  humanReadableDescription: "Enable the viewport-fit-top, viewport-fit-left, viewport-fit-bottom and viewport-fit-right attributes on the viewport meta element"
+  defaultValue: false
+
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 PerElementSpeakerSelectionEnabled:
   type: bool

@@ -2469,6 +2469,7 @@ void WebPage::willCommitMainFrameData(MainFrameData& data, const TransactionID& 
     data.viewportMetaTagWidthWasExplicit = m_viewportConfiguration.viewportArguments().widthWasExplicit;
     data.viewportMetaTagCameFromImageDocument = m_viewportConfiguration.viewportArguments().type == ViewportArguments::Type::ImageDocument;
     data.avoidsUnsafeArea = m_viewportConfiguration.avoidsUnsafeArea();
+    data.viewportFitEdges = m_viewportConfiguration.viewportFitEdges();
     data.isInStableState = m_isInStableState;
     if (RefPtr document = mainFrameView->frame().document())
         data.hasMainThreadScrollDrivenAnimations = document->hasProgressBasedScrollDrivenAnimation();
