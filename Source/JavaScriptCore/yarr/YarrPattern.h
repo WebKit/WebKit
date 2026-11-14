@@ -727,8 +727,8 @@ public:
     bool dotAll() const { return m_flags.contains(Flags::DotAll); }
 
     bool hasDuplicateNamedCaptureGroups() const { return !!m_numDuplicateNamedCaptureGroups; }
-    static constexpr unsigned endAnchoredFixedSizeNotSet = std::numeric_limits<unsigned>::max();
-    bool hasEndAnchoredFixedSize() const { return m_endAnchoredFixedSize != endAnchoredFixedSizeNotSet; }
+    static constexpr unsigned endAnchoredMaximumSizeNotSet = std::numeric_limits<unsigned>::max();
+    bool hasEndAnchoredMaximumSize() const { return m_endAnchoredMaximumSize != endAnchoredMaximumSizeNotSet; }
 
     CompileMode compileMode() const
     {
@@ -752,7 +752,7 @@ public:
     ExecutionMode m_executionMode { ExecutionMode::IncludeSubpatterns };
     OptionSet<Flags> m_flags;
     SpecificPattern m_specificPattern { SpecificPattern::None };
-    unsigned m_endAnchoredFixedSize { endAnchoredFixedSizeNotSet };
+    unsigned m_endAnchoredMaximumSize { endAnchoredMaximumSizeNotSet };
     unsigned m_numSubpatterns { 0 };
     unsigned m_initialStartValueFrameLocation { 0 };
     unsigned m_numDuplicateNamedCaptureGroups { 0 };
