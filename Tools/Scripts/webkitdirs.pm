@@ -71,6 +71,7 @@ BEGIN {
        &XcodeOptions
        &XcodeSDKPath
        &XcodeStaticAnalyzerOption
+       &androidDependenciesPath
        &appDisplayNameFromBundle
        &appendToEnvironmentVariableList
        &architecture
@@ -123,6 +124,7 @@ BEGIN {
        &inCrossTargetEnvironment
        &iosVersion
        &isARM64
+       &isAndroid
        &isAnyWindows
        &isAppleCocoaWebKit
        &isAppleMacWebKit
@@ -207,6 +209,7 @@ BEGIN {
        &splitVersionString
        &tsanIsEnabled
        &ubsanIsEnabled
+       &updateAndroidDependencies
        &updateGtkOrWpeLibs
        &usesCryptexPath
        &vcpkgArgsFromFeatures
@@ -296,6 +299,7 @@ my $shouldNotUseNinja;
 my $xcodeVersion;
 my $configuredXcodeWorkspace;
 my $crossTarget;
+my $isAndroid;
 my $defaultCompilerDetermined;
 
 my $unknownPortProhibited = 0;
@@ -611,6 +615,12 @@ sub determineArchitecture
     # The user explicitly specified the architecture, don't assume anything
     if (checkForArgumentAndRemoveFromARGVGettingValue("--architecture", \$architecture)) {
         $didUserSpecifyArchitecture = 1;
+        return;
+    }
+
+    # The architecture of an Android build is the one of the device, not the host.
+    if (isAndroid()) {
+        $architecture = "arm64";
         return;
     }
 
@@ -962,6 +972,10 @@ sub argumentsForConfiguration()
     push(@args, isCMakeBuild() ? '--cmake' : '--xcode') if (isAppleCocoaWebKit() && passedBuildSystem());
     push(@args, '--gtk') if isGtk();
     push(@args, '--wpe') if isWPE();
+    if (isAndroid()) {
+        push(@args, '--android');
+        push(@args, "--architecture=$architecture");
+    }
     push(@args, '--jsc-only') if isJSCOnly();
     push(@args, '--win') if isWin();
     push(@args, '--playstation') if isPlayStation();
@@ -1081,6 +1095,8 @@ sub determineCrossTarget {
 
     my $crossTargetCandidate;
     if (checkForArgumentAndRemoveFromARGVGettingValue("--cross-target", \$crossTargetCandidate)) {
+        # The cross-target toolchains are not the one of the Android NDK.
+        die "Argument '--android' conflicts with cross-target builds\n" if isAndroid();
         my $crossToolchainHelperPath = File::Spec->catfile(sourceDir(), "Tools", "Scripts", "cross-toolchain-helper");
         my $availableTargets = `'$crossToolchainHelperPath' --print-available-targets`;
         die "Failed to get available cross-targets from cross-toolchain-helper: $!" if exitStatus($?);
@@ -1341,6 +1357,8 @@ sub determineConfigurationProductDir
         $configurationProductDir = File::Spec->catdir($baseProductDir, $configuration);
     } elsif (usesPerConfigurationBuildDirectory()) {
         $configurationProductDir = "$baseProductDir";
+    } elsif (isAndroid()) {
+        $configurationProductDir = "$baseProductDir/Android-" . architecture() . "/$configuration";
     } elsif (isGtk() or isWPE() or isJSCOnly() or shouldBuildForCrossTarget() or inCrossTargetEnvironment()) {
         $configurationProductDir = "$baseProductDir/$portName/$configuration";
     } elsif (isAppleCocoaWebKit() && isCMakeBuild()) {
@@ -2002,6 +2020,17 @@ sub determinePortName()
         }
     }
 
+    if (isAndroid()) {
+        die "Argument '--android' conflicts with selected port '$portName'\n"
+            if defined $portName and $portName ne WPE;
+        # The cross-target toolchains are not the one of the Android NDK. determineCrossTarget()
+        # checks --cross-target, which build-webkit looks for before the port.
+        die "Argument '--android' conflicts with cross-target builds\n"
+            if inCrossTargetEnvironment() or defined $crossTarget or grep(/^--cross-target(=|$)/, @ARGV);
+
+        $portName = WPE;
+    }
+
     return if defined $portName;
 
     # Port was not selected via command line, use appropriate default value
@@ -2016,6 +2045,7 @@ sub determinePortName()
     } else {
         if ($unknownPortProhibited) {
             my $portsChoice = join "\n\t", qw(
+                --android
                 --gtk
                 --jsc-only
                 --wpe
@@ -2049,6 +2079,20 @@ sub isJSCOnly()
 sub isWPE()
 {
     return portName() eq WPE;
+}
+
+# Android is not a port of its own: --android builds the WPE port with the
+# toolchain of the Android NDK.
+sub determineIsAndroid()
+{
+    return if defined $isAndroid;
+    $isAndroid = checkForArgumentAndRemoveFromARGV("--android");
+}
+
+sub isAndroid()
+{
+    determineIsAndroid();
+    return $isAndroid;
 }
 
 sub isPlayStation()
@@ -2166,7 +2210,7 @@ sub isARM64()
 
 sub isCrossCompilation()
 {
-    if (isPlayStation()) {
+    if (isPlayStation() || isAndroid()) {
         return 1;
     }
 
@@ -2871,7 +2915,7 @@ sub wrapperPrefixIfNeeded()
         # Use tools from the active SDK and platform directory.
         return ("xcrun", "--sdk", xcodeSDK());
     }
-    if (shouldBuildForCrossTarget() or inCrossTargetEnvironment()) {
+    if (shouldBuildForCrossTarget() or inCrossTargetEnvironment() or isAndroid()) {
         return ();
     }
 
@@ -2889,6 +2933,87 @@ sub shouldUseVcpkg()
 sub winCrossCompileVcpkgRoot()
 {
     return File::Spec->catdir(sourceDir(), "WebKitLibraries", "windows", "vcpkg");
+}
+
+# Where update-webkit-android-libs downloads the NDK and the dependencies built for Android,
+# and links to the ones the build uses.
+sub androidDependenciesDirectory()
+{
+    return File::Spec->catdir(baseProductDir(), "DependenciesAndroid");
+}
+
+# What a link of update-webkit-android-libs points to. The CMake arguments have that path
+# instead of the link, so the build is configured again when another version is used.
+sub androidLinkedPath($)
+{
+    my ($name) = @_;
+    my $path = File::Spec->catdir(androidDependenciesDirectory(), $name);
+    return -e $path ? realpath($path) : $path;
+}
+
+sub androidNDKPath()
+{
+    return androidLinkedPath("ndk");
+}
+
+sub androidToolchainFile()
+{
+    return File::Spec->catfile(androidNDKPath(), "build", "cmake", "android.toolchain.cmake");
+}
+
+sub androidABI()
+{
+    my %architectureToABI = (
+        arm64 => "arm64-v8a",
+        x86_64 => "x86_64",
+    );
+    my $abi = $architectureToABI{architecture()};
+    die "Error: Android builds support the arm64 and x86_64 architectures, not '" . architecture() . "'.\n" unless $abi;
+    return $abi;
+}
+
+# A prefix with the libraries that WebKit needs, built for Android, and their pkg-config files.
+sub androidDependenciesPath()
+{
+    return androidLinkedPath("dependencies-" . androidABI());
+}
+
+# Gets the NDK and the dependencies, downloading the ones that are not given in the environment.
+sub androidDependenciesCommand()
+{
+    return (File::Spec->catfile(sourceDir(), "Tools", "Scripts", "update-webkit-android-libs"),
+        "--architecture=" . architecture(), "--directory=" . androidDependenciesDirectory());
+}
+
+sub updateAndroidDependencies()
+{
+    system(androidDependenciesCommand()) == 0 or die "Error: could not get the Android NDK and the dependencies built for Android.\n";
+}
+
+sub androidCMakeArguments()
+{
+    my $toolchainFile = androidToolchainFile();
+
+    my $dependencies = androidDependenciesPath();
+    my @args = (
+        "-DCMAKE_TOOLCHAIN_FILE=\"$toolchainFile\"",
+        "-DANDROID_ABI=" . androidABI(),
+        # The minimum API level of wpe-android, which the dependencies are built for.
+        "-DANDROID_PLATFORM=android-31",
+        "-DANDROID_STL=c++_shared",
+        "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON",
+        "-DCMAKE_FIND_ROOT_PATH=\"$dependencies\"",
+    );
+
+    # wpe-android builds WebXR, which is experimental, and no other experimental feature;
+    # build-webkit disables those for Android.
+    push @args, map { "-DENABLE_$_=ON" } qw(WEBXR WEBXR_HIT_TEST WEBXR_LAYERS);
+
+    # The tests do not run on Android yet, and neither do the MiniBrowser, the JavaScript
+    # shell and the tests of JavaScriptCore, which ENABLE_JAVASCRIPT_SHELL builds.
+    push @args, "-DENABLE_API_TESTS=OFF", "-DENABLE_JAVASCRIPT_SHELL=OFF", "-DENABLE_LAYOUT_TESTS=OFF", "-DENABLE_MINIBROWSER=OFF";
+
+    return @args;
 }
 
 sub cmakeCachePath()
@@ -2969,6 +3094,10 @@ sub shouldRemoveCMakeCache(@)
 
     push @buildArgs, parse_line('\s+', 0, $ENV{'BUILD_WEBKIT_ARGS'}) if ($ENV{'BUILD_WEBKIT_ARGS'});
 
+    # These change with the NDK and the dependencies in use, and with the features
+    # that the Android build enables or disables.
+    push @buildArgs, androidCMakeArguments() if isAndroid();
+
     # We check this first, because we always want to create this file for a fresh build.
     my $productDir = productDir();
     my $optionsCache = File::Spec->catdir($productDir, "build-webkit-options.txt");
@@ -3030,7 +3159,7 @@ sub shouldRemoveCMakeCache(@)
     }
 
     # If a change on the JHBuild moduleset has been done, we need to clean the cache as well.
-    if (isGtk() || isWPE()) {
+    if ((isGtk() || isWPE()) && !isAndroid()) {
         my $jhbuildRootDirectory = File::Spec->catdir(getJhbuildPath(), "Root");
         # The script update-webkit-libs-jhbuild shall re-generate $jhbuildRootDirectory if the moduleset changed.
         if (-d $jhbuildRootDirectory && $cacheFileModifiedTime < stat($jhbuildRootDirectory)->mtime) {
@@ -3203,6 +3332,8 @@ sub generateBuildSystemFromCMakeProject
     } elsif (isPlayStation()) {
         my $toolChainFile = $ENV{'CMAKE_TOOLCHAIN_FILE'} || "Platform/PlayStation5";
         push @args, '-DCMAKE_TOOLCHAIN_FILE=' . $toolChainFile;
+    } elsif (isAndroid()) {
+        push @args, androidCMakeArguments();
     }
 
     if ($willUseNinja) {
@@ -4408,6 +4539,9 @@ sub runGitUpdate()
 sub updateGtkOrWpeLibs
 {
     my ($port) = @_;
+    if ($port eq "wpe" and isAndroid()) {
+        exec(androidDependenciesCommand()) or die "Failed to exec update-webkit-android-libs: $!";
+    }
     my $scriptsDir = relativeScriptsDir();
     if (defined $ENV{'WEBKIT_JHBUILD'} and $ENV{'WEBKIT_JHBUILD'}) {
         exec("perl", "$scriptsDir/update-webkit-libs-jhbuild", "--$port", @ARGV)
