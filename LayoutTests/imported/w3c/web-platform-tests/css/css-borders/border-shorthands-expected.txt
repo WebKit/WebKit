@@ -1,0 +1,8 @@
+
+PASS Set border as 1px solid #ffffff
+PASS Set borderTop as 1px solid #ffffff
+PASS Set borderRight as 1px solid #ffffff
+PASS Set borderBottom as 1px solid #ffffff
+PASS Set borderLeft as 1px solid #ffffff
+PASS Computed value of border shorthand
+

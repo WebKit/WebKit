@@ -42,6 +42,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-bevel-round-scoop-square-outset-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-bevel-round-scoop-square-outset.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-bevel.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-border-side-colors-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-border-side-colors-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-border-side-colors.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-box-shadow-spread-bevel-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-box-shadow-spread-bevel-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-box-shadow-spread-bevel.html

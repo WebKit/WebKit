@@ -1,0 +1,59 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/100x100-blue-and-orange.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/100x100-green-with-red-corners.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/12x12-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/1pxgreen-98pxred.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/1x1-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/4bicolor-squares.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/500x500-red-with-green-center.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/500x500-white-red-green-irreg-polygon.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/50x50-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/60x60-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/9-colored-areas-40-30-20-10.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/9-colored-areas-40-30-20-10.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/9-colored-areas.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/9grid20-40-red.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/9grid40-30-20-10-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/9grid40-30-20-10-red-old.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/9grid40-30-20-10-red.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/aqua_color.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/blue-and-red-diamonds-81x81.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/blue-diamond-27x27.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/blue_color.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/border-image-repeat-space-011.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/border-image.jpg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/border.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/green-60-60.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/green-dot.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/green_color.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/img-ref-2.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/new-red-diamond-27x27.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/orange_color.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/outline-5px-10px-15px-20px-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/reticule-bl.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/reticule-bo.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/reticule-br.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/reticule-ct.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/reticule-le.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/reticule-ri.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/reticule-tl.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/reticule-to.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/reticule-tr.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/reticule.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/swatch-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/swatch-red.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/support/y.png

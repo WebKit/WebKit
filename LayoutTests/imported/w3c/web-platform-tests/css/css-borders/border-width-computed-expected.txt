@@ -1,0 +1,8 @@
+
+PASS A border whose style is none or hidden resolves to zero width
+PASS The zero width is not what a child inherits: the computed value stays the length
+PASS A child inherits a line-width keyword as the absolute length it computes to
+PASS A child with its own border style none resolves the inherited width to zero
+PASS A border-width in em computes against the element's own font size
+PASS The font-size keyword sharing a name with a line-width keyword is unaffected
+

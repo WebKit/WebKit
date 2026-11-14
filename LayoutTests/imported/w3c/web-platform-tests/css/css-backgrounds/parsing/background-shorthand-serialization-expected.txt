@@ -5,9 +5,22 @@ PASS multiple backgrounds
 PASS background-size with non-initial background-position
 PASS multiple backgrounds with varying values
 PASS all initial values
+FAIL initial background-position assert_equals: expected "none" but got "0% 0%"
+FAIL initial background-size assert_equals: expected "none" but got "0% 0%"
+FAIL initial background-repeat assert_equals: expected "none" but got "repeat"
+PASS initial background-attachment
+PASS initial background-color
+FAIL initial component beside a non-initial one assert_equals: expected "red" but got "repeat red"
+PASS initial attachment beside an image
+PASS an all-initial layer between two others
+PASS initial keyword not surviving an override
 PASS border-area border-box
 PASS border-area padding-box
 PASS border-area text sets background-clip
 PASS text border-area serializes as border-area text
 PASS border-area text sets background-origin to border-box
+PASS background-size with every earlier component omitted
+FAIL horizontal offset from an edge with the initial vertical offset assert_equals: expected "right 10px top 0%" but got "right 10px 0%"
+FAIL vertical offset from an edge with the initial horizontal offset assert_equals: expected "left 0% bottom 20px" but got "bottom 20px"
+FAIL the serialized shorthand parses back to itself assert_equals: background: none; background-position-x: right 10px expected "right 10px 0%" but got ""
 

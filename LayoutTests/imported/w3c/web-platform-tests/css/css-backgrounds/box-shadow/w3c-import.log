@@ -9,16 +9,26 @@ Do NOT modify or remove this file.
 
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
-None
-Property values requiring vendor prefixes:
-None
+box-decoration-break
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/block-in-inline-fragmentation-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/block-in-inline-fragmentation-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/block-in-inline-fragmentation-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/box-shadow-blur-definition-001.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/box-shadow-table-row-display-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/box-shadow-table-row-display-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/box-shadow-table-row-display.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/inset-shadow-large-spread-clipped-to-padding-box-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/inset-shadow-large-spread-clipped-to-padding-box-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/inset-shadow-large-spread-clipped-to-padding-box.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/inset-shadow-large-spread-cloned-inline-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/inset-shadow-large-spread-cloned-inline-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/inset-shadow-large-spread-cloned-inline.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/inset-shadow-large-spread-fragmented-inline-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/inset-shadow-large-spread-fragmented-inline-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/inset-shadow-large-spread-fragmented-inline.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/slice-block-fragmentation-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/slice-block-fragmentation-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/slice-block-fragmentation-001.html

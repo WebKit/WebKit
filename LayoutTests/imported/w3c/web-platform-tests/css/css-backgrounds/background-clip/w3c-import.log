@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 box-decoration-break
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/WEB_FEATURES.yml
@@ -36,6 +34,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-area-box-decoration-break-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-area-box-decoration-break-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-area-box-decoration-break.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-area-complex-color-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-area-complex-color-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-area-complex-color.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-area-complex-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-area-complex-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-area-complex.html

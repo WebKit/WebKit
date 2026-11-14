@@ -1,0 +1,7 @@
+
+PASS background + another property
+PASS background with var()
+PASS border with var()
+PASS background alone then add another property and value
+PASS putting background last
+

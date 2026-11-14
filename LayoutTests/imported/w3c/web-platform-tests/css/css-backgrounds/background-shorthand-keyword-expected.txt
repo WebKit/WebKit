@@ -1,0 +1,4 @@
+
+PASS background: inherit set via cssText
+PASS background: inherit then background-color override via cssText
+

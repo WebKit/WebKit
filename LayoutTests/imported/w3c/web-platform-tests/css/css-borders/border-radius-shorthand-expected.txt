@@ -1,0 +1,5 @@
+
+PASS shorthand
+PASS longhand from shorthand
+PASS inline style
+

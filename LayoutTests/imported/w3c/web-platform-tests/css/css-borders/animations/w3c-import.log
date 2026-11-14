@@ -1,0 +1,35 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/animations/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/animations/border-bottom-left-radius-composition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/animations/border-bottom-right-radius-composition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/animations/border-bottom-width-composition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/animations/border-color-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/animations/border-image-outset-composition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/animations/border-image-outset-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/animations/border-image-slice-composition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/animations/border-image-slice-interpolation-stability.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/animations/border-image-slice-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/animations/border-image-source-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/animations/border-image-width-composition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/animations/border-image-width-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/animations/border-left-width-composition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/animations/border-radius-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/animations/border-right-width-composition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/animations/border-top-left-radius-composition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/animations/border-top-right-radius-composition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/animations/border-top-width-composition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/animations/border-width-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/animations/border-width-transition-with-style-change.html
