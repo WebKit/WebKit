@@ -47,6 +47,7 @@
 #include <JavaScriptCore/MathCommon.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebKit {
 
@@ -201,6 +202,22 @@ static String toBidiErrorCode(int errorCode, const String& inspectorInternalMsg)
     }
 }
 
+// BackendDispatcher writes a response's "id" member last, so it can be found even when the rest
+// of the response can't be parsed.
+static std::optional<int> commandIdForUnparsableResponse(StringView message)
+{
+    static constexpr auto idMemberPrefix = ",\"id\":"_s;
+    if (!message.endsWith('}'))
+        return std::nullopt;
+
+    auto idMemberStart = message.reverseFind(idMemberPrefix);
+    if (idMemberStart == notFound)
+        return std::nullopt;
+
+    auto idStart = idMemberStart + idMemberPrefix.length();
+    return parseInteger<int>(message.substring(idStart, message.length() - 1 - idStart));
+}
+
 void WebDriverBidiProcessor::sendBidiMessage(const String& message)
 {
     RefPtr session = m_session.get();
@@ -215,6 +232,17 @@ void WebDriverBidiProcessor::sendBidiMessage(const String& message)
     auto msgValue = JSON::Object::parseJSON(message);
     if (!msgValue) {
         RELEASE_LOG_ERROR(Automation, "[s:%s] sendBidiMessage failed to parse message as JSON: %s", session->sessionIdentifier().utf8(), message.utf8());
+
+        // The JSON parser limits nesting depth, and the serializer that produced the message doesn't.
+        // Answer the command so that the client isn't left waiting.
+        if (auto commandId = commandIdForUnparsableResponse(message)) {
+            auto bidiErrorObj = JSON::Object::create();
+            bidiErrorObj->setString("type"_s, "error"_s);
+            bidiErrorObj->setString("error"_s, "unknown error"_s);
+            bidiErrorObj->setString("message"_s, "The command result could not be encoded."_s);
+            bidiErrorObj->setInteger("id"_s, *commandId);
+            session->sendBidiMessage(bidiErrorObj->toJSONString());
+        }
         return;
     }
     auto msgObj = msgValue->asObject();

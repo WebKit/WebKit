@@ -104,6 +104,63 @@ BidiScriptAgent::BidiScriptAgent(WebAutomationSession& session, BackendDispatche
 
 BidiScriptAgent::~BidiScriptAgent() = default;
 
+// The WebProcess identifies a window by the identifier of its frame, which only the UI process can
+// map to a browsing context id. This visits every place where a remote value can hold another, so a
+// WebProcess can't put a window where a client would read it without the window being checked.
+// FIXME: A window whose frame is gone gets no value, so clients that read value.context can fail. The
+// spec's format requires a context id for every window, but its steps don't say what it is for such a window.
+static void resolveWindowContexts(JSON::Value& value, WebAutomationSession& session)
+{
+    // A list holds remote values, and a mapping holds [key, remote value] pairs whose key can
+    // also be a remote value.
+    if (auto array = value.asArray()) {
+        for (auto& item : *array)
+            resolveWindowContexts(item, session);
+        return;
+    }
+
+    auto remoteValue = value.asObject();
+    if (!remoteValue)
+        return;
+
+    auto type = remoteValue->getString("type"_s);
+    auto contents = remoteValue->getValue("value"_s);
+    if (!contents)
+        return;
+
+    // A node's value holds remote values only as its children and shadow root. Its attributes aren't
+    // remote values, even when they are named type and value.
+    if (type == "node"_s) {
+        if (auto properties = contents->asObject()) {
+            if (auto children = properties->getValue("children"_s))
+                resolveWindowContexts(*children, session);
+            if (auto shadowRoot = properties->getValue("shadowRoot"_s))
+                resolveWindowContexts(*shadowRoot, session);
+        }
+        return;
+    }
+
+    if (type != "window"_s) {
+        resolveWindowContexts(*contents, session);
+        return;
+    }
+
+    auto properties = contents->asObject();
+    auto rawFrameID = properties ? parseInteger<uint64_t>(properties->getString("context"_s)) : std::nullopt;
+    // FIXME: A frame removed after the window was serialized, but whose WebFrameProxy is still alive, gets a
+    // new handle that no event announced and that is never removed.
+    RefPtr frame = rawFrameID && WebCore::FrameIdentifier::isValidIdentifier(*rawFrameID) ? WebFrameProxy::webFrame(WebCore::FrameIdentifier(*rawFrameID)) : nullptr;
+    RefPtr page = frame ? frame->page() : nullptr;
+    // Unlike frameControlledBySession(), this accepts a frame in any process, because a window can be in a
+    // process other than the one that serialized it.
+    if (!page || page->activeAutomationSession().get() != &session) {
+        remoteValue->remove("value"_s);
+        return;
+    }
+
+    properties->setString("context"_s, session.effectiveHandleForWebFrameProxy(*frame));
+}
+
 static RefPtr<Inspector::Protocol::BidiScript::RemoteValue> deserializeRemoteValue(const JSON::Value* jsonValue)
 {
     using RemoteValue = Inspector::Protocol::BidiScript::RemoteValue;
@@ -447,6 +504,9 @@ void BidiScriptAgent::finishEvaluateBidiScriptResult(const String& realmID, cons
 {
     using namespace Inspector::Protocol;
 
+    RefPtr session = m_session;
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
+
     // JavaScript exceptions arrive on the value channel below; CommandResult failures remain BiDi command errors.
     if (!result) {
         if (result.error().isEmpty()) {
@@ -467,6 +527,8 @@ void BidiScriptAgent::finishEvaluateBidiScriptResult(const String& realmID, cons
     if (!*success) {
         auto exceptionObject = resultObject->getObject("error"_s);
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!exceptionObject, InternalError, "Malformed script.evaluate result"_s);
+        if (auto exception = exceptionObject->getValue("exception"_s))
+            resolveWindowContexts(*exception, *session);
         auto exceptionDetails = buildExceptionDetailsFromExceptionObject(*exceptionObject);
         callback({ { BidiScript::EvaluateResultType::Exception, realmID, nullptr, WTF::move(exceptionDetails) } });
         return;
@@ -474,6 +536,7 @@ void BidiScriptAgent::finishEvaluateBidiScriptResult(const String& realmID, cons
 
     auto resultValue = resultObject->getValue("result"_s);
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!resultValue || !resultValue->asObject(), InternalError, "Malformed script.evaluate result"_s);
+    resolveWindowContexts(*resultValue, *session);
     auto remote = deserializeRemoteValue(resultValue.get());
     callback({ { BidiScript::EvaluateResultType::Success, realmID, WTF::move(remote), nullptr } });
 }

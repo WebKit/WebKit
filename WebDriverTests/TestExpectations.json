@@ -3388,7 +3388,7 @@
                 "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/298656"}}
             },
             "test_window_open_with_url": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/287934"}}
+                "expected": { "mac": { "status": ["PASS"]}, "glib": { "status": ["TIMEOUT"], "bug": "webkit.org/b/287934"}}
             },
             "test_document_write[None]": {
                 "expected": {"mac": {"status": ["PASS"]}}
@@ -3437,7 +3437,7 @@
                 "expected": { "wpe": { "status": ["PASS"], "bug": "webkit.org/b/287929"}}
             },
             "test_window_open_with_url": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/287934"}}
+                "expected": { "glib": { "status": ["TIMEOUT"], "bug": "webkit.org/b/287934"}}
             },
             "test_document_write[None]": {
                 "expected": {"mac": {"status": ["PASS"]}}
@@ -5062,14 +5062,14 @@
     "imported/w3c/webdriver/tests/bidi/script/evaluate/exception_details_await_promise.py": {
         "subtests": {
             "test_exception_details_await_promise[window-expected39]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060", "note": "Passes only because window serializes with a placeholder context id"}}
+                "expected": { "glib": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
             }
         }
     },
     "imported/w3c/webdriver/tests/bidi/script/evaluate/exception_details.py": {
         "subtests": {
             "test_exception_details[window-expected39]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060", "note": "Passes only because window serializes with a placeholder context id"}}
+                "expected": { "glib": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
             }
         }
     },
@@ -5099,49 +5099,49 @@
     "imported/w3c/webdriver/tests/bidi/script/evaluate/remote_values.py": {
         "subtests": {
             "test_remote_values[window-expected26]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060", "note": "Passes only because window serializes with a placeholder context id"}}
+                "expected": { "glib": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
             },
             "test_window_context_same_id_after_navigation[True-same_origin]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060", "note": "Passes only because window serializes with a placeholder context id"}}
+                "expected": { "glib": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
             },
             "test_window_context_same_id_after_navigation[True-cross_origin]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060", "note": "Passes only because window serializes with a placeholder context id"}}
+                "expected": { "glib": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
             },
             "test_window_context_same_id_after_navigation[False-same_origin]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060", "note": "Passes only because window serializes with a placeholder context id"}}
+                "expected": { "glib": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
             },
             "test_window_context_same_id_after_navigation[False-cross_origin]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060", "note": "Passes only because window serializes with a placeholder context id"}}
+                "expected": { "glib": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
             },
             "test_window_context_top_level[True]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
+                "expected": { "glib": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
             },
             "test_window_context_top_level[False]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
+                "expected": { "glib": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
             },
             "test_window_context_iframe_window[True-same_origin]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
+                "expected": { "glib": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
             },
             "test_window_context_iframe_window[True-cross_origin]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
+                "expected": { "glib": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
             },
             "test_window_context_iframe_window[False-same_origin]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
+                "expected": { "glib": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
             },
             "test_window_context_iframe_window[False-cross_origin]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
+                "expected": { "glib": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
             },
             "test_window_context_iframe_content_window[True-same_origin]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
+                "expected": { "glib": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
             },
             "test_window_context_iframe_content_window[True-cross_origin]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
+                "expected": { "glib": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
             },
             "test_window_context_iframe_content_window[False-same_origin]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
+                "expected": { "glib": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
             },
             "test_window_context_iframe_content_window[False-cross_origin]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
+                "expected": { "glib": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
             }
         }
     },
@@ -5211,10 +5211,10 @@
     "imported/w3c/webdriver/tests/bidi/script/evaluate/user_activation.py": {
         "subtests": {
             "test_userActivation[False]": {
-                "expected": { "wpe": { "status": ["PASS"] } }
+                "expected": { "mac": { "status": ["PASS"] }, "wpe": { "status": ["PASS"] } }
             },
             "test_userActivation_copy[False]": {
-                "expected": { "wpe": { "status": ["PASS"] } }
+                "expected": { "mac": { "status": ["PASS"] }, "wpe": { "status": ["PASS"] } }
             }
         },
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
@@ -6630,74 +6630,6 @@
         }
     },
 
-    "imported/w3c/webdriver/tests/bidi/script/evaluate/serialization_options.py": {
-        "subtests": {
-            "test_include_shadow_tree_for_custom_element['all' mode for closed shadow root]": {
-                "expected": {"mac": {"status": ["FAIL"], "bug": "webkit.org/b/328804", "note": "Serialization options aren't fully implemented"}}
-            },
-            "test_include_shadow_tree_for_custom_element['all' mode for open shadow root]": {
-                "expected": {"mac": {"status": ["FAIL"], "bug": "webkit.org/b/328804", "note": "Serialization options aren't fully implemented"}}
-            },
-            "test_include_shadow_tree_for_custom_element['none' mode for closed shadow root]": {
-                "expected": {"mac": {"status": ["FAIL"], "bug": "webkit.org/b/328804", "note": "Serialization options aren't fully implemented"}}
-            },
-            "test_include_shadow_tree_for_custom_element['none' mode for open shadow root]": {
-                "expected": {"mac": {"status": ["FAIL"], "bug": "webkit.org/b/328804", "note": "Serialization options aren't fully implemented"}}
-            },
-            "test_include_shadow_tree_for_custom_element['open' mode for closed shadow root]": {
-                "expected": {"mac": {"status": ["FAIL"], "bug": "webkit.org/b/328804", "note": "Serialization options aren't fully implemented"}}
-            },
-            "test_include_shadow_tree_for_custom_element['open' mode for open shadow root]": {
-                "expected": {"mac": {"status": ["FAIL"], "bug": "webkit.org/b/328804", "note": "Serialization options aren't fully implemented"}}
-            },
-            "test_include_shadow_tree_for_custom_element[default mode for closed shadow root]": {
-                "expected": {"mac": {"status": ["FAIL"], "bug": "webkit.org/b/328804", "note": "Serialization options aren't fully implemented"}}
-            },
-            "test_include_shadow_tree_for_custom_element[default mode for open shadow root]": {
-                "expected": {"mac": {"status": ["FAIL"], "bug": "webkit.org/b/328804", "note": "Serialization options aren't fully implemented"}}
-            },
-            "test_include_shadow_tree_for_shadow_root['all' mode]": {
-                "expected": {"mac": {"status": ["FAIL"], "bug": "webkit.org/b/328804", "note": "Serialization options aren't fully implemented"}}
-            },
-            "test_include_shadow_tree_for_shadow_root['none' mode]": {
-                "expected": {"mac": {"status": ["FAIL"], "bug": "webkit.org/b/328804", "note": "Serialization options aren't fully implemented"}}
-            },
-            "test_include_shadow_tree_for_shadow_root['open' mode]": {
-                "expected": {"mac": {"status": ["FAIL"], "bug": "webkit.org/b/328804", "note": "Serialization options aren't fully implemented"}}
-            },
-            "test_include_shadow_tree_for_shadow_root[default mode]": {
-                "expected": {"mac": {"status": ["FAIL"], "bug": "webkit.org/b/328804", "note": "Serialization options aren't fully implemented"}}
-            },
-            "test_max_dom_depth[0-expected1]": {
-                "expected": {"mac": {"status": ["FAIL"], "bug": "webkit.org/b/328804", "note": "Serialization options aren't fully implemented"}}
-            },
-            "test_max_dom_depth[1-expected2]": {
-                "expected": {"mac": {"status": ["FAIL"], "bug": "webkit.org/b/328804", "note": "Serialization options aren't fully implemented"}}
-            },
-            "test_max_dom_depth[2-expected3]": {
-                "expected": {"mac": {"status": ["FAIL"], "bug": "webkit.org/b/328804", "note": "Serialization options aren't fully implemented"}}
-            },
-            "test_max_dom_depth[None-expected0]": {
-                "expected": {"mac": {"status": ["FAIL"], "bug": "webkit.org/b/328804", "note": "Serialization options aren't fully implemented"}}
-            },
-            "test_max_dom_depth_null": {
-                "expected": {"mac": {"status": ["FAIL"], "bug": "webkit.org/b/328804", "note": "Serialization options aren't fully implemented"}}
-            },
-            "test_max_object_depth[0-expected1]": {
-                "expected": {"mac": {"status": ["FAIL"], "bug": "webkit.org/b/328804", "note": "Serialization options aren't fully implemented"}}
-            },
-            "test_max_object_depth[1-expected2]": {
-                "expected": {"mac": {"status": ["FAIL"], "bug": "webkit.org/b/328804", "note": "Serialization options aren't fully implemented"}}
-            },
-            "test_max_object_depth[2-expected3]": {
-                "expected": {"mac": {"status": ["FAIL"], "bug": "webkit.org/b/328804", "note": "Serialization options aren't fully implemented"}}
-            },
-            "test_max_object_depth[None-expected0]": {
-                "expected": {"mac": {"status": ["FAIL"], "bug": "webkit.org/b/328804", "note": "Serialization options aren't fully implemented"}}
-            }
-        }
-    },
-
     "imported/w3c/webdriver/tests/bidi/script/evaluate/target.py": {
         "subtests": {
             "test_target_context_and_realm": {
@@ -6765,13 +6697,13 @@
                 "expected": {"mac": {"status": ["FAIL"], "note": "Fails on Mac, not investigated yet"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/331469"}}
             },
             "test_window_open[]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Fails on Mac, not investigated yet"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/331469"}}
+                "expected": {"glib": {"status": ["FAIL"], "bug": "webkit.org/b/331469"}}
             },
             "test_window_open[about:blank]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Fails on Mac, not investigated yet"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/331469"}}
+                "expected": {"glib": {"status": ["FAIL"], "bug": "webkit.org/b/331469"}}
             },
             "test_window_open[inline]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Fails on Mac, not investigated yet"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/331469"}}
+                "expected": {"glib": {"status": ["FAIL"], "bug": "webkit.org/b/331469"}}
             }
         }
     },
