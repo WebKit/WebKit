@@ -84,8 +84,10 @@ class FillRectWithRoundedHole;
 class FillRoundedRect;
 class ResetClip;
 class Restore;
+class RestoreTransform;
 class Rotate;
 class Save;
+class SaveTransform;
 class Scale;
 class SetCTM;
 class SetInlineFillColor;
@@ -155,8 +157,10 @@ using Item = Variant
     , FillRoundedRect
     , ResetClip
     , Restore
+    , RestoreTransform
     , Rotate
     , Save
+    , SaveTransform
     , Scale
     , SetCTM
     , SetInlineFillColor

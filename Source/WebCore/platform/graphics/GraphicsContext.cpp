@@ -70,28 +70,48 @@ GraphicsContext::~GraphicsContext()
 
 void GraphicsContext::save(GraphicsContextState::Purpose purpose)
 {
-    ASSERT(purpose == GraphicsContextState::Purpose::SaveRestore || purpose == GraphicsContextState::Purpose::TransparencyLayer);
+    ASSERT(purpose == GraphicsContextState::Purpose::SaveRestore || purpose == GraphicsContextState::Purpose::TransparencyLayer || purpose == GraphicsContextState::Purpose::Transform);
     m_stack.append(m_state);
+    // For the contexts that do not keep the CTM in m_state.
+    if (purpose == GraphicsContextState::Purpose::Transform)
+        m_stack.last().setCTM(getCTM());
     m_state.repurpose(purpose);
 }
 
-void GraphicsContext::restore(GraphicsContextState::Purpose purpose)
+bool GraphicsContext::restore(GraphicsContextState::Purpose purpose)
 {
-    if (m_stack.isEmpty()) {
-        LOG_ERROR("ERROR void GraphicsContext::restore() stack is empty");
-        return;
+    if (!canRestore(purpose)) {
+        LOG_ERROR("no matching save");
+        return false;
     }
 
-    ASSERT_UNUSED(purpose, purpose == m_state.purpose());
-    ASSERT_UNUSED(purpose, purpose == GraphicsContextState::Purpose::SaveRestore || purpose == GraphicsContextState::Purpose::TransparencyLayer);
-
-    m_state = m_stack.last();
-    m_stack.removeLast();
+    if (purpose == GraphicsContextState::Purpose::Transform)
+        m_state.restoreTransform(m_stack.takeLast());
+    else
+        m_state = m_stack.takeLast();
 
     // Make sure we deallocate the state stack buffer when it goes empty.
     // Canvas elements will immediately save() again, but that goes into inline capacity.
     if (m_stack.isEmpty())
         m_stack.clear();
+    return true;
+}
+
+void GraphicsContext::saveTransform()
+{
+    GraphicsContext::save(GraphicsContextState::Purpose::Transform);
+}
+
+bool GraphicsContext::restoreTransform()
+{
+    if (!canRestore(GraphicsContextState::Purpose::Transform)) {
+        LOG_ERROR("ERROR bool GraphicsContext::restoreTransform() no matching saveTransform()");
+        return false;
+    }
+    GraphicsContext::restore(GraphicsContextState::Purpose::Transform);
+    // Apply the restored CTM to the contexts that do not keep the CTM in m_state.
+    setCTM(m_state.ctm());
+    return true;
 }
 
 void GraphicsContext::unwindStateStack(unsigned count)
@@ -104,6 +124,9 @@ void GraphicsContext::unwindStateStack(unsigned count)
             break;
         case GraphicsContextState::Purpose::TransparencyLayer:
             endTransparencyLayer();
+            break;
+        case GraphicsContextState::Purpose::Transform:
+            restoreTransform();
             break;
         default:
             ASSERT_NOT_REACHED();

@@ -200,11 +200,17 @@ using WebCore::DashArray = FixedVector<float>
 [CustomHeader] class WebCore::DisplayList::Restore {
 }
 
+[CustomHeader] class WebCore::DisplayList::RestoreTransform {
+}
+
 [CustomHeader] class WebCore::DisplayList::Rotate {
     float angle();
 }
 
 [CustomHeader] class WebCore::DisplayList::Save {
+}
+
+[CustomHeader] class WebCore::DisplayList::SaveTransform {
 }
 
 [CustomHeader] class WebCore::DisplayList::Scale {
@@ -396,8 +402,10 @@ using WebKit::DisplayListDataItem = Variant<
     WebCore::DisplayList::FillRoundedRect,
     WebCore::DisplayList::ResetClip,
     WebCore::DisplayList::Restore,
+    WebCore::DisplayList::RestoreTransform,
     WebCore::DisplayList::Rotate,
     WebCore::DisplayList::Save,
+    WebCore::DisplayList::SaveTransform,
     WebCore::DisplayList::Scale,
     WebCore::DisplayList::SetCTM,
     WebCore::DisplayList::SetInlineFillColor,

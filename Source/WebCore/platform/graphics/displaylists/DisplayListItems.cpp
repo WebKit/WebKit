@@ -52,6 +52,16 @@ void Restore::apply(GraphicsContext& context) const
     context.restore();
 }
 
+void SaveTransform::apply(GraphicsContext& context) const
+{
+    context.saveTransform();
+}
+
+void RestoreTransform::apply(GraphicsContext& context) const
+{
+    context.restoreTransform();
+}
+
 void Translate::apply(GraphicsContext& context) const
 {
     context.translate(m_x, m_y);

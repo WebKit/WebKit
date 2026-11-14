@@ -92,7 +92,7 @@ public:
     void drawFocusRing(const Vector<FloatRect>&, float outlineWidth, const Color&, float zoomFactor) final;
 
     void save(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore) final;
-    void restore(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore) final;
+    bool restore(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore) final;
 
     void translate(float, float) final;
     void rotate(float) final;
