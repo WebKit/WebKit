@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/heap-test-utilities.js"></script>
+<script src="resources/heap-markers.js"></script>
+<script>
+// iframe.contentWindow follows the iframe's navigations, so keep an object of each earlier document to keep it alive.
+let keptMarkers = [];
+
+function navigateIFrameAndKeepItsMarkers(url)
+{
+    let iframe = document.querySelector("iframe");
+    keptMarkers.push(iframe.contentWindow.markers);
+    iframe.src = url;
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Heap.NavigatedFrameSnapshot");
+
+    const sameProcessMarkerClassName = HeapTest.markerClassName("SameProcessMarker");
+    const otherProcessMarkerClassName = HeapTest.markerClassName("OtherProcessMarker");
+
+    let mainFrameTarget = null;
+    let iframeTarget = null;
+
+    suite.addTestCase({
+        name: "SiteIsolation.Heap.NavigatedFrameSnapshot.SameProcess",
+        description: "The objects of a document that a same-process iframe navigated away from should stay in the iframe's snapshots only.",
+        async test() {
+            mainFrameTarget = InspectorTest.mainFrameTarget;
+            iframeTarget = await waitForFrameTargetForURLContaining("heap-frame.html");
+            InspectorTest.assert(iframeTarget, "Should find the same-origin iframe's target.");
+            await waitForExpressionInTarget(iframeTarget, "typeof createMarker === 'function'");
+            InspectorTest.expectEqual(HeapTest.processIdentifier(iframeTarget), HeapTest.processIdentifier(mainFrameTarget), "The same-origin iframe should be in the main frame's process.");
+            await HeapTest.evaluate(iframeTarget, `createMarker("${sameProcessMarkerClassName}")`);
+
+            await HeapTest.evaluate(mainFrameTarget, `navigateIFrameAndKeepItsMarkers("resources/heap-frame.html?same-process")`);
+            let navigatedIFrameTarget = await waitForFrameTargetForURLContaining("?same-process");
+            InspectorTest.expectEqual(navigatedIFrameTarget, iframeTarget, "The iframe should keep its frame target after navigating in its process.");
+            await waitForExpressionInTarget(iframeTarget, "typeof createMarker === 'function'");
+
+            let iframeSnapshot = await HeapTest.takeSnapshot(iframeTarget);
+            InspectorTest.expectEqual(HeapTest.objectCount(iframeSnapshot, sameProcessMarkerClassName), 1, "The iframe's snapshot should include the marker of the document it navigated away from.");
+
+            let mainFrameSnapshot = await HeapTest.takeSnapshot(mainFrameTarget);
+            InspectorTest.expectEqual(HeapTest.objectCount(mainFrameSnapshot, sameProcessMarkerClassName), 0, "The main frame's snapshot should not include the marker of the document the iframe navigated away from.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Heap.NavigatedFrameSnapshot.OtherProcess",
+        description: "The objects of a document that an iframe navigated away from to another process should appear in the snapshots of the frame targets in the old process.",
+        async test() {
+            await HeapTest.evaluate(iframeTarget, `createMarker("${otherProcessMarkerClassName}")`);
+
+            await HeapTest.evaluate(mainFrameTarget, `navigateIFrameAndKeepItsMarkers("http://localhost:8000/site-isolation/inspector/heap/resources/heap-frame.html?other-process")`);
+            let otherProcessIFrameTarget = await waitForFrameTargetForURLContaining("?other-process");
+            InspectorTest.expectNotEqual(HeapTest.processIdentifier(otherProcessIFrameTarget), HeapTest.processIdentifier(mainFrameTarget), "The iframe should be in another process after navigating to another site.");
+
+            let mainFrameSnapshot = await HeapTest.takeSnapshot(mainFrameTarget);
+            InspectorTest.expectEqual(HeapTest.objectCount(mainFrameSnapshot, otherProcessMarkerClassName), 1, "The main frame's snapshot should include the marker of the document that the iframe navigated away from.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Test that under Site Isolation, the objects of an iframe's earlier documents appear in the right heap snapshots after the iframe navigates.</p>
+<iframe src="resources/heap-frame.html"></iframe>
+</body>

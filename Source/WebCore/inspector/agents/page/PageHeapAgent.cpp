@@ -26,12 +26,8 @@
 #include "config.h"
 #include "PageHeapAgent.h"
 
-#include "CustomElementRegistry.h"
-#include "JSCustomElementInterface.h"
-#include "JSElement.h"
-#include "JSNode.h"
-#include <JavaScriptCore/HeapCellInlines.h>
-#include <JavaScriptCore/JSFunction.h>
+#include "Page.h"
+#include "Settings.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -43,6 +39,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(PageHeapAgent);
 PageHeapAgent::PageHeapAgent(PageAgentContext& context)
     : WebHeapAgent(context)
     , m_instrumentingAgents(context.instrumentingAgents)
+    , m_inspectedPage(context.inspectedPage)
 {
 }
 
@@ -64,33 +61,10 @@ Inspector::Protocol::ErrorStringOr<void> PageHeapAgent::disable()
     return WebHeapAgent::disable();
 }
 
-String PageHeapAgent::heapSnapshotBuilderOverrideClassName(const JSC::HeapSnapshotBuilder& builder, JSC::JSCell* cell, const String& currentClassName)
+bool PageHeapAgent::observesGarbageCollections() const
 {
-    if (currentClassName == "HTMLElement"_s) {
-        if (auto* jsElement = dynamicDowncast<JSElement>(cell)) {
-            Ref element = jsElement->wrapped();
-            if (element->isDefinedCustomElement()) {
-                if (RefPtr customElementRegistry = element->customElementRegistry()) {
-                    if (RefPtr customElementInterface = customElementRegistry->findInterface(element)) {
-                        if (JSC::JSObject* customElementConstructorObject = customElementInterface->constructor()) {
-                            if (JSC::JSFunction* customElementConstructorFunction = dynamicDowncast<JSC::JSFunction>(customElementConstructorObject)) {
-                                String customElementClassName = customElementConstructorFunction->calculatedDisplayName(customElementConstructorFunction->vm());
-                                if (!customElementClassName.isNull())
-                                    return customElementClassName;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    return JSC::HeapSnapshotBuilder::Client::heapSnapshotBuilderOverrideClassName(builder, cell, currentClassName);
-}
-
-bool PageHeapAgent::heapSnapshotBuilderIsElement(const JSC::HeapSnapshotBuilder&, JSC::JSCell* cell)
-{
-    return dynamicDowncast<JSNode>(cell);
+    // Under Site Isolation, each frame target reports the garbage collections of its own process.
+    return !protect(m_inspectedPage)->settings().siteIsolationEnabled();
 }
 
 void PageHeapAgent::mainFrameNavigated()

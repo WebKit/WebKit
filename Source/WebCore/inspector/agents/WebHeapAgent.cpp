@@ -26,9 +26,15 @@
 #include "config.h"
 #include "WebHeapAgent.h"
 
+#include "CustomElementRegistry.h"
 #include "InstrumentingAgents.h"
+#include "JSCustomElementInterface.h"
+#include "JSElement.h"
+#include "JSNode.h"
 #include "WebConsoleAgent.h"
+#include <JavaScriptCore/HeapCellInlines.h>
 #include <JavaScriptCore/InspectorProtocolTypes.h>
+#include <JavaScriptCore/JSFunction.h>
 #include <wtf/Lock.h>
 #include <wtf/RunLoop.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -134,6 +140,35 @@ Inspector::Protocol::ErrorStringOr<void> WebHeapAgent::disable()
     m_sendGarbageCollectionEventsTask->reset();
 
     return InspectorHeapAgent::disable();
+}
+
+String WebHeapAgent::heapSnapshotBuilderOverrideClassName(const JSC::HeapSnapshotBuilder& builder, JSC::JSCell* cell, const String& currentClassName)
+{
+    if (currentClassName == "HTMLElement"_s) {
+        if (auto* jsElement = dynamicDowncast<JSElement>(cell)) {
+            Ref element = jsElement->wrapped();
+            if (element->isDefinedCustomElement()) {
+                if (RefPtr customElementRegistry = element->customElementRegistry()) {
+                    if (RefPtr customElementInterface = customElementRegistry->findInterface(element)) {
+                        if (JSC::JSObject* customElementConstructorObject = customElementInterface->constructor()) {
+                            if (JSC::JSFunction* customElementConstructorFunction = dynamicDowncast<JSC::JSFunction>(customElementConstructorObject)) {
+                                String customElementClassName = customElementConstructorFunction->calculatedDisplayName(customElementConstructorFunction->vm());
+                                if (!customElementClassName.isNull())
+                                    return customElementClassName;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return JSC::HeapSnapshotBuilder::Client::heapSnapshotBuilderOverrideClassName(builder, cell, currentClassName);
+}
+
+bool WebHeapAgent::heapSnapshotBuilderIsElement(const JSC::HeapSnapshotBuilder&, JSC::JSCell* cell)
+{
+    return dynamicDowncast<JSNode>(cell);
 }
 
 void WebHeapAgent::dispatchGarbageCollectedEvent(Inspector::Protocol::Heap::GarbageCollection::Type type, Seconds startTime, Seconds endTime)

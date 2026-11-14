@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/heap-test-utilities.js"></script>
+<script src="resources/heap-markers.js"></script>
+<script>
+function holdObjectOfIFrame(className)
+{
+    window.objectOfIFrame = document.querySelector("iframe").contentWindow.createUnheldMarker(className);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Heap.SameProcessFramesSnapshot");
+
+    const mainFrameMarkerClassName = HeapTest.markerClassName("MainFrameMarker");
+    const iframeMarkerClassName = HeapTest.markerClassName("IFrameMarker");
+    const heldByMainFrameClassName = HeapTest.markerClassName("IFrameObjectHeldByMainFrame");
+
+    let mainFrameTarget = null;
+    let iframeTarget = null;
+    let mainFrameLabel = null;
+    let mainFrameSnapshot = null;
+
+    suite.addTestCase({
+        name: "SiteIsolation.Heap.SameProcessFramesSnapshot.Setup",
+        description: "Find the same-origin iframe's target and create the markers.",
+        async test() {
+            mainFrameTarget = InspectorTest.mainFrameTarget;
+            iframeTarget = await waitForFrameTargetForURLContaining("heap-frame.html");
+            InspectorTest.assert(iframeTarget, "Should find the same-origin iframe's target.");
+            await waitForExpressionInTarget(iframeTarget, "typeof createMarker === 'function'");
+            InspectorTest.expectEqual(HeapTest.processIdentifier(iframeTarget), HeapTest.processIdentifier(mainFrameTarget), "The same-origin iframe should be in the main frame's process.");
+
+            mainFrameLabel = await HeapTest.evaluate(mainFrameTarget, `createMarker("${mainFrameMarkerClassName}", "Main frame label " + Math.random()).label`);
+            await HeapTest.evaluate(iframeTarget, `createMarker("${iframeMarkerClassName}")`);
+            await HeapTest.evaluate(mainFrameTarget, `holdObjectOfIFrame("${heldByMainFrameClassName}")`);
+        },
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Heap.SameProcessFramesSnapshot.Snapshot",
+        description: "Each frame target's snapshot should include the objects created in its own frame, even those only another frame holds.",
+        async test() {
+            mainFrameSnapshot = await HeapTest.takeSnapshot(mainFrameTarget);
+            InspectorTest.expectEqual(HeapTest.objectCount(mainFrameSnapshot, mainFrameMarkerClassName), 1, "The main frame's snapshot should include the main frame's marker.");
+            InspectorTest.expectEqual(HeapTest.objectCount(mainFrameSnapshot, iframeMarkerClassName), 0, "The main frame's snapshot should not include the iframe's marker.");
+            InspectorTest.expectEqual(HeapTest.objectCount(mainFrameSnapshot, heldByMainFrameClassName), 0, "The main frame's snapshot should not include the iframe's object that the main frame holds.");
+
+            let iframeSnapshot = await HeapTest.takeSnapshot(iframeTarget);
+            InspectorTest.expectEqual(HeapTest.objectCount(iframeSnapshot, iframeMarkerClassName), 1, "The iframe's snapshot should include the iframe's marker.");
+            InspectorTest.expectEqual(HeapTest.objectCount(iframeSnapshot, mainFrameMarkerClassName), 0, "The iframe's snapshot should not include the main frame's marker.");
+            InspectorTest.expectEqual(HeapTest.objectCount(iframeSnapshot, heldByMainFrameClassName), 1, "The iframe's snapshot should include the iframe's object that the main frame holds.");
+
+            // Nothing that the iframe's snapshot includes references this object, so the snapshot reaches it only as an unvisited node.
+            let [heldByMainFrame] = await HeapTest.instances(iframeSnapshot, heldByMainFrameClassName);
+            let {preview} = await iframeTarget.HeapAgent.getPreview(heldByMainFrame.id);
+            InspectorTest.expectEqual(preview?.description, heldByMainFrameClassName, "The iframe's target should preview the iframe's object that the main frame holds.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Heap.SameProcessFramesSnapshot.ObjectOfOtherFrame",
+        description: "A frame target should not preview or create remote objects for the objects of another frame in its process.",
+        async test() {
+            let [mainFrameMarker] = await HeapTest.instances(mainFrameSnapshot, mainFrameMarkerClassName);
+
+            let {preview} = await mainFrameTarget.HeapAgent.getPreview(mainFrameMarker.id);
+            InspectorTest.expectEqual(preview?.description, mainFrameMarkerClassName, "The main frame's target should preview the main frame's marker.");
+
+            let previewError = await HeapTest.commandError(iframeTarget.HeapAgent.getPreview(mainFrameMarker.id));
+            InspectorTest.expectEqual(previewError?.message, "No object for identifier in this target", "The iframe's target should not preview the main frame's marker.");
+
+            let remoteObjectError = await HeapTest.commandError(iframeTarget.HeapAgent.getRemoteObject(mainFrameMarker.id, "test"));
+            InspectorTest.expectEqual(remoteObjectError?.message, "No object for identifier in this target", "The iframe's target should not create a remote object for the main frame's marker.");
+
+            // FIXME: <https://webkit.org/b/331565> Strings belong to no frame, so every frame target of the process can preview them.
+            let labelNode = await HeapTest.propertyNode(mainFrameMarker, "label");
+            InspectorTest.assert(labelNode, "Should find the label of the main frame's marker.");
+            let {string} = await iframeTarget.HeapAgent.getPreview(labelNode.id);
+            InspectorTest.expectEqual(string, mainFrameLabel, "The iframe's target should preview the label string of the main frame's marker.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Heap.SameProcessFramesSnapshot.GarbageCollected",
+        description: "A garbage collection should be reported by every frame target of its process.",
+        async test() {
+            let garbageCollectedPromise = HeapTest.awaitFullGarbageCollection([mainFrameTarget, iframeTarget]);
+            await mainFrameTarget.HeapAgent.gc();
+            await garbageCollectedPromise;
+            InspectorTest.pass("Both frame targets should report a full garbage collection.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Test that under Site Isolation, the frame targets of frames in one process each take heap snapshots of their own frame.</p>
+<iframe src="resources/heap-frame.html"></iframe>
+</body>

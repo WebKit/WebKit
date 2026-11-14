@@ -2041,6 +2041,7 @@ inspector/agents/frame/FrameDOMAgentStubs.cpp
 inspector/agents/frame/FrameDOMDebuggerAgent.cpp
 inspector/agents/frame/FrameDOMStorageAgent.cpp
 inspector/agents/frame/FrameDebuggerAgent.cpp
+inspector/agents/frame/FrameHeapAgent.cpp
 inspector/agents/frame/FrameIndexedDBAgent.cpp
 inspector/agents/frame/FrameLayerTreeAgent.cpp
 inspector/agents/frame/FrameTimelineAgent.cpp

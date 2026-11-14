@@ -41,6 +41,7 @@
 #include "FrameDOMStorageAgent.h"
 #include "FrameDebugger.h"
 #include "FrameDebuggerAgent.h"
+#include "FrameHeapAgent.h"
 #include "FrameIndexedDBAgent.h"
 #include "FrameInlines.h"
 #include "FrameLayerTreeAgent.h"
@@ -215,6 +216,7 @@ void FrameInspectorController::createLazyAgents()
     m_agents.append(makeUniqueRef<FrameRuntimeAgent>(context));
     m_agents.append(makeUniqueRef<FrameCSSAgent>(context));
     m_agents.append(makeUniqueRef<FrameCanvasAgent>(context));
+    m_agents.append(makeUniqueRef<FrameHeapAgent>(context));
     m_agents.append(makeUniqueRef<FrameLayerTreeAgent>(context));
 
     auto scriptProfilerAgent = makeUniqueRef<InspectorScriptProfilerAgent>(context);
@@ -344,7 +346,7 @@ JSC::Debugger* FrameInspectorController::debugger()
     return m_debugger.get();
 }
 
-bool FrameInspectorController::coversGlobalObjectForSampling(JSC::JSGlobalObject& globalObject) const
+bool FrameInspectorController::coversGlobalObject(JSC::JSGlobalObject& globalObject) const
 {
     // A DOMWindow loses its frame when its document is detached, but its window proxy stays with the frame, so this
     // also covers documents that the frame navigated away from, in every world. It is based on ownership rather than

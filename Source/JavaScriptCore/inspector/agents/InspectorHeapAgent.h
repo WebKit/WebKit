@@ -35,14 +35,18 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/Seconds.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakRef.h>
 
 namespace JSC {
+class JSCell;
+class JSGlobalObject;
 struct HeapSnapshotNode;
 }
 
 namespace Inspector {
 
 class InjectedScriptManager;
+class InspectorEnvironment;
 
 class JS_EXPORT_PRIVATE InspectorHeapAgent : public InspectorAgentBase, public HeapBackendDispatcherHandler, public JSC::HeapObserver, public JSC::HeapSnapshotBuilder::Client {
     WTF_MAKE_NONCOPYABLE(InspectorHeapAgent);
@@ -81,7 +85,16 @@ protected:
 
     virtual void dispatchGarbageCollectedEvent(Protocol::Heap::GarbageCollection::Type, Seconds startTime, Seconds endTime);
 
+    InspectorEnvironment& environment() const;
+
+    // Whether this agent's snapshots and heap object lookups include the cells of the given realm. Cells that
+    // belong to no realm are always included.
+    virtual bool includesGlobalObject(JSC::JSGlobalObject&) const;
+
+    virtual bool observesGarbageCollections() const { return true; }
+
 private:
+    bool includesCell(JSC::JSCell&) const;
     std::optional<JSC::HeapSnapshotNode> nodeForHeapObjectIdentifier(Protocol::ErrorString&, unsigned heapObjectIdentifier);
 
     const CheckedRef<InjectedScriptManager> m_injectedScriptManager;

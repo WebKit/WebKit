@@ -1,0 +1,15 @@
+Test that under Site Isolation, the objects of an iframe's earlier documents appear in the right heap snapshots after the iframe navigates.
+
+
+
+== Running test suite: SiteIsolation.Heap.NavigatedFrameSnapshot
+-- Running test case: SiteIsolation.Heap.NavigatedFrameSnapshot.SameProcess
+PASS: The same-origin iframe should be in the main frame's process.
+PASS: The iframe should keep its frame target after navigating in its process.
+PASS: The iframe's snapshot should include the marker of the document it navigated away from.
+PASS: The main frame's snapshot should not include the marker of the document the iframe navigated away from.
+
+-- Running test case: SiteIsolation.Heap.NavigatedFrameSnapshot.OtherProcess
+PASS: The iframe should be in another process after navigating to another site.
+PASS: The main frame's snapshot should include the marker of the document that the iframe navigated away from.
+

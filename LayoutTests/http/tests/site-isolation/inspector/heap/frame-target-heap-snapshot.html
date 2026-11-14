@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/heap-test-utilities.js"></script>
+<script src="resources/heap-markers.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Heap.FrameTargetSnapshot");
+
+    const mainFrameMarkerClassName = HeapTest.markerClassName("MainFrameMarker");
+    const iframeMarkerClassName = HeapTest.markerClassName("IFrameMarker");
+
+    let mainFrameTarget = null;
+    let iframeTarget = null;
+
+    suite.addTestCase({
+        name: "SiteIsolation.Heap.FrameTargetSnapshot.Domain",
+        description: "Frame targets should have the Heap domain.",
+        async test() {
+            mainFrameTarget = InspectorTest.mainFrameTarget;
+            iframeTarget = await waitForFrameTargetForURLContaining("heap-frame.html");
+            InspectorTest.assert(iframeTarget, "Should find the cross-origin iframe's target.");
+            await waitForExpressionInTarget(iframeTarget, "typeof createMarker === 'function'");
+            InspectorTest.expectNotEqual(HeapTest.processIdentifier(iframeTarget), HeapTest.processIdentifier(mainFrameTarget), "The cross-origin iframe should be in another process than the main frame.");
+
+            InspectorTest.expectThat(mainFrameTarget.hasDomain("Heap"), "The main frame's target should have the Heap domain.");
+            InspectorTest.expectThat(iframeTarget.hasDomain("Heap"), "The cross-origin iframe's target should have the Heap domain.");
+
+            await HeapTest.evaluate(mainFrameTarget, `createMarker("${mainFrameMarkerClassName}")`);
+            await HeapTest.evaluate(iframeTarget, `createMarker("${iframeMarkerClassName}")`);
+        },
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Heap.FrameTargetSnapshot.Snapshot",
+        description: "Each frame target's snapshot should include the objects of its own frame, which it can preview.",
+        async test() {
+            // The frames are in different processes, so the absence checks below don't test the filter
+            // (same-process-frames-heap-snapshot.html does).
+            let iframeSnapshot = await HeapTest.takeSnapshot(iframeTarget);
+            InspectorTest.expectEqual(HeapTest.objectCount(iframeSnapshot, iframeMarkerClassName), 1, "The iframe's snapshot should include the iframe's marker.");
+            InspectorTest.expectEqual(HeapTest.objectCount(iframeSnapshot, mainFrameMarkerClassName), 0, "The iframe's snapshot should not include the main frame's marker.");
+
+            let [iframeMarker] = await HeapTest.instances(iframeSnapshot, iframeMarkerClassName);
+            let {preview} = await iframeTarget.HeapAgent.getPreview(iframeMarker.id);
+            InspectorTest.expectEqual(preview?.description, iframeMarkerClassName, "The iframe's target should preview the iframe's marker.");
+            let {result} = await iframeTarget.HeapAgent.getRemoteObject(iframeMarker.id, "test");
+            InspectorTest.expectEqual(result?.description, iframeMarkerClassName, "The iframe's target should create a remote object for the iframe's marker.");
+
+            let mainFrameSnapshot = await HeapTest.takeSnapshot(mainFrameTarget);
+            InspectorTest.expectEqual(HeapTest.objectCount(mainFrameSnapshot, mainFrameMarkerClassName), 1, "The main frame's snapshot should include the main frame's marker.");
+            InspectorTest.expectEqual(HeapTest.objectCount(mainFrameSnapshot, iframeMarkerClassName), 0, "The main frame's snapshot should not include the iframe's marker.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Heap.FrameTargetSnapshot.ConsoleTakeHeapSnapshot",
+        description: "console.takeHeapSnapshot() in the cross-origin iframe should report a snapshot on the iframe's target, whose objects can be previewed.",
+        async test() {
+            let snapshotPromise = HeapTest.awaitConsoleHeapSnapshot();
+            await HeapTest.evaluate(iframeTarget, "console.takeHeapSnapshot()");
+            let snapshot = await snapshotPromise;
+
+            InspectorTest.expectEqual(snapshot.target, iframeTarget, "The snapshot should come from the iframe's target.");
+            InspectorTest.expectEqual(HeapTest.objectCount(snapshot, iframeMarkerClassName), 1, "The snapshot should include the iframe's marker.");
+
+            let [iframeMarker] = await HeapTest.instances(snapshot, iframeMarkerClassName);
+            let [error, , , preview] = await new Promise((resolve) => WI.heapManager.getPreview(iframeMarker, (...args) => resolve(args)));
+            InspectorTest.expectFalse(error, "Getting a preview of the iframe's marker should not fail.");
+            InspectorTest.expectEqual(preview?.description, iframeMarkerClassName, "The preview should describe the iframe's marker.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Test that under Site Isolation, a cross-origin iframe's frame target takes heap snapshots of its own frame.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/heap/resources/heap-frame.html"></iframe>
+</body>

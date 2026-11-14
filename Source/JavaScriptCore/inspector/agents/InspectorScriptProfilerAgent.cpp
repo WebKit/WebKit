@@ -348,7 +348,7 @@ void InspectorScriptProfilerAgent::distributeStackTraces(VM& vm, const SamplingA
     auto agentCoveringGlobalObject = [&](JSGlobalObject& globalObject) {
         return agentsForGlobalObjects.ensure(&globalObject, [&] -> CheckedPtr<InspectorScriptProfilerAgent> {
             for (auto& agent : samplingAgents) {
-                if (protect(agent->m_environment)->coversGlobalObjectForSampling(globalObject))
+                if (protect(agent->m_environment)->coversGlobalObject(globalObject))
                     return agent;
             }
             return nullptr;

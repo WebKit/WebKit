@@ -1,0 +1,19 @@
+Test that under Site Isolation, frame targets in one process share its heap snapshots until the last frame target that uses them stops.
+
+
+== Running test suite: SiteIsolation.Heap.SameProcessFramesSnapshotChain
+-- Running test case: SiteIsolation.Heap.SameProcessFramesSnapshotChain.Setup
+PASS: The same-origin iframe should be in the main frame's process.
+
+-- Running test case: SiteIsolation.Heap.SameProcessFramesSnapshotChain.OtherFrameDisabled
+PASS: The iframe's target should still preview its marker.
+PASS: The iframe's marker should keep its identifier in the next snapshot of the iframe's target.
+PASS: The next snapshot of the iframe's target should have no duplicate identifiers.
+
+-- Running test case: SiteIsolation.Heap.SameProcessFramesSnapshotChain.EnabledWithoutSnapshot
+PASS: The iframe's snapshot should only have identifiers larger than those of the earlier snapshot of the main frame.
+
+-- Running test case: SiteIsolation.Heap.SameProcessFramesSnapshotChain.FrameRemoved
+PASS: The iframe's target should be removed.
+PASS: The main frame's next snapshot should only have identifiers larger than those of its earlier snapshot.
+

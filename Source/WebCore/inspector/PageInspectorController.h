@@ -164,7 +164,7 @@ public:
     NODELETE WEBCORE_EXPORT WTF::Stopwatch& executionStopwatch() const final;
     bool executionStopwatchIsSharedAcrossProcesses() const final { return m_executionStopwatchIsShared; }
     JSC::Debugger* debugger() override;
-    bool coversGlobalObjectForSampling(JSC::JSGlobalObject&) const override;
+    bool coversGlobalObject(JSC::JSGlobalObject&) const override;
     bool takesUncoveredSamples() const override;
     JSC::VM& vm() override;
 

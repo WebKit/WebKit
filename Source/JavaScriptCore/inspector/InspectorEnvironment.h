@@ -62,10 +62,9 @@ public:
 
     virtual JSC::Debugger* debugger() = 0;
 
-    // A VM has one sampling profiler, which several environments can sample at once (for example the frames
-    // in one web process under Site Isolation). Each sample then goes to the environment that covers the
-    // global object where its script was entered.
-    virtual bool coversGlobalObjectForSampling(JSC::JSGlobalObject&) const { return true; }
+    // Several environments can share a VM (for example the frames of one web process under Site Isolation).
+    // Data collected for the whole VM, like samples, goes to the environment that covers its global object.
+    virtual bool coversGlobalObject(JSC::JSGlobalObject&) const { return true; }
 
     // Whether this environment also gets the samples that no sampling environment covers, for example
     // samples of script in a page that is not being inspected.

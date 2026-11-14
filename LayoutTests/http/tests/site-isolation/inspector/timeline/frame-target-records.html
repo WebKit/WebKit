@@ -41,9 +41,8 @@ function test() {
 
     function expectNoScriptRecordsFromPageTarget(recording) {
         let scriptTimeline = recording.timelines.get(WI.TimelineRecord.Type.Script);
-        // Garbage collections are reported by the page target's Heap domain.
-        let pageTargetRecords = scriptTimeline.records.filter((record) => record.target === WI.mainTarget && record.eventType !== WI.ScriptTimelineRecord.EventType.GarbageCollected);
-        InspectorTest.expectEqual(pageTargetRecords.length, 0, "No script records other than garbage collections should come from the page target.");
+        let pageTargetRecords = scriptTimeline.records.filter((record) => record.target === WI.mainTarget);
+        InspectorTest.expectEqual(pageTargetRecords.length, 0, "No script records should come from the page target.");
     }
 
     suite.addTestCase({
@@ -80,6 +79,12 @@ function test() {
             InspectorTest.pass("Recorded a timer from the main frame target.");
             let iframeRecord = await iframeRecordPromise;
             InspectorTest.pass("Recorded a timer from the cross-origin iframe target.");
+
+            // Under Site Isolation, frame targets report garbage collections, not the page target.
+            let garbageCollectedRecordPromise = FrameTimelineTest.awaitScriptRecord(mainFrameTarget, WI.ScriptTimelineRecord.EventType.GarbageCollected);
+            await mainFrameTarget.HeapAgent.gc();
+            await garbageCollectedRecordPromise;
+            InspectorTest.pass("Recorded a garbage collection from the main frame target.");
 
             await FrameTimelineTest.stopCapturing();
             InspectorTest.pass("Capturing stopped.");

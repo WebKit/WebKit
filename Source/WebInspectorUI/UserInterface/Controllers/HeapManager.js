@@ -101,7 +101,7 @@ WI.HeapManager = class HeapManager extends WI.Object
         console.assert(this._enabled);
         console.assert(node instanceof WI.HeapSnapshotNodeProxy);
 
-        // FIXME: <https://webkit.org/b/298984> Remove this check once frame targets have the Heap domain. Until then, `console.takeHeapSnapshot()` in a frame reports the snapshot on the frame target.
+        // COMPATIBILITY (macOS 27.3, iOS 27.3): Frame targets did not have the Heap domain, but `console.takeHeapSnapshot()` in a frame reported its snapshot on the frame target.
         if (!node.target.hasDomain("Heap")) {
             callback("Heap domain is not available for this target.");
             return;
@@ -119,7 +119,7 @@ WI.HeapManager = class HeapManager extends WI.Object
         console.assert(this._enabled);
         console.assert(node instanceof WI.HeapSnapshotNodeProxy);
 
-        // FIXME: <https://webkit.org/b/298984> Remove this check once frame targets have the Heap domain. Until then, `console.takeHeapSnapshot()` in a frame reports the snapshot on the frame target.
+        // COMPATIBILITY (macOS 27.3, iOS 27.3): Frame targets did not have the Heap domain, but `console.takeHeapSnapshot()` in a frame reported its snapshot on the frame target.
         if (!node.target.hasDomain("Heap")) {
             callback("Heap domain is not available for this target.");
             return;

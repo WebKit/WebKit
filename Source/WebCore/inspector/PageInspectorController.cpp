@@ -628,7 +628,7 @@ JSC::Debugger* PageInspectorController::debugger()
     return m_debugger.get();
 }
 
-bool PageInspectorController::coversGlobalObjectForSampling(JSC::JSGlobalObject& globalObject) const
+bool PageInspectorController::coversGlobalObject(JSC::JSGlobalObject& globalObject) const
 {
     Ref page = m_page;
     if (page->settings().siteIsolationEnabled()) {
@@ -640,7 +640,7 @@ bool PageInspectorController::coversGlobalObjectForSampling(JSC::JSGlobalObject&
     if (!window)
         return false;
 
-    // See FrameInspectorController::coversGlobalObjectForSampling() for why this goes through the window proxy.
+    // See FrameInspectorController::coversGlobalObject() for why this goes through the window proxy.
     RefPtr frame = protect(window->proxy().wrapped())->frame();
     return frame && frame->page() == page.ptr();
 }

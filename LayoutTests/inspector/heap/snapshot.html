@@ -20,12 +20,12 @@ function test()
         name: "TriggerSnapshot",
         description: "Calling Heap.snapshot should create a heap snapshot.",
         async test() {
-            let {timestamp, snapshotData} = await HeapAgent.snapshot();
+            let {timestamp, snapshotData} = await InspectorTest.mainFrameTarget.HeapAgent.snapshot();
 
             let workerProxy = WI.HeapSnapshotWorkerProxy.singleton();
-            let {objectId, snapshot: serializedSnapshot} = await new Promise((resolve, reject) => workerProxy.createSnapshot(WI.mainTarget.identifier, snapshotData, resolve));
+            let {objectId, snapshot: serializedSnapshot} = await new Promise((resolve, reject) => workerProxy.createSnapshot(InspectorTest.mainFrameTarget.identifier, snapshotData, resolve));
 
-            let snapshot = WI.HeapSnapshotProxy.deserialize(WI.mainTarget, objectId, serializedSnapshot);
+            let snapshot = WI.HeapSnapshotProxy.deserialize(InspectorTest.mainFrameTarget, objectId, serializedSnapshot);
             InspectorTest.expectGreaterThan(snapshot.totalSize, 1024, "Snapshot size should be greater than 1kb.");
             InspectorTest.expectGreaterThan(snapshot.totalObjectCount, 100, "Snapshot object count should be greater than 100.");
 

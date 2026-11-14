@@ -52,6 +52,10 @@ public:
     // HeapBackendDispatcherHandler
     Inspector::Protocol::ErrorStringOr<void> disable() override;
 
+    // JSC::HeapSnapshotBuilder::Client
+    String heapSnapshotBuilderOverrideClassName(const JSC::HeapSnapshotBuilder&, JSC::JSCell*, const String& currentClassName) override;
+    bool heapSnapshotBuilderIsElement(const JSC::HeapSnapshotBuilder&, JSC::JSCell*) override;
+
 protected:
     void dispatchGarbageCollectedEvent(Inspector::Protocol::Heap::GarbageCollection::Type, Seconds startTime, Seconds endTime) final;
     void dispatchGarbageCollectionEventsAfterDelay(Vector<GarbageCollectionData>&& collections);
