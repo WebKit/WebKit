@@ -2495,8 +2495,6 @@ webkit.org/b/321524 [ Debug ] imported/w3c/web-platform-tests/payment-request/pa
 
 webkit.org/b/321726 imported/w3c/web-platform-tests/largest-contentful-paint/observe-svg-data-uri-image.html [ Pass Failure ]
 
-webkit.org/b/322051 [ Release ] media/picture-in-picture/picture-in-picture-interruption.html [ Pass Failure ]
-
 # rdar://183487942 ([macOS 27] fast/inline/blocks-in-inline-ax-invalid.html is a flaky test failure)
 [ GoldenGate ] fast/inline/blocks-in-inline-ax-invalid.html [ Pass ImageOnlyFailure ]
 
