@@ -1,4 +1,5 @@
-Old content
+New content
 
-FAIL <template for> replace children with element assert_equals: id expected "stuff" but got ""
+
+PASS <template for> replace children with element
 

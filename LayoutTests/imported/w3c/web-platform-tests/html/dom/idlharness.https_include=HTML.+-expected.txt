@@ -3743,7 +3743,7 @@ PASS HTMLTemplateElement interface: existence and properties of interface protot
 PASS HTMLTemplateElement interface: existence and properties of interface prototype object's "constructor" property
 PASS HTMLTemplateElement interface: existence and properties of interface prototype object's @@unscopables property
 PASS HTMLTemplateElement interface: attribute content
-FAIL HTMLTemplateElement interface: attribute htmlFor assert_true: The prototype object must have a property "htmlFor" expected true got false
+PASS HTMLTemplateElement interface: attribute htmlFor
 PASS HTMLTemplateElement interface: attribute shadowRootMode
 PASS HTMLTemplateElement interface: attribute shadowRootDelegatesFocus
 PASS HTMLTemplateElement interface: attribute shadowRootSerializable
@@ -3753,7 +3753,7 @@ PASS HTMLTemplateElement interface: attribute shadowRootCustomElementRegistry
 PASS HTMLTemplateElement must be primary interface of document.createElement("template")
 PASS Stringification of document.createElement("template")
 PASS HTMLTemplateElement interface: document.createElement("template") must inherit property "content" with the proper type
-FAIL HTMLTemplateElement interface: document.createElement("template") must inherit property "htmlFor" with the proper type assert_inherits: property "htmlFor" not found in prototype chain
+PASS HTMLTemplateElement interface: document.createElement("template") must inherit property "htmlFor" with the proper type
 PASS HTMLTemplateElement interface: document.createElement("template") must inherit property "shadowRootMode" with the proper type
 PASS HTMLTemplateElement interface: document.createElement("template") must inherit property "shadowRootDelegatesFocus" with the proper type
 PASS HTMLTemplateElement interface: document.createElement("template") must inherit property "shadowRootSerializable" with the proper type
