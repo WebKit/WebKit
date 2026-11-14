@@ -39,6 +39,32 @@
 namespace rx
 {
 
+namespace
+{
+// The optional WebGPU features that the backend can use to implement GL extensions and ES 3.0
+// features. The backend requests the ones that the adapter supports.
+constexpr WGPUFeatureName kOptionalWgpuFeatures[] = {
+    WGPUFeatureName_CoreFeaturesAndLimits,
+    WGPUFeatureName_DepthClipControl,
+    WGPUFeatureName_Depth32FloatStencil8,
+    WGPUFeatureName_TextureCompressionBC,
+    WGPUFeatureName_TextureCompressionBCSliced3D,
+    WGPUFeatureName_TextureCompressionETC2,
+    WGPUFeatureName_TextureCompressionASTC,
+    WGPUFeatureName_TextureCompressionASTCSliced3D,
+    WGPUFeatureName_TimestampQuery,
+    WGPUFeatureName_IndirectFirstInstance,
+    WGPUFeatureName_ShaderF16,
+    WGPUFeatureName_RG11B10UfloatRenderable,
+    WGPUFeatureName_Float32Filterable,
+    WGPUFeatureName_Float32Blendable,
+    WGPUFeatureName_ClipDistances,
+    WGPUFeatureName_DualSourceBlending,
+    WGPUFeatureName_TextureFormatsTier1,
+    WGPUFeatureName_TextureComponentSwizzle,
+};
+}  // namespace
+
 #if !ANGLE_WEBGPU_HAS_WINDOW_SURFACE_TYPE
 WindowSurfaceWgpu *CreateWgpuWindowSurface(const egl::SurfaceState &surfaceState,
                                            EGLNativeWindowType window)
@@ -120,7 +146,7 @@ egl::Error DisplayWgpu::initialize(egl::Display *display)
 
     initializeFeatures();
 
-    webgpu::GenerateCaps(mLimitsWgpu, &mGLCaps, &mGLTextureCaps, &mGLExtensions, &mGLLimitations,
+    webgpu::GenerateCaps(*this, &mGLCaps, &mGLTextureCaps, &mGLExtensions, &mGLLimitations,
                          &mEGLCaps, &mEGLExtensions, &mMaxSupportedClientVersion);
 
     return egl::NoError();
@@ -132,6 +158,13 @@ void DisplayWgpu::terminate()
     mInstance = nullptr;
     mDevice   = nullptr;
     mQueue    = nullptr;
+}
+
+bool DisplayWgpu::hasWgpuFeature(WGPUFeatureName feature) const
+{
+    // Query the device rather than remember what was requested, so that this works for a device
+    // that the embedder provides too.
+    return mProcTable.deviceHasFeature(mDevice.get(), feature);
 }
 
 egl::Error ThreadSafeDisplayWgpu::makeCurrent(egl::Surface *drawSurface,
@@ -487,7 +520,7 @@ egl::Error DisplayWgpu::createWgpuDevice()
         mInstance.get(), &requestAdapterOptions, requestAdapterCallback);
 
     WGPUWaitStatus status = mProcTable.instanceWaitAny(mInstance.get(), 1, &futureWaitInfo, -1);
-    if (webgpu::IsWgpuError(status))
+    if (webgpu::IsWgpuError(status) || adapterResult.status != WGPURequestAdapterStatus_Success)
     {
         std::ostringstream err;
         err << "Failed to get WebGPU adapter: " << adapterResult.message;
@@ -496,11 +529,29 @@ egl::Error DisplayWgpu::createWgpuDevice()
 
     mAdapter = adapterResult.adapter;
 
-    std::vector<WGPUFeatureName> requiredFeatures;  // empty for now
+    std::vector<WGPUFeatureName> requiredFeatures;
+    for (WGPUFeatureName feature : kOptionalWgpuFeatures)
+    {
+        if (mProcTable.adapterHasFeature(mAdapter.get(), feature))
+        {
+            requiredFeatures.push_back(feature);
+        }
+    }
+
+    // Request everything the adapter supports instead of the WebGPU default limits, which are
+    // lower than what the hardware supports (e.g. 8192 for maxTextureDimension2D, 256 for
+    // maxTextureArrayLayers and 16 for maxInterStageShaderVariables). The GL caps are derived from
+    // the device's limits.
+    WGPULimits requiredLimits = WGPU_LIMITS_INIT;
+    if (mProcTable.adapterGetLimits(mAdapter.get(), &requiredLimits) != WGPUStatus_Success)
+    {
+        return egl::Error(EGL_BAD_ALLOC, "Failed to get WebGPU adapter limits");
+    }
 
     WGPUDeviceDescriptor deviceDesc = WGPU_DEVICE_DESCRIPTOR_INIT;
     deviceDesc.requiredFeatureCount = requiredFeatures.size();
     deviceDesc.requiredFeatures     = requiredFeatures.data();
+    deviceDesc.requiredLimits       = &requiredLimits;
     deviceDesc.uncapturedErrorCallbackInfo.callback =
         [](WGPUDevice const *device, WGPUErrorType type, struct WGPUStringView message,
            void *userdata1, void *userdata2) {
@@ -537,7 +588,7 @@ egl::Error DisplayWgpu::createWgpuDevice()
         mProcTable.adapterRequestDevice(mAdapter.get(), &deviceDesc, requestDeviceCallback);
 
     status = mProcTable.instanceWaitAny(mInstance.get(), 1, &futureWaitInfo, -1);
-    if (webgpu::IsWgpuError(status))
+    if (webgpu::IsWgpuError(status) || deviceResult.status != WGPURequestDeviceStatus_Success)
     {
         std::ostringstream err;
         err << "Failed to get WebGPU device: " << deviceResult.message;

@@ -232,7 +232,90 @@ RenderPassEncoderHandle CreateRenderPass(const DawnProcTable *wgpu,
         wgpu, wgpu->commandEncoderBeginRenderPass(commandEncoder.get(), &renderPassDesc));
 }
 
-void GenerateCaps(const WGPULimits &limitsWgpu,
+namespace
+{
+// Returns the optional WebGPU feature that textures of a WebGPU format require, or nothing if every
+// WebGPU device supports the format.
+std::optional<WGPUFeatureName> GetRequiredFeatureForTextureFormat(WGPUTextureFormat format)
+{
+    switch (format)
+    {
+        case WGPUTextureFormat_R16Unorm:
+        case WGPUTextureFormat_R16Snorm:
+        case WGPUTextureFormat_RG16Unorm:
+        case WGPUTextureFormat_RG16Snorm:
+        case WGPUTextureFormat_RGBA16Unorm:
+        case WGPUTextureFormat_RGBA16Snorm:
+            return WGPUFeatureName_TextureFormatsTier1;
+        case WGPUTextureFormat_BC1RGBAUnorm:
+        case WGPUTextureFormat_BC1RGBAUnormSrgb:
+        case WGPUTextureFormat_BC2RGBAUnorm:
+        case WGPUTextureFormat_BC2RGBAUnormSrgb:
+        case WGPUTextureFormat_BC3RGBAUnorm:
+        case WGPUTextureFormat_BC3RGBAUnormSrgb:
+        case WGPUTextureFormat_BC4RUnorm:
+        case WGPUTextureFormat_BC4RSnorm:
+        case WGPUTextureFormat_BC5RGUnorm:
+        case WGPUTextureFormat_BC5RGSnorm:
+        case WGPUTextureFormat_BC6HRGBUfloat:
+        case WGPUTextureFormat_BC6HRGBFloat:
+        case WGPUTextureFormat_BC7RGBAUnorm:
+        case WGPUTextureFormat_BC7RGBAUnormSrgb:
+            return WGPUFeatureName_TextureCompressionBC;
+        case WGPUTextureFormat_ETC2RGB8Unorm:
+        case WGPUTextureFormat_ETC2RGB8UnormSrgb:
+        case WGPUTextureFormat_ETC2RGB8A1Unorm:
+        case WGPUTextureFormat_ETC2RGB8A1UnormSrgb:
+        case WGPUTextureFormat_ETC2RGBA8Unorm:
+        case WGPUTextureFormat_ETC2RGBA8UnormSrgb:
+        case WGPUTextureFormat_EACR11Unorm:
+        case WGPUTextureFormat_EACR11Snorm:
+        case WGPUTextureFormat_EACRG11Unorm:
+        case WGPUTextureFormat_EACRG11Snorm:
+            return WGPUFeatureName_TextureCompressionETC2;
+        case WGPUTextureFormat_ASTC4x4Unorm:
+        case WGPUTextureFormat_ASTC4x4UnormSrgb:
+        case WGPUTextureFormat_ASTC5x4Unorm:
+        case WGPUTextureFormat_ASTC5x4UnormSrgb:
+        case WGPUTextureFormat_ASTC5x5Unorm:
+        case WGPUTextureFormat_ASTC5x5UnormSrgb:
+        case WGPUTextureFormat_ASTC6x5Unorm:
+        case WGPUTextureFormat_ASTC6x5UnormSrgb:
+        case WGPUTextureFormat_ASTC6x6Unorm:
+        case WGPUTextureFormat_ASTC6x6UnormSrgb:
+        case WGPUTextureFormat_ASTC8x5Unorm:
+        case WGPUTextureFormat_ASTC8x5UnormSrgb:
+        case WGPUTextureFormat_ASTC8x6Unorm:
+        case WGPUTextureFormat_ASTC8x6UnormSrgb:
+        case WGPUTextureFormat_ASTC8x8Unorm:
+        case WGPUTextureFormat_ASTC8x8UnormSrgb:
+        case WGPUTextureFormat_ASTC10x5Unorm:
+        case WGPUTextureFormat_ASTC10x5UnormSrgb:
+        case WGPUTextureFormat_ASTC10x6Unorm:
+        case WGPUTextureFormat_ASTC10x6UnormSrgb:
+        case WGPUTextureFormat_ASTC10x8Unorm:
+        case WGPUTextureFormat_ASTC10x8UnormSrgb:
+        case WGPUTextureFormat_ASTC10x10Unorm:
+        case WGPUTextureFormat_ASTC10x10UnormSrgb:
+        case WGPUTextureFormat_ASTC12x10Unorm:
+        case WGPUTextureFormat_ASTC12x10UnormSrgb:
+        case WGPUTextureFormat_ASTC12x12Unorm:
+        case WGPUTextureFormat_ASTC12x12UnormSrgb:
+            return WGPUFeatureName_TextureCompressionASTC;
+        default:
+            return std::nullopt;
+    }
+}
+
+bool IsTextureFormatSupported(const DisplayWgpu &display, WGPUTextureFormat format)
+{
+    const std::optional<WGPUFeatureName> requiredFeature =
+        GetRequiredFeatureForTextureFormat(format);
+    return !requiredFeature || display.hasWgpuFeature(*requiredFeature);
+}
+}  // namespace
+
+void GenerateCaps(const DisplayWgpu &display,
                   gl::Caps *glCaps,
                   gl::TextureCapsMap *glTextureCapsMap,
                   gl::Extensions *glExtensions,
@@ -241,6 +324,8 @@ void GenerateCaps(const WGPULimits &limitsWgpu,
                   egl::DisplayExtensions *eglExtensions,
                   gl::Version *maxSupportedESVersion)
 {
+    const WGPULimits &limitsWgpu = display.getLimitsWgpu();
+
     // WebGPU does not support separate front/back stencil masks.
     glLimitations->noSeparateStencilRefsAndMasks = true;
 
@@ -270,6 +355,21 @@ void GenerateCaps(const WGPULimits &limitsWgpu,
 
     // Explicit context entry points are supported.
     glExtensions->explicitContextANGLE = true;
+
+    // Extensions that need optional WebGPU features of the device.
+    // 32-bit float textures are filterable with float32-filterable.
+    glExtensions->textureFloatLinearOES = display.hasWgpuFeature(WGPUFeatureName_Float32Filterable);
+    // The 16-bit and 32-bit float formats are renderable in core WebGPU, R11F_G11F_B10F with
+    // rg11b10ufloat-renderable.
+    glExtensions->colorBufferFloatEXT =
+        display.hasWgpuFeature(WGPUFeatureName_RG11B10UfloatRenderable);
+    // 32-bit float color buffers are blendable with float32-blendable.
+    glExtensions->floatBlendEXT = glExtensions->colorBufferFloatEXT &&
+                                  display.hasWgpuFeature(WGPUFeatureName_Float32Blendable);
+    // The 16-bit normalized formats need texture-formats-tier1, which also makes the signed
+    // normalized formats renderable.
+    glExtensions->textureNorm16EXT = display.hasWgpuFeature(WGPUFeatureName_TextureFormatsTier1);
+    glExtensions->renderSnormEXT   = display.hasWgpuFeature(WGPUFeatureName_TextureFormatsTier1);
 
     // OpenGL ES caps
     glCaps->maxElementIndex       = std::numeric_limits<GLuint>::max() - 1;
@@ -422,6 +522,21 @@ void GenerateCaps(const WGPULimits &limitsWgpu,
 
     // OpenGL ES texture caps
     InitMinimumTextureCapsMap(*maxSupportedESVersion, *glExtensions, glTextureCapsMap);
+
+    // Remove the formats whose WebGPU format needs an optional feature that the device doesn't
+    // have, such as the ETC2 and EAC formats of ES 3.0 without texture-compression-etc2. Check the
+    // WebGPU format of the GL format as well as the one that implements it, because the latter is
+    // missing for the formats that would need a fallback.
+    for (GLenum internalFormat : gl::GetAllSizedInternalFormats())
+    {
+        const webgpu::Format &format = display.getFormat(internalFormat);
+        if (!IsTextureFormatSupported(
+                display, GetWgpuTextureFormatFromFormatID(format.getIntendedFormatID())) ||
+            !IsTextureFormatSupported(display, format.getActualWgpuTextureFormat()))
+        {
+            glTextureCapsMap->insert(internalFormat, gl::TextureCaps());
+        }
+    }
 
     // EGL caps
     eglCaps->textureNPOT = true;

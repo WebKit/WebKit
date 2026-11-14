@@ -67,7 +67,7 @@
       "EXTERNAL5": "Undefined",
       "EXTERNAL6": "Undefined",
       "EXTERNAL7": "Undefined",
-      "R10G10B10A2_SINT": "RGB10A2Uint",
+      "R10G10B10A2_UINT": "RGB10A2Uint",
       "R10G10B10A2_UNORM": "RGB10A2Unorm",
       "R11G11B10_FLOAT": "RG11B10Ufloat",
       "R16_FLOAT": "R16Float",
@@ -403,6 +403,7 @@
         "buffer": "R32G32B32A32_FLOAT"
       },
       "R16G16B16_UNORM": {
+        "image": "R16G16B16A16_UNORM",
         "buffer": "R16G16B16A16_UNORM"
       },
       "R16G16B16_USCALED": {
@@ -459,6 +460,9 @@
       "R32G32B32_FIXED": {
         "buffer": "R32G32B32_FLOAT"
         },
+      "R32G32B32_FLOAT": {
+        "image": "R32G32B32A32_FLOAT"
+      },
       "R32G32B32_SINT": {
         "image": "R32G32B32A32_SINT"
       },
@@ -469,6 +473,7 @@
         "buffer": "R32G32B32_FLOAT"
         },
       "R32G32B32_UINT": {
+        "image": "R32G32B32A32_UINT",
         "buffer": "R32G32B32A32_UINT"
         },
       "R32G32B32_UNORM": {
