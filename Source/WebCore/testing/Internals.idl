@@ -1509,6 +1509,7 @@ enum LayerType {
     boolean validateAV1PerLevelConstraints(DOMString codecParameters, VideoConfiguration configuration);
 
     undefined setCookie(CookieData cookieData);
+    undefined deleteCookie(DOMString cookieName);
     sequence<CookieData> getCookies();
     sequence<WebDriverCookieData> webDriverGetCookies(Document document);
 

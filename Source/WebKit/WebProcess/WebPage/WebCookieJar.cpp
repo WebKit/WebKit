@@ -312,9 +312,9 @@ bool WebCookieJar::getRawCookies(WebCore::Document& document, const URL& url, Ve
     return true;
 }
 
-void WebCookieJar::setRawCookie(const WebCore::Document& document, const Cookie& cookie, ShouldPartitionCookie shouldPartitionCookie)
+void WebCookieJar::setRawCookie(const WebCore::Document& document, const URL& url, const Cookie& cookie, ShouldPartitionCookie shouldPartitionCookie)
 {
-    protect(WebProcess::singleton().ensureNetworkProcessConnection().connection())->send(Messages::NetworkConnectionToWebProcess::SetRawCookie(document.firstPartyForCookies(), document.cookieURL(), cookie, shouldPartitionCookie), 0);
+    protect(WebProcess::singleton().ensureNetworkProcessConnection().connection())->send(Messages::NetworkConnectionToWebProcess::SetRawCookie(document.firstPartyForCookies(), url, cookie, shouldPartitionCookie), 0);
 }
 
 void WebCookieJar::deleteCookie(const WebCore::Document& document, const URL& url, const String& cookieName, CompletionHandler<void()>&& completionHandler)
