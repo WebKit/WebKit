@@ -153,6 +153,8 @@ public:
     static int uncheckedPreviousOffsetForBackwardDeletion(const Node*, unsigned current);
     static int uncheckedNextOffset(const Node*, unsigned current);
 
+    NODELETE bool hasOffsetPastEndOfContainer() const;
+
     // These can be either inside or just before/after the node, depending on
     // if the node is ignored by editing or not.
     // FIXME: These should go away. They only make sense for legacy positions.

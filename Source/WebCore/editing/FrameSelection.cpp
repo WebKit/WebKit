@@ -805,7 +805,7 @@ static void updatePositionAfterAdoptingTextReplacement(Position& position, Chara
     if (positionOffset > offset + oldLength)
         position.moveToOffset(positionOffset - oldLength + newLength);
 
-    ASSERT(static_cast<unsigned>(position.offsetInContainerNode()) <= node.length());
+    ASSERT(!position.hasOffsetPastEndOfContainer());
 }
 
 void FrameSelection::textWasReplaced(CharacterData& node, unsigned offset, unsigned oldLength, unsigned newLength)

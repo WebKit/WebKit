@@ -191,6 +191,11 @@ Node* Position::containerNode() const
     return nullptr;
 }
 
+bool Position::hasOffsetPastEndOfContainer() const
+{
+    return m_anchorNode && anchorType() == PositionIsOffsetInAnchor && m_offset > m_anchorNode->length();
+}
+
 Text* Position::containerText() const
 {
     switch (anchorType()) {

@@ -417,7 +417,9 @@ void AlternativeTextController::respondToChangedSelection(const VisibleSelection
         return;
 
     VisiblePosition selectionPosition = currentSelection.start();
-    VisiblePosition oldSelectionPosition = oldSelection.start();
+    auto oldStart = oldSelection.start();
+    // If oldSelection's offset is no longer valid, just drop it. Canonicalizing it can be slow and results in a similarly meaningless position.
+    VisiblePosition oldSelectionPosition = oldStart.isOrphan() || oldStart.hasOffsetPastEndOfContainer() ? VisiblePosition { } : VisiblePosition { oldStart };
     
     // Creating a Visible position triggers a layout and there is no
     // guarantee that the selection is still valid.
