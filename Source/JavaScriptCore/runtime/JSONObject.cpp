@@ -39,7 +39,6 @@
 #include "ObjectConstructorInlines.h"
 #include "PropertyNameArray.h"
 #include "VMInlines.h"
-#include <charconv>
 #include <wtf/MathExtras.h>
 #include <wtf/UnalignedAccess.h>
 #include <wtf/dtoa.h>
@@ -1192,19 +1191,7 @@ ALWAYS_INLINE void FastStringifier<CharType, bufferMode>::appendNewLineAndIndent
 template<typename CharType, BufferMode bufferMode>
 ALWAYS_INLINE void FastStringifier<CharType, bufferMode>::appendInt32(int32_t number)
 {
-    if constexpr (sizeof(CharType) == 1) {
-        char* cursor = std::bit_cast<char*>(buffer()) + m_length;
-        auto result = std::to_chars(cursor, cursor + maxInt32StringLength, number);
-        ASSERT(result.ec != std::errc::value_too_large);
-        m_length += result.ptr - cursor;
-    } else {
-        std::array<char, maxInt32StringLength> temporary;
-        auto result = std::to_chars(temporary.data(), temporary.data() + maxInt32StringLength, number);
-        ASSERT(result.ec != std::errc::value_too_large);
-        unsigned lengthToCopy = result.ptr - temporary.data();
-        WTF::copyElements(spanReinterpretCast<uint16_t>(bufferSpan().subspan(m_length)), spanReinterpretCast<const uint8_t>(std::span { temporary }).first(lengthToCopy));
-        m_length += lengthToCopy;
-    }
+    m_length += writeIntegerToBuffer(number, std::span<CharType> { buffer() + m_length, maxInt32StringLength });
 }
 
 static ALWAYS_INLINE bool eightByteRangeNeedsJSONEscape(uint64_t word)
@@ -1501,16 +1488,7 @@ NEVER_INLINE void FastStringifier<CharType, bufferMode>::appendPreparedObject(JS
         if (value.isInt32()) {
             if (!appendPreparedObjectKey<hasGap>(property, wroteProperty, newLineAndIndent, maxInt32StringLength, out, length, capacity)) [[unlikely]]
                 return;
-            if constexpr (sizeof(CharType) == 1) {
-                char* cursor = std::bit_cast<char*>(out) + length;
-                auto result = std::to_chars(cursor, cursor + maxInt32StringLength, value.asInt32());
-                ASSERT(result.ec != std::errc::value_too_large);
-                length += result.ptr - cursor;
-            } else {
-                m_length = length;
-                appendInt32(value.asInt32());
-                length = m_length;
-            }
+            length += writeIntegerToBuffer(value.asInt32(), std::span<CharType> { out + length, maxInt32StringLength });
             continue;
         }
 
