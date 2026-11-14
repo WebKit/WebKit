@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<!-- The selection gap of the body after its first line is clipped out where the absolutely positioned box of the document element is, in a flipped block direction. -->
+<html style="position: relative; writing-mode: vertical-rl">
+<link rel="stylesheet" href="../../imported/w3c/web-platform-tests/fonts/ahem.css">
+<style>
+body { font: 20px/1 Ahem; height: 200px; margin: 0; color: transparent; }
+body::selection, body *::selection { background-color: green; color: transparent; }
+.box { position: absolute; right: 0; top: 120px; width: 20px; height: 50px; }
+</style>
+<body>XX XX<div class="box"></div><br>XX
+<script>getSelection().selectAllChildren(document.body);</script>
+</body>
+</html>

@@ -1480,13 +1480,17 @@ void RenderBlock::paintSelection(PaintInfo& paintInfo, const LayoutPoint& paintO
 #endif
 }
 
-static void clipOutOutOfFlowBoxes(const PaintInfo* paintInfo, const LayoutPoint& offset, TrackedRendererListHashSet* outOfFlowBoxes)
+static void clipOutOutOfFlowBoxes(const PaintInfo& paintInfo, const RenderBlock& rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& containingBlockOffsetFromRootBlock, TrackedRendererListHashSet* outOfFlowBoxes)
 {
     if (!outOfFlowBoxes)
         return;
-    
-    for (auto& renderer : *outOfFlowBoxes)
-        paintInfo->context().clipOut(IntRect(offset.x() + renderer.x(), offset.y() + renderer.y(), renderer.borderBoxWidth(), renderer.borderBoxHeight()));
+
+    for (auto& outOfFlowBox : *outOfFlowBoxes) {
+        LayoutRect borderBox { toLayoutPoint(containingBlockOffsetFromRootBlock + outOfFlowBox.locationOffset()), outOfFlowBox.borderBoxSize() };
+        rootBlock.blockStartRelativeToPhysical(borderBox);
+        borderBox.moveBy(rootBlockPhysicalPosition);
+        paintInfo.context().clipOut(IntRect(borderBox.x(), borderBox.y(), borderBox.width(), borderBox.height()));
+    }
 }
 
 LayoutUnit blockDirectionOffset(RenderBlock& rootBlock, const LayoutSize& offsetFromRootBlock)
@@ -1518,13 +1522,15 @@ GapRects RenderBlock::selectionGaps(RenderBlock& rootBlock, const LayoutPoint& r
     // Clip out floating and positioned objects when painting selection gaps.
     if (paintInfo) {
         // Note that we don't clip out overflow for positioned objects.  We just stick to the border box.
-        LayoutRect physicalBlockRect(offsetFromRootBlock.width(), offsetFromRootBlock.height(), borderBoxWidth(), borderBoxHeight());
-        rootBlock.blockStartRelativeToPhysical(physicalBlockRect);
-        physicalBlockRect.moveBy(rootBlockPhysicalPosition);
-        clipOutOutOfFlowBoxes(paintInfo, physicalBlockRect.location(), outOfFlowBoxes());
+        clipOutOutOfFlowBoxes(*paintInfo, rootBlock, rootBlockPhysicalPosition, offsetFromRootBlock, outOfFlowBoxes());
         if (isBody() || isDocumentElementRenderer()) { // The <body> must make sure to examine its containingBlock's positioned objects.
-            for (auto* ancestor = containingBlock(); ancestor && !is<RenderView>(*ancestor); ancestor = ancestor->containingBlock())
-                clipOutOutOfFlowBoxes(paintInfo, LayoutPoint(ancestor->x(), ancestor->y()), ancestor->outOfFlowBoxes()); // FIXME: Not right for flipped writing modes.
+            auto containingBlockOffsetFromRootBlock = offsetFromRootBlock;
+            CheckedPtr<const RenderBox> box = this;
+            for (CheckedPtr containingBlock = this->containingBlock(); containingBlock && !is<RenderView>(*containingBlock); containingBlock = containingBlock->containingBlock()) {
+                containingBlockOffsetFromRootBlock -= box->locationOffset();
+                clipOutOutOfFlowBoxes(*paintInfo, rootBlock, rootBlockPhysicalPosition, containingBlockOffsetFromRootBlock, containingBlock->outOfFlowBoxes());
+                box = containingBlock.get();
+            }
         }
         clipOutFloatingBoxes(rootBlock, paintInfo, rootBlockPhysicalPosition, offsetFromRootBlock);
     }
