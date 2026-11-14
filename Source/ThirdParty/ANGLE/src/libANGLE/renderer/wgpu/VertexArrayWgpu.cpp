@@ -240,7 +240,7 @@ angle::Result VertexArrayWgpu::syncClientArrays(
             elementArrayBufferWgpu->getBuffer().getMapReadPointer(sourceOffset, mapReadSize);
     }
     uint32_t adjustedCount = calculateAdjustedIndexCount(
-        mode, primitiveRestartEnabled, destDrawElementsTypeOrInvalid, count, srcIndexData);
+        mode, primitiveRestartEnabled, sourceDrawElementsTypeOrInvalid, count, srcIndexData);
 
     // If there aren't any client attributes to sync but the adjusted count is 0, that means
     // there no indices outside the primitive restart index, so this is a no-op.
@@ -543,7 +543,7 @@ IndexDataNeedsStreaming VertexArrayWgpu::determineIndexDataNeedsStreaming(
 uint32_t VertexArrayWgpu::calculateAdjustedIndexCount(
     gl::PrimitiveMode mode,
     bool primitiveRestartEnabled,
-    gl::DrawElementsType destDrawElementsTypeOrInvalid,
+    gl::DrawElementsType sourceDrawElementsTypeOrInvalid,
     GLsizei count,
     const uint8_t *srcIndexData)
 {
@@ -551,7 +551,7 @@ uint32_t VertexArrayWgpu::calculateAdjustedIndexCount(
     {
         if (primitiveRestartEnabled)
         {
-            return GetLineLoopWithRestartIndexCount(destDrawElementsTypeOrInvalid, count,
+            return GetLineLoopWithRestartIndexCount(sourceDrawElementsTypeOrInvalid, count,
                                                     srcIndexData);
         }
         return count + 1;
@@ -677,7 +677,7 @@ angle::Result VertexArrayWgpu::streamIndicesLineLoop(
     // primitive restarts is count + 1.
     if (primitiveRestartEnabled)
     {
-        rx::StreamEmulatedLineLoopIndices(destDrawElementsTypeOrInvalid, count, srcIndexData,
+        rx::StreamEmulatedLineLoopIndices(sourceDrawElementsTypeOrInvalid, count, srcIndexData,
                                           stagingData,
                                           /* shouldConvertUint8= */ true);
         if (elementArrayBuffer)
