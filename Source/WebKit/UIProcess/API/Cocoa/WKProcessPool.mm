@@ -479,6 +479,15 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return requestWebProcessTermination(protect(*_processPool), pid, terminationReason);
 }
 
+- (BOOL)_detectAndHandleTerminationForTesting:(pid_t)pid
+{
+    for (Ref process : borrow(_processPool->processes()).get()) {
+        if (process->processID() == pid)
+            return process->detectAndHandleTermination();
+    }
+    return NO;
+}
+
 - (BOOL)_isWebProcessSuspended:(pid_t)pid
 {
     for (Ref process : borrow(_processPool->processes()).get()) {
