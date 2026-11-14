@@ -91,6 +91,7 @@ StylePropertyShorthand allShorthand()
         CSSPropertyID::TestMatchOneWithReferenceWithSettingsFlag,
         CSSPropertyID::TestMatchOneWithSettingsFlag,
         CSSPropertyID::TestNumericValueRange,
+        CSSPropertyID::TestPrefixedValues,
         CSSPropertyID::TestProperty,
         CSSPropertyID::TestRenderStyleGetterNodeleteFalse,
         CSSPropertyID::TestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin,
@@ -118,6 +119,7 @@ StylePropertyShorthand allShorthand()
         CSSPropertyID::TestUsingSharedRule,
         CSSPropertyID::TestUsingSharedRuleExported,
         CSSPropertyID::TestUsingSharedRuleWithOverrideFunction,
+        CSSPropertyID::WebkitTestPrefixedValues,
         CSSPropertyID::TestSinkPriority,
         CSSPropertyID::TestLogicalPropertyGroupPhysicalHorizontal,
         CSSPropertyID::TestLogicalPropertyGroupPhysicalVertical,
@@ -182,6 +184,7 @@ StylePropertyShorthandVector matchingShorthandsForLonghand(CSSPropertyID id)
     case CSSPropertyID::TestLogicalPropertyGroupLogicalBlock:
     case CSSPropertyID::TestLogicalPropertyGroupLogicalInline:
         return StylePropertyShorthandVector{allShorthand(), testShorthandTwoShorthand()};
+    case CSSPropertyID::WebkitTestPrefixedValues:
     case CSSPropertyID::BackgroundCoordinatedValueListPropertyTestDiscrete:
     case CSSPropertyID::BackgroundCoordinatedValueListPropertyTestTwo:
     case CSSPropertyID::TestAnimationWrapper:
@@ -261,6 +264,7 @@ StylePropertyShorthandVector matchingShorthandsForLonghand(CSSPropertyID id)
     case CSSPropertyID::TestMatchOneWithSettingsFlag:
     case CSSPropertyID::TestMediumPriority:
     case CSSPropertyID::TestNumericValueRange:
+    case CSSPropertyID::TestPrefixedValues:
     case CSSPropertyID::TestProperty:
     case CSSPropertyID::TestRenderStyleGetterNodeleteFalse:
     case CSSPropertyID::TestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin:

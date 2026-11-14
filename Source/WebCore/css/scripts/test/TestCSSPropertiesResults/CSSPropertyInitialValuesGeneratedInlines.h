@@ -61,6 +61,9 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
     case CSSPropertyID::TestUrlWithModifiers:
     case CSSPropertyID::TestUrlWithNoModifiers:
         return CSSValueID::None;
+    case CSSPropertyID::TestPrefixedValues:
+    case CSSPropertyID::WebkitTestPrefixedValues:
+        return CSSValueID::Auto;
     default:
         RELEASE_ASSERT_NOT_REACHED();
     }

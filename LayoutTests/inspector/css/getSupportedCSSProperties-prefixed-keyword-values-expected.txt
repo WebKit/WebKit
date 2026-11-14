@@ -1,0 +1,33 @@
+"text-orientation" has keyword values:
+ - "sideways"
+ - "upright"
+ - "mixed"
+
+"-webkit-text-orientation" has keyword values:
+ - "sideways"
+ - "sideways-right"
+ - "mixed"
+ - "upright"
+
+"ruby-position" has keyword values:
+ - "inter-character"
+ - "over"
+ - "under"
+
+"-webkit-ruby-position" has keyword values:
+ - "after"
+ - "before"
+
+"user-select" has keyword values:
+ - "none"
+ - "all"
+ - "auto"
+ - "text"
+
+"-webkit-user-select" has keyword values:
+ - "none"
+ - "all"
+ - "auto"
+ - "text"
+
+
