@@ -94,6 +94,15 @@ struct MockWebAuthenticationConfiguration {
         bool expectCancel { false };
         bool supportClientPin { false };
         bool supportInternalUV { false };
+        bool supportHmacSecret { false };
+        bool supportHmacSecretMc { false };
+        bool expectKeyAgreement { false };
+        bool keyAgreementError { false };
+        bool malformedKeyAgreement { false };
+        bool requireHmacSecretExtension { false };
+        bool rejectHmacSecretExtension { false };
+        bool rejectPinUvAuth { false };
+        String hmacSecretOutputBase64;
         Vector<uint8_t> pinProtocols;
         int64_t maxCredentialCountInList { 1 };
         int64_t maxCredentialIdLength { 64 };
