@@ -99,11 +99,11 @@ FloatPoint BasicScrollingMomentumCalculator::linearlyInterpolatedOffsetAtProgres
 FloatPoint BasicScrollingMomentumCalculator::cubicallyInterpolatedOffsetAtProgress(float progress) const
 {
     ASSERT(!m_forceLinearAnimationCurve);
-    FloatPoint interpolatedPoint;
-    for (int i = 0; i < 4; ++i)
-        interpolatedPoint += std::pow(progress, i) * m_snapAnimationCurveCoefficients[i];
+    FloatSize interpolated = m_snapAnimationCurveCoefficients[3];
+    for (int i = 2; i >= 0; --i)
+        interpolated = interpolated * progress + m_snapAnimationCurveCoefficients[i];
 
-    return interpolatedPoint;
+    return toFloatPoint(interpolated);
 }
 
 FloatPoint BasicScrollingMomentumCalculator::scrollOffsetAfterElapsedTime(Seconds elapsedTime)
