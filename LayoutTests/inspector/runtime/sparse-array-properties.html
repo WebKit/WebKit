@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+window.sparseHuge = [];
+sparseHuge[0] = "first";
+sparseHuge[2 ** 30] = "middle";
+sparseHuge[2 ** 31 - 2] = "last";
+
+window.emptyHuge = new Array(2 ** 31 - 1);
+
+window.sparseMixed = [0, 1, 2, 3, 4];
+sparseMixed[200000] = "far";
+sparseMixed[300000] = "farther";
+
+// The injected script lists the present indexes after 100000 holes.
+window.holesAtLimit = [0];
+holesAtLimit[100001] = "after";
+window.holesOverLimit = [0];
+holesOverLimit[100002] = "after";
+
+window.sparseWithNamedAndAccessor = [0];
+sparseWithNamedAndAccessor[200000] = "far";
+sparseWithNamedAndAccessor.named = "named";
+Object.defineProperty(sparseWithNamedAndAccessor, 300000, {get() { return "getter"; }, enumerable: true, configurable: true});
+
+window.dense = Array.from({length: 20}, (_, i) => i * 10);
+
+function test()
+{
+    let suite = ProtocolTest.createAsyncSuite("Runtime.SparseArrayProperties");
+
+    async function evaluate(expression) {
+        let {result} = await InspectorProtocol.awaitCommand({method: "Runtime.evaluate", params: {expression, objectGroup: "test", generatePreview: true}});
+        return result;
+    }
+
+    function logPreview(remoteObject) {
+        let items = remoteObject.preview.properties.map((property) => `${property.name}: ${property.value}`);
+        ProtocolTest.log(`Preview: [${items.join(", ")}] overflow=${remoteObject.preview.overflow}`);
+    }
+
+    async function logDisplayableProperties(remoteObject, {fetchStart, fetchCount} = {}) {
+        let {properties} = await InspectorProtocol.awaitCommand({method: "Runtime.getDisplayableProperties", params: {objectId: remoteObject.objectId, fetchStart, fetchCount}});
+        let names = properties.map((property) => property.name);
+        ProtocolTest.log(`Displayable properties (fetchStart=${fetchStart}, fetchCount=${fetchCount}): [${names.join(", ")}]`);
+    }
+
+    async function logIndexProperties(remoteObject) {
+        let {properties} = await InspectorProtocol.awaitCommand({method: "Runtime.getProperties", params: {objectId: remoteObject.objectId, ownProperties: false}});
+        let names = properties.map((property) => property.name).filter((name) => String(name >>> 0) === name);
+        ProtocolTest.log(`Index properties: [${names.join(", ")}]`);
+    }
+
+    suite.addTestCase({
+        name: "Runtime.SparseArrayProperties.Huge",
+        description: "A huge sparse array should list only its present items.",
+        async test() {
+            let remoteObject = await evaluate("sparseHuge");
+            ProtocolTest.expectEqual(remoteObject.size, 2 ** 31 - 1, "Size should be the length of the array.");
+            logPreview(remoteObject);
+            await logDisplayableProperties(remoteObject);
+            await logIndexProperties(remoteObject);
+        }
+    });
+
+    suite.addTestCase({
+        name: "Runtime.SparseArrayProperties.HugeEmpty",
+        description: "A huge array without items should list no items.",
+        async test() {
+            let remoteObject = await evaluate("emptyHuge");
+            logPreview(remoteObject);
+            await logDisplayableProperties(remoteObject);
+        }
+    });
+
+    suite.addTestCase({
+        name: "Runtime.SparseArrayProperties.DenseStartSparseEnd",
+        description: "An array with dense items followed by a long gap should list each item once, in order.",
+        async test() {
+            let remoteObject = await evaluate("sparseMixed");
+            logPreview(remoteObject);
+            await logDisplayableProperties(remoteObject, {fetchCount: 6});
+            await logDisplayableProperties(remoteObject, {fetchStart: 5, fetchCount: 2});
+        }
+    });
+
+    suite.addTestCase({
+        name: "Runtime.SparseArrayProperties.HoleLimit",
+        description: "Items just before and just after the switch to listing present indexes should be listed.",
+        async test() {
+            for (let expression of ["holesAtLimit", "holesOverLimit"]) {
+                ProtocolTest.log(expression);
+                let remoteObject = await evaluate(expression);
+                await logDisplayableProperties(remoteObject);
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "Runtime.SparseArrayProperties.NamedAndAccessor",
+        description: "After the switch, only indexes should be listed, and an accessor item should stay an accessor.",
+        async test() {
+            let remoteObject = await evaluate("sparseWithNamedAndAccessor");
+            let items = remoteObject.preview.properties.map((property) => `${property.name}: ${property.type === "accessor" ? "<accessor>" : property.value}`);
+            ProtocolTest.log(`Preview: [${items.join(", ")}]`);
+            await logDisplayableProperties(remoteObject);
+        }
+    });
+
+    suite.addTestCase({
+        name: "Runtime.SparseArrayProperties.Dense",
+        description: "A dense array should still be previewed and fetched in order.",
+        async test() {
+            let remoteObject = await evaluate("dense");
+            logPreview(remoteObject);
+            await logDisplayableProperties(remoteObject, {fetchCount: 5});
+            await logDisplayableProperties(remoteObject, {fetchStart: 18, fetchCount: 5});
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that previews and properties of large sparse arrays do not visit every index.</p>
+</body>
+</html>

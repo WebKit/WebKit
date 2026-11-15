@@ -839,6 +839,9 @@ let InjectedScript = class InjectedScript extends PrototypelessObjectBase
             return processDescriptor(descriptor, isOwnProperty, possibleNativeBindingGetter);
         }
 
+        // Checking each index of a large sparse array is slow. After this many holes, list the indexes that are present.
+        const maximumHoleCount = 100000;
+
         let isArrayLike = false;
         try {
             isArrayLike = subtype === "array" && @isFinite(object.length) && object.length > 0;
@@ -885,14 +888,35 @@ let InjectedScript = class InjectedScript extends PrototypelessObjectBase
 
             // FIXME: <https://webkit.org/b/201861> Web Inspector: show autocomplete entries for non-index properties on arrays
             if (isArrayLike && isOwnProperty) {
-                for (let i = 0; i < o.length; ++i) {
-                    if (!(i in o))
+                let length = o.length;
+                let holeCount = 0;
+                let i = 0;
+                for (; i < length; ++i) {
+                    if (!(i in o)) {
+                        if (++holeCount > maximumHoleCount)
+                            break;
                         continue;
+                    }
 
                     let result = processProperty(o, toString(i), isOwnProperty);
                     shouldBreak = result === InjectedScript.PropertyFetchAction.Stop;
                     if (shouldBreak)
                         break;
+                }
+
+                if (!shouldBreak && i < length) {
+                    let propertyNames = @Object.@getOwnPropertyNames(o);
+                    for (let j = 0; j < propertyNames.length; ++j) {
+                        let propertyName = propertyNames[j];
+                        let index = propertyName >>> 0;
+                        if (!isUInt32(propertyName) || index < i || index >= length)
+                            continue;
+
+                        let result = processProperty(o, propertyName, isOwnProperty);
+                        shouldBreak = result === InjectedScript.PropertyFetchAction.Stop;
+                        if (shouldBreak)
+                            break;
+                    }
                 }
             } else {
                 let propertyNames = @Object.@getOwnPropertyNames(o);
