@@ -1,0 +1,11 @@
+
+PASS Computed 'background-image: -webkit-linear-gradient(currentcolor, red)' keeps currentcolor
+PASS Computed 'background-image: -webkit-repeating-linear-gradient(currentcolor, red 10%)' keeps currentcolor
+PASS Computed 'background-image: -webkit-radial-gradient(currentcolor, red)' keeps currentcolor
+PASS Computed 'background-image: -webkit-repeating-radial-gradient(currentcolor, red 10%)' keeps currentcolor
+PASS Computed 'background-image: -webkit-gradient(linear, left top, left bottom, from(color-mix(in srgb, currentcolor, red)), to(red))' keeps currentcolor
+PASS Computed 'background-image: -webkit-cross-fade(linear-gradient(currentcolor, red), linear-gradient(red, blue), 50%)' keeps currentcolor
+PASS Computed 'background-image: -webkit-image-set(linear-gradient(currentcolor, red) 1x)' keeps currentcolor
+PASS Computed 'background-image: -webkit-filter(linear-gradient(currentcolor, red), blur(1px))' keeps currentcolor
+PASS Computed '-webkit-mask-image: linear-gradient(currentcolor, red)' keeps currentcolor
+

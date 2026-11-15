@@ -46,7 +46,7 @@ public:
 private:
     explicit ColorImage(Color&&);
 
-    Ref<CSSValue> computedStyleValue(const Style::ComputedStyle&) const final;
+    Ref<CSSValue> computedStyleValue(const Style::ComputedStyle&, PropertyValueType) const final;
     Ref<DeprecatedCSSOMValue> computedStyleDeprecatedCSSOMValue(CSSValuePool&, const Style::ComputedStyle&, CSSStyleDeclaration&) const final;
     bool isPending() const final;
     void load(CachedResourceLoader&, const ResourceLoaderOptions&) final;

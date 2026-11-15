@@ -47,15 +47,15 @@ struct ImageWrapper {
 
 // MARK: - Conversion
 
-template<> struct ToCSS<ImageWrapper> { auto operator()(const ImageWrapper&, const Style::ComputedStyle&) -> CSS::ImageWrapper; };
+template<> struct ToCSS<ImageWrapper> { auto operator()(const ImageWrapper&, const Style::ComputedStyle&, PropertyValueType = PropertyValueType::Resolved) -> CSS::ImageWrapper; };
 template<> struct ToStyle<CSS::ImageWrapper> { auto operator()(const CSS::ImageWrapper&, const BuilderState&) -> ImageWrapper; };
 
-template<> struct CSSValueCreation<ImageWrapper> { Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, const ImageWrapper&); };
+template<> struct CSSValueCreation<ImageWrapper> { Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, const ImageWrapper&, PropertyValueType = PropertyValueType::Resolved); };
 template<> struct DeprecatedCSSOMValueCreation<ImageWrapper> { Ref<DeprecatedCSSOMValue> operator()(CSSValuePool&, const Style::ComputedStyle&, CSSStyleDeclaration&, const ImageWrapper&); };
 
 // MARK: - Serialization
 
-template<> struct Serialize<ImageWrapper> { void operator()(StringBuilder&, const CSS::SerializationContext&, const Style::ComputedStyle&, const ImageWrapper&); };
+template<> struct Serialize<ImageWrapper> { void operator()(StringBuilder&, const CSS::SerializationContext&, const Style::ComputedStyle&, const ImageWrapper&, PropertyValueType = PropertyValueType::Resolved); };
 
 // MARK: - Blending
 

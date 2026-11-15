@@ -36,14 +36,14 @@ namespace Style {
 
 // MARK: - Conversion
 
-auto ToCSS<BorderImageSource>::operator()(const BorderImageSource& value, const Style::ComputedStyle& style) -> CSS::BorderImageSource
+auto ToCSS<BorderImageSource>::operator()(const BorderImageSource& value, const Style::ComputedStyle& style, PropertyValueType valueType) -> CSS::BorderImageSource
 {
     return WTF::switchOn(value,
         [&](const CSS::Keyword::None& keyword) -> CSS::BorderImageSource {
             return keyword;
         },
         [&](const ImageWrapper& imageWrapper) -> CSS::BorderImageSource {
-            return CSS::ImageWrapper { protect(imageWrapper.value)->computedStyleValue(style) };
+            return CSS::ImageWrapper { protect(imageWrapper.value)->computedStyleValue(style, valueType) };
         }
     );
 }
@@ -85,9 +85,9 @@ auto CSSValueConversion<BorderImageSource>::operator()(BuilderState& state, cons
     return ImageWrapper { image.releaseNonNull() };
 }
 
-auto CSSValueCreation<BorderImageSource>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const BorderImageSource& value) -> Ref<CSSValue>
+auto CSSValueCreation<BorderImageSource>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const BorderImageSource& value, PropertyValueType valueType) -> Ref<CSSValue>
 {
-    return CSSBorderImageSourceValue::create(toCSS(value, style));
+    return CSSBorderImageSourceValue::create(toCSS(value, style, valueType));
 }
 
 // MARK: - Blending

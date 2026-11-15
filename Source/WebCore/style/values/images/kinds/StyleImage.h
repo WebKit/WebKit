@@ -62,6 +62,7 @@ enum class NinePieceImageRule : uint8_t;
 namespace Style {
 
 class ComputedStyle;
+enum class PropertyValueType : bool;
 
 class Image : public RefCountedAndCanMakeWeakPtr<Image> {
 public:
@@ -70,7 +71,7 @@ public:
     virtual bool operator==(const Image&) const = 0;
 
     // Computed Style representation.
-    virtual Ref<CSSValue> computedStyleValue(const Style::ComputedStyle&) const = 0;
+    virtual Ref<CSSValue> computedStyleValue(const Style::ComputedStyle&, PropertyValueType) const = 0;
     virtual Ref<DeprecatedCSSOMValue> computedStyleDeprecatedCSSOMValue(CSSValuePool&, const Style::ComputedStyle&, CSSStyleDeclaration&) const = 0;
 
     // Opaque representation.
