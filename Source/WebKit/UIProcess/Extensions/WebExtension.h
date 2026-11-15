@@ -142,9 +142,6 @@ public:
         Dark  = 1 << 1
     };
 
-    using PermissionsSet = HashSet<String>;
-    using MatchPatternSet = HashSet<Ref<WebExtensionMatchPattern>>;
-
     // Needs to match UIKeyModifierFlags and NSEventModifierFlags.
     enum class ModifierFlags : uint32_t {
         Shift   = 1 << 17,
@@ -152,16 +149,6 @@ public:
         Option  = 1 << 19,
         Command = 1 << 20
     };
-
-    static constexpr OptionSet<ModifierFlags> allModifierFlags()
-    {
-        return {
-            ModifierFlags::Shift,
-            ModifierFlags::Control,
-            ModifierFlags::Option,
-            ModifierFlags::Command
-        };
-    }
 
     struct CommandData {
         String identifier;
@@ -171,8 +158,8 @@ public:
     };
 
     struct InjectedContentData {
-        MatchPatternSet includeMatchPatterns;
-        MatchPatternSet excludeMatchPatterns;
+        WebExtensionMatchPattern::MatchPatternSet includeMatchPatterns;
+        WebExtensionMatchPattern::MatchPatternSet excludeMatchPatterns;
 
         InjectionTime injectionTime { InjectionTime::DocumentIdle };
         WebCore::UserContentMatchParentFrame matchParentFrame { WebCore::UserContentMatchParentFrame::Never };
@@ -194,7 +181,7 @@ public:
     };
 
     struct WebAccessibleResourceData {
-        MatchPatternSet matchPatterns;
+        WebExtensionMatchPattern::MatchPatternSet matchPatterns;
         Vector<String> resourcePathPatterns;
     };
 
@@ -209,6 +196,20 @@ public:
         String scriptCode;
         String countryCode;
     };
+    enum class AllowInlineResourceURLs : bool { No, Yes };
+
+    using PermissionsSet = HashSet<String>;
+    using MatchPatternSet = HashSet<Ref<WebExtensionMatchPattern>>;
+
+    static constexpr OptionSet<ModifierFlags> allModifierFlags()
+    {
+        return {
+            ModifierFlags::Shift,
+            ModifierFlags::Control,
+            ModifierFlags::Option,
+            ModifierFlags::Command
+        };
+    }
 
     using CommandsVector = Vector<CommandData>;
     using InjectedContentVector = Vector<InjectedContentData>;
@@ -247,7 +248,7 @@ public:
     String resourceMIMETypeForPath(const String&);
 
     Expected<String, RefPtr<API::Error>> resourceStringForPath(const String&, CacheResult = CacheResult::No, SuppressNotFoundErrors = SuppressNotFoundErrors::No);
-    Expected<Ref<API::Data>, RefPtr<API::Error>> resourceDataForPath(const String&, CacheResult = CacheResult::No, SuppressNotFoundErrors = SuppressNotFoundErrors::No);
+    Expected<Ref<API::Data>, RefPtr<API::Error>> resourceDataForPath(const String&, CacheResult = CacheResult::No, SuppressNotFoundErrors = SuppressNotFoundErrors::No, AllowInlineResourceURLs = AllowInlineResourceURLs::Yes);
 
     RefPtr<WebExtensionLocalization> localization();
 

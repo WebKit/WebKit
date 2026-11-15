@@ -117,7 +117,7 @@ void WebExtensionURLSchemeHandler::platformStartTask(WebPageProxy& page, WebURLS
             loadingExtensionMainFrame = true;
         }
 
-        auto resourceDataResult = extension->resourceDataForPath(requestURL.path().toString());
+        auto resourceDataResult = extension->resourceDataForPath(requestURL.path().toString(), WebExtension::CacheResult::No, WebExtension::SuppressNotFoundErrors::No, WebExtension::AllowInlineResourceURLs::No);
         if (!resourceDataResult) {
             extensionContext->recordErrorIfNeeded(resourceDataResult.error());
             task->didComplete([NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorFileDoesNotExist userInfo:nil]);
