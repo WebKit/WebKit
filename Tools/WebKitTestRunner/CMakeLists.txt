@@ -33,6 +33,9 @@ set(WebKitTestRunner_FRAMEWORKS
 if (APPLE AND NOT WEBKIT_SDK_IS_IOS_FAMILY)
     list(APPEND WebKitTestRunner_FRAMEWORKS WebKitLegacy)
 endif ()
+if (USE_APPLE_INTERNAL_SDK)
+    list(APPEND WebKitTestRunner_FRAMEWORKS WebKitAdditions)
+endif ()
 
 if (COMPILER_IS_GCC_OR_CLANG)
     if (HAVE_STD_EXPERIMENTAL_FILESYSTEM)
