@@ -1,0 +1,26 @@
+Tests that an indeterminate progress element only runs its animation timer while it has a native appearance renderer.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.isProgressElementAnimating(progress) is true
+display: none
+PASS internals.isProgressElementAnimating(progress) is false
+display: inline-block
+PASS internals.isProgressElementAnimating(progress) is true
+Determinate value
+PASS internals.isProgressElementAnimating(progress) is false
+Indeterminate again
+PASS internals.isProgressElementAnimating(progress) is true
+appearance: none
+PASS internals.isProgressElementAnimating(progress) is false
+appearance: auto
+PASS internals.isProgressElementAnimating(progress) is true
+Removed from the document
+PASS internals.isProgressElementAnimating(progress) is false
+Created while display: none
+PASS internals.isProgressElementAnimating(hidden) is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

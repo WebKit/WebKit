@@ -827,6 +827,7 @@ enum LayerType {
     undefined setImageFrameDecodingDuration(HTMLImageElement element, unrestricted float duration);
     undefined resetImageAnimation(HTMLImageElement element);
     boolean isImageAnimating(HTMLImageElement element);
+    boolean isProgressElementAnimating(Element element);
     undefined setImageAnimationEnabled(boolean enabled);
     undefined resumeImageAnimation(HTMLImageElement element);
     undefined pauseImageAnimation(HTMLImageElement element);

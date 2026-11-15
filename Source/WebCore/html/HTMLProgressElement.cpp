@@ -46,6 +46,7 @@ using namespace HTMLNames;
 
 HTMLProgressElement::HTMLProgressElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document, TypeFlag::HasCustomStyleResolveCallbacks)
+    , m_animationTimer(*this, &HTMLProgressElement::animationTimerFired)
 {
     ASSERT(hasTagName(progressTag));
 }
@@ -101,6 +102,12 @@ void HTMLProgressElement::didAttachRenderers()
 {
     if (CheckedPtr renderer = renderProgress())
         renderer->updateFromElement();
+    updateAnimationState();
+}
+
+void HTMLProgressElement::didDetachRenderers()
+{
+    m_animationTimer.stop();
 }
 
 double HTMLProgressElement::value() const
@@ -151,9 +158,42 @@ void HTMLProgressElement::didChangeElementValue()
 
     if (CheckedPtr renderer = renderProgress())
         renderer->updateFromElement();
+    updateAnimationState();
 
     if (CheckedPtr cache = protect(document())->existingAXObjectCache())
         cache->valueChanged(*this);
+}
+
+void HTMLProgressElement::updateAnimationState()
+{
+    // The native indeterminate appearance is animated by repainting the RenderProgress, so the timer
+    // only runs while one exists. In particular, display: none detaches it and stops the timer.
+    CheckedPtr renderer = renderProgress();
+    auto repeatInterval = renderer ? renderer->theme().animationRepeatIntervalForProgressBar(*renderer) : 0_s;
+    bool shouldAnimate = repeatInterval > 0_s && !isDeterminate();
+    if (shouldAnimate == m_animationTimer.isActive())
+        return;
+
+    if (shouldAnimate) {
+        m_animationStartTime = MonotonicTime::now();
+        m_animationTimer.startOneShot(repeatInterval);
+    } else
+        m_animationTimer.stop();
+}
+
+void HTMLProgressElement::animationTimerFired()
+{
+    CheckedPtr renderer = renderProgress();
+    if (!renderer)
+        return;
+
+    renderer->repaint();
+
+    // FIXME: Ideally obtaining the repeat interval from Page is not RenderTheme-specific, but it
+    // currently is as it also determines whether we animate at all.
+    auto repeatInterval = renderer->theme().animationRepeatIntervalForProgressBar(*renderer);
+    if (repeatInterval > 0_s)
+        m_animationTimer.startOneShot(repeatInterval);
 }
 
 void HTMLProgressElement::appendShadowTreeForAutoAppearance(ShadowRoot& root)
