@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Timeline.ScreenshotsVisibleRecords");
+
+    const timestamps = [1, 2, 3, 4, 5];
+
+    function createScreenshotsTimeline()
+    {
+        let timeline = new WI.Timeline(WI.TimelineRecord.Type.Screenshots);
+        for (let timestamp of timestamps)
+            timeline.addRecord(new WI.ScreenshotsTimelineRecord(timestamp, "data:,"));
+        return timeline;
+    }
+
+    // The Screenshots views show the records in the selected range, plus the record just before it,
+    // so that the range is never entered from an empty view.
+    let expectedVisibleTimestamps = [1, 2, 3, 4];
+
+    suite.addTestCase({
+        name: "Timeline.ScreenshotsVisibleRecords.TimelineView",
+        description: "WI.ScreenshotsTimelineView should show only the screenshots in the selected range, and the one just before it.",
+        async test() {
+            let view = new WI.ScreenshotsTimelineView(createScreenshotsTimeline());
+            view.startTime = 2;
+            view.endTime = 4;
+            view.currentTime = 4;
+
+            let visibleTimestamps = view._visibleRecords().map((record) => record.startTime);
+            InspectorTest.expectShallowEqual(visibleTimestamps, expectedVisibleTimestamps, "The view should show only the screenshots in the selected range, and the one just before it.");
+
+            view.updateLayout();
+
+            let imageElements = view._scrollView.element.querySelectorAll("img");
+            InspectorTest.expectEqual(imageElements.length, expectedVisibleTimestamps.length, "The view should have an image element only for each visible screenshot.");
+            let firstImageElement = imageElements[0];
+            let spacerElements = view._scrollView.element.querySelectorAll(".spacer");
+            InspectorTest.expectEqual(spacerElements.length, 1, "The view should have a spacer after the screenshots.");
+
+            // Count every element inserted into the container. A layout must not re-insert an element
+            // that stays visible, which a remove-and-re-append layout would.
+            let insertedElementCount = 0;
+            let mutationObserver = new MutationObserver((mutations) => {
+                for (let mutation of mutations)
+                    insertedElementCount += mutation.addedNodes.length;
+            });
+            mutationObserver.observe(view._scrollView.element, {childList: true});
+
+            // A layout with an unchanged range should not move any element.
+            view.updateLayout();
+            await null; // MutationObserver callbacks run in a microtask.
+            InspectorTest.expectEqual(insertedElementCount, 0, "A layout with an unchanged range should not re-insert any element.");
+
+            // A smaller range should remove the image elements that left the range.
+            view.startTime = 2;
+            view.endTime = 3;
+            view.updateLayout();
+            await null;
+            imageElements = view._scrollView.element.querySelectorAll("img");
+            InspectorTest.expectEqual(imageElements.length, 3, "The view should remove the image elements of the screenshots that left the range.");
+            InspectorTest.expectEqual(insertedElementCount, 0, "Removing the image elements that left the range should not re-insert any element either.");
+            InspectorTest.expectThat(imageElements[0] === firstImageElement, "An element of a record that stays visible should be reused, not recreated.");
+            mutationObserver.disconnect();
+        }
+    });
+
+    suite.addTestCase({
+        name: "Timeline.ScreenshotsVisibleRecords.SelectionRevealedOnce",
+        description: "WI.ScreenshotsTimelineView should reveal the selected screenshot when its image is created or re-inserted, not on every layout.",
+        async test() {
+            let timeline = createScreenshotsTimeline();
+            let view = new WI.ScreenshotsTimelineView(timeline);
+            view.startTime = 2;
+            view.endTime = 4;
+            view.currentTime = 4;
+
+            let revealCount = 0;
+            let originalScrollIntoView = Element.prototype.scrollIntoView;
+            Element.prototype.scrollIntoView = function(...args) {
+                revealCount++;
+                return originalScrollIntoView.apply(this, args);
+            };
+
+            try {
+                view.selectRecord(timeline.records[3]);
+
+                view.updateLayout();
+                view.updateLayout();
+                view.updateLayout();
+            } finally {
+                Element.prototype.scrollIntoView = originalScrollIntoView;
+            }
+
+            InspectorTest.expectEqual(revealCount, 1, "The selected screenshot should be revealed once, not on every layout.");
+            let selectedElement = view._imageElementForRecord.get(view._selectedRecord);
+            InspectorTest.expectTrue(selectedElement.classList.contains("selected"), "The selected screenshot should keep the selected style.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Timeline.ScreenshotsVisibleRecords.OverviewGraph",
+        description: "WI.ScreenshotsTimelineOverviewGraph should show only the screenshots in the selected range, and the one just before it.",
+        async test() {
+            let graph = new WI.ScreenshotsTimelineOverviewGraph(createScreenshotsTimeline(), {secondsPerPixel: 0.01});
+            graph.startTime = 2;
+            graph.endTime = 4;
+            graph.currentTime = 4;
+
+            let visibleTimestamps = graph._visibleRecords().map((record) => record.startTime);
+            InspectorTest.expectShallowEqual(visibleTimestamps, expectedVisibleTimestamps, "The overview graph should show only the screenshots in the selected range, and the one just before it.");
+
+            graph.updateLayout();
+
+            let imageElements = graph.element.querySelectorAll("img");
+            InspectorTest.expectEqual(imageElements.length, expectedVisibleTimestamps.length, "The overview graph should have an image element only for each visible screenshot.");
+            InspectorTest.expectEqual(Number.parseFloat(imageElements[0].style.left), (timestamps[0] - 2) / 0.01, "The first image should be positioned by the start time of its record.");
+
+            graph.startTime = 2;
+            graph.endTime = 3;
+            graph.updateLayout();
+            imageElements = graph.element.querySelectorAll("img");
+            InspectorTest.expectEqual(imageElements.length, 3, "The overview graph should remove the image elements of the screenshots that left the range.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Timeline.ScreenshotsVisibleRecords.ZeroCurrentTime",
+        description: "The views should show the range when currentTime is 0, as for a capture that starts while the inspector is hidden.",
+        async test() {
+            let view = new WI.ScreenshotsTimelineView(createScreenshotsTimeline());
+            view.startTime = 2;
+            view.endTime = 4;
+            view.currentTime = 0;
+
+            let visibleTimestamps = view._visibleRecords().map((record) => record.startTime);
+            InspectorTest.expectShallowEqual(visibleTimestamps, expectedVisibleTimestamps, "The view should show the screenshots in the range when currentTime is 0.");
+
+            view.updateLayout();
+            let imageElements = view._scrollView.element.querySelectorAll("img");
+            InspectorTest.expectEqual(imageElements.length, expectedVisibleTimestamps.length, "The view should have an image element for each visible screenshot when currentTime is 0.");
+            let messageElements = view._scrollView.element.querySelectorAll(".message-text-view");
+            InspectorTest.expectEqual(messageElements.length, 0, "The view should not show the no-screenshots message when currentTime is 0.");
+
+            let graph = new WI.ScreenshotsTimelineOverviewGraph(createScreenshotsTimeline(), {secondsPerPixel: 0.01});
+            graph.startTime = 2;
+            graph.endTime = 4;
+            graph.currentTime = 0;
+
+            let graphVisibleTimestamps = graph._visibleRecords().map((record) => record.startTime);
+            InspectorTest.expectShallowEqual(graphVisibleTimestamps, expectedVisibleTimestamps, "The overview graph should show the screenshots in the range when currentTime is 0.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Timeline.ScreenshotsVisibleRecords.EmptyRange",
+        description: "The view should show the no-screenshots message for an empty range, and the screenshots again when the range returns.",
+        async test() {
+            // The test bundle does not include `WI.createMessageTextView`, which is in Base/Main.js.
+            if (!WI.createMessageTextView) {
+                WI.createMessageTextView = (message) => {
+                    let messageElement = document.createElement("div");
+                    messageElement.className = "message-text-view";
+                    messageElement.append(message);
+                    return messageElement;
+                };
+            }
+
+            let view = new WI.ScreenshotsTimelineView(createScreenshotsTimeline());
+            view.startTime = 2;
+            view.endTime = 4;
+            view.currentTime = 4;
+
+            view.updateLayout();
+
+            // A range with no screenshots shows the message, and no spacer.
+            view.startTime = 10;
+            view.endTime = 11;
+            view.currentTime = 11;
+            view.updateLayout();
+
+            let imageElements = view._scrollView.element.querySelectorAll("img");
+            InspectorTest.expectEqual(imageElements.length, 0, "The view should have no image elements for an empty range.");
+            let spacerElements = view._scrollView.element.querySelectorAll(".spacer");
+            InspectorTest.expectEqual(spacerElements.length, 0, "The view should have no spacer for an empty range.");
+            let messageElements = view._scrollView.element.querySelectorAll(".message-text-view");
+            InspectorTest.expectEqual(messageElements.length, 1, "The view should show the no-screenshots message for an empty range.");
+
+            // Back in a range with screenshots, the message is gone.
+            view.startTime = 2;
+            view.endTime = 4;
+            view.currentTime = 4;
+            view.updateLayout();
+
+            imageElements = view._scrollView.element.querySelectorAll("img");
+            InspectorTest.expectEqual(imageElements.length, expectedVisibleTimestamps.length, "The view should show the screenshots again when the range returns.");
+            spacerElements = view._scrollView.element.querySelectorAll(".spacer");
+            InspectorTest.expectEqual(spacerElements.length, 1, "The view should have one spacer again.");
+            messageElements = view._scrollView.element.querySelectorAll(".message-text-view");
+            InspectorTest.expectEqual(messageElements.length, 0, "The view should not show the message when there are screenshots.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Timeline.ScreenshotsVisibleRecords.RemovedRecord",
+        description: "The view should trim the element of a screenshot that is removed from the timeline.",
+        async test() {
+            let timeline = createScreenshotsTimeline();
+            let view = new WI.ScreenshotsTimelineView(timeline);
+            view.startTime = 2;
+            view.endTime = 4;
+            view.currentTime = 4;
+
+            view.updateLayout();
+
+            // Remove the record in the middle of the range.
+            timeline.records.splice(2, 1);
+            view.updateLayout();
+
+            let visibleTimestamps = view._visibleRecords().map((record) => record.startTime);
+            InspectorTest.expectShallowEqual(visibleTimestamps, [1, 2, 4], "The view should show the remaining screenshots after one is removed.");
+            let imageElements = view._scrollView.element.querySelectorAll("img");
+            InspectorTest.expectEqual(imageElements.length, 3, "The view should have one image element less after a screenshot is removed.");
+            let spacerElements = view._scrollView.element.querySelectorAll(".spacer");
+            InspectorTest.expectEqual(spacerElements.length, 1, "The view should keep one spacer after a screenshot is removed.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test that the Screenshots views show only the screenshots in the selected range.</p>
+</body>
+</html>
