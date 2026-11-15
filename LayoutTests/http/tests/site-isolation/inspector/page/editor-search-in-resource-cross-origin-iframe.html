@@ -1,0 +1,115 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Page.EditorSearchInResource.CrossOriginIFrame");
+
+    let resource;
+
+    function loadFrontendScript(path) {
+        return new Promise((resolve, reject) => {
+            let script = document.createElement("script");
+            script.src = path;
+            script.onload = resolve;
+            script.onerror = () => reject(new Error("Failed to load " + path));
+            document.head.appendChild(script);
+        });
+    }
+
+    async function waitFor(callback) {
+        for (let i = 0; i < 50; ++i) {
+            let value = callback();
+            if (value)
+                return value;
+            await new Promise((resolve) => setTimeout(resolve, 100));
+        }
+        return null;
+    }
+
+    // Runs the source editor's own search (Cmd+F) on the resource, with a stand-in for the editor's text view.
+    async function searchInEditor(query) {
+        let reported = Promise.withResolvers();
+        let editor = {
+            _sourceCode: resource,
+            currentSearchQuery: query,
+            searchResults: null,
+            hasEdits() { return false; },
+            searchCleared() { },
+            line(lineNumber) { return lineNumber === 0 ? "body { color: rebeccapurple; }" : ""; },
+            addSearchResults(results) { this.searchResults = results; },
+            dispatchEventToListeners(type) { reported.resolve(); },
+        };
+
+        let handled = WI.SourceCodeTextEditor.prototype.customPerformSearch.call(editor, query);
+        InspectorTest.expectTrue(handled, `The editor should search "${query}" in the backend.`);
+        await Promise.race([reported.promise, new Promise((resolve) => setTimeout(resolve, 5000))]);
+        return editor.searchResults || [];
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.EditorSearchInResource.CrossOriginIFrame.Setup",
+        async test() {
+            await waitForFrameTargetForURLContaining("resource-tree-frame-with-subresource.html");
+
+            let frame = await waitFor(() => WI.networkManager.frames.find((frame) => !frame.isMainFrame()));
+            InspectorTest.expectNotNull(frame, "Should find the cross-origin iframe's frame.");
+
+            resource = await waitFor(() => Array.from(frame.resourceCollection).find((resource) => resource.url.endsWith("/resource-tree-subframe-style.css")));
+            InspectorTest.expectNotNull(resource, "Should find the style sheet resource of the iframe.");
+            InspectorTest.expectTrue(resource.target.hasCommand("Page.searchInResource"), "The editor should search the resource with Page.searchInResource.");
+
+            // The editor's view class extends the text editor, which is not part of the test frontend.
+            WI.TextEditor ||= class TextEditor extends WI.View { };
+            WI.TextEditor.Event ||= {NumberOfSearchResultsDidChange: "text-editor-number-of-search-results-did-change"};
+            await loadFrontendScript("Views/SourceCodeTextEditor.js");
+            InspectorTest.expectEqual(typeof WI.SourceCodeTextEditor, "function", "Should load the source code editor.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.EditorSearchInResource.CrossOriginIFrame.FindsMatch",
+        async test() {
+            let results = await searchInEditor("rebeccapurple");
+            InspectorTest.expectEqual(results.length, 1, "Should find one match in the iframe's resource.");
+            InspectorTest.expectEqual(results[0]?.startLine, 0, "The match should start on line 0.");
+            InspectorTest.expectEqual(results[0]?.startColumn, 14, "The match should start at column 14.");
+            InspectorTest.expectEqual(results[0]?.endColumn, 27, "The match should end at column 27.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.EditorSearchInResource.CrossOriginIFrame.SearchOptions",
+        async test() {
+            let {caseSensitive, regularExpression} = WI.SearchUtilities.defaultSettings;
+            let originalCaseSensitive = caseSensitive.value;
+            let originalRegularExpression = regularExpression.value;
+
+            try {
+                caseSensitive.value = true;
+                regularExpression.value = false;
+                let different = await searchInEditor("REBECCAPURPLE");
+                InspectorTest.expectEqual(different.length, 0, "A case sensitive search should not match different case.");
+
+                caseSensitive.value = false;
+                let same = await searchInEditor("REBECCAPURPLE");
+                InspectorTest.expectEqual(same.length, 1, "A case insensitive search should match different case.");
+
+                regularExpression.value = true;
+                let regex = await searchInEditor("reb[a-z]+purple");
+                InspectorTest.expectEqual(regex.length, 1, "A regular expression search should match.");
+            } finally {
+                caseSensitive.value = originalCaseSensitive;
+                regularExpression.value = originalRegularExpression;
+            }
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Test that searching in the source editor (Cmd+F) finds matches in a resource of a cross-origin iframe under Site Isolation.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/page/resources/resource-tree-frame-with-subresource.html"></iframe>
+</body>

@@ -296,8 +296,10 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
         let caseSensitive = WI.SearchUtilities.defaultSettings.caseSensitive.value;
         let isRegex = WI.SearchUtilities.defaultSettings.regularExpression.value;
 
+        // The source code's own target decides if it has a page to search, so resources of workers keep the CodeMirror search.
+        // The search itself goes through the target that can reach frames in every process.
         if (this._sourceCode instanceof WI.Resource && target.hasCommand("Page.searchInResource")) {
-            target.PageAgent.searchInResource(this._sourceCode.parentFrame.id, this._sourceCode.url, query, caseSensitive, isRegex, searchResultCallback.bind(this));
+            WI.networkManager.resourceSearchTarget.PageAgent.searchInResource(this._sourceCode.parentFrame.id, this._sourceCode.url, query, caseSensitive, isRegex, searchResultCallback.bind(this));
             return true;
         }
 
