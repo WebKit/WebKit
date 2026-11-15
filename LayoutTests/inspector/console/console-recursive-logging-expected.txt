@@ -6,4 +6,7 @@ Ensure that recursive logging does not crash the page's web content process.
 == Running test suite: WI.Console.MessageAdded.Recursive
 -- Running test case: WI.Console.MessageAdded.Recursive
 The test passed if evaluating `logObjectThatLogsRecursively` on the page did not crash.
+PASS: Should add the logged message and the message logged while making its preview.
+PASS: The message logged while making the preview should not have a preview.
+PASS: The logged message should have a preview.
 
