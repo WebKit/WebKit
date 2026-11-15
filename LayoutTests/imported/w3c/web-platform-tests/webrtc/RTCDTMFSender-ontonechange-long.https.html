@@ -47,4 +47,20 @@
     ['', '', 6070]
   ],'insertDTMF with duration greater than 6000 should be clamped to 6000');
 
+  test_tone_change_events((t, dtmfSender) => {
+    dtmfSender.insertDTMF('A', 100, 12000);
+  }, [
+    ['A', '', 0],
+    ['', '', 6100]
+  ],'insertDTMF with interToneGap greater than 6000 should be clamped to 6000');
+
+  test_tone_change_events((t, dtmfSender) => {
+    dtmfSender.insertDTMF('ABC', 100, 2000);
+  }, [
+    ['A', 'BC', 0],
+    ['B', 'C', 2100],
+    ['C', '', 2100],
+    ['', '', 2100]
+  ],'insertDTMF should wait duration + interToneGap between tones, not interToneGap twice');
+
 </script>

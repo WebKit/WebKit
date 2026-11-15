@@ -31,7 +31,6 @@
 #include "EventTarget.h"
 #include "EventTargetInterfaces.h"
 #include "ScriptWrappable.h"
-#include "Timer.h"
 
 namespace WebCore {
 
@@ -73,9 +72,7 @@ private:
 
     void playNextTone();
     void onTonePlayed();
-    void toneTimerFired();
 
-    Timer m_toneTimer;
     WeakPtr<RTCRtpSender> m_sender;
     std::unique_ptr<RTCDTMFSenderBackend> m_backend;
     String m_tones;
