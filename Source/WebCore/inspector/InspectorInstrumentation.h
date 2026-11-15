@@ -350,6 +350,7 @@ public:
     static RefPtr<::WebGPU::RenderPipeline> renderPipelineForWebGPUHighlighting(GPURenderPipeline&, unsigned canvasColorAttachmentMask);
 
     static void willApplyKeyframeEffect(const Styleable&, KeyframeEffect&, const ComputedEffectTiming&);
+    static void didChangeStyleOriginatedAnimationPhase(StyleOriginatedAnimation&, AnimationEffectPhase);
     static void didChangeWebAnimationName(WebAnimation&);
     static void didSetWebAnimationEffect(WebAnimation&);
     static void didChangeWebAnimationEffectTiming(WebAnimation&);
@@ -571,6 +572,7 @@ private:
     static RefPtr<::WebGPU::RenderPipeline> renderPipelineForWebGPUHighlightingImpl(InstrumentingAgents&, GPURenderPipeline&, unsigned canvasColorAttachmentMask);
 
     static void willApplyKeyframeEffectImpl(InstrumentingAgents&, const Styleable&, KeyframeEffect&, const ComputedEffectTiming&);
+    static void didChangeStyleOriginatedAnimationPhaseImpl(InstrumentingAgents&, StyleOriginatedAnimation&, AnimationEffectPhase);
     static void didChangeWebAnimationNameImpl(InstrumentingAgents&, WebAnimation&);
     static void didSetWebAnimationEffectImpl(InstrumentingAgents&, WebAnimation&);
     static void didChangeWebAnimationEffectTimingImpl(InstrumentingAgents&, WebAnimation&);
@@ -1644,6 +1646,13 @@ inline void InspectorInstrumentation::willApplyKeyframeEffect(const Styleable& t
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (RefPtr agents = instrumentingAgents(target.element->document()))
         willApplyKeyframeEffectImpl(*agents, target, effect, computedTiming);
+}
+
+inline void InspectorInstrumentation::didChangeStyleOriginatedAnimationPhase(StyleOriginatedAnimation& animation, AnimationEffectPhase phase)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (RefPtr agents = instrumentingAgents(protect(animation.scriptExecutionContext())))
+        didChangeStyleOriginatedAnimationPhaseImpl(*agents, animation, phase);
 }
 
 inline void InspectorInstrumentation::didChangeWebAnimationName(WebAnimation& animation)
