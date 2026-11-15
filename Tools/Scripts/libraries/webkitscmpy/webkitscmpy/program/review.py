@@ -343,6 +343,7 @@ class Review(Command):
             sys.stderr.write('No repository provided\n')
             return 1
 
+        local_repository = repository if isinstance(repository, local.Git) else None
         if isinstance(repository, local.Git):
             original = repository
             repository = repository.remote(name=args.remote)
@@ -366,7 +367,12 @@ class Review(Command):
         if match:
             pull_request = repository.pull_requests.get(number=int(match.group('number')))
         else:
-            pull_request = PullRequest.find_existing_pull_request(repository, rmt, branch=target)
+            if target == 'HEAD':
+                if not local_repository:
+                    sys.stderr.write("Cannot resolve 'HEAD' without a local checkout\n")
+                    return 1
+                target = local_repository.branch
+            pull_request = PullRequest.find_existing_pull_request(repository, repository, branch=target)
         if not pull_request:
             sys.stderr.write("\nCannot extract PR number from '{}'\n".format(target))
             return 1
