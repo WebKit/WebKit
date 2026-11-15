@@ -1,0 +1,4 @@
+
+PASS rootBounds of an element root is in the same coordinate space as boundingClientRect under page zoom
+PASS rootBounds of the implicit root is in the same coordinate space as boundingClientRect under page zoom
+
