@@ -1792,6 +1792,7 @@ ExceptionOr<Ref<Node>> Document::importNode(Node& nodeToImport, Variant<bool, Im
     case NodeType::CDATASection:
     case NodeType::ProcessingInstruction:
     case NodeType::Comment:
+    case NodeType::DocumentType:
         return nodeToImport.cloneNodeInternal(*this, subtree ? Node::CloningOperation::Everything : Node::CloningOperation::SelfOnly, registry.get());
 
     case NodeType::Attribute: {
@@ -1799,7 +1800,6 @@ ExceptionOr<Ref<Node>> Document::importNode(Node& nodeToImport, Variant<bool, Im
         return Ref<Node> { Attr::create(protect(documentScope()), attribute.qualifiedName(), attribute.value()) };
     }
     case NodeType::Document: // Can't import a document into another document.
-    case NodeType::DocumentType: // FIXME: Support cloning a DocumentType node per DOM4.
         break;
     }
     return Exception { ExceptionCode::NotSupportedError };

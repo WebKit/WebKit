@@ -4,4 +4,6 @@ PASS Undefined 'deep' argument.
 PASS True 'deep' argument.
 PASS False 'deep' argument.
 PASS Import an Attr node with namespace/prefix correctly.
+PASS Import a DocumentType node.
+PASS Import a DocumentType node that has a parent.
 
