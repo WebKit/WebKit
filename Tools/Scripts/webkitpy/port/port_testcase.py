@@ -32,6 +32,7 @@
 import errno
 import logging
 import os
+import signal
 import socket
 import sys
 import time
@@ -402,7 +403,7 @@ class PortTestCase(unittest.TestCase):
         self.proc = None
 
         def make_proc(port, nm, cmd, env, crash_message=None):
-            self.proc = MockServerProcess(port, nm, cmd, env, crashed=True)
+            self.proc = MockServerProcess(port, nm, cmd, env, crashed=True, returncode=-signal.SIGSEGV)
             return self.proc
         port._server_process_constructor = make_proc
         self.test_runner_proc = None
@@ -414,6 +415,20 @@ class PortTestCase(unittest.TestCase):
         port.setup_test_run()
         self.assertEqual(port.diff_image(b'foo', b'bar'), ImageDiffResult(passed=False, diff_image=None, difference=0, tolerance=0.1, error_string='ImageDiff crashed\n'))
         port.clean_up_test_run()
+
+    def test_diff_image_exited_with_error(self):
+        port = self.make_port()
+        processes = []
+
+        def make_proc(port, nm, cmd, env, crash_message=None):
+            processes.append(MockServerProcess(crashed=True, returncode=1))
+            return processes[-1]
+        port._server_process_constructor = make_proc
+        image_differ = ImageDiffer(port)
+        self.assertEqual(image_differ.diff_image(b'foo', b'bar', tolerance=0.1), ImageDiffResult(passed=False, diff_image=None, difference=0, tolerance=0.1, error_string='ImageDiff exited with an error\n'))
+        self.assertTrue(processes[0].stopped)
+        image_differ.diff_image(b'foo', b'bar', tolerance=0.1)
+        self.assertEqual(len(processes), 2)
 
     @slow
     @xfail

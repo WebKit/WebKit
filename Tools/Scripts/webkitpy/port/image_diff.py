@@ -134,7 +134,11 @@ class ImageDiffer(object):
         if self._process.timed_out:
             err_str += "ImageDiff timed out\n"
         if self._process.has_crashed():
-            err_str += "ImageDiff crashed\n"
+            # ImageDiff exits with EXIT_FAILURE after printing why it couldn't compare the images.
+            if self._process.poll() == 1:
+                err_str += "ImageDiff exited with an error\n"
+            else:
+                err_str += "ImageDiff crashed\n"
             self.stop()
 
         if not diff_output or not fuzzy_data:
