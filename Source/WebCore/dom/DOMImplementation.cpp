@@ -125,6 +125,8 @@ Ref<HTMLDocument> DOMImplementation::createHTMLDocument(String&& title)
     Ref thisDocument = m_document.get();
     Ref document = HTMLDocument::create(nullptr, thisDocument->settings(), URL(), { });
     document->setParserContentPolicy({ ParserContentPolicy::AllowScriptingContent });
+    document->setContextDocument(thisDocument->contextDocument());
+    document->setSecurityOriginPolicy(thisDocument->securityOriginPolicy());
 
     Ref htmlElement = HTMLHtmlElement::create(document);
     Ref headElement = HTMLHeadElement::create(document);
@@ -141,8 +143,6 @@ Ref<HTMLDocument> DOMImplementation::createHTMLDocument(String&& title)
     document->appendChild(DocumentType::create(document, "html"_s, emptyString(), emptyString()));
     document->appendChild(htmlElement);
 
-    document->setContextDocument(thisDocument->contextDocument());
-    document->setSecurityOriginPolicy(thisDocument->securityOriginPolicy());
     return document;
 }
 
