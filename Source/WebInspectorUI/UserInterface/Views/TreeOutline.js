@@ -245,8 +245,10 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         if (this.treeOutline) {
             this.treeOutline.dispatchEventToListeners(WI.TreeOutline.Event.ElementAdded, {element: child});
 
-            if (this.treeOutline.virtualized)
+            if (this.treeOutline.virtualized) {
+                this.treeOutline._virtualizedVisibleTreeElements.clear();
                 this.treeOutline._virtualizedDebouncer.delayForFrame();
+            }
         }
 
         if (isFirstChild && this.expanded)
@@ -291,8 +293,10 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         if (this.treeOutline) {
             this.treeOutline.dispatchEventToListeners(WI.TreeOutline.Event.ElementAdded, {element: child});
 
-            if (this.treeOutline.virtualized)
+            if (this.treeOutline.virtualized) {
+                this.treeOutline._virtualizedVisibleTreeElements.clear();
                 this.treeOutline._virtualizedDebouncer.delayForFrame();
+            }
         }
 
         if (isFirstChild && this.expanded)
@@ -338,8 +342,10 @@ WI.TreeOutline = class TreeOutline extends WI.Object
 
             treeOutline.dispatchEventToListeners(WI.TreeOutline.Event.ElementRemoved, {element: child});
 
-            if (treeOutline.virtualized)
+            if (treeOutline.virtualized) {
+                treeOutline._virtualizedVisibleTreeElements.clear();
                 treeOutline._virtualizedDebouncer.delayForFrame();
+            }
         }
     }
 
@@ -385,8 +391,10 @@ WI.TreeOutline = class TreeOutline extends WI.Object
 
         this.children = [];
 
-        if (this.virtualized)
+        if (this.virtualized) {
+            this._virtualizedVisibleTreeElements.clear();
             this._virtualizedDebouncer.delayForFrame();
+        }
     }
 
     _rememberTreeElementAndDescendants(element)
