@@ -1823,9 +1823,28 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         };
 
         if (sourceMapURL.startsWith("data:")) {
-            let {mimeType, base64, data} = parseDataURL(sourceMapURL);
-            let content = base64 ? atob(data) : data;
-            sourceMapLoaded(null, content, mimeType, 0);
+            // The source map is JSON, which is UTF-8. `atob` gives one character per byte, so decode the bytes.
+            // A malformed data URL must not throw, since it would hide the script from the debugger.
+            let parsedDataURL = null;
+            let content = null;
+            try {
+                parsedDataURL = parseDataURL(sourceMapURL);
+                if (parsedDataURL) {
+                    if (parsedDataURL.base64) {
+                        let decoded = atob(parsedDataURL.data);
+                        let bytes = new Uint8Array(decoded.length);
+                        for (let i = 0; i < decoded.length; ++i)
+                            bytes[i] = decoded.charCodeAt(i);
+                        content = new TextDecoder("utf-8").decode(bytes);
+                    } else
+                        content = parsedDataURL.data;
+                }
+            } catch { }
+            if (content === null) {
+                this._sourceMapLoadFailed(sourceMapURL);
+                return;
+            }
+            sourceMapLoaded(null, content, parsedDataURL.mimeType, 0);
             return;
         }
 
