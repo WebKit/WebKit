@@ -388,7 +388,12 @@ std::optional<FloatSize> RenderImage::usedImageSize() const
 
 ConcreteObjectSize RenderImage::concreteObjectSizeForPainting() const
 {
-    return ConcreteObjectSize::fixed(FloatSize(imageContainerSize()));
+    return concreteObjectSizeForPainting(replacedContentRect());
+}
+
+ConcreteObjectSize RenderImage::concreteObjectSizeForPainting(const LayoutRect& replacedContentRect)
+{
+    return ConcreteObjectSize::fixed(FloatSize(flooredIntSize(replacedContentRect.size())));
 }
 
 ConcreteObjectSize RenderImage::concreteObjectSizeForInteractionRegion() const
@@ -818,10 +823,12 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
 
     contentBoxRect.moveBy(paintOffset);
 
-    auto replacedContentRect = this->replacedContentRect();
-    replacedContentRect.moveBy(paintOffset);
+    auto naturalDimensions = zoomedNaturalDimensions();
+    auto replacedContentRect = this->replacedContentRect(naturalDimensions);
+    auto concreteObjectSize = concreteObjectSizeForPainting(replacedContentRect);
+    auto paintRect = replacedContentPaintRect(replacedContentRect, naturalDimensions);
 
-    auto paintRect = replacedContentPaintRect();
+    replacedContentRect.moveBy(paintOffset);
     paintRect.moveBy(paintOffset);
 
     float snappingScaleFactor = document().pixelSnappingScaleFactor();
@@ -830,7 +837,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
     if (clip)
         context.clip(snapRectToDevicePixels(contentBoxRect, snappingScaleFactor));
 
-    ImageDrawResult result = paintIntoRect(paintInfo, snapRectToDevicePixels(paintRect, snappingScaleFactor));
+    ImageDrawResult result = paintIntoRect(paintInfo, snapRectToDevicePixels(paintRect, snappingScaleFactor), concreteObjectSize);
 
     if (showBorderForIncompleteImage && (result != ImageDrawResult::DidDraw || (cachedImage() && cachedImage()->isLoading())))
         paintIncompleteImageOutline(paintInfo, paintOffset, missingImageBorderWidth);
@@ -864,14 +871,14 @@ void RenderImage::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 
 void RenderImage::paintAreaElementFocusRing(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (document().printing() || !frame().selection().isFocusedAndActive())
-        return;
-    
-    if (paintInfo.context().paintingDisabled() && !paintInfo.context().performingPaintInvalidation())
-        return;
-
     RefPtr areaElement = dynamicDowncast<HTMLAreaElement>(document().focusedElement());
     if (!areaElement || areaElement->imageElement() != element())
+        return;
+
+    if (document().printing() || !frame().selection().isFocusedAndActive())
+        return;
+
+    if (paintInfo.context().paintingDisabled() && !paintInfo.context().performingPaintInvalidation())
         return;
 
     auto* areaElementStyle = areaElement->computedStyle();
@@ -941,14 +948,17 @@ RefPtr<NativeImage> RenderImage::createNativeImageAsPainted(float deviceScaleFac
 
 ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect& rect)
 {
+    return paintIntoRect(paintInfo, rect, concreteObjectSizeForPainting());
+}
+
+ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect& rect, const ConcreteObjectSize& concreteObjectSize)
+{
     if (isShowingMissingOrImageError() || rect.width() <= 0 || rect.height() <= 0)
         return ImageDrawResult::DidNothing;
 
     RefPtr styleImage = imageResource().styleImage();
     if (!styleImage || !styleImage->canDrawAtSize(*this, rect.size()))
         return ImageDrawResult::DidNothing;
-
-    auto concreteObjectSize = concreteObjectSizeForPainting();
 
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
     auto invertContent = [&] {

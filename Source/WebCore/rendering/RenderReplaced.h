@@ -42,6 +42,7 @@ public:
     LayoutRect replacedContentRect(NaturalDimensions zoomedNaturalDimensions) const;
     LayoutRect replacedContentRect() const;
     LayoutRect replacedContentPaintRect() const;
+    LayoutRect replacedContentPaintRect(const LayoutRect& replacedContentRect, NaturalDimensions zoomedNaturalDimensions) const;
 
     std::optional<FloatRect> resolvedObjectViewBox(const FloatSize& physicalIntrinsicSize) const;
 
