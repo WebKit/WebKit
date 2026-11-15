@@ -3221,7 +3221,6 @@ rendering/svg/RenderSVGResourcePattern.cpp @header:RenderStyleGetters
 rendering/svg/RenderSVGResourceRadialGradient.cpp
 rendering/svg/RenderSVGRoot.cpp @header:RenderStyleGetters
 rendering/svg/RenderSVGShape.cpp @header:RenderStyleGetters
-rendering/svg/RenderSVGTSpan.cpp @header:RenderStyleGetters
 rendering/svg/RenderSVGText.cpp @header:RenderStyleGetters
 rendering/svg/RenderSVGTextPath.cpp @header:RenderStyleGetters
 rendering/svg/RenderSVGTransformableContainer.cpp

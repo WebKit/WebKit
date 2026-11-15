@@ -215,7 +215,6 @@ public:
         SVGResourcePattern,
         SVGResourceRadialGradient,
         SVGRoot,
-        SVGTSpan,
         SVGText,
         SVGTextPath,
         SVGTransformableContainer,
@@ -571,8 +570,7 @@ public:
     bool isRenderSVGRect() const { return type() == Type::SVGRect; }
     bool isRenderSVGText() const { return type() == Type::SVGText; }
     bool isRenderSVGTextPath() const { return type() == Type::SVGTextPath; }
-    bool isRenderSVGTSpan() const { return type() == Type::SVGTSpan; }
-    bool isRenderSVGInline() const { return type() == Type::SVGInline || type() == Type::SVGTSpan || type() == Type::SVGTextPath; }
+    bool isRenderSVGInline() const { return type() == Type::SVGInline || type() == Type::SVGTextPath; }
     bool isRenderSVGInlineText() const { return type() == Type::SVGInlineText; }
     bool isLegacyRenderSVGImage() const { return type() == Type::LegacySVGImage; }
     bool isRenderSVGImage() const { return type() == Type::SVGImage; }

@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 100x100
     RenderSVGText {text}
-      RenderSVGTSpan {tspan} at (0,0) size 0x0
+      RenderSVGInline {tspan} at (0,0) size 0x0
         RenderSVGInlineText {#text} at (0,0) size 0x0
         RenderSVGInlineText {#text} at (0,0) size 0x0
         RenderSVGInlineText {#text} at (0,0) size 0x0

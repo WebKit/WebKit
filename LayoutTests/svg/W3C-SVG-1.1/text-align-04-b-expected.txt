@@ -19,13 +19,13 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (220,113) size 256x33 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 122x33
             chunk 1 text run 1 at (220.00,140.00) startOffset 0 endOffset 11 width 122.00: "start text "
-          RenderSVGTSpan {tspan} at (0,0) size 134x33
+          RenderSVGInline {tspan} at (0,0) size 134x33
             RenderSVGInlineText {#text} at (122,0) size 134x33
               chunk 1 text run 1 at (342.00,140.00) startOffset 0 endOffset 10 width 134.00: " red tspan"
         RenderSVGText {text} at (64,153) size 312x33 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 154x33
             chunk 1 (middle anchor) text run 1 at (64.00,180.00) startOffset 0 endOffset 12 width 154.00: "middle text "
-          RenderSVGTSpan {tspan} at (0,0) size 158x33
+          RenderSVGInline {tspan} at (0,0) size 158x33
             RenderSVGInlineText {#text} at (154,0) size 158x33
               chunk 1 (middle anchor) text run 1 at (218.00,180.00) startOffset 0 endOffset 11 width 158.00: " bold tspan"
         RenderSVGText {text} at (62,193) size 158x33 contains 1 chunk(s)

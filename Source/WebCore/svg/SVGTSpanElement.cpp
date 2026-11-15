@@ -21,7 +21,7 @@
 #include "config.h"
 #include "SVGTSpanElement.h"
 
-#include "RenderSVGTSpan.h"
+#include "RenderSVGInline.h"
 #include "SVGElementInlines.h"
 #include "SVGNames.h"
 #include "SVGPropertyOwnerRegistry.h"
@@ -44,7 +44,7 @@ Ref<SVGTSpanElement> SVGTSpanElement::create(const QualifiedName& tagName, Docum
 
 RenderPtr<RenderElement> SVGTSpanElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderSVGTSpan>(*this, WTF::move(style));
+    return createRenderer<RenderSVGInline>(RenderObject::Type::SVGInline, *this, WTF::move(style));
 }
 
 bool SVGTSpanElement::childShouldCreateRenderer(const Node& child) const

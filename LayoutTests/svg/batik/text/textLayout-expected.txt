@@ -15,7 +15,7 @@ layer at (0,0) size 450x500
           chunk 1 (middle anchor) text run 1 at (170.00,75.00) startOffset 0 endOffset 26 width 110.00: "Explicit Glyph Positioning"
       RenderSVGContainer {g} at (40,89) size 111x38
         RenderSVGText {text} at (40,89) size 111x26 contains 1 chunk(s)
-          RenderSVGTSpan {tspan} at (0,0) size 111x26
+          RenderSVGInline {tspan} at (0,0) size 111x26
             RenderSVGInlineText {#text} at (0,0) size 111x26
               chunk 1 text run 1 at (40.00,110.00) startOffset 0 endOffset 1 width 9.00: "s"
               chunk 1 text run 1 at (60.00,110.00) startOffset 0 endOffset 1 width 11.00: "a"
@@ -35,7 +35,7 @@ layer at (0,0) size 450x500
             chunk 1 text run 1 at (185.00,125.00) startOffset 0 endOffset 22 width 70.00: "Serif, default spacing"
       RenderSVGContainer {g} at (290,89) size 119x38
         RenderSVGText {text} at (290,89) size 119x26 contains 1 chunk(s)
-          RenderSVGTSpan {tspan} at (0,0) size 119x26
+          RenderSVGInline {tspan} at (0,0) size 119x26
             RenderSVGInlineText {#text} at (0,0) size 119x26
               chunk 1 text run 1 at (290.00,110.00) startOffset 0 endOffset 1 width 9.00: "s"
               chunk 1 text run 2 at (309.00,110.00) startOffset 1 endOffset 2 width 11.00: "a"
@@ -92,7 +92,7 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (40,233) size 114x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 62x9
             chunk 1 text run 1 at (40.00,240.00) startOffset 0 endOffset 18 width 62.00: "textLength=\"120\", "
-          RenderSVGTSpan {tspan} at (0,0) size 114x9
+          RenderSVGInline {tspan} at (0,0) size 114x9
             RenderSVGInlineText {#text} at (0,10) size 114x9
               chunk 1 text run 1 at (40.00,250.00) startOffset 0 endOffset 31 width 114.00: "lengthAdjust=\"spacingAndGlyphs\""
       RenderSVGContainer {g} at (185,204) size 114x48
@@ -102,7 +102,7 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (185,233) size 114x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 56x9
             chunk 1 text run 1 at (185.00,240.00) startOffset 0 endOffset 16 width 56.00: "textLength=\"70\" "
-          RenderSVGTSpan {tspan} at (0,0) size 114x9
+          RenderSVGInline {tspan} at (0,0) size 114x9
             RenderSVGInlineText {#text} at (0,10) size 114x9
               chunk 1 text run 1 at (185.00,250.00) startOffset 0 endOffset 31 width 114.00: "lengthAdjust=\"spacingAndGlyphs\""
       RenderSVGContainer {g} at (290,204) size 120x38

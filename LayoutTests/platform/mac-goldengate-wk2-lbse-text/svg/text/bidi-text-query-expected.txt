@@ -8,12 +8,12 @@ layer at (10,33.70) size 127x51
   RenderSVGTransformableContainer {g} at (10,33.70) size 126.55x50.13
 layer at (10,33.70) size 127x20
   RenderSVGText {text} at (0,0) size 127x21 contains 1 chunk(s)
-    RenderSVGTSpan {tspan} at (0,0) size 127x21
+    RenderSVGInline {tspan} at (0,0) size 127x21
       RenderSVGInlineText {#text} at (0,0) size 127x21
         chunk 1 text run 1 at (10.00,50.00) startOffset 0 endOffset 17 width 126.54: "\x{646}\x{634}\x{627}\x{637} \x{627}\x{644}\x{62A}\x{62F}\x{648}\x{64A}\x{644}\x{60C} W3C"
 layer at (10,63.70) size 124x20
   RenderSVGText {text} at (0,30) size 124x21 contains 1 chunk(s)
-    RenderSVGTSpan {tspan} at (0,0) size 124x21
+    RenderSVGInline {tspan} at (0,0) size 124x21
       RenderSVGInlineText {#text} at (0,0) size 124x21
         chunk 1 text run 1 at (10.00,80.00) startOffset 0 endOffset 12 width 72.76 RTL: "\x{646}\x{634}\x{627}\x{637} \x{627}\x{644}\x{62A}\x{62F}\x{648}\x{64A}\x{644}"
         chunk 1 text run 1 at (82.76,80.00) startOffset 0 endOffset 5 width 50.74: "\x{60C} W3C"

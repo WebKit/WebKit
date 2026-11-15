@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
       RenderSVGPath {path} at (100,140) size 100x10 [fill={[type=SOLID] [color=#000000]}] [data="M 100 150 L 150 140 L 200 150"]
     RenderSVGText {text} at (100,35) size 71x19 contains 1 chunk(s)
       RenderSVGInline {a} at (0,0) size 71x19
-        RenderSVGTSpan {tspan} at (0,0) size 71x19
+        RenderSVGInline {tspan} at (0,0) size 71x19
           RenderSVGInlineText {#text} at (0,0) size 71x19
             chunk 1 text run 1 at (100.00,50.00) startOffset 0 endOffset 13 width 71.00: "tspan in link"
     RenderSVGText {text} at (100,85) size 159x19 contains 1 chunk(s)
@@ -42,9 +42,9 @@ layer at (0,0) size 800x600
         RenderSVGInlineText {#text} at (0,0) size 91x19
           chunk 1 text run 1 at (100.00,200.00) startOffset 0 endOffset 15 width 91.00: "ltGlyph content"
     RenderSVGText {text} at (100,235) size 121x19 contains 1 chunk(s)
-      RenderSVGTSpan {tspan} at (0,0) size 121x19
+      RenderSVGInline {tspan} at (0,0) size 121x19
         RenderSVGInline {a} at (0,0) size 121x19
-          RenderSVGTSpan {tspan} at (0,0) size 121x19
+          RenderSVGInline {tspan} at (0,0) size 121x19
             RenderSVGInlineText {#text} at (0,0) size 121x19
               chunk 1 text run 1 at (100.00,250.00) startOffset 0 endOffset 22 width 121.00: "tspan in link in tspan"
     RenderSVGText {text}
