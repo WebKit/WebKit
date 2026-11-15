@@ -1819,6 +1819,7 @@ public:
     void setActiveSpeechRecognition(SpeechRecognition*);
     MediaProducerMediaStateFlags mediaState() const { return m_mediaState; }
     void noteUserInteractionWithMediaElement();
+    void noteUserDidEnableMediaElementAudio(const Document&);
     NODELETE bool isCapturing() const;
     WEBCORE_EXPORT void updateIsPlayingMedia();
 

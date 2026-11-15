@@ -2066,6 +2066,15 @@ void Page::didCommitLoad()
     m_userHasInteractedSinceLastPageLoad = false;
     m_userHasInteractedSinceLastPageLoadExcludingForcedUserGestures = false;
 
+    if (m_mediaUserInteractionOriginToCarryForward) {
+        RefPtr localMainFrame = this->localMainFrame();
+        RefPtr mainFrameDocument = localMainFrame ? localMainFrame->document() : nullptr;
+        if (!mainFrameDocument
+            || isReload(localMainFrame->loader().loadType())
+            || mainFrameDocument->securityOrigin().data() != *m_mediaUserInteractionOriginToCarryForward)
+            clearMediaUserInteractionToCarryForwardAcrossNavigation();
+    }
+
     m_mainFrameURLFragment = { };
 
 #if PLATFORM(VISION) && ENABLE(GAMEPAD)
@@ -3427,12 +3436,26 @@ void Page::storageBlockingStateChanged()
     });
 }
 
+static constexpr MediaProducerMediaStateFlags isPlayingMediaMask { MediaProducerMediaState::IsPlayingAudio, MediaProducerMediaState::IsPlayingVideo };
+
 void Page::updateIsPlayingMedia()
 {
     MediaProducerMediaStateFlags state;
+    MediaProducerMediaStateFlags carryForwardOriginState;
+    bool hasCarryForwardOrigin = !!m_mediaUserInteractionOriginToCarryForward;
     forEachDocument([&](auto& document) {
-        state.add(document.mediaState());
+        auto documentState = document.mediaState();
+        state.add(documentState);
+        if (hasCarryForwardOrigin && document.securityOrigin().data() == *m_mediaUserInteractionOriginToCarryForward)
+            carryForwardOriginState.add(documentState);
     });
+
+    if (hasCarryForwardOrigin) {
+        auto playingState = carryForwardOriginState & isPlayingMediaMask;
+        if (playingState != m_playingMediaStateOfCarryForwardOrigin)
+            restampMediaUserInteractionToCarryForwardAcrossNavigation();
+        m_playingMediaStateOfCarryForwardOrigin = playingState;
+    }
 
     if (state == m_mediaState)
         return;
@@ -3440,6 +3463,38 @@ void Page::updateIsPlayingMedia()
     m_mediaState = state;
 
     chrome().client().isPlayingMediaDidChange(state);
+}
+
+static constexpr Seconds mediaUserInteractionCarryForwardWindow = 10_s;
+
+void Page::noteMediaUserInteractionToCarryForwardAcrossNavigation(const SecurityOriginData& origin)
+{
+    RELEASE_LOG(Media, "%p - Page::noteMediaUserInteractionToCarryForwardAcrossNavigation: arming for %" PUBLIC_LOG_STRING, this, origin.toString().utf8());
+    m_mediaUserInteractionOriginToCarryForward = origin;
+    m_lastPlaybackTimeOfMediaUserInteractedWith = MonotonicTime::now();
+}
+
+void Page::clearMediaUserInteractionToCarryForwardAcrossNavigation()
+{
+    if (!m_mediaUserInteractionOriginToCarryForward)
+        return;
+    RELEASE_LOG(Media, "%p - Page::clearMediaUserInteractionToCarryForwardAcrossNavigation: revoking", this);
+    m_mediaUserInteractionOriginToCarryForward = std::nullopt;
+    m_playingMediaStateOfCarryForwardOrigin = { };
+}
+
+void Page::restampMediaUserInteractionToCarryForwardAcrossNavigation()
+{
+    if (!m_mediaUserInteractionOriginToCarryForward)
+        return;
+    m_lastPlaybackTimeOfMediaUserInteractedWith = MonotonicTime::now();
+}
+
+bool Page::canCarryMediaUserInteractionForwardAcrossNavigation(const SecurityOriginData& origin) const
+{
+    if (!m_mediaUserInteractionOriginToCarryForward || *m_mediaUserInteractionOriginToCarryForward != origin)
+        return false;
+    return MonotonicTime::now() - m_lastPlaybackTimeOfMediaUserInteractedWith < mediaUserInteractionCarryForwardWindow;
 }
 
 void Page::schedulePlaybackControlsManagerUpdate()

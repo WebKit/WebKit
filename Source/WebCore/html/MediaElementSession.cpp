@@ -31,6 +31,7 @@
 #include "AudioTrack.h"
 #include "AudioTrackConfiguration.h"
 #include "AudioTrackList.h"
+#include "AutoplayPolicy.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "DocumentFullscreen.h"
@@ -56,6 +57,7 @@
 #include "RenderObjectInlines.h"
 #include "RenderView.h"
 #include "ScriptController.h"
+#include "SecurityOrigin.h"
 #include "Settings.h"
 #include "SourceBuffer.h"
 #include "TextTrack.h"
@@ -544,6 +546,14 @@ std::expected<void, MediaPlaybackDenialExplanation> MediaElementSession::playbac
     if (mainFrameDocument
         && mainFrameDocument->mediaState() & MediaProducerMediaState::HasUserInteractedWithMediaElement
         && mainFrameDocument->quirks().needsPerDocumentAutoplayBehavior())
+        return { };
+
+    // FIXME: Returning permitted also skips the low power, thermal and page visibility restrictions
+    // below, which may not be intended.
+    if (mainFrameDocument
+        && mainFrameDocument->quirks().allowsAutoplayToCarryForwardAcrossNavigation()
+        && protect(page->mainFrame())->autoplayPolicy() != AutoplayPolicy::Deny
+        && page->canCarryMediaUserInteractionForwardAcrossNavigation(document->securityOrigin().data()))
         return { };
 
     if (document->quirks().needsYouTubeEmbedAutoplayQuirk())
