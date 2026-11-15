@@ -174,7 +174,10 @@ WI.SourceMapResource = class SourceMapResource extends WI.Resource
     createSourceCodeLocation(lineNumber, columnNumber)
     {
         // SourceCodeLocations are always constructed with raw resources and raw locations. Lookup the raw location.
-        let [generatedLine, generatedColumn] = this._sourceMap.findGeneratedPosition(this.url, lineNumber);
+        let generatedPosition = this._sourceMap.findGeneratedPosition(this.url, lineNumber, columnNumber);
+        if (!generatedPosition)
+            return null;
+        let [generatedLine, generatedColumn] = generatedPosition;
 
         // Keep in sync with `WI.SourceCodeLocation.prototype.resolveMappedLocation`.
         var originalSourceCode = this._sourceMap.originalSourceCode;
@@ -196,6 +199,11 @@ WI.SourceMapResource = class SourceMapResource extends WI.Resource
         // However, we can provide the most accurate mapped locations in construction.
         var startSourceCodeLocation = this.createSourceCodeLocation(textRange.startLine, textRange.startColumn);
         var endSourceCodeLocation = this.createSourceCodeLocation(textRange.endLine, textRange.endColumn);
+        // The text range may extend past the last mapping, in which case there is no generated location.
+        startSourceCodeLocation ??= endSourceCodeLocation;
+        endSourceCodeLocation ??= startSourceCodeLocation;
+        if (!startSourceCodeLocation || !endSourceCodeLocation)
+            return null;
         return new WI.SourceCodeTextRange(this._sourceMap.originalSourceCode, startSourceCodeLocation, endSourceCodeLocation);
     }
 };
