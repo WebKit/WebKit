@@ -785,9 +785,6 @@
             "test_click_element_in_shadow_tree[outer-closed]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/320461"}}
             },
-            "test_null_response_value": {
-                "expected": {"mac": {"status": ["TIMEOUT"], "note": "Simulated input fails on Mac"}}
-            },
             "test_move_to_position_in_viewport[default value]": {
                 "expected": {"mac": {"status": ["FAIL"], "note": "Simulated input fails on Mac"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/331469"}}
             }
@@ -813,9 +810,6 @@
             },
             "test_pen_pointer_in_shadow_tree[outer-closed]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/320461"}}
-            },
-            "test_null_response_value": {
-                "expected": {"mac": {"status": ["TIMEOUT"], "note": "Simulated input fails on Mac"}}
             }
         }
     },
@@ -856,9 +850,6 @@
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/320461"}}
             },
             "test_move_to_fractional_position": {
-                "expected": {"mac": {"status": ["TIMEOUT"], "note": "Simulated input fails on Mac"}}
-            },
-            "test_null_response_value": {
                 "expected": {"mac": {"status": ["TIMEOUT"], "note": "Simulated input fails on Mac"}}
             },
             "test_touch_pointer_cancel_and_up": {
@@ -2540,10 +2531,26 @@
         }
     },
     "imported/w3c/webdriver/tests/bidi/browsing_context/capture_screenshot/capture_screenshot.py": {
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288325"}}
+        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288325"}},
+        "subtests": {
+            "test_capture_with_different_dpr[0.5]": {
+                "expected": {"mac": {"status": ["PASS"]}}
+            },
+            "test_capture_with_different_dpr[2]": {
+                "expected": {"mac": {"status": ["PASS"]}}
+            }
+        }
     },
     "imported/w3c/webdriver/tests/bidi/browsing_context/capture_screenshot/frame_tentative.py": {
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288325"}}
+        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288325"}},
+        "subtests": {
+            "test_context_origin[cross_origin]": {
+                "expected": {"mac": {"status": ["PASS"]}}
+            },
+            "test_context_origin[same_origin]": {
+                "expected": {"all": {"status": ["PASS"]}}
+            }
+        }
     },
     "imported/w3c/webdriver/tests/bidi/browsing_context/capture_screenshot/clip.py": {
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288325"}}
@@ -2680,7 +2687,7 @@
                 "expected": { "all": { "status": ["PASS"], "bug": "webkit.org/b/287929"}}
             },
             "test_navigate[cross_origin]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/233391", "note": "The cross-origin load fails on GTK; navigate now reports that instead of succeeding"}}
+                "expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/233391", "note": "The cross-origin load fails on GTK; navigate now reports that instead of succeeding"}}
             },
             "test_new_context[tab]": {
                 "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/288336"}}
@@ -2707,7 +2714,7 @@
                 "expected": {"mac": {"status": ["TIMEOUT"], "note": "Fails on Mac, not investigated yet"}}
             },
             "test_subscribe_to_one_context": {
-                "expected": {"mac": {"status": ["TIMEOUT"], "note": "Fails on Mac, not investigated yet"},  "all": { "status": ["PASS"]}}
+                "expected": {"all": {"status": ["PASS"]}}
             }
         },
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288336"}}
@@ -2743,7 +2750,7 @@
     "imported/w3c/webdriver/tests/bidi/browsing_context/create/background.py": {
         "subtests": {
             "test_background[True-tab]": {
-                "expected": {"mac": {"status": ["PASS"]},  "wpe": { "status": ["FAIL"], "bug": "webkit.org/b/328000"} }
+                "expected": {"mac": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/328000"}, "wpe": {"status": ["FAIL"], "bug": "webkit.org/b/328000"}}
             },
             "test_background[True-window]": {
                 "expected": { "wpe": { "status": ["FAIL"], "bug": "webkit.org/b/328000"} }
@@ -2755,10 +2762,10 @@
                 "expected": {"glib": {"status": ["PASS"]}}
             },
             "test_create_in_parallel[True-tab]": {
-                "expected": {"mac": {"status": ["PASS"]}}
+                "expected": {"mac": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/328000"}}
             },
             "test_create_in_parallel[True-window]": {
-                "expected": {"mac": {"status": ["PASS"]}}
+                "expected": {"mac": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/328000"}}
             }
         },
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/286790"}}
@@ -2790,6 +2797,18 @@
     "imported/w3c/webdriver/tests/bidi/browsing_context/create/type.py": {
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/286790"}},
         "subtests": {
+            "test_get_viewport_after_browsing_context_create[False-tab]": {
+                "expected": {"all": {"status": ["PASS"]}}
+            },
+            "test_get_viewport_after_browsing_context_create[False-window]": {
+                "expected": {"all": {"status": ["PASS"]}}
+            },
+            "test_get_viewport_after_browsing_context_create[True-tab]": {
+                "expected": {"all": {"status": ["PASS"]}}
+            },
+            "test_get_viewport_after_browsing_context_create[True-window]": {
+                "expected": {"all": {"status": ["PASS"]}}
+            },
             "test_type[tab]": {
                 "expected": {"mac": {"status": ["TIMEOUT"], "note": "Fails on Mac, not investigated yet"},  "glib": { "status": ["TIMEOUT"], "bug": "webkit.org/b/286790"}}
             },
@@ -2820,6 +2839,18 @@
     },
     "imported/w3c/webdriver/tests/bidi/browsing_context/dom_content_loaded/dom_content_loaded.py": {
         "subtests": {
+            "test_early_same_document_navigation": {
+                "expected": {"all": {"status": ["PASS"]}}
+            },
+            "test_page_with_base_tag": {
+                "expected": {"all": {"status": ["PASS"]}}
+            },
+            "test_subscribe": {
+                "expected": {"all": {"status": ["PASS"]}}
+            },
+            "test_timestamp": {
+                "expected": {"all": {"status": ["PASS"]}}
+            },
             "test_unsubscribe": {
                 "expected": { "all": { "status": ["PASS"]}}
             },
@@ -3024,6 +3055,15 @@
     },
     "imported/w3c/webdriver/tests/bidi/browsing_context/load/load.py": {
         "subtests": {
+            "test_early_same_document_navigation": {
+                "expected": {"all": {"status": ["PASS"]}}
+            },
+            "test_page_with_base_tag": {
+                "expected": {"all": {"status": ["PASS"]}}
+            },
+            "test_timestamp": {
+                "expected": {"all": {"status": ["PASS"]}}
+            },
             "test_unsubscribe": {
                 "expected": { "all": { "status": ["PASS"]}}
             },
@@ -3095,9 +3135,6 @@
             },
             "test_navigate_from_frameset": {
                 "expected": { "all": { "status": ["PASS"]}}
-            },
-            "test_navigate_in_iframe": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Fails on Mac, not investigated yet"}}
             }
         }
     },
@@ -3138,14 +3175,17 @@
             },
             "test_navigate_from_single_page[data:text to data:text]": {
                 "expected": { "all": { "status": ["PASS"]}}
-            },
-            "test_navigate_in_iframe": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Fails on Mac, not investigated yet"}}
             }
         }
     },
     "imported/w3c/webdriver/tests/bidi/browsing_context/navigate/error.py": {
         "subtests": {
+            "test_with_x_frame_options_header[DENY]": {
+                "expected": {"mac": {"status": ["PASS"]}}
+            },
+            "test_with_x_frame_options_header[SAMEORIGIN]": {
+                "expected": {"mac": {"status": ["PASS"]}}
+            },
             "test_invalid_address[host]": {
                 "expected": { "all": { "status": ["PASS"]}}
             },
@@ -3168,7 +3208,7 @@
                 "expected": { "all": { "status": ["PASS"]}}
             },
             "test_close_iframe": {
-                "expected": {"mac": {"status": ["TIMEOUT"], "note": "Fails on Mac, not investigated yet"},  "all": { "status": ["PASS"]}}
+                "expected": {"all": {"status": ["PASS"]}}
             },
             "test_invalid_address[protocol]": {
                 "expected": {"mac": {"status": ["TIMEOUT"], "note": "Fails on Mac, not investigated yet"},  "all": { "status": ["PASS"]}}
@@ -3182,6 +3222,9 @@
     "imported/w3c/webdriver/tests/bidi/browsing_context/navigate/frame.py": {
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288330"}},
         "subtests": {
+            "test_origin[cross_origin]": {
+                "expected": {"mac": {"status": ["PASS"]}}
+            },
             "test_origin[same_origin]": {
                 "expected": { "all": { "status": ["PASS"]}}
             },
@@ -3219,12 +3262,6 @@
             "test_navigate_in_the_same_document[with identical hashes]": {
                 "expected": { "all": { "status": ["PASS"]}}
             },
-            "test_navigate_in_iframe": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Fails on Mac, not investigated yet"}}
-            },
-            "test_navigate_unique_navigation_id": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Fails on Mac, not investigated yet"}}
-            },
             "test_navigate_in_iframe_to_current_fragment[none]": {
                 "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/330783"}}
             },
@@ -3255,12 +3292,6 @@
             },
             "test_navigate_between_img_and_html[svg to document]": {
                 "expected": { "all": { "status": ["PASS"]}}
-            },
-            "test_navigate_in_iframe[to png]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Fails on Mac, not investigated yet"}}
-            },
-            "test_navigate_in_iframe[to svg]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Fails on Mac, not investigated yet"}}
             }
         }
     },
@@ -3354,6 +3385,18 @@
     },
     "imported/w3c/webdriver/tests/bidi/browsing_context/navigation_committed/navigation_committed.py": {
         "subtests": {
+            "test_basic_auth": {
+                "expected": {"all": {"status": ["PASS"]}}
+            },
+            "test_navigate_history_pushstate": {
+                "expected": {"all": {"status": ["PASS"]}}
+            },
+            "test_redirect_http_equiv": {
+                "expected": {"all": {"status": ["PASS"]}}
+            },
+            "test_redirect_navigation": {
+                "expected": {"all": {"status": ["PASS"]}}
+            },
             "test_unsubscribe": {
                 "expected": { "all": { "status": ["PASS"]}}
             },
@@ -3376,19 +3419,19 @@
                 "expected": { "wpe": { "status": ["PASS"], "bug": "webkit.org/b/287929"}}
             },
             "test_subscribe": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/298656"}}
+                "expected": {"all": {"status": ["PASS"]}}
             },
             "test_timestamp": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/298656"}}
+                "expected": {"all": {"status": ["PASS"]}}
             },
             "test_base_element": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/298656"}}
+                "expected": {"all": {"status": ["PASS"]}}
             },
             "test_navigate_to_about_blank": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/298656"}}
+                "expected": {"all": {"status": ["PASS"]}}
             },
             "test_window_open_with_url": {
-                "expected": { "mac": { "status": ["PASS"]}, "glib": { "status": ["TIMEOUT"], "bug": "webkit.org/b/287934"}}
+                "expected": {"mac": {"status": ["PASS", "FAIL"], "note": "browsingContext.getTree lists top-level contexts by web process, not in creation order"}, "glib": {"status": ["TIMEOUT"], "bug": "webkit.org/b/287934"}}
             },
             "test_document_write[None]": {
                 "expected": {"mac": {"status": ["PASS"]}}
@@ -3402,19 +3445,25 @@
     "imported/w3c/webdriver/tests/bidi/browsing_context/navigation_committed/navigation_interrupted.py": {
         "subtests": {
             "test_multiple_events_for_interrupted_navigation[Interrupted immediately]": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
+                "expected": {"all": {"status": ["PASS"]}}
             },
             "test_multiple_events_for_interrupted_navigation[Interrupted on DOMContentLoaded]": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
+                "expected": {"all": {"status": ["PASS"]}}
             },
             "test_multiple_events_for_interrupted_navigation[Interrupted on load]": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
+                "expected": {"all": {"status": ["PASS"]}}
             }
         },
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/287934"}}
     },
     "imported/w3c/webdriver/tests/bidi/browsing_context/navigation_started/navigation_started.py": {
         "subtests": {
+            "test_navigate_history_pushstate": {
+                "expected": {"all": {"status": ["PASS"]}}
+            },
+            "test_timestamp": {
+                "expected": {"all": {"status": ["PASS"]}}
+            },
             "test_unsubscribe": {
                 "expected": { "all": { "status": ["PASS"]}}
             },
@@ -3523,14 +3572,8 @@
     },
     "imported/w3c/webdriver/tests/bidi/browsing_context/reload/frame.py": {
         "subtests": {
-            "test_frame_reload_is_a_reload": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Fails on Mac, not investigated yet"},  "all": { "status": ["PASS"]}}
-            },
             "test_origin[cross_origin]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Fails on Mac, not investigated yet"},  "all": { "status": ["FAIL"], "bug": "webkit.org/b/233391"}}
-            },
-            "test_origin[same_origin]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Fails on Mac, not investigated yet"},  "all": { "status": ["PASS"]}}
+                "expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/233391"}}
             },
             "test_reload_resets_iframe_location[cross_origin]": {
                 "expected": {"mac": {"status": ["PASS"]},  "all": { "status": ["FAIL"], "bug": "webkit.org/b/233391"}}
@@ -3547,27 +3590,6 @@
             "test_slow_script_blocks_domContentLoaded[none-False]": {
                 "expected": { "all": { "status": ["PASS"]}}
             },
-            "test_slow_image_blocks_load[complete-True]": {
-                "expected": {"mac": {"status": ["TIMEOUT"], "note": "Fails on Mac, not investigated yet"},  "all": { "status": ["PASS"]}}
-            },
-            "test_slow_image_blocks_load[interactive-False]": {
-                "expected": {"mac": {"status": ["TIMEOUT"], "note": "Fails on Mac, not investigated yet"},  "all": { "status": ["PASS"]}}
-            },
-            "test_slow_image_blocks_load[none-False]": {
-                "expected": {"mac": {"status": ["TIMEOUT"], "note": "Fails on Mac, not investigated yet"},  "all": { "status": ["PASS"]}}
-            },
-            "test_slow_page[complete-True]": {
-                "expected": {"mac": {"status": ["TIMEOUT"], "note": "Fails on Mac, not investigated yet"}}
-            },
-            "test_slow_page[interactive-True]": {
-                "expected": {"mac": {"status": ["TIMEOUT"], "note": "Fails on Mac, not investigated yet"}}
-            },
-            "test_slow_script_blocks_domContentLoaded[complete-True]": {
-                "expected": {"mac": {"status": ["TIMEOUT"], "note": "Fails on Mac, not investigated yet"}}
-            },
-            "test_slow_script_blocks_domContentLoaded[interactive-True]": {
-                "expected": {"mac": {"status": ["TIMEOUT"], "note": "Fails on Mac, not investigated yet"}}
-            },
             "test_beforeunload_prompt[none]": {
                 "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288344", "note": "Under automation WebPageProxy::runBeforeUnloadConfirmPanel() always lets the unload proceed, so the prompt never opens"}}
             },
@@ -3580,7 +3602,33 @@
         }
     },
     "imported/w3c/webdriver/tests/bidi/browsing_context/set_viewport/device_pixel_ratio.py": {
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288333"}}
+        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288333"}},
+        "subtests": {
+            "test_device_pixel_ratio_only[0.5]": {
+                "expected": {"mac": {"status": ["PASS"]}}
+            },
+            "test_device_pixel_ratio_only[2]": {
+                "expected": {"mac": {"status": ["PASS"]}}
+            },
+            "test_device_pixel_ratio_with_scrollbar[both-0.5]": {
+                "expected": {"all": {"status": ["PASS"]}}
+            },
+            "test_device_pixel_ratio_with_scrollbar[both-2]": {
+                "expected": {"all": {"status": ["PASS"]}}
+            },
+            "test_device_pixel_ratio_with_scrollbar[horizontal-0.5]": {
+                "expected": {"all": {"status": ["PASS"]}}
+            },
+            "test_device_pixel_ratio_with_scrollbar[horizontal-2]": {
+                "expected": {"all": {"status": ["PASS"]}}
+            },
+            "test_device_pixel_ratio_with_scrollbar[vertical-0.5]": {
+                "expected": {"all": {"status": ["PASS"]}}
+            },
+            "test_device_pixel_ratio_with_scrollbar[vertical-2]": {
+                "expected": {"all": {"status": ["PASS"]}}
+            }
+        }
     },
     "imported/w3c/webdriver/tests/bidi/browsing_context/set_viewport/invalid.py": {
         "expected": { "all": { "status": ["PASS"], "bug": "webkit.org/b/288333"}},
@@ -3602,24 +3650,8 @@
     "imported/w3c/webdriver/tests/bidi/browsing_context/set_viewport/user_contexts.py": {
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288333"}}
     },
-    "imported/w3c/webdriver/tests/bidi/browsing_context/traverse_history/context.py": {
-        "subtests": {
-            "test_top_level_contexts": {
-                "expected": {"mac": {"status": ["TIMEOUT"], "note": "Fails on Mac, not investigated yet"}, "mac-site-isolation": {"status": ["TIMEOUT"], "note": "With Site Isolation, traverseHistory times out"}}
-            }
-        }
-    },
     "imported/w3c/webdriver/tests/bidi/browsing_context/traverse_history/delta.py": {
         "subtests": {
-            "test_delta_forward_and_back": {
-                "expected": {"mac": {"status": ["TIMEOUT"], "note": "Fails on Mac, not investigated yet"}, "mac-site-isolation": {"status": ["TIMEOUT"], "note": "With Site Isolation, traverseHistory times out"}}
-            },
-            "test_navigate_special_protocols[data url]": {
-                "expected": {"mac": {"status": ["TIMEOUT"], "note": "Fails on Mac, not investigated yet"}, "mac-site-isolation": {"status": ["TIMEOUT"], "note": "With Site Isolation, traverseHistory times out"}}
-            },
-            "test_navigate_special_protocols[file url]": {
-                "expected": {"mac": {"status": ["TIMEOUT"], "note": "Fails on Mac, not investigated yet"}, "mac-site-isolation": {"status": ["TIMEOUT"], "note": "With Site Isolation, traverseHistory times out"}}
-            },
             "test_history_push_state": {
                 "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288058"}}
             }
@@ -3630,14 +3662,26 @@
     },
     "imported/w3c/webdriver/tests/bidi/browsing_context/user_prompt_closed/user_prompt_closed.py": {
         "subtests": {
+            "test_prompt_type_alert": {
+                "expected": {"mac": {"status": ["PASS"]}}
+            },
+            "test_prompt_type_confirm[False]": {
+                "expected": {"mac": {"status": ["PASS"]}}
+            },
+            "test_prompt_type_confirm[True]": {
+                "expected": {"mac": {"status": ["PASS"]}}
+            },
+            "test_prompt_type_prompt[True]": {
+                "expected": {"mac": {"status": ["PASS"]}}
+            },
             "test_unsubscribe": {
                 "expected": { "all": { "status": ["PASS"]}}
             },
             "test_subscribe_to_one_context[tab]": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
+                "expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
             },
             "test_subscribe_to_one_context[window]": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
+                "expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
             }
         },
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288343"}}
@@ -3653,7 +3697,7 @@
     "imported/w3c/webdriver/tests/bidi/browsing_context/user_prompt_opened/user_prompt_opened.py": {
         "subtests": {
             "test_unsubscribe": {
-                "expected": {"mac": {"status": ["TIMEOUT"], "note": "BiDi user prompt events time out on Mac"},  "all": { "status": ["PASS"]}}
+                "expected": {"all": {"status": ["PASS"]}}
             },
             "test_two_prompts[tab]": {
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/288344"}}
@@ -3691,8 +3735,8 @@
     "imported/w3c/webdriver/tests/bidi/browsing_context/user_prompt_opened/handler.py": {
         "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/288344"}},
         "subtests": {
-            "test_accept": {"expected": {"mac": {"status": ["TIMEOUT"], "note": "BiDi user prompt events time out on Mac"}, "all": {"status": ["PASS"] }}},
-            "test_accept_and_notify": {"expected": {"mac": {"status": ["TIMEOUT"], "note": "BiDi user prompt events time out on Mac"}, "all": {"status": ["PASS"] }}}
+            "test_accept": {"expected": {"all": {"status": ["PASS"]}}},
+            "test_accept_and_notify": {"expected": {"all": {"status": ["PASS"]}}}
         }
     },
 
@@ -3903,7 +3947,7 @@
         "expected": { "glib": { "status": ["SKIP"], "bug": "webkit.org/b/281949"}},
         "subtests": {
             "test_key_down_closes_browsing_context": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
+                "expected": {"mac-site-isolation": {"status": ["FAIL"], "bug": "webkit.org/b/331698"}, "mac": {"status": ["PASS"]}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
             },
             "test_key_shadow_tree[outer-open]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
@@ -4095,10 +4139,10 @@
         "expected": { "glib": { "status": ["SKIP"], "bug": "webkit.org/b/281949"}},
         "subtests": {
             "test_viewport_inside": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/313656"}}
+                "expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/313656"}}
             },
             "test_pointer_inside": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/313656"}}
+                "expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/313656"}}
             },
             "test_element_center_point_with_offset[10-15-element fully visible]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/327875"}}
@@ -5339,14 +5383,8 @@
             "test_shared_worker": {
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
             },
-            "test_reload_context": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
-            },
             "test_subscribe_after_sandbox_creation": {
                 "expected": { "glib": { "status": ["FAIL"], "bug": "webkit.org/b/288067"}}
-            },
-            "test_dedicated_worker_subscribe_to_one_context": {
-                "expected": {"mac": {"status": ["TIMEOUT"], "note": "Fails on Mac, not investigated yet"}}
             },
             "test_dedicated_worker_subscribe_to_user_context": {
                 "expected": {"mac": {"status": ["FAIL"], "note": "User contexts aren't implemented on Mac"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/309502"}}
@@ -5800,7 +5838,12 @@
         "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/281949"}}
     },
     "imported/w3c/webdriver/tests/interop/shared_id_node.py": {
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/303212"}}
+        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/303212"}},
+        "subtests": {
+            "test_web_element_reference_created_in_bidi": {
+                "expected": {"all": {"status": ["PASS"]}}
+            }
+        }
     },
     "imported/w3c/webdriver/tests/interop/shared_id_window.py": {
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/303212"}},
@@ -5927,7 +5970,7 @@
                 "expected": {"mac": {"status": ["FAIL", "PASS"], "note": "Simulated input fails on Mac"}}
             },
             "test_dismiss[beforeunload-None]": {
-                "expected": {"mac@Release": {"status": ["FAIL", "PASS"], "note": "Simulated input fails on Mac"}}
+                "expected": {"mac": {"status": ["FAIL", "PASS"], "note": "Simulated input fails on Mac"}}
             },
             "test_dismiss_and_notify[beforeunload-None]": {
                 "expected": {"mac": {"status": ["FAIL", "PASS"], "note": "Simulated input fails on Mac"}}
@@ -6581,7 +6624,7 @@
                 "expected": {"mac": {"status": ["FAIL"], "bug": "webkit.org/b/331296"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/331296"}}
             },
             "test_default_src_unsafe_inline[promise eval]": {
-                "expected": {"mac": {"status": ["TIMEOUT"], "note": "Undecided in https://github.com/w3c/webdriver-bidi/issues/1024"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/331296"}}
+                "expected": {"mac": {"status": ["SKIP"], "bug": "webkit.org/b/331296", "note": "The promise never settles, and the late response to script.callFunction hangs the next subtest"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/331296"}}
             }
         }
     },
@@ -6626,14 +6669,6 @@
             },
             "test_default_src_unsafe_inline[promise eval]": {
                 "expected": {"mac": {"status": ["FAIL"], "note": "Undecided in https://github.com/w3c/webdriver-bidi/issues/1024"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/331296"}}
-            }
-        }
-    },
-
-    "imported/w3c/webdriver/tests/bidi/script/evaluate/target.py": {
-        "subtests": {
-            "test_target_context_and_realm": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Fails with the new new_tab fixture, not investigated yet"}}
             }
         }
     },
@@ -6815,7 +6850,7 @@
     "imported/w3c/webdriver/tests/classic/perform_actions/wheel_events.py": {
         "subtests": {
             "test_scroll_on_not_scrollable_element": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Simulated input fails on Mac"}, "wpe": {"status": ["FAIL"], "bug": "webkit.org/b/331460"}}
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/331460"}}
             },
             "test_scroll_with_key_pressed": {
                 "expected": {"mac": {"status": ["FAIL"], "note": "Simulated input fails on Mac"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/331460"}}
