@@ -1421,6 +1421,32 @@ function(_WEBKIT_COMPUTE_SWIFT_SHARED_CLANG_FLAGS _outvar)
     set(${_outvar} ${_flags} PARENT_SCOPE)
 endfunction()
 
+# Importer flags in the SDK module cache key to create one shared set of SDK modules.
+function(_WEBKIT_SWIFT_SHARED_IMPORTER_OPTIONS _outvar _resp_path _cxx_interop)
+    set(_opts "@${_resp_path}")
+    if (_cxx_interop)
+        list(APPEND _opts ${WEBKIT_SWIFT_CXX_INTEROP_FLAGS})
+    endif ()
+    if (CMAKE_Swift_COMPILER_TARGET)
+        list(APPEND _opts "-clang-target ${CMAKE_Swift_COMPILER_TARGET}")
+    endif ()
+    _WEBKIT_COMPUTE_SWIFT_SHARED_CLANG_FLAGS(_shared_cc_flags)
+    if (NOT _cxx_interop)
+        # UCHAR_TYPE is only for C++ and breaks icu's module otherwise.
+        list(FILTER _shared_cc_flags EXCLUDE REGEX "^-DUCHAR_TYPE=")
+    endif ()
+    foreach (_f IN LISTS _shared_cc_flags)
+        list(APPEND _opts "-Xcc ${_f}")
+    endforeach ()
+    set(${_outvar} ${_opts} PARENT_SCOPE)
+endfunction()
+
+# For Swift targets without C++ interop so they all share one set of Objective-C SDK modules.
+function(webkit_target_add_swift_objc_importer_options _target _resp_path)
+    _WEBKIT_SWIFT_SHARED_IMPORTER_OPTIONS(_opts "${_resp_path}" OFF)
+    webkit_target_add_swift_options(${_target} ${_opts})
+endfunction()
+
 # Generates ${_resp_path}, a swiftc @-response file with the platform-derived
 # flags. Mirrors the Xcode "Generate Swift platform args" build phase.
 # Format (one token per line): -DNAME for truthy HAVE_/USE_/ENABLE_/
@@ -1601,7 +1627,7 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
         # it ends up in the swiftc invocation that CMake assembles from
         # target_compile_options.
         set(_resp_path "${CMAKE_CURRENT_BINARY_DIR}/${_target}.platform-swift-args.resp")
-        set(_swift_options "@${_resp_path}")
+        _WEBKIT_SWIFT_SHARED_IMPORTER_OPTIONS(_swift_options "${_resp_path}" ON)
         # Other options needed by Swift for C++ interop, including the location
         # of the modulemap and hader for WebKit's internal "APIs" which we
         # make available from C++ to Swift.
@@ -1612,14 +1638,6 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
         # WebKit_Private framework module — matches Xcode's SWIFT_INCLUDE_PATHS
         # which is also Swift-only) can set
         # ${_target}_SWIFT_INTEROP_MODULE_PATH_SWIFT_ONLY to TRUE.
-        list(APPEND _swift_options ${WEBKIT_SWIFT_CXX_INTEROP_FLAGS})
-        if (CMAKE_Swift_COMPILER_TARGET)
-            list(APPEND _swift_options "-clang-target ${CMAKE_Swift_COMPILER_TARGET}")
-        endif ()
-        _WEBKIT_COMPUTE_SWIFT_SHARED_CLANG_FLAGS(_shared_cc_flags)
-        foreach (_f IN LISTS _shared_cc_flags)
-            list(APPEND _swift_options "-Xcc ${_f}")
-        endforeach ()
         if (APPLE)
             # Swift modules extend their underlying ObjC++ module.
             list(APPEND _swift_options "-import-underlying-module")
