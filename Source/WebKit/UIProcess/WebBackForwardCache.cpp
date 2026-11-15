@@ -140,6 +140,14 @@ void WebBackForwardCache::removeEntry(SuspendedPageProxy& suspendedPage)
     });
 }
 
+void WebBackForwardCache::removeEntriesForFrameItem(WebPageProxyIdentifier pageID, WebCore::BackForwardFrameItemIdentifier frameItemID)
+{
+    removeEntriesMatching([&](auto& item) {
+        RefPtr entry = item.backForwardCacheEntry();
+        return item.pageID() == pageID && entry && entry->backForwardFrameItemID() == frameItemID;
+    });
+}
+
 Ref<SuspendedPageProxy> WebBackForwardCache::takeSuspendedPage(WebBackForwardListItem& item)
 {
     RELEASE_LOG(BackForwardCache, "WebBackForwardCache::takeSuspendedPage: item=%s", item.identifier().toString().utf8());

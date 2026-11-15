@@ -713,5 +713,6 @@ messages -> WebPageProxy {
 
     DidCacheBackForwardItem(WebCore::BackForwardItemIdentifier itemID) -> (bool success)
     DidEvictBackForwardItem(WebCore::BackForwardItemIdentifier itemID)
+    DidEvictBackForwardFrameItem(WebCore::BackForwardFrameItemIdentifier frameItemID)
     DidTakeBackForwardItemForRestoration(WebCore::BackForwardItemIdentifier itemID)
 }

@@ -53,6 +53,7 @@ public:
     FrameView* view() const { return m_view.get(); }
     const URL& url() const LIFETIME_BOUND { return m_url; }
     bool isMainFrame() { return m_isMainFrame; }
+    bool containsFrame(const Frame&) const;
 
 protected:
     CachedFrameBase(Frame&);
@@ -93,6 +94,7 @@ public:
     using CachedFrameBase::document;
     using CachedFrameBase::view;
     using CachedFrameBase::url;
+    using CachedFrameBase::containsFrame;
     DocumentLoader* documentLoader() const { return m_documentLoader.get(); }
 
     NODELETE size_t descendantFrameCount() const;
