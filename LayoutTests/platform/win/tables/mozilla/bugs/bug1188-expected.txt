@@ -26,10 +26,9 @@ layer at (0,0) size 800x600
                 RenderTextControl {INPUT} at (266,3) size 220x22 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
                 RenderText {#text} at (488,3) size 5x21
                   text run at (488,4) width 5: " "
-                RenderButton {INPUT} at (494,3) size 59x22 [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
-                  RenderBlock (anonymous) at (8,3) size 43x16
-                    RenderText at (0,0) size 43x16
-                      text run at (0,0) width 43: "Search"
+                RenderBlock {INPUT} at (494,3) size 59x22 [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
+                  RenderText at (8,3) size 43x16
+                    text run at (8,3) width 43: "Search"
                 RenderBR {BR} at (555,18) size 1x2
                 RenderInline {SMALL} at (0,0) size 559x15
                   RenderInline {A} at (0,0) size 99x15 [color=#0000EE]

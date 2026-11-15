@@ -885,7 +885,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorCSSAgent::forcePseudoState(Ins
 std::optional<InspectorCSSAgent::LayoutFlag> InspectorCSSAgent::layoutFlagContextType(RenderObject* renderer)
 {
     if (auto* renderFlexibleBox = dynamicDowncast<RenderFlexibleBox>(renderer)) {
-        // Subclasses of RenderFlexibleBox (buttons, selection inputs, etc.) should not be considered flex containers,
+        // Subclasses of RenderFlexibleBox (selection inputs, text inputs, etc.) should not be considered flex containers,
         // as it is an internal implementation detail.
         if (renderFlexibleBox->isFlexibleBoxImpl())
             return std::nullopt;

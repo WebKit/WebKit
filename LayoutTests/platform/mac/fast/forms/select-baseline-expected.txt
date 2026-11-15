@@ -30,20 +30,18 @@ layer at (0,0) size 800x600
             text run at (8,1) width 21: "test"
       RenderText {#text} at (240,19) size 5x18
         text run at (240,19) width 5: " "
-      RenderButton {BUTTON} at (244,21) size 17x15 [color=#000000D8] [bgcolor=#C0C0C0] [border: none (2px outset #C0C0C0) none (2px outset #C0C0C0)]
+      RenderBlock {BUTTON} at (244,21) size 17x15 [color=#000000D8] [bgcolor=#C0C0C0] [border: none (2px outset #C0C0C0) none (2px outset #C0C0C0)]
       RenderText {#text} at (260,19) size 5x18
         text run at (260,19) width 5: " "
-      RenderButton {BUTTON} at (264,20) size 37x18 [color=#000000D8] [bgcolor=#C0C0C0] [border: none (2px outset #C0C0C0) none (2px outset #C0C0C0)]
-        RenderBlock (anonymous) at (8,2) size 21x13
-          RenderText {#text} at (0,0) size 21x13
-            text run at (0,0) width 21: "test"
+      RenderBlock {BUTTON} at (264,20) size 37x18 [color=#000000D8] [bgcolor=#C0C0C0] [border: none (2px outset #C0C0C0) none (2px outset #C0C0C0)]
+        RenderText {#text} at (8,2) size 21x13
+          text run at (8,2) width 21: "test"
       RenderText {#text} at (300,19) size 5x18
         text run at (300,19) width 5: " "
-      RenderButton {BUTTON} at (304,29) size 17x9 [color=#00008B] [bgcolor=#ADD8E6] [border: (2px outset #C0C0C0)]
+      RenderBlock {BUTTON} at (304,29) size 17x9 [color=#00008B] [bgcolor=#ADD8E6] [border: (2px outset #C0C0C0)]
       RenderText {#text} at (320,19) size 5x18
         text run at (320,19) width 5: " "
-      RenderButton {BUTTON} at (324,18) size 37x22 [color=#00008B] [bgcolor=#ADD8E6] [border: (2px outset #C0C0C0)]
-        RenderBlock (anonymous) at (8,4) size 21x13
-          RenderText {#text} at (0,0) size 21x13
-            text run at (0,0) width 21: "test"
+      RenderBlock {BUTTON} at (324,18) size 37x22 [color=#00008B] [bgcolor=#ADD8E6] [border: (2px outset #C0C0C0)]
+        RenderText {#text} at (8,4) size 21x13
+          text run at (8,4) width 21: "test"
       RenderText {#text} at (0,0) size 0x0

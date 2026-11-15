@@ -18,22 +18,20 @@ layer at (0,0) size 800x600
       RenderMenuList {SELECT} at (171,18) size 53x30 [color=#00008B] [bgcolor=#ADD8E6] [border: (1px solid #00008B)]
       RenderText {#text} at (224,24) size 4x18
         text run at (224,24) width 4: " "
-      RenderButton {BUTTON} at (228,34) size 16x10 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+      RenderBlock {BUTTON} at (228,34) size 16x10 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
       RenderText {#text} at (244,24) size 4x18
         text run at (244,24) width 4: " "
-      RenderButton {BUTTON} at (248,20) size 41x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-        RenderBlock (anonymous) at (8,4) size 25x18
-          RenderText {#text} at (0,0) size 25x18
-            text run at (0,0) width 25: "test"
+      RenderBlock {BUTTON} at (248,20) size 41x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderText {#text} at (8,4) size 25x18
+          text run at (8,4) width 25: "test"
       RenderText {#text} at (289,24) size 4x18
         text run at (289,24) width 4: " "
-      RenderButton {BUTTON} at (293,34) size 16x10 [color=#00008B] [bgcolor=#ADD8E6] [border: (2px outset #C0C0C0)]
+      RenderBlock {BUTTON} at (293,34) size 16x10 [color=#00008B] [bgcolor=#ADD8E6] [border: (2px outset #C0C0C0)]
       RenderText {#text} at (309,24) size 4x18
         text run at (309,24) width 4: " "
-      RenderButton {BUTTON} at (313,20) size 41x27 [color=#00008B] [bgcolor=#ADD8E6] [border: (2px outset #C0C0C0)]
-        RenderBlock (anonymous) at (8,4) size 25x18
-          RenderText {#text} at (0,0) size 25x18
-            text run at (0,0) width 25: "test"
+      RenderBlock {BUTTON} at (313,20) size 41x27 [color=#00008B] [bgcolor=#ADD8E6] [border: (2px outset #C0C0C0)]
+        RenderText {#text} at (8,4) size 25x18
+          text run at (8,4) width 25: "test"
       RenderText {#text} at (0,0) size 0x0
 layer at (9,27) size 26x28
   RenderBlock {DIV} at (1,1) size 26x28

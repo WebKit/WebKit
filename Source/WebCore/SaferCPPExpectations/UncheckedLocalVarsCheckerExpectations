@@ -12,7 +12,6 @@ rendering/RenderBlock.cpp
 rendering/RenderBlockFlow.cpp
 rendering/RenderBox.cpp
 rendering/RenderBoxModelObject.cpp
-rendering/RenderButton.cpp
 rendering/RenderCounter.cpp
 rendering/RenderDeprecatedFlexibleBox.cpp
 rendering/RenderElement.cpp

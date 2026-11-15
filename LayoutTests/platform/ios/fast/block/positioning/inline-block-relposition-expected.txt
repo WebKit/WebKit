@@ -5,10 +5,9 @@ layer at (0,0) size 800x36
     RenderBody {BODY} at (8,8) size 784x20
       RenderText {#text} at (0,0) size 0x0
 layer at (8,8) size 100x20
-  RenderButton {BUTTON} at (0,0) size 100x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-    RenderBlock (anonymous) at (12,3) size 76x14
-      RenderText {#text} at (15,-1) size 46x15
-        text run at (15,0) width 46: "Click Me"
+  RenderBlock (relative positioned) {BUTTON} at (0,0) size 100x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+    RenderText {#text} at (27,2) size 46x15
+      text run at (27,3) width 46: "Click Me"
 layer at (89,25) size 23x13
   RenderBlock (positioned) {DIV} at (80,16) size 24x14
     RenderText {#text} at (0,-1) size 24x15

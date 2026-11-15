@@ -58,10 +58,9 @@ layer at (0,0) size 800x600
                             RenderText {#text} at (0,0) size 0x0
                           RenderText {#text} at (0,0) size 0x0
                         RenderTableCell {TD} at (399,4) size 78x37 [border: (1px inset #000000)] [r=0 c=3 rs=1 cs=1]
-                          RenderButton {INPUT} at (5,5) size 67x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-                            RenderBlock (anonymous) at (8,4) size 51x18
-                              RenderText at (0,0) size 51x18
-                                text run at (0,0) width 51: "Search"
+                          RenderBlock {INPUT} at (5,5) size 67x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+                            RenderText at (8,4) size 51x18
+                              text run at (8,4) width 51: "Search"
                           RenderText {#text} at (0,0) size 0x0
                       RenderTableRow {TR} at (0,45) size 480x28
                         RenderTableCell {TD} at (4,45) size 128x28 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]

@@ -9,10 +9,9 @@ layer at (0,0) size 800x39
             RenderBlock {DIV} at (0,0) size 131x13
         RenderText {#text} at (140,2) size 5x18
           text run at (140,2) width 5: " "
-        RenderButton {INPUT} at (146,3) size 54x18 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (8,2) size 38x13
-            RenderText at (0,0) size 38x13
-              text run at (0,0) width 38: "Submit"
+        RenderBlock {INPUT} at (146,3) size 54x18 [bgcolor=#C0C0C0]
+          RenderText at (8,2) size 38x13
+            text run at (8,2) width 38: "Submit"
         RenderText {#text} at (0,0) size 0x0
 layer at (13,13) size 130x13
   RenderBlock {DIV} at (0,0) size 131x13

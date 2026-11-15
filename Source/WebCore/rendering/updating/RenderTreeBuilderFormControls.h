@@ -30,22 +30,17 @@
 
 namespace WebCore {
 
-class RenderBlock;
-class RenderButton;
+class RenderBlockFlow;
 
 class RenderTreeBuilder::FormControls {
     WTF_MAKE_TZONE_ALLOCATED(FormControls);
 public:
     NODELETE FormControls(RenderTreeBuilder&);
 
-    void attach(RenderButton& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
-
-    [[nodiscard]] RenderPtr<RenderObject> detach(RenderButton& parent, RenderObject& child, RenderTreeBuilder::WillBeDestroyed);
-
     void updateAfterDescendants(RenderElement&);
 
 private:
-    RenderBlock& findOrCreateParentForChild(RenderButton&);
+    void updateInputButtonText(RenderBlockFlow&, const String&);
 
     enum class PseudoElementPosition : bool { FirstChild, LastChild };
     void updatePseudoElement(PseudoElementType, RenderElement&, StyleAppearance, PseudoElementPosition = PseudoElementPosition::LastChild);

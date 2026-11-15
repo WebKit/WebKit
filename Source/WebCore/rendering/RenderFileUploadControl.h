@@ -26,9 +26,9 @@ namespace WebCore {
 
 class HTMLInputElement;
 
-// Each RenderFileUploadControl contains a RenderButton (for opening the file chooser), and
-// sufficient space to draw a file icon and filename. The RenderButton has a shadow node
-// associated with it to receive click/hover events.
+// Each RenderFileUploadControl contains a button (for opening the file chooser), and
+// sufficient space to draw a file icon and filename. The button is a shadow node
+// to receive click/hover events.
 
 class RenderFileUploadControl final : public RenderBlockFlow {
     WTF_MAKE_TZONE_ALLOCATED(RenderFileUploadControl);

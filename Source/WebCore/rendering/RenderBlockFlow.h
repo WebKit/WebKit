@@ -133,6 +133,11 @@ public:
 
     NODELETE bool establishesLineClampContainer() const;
 
+    bool canBeSelectionLeaf() const override;
+    bool canHaveGeneratedChildren() const override;
+    bool hasControlClip() const override;
+    LayoutRect controlClipRect(const LayoutPoint&) const override;
+
 protected:
     void willBeDestroyed() override;
 

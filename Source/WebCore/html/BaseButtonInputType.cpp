@@ -36,7 +36,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "NodeDocument.h"
-#include "RenderButton.h"
+#include "RenderBlockFlow.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -59,7 +59,9 @@ bool BaseButtonInputType::appendFormData(DOMFormData&) const
 RenderPtr<RenderElement> BaseButtonInputType::createInputRenderer(Style::ComputedStyle&& style)
 {
     ASSERT(element());
-    return createRenderer<RenderButton>(*protect(element()), WTF::move(style));
+    // https://html.spec.whatwg.org/multipage/rendering.html#button-layout
+    // The inner display type of an input element is always 'flow-root'.
+    return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, *protect(element()), WTF::move(style), RenderObject::BlockFlowFlag::UsesButtonLayout);
 }
 
 bool BaseButtonInputType::storesValueSeparateFromAttribute()

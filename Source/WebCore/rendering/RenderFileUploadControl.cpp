@@ -36,9 +36,9 @@
 #include "RenderBlockInlines.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
-#include "RenderButton.h"
 #include "RenderElementInlines.h"
 #include "RenderElementStyleInlines.h"
+#include "RenderIterator.h"
 #include "RenderText.h"
 #include "RenderTheme.h"
 #include "ShadowRoot.h"
@@ -187,8 +187,9 @@ void RenderFileUploadControl::paintControl(PaintInfo& paintInfo, const LayoutPoi
         // We want to match the button's baseline
         // FIXME: Make this work with transforms.
         auto textLogicalTop = [&]() -> float {
-            if (CheckedPtr buttonRenderer = downcast<RenderButton>(button->renderer())) {
-                if (CheckedPtr buttonTextRenderer = buttonRenderer->textRenderer()) {
+            if (CheckedPtr buttonRenderer = button->renderer()) {
+                // The value is the only text of the button.
+                if (CheckedPtr buttonTextRenderer = RenderTraversal::firstWithin<RenderText>(*buttonRenderer)) {
                     if (auto textBox = InlineIterator::lineLeftmostTextBoxFor(*buttonTextRenderer)) {
                         auto textVisualRect = textBox->blockStartRelativePhysicalRect();
                         textVisualRect.setLocation(buttonTextRenderer->localToContainerPoint(textVisualRect.location(), this));
@@ -259,7 +260,7 @@ void RenderFileUploadControl::paintControl(PaintInfo& paintInfo, const LayoutPoi
                 iconRect = iconRect.transposedRect();
 
 #if PLATFORM(COCOA)
-            if (CheckedPtr buttonRenderer = downcast<RenderButton>(button->renderer())) {
+            if (CheckedPtr buttonRenderer = button->renderer()) {
                 // Draw the file icon and decorations.
                 auto decorationsType = inputElement().files()->length() == 1 ? RenderTheme::FileUploadDecorations::SingleFile : RenderTheme::FileUploadDecorations::MultipleFiles;
                 theme().paintFileUploadIconDecorations(*this, *buttonRenderer, paintInfo, iconRect, protect(inputElement().icon()), decorationsType);

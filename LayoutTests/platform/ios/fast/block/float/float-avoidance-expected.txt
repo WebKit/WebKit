@@ -17,10 +17,9 @@ layer at (0,0) size 800x2364
         RenderBR {BR} at (69,10) size 1x18
         RenderMenuList {SELECT} at (10,28) size 100x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
         RenderText {#text} at (0,0) size 0x0
-        RenderButton {INPUT} at (10,48) size 200x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-          RenderBlock (anonymous) at (12,3) size 176x14
-            RenderText at (82,-1) size 12x15
-              text run at (82,0) width 12: "Hi"
+        RenderBlock {INPUT} at (10,48) size 200x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+          RenderText at (94,2) size 12x15
+            text run at (94,3) width 12: "Hi"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,182) size 784x18
         RenderText {#text} at (0,0) size 482x18
@@ -31,10 +30,9 @@ layer at (0,0) size 800x2364
         RenderBR {BR} at (69,10) size 1x18
         RenderMenuList {SELECT} at (10,28) size 100x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
         RenderText {#text} at (0,0) size 0x0
-        RenderButton {INPUT} at (110,28) size 100x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-          RenderBlock (anonymous) at (12,3) size 76x14
-            RenderText at (32,-1) size 12x15
-              text run at (32,0) width 12: "Hi"
+        RenderBlock (floating) {INPUT} at (110,28) size 100x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+          RenderText at (44,2) size 12x15
+            text run at (44,3) width 12: "Hi"
         RenderText {#text} at (0,0) size 0x0
         RenderBR {BR} at (210,28) size 0x18
       RenderBlock (anonymous) at (0,290) size 784x18
@@ -47,10 +45,9 @@ layer at (0,0) size 800x2364
           RenderBR {BR} at (59,0) size 1x18
           RenderMenuList {SELECT} at (0,18) size 100x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
           RenderText {#text} at (0,0) size 0x0
-        RenderButton {INPUT} at (110,28) size 36x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-          RenderBlock (anonymous) at (12,3) size 12x14
-            RenderText at (0,-1) size 12x15
-              text run at (0,0) width 12: "Hi"
+        RenderBlock {INPUT} at (110,28) size 36x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+          RenderText at (12,2) size 12x15
+            text run at (12,3) width 12: "Hi"
         RenderBlock (anonymous) at (10,48) size 200x18
           RenderBR {BR} at (0,0) size 0x18
       RenderBlock (anonymous) at (0,416) size 784x18
@@ -63,10 +60,9 @@ layer at (0,0) size 800x2364
           RenderBR {BR} at (59,0) size 1x18
           RenderMenuList {SELECT} at (0,18) size 100x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
           RenderText {#text} at (0,0) size 0x0
-        RenderButton {INPUT} at (110,28) size 100x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-          RenderBlock (anonymous) at (12,3) size 76x14
-            RenderText at (32,-1) size 12x15
-              text run at (32,0) width 12: "Hi"
+        RenderBlock {INPUT} at (110,28) size 100x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+          RenderText at (44,2) size 12x15
+            text run at (44,3) width 12: "Hi"
         RenderBlock (anonymous) at (10,48) size 200x18
           RenderBR {BR} at (0,0) size 0x18
       RenderBlock (anonymous) at (0,542) size 784x18

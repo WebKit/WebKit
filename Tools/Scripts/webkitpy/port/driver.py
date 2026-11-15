@@ -71,7 +71,7 @@ class DriverOutput(object):
     metrics_patterns.append((re.compile('size -?[0-9]+x-?[0-9]+ *'), ''))
     metrics_patterns.append((re.compile('text run width -?[0-9]+: '), ''))
     metrics_patterns.append((re.compile('text run width -?[0-9]+ [a-zA-Z ]+: '), ''))
-    metrics_patterns.append((re.compile('RenderButton {BUTTON} .*'), 'RenderButton {BUTTON}'))
+    metrics_patterns.append((re.compile('RenderBlock {BUTTON} .*'), 'RenderBlock {BUTTON}'))
     metrics_patterns.append((re.compile('RenderImage {INPUT} .*'), 'RenderImage {INPUT}'))
     metrics_patterns.append((re.compile('RenderBlock {INPUT} .*'), 'RenderBlock {INPUT}'))
     metrics_patterns.append((re.compile('RenderTextControl {INPUT} .*'), 'RenderTextControl {INPUT}'))

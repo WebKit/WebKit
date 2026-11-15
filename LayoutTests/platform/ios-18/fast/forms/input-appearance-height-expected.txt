@@ -25,10 +25,9 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,66) size 26x20
           text run at (0,66) width 26: "file "
         RenderFileUploadControl {INPUT} at (25,67) size 267x21 "no file selected"
-          RenderButton {INPUT} at (0,0) size 86x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-            RenderBlock (anonymous) at (12,3) size 62x14
-              RenderText at (0,0) size 62x14
-                text run at (0,0) width 62: "Choose File"
+          RenderBlock {INPUT} at (0,0) size 86x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+            RenderText at (12,3) size 62x14
+              text run at (12,3) width 62: "Choose File"
         RenderText {#text} at (0,0) size 0x0
         RenderBR {BR} at (291,66) size 1x20
         RenderText {#text} at (0,87) size 44x20
@@ -51,18 +50,16 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (172,132) size 1x20
         RenderText {#text} at (0,152) size 35x20
           text run at (0,152) width 35: "reset "
-        RenderButton {INPUT} at (34,153) size 54x21 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-          RenderBlock (anonymous) at (12,3) size 30x14
-            RenderText at (0,0) size 30x14
-              text run at (0,0) width 30: "Reset"
+        RenderBlock {INPUT} at (34,153) size 54x21 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+          RenderText at (12,3) size 30x14
+            text run at (12,3) width 30: "Reset"
         RenderText {#text} at (0,0) size 0x0
         RenderBR {BR} at (87,152) size 1x20
         RenderText {#text} at (0,173) size 48x20
           text run at (0,173) width 48: "submit "
-        RenderButton {INPUT} at (47,174) size 62x21 [color=#FFFFFF] [bgcolor=#007AFF] [border: (1px solid #FFFFFF)]
-          RenderBlock (anonymous) at (12,3) size 37x14
-            RenderText at (0,0) size 37x14
-              text run at (0,0) width 37: "Submit"
+        RenderBlock {INPUT} at (47,174) size 62x21 [color=#FFFFFF] [bgcolor=#007AFF] [border: (1px solid #FFFFFF)]
+          RenderText at (12,3) size 37x14
+            text run at (12,3) width 37: "Submit"
         RenderText {#text} at (0,0) size 0x0
         RenderBR {BR} at (108,173) size 1x20
         RenderText {#text} at (0,194) size 51x20

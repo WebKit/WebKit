@@ -316,7 +316,7 @@ void RenderMenuList::layout()
     // use the correct border radius. Consequently, we need to adjust the border
     // radius here.
     //
-    // Note that similar adjustments are made in RenderSliderThumb, RenderButton
+    // Note that similar adjustments are made in RenderSliderThumb, RenderBlock (for buttons)
     // and RenderTextControlSingleLine.
     RenderThemeIOS::adjustRoundBorderRadius(protect(mutableStyle()), *this);
 }

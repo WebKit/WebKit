@@ -55,6 +55,8 @@ public:
 
     inline UsedVisibility visibility() const;
 
+    inline Style::AlignContent alignContent() const;
+
     // The box's own border widths, zoomed and snapped to device pixels. Formatting-context
     // adjustments, like collapsed table borders, are applied by RenderBoxModelObject::borderTop()
     // and friends.
@@ -104,6 +106,15 @@ inline UsedVisibility UsedStyle::visibility() const
     if (element.isForceHiddenByLineClamp() || computedStyle().isForceHidden()) [[unlikely]]
         return UsedVisibility::Hidden;
     return computedStyle().visibility() == Visibility::Visible ? UsedVisibility::Visible : UsedVisibility::Hidden;
+}
+
+inline Style::AlignContent UsedStyle::alignContent() const
+{
+    // Buttons center their content as if the user agent style sheet had `align-content: center !important`.
+    // https://html.spec.whatwg.org/multipage/rendering.html#button-layout
+    if (m_renderer->usesButtonLayout())
+        return CSS::Keyword::Center { };
+    return computedStyle().alignContent();
 }
 
 } // namespace WebCore

@@ -30,20 +30,18 @@ layer at (0,0) size 800x600
             text run at (0,0) width 21: "test"
       RenderText {#text} at (202,24) size 5x19
         text run at (202,24) width 5: " "
-      RenderButton {BUTTON} at (206,20) size 25x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+      RenderBlock {BUTTON} at (206,20) size 25x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
       RenderText {#text} at (230,24) size 5x19
         text run at (230,24) width 5: " "
-      RenderButton {BUTTON} at (234,25) size 45x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-        RenderBlock (anonymous) at (12,3) size 21x14
-          RenderText {#text} at (0,0) size 21x14
-            text run at (0,0) width 21: "test"
+      RenderBlock {BUTTON} at (234,25) size 45x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+        RenderText {#text} at (12,3) size 21x14
+          text run at (12,3) width 21: "test"
       RenderText {#text} at (278,24) size 5x19
         text run at (278,24) width 5: " "
-      RenderButton {BUTTON} at (282,38) size 15x2 [color=#00008B] [bgcolor=#ADD8E6] [border: (1px solid #FFFFFF)]
+      RenderBlock {BUTTON} at (282,38) size 15x2 [color=#00008B] [bgcolor=#ADD8E6] [border: (1px solid #FFFFFF)]
       RenderText {#text} at (296,24) size 5x19
         text run at (296,24) width 5: " "
-      RenderButton {BUTTON} at (300,27) size 35x16 [color=#00008B] [bgcolor=#ADD8E6] [border: (1px solid #FFFFFF)]
-        RenderBlock (anonymous) at (7,1) size 21x14
-          RenderText {#text} at (0,0) size 21x14
-            text run at (0,0) width 21: "test"
+      RenderBlock {BUTTON} at (300,27) size 35x16 [color=#00008B] [bgcolor=#ADD8E6] [border: (1px solid #FFFFFF)]
+        RenderText {#text} at (7,1) size 21x14
+          text run at (7,1) width 21: "test"
       RenderText {#text} at (0,0) size 0x0

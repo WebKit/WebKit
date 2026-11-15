@@ -52,7 +52,6 @@
 #import "PlatformRenderTheme.h"
 #import "RenderBoxInlines.h"
 #import "RenderBoxModelObjectInlines.h"
-#import "RenderButton.h"
 #import "RenderElementInlines.h"
 #import "RenderMenuList.h"
 #import "RenderMeter.h"
@@ -4671,10 +4670,11 @@ bool RenderThemeCocoa::adjustTextControlInnerTextStyleForVectorBasedControls(Sty
 Color RenderThemeCocoa::submitButtonTextColor(const RenderText& textRenderer) const
 {
     auto isEnabled = true;
-    if (CheckedPtr controlRenderer = textRenderer.parent()) {
-        if ((controlRenderer = controlRenderer->parent())) {
-            const auto states = extractControlStyleStatesForRenderer(*controlRenderer.get());
-            isEnabled = states.contains(ControlStyle::State::Enabled);
+    // The text can be nested in inline boxes or anonymous blocks within the button.
+    for (CheckedPtr ancestor = textRenderer.parent(); ancestor; ancestor = ancestor->parent()) {
+        if (is<HTMLFormControlElement>(ancestor->element())) {
+            isEnabled = extractControlStyleStatesForRenderer(*ancestor).contains(ControlStyle::State::Enabled);
+            break;
         }
     }
 

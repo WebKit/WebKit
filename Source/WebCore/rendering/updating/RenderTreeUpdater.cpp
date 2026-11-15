@@ -571,7 +571,7 @@ bool RenderTreeUpdater::textRendererIsNeeded(const Text& textNode)
     if (is<RenderText>(renderingParent.previousChildRenderer))
         return true;
     // This text node has nothing but white space. We may still need a renderer in some cases.
-    if (parentRenderer.isRenderTable() || parentRenderer.isRenderTableRow() || parentRenderer.isRenderTableSection() || parentRenderer.isRenderTableCol() || parentRenderer.isRenderFrameSet() || parentRenderer.isRenderGrid() || (parentRenderer.isRenderFlexibleBox() && !parentRenderer.isRenderButton()))
+    if (parentRenderer.isRenderTable() || parentRenderer.isRenderTableRow() || parentRenderer.isRenderTableSection() || parentRenderer.isRenderTableCol() || parentRenderer.isRenderFrameSet() || parentRenderer.isRenderGrid() || parentRenderer.isRenderFlexibleBox())
         return false;
     if (parentRenderer.style().preserveNewline()) // pre/pre-wrap/pre-line always make renderers.
         return true;

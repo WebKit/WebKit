@@ -39,34 +39,29 @@ layer at (0,0) size 800x600
         RenderText {#text} at (173,8) size 4x18
           text run at (173,8) width 4: " "
         RenderFileUploadControl {INPUT} at (177,4) size 272x27 "no file selected"
-          RenderButton {INPUT} at (0,0) size 92x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-            RenderBlock (anonymous) at (8,4) size 76x18
-              RenderText at (0,0) size 76x18
-                text run at (0,0) width 76: "Choose File"
+          RenderBlock {INPUT} at (0,0) size 92x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+            RenderText at (8,4) size 76x18
+              text run at (8,4) width 76: "Choose File"
         RenderText {#text} at (449,8) size 4x18
           text run at (449,8) width 4: " "
-        RenderButton {INPUT} at (453,0) size 71x32 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-          RenderBlock (anonymous) at (8,4) size 55x23
-            RenderText at (0,0) size 55x23
-              text run at (0,0) width 55: "Button"
+        RenderBlock {INPUT} at (453,0) size 71x32 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderText at (8,4) size 55x23
+            text run at (8,4) width 55: "Button"
         RenderText {#text} at (524,8) size 4x18
           text run at (524,8) width 4: " "
-        RenderButton {INPUT} at (528,4) size 59x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-          RenderBlock (anonymous) at (8,4) size 43x18
-            RenderText at (0,0) size 43x18
-              text run at (0,0) width 43: "Button"
+        RenderBlock {INPUT} at (528,4) size 59x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderText at (8,4) size 43x18
+            text run at (8,4) width 43: "Button"
         RenderText {#text} at (587,8) size 4x18
           text run at (587,8) width 4: " "
-        RenderButton {INPUT} at (591,14) size 30x15 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-          RenderBlock (anonymous) at (8,4) size 14x5
-            RenderText at (0,0) size 14x5
-              text run at (0,0) width 14: "Button"
+        RenderBlock {INPUT} at (591,14) size 30x15 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderText at (8,4) size 14x5
+            text run at (8,4) width 14: "Button"
         RenderText {#text} at (621,8) size 4x18
           text run at (621,8) width 4: " "
-        RenderButton {BUTTON} at (625,0) size 71x32 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-          RenderBlock (anonymous) at (8,4) size 55x23
-            RenderText {#text} at (0,0) size 55x23
-              text run at (0,0) width 55: "Button"
+        RenderBlock {BUTTON} at (625,0) size 71x32 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderText {#text} at (8,4) size 55x23
+            text run at (8,4) width 55: "Button"
         RenderText {#text} at (0,0) size 0x0
 layer at (11,79) size 151x18
   RenderBlock {DIV} at (0,0) size 151x18

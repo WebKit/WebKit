@@ -41,10 +41,9 @@ layer at (0,0) size 800x595
           RenderBR {BR} at (21,163) size 0x19
         RenderBlock (anonymous) at (0,535) size 784x44
           RenderBR {BR} at (0,0) size 0x19
-          RenderButton {INPUT} at (2,22) size 59x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
-            RenderBlock (anonymous) at (12,3) size 35x14
-              RenderText at (0,0) size 35x14
-                text run at (0,0) width 35: "Submit"
+          RenderBlock {INPUT} at (2,22) size 59x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+            RenderText at (12,3) size 35x14
+              text run at (12,3) width 35: "Submit"
           RenderText {#text} at (0,0) size 0x0
 layer at (10,10) size 97x22 clip at (11,11) size 95x20
   RenderFlexibleBox {INPUT} at (2,2) size 97x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]

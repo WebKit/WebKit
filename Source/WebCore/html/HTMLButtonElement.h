@@ -27,8 +27,6 @@
 
 namespace WebCore {
 
-class RenderButton;
-
 class HTMLButtonElement final : public HTMLFormControlElement {
     WTF_MAKE_TZONE_ALLOCATED(HTMLButtonElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLButtonElement);
@@ -44,8 +42,6 @@ public:
 
     bool willRespondToMouseClickEventsWithEditability(Editability) const final;
     bool hasActivationBehavior() const final;
-
-    RenderButton* renderer() const;
 
     bool isExplicitlySetSubmitButton() const;
 

@@ -33,16 +33,14 @@ layer at (0,0) size 800x600
                 text run at (2,38) width 293: "Architecture, Bidi, Necko/Imglib, and more..."
       RenderBlock (anonymous) at (0,111) size 784x39
         RenderBR {BR} at (0,0) size 0x18
-        RenderButton {INPUT} at (0,18) size 60x21 [color=#FFFFFF] [bgcolor=#0088FF] [border: (1px solid #FFFFFF)]
-          RenderBlock (anonymous) at (12,3) size 36x14
-            RenderText at (0,-1) size 36x15
-              text run at (0,0) width 36: "Reload"
+        RenderBlock {INPUT} at (0,18) size 60x21 [color=#FFFFFF] [bgcolor=#0088FF] [border: (1px solid #FFFFFF)]
+          RenderText at (12,2) size 36x15
+            text run at (12,3) width 36: "Reload"
         RenderText {#text} at (59,18) size 9x18
           text run at (59,18) width 9: "  "
-        RenderButton {INPUT} at (67,18) size 92x21 [color=#FFFFFF] [bgcolor=#0088FF] [border: (1px solid #FFFFFF)]
-          RenderBlock (anonymous) at (12,3) size 67x14
-            RenderText at (0,-1) size 67x15
-              text run at (0,0) width 67: "Change Font"
+        RenderBlock {INPUT} at (67,18) size 92x21 [color=#FFFFFF] [bgcolor=#0088FF] [border: (1px solid #FFFFFF)]
+          RenderText at (12,2) size 67x15
+            text run at (12,3) width 67: "Change Font"
         RenderText {#text} at (158,18) size 9x18
           text run at (158,18) width 9: "  "
         RenderTextControl {INPUT} at (166,19) size 155x20 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]

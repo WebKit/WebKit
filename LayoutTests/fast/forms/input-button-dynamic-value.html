@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+input { font: 16px/1 sans-serif; }
+</style>
+</head>
+<body>
+<p>The text of the buttons should update when their value changes.</p>
+<input id="empty-to-text" type="button" value="">
+<input id="text-to-empty" type="button" value="Text">
+<input id="text-to-text" type="button" value="Before">
+<input id="default-to-text" type="submit">
+<input id="text-to-default" type="reset" value="Text">
+<script>
+document.body.offsetHeight;
+document.getElementById("empty-to-text").value = "Text";
+document.getElementById("text-to-empty").value = "";
+document.getElementById("text-to-text").value = "After";
+document.getElementById("default-to-text").value = "Text";
+document.getElementById("text-to-default").removeAttribute("value");
+</script>
+</body>
+</html>
