@@ -1454,6 +1454,8 @@ TextStream& operator<<(TextStream& ts, AlignmentBaseline value)
     case AlignmentBaseline::Alphabetic: ts << "alphabetic"_s; break;
     case AlignmentBaseline::Hanging: ts << "hanging"_s; break;
     case AlignmentBaseline::Mathematical: ts << "mathematical"_s; break;
+    case AlignmentBaseline::TextTop: ts << "text-top"_s; break;
+    case AlignmentBaseline::TextBottom: ts << "text-bottom"_s; break;
     }
     return ts;
 }

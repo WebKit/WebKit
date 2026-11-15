@@ -112,6 +112,7 @@ float SVGTextLayoutEngineBaseline::calculateAlignmentBaselineShift(bool isVertic
     switch (baseline) {
     case AlignmentBaseline::BeforeEdge:
     case AlignmentBaseline::TextBeforeEdge:
+    case AlignmentBaseline::TextTop:
         return ascent;
     case AlignmentBaseline::Middle:
         return fontMetrics.xHeight().value_or(0.f) / 2;
@@ -119,6 +120,7 @@ float SVGTextLayoutEngineBaseline::calculateAlignmentBaselineShift(bool isVertic
         return (ascent - descent) / 2;
     case AlignmentBaseline::AfterEdge:
     case AlignmentBaseline::TextAfterEdge:
+    case AlignmentBaseline::TextBottom:
     case AlignmentBaseline::Ideographic:
         return -descent;
     case AlignmentBaseline::Alphabetic:
