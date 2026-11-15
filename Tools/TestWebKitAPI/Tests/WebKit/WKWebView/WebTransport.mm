@@ -929,16 +929,22 @@ TEST(WebTransport, ServerConnectionTermination)
         "  try {"
         "    let t = new WebTransport('https://127.0.0.1:%d/');"
         "    await t.ready;"
+        "    let datagramRead = t.datagrams.readable.getReader().read();"
+        "    let incomingUnidirectionalRead = t.incomingUnidirectionalStreams.getReader().read();"
+        "    let incomingBidirectionalRead = t.incomingBidirectionalStreams.getReader().read();"
         "    let c = await t.createUnidirectionalStream();"
         "    let w = c.getWriter();"
         "    await w.write(new TextEncoder().encode('abc'));"
         "    let closeInfo = await t.closed;"
-        "    alert('successfully read closeInfo (' + closeInfo.closeCode + ', ' + closeInfo.reason + ')');"
+        "    let datagramsDone = (await datagramRead).done;"
+        "    let incomingUnidirectionalDone = (await incomingUnidirectionalRead).done;"
+        "    let incomingBidirectionalDone = (await incomingBidirectionalRead).done;"
+        "    alert('successfully read closeInfo (' + closeInfo.closeCode + ', ' + closeInfo.reason + '), done ' + datagramsDone + ' ' + incomingUnidirectionalDone + ' ' + incomingBidirectionalDone);"
         "  } catch (e) { alert('caught ' + e); }"
         "}; test();"
         "</script>", echoServer.port()];
     [webView loadHTMLString:html baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
-    EXPECT_WK_STREQ([webView _test_waitForAlert], "successfully read closeInfo (0, )");
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "successfully read closeInfo (0, ), done true true true");
 }
 
 TEST(WebTransport, BackForwardCache)

@@ -560,6 +560,8 @@ void NetworkTransportSession::receiveDatagramLoop()
         if (!protectedThis)
             return;
         if (error) {
+            if (protectedThis->isSessionClosed())
+                return;
             if (nw_error_get_error_domain(error) != nw_error_domain_posix || nw_error_get_error_code(error) != ECANCELED)
                 protectedThis->receiveDatagram({ }, false, WebCore::Exception(WebCore::ExceptionCode::NetworkError));
             return;
