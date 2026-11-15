@@ -171,7 +171,7 @@ static inline void pas_lock_testing_assert_not_held(pas_lock* lock)
 
 PAS_END_EXTERN_C;
 
-#elif PAS_OS(LINUX) || PAS_OS(WINDOWS) || PAS_OS(FREEBSD)
+#else /* !PAS_OS(DARWIN) */
 
 PAS_BEGIN_EXTERN_C;
 
@@ -194,8 +194,8 @@ static inline void pas_lock_construct_disabled(pas_lock* lock)
     pas_zero_memory(lock, sizeof(pas_lock));
 }
 
-PAS_API PAS_NEVER_INLINE void pas_lock_lock_slow(pas_lock* lock, unsigned expected);
-PAS_API PAS_NEVER_INLINE void pas_lock_unlock_slow(pas_lock* lock);
+PAS_BEXPORT PAS_NEVER_INLINE void pas_lock_lock_slow(pas_lock* lock, unsigned expected);
+PAS_BEXPORT PAS_NEVER_INLINE void pas_lock_unlock_slow(pas_lock* lock);
 
 static inline void pas_lock_lock(pas_lock* lock)
 {
@@ -206,7 +206,6 @@ static inline void pas_lock_lock(pas_lock* lock)
 
     pas_race_test_will_lock(lock);
 
-    /* Fast path: Try to acquire 0 -> 1 */
     if (PAS_UNLIKELY(!__atomic_compare_exchange_n(&lock->futex, &expected, 1, false, __ATOMIC_ACQUIRE, __ATOMIC_RELAXED)))
         pas_lock_lock_slow(lock, expected);
 
@@ -236,7 +235,6 @@ static inline void pas_lock_unlock(pas_lock* lock)
 
     pas_race_test_will_unlock(lock);
 
-    /* If we had no waiters (state was 1), just unlock to 0 */
     if (PAS_UNLIKELY(__atomic_fetch_sub(&lock->futex, 1, __ATOMIC_RELEASE) != 1))
         pas_lock_unlock_slow(lock);
 }
@@ -260,9 +258,7 @@ static inline void pas_lock_testing_assert_not_held(pas_lock* lock)
 
 PAS_END_EXTERN_C;
 
-#else
-#error "No pas_lock implementation found"
-#endif
+#endif /* PAS_OS(DARWIN) */
 
 PAS_BEGIN_EXTERN_C;
 

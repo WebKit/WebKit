@@ -110,6 +110,10 @@
 		DD4BEC3629CBA49700398E35 /* pas_segregated_page_and_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5FE7D125B6210C001859FC /* pas_segregated_page_and_config.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD4BEC3829CBA49700398E35 /* pas_dyld_state.c in Sources */ = {isa = PBXBuildFile; fileRef = 0FC4098A2451496000876DA0 /* pas_dyld_state.c */; };
 		DD4BEC3929CBA49700398E35 /* pas_enumerator_region.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F87002025AF89C8000E1ABF /* pas_enumerator_region.c */; };
+		A7F5C84F1D23438DA89BC06D /* pas_condition.c in Sources */ = {isa = PBXBuildFile; fileRef = 48FD56C3DD3B42ACA9D58136 /* pas_condition.c */; };
+		55A87295F41B4D13BEBF0EAD /* pas_futex.c in Sources */ = {isa = PBXBuildFile; fileRef = F533B38C934F47F1B8AEFD32 /* pas_futex.c */; };
+		1F2FA0B8FAA541BEBBFE03C1 /* pas_condition.h in Headers */ = {isa = PBXBuildFile; fileRef = 526F882ED81B4AEFADFE6A62 /* pas_condition.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BEC3B74A69014E0EB2717D42 /* pas_futex.h in Headers */ = {isa = PBXBuildFile; fileRef = FFF5040A1B6D451B82041098 /* pas_futex.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD4BEC3A29CBA49700398E35 /* pas_lock.c in Sources */ = {isa = PBXBuildFile; fileRef = 0FC40BD9245243A400876DA0 /* pas_lock.c */; };
 		DD4BEC3B29CBA49700398E35 /* pas_aligned_allocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC4092B2451494300876DA0 /* pas_aligned_allocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD4BEC3C29CBA49700398E35 /* pas_enumerate_bitfit_heaps.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F87FFD025AF897C000E1ABF /* pas_enumerate_bitfit_heaps.c */; };
@@ -1046,6 +1050,10 @@
 		0FC40A862451498C00876DA0 /* pas_reallocate_heap_teleport_rule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_reallocate_heap_teleport_rule.h; path = libpas/src/libpas/pas_reallocate_heap_teleport_rule.h; sourceTree = "<group>"; };
 		0FC40A892451498C00876DA0 /* pas_page_malloc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pas_page_malloc.c; path = libpas/src/libpas/pas_page_malloc.c; sourceTree = "<group>"; };
 		0FC40A8A2451498C00876DA0 /* pas_reserved_memory_provider.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pas_reserved_memory_provider.c; path = libpas/src/libpas/pas_reserved_memory_provider.c; sourceTree = "<group>"; };
+		48FD56C3DD3B42ACA9D58136 /* pas_condition.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pas_condition.c; path = libpas/src/libpas/pas_condition.c; sourceTree = "<group>"; };
+		F533B38C934F47F1B8AEFD32 /* pas_futex.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pas_futex.c; path = libpas/src/libpas/pas_futex.c; sourceTree = "<group>"; };
+		526F882ED81B4AEFADFE6A62 /* pas_condition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_condition.h; path = libpas/src/libpas/pas_condition.h; sourceTree = "<group>"; };
+		FFF5040A1B6D451B82041098 /* pas_futex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_futex.h; path = libpas/src/libpas/pas_futex.h; sourceTree = "<group>"; };
 		0FC40A8B2451498C00876DA0 /* pas_lock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_lock.h; path = libpas/src/libpas/pas_lock.h; sourceTree = "<group>"; };
 		0FC40A8C2451498C00876DA0 /* pas_first_level_tiny_large_map_entry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_first_level_tiny_large_map_entry.h; path = libpas/src/libpas/pas_first_level_tiny_large_map_entry.h; sourceTree = "<group>"; };
 		0FC40A8D2451498C00876DA0 /* pas_heap_config_kind.def */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = pas_heap_config_kind.def; path = libpas/src/libpas/pas_heap_config_kind.def; sourceTree = "<group>"; };
@@ -1460,6 +1468,8 @@
 				0FC4099A2451496100876DA0 /* pas_compact_unsigned_ptr.h */,
 				0FC409792451495F00876DA0 /* pas_compute_summary_object_callbacks.c */,
 				0FC409B32451496200876DA0 /* pas_compute_summary_object_callbacks.h */,
+				48FD56C3DD3B42ACA9D58136 /* pas_condition.c */,
+				526F882ED81B4AEFADFE6A62 /* pas_condition.h */,
 				0FC409B82451496300876DA0 /* pas_config.h */,
 				0FC409A82451496200876DA0 /* pas_config_prefix.h */,
 				0FC409A52451496200876DA0 /* pas_create_basic_heap_page_caches_with_reserved_memory.c */,
@@ -1534,6 +1544,8 @@
 				0FC40A342451498600876DA0 /* pas_free_range_kind.h */,
 				0FC40ACB2451499100876DA0 /* pas_full_alloc_bits.h */,
 				0FC40A452451498700876DA0 /* pas_full_alloc_bits_inlines.h */,
+				F533B38C934F47F1B8AEFD32 /* pas_futex.c */,
+				FFF5040A1B6D451B82041098 /* pas_futex.h */,
 				0FC40A3A2451498600876DA0 /* pas_generic_large_free_heap.h */,
 				0FC40A962451498D00876DA0 /* pas_get_allocation_size.h */,
 				0FC40AE12451499200876DA0 /* pas_get_heap.h */,
@@ -2101,6 +2113,7 @@
 				DD4BEC3529CBA49700398E35 /* pas_compact_thread_local_cache_layout_node.h in Headers */,
 				DD4BEDA929CBA49700398E35 /* pas_compact_unsigned_ptr.h in Headers */,
 				DD4BEE0929CBA49700398E35 /* pas_compute_summary_object_callbacks.h in Headers */,
+				1F2FA0B8FAA541BEBBFE03C1 /* pas_condition.h in Headers */,
 				DD4BEDDC29CBA49700398E35 /* pas_config.h in Headers */,
 				DD4BEE1A29CBA49700398E35 /* pas_config_prefix.h in Headers */,
 				DD4BEDD729CBA49700398E35 /* pas_create_basic_heap_page_caches_with_reserved_memory.h in Headers */,
@@ -2148,6 +2161,7 @@
 				DD4BEC6B29CBA49700398E35 /* pas_free_range_kind.h in Headers */,
 				DD4BED4B29CBA49700398E35 /* pas_full_alloc_bits.h in Headers */,
 				DD4BECA629CBA49700398E35 /* pas_full_alloc_bits_inlines.h in Headers */,
+				BEC3B74A69014E0EB2717D42 /* pas_futex.h in Headers */,
 				DD4BEC4029CBA49700398E35 /* pas_generic_large_free_heap.h in Headers */,
 				DD4BEC6F29CBA49700398E35 /* pas_get_allocation_size.h in Headers */,
 				DD4BEC4329CBA49700398E35 /* pas_get_heap.h in Headers */,
@@ -2611,6 +2625,7 @@
 				DD4BEDB929CBA49700398E35 /* pas_compact_heap_reservation.c in Sources */,
 				DD4BEE2429CBA49700398E35 /* pas_compact_large_utility_free_heap.c in Sources */,
 				DD4BEC8A29CBA49700398E35 /* pas_compute_summary_object_callbacks.c in Sources */,
+				A7F5C84F1D23438DA89BC06D /* pas_condition.c in Sources */,
 				DD4BECA729CBA49700398E35 /* pas_create_basic_heap_page_caches_with_reserved_memory.c in Sources */,
 				DD4BEC2B29CBA49700398E35 /* pas_deallocate.c in Sources */,
 				DD4BEDBA29CBA49700398E35 /* pas_debug_spectrum.c in Sources */,
@@ -2638,6 +2653,7 @@
 				DD4BED9C29CBA49700398E35 /* pas_fast_megapage_table.c in Sources */,
 				DD4BED8229CBA49700398E35 /* pas_fd_stream.c in Sources */,
 				DD4BED3529CBA49700398E35 /* pas_free_granules.c in Sources */,
+				55A87295F41B4D13BEBF0EAD /* pas_futex.c in Sources */,
 				DD4BEDAB29CBA49700398E35 /* pas_heap.c in Sources */,
 				DD4BED8729CBA49700398E35 /* pas_heap_config.c in Sources */,
 				DD4BEDEB29CBA49700398E35 /* pas_heap_config_kind.c in Sources */,

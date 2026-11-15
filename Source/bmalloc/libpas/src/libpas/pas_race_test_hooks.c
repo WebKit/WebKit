@@ -25,8 +25,6 @@
 
 #include "pas_config.h"
 
-#if LIBPAS_ENABLED
-
 #include "pas_race_test_hooks.h"
 
 #if PAS_ENABLE_TESTING
@@ -38,5 +36,3 @@ pas_race_test_lock_callback pas_race_test_did_try_lock_callback = NULL;
 pas_race_test_lock_callback pas_race_test_will_unlock_callback = NULL;
 
 #endif /* PAS_ENABLE_TESTING */
-
-#endif /* LIBPAS_ENABLED */

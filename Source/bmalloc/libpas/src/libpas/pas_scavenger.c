@@ -32,6 +32,7 @@
 #include <math.h>
 #include "pas_baseline_allocator_table.h"
 #include "pas_compact_expendable_memory.h"
+#include "pas_condition.h"
 #include "pas_dyld_state.h"
 #include "pas_epoch.h"
 #include "pas_heap_lock.h"
@@ -46,7 +47,6 @@
 #include "pas_utils.h"
 #include <stdio.h>
 #if !PAS_OS(WINDOWS)
-#include <sys/time.h>
 #include <unistd.h>
 #endif
 
@@ -112,9 +112,9 @@ static pas_scavenger_data* ensure_data_instance(pas_lock_hold_mode heap_lock_hol
             "pas_scavenger_data",
             pas_object_allocation);
 
-        pthread_mutex_init(&instance->lock, NULL);
-        pthread_cond_init(&instance->cond, NULL);
-        pthread_mutex_init(&instance->foreign_work.lock, NULL);
+        pas_lock_construct(&instance->lock);
+        pas_condition_construct(&instance->cond);
+        pas_lock_construct(&instance->foreign_work.lock);
 
         pas_fence();
 
@@ -127,44 +127,23 @@ static pas_scavenger_data* ensure_data_instance(pas_lock_hold_mode heap_lock_hol
 
 static double get_time_in_milliseconds(void)
 {
-#if PAS_OS(WINDOWS)
-    LARGE_INTEGER frequency, counter;
-    if (!QueryPerformanceFrequency(&frequency))
-        return 0.;
-
-    if (!QueryPerformanceCounter(&counter))
-        return 0.;
-
-    uint64_t freq = (uint64_t)frequency.QuadPart;
-    uint64_t ticks = (uint64_t)counter.QuadPart;
-    uint64_t sec_ms = (ticks / freq) * 1000ULL;
-    uint64_t frac_ms = ((ticks % freq) * 1000ULL) / freq;
-    return (double)(sec_ms + frac_ms);
-#else
-    struct timeval current_time;
-
-    gettimeofday(&current_time, NULL);
-
-    return current_time.tv_sec * 1000. + current_time.tv_usec / 1000.;
-#endif
+    return pas_condition_get_time_in_nanoseconds() / 1000000.;
 }
 
-static void timed_wait(pthread_cond_t* cond, pthread_mutex_t* mutex,
+static void timed_wait(pas_condition* cond, pas_lock* lock,
                        double absolute_timeout_in_milliseconds)
 {
-    struct timespec time_to_wake_up;
+    double absolute_timeout_in_nanoseconds;
 
-    time_to_wake_up.tv_sec = (unsigned)(
-        absolute_timeout_in_milliseconds / 1000.);
-    time_to_wake_up.tv_nsec = (unsigned)(
-        (uint64_t)(absolute_timeout_in_milliseconds * 1000. * 1000.) %
-        (uint64_t)(1000. * 1000. * 1000.));
+    absolute_timeout_in_nanoseconds = absolute_timeout_in_milliseconds * 1000000.;
 
     if (verbose) {
         pas_log("Doing timed wait with target wake up at %.2lf.\n",
                absolute_timeout_in_milliseconds);
     }
-    pthread_cond_timedwait(cond, mutex, &time_to_wake_up);
+    pas_condition_timed_wait_until(
+        cond, lock,
+        absolute_timeout_in_nanoseconds >= (double)UINT64_MAX ? UINT64_MAX : (uint64_t)absolute_timeout_in_nanoseconds);
     if (verbose)
         pas_log("Woke up from timed wait at %.2lf.\n", get_time_in_milliseconds());
 }
@@ -344,7 +323,7 @@ static void* scavenger_thread_main(void* arg)
 
         should_shut_down = false;
 
-        pthread_mutex_lock(&data->lock);
+        pas_lock_lock(&data->lock);
 
         PAS_ASSERT(pas_scavenger_current_state == pas_scavenger_state_polling ||
                    pas_scavenger_current_state == pas_scavenger_state_deep_sleep);
@@ -409,11 +388,11 @@ static void* scavenger_thread_main(void* arg)
 
             if (should_shut_down) {
                 pas_scavenger_current_state = pas_scavenger_state_no_thread;
-                pthread_cond_broadcast(&data->cond);
+                pas_condition_broadcast(&data->cond);
             }
         }
 
-        pthread_mutex_unlock(&data->lock);
+        pas_lock_unlock(&data->lock);
 
         if (should_shut_down) {
             pas_scavenger_activity_callback shut_down_callback;
@@ -442,11 +421,11 @@ bool pas_scavenger_try_install_foreign_work_callback(
     PAS_ASSERT(callback);
 
     data = ensure_data_instance(pas_lock_is_not_held);
-    pthread_mutex_lock(&data->foreign_work.lock);
+    pas_lock_lock(&data->foreign_work.lock);
 
     int slot = data->foreign_work.next_open_descriptor;
     if (slot >= PAS_SCAVENGER_MAX_FOREIGN_WORK_DESCRIPTORS) {
-        pthread_mutex_unlock(&data->foreign_work.lock);
+        pas_lock_unlock(&data->foreign_work.lock);
         return false;
     }
 
@@ -459,7 +438,7 @@ bool pas_scavenger_try_install_foreign_work_callback(
     pas_store_store_fence();
     data->foreign_work.next_open_descriptor = slot + 1;
 
-    pthread_mutex_unlock(&data->foreign_work.lock);
+    pas_lock_unlock(&data->foreign_work.lock);
 
     return true;
 }
@@ -510,7 +489,7 @@ void pas_scavenger_notify_eligibility_if_needed(void)
         pas_log("It's not polling so need to do something.\n");
 
     data = ensure_data_instance(pas_lock_is_not_held);
-    pthread_mutex_lock(&data->lock);
+    pas_lock_lock(&data->lock);
 
     if (pas_scavenger_should_suspend_count)
         goto done;
@@ -526,11 +505,11 @@ void pas_scavenger_notify_eligibility_if_needed(void)
 
     if (pas_scavenger_current_state == pas_scavenger_state_deep_sleep) {
         pas_scavenger_current_state = pas_scavenger_state_polling;
-        pthread_cond_broadcast(&data->cond);
+        pas_condition_broadcast(&data->cond);
     }
 
 done:
-    pthread_mutex_unlock(&data->lock);
+    pas_lock_unlock(&data->lock);
 
     pas_status_reporter_start_if_necessary();
 }
@@ -539,28 +518,32 @@ void pas_scavenger_suspend(void)
 {
     pas_scavenger_data* data;
     data = ensure_data_instance(pas_lock_is_not_held);
-    pthread_mutex_lock(&data->lock);
+    pas_lock_lock(&data->lock);
 
     pas_scavenger_should_suspend_count++;
     PAS_ASSERT(pas_scavenger_should_suspend_count);
 
-    while (pas_scavenger_current_state != pas_scavenger_state_no_thread)
-        pthread_cond_wait(&data->cond, &data->lock);
+    /* The scavenger only rechecks the suspend count when its timed wait returns, which in deep sleep
+       is seconds away. */
+    pas_condition_broadcast(&data->cond);
 
-    pthread_mutex_unlock(&data->lock);
+    while (pas_scavenger_current_state != pas_scavenger_state_no_thread)
+        pas_condition_wait(&data->cond, &data->lock);
+
+    pas_lock_unlock(&data->lock);
 }
 
 void pas_scavenger_resume(void)
 {
     pas_scavenger_data* data;
     data = ensure_data_instance(pas_lock_is_not_held);
-    pthread_mutex_lock(&data->lock);
+    pas_lock_lock(&data->lock);
 
     PAS_ASSERT(pas_scavenger_should_suspend_count);
 
     pas_scavenger_should_suspend_count--;
 
-    pthread_mutex_unlock(&data->lock);
+    pas_lock_unlock(&data->lock);
 
     /* Just assume that there are empty pages to be scavenged. We wouldn't have been keeping
        track perfectly while the scavenger was suspended. For example, we would not have
