@@ -388,6 +388,8 @@ ExceptionOr<void> DocumentFullscreen::willEnterFullscreen(Element& element, HTML
     if (auto* iframe = dynamicDowncast<HTMLIFrameElement>(element); iframe && !elementWasFullscreen)
         iframe->setIFrameFullscreenFlag(true);
 
+    page->displayModeDidChange();
+
     return { };
 }
 
@@ -678,6 +680,9 @@ void DocumentFullscreen::didExitFullscreen(CompletionHandler<void(ExceptionOr<vo
     m_areKeysEnabledInFullscreen = false;
     m_fullscreenElement = nullptr;
     m_pendingFullscreenElement = nullptr;
+
+    if (RefPtr page = this->page())
+        page->displayModeDidChange();
 
     completionHandler({ });
 }
