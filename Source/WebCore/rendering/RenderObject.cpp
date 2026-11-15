@@ -511,12 +511,12 @@ static inline bool isLayoutBoundary(const RenderElement& renderer)
     if (auto* textControl = dynamicDowncast<RenderTextControl>(renderer)) {
         if (!textControl->isFlexItem() && !textControl->isGridItem() && style.fieldSizing() != FieldSizing::Content) {
             // Flexing type of layout systems may compute different size than what input's preferred width is which won't happen unless they run their layout as well.
-            return true;
+            return !RenderListItem::containsExcludedMarkerLine(renderer);
         }
     }
 
     if (renderer.shouldApplyLayoutContainment() && renderer.shouldApplySizeContainment())
-        return true;
+        return !RenderListItem::containsExcludedMarkerLine(renderer);
 
     if (renderer.isRenderOrLegacyRenderSVGRoot())
         return true;
@@ -540,7 +540,7 @@ static inline bool isLayoutBoundary(const RenderElement& renderer)
     if (CheckedPtr renderBlock = dynamicDowncast<RenderBlock>(renderer); !renderBlock->createsNewFormattingContext())
         return false;
 
-    return true;
+    return !RenderListItem::containsExcludedMarkerLine(renderer);
 }
 
 void RenderObject::clearNeedsLayout(HadSkippedLayout hadSkippedLayout)

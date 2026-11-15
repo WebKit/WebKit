@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Lists reference: an outside marker aligned with a taller line</title>
+<style>
+body { font: 20px/1 monospace; }
+ul { margin: 0; padding-left: 60px; }
+li::marker { color: green; }
+.box { overflow: hidden; width: 200px; height: 100px; }
+.contained { contain: size layout; width: 200px; height: 100px; }
+</style>
+<ul>
+<li><div class="box"><span style="font-size: 60px">text</span></div></li>
+<li><div class="box"><div><span style="font-size: 60px">text</span></div></div></li>
+<li><div class="contained"><span style="font-size: 60px">text</span></div></li>
+</ul>

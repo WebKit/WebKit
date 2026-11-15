@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Lists: an outside marker follows its line when a block around the line changes on its own</title>
+<link rel="help" href="https://drafts.csswg.org/css-lists-3/#list-style-position-property">
+<link rel="match" href="outside-marker-in-layout-boundary-dynamic-ref.html">
+<style>
+body { font: 20px/1 monospace; }
+ul { margin: 0; padding-left: 60px; }
+li::marker { color: green; }
+.box { overflow: hidden; width: 200px; height: 100px; }
+.contained { contain: size layout; width: 200px; height: 100px; }
+</style>
+<ul>
+<li><div class="box"><span id="text">text</span></div></li>
+<li><div class="box"><div><span id="nested">text</span></div></div></li>
+<li><div class="contained"><span id="contained">text</span></div></li>
+</ul>
+<script>
+document.body.offsetHeight;
+document.getElementById("text").style.fontSize = "60px";
+document.getElementById("nested").style.fontSize = "60px";
+document.getElementById("contained").style.fontSize = "60px";
+</script>

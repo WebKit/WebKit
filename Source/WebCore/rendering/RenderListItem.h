@@ -58,6 +58,9 @@ public:
 
     bool isInReversedOrderedList() const;
 
+    // Whether the line an ancestor list item places its outside marker against is inside the given box.
+    static bool containsExcludedMarkerLine(const RenderElement&);
+
     struct FirstFormattedLineCandidate {
         CheckedPtr<RenderBlock> parent;
         CheckedPtr<RenderBlock> fallbackParent;

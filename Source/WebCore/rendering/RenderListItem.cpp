@@ -776,4 +776,19 @@ Vector<CheckedPtr<RenderListOutsideMarker>> RenderListItem::excludedMarkersForCo
     return markersForContainer;
 }
 
+bool RenderListItem::containsExcludedMarkerLine(const RenderElement& renderer)
+{
+    // A list item places its outside marker against the first line of a block inside it when the list item lays out,
+    // so no box between the list item and that line can lay out on its own (see isLayoutBoundary).
+    for (CheckedPtr ancestor = renderer.containingBlock(); ancestor; ancestor = ancestor->containingBlock()) {
+        CheckedPtr listItem = dynamicDowncast<RenderListItem>(*ancestor);
+        CheckedPtr marker = listItem ? listItem->excludedMarker() : nullptr;
+        if (!marker)
+            continue;
+        if (auto excludedPosition = marker->excludedPosition(); excludedPosition && excludedPosition->firstFormattedLineRoot && excludedPosition->firstFormattedLineRoot->isDescendantOf(&renderer))
+            return true;
+    }
+    return false;
+}
+
 } // namespace WebCore
