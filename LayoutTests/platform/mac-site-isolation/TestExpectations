@@ -163,3 +163,6 @@ imported/w3c/web-platform-tests/html/document-isolation-policy/shared-array-buff
 imported/w3c/web-platform-tests/html/document-isolation-policy/shared-workers.tentative.https.html [ Pass ]
 imported/w3c/web-platform-tests/html/document-isolation-policy/window-reuse.tentative.https.html [ Pass ]
 http/tests/document-isolation-policy/xslt-result-agent-cluster.https.html [ Pass ]
+
+# history.go(-2) navigates a same-origin iframe together with the main frame only with Site Isolation.
+webkit.org/b/331658 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/history-traversal-navigates-multiple-frames.html [ Pass ]
