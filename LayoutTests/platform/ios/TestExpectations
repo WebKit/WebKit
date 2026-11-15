@@ -10413,8 +10413,6 @@ webkit.org/b/327433 http/wpt/background-fetch/background-fetch-click.window.html
 
 webkit.org/b/326550 imported/w3c/web-platform-tests/workers/semantics/structured-clone/shared.html [ Pass Failure ]
 
-webkit.org/b/326709 [ Debug ] http/tests/site-isolation/fullscreen-resize-event.html [ Pass Failure ]
-
 webkit.org/b/326710 [ Debug ] media/adopt-node-crash.html [ Pass Crash ]
 
 webkit.org/b/326712 [ Debug ] imported/w3c/web-platform-tests/shadow-dom/capturing-and-bubbling-event-listeners-across-shadow-trees.html [ Pass Timeout ]
