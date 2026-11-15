@@ -4895,6 +4895,17 @@ RefPtr<AccessCase> InlineCacheCompiler::tryFoldToMegamorphic(CodeBlock* codeBloc
 
             return AccessCase::create(vm(), codeBlock, AccessCase::IndexedMegamorphicIn, nullptr);
         }
+        case AccessType::HasPrivateName: {
+            for (auto& accessCase : cases) {
+                if (accessCase->type() != AccessCase::InHit && accessCase->type() != AccessCase::InMiss)
+                    return nullptr;
+
+                if (accessCase->viaGlobalProxy())
+                    return nullptr;
+            }
+
+            return AccessCase::create(vm(), codeBlock, AccessCase::IndexedMegamorphicIn, nullptr);
+        }
         default:
             break;
         }

@@ -209,6 +209,7 @@ JSC_DECLARE_JIT_OPERATION(operationInByValGaveUp, EncodedJSValue, (EncodedJSValu
 JSC_DECLARE_JIT_OPERATION(operationInByValMegamorphicGeneric, EncodedJSValue, (JSGlobalObject*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript));
 
 JSC_DECLARE_JIT_OPERATION(operationHasPrivateNameOptimize, EncodedJSValue, (EncodedJSValue, EncodedJSValue, PropertyInlineCache*));
+JSC_DECLARE_JIT_OPERATION(operationHasPrivateNameMegamorphic, EncodedJSValue, (EncodedJSValue, EncodedJSValue, PropertyInlineCache*));
 JSC_DECLARE_JIT_OPERATION(operationHasPrivateNameGaveUp, EncodedJSValue, (EncodedJSValue, EncodedJSValue, PropertyInlineCache*));
 
 JSC_DECLARE_JIT_OPERATION(operationHasPrivateBrandOptimize, EncodedJSValue, (EncodedJSValue, EncodedJSValue, PropertyInlineCache*));

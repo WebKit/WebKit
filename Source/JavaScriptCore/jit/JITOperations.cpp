@@ -963,6 +963,41 @@ JSC_DEFINE_JIT_OPERATION(operationHasPrivateNameGaveUp, EncodedJSValue, (Encoded
     OPERATION_RETURN(scope, JSValue::encode(jsBoolean(asObject(baseValue)->hasPrivateField(globalObject, property))));
 }
 
+JSC_DEFINE_JIT_OPERATION(operationHasPrivateNameMegamorphic, EncodedJSValue, (EncodedJSValue encodedBase, EncodedJSValue encodedProperty, PropertyInlineCache* propertyCache))
+{
+    JSGlobalObject* globalObject = propertyCache->globalObject();
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    ICSlowPathCallFrameTracer tracer(vm, callFrame, propertyCache);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue baseValue = JSValue::decode(encodedBase);
+    if (!baseValue.isObject()) [[unlikely]] {
+        if (propertyCache->considerRepatchingCacheMegamorphic(vm))
+            repatchInBySlowPathCall(callFrame->codeBlock(), *propertyCache, InByKind::PrivateName);
+        throwException(globalObject, scope, createInvalidInParameterError(globalObject, baseValue));
+        OPERATION_RETURN(scope, encodedJSValue());
+    }
+    JSObject* baseObject = asObject(baseValue);
+
+    JSValue propertyValue = JSValue::decode(encodedProperty);
+    ASSERT(propertyValue.isSymbol());
+    auto propertyName = CacheableIdentifier::getCacheableIdentifier(propertyValue.asCell());
+    UniquedStringImpl* uid = const_cast<UniquedStringImpl*>(propertyName.data);
+
+    bool found = baseObject->hasPrivateField(globalObject, uid);
+    Structure* structure = baseObject->structure();
+    if (!structure->propertyAccessesAreCacheable()) [[unlikely]] {
+        if (propertyCache->considerRepatchingCacheMegamorphic(vm))
+            repatchInBySlowPathCall(callFrame->codeBlock(), *propertyCache, InByKind::PrivateName);
+    } else if (found)
+        vm.megamorphicCache()->initAsHasHit(structure->id(), uid);
+    else if (!structure->isDictionary()) // A dictionary can gain the private name without changing its Structure.
+        vm.megamorphicCache()->initAsHasMiss(structure->id(), uid);
+
+    OPERATION_RETURN(scope, JSValue::encode(jsBoolean(found)));
+}
+
 JSC_DEFINE_JIT_OPERATION(operationHasPrivateBrandOptimize, EncodedJSValue, (EncodedJSValue encodedBase, EncodedJSValue encodedBrand, PropertyInlineCache* propertyCache))
 {
     SuperSamplerScope superSamplerScope(false);
