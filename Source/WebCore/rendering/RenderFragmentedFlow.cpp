@@ -129,8 +129,6 @@ void RenderFragmentedFlow::validateFragments()
             bool firstFragmentVisited = false;
             
             for (auto& fragment : m_fragmentList) {
-                ASSERT(!fragment.needsLayout() || fragment.isRenderFragmentContainerSet());
-
                 fragment.deleteAllRenderBoxFragmentInfo();
 
                 LayoutUnit fragmentLogicalWidth = fragment.pageLogicalWidth();
@@ -173,7 +171,6 @@ void RenderFragmentedFlow::updateLogicalWidth()
 {
     LayoutUnit logicalWidth = initialLogicalWidth();
     for (auto& fragment : m_fragmentList) {
-        ASSERT(!fragment.needsLayout() || fragment.isRenderFragmentContainerSet());
         logicalWidth = std::max(fragment.pageLogicalWidth(), logicalWidth);
     }
     setLogicalWidth(logicalWidth);
@@ -195,8 +192,6 @@ RenderBox::LogicalExtentComputedValues RenderFragmentedFlow::computeLogicalHeigh
 
     const LayoutUnit maxFlowSize = RenderFragmentedFlow::maxLogicalHeight();
     for (auto& fragment : m_fragmentList) {
-        ASSERT(!fragment.needsLayout() || fragment.isRenderFragmentContainerSet());
-
         LayoutUnit distanceToMaxSize = maxFlowSize - computedValues.extent;
         computedValues.extent += std::min(distanceToMaxSize, fragment.logicalHeightOfAllFragmentedFlowContent());
 
@@ -325,13 +320,8 @@ RenderFragmentContainer* RenderFragmentedFlow::fragmentAtBlockOffset(const Rende
     if (auto* fragment = adapter.result())
         return clamp(fragment);
 
-    // If no fragment was found, the offset is in the flow thread overflow.
-    // The last fragment will contain the offset if extendLastFragment is set or if the last fragment is a set.
-    if (extendLastFragment || m_fragmentList.last().isRenderFragmentContainerSet()) {
-        return clamp(const_cast<RenderFragmentContainer*>(&m_fragmentList.last()));
-    }
-
-    return nullptr;
+    // If no fragment was found, the offset is in the flow thread overflow, which the last column set contains.
+    return clamp(const_cast<RenderFragmentContainer*>(&m_fragmentList.last()));
 }
 
 LayoutUnit RenderFragmentedFlow::pageLogicalTopForOffset(LayoutUnit offset) const
@@ -462,8 +452,6 @@ void RenderFragmentedFlow::logicalWidthChangedInFragmentsForBlock(const RenderBl
         return;
 
     forEachFragmentInRange(m_fragmentList, *startFragment, *endFragment, [&](auto& fragment) {
-        ASSERT(!fragment.needsLayout() || fragment.isRenderFragmentContainerSet());
-
         // We have no information computed for this fragment so we need to do it.
         std::unique_ptr<RenderBoxFragmentInfo> oldInfo = fragment.takeRenderBoxFragmentInfo(block);
         if (!oldInfo) {

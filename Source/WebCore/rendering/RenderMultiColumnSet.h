@@ -26,7 +26,7 @@
 #pragma once
 
 #include "LayerFragment.h"
-#include "RenderFragmentContainerSet.h"
+#include "RenderFragmentContainer.h"
 #include "RenderMultiColumnFlow.h"
 #include <wtf/Vector.h>
 
@@ -42,7 +42,7 @@ namespace WebCore {
 //
 // Column spans result in the creation of new column sets as well, since a spanning fragment has to be placed in between the column sets that
 // come before and after the span.
-class RenderMultiColumnSet final : public RenderFragmentContainerSet {
+class RenderMultiColumnSet final : public RenderFragmentContainer {
     WTF_MAKE_TZONE_ALLOCATED(RenderMultiColumnSet);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMultiColumnSet);
 public:
@@ -122,6 +122,8 @@ public:
     void endFlow(RenderBlock* container, LayoutUnit bottomInContainer);
     // Has this set been flowed in this layout pass?
     bool hasBeenFlowed() const { return logicalBottomInFragmentedFlow() != RenderFragmentedFlow::maxLogicalHeight(); }
+
+    void expandToEncompassFragmentedFlowContentsIfNeeded();
 
     NODELETE bool requiresBalancing() const;
 

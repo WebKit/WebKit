@@ -3088,7 +3088,6 @@ rendering/RenderEmbeddedObject.cpp @header:RenderStyleGetters @cost:7
 rendering/RenderFileUploadControl.cpp @header:RenderStyleGetters @cost:7
 rendering/RenderFlexibleBox.cpp @header:RenderStyleGetters @cost:7
 rendering/RenderFragmentContainer.cpp @header:RenderStyleGetters @cost:6
-rendering/RenderFragmentContainerSet.cpp @header:RenderStyleGetters @cost:5
 rendering/RenderFragmentedFlow.cpp @header:RenderStyleGetters @cost:6
 rendering/RenderFrame.cpp @header:RenderStyleGetters @cost:5
 rendering/RenderFrameBase.cpp @header:RenderStyleGetters @cost:5

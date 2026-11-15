@@ -287,11 +287,6 @@ Vector<LayoutRect> RenderFragmentContainer::fragmentRectsForFlowContentRect(cons
     return { fragmentRect };
 }
 
-void RenderFragmentContainer::installFragmentedFlow()
-{
-    ASSERT_NOT_REACHED();
-}
-
 void RenderFragmentContainer::attachFragment()
 {
     if (renderTreeBeingDestroyed())
@@ -300,11 +295,6 @@ void RenderFragmentContainer::attachFragment()
     // A fragment starts off invalid.
     setIsValid(false);
 
-    // Initialize the flow thread reference and create the flow thread object if needed.
-    // The flow thread lifetime is influenced by the number of fragments attached to it,
-    // and we are attaching the fragment to the flow thread.
-    installFragmentedFlow();
-    
     if (!m_fragmentedFlow)
         return;
 

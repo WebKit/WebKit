@@ -77,7 +77,7 @@ public:
     NODELETE virtual bool shouldClipFragmentedFlowContent() const;
 
     // These methods represent the width and height of a "page" and for a RenderFragmentContainer they are just the
-    // content width and content height of a fragment. For RenderFragmentContainerSets, however, they will be the width and
+    // content width and content height of a fragment. For RenderMultiColumnSets, however, they will be the width and
     // height of a single column or page in the set.
     virtual LayoutUnit pageLogicalWidth() const;
     virtual LayoutUnit pageLogicalHeight() const;
@@ -97,9 +97,6 @@ public:
     // page.
     virtual LayoutUnit pageLogicalTopForOffset(LayoutUnit offset) const;
 
-    // Whether or not this fragment is a set.
-    virtual bool isRenderFragmentContainerSet() const { return false; }
-    
     virtual void repaintFragmentedFlowContent(const LayoutRect& repaintRect) const;
 
     virtual void collectLayerFragments(LayerFragments&, const LayoutRect&, const LayoutRect&) const { }
@@ -142,8 +139,6 @@ private:
 
     void insertedIntoTree() override;
     void willBeRemovedFromTree() override;
-
-    NODELETE virtual void installFragmentedFlow();
 
     NODELETE LayoutPoint mapFragmentPointIntoFragmentedFlowCoordinates(const LayoutPoint&);
     LayoutRect computedVisualOverflowRectForBox(const RenderBox&) const;
