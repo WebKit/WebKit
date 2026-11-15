@@ -176,20 +176,15 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
         const auto& import = moduleInformation.imports[importIndex];
         const Identifier& moduleName = importNames[importIndex].module;
 
-        // Imports related to builtins or importedStringConstants are special and bypass
-        // the normal procedure of looking up a value in importObject.
         if (moduleInformation.importedStringConstantsEquals(import.module)) {
             defineImportedStringConstant(vm, m_instance, import);
             continue;
         }
-        const WebAssemblyBuiltinSet* builtinSet = findEnabledBuiltinSet(import, moduleInformation);
-        if (builtinSet) {
-            String fieldName = makeString(import.field);
-            auto* builtin = builtinSet->findBuiltin(fieldName);
-            if (!builtin)
-                return exception(createTypeError(globalObject, importFailMessage(import, "import"_s, "is not a valid builtin reference"_s)));
-            initializeBuiltinImport(vm, m_instance, import, builtin);
-            continue;
+        if (const auto* builtinSet = findEnabledBuiltinSet(import, moduleInformation)) {
+            if (const auto* builtin = builtinSet->findBuiltin(makeString(import.field))) {
+                initializeBuiltinImport(vm, m_instance, import, builtin);
+                continue;
+            }
         }
 
         const Identifier& fieldName = importNames[importIndex].field;
