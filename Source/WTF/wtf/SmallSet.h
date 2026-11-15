@@ -88,7 +88,7 @@ public:
             SmallSetMalloc::free(m_inline.buffer);
     }
 
-    class iterator {
+    class WTF_VIEW_TYPE iterator {
         WTF_DEPRECATED_MAKE_FAST_ALLOCATED(iterator);
     public:
         iterator() = default;
@@ -117,7 +117,7 @@ public:
         std::span<T> m_buffer;
     };
 
-    struct AddResult {
+    struct WTF_VIEW_TYPE AddResult {
         iterator entry;
         bool isNewEntry;
     };
