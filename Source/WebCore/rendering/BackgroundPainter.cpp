@@ -620,7 +620,7 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
 
                 if (RefPtr image = bgImage->cachedImage(); image && image->currentFrameIsComplete()) {
                     if (auto styleable = Styleable::fromRenderer(m_renderer))
-                        document().didPaintImage(protect(styleable->element), image, geometry.destinationRect);
+                        document().didPaintImage(styleable->element, image, geometry.destinationRect);
                 }
             }
         }

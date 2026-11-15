@@ -164,12 +164,12 @@ private:
             return adoptRef(*new (NotNull, fastMalloc(Base::allocationSize(size))) Data(size, std::forward<SizedRange>(range), mapper));
         }
 
-        bool containsScrollPosition() const;
-        bool containsContents() const;
-        bool containsProperty(CSSPropertyID) const;
-        bool createsContainingBlockForAbsolutelyPositioned(bool isRootElement) const;
-        bool createsContainingBlockForOutOfFlowPositioned(bool isRootElement) const;
-        bool canBeBackdropRoot() const;
+        NODELETE bool containsScrollPosition() const;
+        NODELETE bool containsContents() const;
+        NODELETE bool containsProperty(CSSPropertyID) const;
+        NODELETE bool createsContainingBlockForAbsolutelyPositioned(bool isRootElement) const;
+        NODELETE bool createsContainingBlockForOutOfFlowPositioned(bool isRootElement) const;
+        NODELETE bool canBeBackdropRoot() const;
         bool canCreateStackingContext() const { return m_canCreateStackingContext; }
         bool canTriggerCompositing() const { return m_canTriggerCompositing; }
         bool canTriggerCompositingOnInline() const { return m_canTriggerCompositingOnInline; }

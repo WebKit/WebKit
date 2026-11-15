@@ -110,9 +110,7 @@ Style::ComputedStyle* ComputedStyleBase::addPseudoElementStyle(std::unique_ptr<S
 
     ASSERT(pseudo->pseudoElementType());
 
-    auto* result = pseudo.get();
-    m_pseudoElementStyles.add(*result->pseudoElementIdentifier(), WTF::move(pseudo));
-    return result;
+    return m_pseudoElementStyles.add(*pseudo->pseudoElementIdentifier(), WTF::move(pseudo)).iterator->value.get();
 }
 
 // MARK: - Custom properties

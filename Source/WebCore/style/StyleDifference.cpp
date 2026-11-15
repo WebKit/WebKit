@@ -550,10 +550,10 @@ public:
             return true;
 
         if (aHasFirstLineStyle) {
-            auto* aFirstLineStyle = a.pseudoElementStyle({ PseudoElementType::FirstLine });
+            CheckedPtr aFirstLineStyle = a.pseudoElementStyle({ PseudoElementType::FirstLine });
             if (!aFirstLineStyle)
                 return true;
-            auto* bFirstLineStyle = b.pseudoElementStyle({ PseudoElementType::FirstLine });
+            CheckedPtr bFirstLineStyle = b.pseudoElementStyle({ PseudoElementType::FirstLine });
             if (!bFirstLineStyle)
                 return true;
             // FIXME: Not all first line style changes actually need layout.
@@ -925,8 +925,8 @@ public:
             return true;
 
         auto differs = [&](const PseudoElementIdentifier& identifier) {
-            auto* aStyle = a.pseudoElementStyle(identifier);
-            auto* bStyle = b.pseudoElementStyle(identifier);
+            CheckedPtr aStyle = a.pseudoElementStyle(identifier);
+            CheckedPtr bStyle = b.pseudoElementStyle(identifier);
             if (!aStyle || !bStyle)
                 return aStyle != bStyle;
             return *aStyle != *bStyle;

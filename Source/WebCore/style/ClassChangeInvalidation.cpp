@@ -38,7 +38,7 @@ namespace Style {
 enum class ClassChangeType : bool { Add, Remove };
 
 struct ClassChange {
-    AtomStringImpl* className { };
+    AtomString className;
     ClassChangeType type;
 };
 
@@ -48,7 +48,7 @@ using ClassChangeVector = Vector<ClassChange, classChangeVectorInlineCapacity>;
 static ClassChangeVector collectClasses(const SpaceSplitString& classes, ClassChangeType changeType)
 {
     return WTF::map<classChangeVectorInlineCapacity>(classes, [changeType](auto& className) {
-        return ClassChange { className.impl(), changeType };
+        return ClassChange { className, changeType };
     });
 }
 
@@ -76,13 +76,13 @@ static ClassChangeVector computeClassChanges(const SpaceSplitString& oldClasses,
         }
         if (foundFromBoth)
             continue;
-        changedClasses.append({ newClass.impl(), ClassChangeType::Add });
+        changedClasses.append({ newClass, ClassChangeType::Add });
     }
     for (unsigned i = 0; i < oldSize; ++i) {
         // If the bit is not set the corresponding class has been removed.
         if (remainingClassBits.quickGet(i))
             continue;
-        changedClasses.append({ oldClasses[i].impl(), ClassChangeType::Remove });
+        changedClasses.append({ oldClasses[i], ClassChangeType::Remove });
     }
 
     return changedClasses;

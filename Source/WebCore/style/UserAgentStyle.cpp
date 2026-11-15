@@ -142,10 +142,10 @@ void static addUserAgentKeyframes(StyleSheetContents& sheet)
 
 void UserAgentStyle::addToDefaultStyle(StyleSheetContents& sheet)
 {
-    RuleSetBuilder screenBuilder(*defaultStyle, screenEval());
+    RuleSetBuilder screenBuilder(protect(*defaultStyle), screenEval());
     screenBuilder.addRulesFromSheet(sheet);
 
-    RuleSetBuilder printBuilder(*defaultPrintStyle, printEval());
+    RuleSetBuilder printBuilder(protect(*defaultPrintStyle), printEval());
     printBuilder.addRulesFromSheet(sheet);
 
     // Build a stylesheet consisting of non-trivial media queries seen in default style.
@@ -189,7 +189,7 @@ void UserAgentStyle::initDefaultStyleSheet()
 
     quirksStyleSheet = parseUASheet(StringImpl::createWithoutCopying(quirksUserAgentStyleSheet));
 
-    RuleSetBuilder quirkBuilder(*defaultQuirksStyle, screenEval());
+    RuleSetBuilder quirkBuilder(protect(*defaultQuirksStyle), screenEval());
     quirkBuilder.addRulesFromSheet(protect(*quirksStyleSheet));
 
     ++defaultStyleVersion;
@@ -246,7 +246,7 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
         }
         if (!mathMLCoreMathvariantStyleSheet && element.document().settings().coreMathMLDeprecateLegacyMathvariant()) {
             mathMLCoreMathvariantStyleSheet = parseUASheet(StringImpl::createWithoutCopying(mathmlCoreMathvariantUserAgentStyleSheet));
-            addToDefaultStyle(*mathMLCoreMathvariantStyleSheet);
+            addToDefaultStyle(protect(*mathMLCoreMathvariantStyleSheet));
         }
         if (element.document().settings().cssMathDepthEnabled()) {
             if (!mathMLFontSizeMathStyleSheet) {

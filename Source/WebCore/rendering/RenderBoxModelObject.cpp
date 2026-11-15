@@ -832,7 +832,7 @@ void RenderBoxModelObject::imageChanged(WrappedImagePtr image, const IntRect*)
     RefPtr styleImage = Style::findLayerUsedImage(style().backgroundLayers(), image, isNonEmpty);
     if (styleImage && isNonEmpty) {
         if (auto styleable = Styleable::fromRenderer(*this))
-            protect(document())->didLoadImage(protect(styleable->element).get(), protect(styleImage->cachedImage()));
+            protect(document())->didLoadImage(styleable->element, protect(styleImage->cachedImage()));
     }
     // FIXME: We can do better.
     repaint();

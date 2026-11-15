@@ -41,7 +41,7 @@ void FilterReference::loadExternalDocumentIfNeeded(CachedResourceLoader& cachedR
     if (!SVGURIReference::isExternalURIReference(url.resolved.string(), *protect(cachedResourceLoader.document())))
         return;
     lazyInitialize(cachedSVGDocumentReference, CachedSVGDocumentReference::create(url));
-    cachedSVGDocumentReference->load(protect(cachedResourceLoader), options);
+    protect(cachedSVGDocumentReference)->load(protect(cachedResourceLoader), options);
 }
 
 // MARK: - Conversion

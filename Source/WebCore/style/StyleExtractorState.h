@@ -25,13 +25,14 @@
 
 #pragma once
 
+#include "CSSValuePool.h"
 #include "PseudoElementIdentifier.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {
 
-class CSSValuePool;
 class Element;
 class RenderElement;
 
@@ -45,10 +46,10 @@ struct ExtractorState {
 
     const CheckedRef<const Style::ComputedStyle> style;
 
-    Ref<Element> element;
+    const Ref<Element> element;
     const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier;
 
-    const RenderElement* renderer;
+    const CheckedPtr<const RenderElement> renderer;
 
     bool allowVisitedStyle;
 

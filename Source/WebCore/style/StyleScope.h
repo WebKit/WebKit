@@ -209,7 +209,7 @@ private:
     NODELETE TreeScope& treeScope();
 
     const CheckedRef<Document> m_document;
-    ShadowRoot* m_shadowRoot { nullptr };
+    const CheckedPtr<ShadowRoot> m_shadowRoot;
 
     RefPtr<Resolver> m_resolver;
 

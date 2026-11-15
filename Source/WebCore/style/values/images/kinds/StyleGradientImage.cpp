@@ -164,7 +164,7 @@ ImageDrawResult GradientImage::drawAsPattern(GraphicsContext& context, const Ren
 
 bool GradientImage::knownToBeOpaque(const RenderElement& renderer) const
 {
-    return isOpaque(m_gradient, renderer.style());
+    return isOpaque(m_gradient, protect(renderer.style()));
 }
 
 bool GradientImage::containsCurrentColor() const

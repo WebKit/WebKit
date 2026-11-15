@@ -24,6 +24,7 @@
 #include "CSSParserEnum.h"
 #include "MediaQuery.h"
 #include "RuleSet.h"
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -84,7 +85,7 @@ private:
 
     const RefPtr<RuleSet> m_ruleSet;
     MediaQueryCollector m_mediaQueryCollector;
-    Resolver* m_resolver { nullptr };
+    const SingleThreadWeakPtr<Resolver> m_resolver;
     const ShrinkToFit m_shrinkToFit { ShrinkToFit::Enable };
 
     CascadeLayerName m_resolvedCascadeLayerName;

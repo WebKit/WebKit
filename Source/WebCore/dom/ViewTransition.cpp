@@ -707,7 +707,7 @@ ExceptionOr<void> ViewTransition::captureOldState()
             if (rendererIsFragmented(renderer))
                 return { };
 
-            if (auto name = effectiveViewTransitionName(renderer, protect(styleable->element), styleScope, isCrossDocument()); !name.isNull()) {
+            if (auto name = effectiveViewTransitionName(renderer, styleable->element, styleScope, isCrossDocument()); !name.isNull()) {
                 if (auto check = checkDuplicateViewTransitionName(name, usedTransitionNames); check.hasException())
                     return check.releaseException();
 
@@ -1136,7 +1136,7 @@ void ViewTransition::copyElementBaseProperties(RenderLayerModelObject& renderer,
 {
     std::optional<const Styleable> styleable = Styleable::fromRenderer(renderer);
     ASSERT(styleable);
-    Style::Extractor styleExtractor { protect(styleable->element).ptr(), false, styleable->pseudoElementIdentifier };
+    Style::Extractor styleExtractor { styleable->element.ptr(), false, styleable->pseudoElementIdentifier };
 
     static constexpr auto transitionProperties = WTF::toArray<CSSPropertyID>({
         CSSPropertyID::WritingMode,
@@ -1298,7 +1298,7 @@ RenderViewTransitionCapture* ViewTransition::viewTransitionNewPseudoForCapturedE
     auto styleable = Styleable::fromRenderer(renderer);
     if (!styleable)
         return nullptr;
-    auto capturedName = styleable->element.viewTransitionCapturedName(styleable->pseudoElementIdentifier);
+    auto capturedName = styleable->element->viewTransitionCapturedName(styleable->pseudoElementIdentifier);
     if (capturedName.isNull())
         return nullptr;
 

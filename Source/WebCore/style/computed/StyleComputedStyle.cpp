@@ -101,7 +101,7 @@ std::unique_ptr<ComputedStyle> ComputedStyle::createPtr()
 
 std::unique_ptr<ComputedStyle> ComputedStyle::createPtrWithRegisteredInitialValues(const Style::CustomPropertyRegistry& registry)
 {
-    return clonePtr(registry.initialValuePrototypeStyle());
+    return clonePtr(protect(registry.initialValuePrototypeStyle()));
 }
 
 SUPPRESS_NODELETE ComputedStyle ComputedStyle::clone(const ComputedStyle& style)
@@ -155,7 +155,8 @@ void ComputedStyle::copyPseudoElementsFrom(const ComputedStyle& other)
             ASSERT_NOT_REACHED();
             continue;
         }
-        addPseudoElementStyle(makeUnique<ComputedStyle>(cloneIncludingPseudoElements(*pseudoElementStyle)));
+        auto clone = cloneIncludingPseudoElements(protect(*pseudoElementStyle));
+        addPseudoElementStyle(makeUnique<ComputedStyle>(WTF::move(clone)));
     }
 }
 
@@ -413,7 +414,7 @@ const WTF::String& ComputedStyle::hyphenString() const
             static MainThreadNeverDestroyed<const WTF::String> hyphenMinusString(span(hyphenMinus));
             static MainThreadNeverDestroyed<const WTF::String> hyphenString(span(hyphen));
 
-            return protect(fontCascade().primaryFont())->glyphForCharacter(hyphen) ? hyphenString : hyphenMinusString;
+            return protect(protect(fontCascade())->primaryFont())->glyphForCharacter(hyphen) ? hyphenString : hyphenMinusString;
         },
         [](const String& string) -> const WTF::String& {
             return string.value;

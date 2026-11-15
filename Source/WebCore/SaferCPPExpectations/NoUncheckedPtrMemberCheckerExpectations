@@ -36,12 +36,8 @@ style/InlineTextBoxStyle.cpp
 style/PseudoClassChangeInvalidation.h
 style/StyleAdjuster.h
 style/StyleBuilderState.h
-style/StyleCustomPropertyRegistry.h
-style/StyleExtractorState.h
 style/StyleRelations.h
 style/StyleResolver.cpp
 style/StyleResolver.h
-style/StyleScope.h
 style/StyleTreeResolver.h
-style/Styleable.h
 style/values/primitives/StyleLengthResolution.cpp

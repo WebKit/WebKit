@@ -7,16 +7,11 @@ rendering/RenderLayerCompositor.cpp
 rendering/RenderLayerScrollableArea.h
 rendering/updating/RenderTreeUpdater.h
 rendering/updating/RenderTreeUpdaterGeneratedContent.cpp
-style/ClassChangeInvalidation.cpp
 style/ElementRuleCollector.cpp
 style/PropertyCascade.h
 style/PseudoClassChangeInvalidation.h
-style/RuleSetBuilder.h
 style/StyleRelations.h
 style/StyleResolver.cpp
-style/StyleScope.h
-style/StyleScopeRuleSets.h
 style/StyleTreeResolver.h
-style/Styleable.h
 xml/XPathGrammar.cpp
 xml/XPathGrammar.h

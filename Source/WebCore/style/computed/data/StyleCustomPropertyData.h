@@ -49,7 +49,7 @@ public:
     void dumpDifferences(TextStream&, const CustomPropertyData&) const;
 #endif
 
-    const CustomProperty* get(const AtomString&) const;
+    NODELETE const CustomProperty* get(const AtomString&) const;
     void set(const AtomString&, Ref<const CustomProperty>&&);
 
     unsigned size() const { return m_size; }

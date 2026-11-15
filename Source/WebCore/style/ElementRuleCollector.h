@@ -50,7 +50,7 @@ struct MatchedRule {
 class ElementRuleCollector {
 public:
     ElementRuleCollector(const Element&, const ScopeRuleSets&, SelectorMatchingState*, SelectorChecker::Mode = SelectorChecker::Mode::ResolvingStyle);
-    ElementRuleCollector(const Element&, const RuleSet& authorStyle, SelectorMatchingState*, SelectorChecker::Mode = SelectorChecker::Mode::ResolvingStyle);
+    ElementRuleCollector(const Element&, Ref<const RuleSet>&& authorStyle, SelectorMatchingState*, SelectorChecker::Mode = SelectorChecker::Mode::ResolvingStyle);
 
     void setIncludeEmptyRules(bool value) { m_shouldIncludeEmptyRules = value; }
 

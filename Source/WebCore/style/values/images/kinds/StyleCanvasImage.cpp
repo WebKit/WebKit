@@ -183,8 +183,8 @@ void CanvasImage::canvasContentsWillChange(CanvasBase& canvasBase, const FloatRe
 
     auto imageChangeRect = enclosingIntRect(changingRect);
     for (auto entry : clients()) {
-        auto& client = entry.key;
-        client.imageChanged(static_cast<WrappedImagePtr>(this), &imageChangeRect);
+        CheckedRef client = entry.key;
+        client->imageChanged(static_cast<WrappedImagePtr>(this), &imageChangeRect);
     }
 }
 
@@ -194,8 +194,8 @@ void CanvasImage::canvasResized(CanvasBase& canvasBase)
     ASSERT_UNUSED(canvasBase, m_element == &downcast<HTMLCanvasElement>(canvasBase));
 
     for (auto entry : clients()) {
-        auto& client = entry.key;
-        client.imageChanged(static_cast<WrappedImagePtr>(this));
+        CheckedRef client = entry.key;
+        client->imageChanged(static_cast<WrappedImagePtr>(this));
     }
 }
 

@@ -110,7 +110,7 @@ RefPtr<CSSValue> Extractor::getFontSizeCSSValuePreferringKeyword() const
 
     protect(element->document())->updateLayoutIgnorePendingStylesheets();
 
-    auto* style = element->computedStyle(m_pseudoElementIdentifier);
+    CheckedPtr style = element->computedStyle(m_pseudoElementIdentifier);
     if (!style)
         return nullptr;
 
@@ -126,7 +126,7 @@ bool Extractor::useFixedFontDefaultSize() const
     if (!element)
         return false;
 
-    auto* style = element->computedStyle(m_pseudoElementIdentifier);
+    CheckedPtr style = element->computedStyle(m_pseudoElementIdentifier);
     if (!style)
         return false;
 
@@ -214,7 +214,7 @@ static inline const Style::ComputedStyle* computeRenderStyleForProperty(Element&
     if (Style::Interpolation::isAccelerated(propertyID, protect(element.document().settings()))) {
         Styleable styleable(element, pseudoElementIdentifier);
         if (styleable.renderer() && styleable.isRunningAcceleratedAnimationOfProperty(propertyID)) {
-            ownedStyle = styleable.renderer()->animatedStyle();
+            ownedStyle = protect(styleable.renderer())->animatedStyle();
             return ownedStyle.get();
         }
     }
@@ -222,7 +222,7 @@ static inline const Style::ComputedStyle* computeRenderStyleForProperty(Element&
     return element.computedStyle(pseudoElementIdentifier);
 }
 
-const Style::ComputedStyle* Extractor::computeStyleForCustomProperty(std::unique_ptr<Style::ComputedStyle>& ownedStyle) const
+CheckedPtr<const Style::ComputedStyle> Extractor::computeStyleForCustomProperty(std::unique_ptr<Style::ComputedStyle>& ownedStyle) const
 {
     RefPtr element = m_element;
     if (!element)
@@ -230,7 +230,7 @@ const Style::ComputedStyle* Extractor::computeStyleForCustomProperty(std::unique
 
     updateStyleIfNeededForProperty(*element, m_pseudoElementIdentifier, CSSPropertyID::Custom);
 
-    auto* style = computeRenderStyleForProperty(*element, m_pseudoElementIdentifier, CSSPropertyID::Custom, ownedStyle);
+    CheckedPtr style = computeRenderStyleForProperty(*element, m_pseudoElementIdentifier, CSSPropertyID::Custom, ownedStyle);
     if (!style)
         return nullptr;
 
@@ -238,6 +238,7 @@ const Style::ComputedStyle* Extractor::computeStyleForCustomProperty(std::unique
 
     if (document->hasStyleWithViewportUnits()) {
         if (RefPtr owner = document->ownerElement()) {
+            style = nullptr;
             protect(owner->document())->updateLayout();
             style = computeRenderStyleForProperty(*element, m_pseudoElementIdentifier, CSSPropertyID::Custom, ownedStyle);
         }
@@ -249,7 +250,7 @@ const Style::ComputedStyle* Extractor::computeStyleForCustomProperty(std::unique
 RefPtr<CSSValue> Extractor::customPropertyValue(const AtomString& propertyName) const
 {
     std::unique_ptr<Style::ComputedStyle> ownedStyle;
-    auto* style = computeStyleForCustomProperty(ownedStyle);
+    CheckedPtr style = computeStyleForCustomProperty(ownedStyle);
     if (!style)
         return nullptr;
 
@@ -263,7 +264,7 @@ RefPtr<CSSValue> Extractor::customPropertyValue(const AtomString& propertyName) 
 RefPtr<DeprecatedCSSOMValue> Extractor::customPropertyValueDeprecatedCSSOMValue(const AtomString& propertyName, CSSStyleDeclaration& owner) const
 {
     std::unique_ptr<Style::ComputedStyle> ownedStyle;
-    auto* style = computeStyleForCustomProperty(ownedStyle);
+    CheckedPtr style = computeStyleForCustomProperty(ownedStyle);
     if (!style)
         return nullptr;
 
@@ -277,7 +278,7 @@ RefPtr<DeprecatedCSSOMValue> Extractor::customPropertyValueDeprecatedCSSOMValue(
 WTF::String Extractor::customPropertyValueSerialization(const AtomString& propertyName, const CSS::SerializationContext& serializationContext) const
 {
     std::unique_ptr<Style::ComputedStyle> ownedStyle;
-    if (auto* style = computeStyleForCustomProperty(ownedStyle))
+    if (CheckedPtr style = computeStyleForCustomProperty(ownedStyle))
         return customPropertyValueSerializationInStyle(*style, propertyName, serializationContext);
     return emptyString();
 }
@@ -373,19 +374,19 @@ static bool isLayoutDependent(CSSPropertyID propertyID, const Style::ComputedSty
     case CSSPropertyID::PaddingInline:
         return isLayoutDependent(CSSPropertyID::PaddingInlineStart, style, renderer) || isLayoutDependent(CSSPropertyID::PaddingInlineEnd, style, renderer);
     case CSSPropertyID::PaddingBlockStart:
-        if (auto* renderBox = dynamicDowncast<RenderBox>(renderer))
+        if (CheckedPtr renderBox = dynamicDowncast<RenderBox>(renderer))
             return isLayoutDependent(mapLogicalToPhysicalPaddingProperty(FlowRelativeDirection::BlockStart, *renderBox), style, renderBox);
         return false;
     case CSSPropertyID::PaddingBlockEnd:
-        if (auto* renderBox = dynamicDowncast<RenderBox>(renderer))
+        if (CheckedPtr renderBox = dynamicDowncast<RenderBox>(renderer))
             return isLayoutDependent(mapLogicalToPhysicalPaddingProperty(FlowRelativeDirection::BlockEnd, *renderBox), style, renderBox);
         return false;
     case CSSPropertyID::PaddingInlineStart:
-        if (auto* renderBox = dynamicDowncast<RenderBox>(renderer))
+        if (CheckedPtr renderBox = dynamicDowncast<RenderBox>(renderer))
             return isLayoutDependent(mapLogicalToPhysicalPaddingProperty(FlowRelativeDirection::InlineStart, *renderBox), style, renderBox);
         return false;
     case CSSPropertyID::PaddingInlineEnd:
-        if (auto* renderBox = dynamicDowncast<RenderBox>(renderer))
+        if (CheckedPtr renderBox = dynamicDowncast<RenderBox>(renderer))
             return isLayoutDependent(mapLogicalToPhysicalPaddingProperty(FlowRelativeDirection::InlineEnd, *renderBox), style, renderBox);
         return false;
     case CSSPropertyID::PaddingTop:
@@ -406,7 +407,7 @@ static bool isLayoutDependent(CSSPropertyID propertyID, const Style::ComputedSty
     }
 }
 
-const Style::ComputedStyle* Extractor::computeStyle(CSSPropertyID propertyID, UpdateLayout updateLayout, std::unique_ptr<Style::ComputedStyle>& ownedStyle) const
+CheckedPtr<const Style::ComputedStyle> Extractor::computeStyle(CSSPropertyID propertyID, UpdateLayout updateLayout, std::unique_ptr<Style::ComputedStyle>& ownedStyle) const
 {
     RefPtr element = m_element.get();
     if (!element)
@@ -417,14 +418,14 @@ const Style::ComputedStyle* Extractor::computeStyle(CSSPropertyID propertyID, Up
         return nullptr;
     }
 
-    const Style::ComputedStyle* style = nullptr;
+    CheckedPtr<const Style::ComputedStyle> style;
     auto forcedLayout = ForcedLayout::No;
 
     if (updateLayout == UpdateLayout::Yes) {
         Ref document = element->document();
 
         updateStyleIfNeededForProperty(*element, m_pseudoElementIdentifier, propertyID);
-        auto renderer = computeRenderer();
+        CheckedPtr renderer = computeRenderer();
         if (propertyID == CSSPropertyID::Display && !renderer) {
             RefPtr svgElement = dynamicDowncast<SVGElement>(*element);
             if (svgElement && !svgElement->isValid())
@@ -452,12 +453,16 @@ const Style::ComputedStyle* Extractor::computeStyle(CSSPropertyID propertyID, Up
             return ForcedLayout::No;
         }();
 
-        if (forcedLayout == ForcedLayout::Yes)
+        if (forcedLayout == ForcedLayout::Yes) {
+            style = nullptr;
+            renderer = nullptr;
             document->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, element.get());
-        else if (forcedLayout == ForcedLayout::ParentDocument) {
-            if (RefPtr owner = document->ownerElement())
+        } else if (forcedLayout == ForcedLayout::ParentDocument) {
+            if (RefPtr owner = document->ownerElement()) {
+                style = nullptr;
+                renderer = nullptr;
                 protect(owner->document())->updateLayout();
-            else
+            } else
                 forcedLayout = ForcedLayout::No;
         }
     }
@@ -471,7 +476,7 @@ const Style::ComputedStyle* Extractor::computeStyle(CSSPropertyID propertyID, Up
 RefPtr<CSSValue> Extractor::propertyValue(CSSPropertyID propertyID, UpdateLayout updateLayout, ExtractorState::PropertyValueType valueType) const
 {
     std::unique_ptr<Style::ComputedStyle> ownedStyle;
-    auto style = computeStyle(propertyID, updateLayout, ownedStyle);
+    CheckedPtr style = computeStyle(propertyID, updateLayout, ownedStyle);
     if (!style)
         return nullptr;
 
@@ -479,7 +484,7 @@ RefPtr<CSSValue> Extractor::propertyValue(CSSPropertyID propertyID, UpdateLayout
         *style,
         propertyID,
         CSSValuePool::singleton(),
-        valueType == ExtractorState::PropertyValueType::Resolved ? computeRenderer() : nullptr,
+        valueType == ExtractorState::PropertyValueType::Resolved ? protect(computeRenderer()) : nullptr,
         valueType
     );
 }
@@ -495,7 +500,7 @@ RefPtr<DeprecatedCSSOMValue> Extractor::propertyValueDeprecatedCSSOMValue(CSSPro
 WTF::String Extractor::propertyValueSerialization(CSSPropertyID propertyID, const CSS::SerializationContext& serializationContext, UpdateLayout updateLayout, ExtractorState::PropertyValueType valueType) const
 {
     std::unique_ptr<Style::ComputedStyle> ownedStyle;
-    auto style = computeStyle(propertyID, updateLayout, ownedStyle);
+    CheckedPtr style = computeStyle(propertyID, updateLayout, ownedStyle);
     if (!style)
         return emptyString();
 
@@ -519,7 +524,7 @@ WTF::String Extractor::propertyValueSerialization(CSSPropertyID propertyID, cons
         propertyID,
         serializationContext,
         CSSValuePool::singleton(),
-        valueType == ExtractorState::PropertyValueType::Resolved ? computeRenderer() : nullptr,
+        valueType == ExtractorState::PropertyValueType::Resolved ? protect(computeRenderer()) : nullptr,
         valueType
     );
 }

@@ -60,7 +60,7 @@ private:
     void invalidate(const AtomString&);
     void notifyAnimationsOfCustomPropertyRegistration(const AtomString&);
 
-    Scope& m_scope;
+    const CheckedRef<Scope> m_scope;
 
     HashMap<AtomString, UniqueRef<CSSRegisteredCustomProperty>> m_propertiesFromAPI;
     HashMap<AtomString, UniqueRef<CSSRegisteredCustomProperty>> m_propertiesFromStylesheet;

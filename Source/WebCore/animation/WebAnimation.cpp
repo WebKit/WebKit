@@ -1988,7 +1988,7 @@ bool WebAnimation::isSkippedContentAnimation() const
         return false;
     if (auto animation = dynamicDowncast<StyleOriginatedAnimation>(this)) {
         if (auto element = animation->owningElement()) {
-            CheckedPtr renderer = element->element.renderer();
+            CheckedPtr renderer = element->element->renderer();
             return renderer && renderer->isSkippedContent();
         }
     }

@@ -1687,7 +1687,7 @@ inline RefPtr<::WebGPU::RenderPipeline> InspectorInstrumentation::renderPipeline
 inline void InspectorInstrumentation::willApplyKeyframeEffect(const Styleable& target, KeyframeEffect& effect, const ComputedEffectTiming& computedTiming)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (RefPtr agents = instrumentingAgents(target.element.document()))
+    if (RefPtr agents = instrumentingAgents(target.element->document()))
         willApplyKeyframeEffectImpl(*agents, target, effect, computedTiming);
 }
 

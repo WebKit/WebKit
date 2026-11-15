@@ -99,7 +99,7 @@ ScrollTimeline& StyleOriginatedTimelinesController::inactiveNamedTimeline(const 
 
 ScrollTimeline* StyleOriginatedTimelinesController::determineTreeOrder(const Vector<Ref<ScrollTimeline>>& ancestorTimelines, const Styleable& styleable, const Element* timelineScopeElement)
 {
-    RefPtr element = styleable.element;
+    RefPtr element = styleable.element.ptr();
     while (element) {
         Vector<Ref<ScrollTimeline>> matchedTimelines;
         for (auto& timeline : ancestorTimelines) {
@@ -116,7 +116,7 @@ ScrollTimeline* StyleOriginatedTimelinesController::determineTreeOrder(const Vec
                 }
                 // Prefer the nearest timeline in hierarchy.
                 for (auto& matchedTimeline : matchedTimelines | std::views::reverse) {
-                    if (styleable.element.isComposedTreeDescendantOf(*originatingElement(matchedTimeline)))
+                    if (styleable.element->isComposedTreeDescendantOf(*originatingElement(matchedTimeline)))
                         return matchedTimeline.unsafePtr();
                 }
                 // Otherwise return the last of the matching timelines per https://github.com/w3c/csswg-drafts/issues/12581.
@@ -236,7 +236,7 @@ void StyleOriginatedTimelinesController::updateTimelineForTimelineScope(const Re
     RefPtr element = timelineElement;
     while (element) {
         auto it = matchedTimelineScopeElements.findIf([element] (const Styleable& entry) {
-            return &entry.element == element;
+            return entry.element.ptr() == element;
         });
         if (it != notFound) {
             Ref protectedTimelineScopeElement { matchedTimelineScopeElements.at(it).element };
@@ -415,7 +415,7 @@ void StyleOriginatedTimelinesController::attachAnimation(CSSAnimation& animation
         if (timelineScopeElements.isEmpty())
             return nullptr;
         // Find the nearest parent within timelineScopeElements.
-        for (RefPtr currentParent = target->element.parentElementInComposedTree(); currentParent; currentParent = currentParent->parentElementInComposedTree()) {
+        for (RefPtr currentParent = target->element->parentElementInComposedTree(); currentParent; currentParent = currentParent->parentElementInComposedTree()) {
             for (auto& timelineScopeElement : timelineScopeElements) {
                 if (currentParent == timelineScopeElement.element())
                     return currentParent;
@@ -429,7 +429,7 @@ void StyleOriginatedTimelinesController::attachAnimation(CSSAnimation& animation
         RefPtr timelineScope = timeline->timelineScopeDeclaredElement();
         if (timelineScope && timelineScope != relevantTimelineScopeElement) {
             RefPtr timelineElement = originatingElement(timeline);
-            if (!timelineElement || !target->element.isComposedTreeInclusiveDescendantOf(*timelineElement))
+            if (!timelineElement || !target->element->isComposedTreeInclusiveDescendantOf(*timelineElement))
                 return false;
         }
         return !timeline->isInactiveStyleOriginatedTimeline();
@@ -501,7 +501,7 @@ void StyleOriginatedTimelinesController::updateNamedTimelineMapForTimelineScope(
         HashSet<Ref<ScrollTimeline>> namedTimelinesToUpdate;
         for (auto& entry : m_nameToTimelineMap) {
             for (auto& timeline : entry.value) {
-                if (timeline->timelineScopeDeclaredElement() == &styleable.element)
+                if (timeline->timelineScopeDeclaredElement() == styleable.element.ptr())
                     timeline->clearTimelineScopeDeclaredElement();
                 // Make sure to track this timeline to be updated in a separate
                 // step since updating timeline relationships could affect m_nameToTimelineMap.
