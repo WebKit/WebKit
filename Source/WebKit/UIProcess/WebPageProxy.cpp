@@ -16354,6 +16354,7 @@ void WebPageProxy::resetStateAfterProcessTermination(ProcessTerminationReason re
         m_navigationState->clearAllNavigations();
         m_sessionHistoryTraversalQueue->cancel();
 
+        internals().pendingBackForwardCachedChildren.clear();
         auto pendingIframeRestores = std::exchange(internals().pendingBackForwardIframeRestores, { });
         for (auto& pendingRestore : pendingIframeRestores.values())
             restoreOrCancelPendingBackForwardIframes(*pendingRestore, RestoredFromBackForwardCache::No);
@@ -16411,6 +16412,21 @@ void WebPageProxy::clearStateForTerminatedProcess(WebProcessProxy& process)
 
     if (protect(preferences())->siteIsolationEnabled())
         processDidBecomeResponsive(process); // Check if all other processes are responsive.
+}
+
+void WebPageProxy::markProcessesIneligibleForWebProcessCache()
+{
+    if (!protect(preferences())->siteIsolationEnabled())
+        return;
+
+    // Prevent the page's other processes from entering the WebProcess cache and being reused on
+    // reload, as one of them may have caused the termination (e.g. by exceeding the page memory
+    // limit).
+    protect(browsingContextGroup())->forEachRemotePage(*this, [](auto& remotePage) {
+        Ref process = remotePage.process();
+        ASSERT(!process->isInProcessCache());
+        process->setIneligbleForWebProcessCache();
+    });
 }
 
 void WebPageProxy::mainFrameProcessDidTerminate(WebProcessProxy& process)

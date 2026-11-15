@@ -31,8 +31,11 @@
 #import "Helpers/Test.h"
 #import "Helpers/Utilities.h"
 #import "Helpers/cocoa/HTTPServer.h"
+#import "Helpers/cocoa/ProcessTerminationTestUtilities.h"
+#import "Helpers/cocoa/SiteIsolationTestUtilities.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
+#import <WebKit/WKFrameInfoPrivate.h>
 #import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
@@ -90,6 +93,62 @@ TEST(MemoryFootprintMonitor, PageMemoryLimit)
     bool didTerminate = Util::runFor(&terminated, 2_s);
     ASSERT_TRUE(didTerminate);
     EXPECT_EQ(terminationReason, _WKProcessTerminationReasonExceededMemoryLimit);
+}
+
+TEST(MemoryFootprintMonitor, SiteIsolatedPageMemoryLimit)
+{
+    HTTPServer server({
+        { "/example"_s, { makeString("<!DOCTYPE html><iframe src='https://webkit.org/webkit'></iframe>"_s, touchMegabytesHTML) } },
+        { "/webkit"_s, { touchMegabytesHTML } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    // The page's processes exceed this limit together, but neither of them does on its own.
+    static constexpr size_t memoryLimit = 300 * MB;
+
+    RetainPtr configuration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    [configuration setMemoryFootprintPollIntervalForTesting:0.1];
+    [configuration setMemoryLimitForTesting:memoryLimit];
+    [configuration setUsesWebProcessCache:YES];
+
+    RetainPtr webViewConfiguration = server.httpsProxyConfiguration();
+    [webViewConfiguration setProcessPool:adoptNS([[WKProcessPool alloc] _initWithConfiguration:configuration.get()]).get()];
+    enableSiteIsolation(webViewConfiguration.get());
+    setFeatureEnabled(webViewConfiguration.get(), @"SiteIsolationSharedProcessEnabled", false);
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:webViewConfiguration.get() addToWindow:YES]);
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    __block Vector<_WKProcessTerminationReason> terminationReasons;
+    [navigationDelegate setWebContentProcessDidTerminate:^(WKWebView *, _WKProcessTerminationReason reason) {
+        terminationReasons.append(reason);
+    }];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    pid_t mainFrameProcess = [webView _webProcessIdentifier];
+    pid_t iframeProcess = [webView firstChildFrame]._processIdentifier;
+    EXPECT_NE(iframeProcess, mainFrameProcess);
+
+    [webView evaluateJavaScript:@"window.mainFrameMemory = touchMegabytes(150)" completionHandler:nil];
+    Util::runFor(1_s);
+    EXPECT_TRUE(terminationReasons.isEmpty());
+
+    [webView evaluateJavaScript:@"window.iframeMemory = touchMegabytes(150)" inFrame:[webView firstChildFrame] completionHandler:nil];
+    EXPECT_TRUE(Util::waitFor(^{
+        return !terminationReasons.isEmpty();
+    }));
+    ASSERT_EQ(terminationReasons.size(), 1u);
+    EXPECT_EQ(terminationReasons[0], _WKProcessTerminationReasonExceededMemoryLimit);
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return !processStillRunning(iframeProcess);
+    }));
+    [webView reload];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_NE([webView firstChildFrame]._processIdentifier, iframeProcess);
+    EXPECT_EQ(terminationReasons.size(), 1u);
 }
 
 } // namespace TestWebKitAPI

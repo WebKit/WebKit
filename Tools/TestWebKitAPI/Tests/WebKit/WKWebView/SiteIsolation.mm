@@ -13876,6 +13876,138 @@ TEST(SiteIsolation, SubframeMemoryLimitKillDoesNotReloadFormSubmissionResult)
     EXPECT_EQ([navigationDelegate didStartProvisionalNavigationCount], 1u);
 }
 
+static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> siteIsolatedViewWithProcessCache(const HTTPServer& server, EnableBackForwardCache enableBackForwardCache = EnableBackForwardCache::No)
+{
+    RetainPtr processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().usesWebProcessCache = YES;
+    if (enableBackForwardCache == EnableBackForwardCache::No)
+        processPoolConfiguration.get().pageCacheEnabled = NO;
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    configuration.get().processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]).get();
+    disableSharedProcess(configuration.get());
+    if (enableBackForwardCache == EnableBackForwardCache::Yes)
+        setFeatureEnabled(configuration.get(), @"MultiProcessBackForwardCacheEnabled", true);
+    return siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+}
+
+TEST(SiteIsolation, MainFrameCrashDoesNotCacheIframeProcesses)
+{
+    HTTPServer server({
+        { "/example"_s, { "<!DOCTYPE html><iframe src='https://webkit.org/webkit'></iframe>"_s } },
+        { "/webkit"_s, { "<!DOCTYPE html>webkit"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewWithProcessCache(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    pid_t mainFrameProcess = [webView _webProcessIdentifier];
+    pid_t iframeProcess = [webView firstChildFrame]._processIdentifier;
+    EXPECT_NE(iframeProcess, mainFrameProcess);
+
+    kill(mainFrameProcess, SIGKILL);
+    [navigationDelegate waitForWebContentProcessDidTerminate];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return !processStillRunning(iframeProcess);
+    }));
+    EXPECT_EQ([[webView configuration].processPool _processCacheSize], 0u);
+
+    [webView reload];
+    [navigationDelegate waitForDidFinishNavigation];
+    pid_t reloadedIframeProcess = [webView firstChildFrame]._processIdentifier;
+    EXPECT_NE(reloadedIframeProcess, iframeProcess);
+    EXPECT_NE(reloadedIframeProcess, [webView _webProcessIdentifier]);
+}
+
+TEST(SiteIsolation, MainFrameCrashDoesNotCacheSharedIframeProcess)
+{
+    HTTPServer server({
+        { "/example"_s, { "<!DOCTYPE html><iframe src='https://webkit.org/webkit'></iframe>"_s } },
+        { "/webkit"_s, { "<!DOCTYPE html>webkit"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewWithSharedProcess(server, EnableProcessCache::Yes);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    pid_t mainFrameProcess = [webView _webProcessIdentifier];
+    pid_t sharedProcess = [webView firstChildFrame]._processIdentifier;
+    EXPECT_NE(sharedProcess, mainFrameProcess);
+
+    kill(mainFrameProcess, SIGKILL);
+    [navigationDelegate waitForWebContentProcessDidTerminate];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return !processStillRunning(sharedProcess);
+    }));
+    EXPECT_EQ([[webView configuration].processPool _processCacheSize], 0u);
+
+    [webView reload];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_NE([webView firstChildFrame]._processIdentifier, sharedProcess);
+}
+
+TEST(SiteIsolation, MainFrameCrashKeepsIframeProcessThatAnotherPageUses)
+{
+    HTTPServer server({
+        { "/example"_s, { "<!DOCTYPE html><iframe src='https://webkit.org/webkit'></iframe>"_s } },
+        { "/apple"_s, { "<!DOCTYPE html><iframe src='https://webkit.org/webkit'></iframe>"_s } },
+        { "/webkit"_s, { "<!DOCTYPE html>webkit"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [openerView, openerNavigationDelegate] = siteIsolatedViewWithProcessCache(server);
+    openerView.get().configuration.preferences.javaScriptCanOpenWindowsAutomatically = YES;
+    RetainPtr openerUIDelegate = adoptNS([TestUIDelegate new]);
+    [openerView setUIDelegate:openerUIDelegate.get()];
+    [openerView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [openerNavigationDelegate waitForDidFinishNavigation];
+    pid_t openerProcess = [openerView _webProcessIdentifier];
+    pid_t iframeProcess = [openerView firstChildFrame]._processIdentifier;
+
+    auto opened = openWindowFromFrame(openerView.get(), openerUIDelegate.get(), @"https://apple.com/apple", [openerView mainFrame].info);
+    RetainPtr openedView = opened.webView;
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [openedView firstChildFrame]._processIdentifier == iframeProcess;
+    }));
+
+    kill(openerProcess, SIGKILL);
+    [openerNavigationDelegate waitForWebContentProcessDidTerminate];
+    EXPECT_TRUE(processStillRunning(iframeProcess));
+    [openerView reload];
+    [openerNavigationDelegate waitForDidFinishNavigation];
+    EXPECT_EQ([openerView firstChildFrame]._processIdentifier, iframeProcess);
+
+    [openedView _close];
+    [openerView _close];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return !processStillRunning(iframeProcess);
+    }));
+}
+
+TEST(SiteIsolation, CrashDuringBackForwardCacheRestoreDropsCachedChildren)
+{
+    HTTPServer server({
+        { "/example"_s, { "<!DOCTYPE html><iframe src='https://webkit.org/webkit'></iframe>"_s } },
+        { "/other"_s, { "<!DOCTYPE html>other"_s } },
+        { "/webkit"_s, { "<!DOCTYPE html>webkit"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewWithProcessCache(server, EnableBackForwardCache::Yes);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    pid_t mainFrameProcess = [webView _webProcessIdentifier];
+    pid_t iframeProcess = [webView firstChildFrame]._processIdentifier;
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/other"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_EQ([webView _webProcessIdentifier], mainFrameProcess);
+    checkTopDocumentURLsInBackForwardCacheAtIndex(webView.get(), -1, 2, @"https://example.com/other");
+
+    // Going back takes the cached iframe out of the cache entry until the main frame commits.
+    [webView goBack];
+    kill(mainFrameProcess, SIGKILL);
+    EXPECT_TRUE(waitForProcessExitWithoutSpinningRunLoop(mainFrameProcess));
+    EXPECT_TRUE([[webView configuration].processPool _detectAndHandleTerminationForTesting:mainFrameProcess]);
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return !processStillRunning(iframeProcess);
+    }));
+    EXPECT_EQ([[webView configuration].processPool _processCacheSize], 0u);
+}
+
 TEST(SiteIsolation, SharedProcessShutsDownWhenLastRemoteFrameIsRemoved)
 {
     HTTPServer server({
