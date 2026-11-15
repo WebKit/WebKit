@@ -767,23 +767,24 @@ private:
         // inequality that involves a constant that is -1,0,1. Note that we will never have
         // lessThan and greaterThan because the constants are constrained to -1,0,1. The only
         // way for both of them to be valid is a<b+1 and a>b-1, but then we would have said
-        // a==b.
+        // a==b. Something like @a < @b - 2 implies @a < @b - 1, and something like @a > @b + 2
+        // implies @a > @b + 1, so we weaken them to those instead of giving up.
 
         Relationship lessThan;
         Relationship greaterThan;
         
         int lessThanEqOffset = WTF::max(m_offset, other.m_offset);
-        if (lessThanEqOffset >= -2 && lessThanEqOffset <= 0) {
+        if (lessThanEqOffset <= 0) {
             lessThan = Relationship(
-                m_left, other.m_right, LessThan, lessThanEqOffset + 1);
+                m_left, other.m_right, LessThan, WTF::max(lessThanEqOffset + 1, -1));
             
             ASSERT(isGeneralOffset(lessThan.offset()));
         }
         
         int greaterThanEqOffset = WTF::min(m_offset, other.m_offset);
-        if (greaterThanEqOffset >= 0 && greaterThanEqOffset <= 2) {
+        if (greaterThanEqOffset >= 0) {
             greaterThan = Relationship(
-                m_left, other.m_right, GreaterThan, greaterThanEqOffset - 1);
+                m_left, other.m_right, GreaterThan, WTF::min(greaterThanEqOffset - 1, 1));
             
             ASSERT(isGeneralOffset(greaterThan.offset()));
         }
