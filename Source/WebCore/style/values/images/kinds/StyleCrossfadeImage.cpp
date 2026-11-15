@@ -184,18 +184,18 @@ RefPtr<CrossfadeImage> CrossfadeImage::blend(const CrossfadeImage& from, const B
     );
 }
 
-Ref<CSSValue> CrossfadeImage::computedStyleValue(const Style::ComputedStyle& style) const
+Ref<CSSValue> CrossfadeImage::computedStyleValue(const Style::ComputedStyle& style, PropertyValueType valueType) const
 {
     return WTF::switchOn(m_function,
         [&](const auto& function) -> Ref<CSSValue> {
-            return CSSCrossfadeValue::create(toCSS(function, style));
+            return CSSCrossfadeValue::create(toCSS(function, style, valueType));
         }
     );
 }
 
 Ref<DeprecatedCSSOMValue> CrossfadeImage::computedStyleDeprecatedCSSOMValue(CSSValuePool&, const Style::ComputedStyle& style, CSSStyleDeclaration& owner) const
 {
-    return computedStyleValue(style)->createDeprecatedCSSOMWrapper(owner);
+    return computedStyleValue(style, PropertyValueType::Resolved)->createDeprecatedCSSOMWrapper(owner);
 }
 
 bool CrossfadeImage::isPending() const

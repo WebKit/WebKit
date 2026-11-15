@@ -1,0 +1,59 @@
+
+PASS Computed 'background-image: linear-gradient(currentcolor, red)' keeps currentcolor
+PASS Computed 'background-image: linear-gradient(color-mix(in srgb, currentcolor, red), red)' keeps currentcolor
+PASS Computed 'background-image: repeating-linear-gradient(currentcolor, red 10%)' keeps currentcolor
+PASS Computed 'background-image: radial-gradient(currentcolor, red)' keeps currentcolor
+PASS Computed 'background-image: repeating-radial-gradient(currentcolor, red 10%)' keeps currentcolor
+PASS Computed 'background-image: conic-gradient(currentcolor, red)' keeps currentcolor
+PASS Computed 'background-image: repeating-conic-gradient(currentcolor, red 10%)' keeps currentcolor
+PASS Computed 'background-image: image-set(linear-gradient(currentcolor, red) 1x)' keeps currentcolor
+PASS Computed 'mask-image: linear-gradient(currentcolor, red)' keeps currentcolor
+PASS Computed 'mask-image: linear-gradient(color-mix(in srgb, currentcolor, red), red)' keeps currentcolor
+PASS Computed 'mask-image: repeating-linear-gradient(currentcolor, red 10%)' keeps currentcolor
+PASS Computed 'mask-image: radial-gradient(currentcolor, red)' keeps currentcolor
+PASS Computed 'mask-image: repeating-radial-gradient(currentcolor, red 10%)' keeps currentcolor
+PASS Computed 'mask-image: conic-gradient(currentcolor, red)' keeps currentcolor
+PASS Computed 'mask-image: repeating-conic-gradient(currentcolor, red 10%)' keeps currentcolor
+PASS Computed 'mask-image: image-set(linear-gradient(currentcolor, red) 1x)' keeps currentcolor
+PASS Computed 'border-image-source: linear-gradient(currentcolor, red)' keeps currentcolor
+PASS Computed 'border-image-source: linear-gradient(color-mix(in srgb, currentcolor, red), red)' keeps currentcolor
+PASS Computed 'border-image-source: repeating-linear-gradient(currentcolor, red 10%)' keeps currentcolor
+PASS Computed 'border-image-source: radial-gradient(currentcolor, red)' keeps currentcolor
+PASS Computed 'border-image-source: repeating-radial-gradient(currentcolor, red 10%)' keeps currentcolor
+PASS Computed 'border-image-source: conic-gradient(currentcolor, red)' keeps currentcolor
+PASS Computed 'border-image-source: repeating-conic-gradient(currentcolor, red 10%)' keeps currentcolor
+PASS Computed 'border-image-source: image-set(linear-gradient(currentcolor, red) 1x)' keeps currentcolor
+PASS Computed 'mask-border-source: linear-gradient(currentcolor, red)' keeps currentcolor
+PASS Computed 'mask-border-source: linear-gradient(color-mix(in srgb, currentcolor, red), red)' keeps currentcolor
+PASS Computed 'mask-border-source: repeating-linear-gradient(currentcolor, red 10%)' keeps currentcolor
+PASS Computed 'mask-border-source: radial-gradient(currentcolor, red)' keeps currentcolor
+PASS Computed 'mask-border-source: repeating-radial-gradient(currentcolor, red 10%)' keeps currentcolor
+PASS Computed 'mask-border-source: conic-gradient(currentcolor, red)' keeps currentcolor
+PASS Computed 'mask-border-source: repeating-conic-gradient(currentcolor, red 10%)' keeps currentcolor
+PASS Computed 'mask-border-source: image-set(linear-gradient(currentcolor, red) 1x)' keeps currentcolor
+PASS Computed 'list-style-image: linear-gradient(currentcolor, red)' keeps currentcolor
+PASS Computed 'list-style-image: linear-gradient(color-mix(in srgb, currentcolor, red), red)' keeps currentcolor
+PASS Computed 'list-style-image: repeating-linear-gradient(currentcolor, red 10%)' keeps currentcolor
+PASS Computed 'list-style-image: radial-gradient(currentcolor, red)' keeps currentcolor
+PASS Computed 'list-style-image: repeating-radial-gradient(currentcolor, red 10%)' keeps currentcolor
+PASS Computed 'list-style-image: conic-gradient(currentcolor, red)' keeps currentcolor
+PASS Computed 'list-style-image: repeating-conic-gradient(currentcolor, red 10%)' keeps currentcolor
+PASS Computed 'list-style-image: image-set(linear-gradient(currentcolor, red) 1x)' keeps currentcolor
+PASS Computed 'shape-outside: linear-gradient(currentcolor, red)' keeps currentcolor
+PASS Computed 'shape-outside: linear-gradient(color-mix(in srgb, currentcolor, red), red)' keeps currentcolor
+PASS Computed 'shape-outside: repeating-linear-gradient(currentcolor, red 10%)' keeps currentcolor
+PASS Computed 'shape-outside: radial-gradient(currentcolor, red)' keeps currentcolor
+PASS Computed 'shape-outside: repeating-radial-gradient(currentcolor, red 10%)' keeps currentcolor
+PASS Computed 'shape-outside: conic-gradient(currentcolor, red)' keeps currentcolor
+PASS Computed 'shape-outside: repeating-conic-gradient(currentcolor, red 10%)' keeps currentcolor
+PASS Computed 'shape-outside: image-set(linear-gradient(currentcolor, red) 1x)' keeps currentcolor
+PASS Computed 'background-image: image(currentcolor)' keeps currentcolor
+PASS Computed 'background-image: cross-fade(linear-gradient(currentcolor, red) 50%, linear-gradient(red, blue))' keeps currentcolor
+PASS Computed 'background-image: light-dark(linear-gradient(currentcolor, red), linear-gradient(red, blue))' keeps currentcolor
+PASS Computed 'background-image: filter(linear-gradient(red, blue), drop-shadow(1px 1px currentcolor))' keeps currentcolor
+PASS Computed 'background-image: none, linear-gradient(currentcolor, red)' keeps currentcolor
+PASS Computed 'mask-image: none, linear-gradient(currentcolor, red)' keeps currentcolor
+PASS Computed 'background: linear-gradient(currentcolor, red)' keeps currentcolor
+PASS Computed 'mask: linear-gradient(currentcolor, red)' keeps currentcolor
+PASS Computed 'list-style: linear-gradient(currentcolor, red)' keeps currentcolor
+

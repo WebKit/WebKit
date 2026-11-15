@@ -58,14 +58,14 @@ bool MeshGradientImage::equals(const MeshGradientImage& other) const
     return m_gradient == other.m_gradient;
 }
 
-Ref<CSSValue> MeshGradientImage::computedStyleValue(const Style::ComputedStyle& style) const
+Ref<CSSValue> MeshGradientImage::computedStyleValue(const Style::ComputedStyle& style, PropertyValueType valueType) const
 {
-    return CSSMeshGradientValue::create(toCSS(m_gradient, style));
+    return CSSMeshGradientValue::create(toCSS(m_gradient, style, valueType));
 }
 
 Ref<DeprecatedCSSOMValue> MeshGradientImage::computedStyleDeprecatedCSSOMValue(CSSValuePool&, const Style::ComputedStyle& style, CSSStyleDeclaration& owner) const
 {
-    return computedStyleValue(style)->createDeprecatedCSSOMWrapper(owner);
+    return computedStyleValue(style, PropertyValueType::Resolved)->createDeprecatedCSSOMWrapper(owner);
 }
 
 bool MeshGradientImage::isPending() const

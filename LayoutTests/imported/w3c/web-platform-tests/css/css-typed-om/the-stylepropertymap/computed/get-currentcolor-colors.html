@@ -1,0 +1,108 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Computed StylePropertyMap.get with currentcolor in color properties</title>
+<link rel="help" href="https://drafts.css-houdini.org/css-typed-om-1/#computed-stylepropertymapreadonly-objects">
+<link rel="help" href="https://drafts.csswg.org/css-color-4/#resolving-other-colors">
+<link rel="help" href="https://drafts.csswg.org/css-color-5/#resolving-mix">
+<link rel="help" href="https://drafts.csswg.org/css-color-5/#resolving-rcs">
+<meta name="assert" content="The computed value of a color that uses currentcolor keeps currentcolor instead of using the value of the color property.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="../../resources/testhelper.js"></script>
+<body>
+<div id="log"></div>
+<script>
+'use strict';
+
+function testKeepsCurrentColor(property, value) {
+  test(t => {
+    const [element, styleMap] = createElementWithComputedStyleMap(t, `${property}: ${value}`);
+    assert_not_equals(element.style.getPropertyValue(property), '', `'${value}' is a valid value of '${property}'`);
+    element.style.color = 'rgb(0, 128, 0)';
+    const computedWithGreen = styleMap.getAll(property).map(String).join(', ');
+    element.style.color = 'rgb(0, 0, 255)';
+    const computedWithBlue = styleMap.getAll(property).map(String).join(', ');
+    assert_regexp_match(computedWithGreen, /currentcolor/i, 'The computed value keeps currentcolor');
+    assert_equals(computedWithBlue, computedWithGreen, 'The computed value does not depend on the color property');
+  }, `Computed '${property}: ${value}' keeps currentcolor`);
+}
+
+const colorProperties = [
+  'background-color',
+  'border-top-color',
+  'border-right-color',
+  'border-bottom-color',
+  'border-left-color',
+  'border-block-start-color',
+  'border-block-end-color',
+  'border-inline-start-color',
+  'border-inline-end-color',
+  'outline-color',
+  'column-rule-color',
+  'text-decoration-color',
+  'text-emphasis-color',
+  'flood-color',
+  'lighting-color',
+  'stop-color',
+  'accent-color',
+  'caret-color',
+];
+
+for (const property of [...colorProperties, 'fill', 'stroke', 'stroke-color']) {
+  testKeepsCurrentColor(property, 'color-mix(in srgb, currentcolor, red)');
+  testKeepsCurrentColor(property, 'rgb(from currentcolor r g b / 50%)');
+  testKeepsCurrentColor(property, 'light-dark(currentcolor, red)');
+}
+
+for (const property of ['fill', 'stroke', 'stroke-color'])
+  testKeepsCurrentColor(property, 'currentcolor');
+
+testKeepsCurrentColor('fill', 'url(#missing) currentcolor');
+testKeepsCurrentColor('stroke', 'url(#missing) currentcolor');
+testKeepsCurrentColor('scrollbar-color', 'currentcolor red');
+testKeepsCurrentColor('scrollbar-color', 'red currentcolor');
+
+for (const color of [
+  'CurrentColor',
+  'color-mix(in oklch, red, currentcolor 30%)',
+  'hsl(from currentcolor h s l)',
+  'hwb(from currentcolor h w b)',
+  'lab(from currentcolor l a b)',
+  'lch(from currentcolor l c h)',
+  'oklab(from currentcolor l a b)',
+  'oklch(from currentcolor l c h)',
+  'color(from currentcolor srgb r g b)',
+  'color(from currentcolor srgb-linear r g b)',
+  'color(from currentcolor display-p3 r g b)',
+  'color(from currentcolor a98-rgb r g b)',
+  'color(from currentcolor prophoto-rgb r g b)',
+  'color(from currentcolor rec2020 r g b)',
+  'color(from currentcolor xyz-d50 x y z)',
+  'color(from currentcolor xyz-d65 x y z)',
+  'alpha(from currentcolor / 50%)',
+  'contrast-color(currentcolor)',
+  'rgb(from color-mix(in srgb, currentcolor, red) r g b)',
+  'color-mix(in srgb, rgb(from currentcolor r g b), red)',
+  'color-mix(in srgb, light-dark(currentcolor, red), blue)',
+])
+  testKeepsCurrentColor('background-color', color);
+
+for (const property of ['border', 'border-top', 'border-right', 'border-bottom', 'border-left', 'border-block', 'border-block-start', 'border-block-end', 'border-inline', 'border-inline-start', 'border-inline-end', 'outline', 'column-rule'])
+  testKeepsCurrentColor(property, '1px solid currentcolor');
+
+testKeepsCurrentColor('border-color', 'currentcolor');
+testKeepsCurrentColor('border-color', 'red currentcolor');
+testKeepsCurrentColor('border-block-color', 'red currentcolor');
+testKeepsCurrentColor('border-inline-color', 'red currentcolor');
+testKeepsCurrentColor('text-decoration', 'underline color-mix(in srgb, currentcolor, red)');
+testKeepsCurrentColor('text-emphasis', 'filled currentcolor');
+testKeepsCurrentColor('background', 'currentcolor');
+
+test(t => {
+  const [element, styleMap] = createElementWithComputedStyleMap(t, 'background-color: color-mix(in srgb, red, blue)');
+  const result = styleMap.get('background-color');
+  assert_class_string(result, 'CSSStyleValue');
+  assert_equals(result.toString(), getComputedStyle(element).backgroundColor);
+}, 'Computed color-mix() without currentcolor is an absolute color');
+
+</script>

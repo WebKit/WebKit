@@ -68,16 +68,16 @@ using BoxShadows = Shadows<BoxShadow>;
 
 // MARK: - Conversions
 
-template<> struct ToCSS<BoxShadow> { auto operator()(const BoxShadow&, const Style::ComputedStyle&) -> CSS::BoxShadow; };
+template<> struct ToCSS<BoxShadow> { auto operator()(const BoxShadow&, const Style::ComputedStyle&, PropertyValueType = PropertyValueType::Resolved) -> CSS::BoxShadow; };
 template<> struct ToStyle<CSS::BoxShadow> { auto operator()(const CSS::BoxShadow&, const BuilderState&) -> BoxShadow; };
 
 // `BoxShadowList` is special-cased to return a `CSSBoxShadowPropertyValue`.
-template<> struct CSSValueCreation<BoxShadowList> { Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, const BoxShadowList&); };
+template<> struct CSSValueCreation<BoxShadowList> { Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, const BoxShadowList&, PropertyValueType = PropertyValueType::Resolved); };
 template<> struct CSSValueConversion<BoxShadows> { auto operator()(BuilderState&, const CSSValue&) -> BoxShadows; };
 
 // MARK: - Serialization
 
-template<> struct Serialize<BoxShadowList> { void operator()(StringBuilder&, const CSS::SerializationContext&, const Style::ComputedStyle&, const BoxShadowList&); };
+template<> struct Serialize<BoxShadowList> { void operator()(StringBuilder&, const CSS::SerializationContext&, const Style::ComputedStyle&, const BoxShadowList&, PropertyValueType = PropertyValueType::Resolved); };
 
 // MARK: - Blending
 

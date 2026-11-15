@@ -1,0 +1,44 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Computed StylePropertyMap.get with currentcolor in content, border-image and mask-border</title>
+<link rel="help" href="https://drafts.css-houdini.org/css-typed-om-1/#computed-stylepropertymapreadonly-objects">
+<link rel="help" href="https://drafts.csswg.org/css-color-4/#resolving-other-colors">
+<link rel="help" href="https://drafts.csswg.org/css-content-3/#content-property">
+<link rel="help" href="https://drafts.csswg.org/css-backgrounds/#border-image">
+<link rel="help" href="https://drafts.csswg.org/css-masking-1/#propdef-mask-border">
+<meta name="assert" content="The computed value of a property that holds an image inside a larger value keeps currentcolor in that image instead of using the value of the color property.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="../../resources/testhelper.js"></script>
+<body>
+<div id="log"></div>
+<script>
+'use strict';
+
+function testKeepsCurrentColor(property, value) {
+  test(t => {
+    const [element, styleMap] = createElementWithComputedStyleMap(t, `${property}: ${value}`);
+    assert_not_equals(element.style.getPropertyValue(property), '', `'${value}' is a valid value of '${property}'`);
+    element.style.color = 'rgb(0, 128, 0)';
+    const computedWithGreen = styleMap.getAll(property).map(String).join(', ');
+    element.style.color = 'rgb(0, 0, 255)';
+    const computedWithBlue = styleMap.getAll(property).map(String).join(', ');
+    assert_regexp_match(computedWithGreen, /currentcolor/i, 'The computed value keeps currentcolor');
+    assert_equals(computedWithBlue, computedWithGreen, 'The computed value does not depend on the color property');
+  }, `Computed '${property}: ${value}' keeps currentcolor`);
+}
+
+const images = [
+  'linear-gradient(currentcolor, red)',
+  'radial-gradient(currentcolor, red)',
+  'conic-gradient(currentcolor, red)',
+  'image-set(linear-gradient(currentcolor, red) 1x)',
+];
+
+for (const image of images) {
+  testKeepsCurrentColor('content', image);
+  testKeepsCurrentColor('border-image', `${image} 1`);
+  testKeepsCurrentColor('mask-border', `${image} 1`);
+}
+
+</script>

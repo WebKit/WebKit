@@ -69,14 +69,14 @@ ImageDrawResult InvalidImage::drawNinePiece(GraphicsContext&, const RenderElemen
     return ImageDrawResult::DidNothing;
 }
 
-Ref<CSSValue> InvalidImage::computedStyleValue(const Style::ComputedStyle&) const
+Ref<CSSValue> InvalidImage::computedStyleValue(const Style::ComputedStyle&, PropertyValueType) const
 {
     return CSSImageValue::create();
 }
 
 Ref<DeprecatedCSSOMValue> InvalidImage::computedStyleDeprecatedCSSOMValue(CSSValuePool&, const Style::ComputedStyle& style, CSSStyleDeclaration& owner) const
 {
-    return computedStyleValue(style)->createDeprecatedCSSOMWrapper(owner);
+    return computedStyleValue(style, PropertyValueType::Resolved)->createDeprecatedCSSOMWrapper(owner);
 }
 
 } // namespace Style

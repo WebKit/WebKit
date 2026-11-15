@@ -43,10 +43,10 @@ namespace Style {
 
 // MARK: - Conversion
 
-auto ToCSS<BoxShadow>::operator()(const BoxShadow& value, const Style::ComputedStyle& style) -> CSS::BoxShadow
+auto ToCSS<BoxShadow>::operator()(const BoxShadow& value, const Style::ComputedStyle& style, PropertyValueType valueType) -> CSS::BoxShadow
 {
     return {
-        .color = toCSS(value.color, style),
+        .color = toCSS(value.color, style, valueType),
         .location = toCSS(value.location, style),
         .blur = toCSS(value.blur, style),
         .spread = toCSS(value.spread, style),
@@ -67,12 +67,12 @@ auto ToStyle<CSS::BoxShadow>::operator()(const CSS::BoxShadow& value, const Buil
     };
 }
 
-Ref<CSSValue> CSSValueCreation<BoxShadowList>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const BoxShadowList& value)
+Ref<CSSValue> CSSValueCreation<BoxShadowList>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const BoxShadowList& value, PropertyValueType valueType)
 {
     CSS::BoxShadowProperty::List list;
 
     for (const auto& shadow : value | std::views::reverse)
-        list.value.append(toCSS(shadow, style));
+        list.value.append(toCSS(shadow, style, valueType));
 
     return CSSBoxShadowPropertyValue::create(CSS::BoxShadowProperty { WTF::move(list) });
 }
@@ -107,9 +107,9 @@ auto CSSValueConversion<BoxShadows>::operator()(BuilderState& state, const CSSVa
 
 // MARK: - Serialization
 
-void Serialize<BoxShadowList>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const BoxShadowList& value)
+void Serialize<BoxShadowList>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const BoxShadowList& value, PropertyValueType valueType)
 {
-    serializationForCSSOnRangeLike(builder, context, style, value | std::views::reverse, SerializationSeparatorString<BoxShadowList>);
+    serializationForCSSOnRangeLike(builder, context, style, value | std::views::reverse, SerializationSeparatorString<BoxShadowList>, valueType);
 }
 
 // MARK: - Blending

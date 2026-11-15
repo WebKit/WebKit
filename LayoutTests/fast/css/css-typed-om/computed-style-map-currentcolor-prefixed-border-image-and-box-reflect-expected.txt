@@ -1,0 +1,5 @@
+
+PASS Computed '-webkit-border-image: linear-gradient(currentcolor, red) 1' keeps currentcolor
+PASS Computed '-webkit-mask-box-image: linear-gradient(currentcolor, red) 1' keeps currentcolor
+PASS Computed '-webkit-box-reflect: below 0 linear-gradient(currentcolor, transparent)' keeps currentcolor
+
