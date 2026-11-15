@@ -67,6 +67,7 @@ public:
     JSC::JSValue evaluateWithScopeExtension(JSC::JSGlobalObject*, JSC::CallFrame*);
     JSC::JSValue internalConstructorName(JSC::JSGlobalObject*, JSC::CallFrame*);
     JSC::JSValue isHTMLAllCollection(JSC::JSGlobalObject*, JSC::CallFrame*);
+    NODELETE JSC::JSValue isNativeFunction(JSC::CallFrame*);
     JSC::JSValue isPromiseRejectedWithNativeGetterTypeError(JSC::JSGlobalObject*, JSC::CallFrame*);
     JSC::JSValue subtype(JSC::JSGlobalObject*, JSC::CallFrame*);
     JSC::JSValue functionDetails(JSC::JSGlobalObject*, JSC::CallFrame*);

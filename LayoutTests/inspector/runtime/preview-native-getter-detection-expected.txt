@@ -1,0 +1,47 @@
+Tests that previews and displayable properties invoke native getters, but not user getters that look native.
+
+
+== Running test suite: Runtime.PreviewSideEffects.Getters
+-- Running test case: Runtime.PreviewSideEffects.Getters.BoundFunction
+PASS: Preview should show 'value' as an accessor.
+PASS: Preview should not call page code.
+PASS: Displayable property 'value' should be an accessor.
+PASS: Displayable property 'value' should not be a native getter.
+PASS: Displayable properties should not call the getter.
+
+-- Running test case: Runtime.PreviewSideEffects.Getters.CallableProxy
+PASS: Preview should show 'value' as an accessor.
+PASS: Preview should not call page code.
+PASS: Displayable property 'value' should be an accessor.
+PASS: Displayable property 'value' should not be a native getter.
+PASS: Displayable properties should not call the getter.
+
+-- Running test case: Runtime.PreviewSideEffects.Getters.OwnToString
+PASS: Preview should show 'value' as an accessor.
+PASS: Preview should not call page code.
+PASS: Displayable property 'value' should be an accessor.
+PASS: Displayable property 'value' should not be a native getter.
+PASS: Displayable properties should not call the getter.
+
+-- Running test case: Runtime.PreviewSideEffects.Getters.InheritedBoundFunction
+PASS: Preview should show 'value' as an accessor.
+PASS: Preview should not call page code.
+PASS: Inherited accessor 'value' should not be listed as a native getter.
+PASS: Displayable properties should not call the getter.
+
+-- Running test case: Runtime.PreviewSideEffects.Getters.NativeGetters
+url preview: href = https://example.com/path?query
+PASS: url: displayable property 'href' should be a native getter.
+url displayable property: href = https://example.com/path?query
+PASS: url: displayable property 'pathname' should be a native getter.
+url displayable property: pathname = /path
+arrayBuffer preview: byteLength = 8
+PASS: arrayBuffer: displayable property 'byteLength' should be a native getter.
+arrayBuffer displayable property: byteLength = 8
+countQueuingStrategy preview: highWaterMark = 7
+PASS: countQueuingStrategy: displayable property 'highWaterMark' should be a native getter.
+countQueuingStrategy displayable property: highWaterMark = 7
+internalFunctionGetter preview: list = Array
+PASS: internalFunctionGetter: displayable property 'list' should be a native getter.
+internalFunctionGetter displayable property: list = Array
+
