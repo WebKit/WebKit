@@ -51,7 +51,8 @@ Usage: $programName [options]
   -h|--help             Show this help message
   --top-level           Show the top-level build directory
 
-  --asan                Select the ASan (AddressSanitizer) build tree (with CMake: WebKitBuild/cmake-mac/ASan)
+  --asan                Select the ASan (AddressSanitizer) build tree
+  --tsan                Select the TSan (ThreadSanitizer) build tree
   --cmake               Select the CMake build tree, overriding set-webkit-configuration
   --xcode               Select the Xcode build tree, overriding set-webkit-configuration
   --gtk                 Find the build directory for the GTK+ port
