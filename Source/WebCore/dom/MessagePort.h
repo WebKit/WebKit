@@ -135,7 +135,7 @@ private:
     // and the channel is re-attached later, upon reception, to the new port. See https://github.com/whatwg/html/issues/12490
     enum class State : uint8_t { NotStartedYet, Started, Disentangled };
     State m_state { State::NotStartedYet };
-    bool m_hasMessageEventListener { false };
+    bool m_hasMessageOrMessageErrorEventListener { false };
     // Set when the provider lost its record of this port's channel while the port was entangled locally.
     bool m_isUnknownToProvider { false };
 

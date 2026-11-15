@@ -469,8 +469,8 @@ bool MessagePort::virtualHasPendingActivity() const
     if (!scriptExecutionContext() || isDetached())
         return false;
 
-    // If this MessagePort has no message event handler then there is no point in keeping it alive.
-    if (!m_hasMessageEventListener)
+    // If this MessagePort has no message or messageerror event listener then there is no point in keeping it alive.
+    if (!m_hasMessageOrMessageErrorEventListener)
         return false;
 
     return true;
@@ -538,8 +538,9 @@ bool MessagePort::addEventListener(const AtomString& eventType, Ref<EventListene
     if (eventType == eventNames().messageEvent) {
         if (listener->isAttribute())
             start();
-        m_hasMessageEventListener = true;
-    }
+        m_hasMessageOrMessageErrorEventListener = true;
+    } else if (eventType == eventNames().messageerrorEvent)
+        m_hasMessageOrMessageErrorEventListener = true;
 
     return EventTarget::addEventListener(eventType, WTF::move(listener), options);
 }
@@ -548,8 +549,8 @@ bool MessagePort::removeEventListener(const AtomString& eventType, EventListener
 {
     bool result = EventTarget::removeEventListener(eventType, listener, options);
 
-    if (!hasEventListeners(eventNames().messageEvent))
-        m_hasMessageEventListener = false;
+    if (!hasEventListeners(eventNames().messageEvent) && !hasEventListeners(eventNames().messageerrorEvent))
+        m_hasMessageOrMessageErrorEventListener = false;
 
     return result;
 }
