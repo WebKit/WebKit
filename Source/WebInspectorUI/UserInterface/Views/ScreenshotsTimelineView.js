@@ -36,8 +36,10 @@ WI.ScreenshotsTimelineView = class ScreenshotsTimelineView extends WI.TimelineVi
         this.element.classList.add("screenshots");
         
         this._selectedRecord = null;
+        this._selectedRecordNeedsReveal = false;
 
         this._imageElementForRecord = new WeakMap;
+        this._spacerElement = null;
     }
 
     // Public
@@ -49,6 +51,7 @@ WI.ScreenshotsTimelineView = class ScreenshotsTimelineView extends WI.TimelineVi
         this.selectRecord(null);
 
         this._imageElementForRecord = new WeakMap;
+        this._spacerElement = null;
     }
 
     // Protected
@@ -74,12 +77,16 @@ WI.ScreenshotsTimelineView = class ScreenshotsTimelineView extends WI.TimelineVi
         if (this.hidden)
             return;
 
-        this._scrollView.element.removeChildren();
+        let container = this._scrollView.element;
 
-        let selectedElement = null;
+        // Reuse the elements of records that stay visible, instead of removing and re-adding every
+        // image on each layout, since capturing lays out on every time update.
+        let records = this._visibleRecords();
+        let childElements = container.children;
 
-        for (let record of this._visibleRecords()) {
-            this._scrollView.element.appendChild(this._imageElementForRecord.getOrInsertComputed(record, () => {
+        for (let i = 0; i < records.length; ++i) {
+            let record = records[i];
+            let imageElement = this._imageElementForRecord.getOrInsertComputed(record, () => {
                 let imageElement = document.createElement("img");
 
                 imageElement.hidden = true;
@@ -92,24 +99,47 @@ WI.ScreenshotsTimelineView = class ScreenshotsTimelineView extends WI.TimelineVi
                     this._selectTimelineRecord(record);
                 });
 
-                if (record === this._selectedRecord)
-                    selectedElement = imageElement;
-
                 return imageElement;
-            }));
-        }        
+            });
 
-        if (selectedElement) {
-            selectedElement.classList.add("selected");
+            if (childElements[i] !== imageElement) {
+                container.insertBefore(imageElement, childElements[i] || null);
 
-            selectedElement.scrollIntoView({inline: "center"});
+                // The element left and re-entered the DOM, so it needs to be revealed again.
+                if (record === this._selectedRecord)
+                    this._selectedRecordNeedsReveal = true;
+            }
         }
 
-        if (this._scrollView.element.childNodes.length) {
-            let spacer = this._scrollView.element.appendChild(document.createElement("div"));
-            spacer.className = "spacer";
-        } else
-            this._scrollView.element.appendChild(WI.createMessageTextView(WI.UIString("No screenshots", "No screenshots @ Screenshots Timeline", "Placeholder text shown when there are no images to display in the Screenshots timeline.")));
+        // Trim the elements that no longer have a record, keeping the spacer in place, so that a
+        // layout that shows the same records does not move any element.
+        while (childElements.length > records.length && childElements[records.length] !== this._spacerElement)
+            childElements[records.length].remove();
+
+        // Reveal the selection once, when its image was created or re-inserted or when the selection
+        // changed, so that capturing does not re-center it on every layout.
+        if (this._selectedRecord && this._selectedRecordNeedsReveal) {
+            let selectedElement = this._imageElementForRecord.get(this._selectedRecord);
+            if (selectedElement && records.includes(this._selectedRecord)) {
+                selectedElement.classList.add("selected");
+
+                selectedElement.scrollIntoView({inline: "center"});
+
+                this._selectedRecordNeedsReveal = false;
+            }
+        }
+
+        if (records.length) {
+            if (!this._spacerElement) {
+                this._spacerElement = document.createElement("div");
+                this._spacerElement.className = "spacer";
+            }
+            if (this._spacerElement.parentNode !== container)
+                container.appendChild(this._spacerElement);
+        } else {
+            container.removeChildren();
+            container.appendChild(WI.createMessageTextView(WI.UIString("No screenshots", "No screenshots @ Screenshots Timeline", "Placeholder text shown when there are no images to display in the Screenshots timeline.")));
+        }
     }
 
     selectRecord(record)
@@ -121,13 +151,17 @@ WI.ScreenshotsTimelineView = class ScreenshotsTimelineView extends WI.TimelineVi
             this._imageElementForRecord.get(this._selectedRecord)?.classList.remove("selected");
 
         this._selectedRecord = record;
+        this._selectedRecordNeedsReveal = !!this._selectedRecord;
 
         if (this._selectedRecord) {
             let element = this._imageElementForRecord.get(this._selectedRecord);
             if (element) {
                 element.classList.add("selected");
 
-                element.scrollIntoView({inline: "center"});
+                if (element.isConnected) {
+                    element.scrollIntoView({inline: "center"});
+                    this._selectedRecordNeedsReveal = false;
+                }
             }
         }
     }
@@ -141,19 +175,24 @@ WI.ScreenshotsTimelineView = class ScreenshotsTimelineView extends WI.TimelineVi
 
     _visibleRecords()
     {
-        let visibleEndTime = Math.min(this.endTime, this.currentTime);
+        // `currentTime` is 0 or NaN for an imported recording, or for a capture that starts while
+        // the inspector is hidden. See `WI.CPUTimelineView`.
+        let visibleEndTime = Math.min(this.endTime, this.currentTime) || this.endTime;
 
         let records = this._screenshotsTimeline.records;
         let visibleRecords = [];
 
         for (let i = 0; i < records.length; ++i) {
             let record = records[i];
-            if (!(record.startTime >= this.startTime || record.startTime <= visibleEndTime))
+            if (record.startTime < this.startTime)
                 continue;
-                
+
+            if (record.startTime > visibleEndTime)
+                break;
+
             if (!visibleRecords.length && i)
                 visibleRecords.push(records[i - 1]);
-                
+
             visibleRecords.push(record);
         }
 
