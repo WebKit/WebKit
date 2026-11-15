@@ -1,0 +1,32 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CSSFreeformGradientsEnabled=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<title>CSS Images Module Level 5: parsing freeform-gradient() with invalid values</title>
+<link rel="help" href="https://github.com/w3c/csswg-drafts/pull/14655">
+<meta name="assert" content="freeform-gradient() rejects invalid values.">
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<script src="../../../imported/w3c/web-platform-tests/css/support/parsing-testcommon.js"></script>
+</head>
+<body>
+<script>
+test_invalid_value("background-image", "freeform-gradient()");
+test_invalid_value("background-image", "freeform-gradient(red)");
+test_invalid_value("background-image", "freeform-gradient(left top red)");
+test_invalid_value("background-image", "freeform-gradient(red left top,)");
+test_invalid_value("background-image", "freeform-gradient(, red left top)");
+test_invalid_value("background-image", "freeform-gradient(red left top; blue right bottom)");
+test_invalid_value("background-image", "freeform-gradient(red left top 1)");
+test_invalid_value("background-image", "freeform-gradient(red 0.5 left top)");
+test_invalid_value("background-image", "freeform-gradient(red / 0.5 left top)");
+test_invalid_value("background-image", "freeform-gradient(red left top /)");
+test_invalid_value("background-image", "freeform-gradient(red left top / 1 2)");
+test_invalid_value("background-image", "freeform-gradient(red left top / 1px)");
+test_invalid_value("background-image", "freeform-gradient(red left top / 50%)");
+test_invalid_value("background-image", "freeform-gradient(in oklab red left top)");
+test_invalid_value("background-image", "freeform-gradient(in oklab, )");
+test_invalid_value("background-image", "freeform-gradient(in oklab)");
+</script>
+</body>
+</html>

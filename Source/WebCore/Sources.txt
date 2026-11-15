@@ -983,6 +983,7 @@ css/CSSFontStyleRangeValue.cpp
 css/CSSFontStyleWithAngleValue.cpp
 css/CSSFontValue.cpp
 css/CSSFontVariationValue.cpp
+css/CSSFreeformGradientValue.cpp
 css/CSSFunctionDeclarations.cpp
 css/CSSFunctionDescriptors.cpp
 css/CSSFunctionRule.cpp
@@ -1271,6 +1272,7 @@ css/values/grid/CSSGridNamedAreaMap.cpp
 css/values/grid/CSSGridSubgrid.cpp
 css/values/grid/CSSGridTemplateList.cpp
 css/values/grid/CSSGridTrackSizes.cpp
+css/values/images/CSSFreeformGradient.cpp
 css/values/images/CSSGradient.cpp
 css/values/images/CSSGradientColorInterpolationMethod.cpp
 css/values/images/CSSImageWrapper.cpp

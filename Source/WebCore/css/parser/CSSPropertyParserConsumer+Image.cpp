@@ -33,6 +33,7 @@
 #include "CSSCrossfadeValue.h"
 #include "CSSCursorImageValue.h"
 #include "CSSFilterImageValue.h"
+#include "CSSFreeformGradientValue.h"
 #include "CSSGradientValue.h"
 #include "CSSImageSetOptionValue.h"
 #include "CSSImageSetValue.h"
@@ -1167,6 +1168,74 @@ static RefPtr<CSSValue> consumeMeshGradient(CSSParserTokenRange& range, CSS::Pro
     });
 }
 
+// MARK: <freeform-gradient()>
+// https://github.com/w3c/csswg-drafts/pull/14655
+
+static std::optional<CSS::FreeformGradientColorStop> consumeFreeformGradientColorStop(CSSParserTokenRange& range, CSS::PropertyParserState& state)
+{
+    // <freeform-color-stop> = <color> <position> [ / <number> ]?
+
+    auto color = consumeUnresolvedColor(range, state);
+    if (!color)
+        return { };
+
+    auto position = consumePositionUnresolved(range, state);
+    if (!position)
+        return { };
+
+    std::optional<CSS::Number<>> weight;
+    if (consumeSlashIncludingWhitespace(range)) {
+        weight = MetaConsumer<CSS::Number<>>::consume(range, state);
+        if (!weight)
+            return { };
+    }
+
+    return CSS::FreeformGradientColorStop {
+        .color = WTF::move(*color),
+        .position = WTF::move(*position),
+        .weight = WTF::move(weight),
+    };
+}
+
+static RefPtr<CSSValue> consumeFreeformGradient(CSSParserTokenRange& range, CSS::PropertyParserState& state)
+{
+    // freeform-gradient( <color-interpolation-method>? , <freeform-color-stop># )
+    // <freeform-color-stop> = <color> <position> [ / <number> ]?
+
+    if (!state.context.cssFreeformGradientsEnabled)
+        return nullptr;
+
+    std::optional<CSS::ColorInterpolationMethod> colorInterpolationMethod;
+    if (range.peek().id() == CSSValueID::In) {
+        colorInterpolationMethod = consumeColorInterpolationMethod(range, state);
+        if (!colorInterpolationMethod)
+            return nullptr;
+        if (!consumeCommaIncludingWhitespace(range))
+            return nullptr;
+    }
+
+    CSS::FreeformGradientColorStops::Container stops;
+    do {
+        auto stop = consumeFreeformGradientColorStop(range, state);
+        if (!stop)
+            return nullptr;
+        stops.append(WTF::move(*stop));
+    } while (consumeCommaIncludingWhitespace(range));
+
+    auto defaultColorInterpolationMethod = CSS::GradientColorInterpolationMethod::Default::SRGB;
+    for (auto& stop : stops) {
+        if (!stopColorIs8Bit(stop.color))
+            defaultColorInterpolationMethod = CSS::GradientColorInterpolationMethod::Default::OKLab;
+    }
+
+    return CSSFreeformGradientValue::create({
+        .parameters = {
+            .colorInterpolationMethod = computeGradientColorInterpolationMethod(colorInterpolationMethod, defaultColorInterpolationMethod),
+            .stops = { WTF::move(stops) },
+        }
+    });
+}
+
 // MARK: <-webkit-cross-fade()>
 
 static RefPtr<CSSValue> consumeWebkitCrossfade(CSSParserTokenRange& args, CSS::PropertyParserState& state)
@@ -1477,6 +1546,8 @@ RefPtr<CSSValue> consumeImage(CSSParserTokenRange& range, CSS::PropertyParserSta
             return consumeGeneratedImage([&](auto& args) { return consumeConicGradient<CSSValueID::RepeatingConicGradient>(args, state); });
         case CSSValueID::MeshGradient:
             return consumeGeneratedImage([&](auto& args) { return consumeMeshGradient(args, state); });
+        case CSSValueID::FreeformGradient:
+            return consumeGeneratedImage([&](auto& args) { return consumeFreeformGradient(args, state); });
         case CSSValueID::WebkitCrossFade:
             return consumeGeneratedImage([&](auto& args) { return consumeWebkitCrossfade(args, state); });
         case CSSValueID::CrossFade:

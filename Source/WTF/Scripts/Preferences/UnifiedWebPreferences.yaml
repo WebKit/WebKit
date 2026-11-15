@@ -1012,6 +1012,14 @@ CSSFontVariantEmojiEnabled:
       "PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
 
+CSSFreeformGradientsEnabled:
+  type: bool
+  status: unstable
+  category: css
+  humanReadableName: "CSS freeform gradients"
+  humanReadableDescription: "Enable support for CSS freeform gradients."
+  defaultValue: false
+
 CSSFunctionAtRuleEnabled:
   type: bool
   status: stable

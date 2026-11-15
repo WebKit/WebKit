@@ -105,6 +105,7 @@ public:
     bool isFontStyleWithAngleValue() const { return m_classType == ClassType::FontStyleWithAngle; }
     bool isFontValue() const { return m_classType == ClassType::Font; }
     bool isFontVariationValue() const { return m_classType == ClassType::FontVariation; }
+    bool isFreeformGradientValue() const { return m_classType == ClassType::FreeformGradient; }
     bool isFunctionValue() const { return m_classType == ClassType::Function; }
     bool isGradientValue() const { return m_classType == ClassType::Gradient; }
     bool isGridAutoFlowValue() const { return m_classType == ClassType::GridAutoFlow; }
@@ -152,7 +153,7 @@ public:
     bool isWebkitBoxReflectValue() const { return m_classType == ClassType::WebkitBoxReflect; }
 
     bool hasSubstitutionFunctions() const { return isSubstitutionValue() || isShorthandSubstitutionValue(); }
-    bool isImageGeneratorValue() const { return m_classType >= ClassType::Canvas && m_classType <= ClassType::MeshGradient; }
+    bool isImageGeneratorValue() const { return m_classType >= ClassType::Canvas && m_classType <= ClassType::FreeformGradient; }
     bool isImplicitInitialValue() const { return m_isImplicitInitialValue; }
     bool containsVector() const { return m_classType >= ClassType::ValueList; }
 
@@ -217,6 +218,7 @@ protected:
         FilterImage,
         Gradient,
         MeshGradient,
+        FreeformGradient,
 
         // Other non-list classes.
         AppleColorFilter,
