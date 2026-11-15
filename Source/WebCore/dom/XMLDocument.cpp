@@ -40,6 +40,13 @@ Ref<XMLDocument> XMLDocument::createXHTML(LocalFrame* frame, const Settings& set
     return document;
 }
 
+Ref<XMLDocument> XMLDocument::createXHTML(Document& contextDocument, const URL& url, RefPtr<SecurityOriginPolicy>&& securityOriginPolicy)
+{
+    Ref document = adoptRef(*new XMLDocument(contextDocument, url, WTF::move(securityOriginPolicy), { DocumentClass::XML, DocumentClass::XHTML }));
+    document->addToContextsMap();
+    return document;
+}
+
 XMLDocument::~XMLDocument() = default;
 
 } // namespace WebCore

@@ -78,7 +78,7 @@ public:
     //       context that already contains content.
     void setContentSecurityPolicy(std::unique_ptr<ContentSecurityPolicy>&&);
 
-    inline void setEmptySecurityOriginPolicyAndContentSecurityPolicy();
+    void setSecurityOriginPolicyAndEmptyContentSecurityPolicy(RefPtr<SecurityOriginPolicy>&&);
 
     const CrossOriginEmbedderPolicy& crossOriginEmbedderPolicy() const LIFETIME_BOUND { return m_crossOriginEmbedderPolicy; }
     void setCrossOriginEmbedderPolicy(const CrossOriginEmbedderPolicy& crossOriginEmbedderPolicy) { m_crossOriginEmbedderPolicy = crossOriginEmbedderPolicy; }
@@ -158,14 +158,5 @@ private:
     bool m_hasEmptySecurityOriginPolicy { false };
     bool m_hasEmptyContentSecurityPolicy { false };
 };
-
-void SecurityContext::setEmptySecurityOriginPolicyAndContentSecurityPolicy()
-{
-    ASSERT(!m_securityOriginPolicy);
-    ASSERT(!m_contentSecurityPolicy);
-    m_haveInitializedSecurityOrigin = true;
-    m_hasEmptySecurityOriginPolicy = true;
-    m_hasEmptyContentSecurityPolicy = true;
-}
 
 } // namespace WebCore

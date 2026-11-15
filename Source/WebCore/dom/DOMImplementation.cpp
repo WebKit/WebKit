@@ -82,15 +82,15 @@ ExceptionOr<Ref<DocumentType>> DOMImplementation::createDocumentType(const AtomS
     return DocumentType::create(protect(document()), qualifiedName, publicId, systemId);
 }
 
-static inline Ref<XMLDocument> createXMLDocument(const String& namespaceURI, const Settings& settings)
+static inline Ref<XMLDocument> createXMLDocument(const String& namespaceURI, Document& contextDocument, RefPtr<SecurityOriginPolicy>&& securityOriginPolicy)
 {
     RefPtr<XMLDocument> document;
     if (namespaceURI == SVGNames::svgNamespaceURI)
-        document = SVGDocument::create(nullptr, settings, URL());
+        document = SVGDocument::create(contextDocument, URL(), WTF::move(securityOriginPolicy));
     else if (namespaceURI == HTMLNames::xhtmlNamespaceURI)
-        document = XMLDocument::createXHTML(nullptr, settings, URL());
+        document = XMLDocument::createXHTML(contextDocument, URL(), WTF::move(securityOriginPolicy));
     else
-        document = XMLDocument::create(nullptr, settings, URL());
+        document = XMLDocument::create(contextDocument, URL(), WTF::move(securityOriginPolicy));
     document->setParserContentPolicy({ ParserContentPolicy::AllowScriptingContent });
     return document.releaseNonNull();
 }
@@ -98,10 +98,8 @@ static inline Ref<XMLDocument> createXMLDocument(const String& namespaceURI, con
 ExceptionOr<Ref<XMLDocument>> DOMImplementation::createDocument(const AtomString& namespaceURI, const AtomString& qualifiedName, DocumentType* documentType)
 {
     Ref thisDocument = m_document.get();
-    Ref document = createXMLDocument(namespaceURI, thisDocument->settings());
+    Ref document = createXMLDocument(namespaceURI, protect(thisDocument->contextDocument()), thisDocument->securityOriginPolicy());
     document->setParserContentPolicy({ ParserContentPolicy::AllowScriptingContent });
-    document->setContextDocument(thisDocument->contextDocument());
-    document->setSecurityOriginPolicy(thisDocument->securityOriginPolicy());
 
     RefPtr<Element> documentElement;
     if (!qualifiedName.isEmpty()) {
@@ -123,10 +121,8 @@ ExceptionOr<Ref<XMLDocument>> DOMImplementation::createDocument(const AtomString
 Ref<HTMLDocument> DOMImplementation::createHTMLDocument(String&& title)
 {
     Ref thisDocument = m_document.get();
-    Ref document = HTMLDocument::create(nullptr, thisDocument->settings(), URL(), { });
+    Ref document = HTMLDocument::create(protect(thisDocument->contextDocument()), URL(), thisDocument->securityOriginPolicy());
     document->setParserContentPolicy({ ParserContentPolicy::AllowScriptingContent });
-    document->setContextDocument(thisDocument->contextDocument());
-    document->setSecurityOriginPolicy(thisDocument->securityOriginPolicy());
 
     Ref htmlElement = HTMLHtmlElement::create(document);
     Ref headElement = HTMLHeadElement::create(document);

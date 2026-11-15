@@ -53,6 +53,19 @@ void SecurityContext::setSecurityOriginPolicy(RefPtr<SecurityOriginPolicy>&& sec
         securityOriginDidChange();
 }
 
+void SecurityContext::setSecurityOriginPolicyAndEmptyContentSecurityPolicy(RefPtr<SecurityOriginPolicy>&& securityOriginPolicy)
+{
+    ASSERT(!m_securityOriginPolicy);
+    ASSERT(!m_contentSecurityPolicy);
+    m_hasEmptyContentSecurityPolicy = true;
+    if (securityOriginPolicy) {
+        setSecurityOriginPolicy(WTF::move(securityOriginPolicy));
+        return;
+    }
+    m_haveInitializedSecurityOrigin = true;
+    m_hasEmptySecurityOriginPolicy = true;
+}
+
 SUPPRESS_NODELETE ContentSecurityPolicy* SecurityContext::contentSecurityPolicy()
 {
     if (!m_contentSecurityPolicy && m_hasEmptyContentSecurityPolicy)

@@ -214,7 +214,6 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
         protect(frame->script())->updatePlatformScriptObjects();
 
     frameLoader->setOutgoingReferrer(url);
-    frame->setDocument(document.copyRef());
 
     if (m_decoder)
         document->setDecoder(m_decoder.copyRef());
@@ -232,7 +231,17 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
         CheckedRef ownerContentSecurityPolicy = *ownerDocument->contentSecurityPolicy();
         contentSecurityPolicy->copyStateFrom(ownerContentSecurityPolicy.ptr());
         contentSecurityPolicy->setInsecureNavigationRequestsToUpgrade(ownerContentSecurityPolicy->takeNavigationRequestsToUpgrade());
-    } else if (url.protocolIsAbout() || url.protocolIsData()) {
+    }
+
+    // Documents that inherit their origin, such as about:blank, keep the identifier they inherited.
+    if (RefPtr documentLoader = frameLoader->documentLoader()) {
+        if (auto agentClusterIdentifier = documentLoader->agentClusterAssignment().identifier; agentClusterIdentifier && !frameLoader->stateMachine().creatingInitialEmptyDocument())
+            document->setAgentClusterIdentifier(agentClusterIdentifier);
+    }
+
+    frame->setDocument(document.copyRef());
+
+    if (!ownerDocument && (url.protocolIsAbout() || url.protocolIsData())) {
         // https://html.spec.whatwg.org/multipage/origin.html#determining-navigation-params-policy-container
         RefPtr currentHistoryItem = frame->loader().history().currentItem();
 

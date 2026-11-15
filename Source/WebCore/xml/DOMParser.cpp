@@ -24,7 +24,6 @@
 #include "HTMLDocument.h"
 #include "SVGDocument.h"
 #include "SecurityOriginPolicy.h"
-#include "Settings.h"
 #include "TrustedType.h"
 #include "XMLDocument.h"
 
@@ -32,7 +31,6 @@ namespace WebCore {
 
 inline DOMParser::DOMParser(Document& contextDocument)
     : m_contextDocument(contextDocument)
-    , m_settings(contextDocument.settings())
 {
 }
 
@@ -45,31 +43,27 @@ Ref<DOMParser> DOMParser::create(Document& contextDocument)
 
 ExceptionOr<Ref<Document>> DOMParser::parseFromString(Variant<Ref<TrustedHTML>, String>&& string, const AtomString& contentType)
 {
-    auto stringValueHolder = trustedTypeCompliantString(protect(m_contextDocument->contextDocument()), WTF::move(string), "DOMParser parseFromString"_s);
+    Ref contextDocument = *m_contextDocument;
+    auto stringValueHolder = trustedTypeCompliantString(protect(contextDocument->contextDocument()), WTF::move(string), "DOMParser parseFromString"_s);
 
     if (stringValueHolder.hasException())
         return stringValueHolder.releaseException();
 
     RefPtr<Document> document;
     if (contentType == textHTMLContentTypeAtom())
-        document = HTMLDocument::create(nullptr, m_settings, URL { });
+        document = HTMLDocument::create(contextDocument, URL { }, contextDocument->securityOriginPolicy());
     else if (contentType == applicationXHTMLContentTypeAtom())
-        document = XMLDocument::createXHTML(nullptr, m_settings, URL { });
+        document = XMLDocument::createXHTML(contextDocument, URL { }, contextDocument->securityOriginPolicy());
     else if (contentType == imageSVGContentTypeAtom())
-        document = SVGDocument::create(nullptr, m_settings, URL { });
+        document = SVGDocument::create(contextDocument, URL { }, contextDocument->securityOriginPolicy());
     else if (contentType == textXMLContentTypeAtom() || contentType == applicationXMLContentTypeAtom()) {
-        document = XMLDocument::create(nullptr, m_settings, URL { });
+        document = XMLDocument::create(contextDocument, URL { }, contextDocument->securityOriginPolicy());
         document->overrideMIMEType(contentType);
     } else
         return Exception { ExceptionCode::TypeError };
 
-    if (m_contextDocument) {
-        document->setContextDocument(*m_contextDocument);
-        document->setURL(URL { protect(m_contextDocument)->url() });
-    }
+    document->setURL(URL { contextDocument->url() });
     document->setMarkupUnsafe(stringValueHolder.releaseReturnValue(), { });
-    if (m_contextDocument)
-        document->setSecurityOriginPolicy(m_contextDocument->securityOriginPolicy());
     return document.releaseNonNull();
 }
 

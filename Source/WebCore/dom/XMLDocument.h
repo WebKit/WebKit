@@ -41,13 +41,26 @@ public:
         return document;
     }
 
+    static Ref<XMLDocument> create(Document& contextDocument, const URL& url, RefPtr<SecurityOriginPolicy>&& securityOriginPolicy)
+    {
+        Ref document = adoptRef(*new XMLDocument(contextDocument, url, WTF::move(securityOriginPolicy), { DocumentClass::XML }));
+        document->addToContextsMap();
+        return document;
+    }
+
     ~XMLDocument();
 
     WEBCORE_EXPORT static Ref<XMLDocument> createXHTML(LocalFrame*, const Settings&, const URL&);
+    static Ref<XMLDocument> createXHTML(Document& contextDocument, const URL&, RefPtr<SecurityOriginPolicy>&&);
 
 protected:
     XMLDocument(LocalFrame* frame, const Settings& settings, const URL& url, DocumentClasses documentClasses = { })
         : Document(frame, settings, url, documentClasses | DocumentClasses(DocumentClass::XML))
+    {
+    }
+
+    XMLDocument(Document& contextDocument, const URL& url, RefPtr<SecurityOriginPolicy>&& securityOriginPolicy, DocumentClasses documentClasses = { })
+        : Document(contextDocument, url, WTF::move(securityOriginPolicy), documentClasses | DocumentClasses(DocumentClass::XML))
     {
     }
 };

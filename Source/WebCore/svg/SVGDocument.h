@@ -32,6 +32,7 @@ class SVGDocument final : public XMLDocument {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGDocument);
 public:
     static Ref<SVGDocument> create(LocalFrame*, const Settings&, const URL&);
+    static Ref<SVGDocument> create(Document& contextDocument, const URL&, RefPtr<SecurityOriginPolicy>&&);
 
     ~SVGDocument();
 
@@ -41,6 +42,7 @@ public:
 
 private:
     SVGDocument(LocalFrame*, const Settings&, const URL&);
+    SVGDocument(Document& contextDocument, const URL&, RefPtr<SecurityOriginPolicy>&&);
 
     FloatSize m_panningOffset;
 };
@@ -48,6 +50,13 @@ private:
 inline Ref<SVGDocument> SVGDocument::create(LocalFrame* frame, const Settings& settings, const URL& url)
 {
     Ref document = adoptRef(*new SVGDocument(frame, settings, url));
+    document->addToContextsMap();
+    return document;
+}
+
+inline Ref<SVGDocument> SVGDocument::create(Document& contextDocument, const URL& url, RefPtr<SecurityOriginPolicy>&& securityOriginPolicy)
+{
+    Ref document = adoptRef(*new SVGDocument(contextDocument, url, WTF::move(securityOriginPolicy)));
     document->addToContextsMap();
     return document;
 }

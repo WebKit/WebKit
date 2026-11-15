@@ -115,6 +115,7 @@
 #include "ScriptSourceCode.h"
 #include "ScrollingCoordinator.h"
 #include "SecurityOrigin.h"
+#include "SecurityOriginPolicy.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "Settings.h"
 #include "StyleComputedStyle+GettersInlines.h"

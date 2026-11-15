@@ -26,7 +26,6 @@ namespace WebCore {
 
 class Document;
 class WeakPtrImplWithEventTargetData;
-class Settings;
 class TrustedHTML;
 template<typename> class ExceptionOr;
 
@@ -41,7 +40,6 @@ private:
     explicit DOMParser(Document& contextDocument);
 
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_contextDocument;
-    const Ref<const Settings> m_settings;
 };
 
 }

@@ -102,6 +102,12 @@ HTMLDocument::HTMLDocument(LocalFrame* frame, const Settings& settings, const UR
     clearXMLVersion();
 }
 
+HTMLDocument::HTMLDocument(Document& contextDocument, const URL& url, RefPtr<SecurityOriginPolicy>&& securityOriginPolicy)
+    : Document(contextDocument, url, WTF::move(securityOriginPolicy), { DocumentClass::HTML })
+{
+    clearXMLVersion();
+}
+
 HTMLDocument::~HTMLDocument() = default;
 
 Ref<DocumentParser> HTMLDocument::createParser()

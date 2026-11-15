@@ -174,12 +174,10 @@ ExceptionOr<Document*> XMLHttpRequest::responseXML()
         } else {
             RefPtr<Document> responseDocument;
             if (isHTML)
-                responseDocument = HTMLDocument::create(nullptr, document->settings(), m_response.url(), { });
+                responseDocument = HTMLDocument::create(document, m_response.url(), document->securityOriginPolicy());
             else
-                responseDocument = XMLDocument::create(nullptr, document->settings(), m_response.url());
+                responseDocument = XMLDocument::create(document, m_response.url(), document->securityOriginPolicy());
             responseDocument->overrideLastModified(m_response.lastModified());
-            responseDocument->setContextDocument(document.get());
-            responseDocument->setSecurityOriginPolicy(document->securityOriginPolicy());
             responseDocument->overrideMIMEType(mimeType);
             responseDocument->setMarkupUnsafe(m_responseBuilder.toStringPreserveCapacity(), { });
             if (m_decoder)

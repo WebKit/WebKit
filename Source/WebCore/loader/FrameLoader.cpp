@@ -987,10 +987,6 @@ void FrameLoader::didBeginDocument(bool dispatch, LocalDOMWindow* previousWindow
             }
         }
 
-        // Documents that inherit their origin, such as about:blank, keep the identifier they inherited.
-        if (auto agentClusterIdentifier = documentLoader->agentClusterAssignment().identifier; agentClusterIdentifier && !m_stateMachine.creatingInitialEmptyDocument())
-            document->setAgentClusterIdentifier(agentClusterIdentifier);
-
         String referrerPolicy = documentLoader->response().httpHeaderField(HTTPHeaderName::ReferrerPolicy);
         if (!referrerPolicy.isNull())
             document->processReferrerPolicy(referrerPolicy, ReferrerPolicySource::HTTPHeader);

@@ -100,7 +100,6 @@ Ref<Node> SerializedNode::deserialize(SerializedNode&& serializedNode, WebCore::
     }, [&] (SerializedNode::Document&& serializedDocument) -> Ref<Node> {
         return WebCore::Document::createCloned(
             serializedDocument.type,
-            document.settings(),
             serializedDocument.url,
             serializedDocument.baseURL,
             serializedDocument.aboutBaseURL,

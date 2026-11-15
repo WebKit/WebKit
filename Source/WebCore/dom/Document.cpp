@@ -686,12 +686,23 @@ static inline IntDegrees currentOrientation(LocalFrame* frame)
 }
 
 Document::Document(LocalFrame* frame, const Settings& settings, const URL& url, DocumentClasses documentClasses, OptionSet<ConstructionFlag> constructionFlags, std::optional<ScriptExecutionContextIdentifier> identifier)
+    : Document(frame, nullptr, nullptr, settings, url, documentClasses, constructionFlags, identifier)
+{
+}
+
+Document::Document(Document& contextDocument, const URL& url, RefPtr<SecurityOriginPolicy>&& securityOriginPolicy, DocumentClasses documentClasses)
+    : Document(nullptr, &contextDocument, WTF::move(securityOriginPolicy), contextDocument.m_settings, url, documentClasses, { }, std::nullopt)
+{
+}
+
+Document::Document(LocalFrame* frame, Document* contextDocument, RefPtr<SecurityOriginPolicy>&& securityOriginPolicy, const Settings& settings, const URL& url, DocumentClasses documentClasses, OptionSet<ConstructionFlag> constructionFlags, std::optional<ScriptExecutionContextIdentifier> identifier)
     : ContainerNode(*this, NodeType::Document)
     , TreeScope(*this)
     , ScriptExecutionContext(Type::Document, identifier)
     , FrameDestructionObserver(frame)
     , m_settings(settings)
     , m_speculationRules(SpeculationRules::create())
+    , m_contextDocument(contextDocument)
     , m_parserContentPolicy(DefaultParserContentPolicy)
     , m_creationURL(url)
     , m_domTreeVersion(++s_globalTreeVersion)
@@ -741,7 +752,7 @@ Document::Document(LocalFrame* frame, const Settings& settings, const URL& url, 
     if (!frame)
         setUsesNullCustomElementRegistry();
 
-    initSecurityContext();
+    initSecurityContext(WTF::move(securityOriginPolicy));
 
     InspectorInstrumentation::addEventListenersToNode(*this);
     setStorageBlockingPolicy(m_settings->storageBlockingPolicy());
@@ -812,10 +823,13 @@ void Document::createNewIdentifier()
 
 Ref<Document> Document::create(Document& contextDocument)
 {
-    auto document = adoptRef(*new Document(nullptr, contextDocument.m_settings, URL(), { }));
+    return create(contextDocument, URL(), contextDocument.securityOriginPolicy());
+}
+
+Ref<Document> Document::create(Document& contextDocument, const URL& url, RefPtr<SecurityOriginPolicy>&& securityOriginPolicy)
+{
+    Ref document = adoptRef(*new Document(contextDocument, url, WTF::move(securityOriginPolicy)));
     document->addToContextsMap();
-    document->setContextDocument(contextDocument);
-    document->setSecurityOriginPolicy(contextDocument.securityOriginPolicy());
     return document;
 }
 
@@ -1312,9 +1326,7 @@ ExceptionOr<Ref<Document>> Document::parseHTMLUnsafe(Document& context, Variant<
     if (stringValueHolder.hasException())
         return stringValueHolder.releaseException();
 
-    Ref document = HTMLDocument::create(nullptr, context.settings(), URL { });
-    document->setContextDocument(protect(context.contextDocument()));
-    document->setSecurityOriginPolicy(context.securityOriginPolicy());
+    Ref document = HTMLDocument::create(protect(context.contextDocument()), URL { }, context.securityOriginPolicy());
     document->setMarkupUnsafe(stringValueHolder.releaseReturnValue(), { ParserContentPolicy::AllowDeclarativeShadowRoots });
     return { document };
 }
@@ -5925,7 +5937,7 @@ ClonedDocumentType Document::clonedDocumentType() const
 
 Ref<Node> Document::cloneNodeInternal(Document&, CloningOperation type, CustomElementRegistry* registry) const
 {
-    Ref clone = createCloned(clonedDocumentType(), settings(), url(), baseURL(), m_aboutBaseURL, m_documentURI, m_compatibilityMode, m_parserContentPolicy, protect(contextDocument()), protect(securityOriginPolicy()), contentType(), protect(decoder()));
+    Ref clone = createCloned(clonedDocumentType(), url(), baseURL(), m_aboutBaseURL, m_documentURI, m_compatibilityMode, m_parserContentPolicy, protect(contextDocument()), protect(securityOriginPolicy()), contentType(), protect(decoder()));
     switch (type) {
     case CloningOperation::SelfOnly:
     case CloningOperation::SelfWithTemplateContent:
@@ -5960,20 +5972,20 @@ SerializedNode Document::serializeNode(CloningOperation type) const
     };
 }
 
-Ref<Document> Document::createCloned(ClonedDocumentType clonedDocumentType, const Settings& settings, const URL& url, const URL& baseURL, const URL& aboutBaseURL, const Variant<String, URL>& documentURI, DocumentCompatibilityMode compatibilityMode, OptionSet<ParserContentPolicy> parserContentPolicy, Document& contextDocument, SecurityOriginPolicy* securityOriginPolicy, const String& contentType, TextResourceDecoder* decoder)
+Ref<Document> Document::createCloned(ClonedDocumentType clonedDocumentType, const URL& url, const URL& baseURL, const URL& aboutBaseURL, const Variant<String, URL>& documentURI, DocumentCompatibilityMode compatibilityMode, OptionSet<ParserContentPolicy> parserContentPolicy, Document& contextDocument, SecurityOriginPolicy* securityOriginPolicy, const String& contentType, TextResourceDecoder* decoder)
 {
     Ref clone = [&] -> Ref<Document> {
         switch (clonedDocumentType) {
         case ClonedDocumentType::XMLDocument:
-            return XMLDocument::create(nullptr, settings, url);
+            return XMLDocument::create(contextDocument, url, securityOriginPolicy);
         case ClonedDocumentType::XHTMLDocument:
-            return XMLDocument::createXHTML(nullptr, settings, url);
+            return XMLDocument::createXHTML(contextDocument, url, securityOriginPolicy);
         case ClonedDocumentType::HTMLDocument:
-            return HTMLDocument::create(nullptr, settings, url);
+            return HTMLDocument::create(contextDocument, url, securityOriginPolicy);
         case ClonedDocumentType::SVGDocument:
-            return SVGDocument::create(nullptr, settings, url);
+            return SVGDocument::create(contextDocument, url, securityOriginPolicy);
         case ClonedDocumentType::Document:
-            return create(settings, url);
+            return create(contextDocument, url, securityOriginPolicy);
         }
         RELEASE_ASSERT_NOT_REACHED();
     } ();
@@ -5985,8 +5997,6 @@ Ref<Document> Document::createCloned(ClonedDocumentType clonedDocumentType, cons
     clone->m_documentURI = documentURI;
     clone->setCompatibilityMode(compatibilityMode);
     clone->setParserContentPolicy(parserContentPolicy);
-    clone->setContextDocument(contextDocument);
-    clone->setSecurityOriginPolicy(securityOriginPolicy);
     clone->overrideMIMEType(contentType);
     clone->setDecoder(decoder);
     return clone;
@@ -8639,7 +8649,7 @@ ExceptionOr<Ref<XPathResult>> Document::evaluate(const String& expression, Node&
     return m_xpathEvaluator->evaluate(expression, contextNode, WTF::move(resolver), type, result);
 }
 
-void Document::initSecurityContext()
+void Document::initSecurityContext(RefPtr<SecurityOriginPolicy>&& securityOriginPolicy)
 {
     if (haveInitializedSecurityOrigin()) {
         ASSERT(SecurityContext::securityOrigin());
@@ -8647,10 +8657,9 @@ void Document::initSecurityContext()
     }
 
     if (!m_frame) {
-        // No source for a security context.
-        // This can occur via document.implementation.createDocument().
+        // Without a browsing context, the origin comes from the document's creator, if it has one.
         ASSERT(m_cookieURL.isNull());
-        setEmptySecurityOriginPolicyAndContentSecurityPolicy();
+        setSecurityOriginPolicyAndEmptyContentSecurityPolicy(WTF::move(securityOriginPolicy));
         return;
     }
 
@@ -10328,11 +10337,10 @@ Document& Document::ensureTemplateDocument()
 
     Ref templateDocument = [&]() -> Ref<Document> {
         if (isHTMLDocument())
-            return HTMLDocument::create(nullptr, m_settings, aboutBlankURL(), { });
-        return create(m_settings, aboutBlankURL());
+            return HTMLDocument::create(protect(contextDocument()), aboutBlankURL(), nullptr);
+        return create(protect(contextDocument()), aboutBlankURL(), nullptr);
     }();
     lazyInitialize(m_templateDocument, templateDocument.copyRef());
-    templateDocument->setContextDocument(contextDocument());
     templateDocument->setTemplateDocumentHost(this); // balanced in dtor.
 
     return *m_templateDocument;

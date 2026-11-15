@@ -32,6 +32,7 @@ class HTMLDocument : public Document {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLDocument);
 public:
     static Ref<HTMLDocument> create(LocalFrame*, const Settings&, const URL&, std::optional<ScriptExecutionContextIdentifier> = std::nullopt);
+    static Ref<HTMLDocument> create(Document& contextDocument, const URL&, RefPtr<SecurityOriginPolicy>&&);
     static Ref<HTMLDocument> createSynthesizedDocument(LocalFrame&, const URL&);
     virtual ~HTMLDocument();
     
@@ -55,6 +56,7 @@ public:
 
 protected:
     WEBCORE_EXPORT HTMLDocument(LocalFrame*, const Settings&, const URL&, std::optional<ScriptExecutionContextIdentifier>, DocumentClasses = { }, OptionSet<ConstructionFlag> = { });
+    HTMLDocument(Document& contextDocument, const URL&, RefPtr<SecurityOriginPolicy>&&);
 
 private:
     bool isFrameSet() const final;
@@ -67,6 +69,13 @@ private:
 inline Ref<HTMLDocument> HTMLDocument::create(LocalFrame* frame, const Settings& settings, const URL& url, std::optional<ScriptExecutionContextIdentifier> identifier)
 {
     auto document = adoptRef(*new HTMLDocument(frame, settings, url, identifier, { DocumentClass::HTML }));
+    document->addToContextsMap();
+    return document;
+}
+
+inline Ref<HTMLDocument> HTMLDocument::create(Document& contextDocument, const URL& url, RefPtr<SecurityOriginPolicy>&& securityOriginPolicy)
+{
+    Ref document = adoptRef(*new HTMLDocument(contextDocument, url, WTF::move(securityOriginPolicy)));
     document->addToContextsMap();
     return document;
 }

@@ -36,6 +36,11 @@ SVGDocument::SVGDocument(LocalFrame* frame, const Settings& settings, const URL&
 {
 }
 
+SVGDocument::SVGDocument(Document& contextDocument, const URL& url, RefPtr<SecurityOriginPolicy>&& securityOriginPolicy)
+    : XMLDocument(contextDocument, url, WTF::move(securityOriginPolicy), { DocumentClass::SVG })
+{
+}
+
 SVGDocument::~SVGDocument() = default;
 
 bool SVGDocument::zoomAndPanEnabled() const
