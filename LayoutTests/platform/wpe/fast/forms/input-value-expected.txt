@@ -81,10 +81,9 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (1,6) size 224x17
                   text run at (1,2) width 224: "button with value property changed"
               RenderTableCell {TD} at (381,100) size 275x29 [r=4 c=1 rs=1 cs=1]
-                RenderButton {INPUT} at (1,1) size 44x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-                  RenderBlock (anonymous) at (8,4) size 28x18
-                    RenderText at (0,0) size 28x18
-                      text run at (0,0) width 28: "after"
+                RenderBlock {INPUT} at (1,1) size 44x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+                  RenderText at (8,4) size 28x18
+                    text run at (8,4) width 28: "after"
               RenderTableCell {TD} at (657,104) size 62x21 [r=4 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,6) size 28x17
                   text run at (1,2) width 28: "after"
@@ -197,10 +196,9 @@ layer at (0,0) size 800x600
                   text run at (1,2) width 204: "file with value property changed"
               RenderTableCell {TD} at (381,388) size 275x29 [r=13 c=1 rs=1 cs=1]
                 RenderFileUploadControl {INPUT} at (1,1) size 272x27 "no file selected"
-                  RenderButton {INPUT} at (0,0) size 92x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-                    RenderBlock (anonymous) at (8,4) size 76x18
-                      RenderText at (0,0) size 76x18
-                        text run at (0,0) width 76: "Choose File"
+                  RenderBlock {INPUT} at (0,0) size 92x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+                    RenderText at (8,4) size 76x18
+                      text run at (8,4) width 76: "Choose File"
               RenderTableCell {TD} at (657,401) size 62x3 [r=13 c=2 rs=1 cs=1]
               RenderTableCell {TD} at (721,392) size 61x21 [r=13 c=3 rs=1 cs=1]
                 RenderText {#text} at (1,6) size 40x17

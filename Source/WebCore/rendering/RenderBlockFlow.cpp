@@ -669,7 +669,11 @@ void RenderBlockFlow::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit 
         // Table cell alignment is handled in RenderTableCell::computeIntrinsicPadding.
         if (isRenderTableCell())
             return false;
-        return !is<HTMLInputElement>(element());
+        // There is nothing to align when the layout of the content is skipped.
+        if (layoutContext().isSkippedContentRootForLayout(*this))
+            return false;
+        // Input elements aren't block containers, unless they use button layout.
+        return usesButtonLayout() || !is<HTMLInputElement>(element());
     };
     if (shouldApplyAlignContent()) {
         alignContentShift = shiftForAlignContent(oldHeight, repaintLogicalTop, repaintLogicalBottom);
@@ -873,7 +877,7 @@ void RenderBlockFlow::dirtyForLayoutFromPercentageHeightDescendantsIfBasisChange
 
 LayoutUnit RenderBlockFlow::shiftForAlignContent(LayoutUnit intrinsicLogicalHeight, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)
 {
-    auto alignment = style().alignContent().resolve();
+    auto alignment = usedStyle().alignContent().resolve();
 
     // Exit if no alignment necessary.
     if (alignment.isNormal() || alignment.isStartward())
@@ -918,6 +922,36 @@ LayoutUnit RenderBlockFlow::shiftForAlignContent(LayoutUnit intrinsicLogicalHeig
         repaintLogicalBottom += space;
 
     return space;
+}
+
+static bool isInputButton(const RenderBlockFlow& renderer)
+{
+    return renderer.usesButtonLayout() && is<HTMLInputElement>(renderer.element());
+}
+
+bool RenderBlockFlow::canBeSelectionLeaf() const
+{
+    // An editable button is selected as a whole.
+    return usesButtonLayout() && protect(nodeForNonAnonymous())->hasEditableStyle();
+}
+
+bool RenderBlockFlow::canHaveGeneratedChildren() const
+{
+    // The only content of an input button is its value.
+    return !isInputButton(*this) && RenderBlock::canHaveGeneratedChildren();
+}
+
+bool RenderBlockFlow::hasControlClip() const
+{
+    // Only clip the content of input buttons, to match other browsers.
+    return isInputButton(*this);
+}
+
+LayoutRect RenderBlockFlow::controlClipRect(const LayoutPoint& additionalOffset) const
+{
+    ASSERT(hasControlClip());
+    // Clip to the padding box to at least give content the extra padding space.
+    return LayoutRect(additionalOffset.x() + borderLeft(), additionalOffset.y() + borderTop(), borderBoxWidth() - borderLeft() - borderRight(), borderBoxHeight() - borderTop() - borderBottom());
 }
 
 bool RenderBlockFlow::establishesLineClampContainer() const
@@ -4949,7 +4983,7 @@ LayoutOptionalOutsets RenderBlockFlow::allowedLayoutOverflow() const
 {
     LayoutOptionalOutsets allowance = RenderBox::allowedLayoutOverflow();
 
-    if (!style().alignContent().isNormal()) {
+    if (!usedStyle().alignContent().isNormal()) {
         if (hasRareBlockFlowData()) {
             if (isHorizontalWritingMode())
                 allowance.setTop(-rareBlockFlowData()->m_alignContentShift);

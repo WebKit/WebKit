@@ -131,7 +131,6 @@ public:
         Attachment,
 #endif
         BlockFlow,
-        Button,
         Counter,
         DeprecatedFlexibleBox,
         EmbeddedObject,
@@ -258,6 +257,7 @@ public:
         IsTextControl = 1 << 2,
         IsSVGBlock = 1 << 3,
         IsViewTransitionContainingBlock = 1 << 4,
+        UsesButtonLayout = 1 << 5,
     };
 
     enum class LineBreakFlag : uint8_t {
@@ -416,7 +416,6 @@ public:
     //////////////////////////////////////////
     virtual bool canHaveChildren() const = 0;
     virtual bool canHaveGeneratedChildren() const;
-    virtual bool createsAnonymousWrapper() const { return false; }
     //////////////////////////////////////////
 
 #if ENABLE(TREE_DEBUGGING)
@@ -458,7 +457,6 @@ public:
     bool isRenderMenuList() const { return type() == Type::MenuList; }
     bool isRenderMeter() const { return type() == Type::Meter; }
     bool isRenderProgress() const { return type() == Type::Progress; }
-    bool isRenderButton() const { return type() == Type::Button; }
     bool isRenderIFrame() const { return type() == Type::IFrame; }
     bool isRenderImage() const { return isRenderReplaced() && m_typeSpecificFlags.replacedFlags().contains(ReplacedFlag::IsImage); }
     bool isRenderTextFragment() const { return type() == Type::TextFragment; }
@@ -498,6 +496,9 @@ public:
     bool isRenderVTTCue() const { return type() == Type::VTTCue; }
 
     bool isViewTransitionContainingBlock() const { return isRenderBlockFlow() && m_typeSpecificFlags.blockFlowFlags().contains(BlockFlowFlag::IsViewTransitionContainingBlock); }
+
+    // https://html.spec.whatwg.org/multipage/rendering.html#button-layout
+    bool usesButtonLayout() const { return isRenderBlockFlow() && m_typeSpecificFlags.blockFlowFlags().contains(BlockFlowFlag::UsesButtonLayout); }
 
     inline bool isDocumentElementRenderer() const; // Defined in RenderObjectInlines.h
     inline bool isBody() const; // Defined in RenderObjectNode.h

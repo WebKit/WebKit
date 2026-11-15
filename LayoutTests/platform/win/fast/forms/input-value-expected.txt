@@ -80,10 +80,9 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (1,1) size 212x19
                   text run at (1,1) width 212: "button with value property changed"
               RenderTableCell {TD} at (370,108) size 244x28 [r=4 c=1 rs=1 cs=1]
-                RenderButton {INPUT} at (3,3) size 42x22 [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
-                  RenderBlock (anonymous) at (8,3) size 26x16
-                    RenderText at (0,0) size 26x16
-                      text run at (0,0) width 26: "after"
+                RenderBlock {INPUT} at (3,3) size 42x22 [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
+                  RenderText at (8,3) size 26x16
+                    text run at (8,3) width 26: "after"
               RenderTableCell {TD} at (616,111) size 59x22 [r=4 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 27x19
                   text run at (1,1) width 27: "after"
@@ -192,10 +191,9 @@ layer at (0,0) size 800x600
                   text run at (1,1) width 191: "file with value property changed"
               RenderTableCell {TD} at (370,348) size 244x28 [r=13 c=1 rs=1 cs=1]
                 RenderFileUploadControl {INPUT} at (3,3) size 238x22 "no file selected"
-                  RenderButton {INPUT} at (0,0) size 88x22 [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
-                    RenderBlock (anonymous) at (8,3) size 72x16
-                      RenderText at (0,0) size 72x16
-                        text run at (0,0) width 72: "Choose File"
+                  RenderBlock {INPUT} at (0,0) size 88x22 [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
+                    RenderText at (8,3) size 72x16
+                      text run at (8,3) width 72: "Choose File"
               RenderTableCell {TD} at (616,361) size 59x2 [r=13 c=2 rs=1 cs=1]
               RenderTableCell {TD} at (677,351) size 59x22 [r=13 c=3 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 39x19

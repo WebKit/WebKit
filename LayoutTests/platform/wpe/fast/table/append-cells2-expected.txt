@@ -76,14 +76,12 @@ layer at (0,0) size 800x600
               RenderText {#text} at (0,0) size 4x18
                 text run at (0,0) width 4: " "
       RenderBlock (anonymous) at (0,124) size 784x27
-        RenderButton {BUTTON} at (0,0) size 50x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-          RenderBlock (anonymous) at (8,4) size 34x18
-            RenderText {#text} at (0,0) size 34x18
-              text run at (0,0) width 34: "show"
+        RenderBlock {BUTTON} at (0,0) size 50x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderText {#text} at (8,4) size 34x18
+            text run at (8,4) width 34: "show"
         RenderText {#text} at (50,4) size 4x18
           text run at (50,4) width 4: " "
-        RenderButton {BUTTON} at (54,0) size 43x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-          RenderBlock (anonymous) at (8,4) size 27x18
-            RenderText {#text} at (0,0) size 27x18
-              text run at (0,0) width 27: "hide"
+        RenderBlock {BUTTON} at (54,0) size 43x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderText {#text} at (8,4) size 27x18
+            text run at (8,4) width 27: "hide"
         RenderText {#text} at (0,0) size 0x0

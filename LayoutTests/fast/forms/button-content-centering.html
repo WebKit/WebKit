@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Button content is centered without changing the computed style</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style>
+button {
+    appearance: none;
+    box-sizing: content-box;
+    width: 100px;
+    height: 100px;
+    margin: 0;
+    padding: 0;
+    border: none;
+    vertical-align: top;
+}
+.content {
+    width: 50px;
+    height: 20px;
+}
+</style>
+</head>
+<body>
+<div id="buttons">
+<button data-offset="40"><div class="content"></div></button>
+<button data-offset="40" style="align-content: start"><div class="content"></div></button>
+<button data-offset="40" style="align-content: end"><div class="content"></div></button>
+<button data-offset="40" style="display: inline"><div class="content"></div></button>
+<button data-offset="40" style="display: block"><div class="content"></div></button>
+<button data-offset="40" style="display: table-cell"><div class="content"></div></button>
+<button data-offset="0" style="display: flex"><div class="content"></div></button>
+<button data-offset="0" style="display: grid"><div class="content"></div></button>
+</div>
+<script>
+// Buttons center their content as if the user agent style sheet had `align-content: center !important`,
+// unless they are flex or grid containers.
+for (const button of document.querySelectorAll("button")) {
+    test(() => {
+        const offset = button.firstElementChild.getBoundingClientRect().top - button.getBoundingClientRect().top;
+        assert_equals(offset, Number(button.dataset.offset));
+    }, `Content offset of button with style "${button.getAttribute("style") ?? ""}"`);
+}
+
+test(() => {
+    const buttons = document.querySelectorAll("button");
+    assert_equals(getComputedStyle(buttons[0]).alignContent, "normal");
+    assert_equals(getComputedStyle(buttons[1]).alignContent, "start");
+    assert_equals(getComputedStyle(buttons[2]).alignContent, "end");
+    assert_equals(getComputedStyle(buttons[3]).display, "inline");
+    assert_equals(getComputedStyle(buttons[5]).display, "table-cell");
+}, "Centering the content of buttons does not change their computed style");
+
+document.getElementById("buttons").remove();
+</script>
+</body>
+</html>

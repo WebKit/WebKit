@@ -8,10 +8,9 @@ layer at (0,0) size 800x600
       RenderBR {BR} at (528,0) size 1x18
       RenderMenuList {SELECT} at (0,18) size 295x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
       RenderBR {BR} at (295,17) size 0x19
-      RenderButton {INPUT} at (0,38) size 295x29 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-        RenderBlock (anonymous) at (12,1) size 271x27
-          RenderText at (0,6) size 271x14
-            text run at (0,6) width 271: "This text should be centered vertically in the button"
+      RenderBlock {INPUT} at (0,38) size 295x29 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+        RenderText at (12,7) size 271x14
+          text run at (12,7) width 271: "This text should be centered vertically in the button"
       RenderBR {BR} at (294,41) size 1x19
       RenderTextControl {INPUT} at (0,66) size 154x34 [bgcolor=#EEEEEF] [border: (1px solid #FFFFFF)]
         RenderFlexibleBox {DIV} at (6,3) size 142x27

@@ -73,7 +73,6 @@
 #import "PlatformLocale.h"
 #import "RenderAttachment.h"
 #import "RenderBoxInlines.h"
-#import "RenderButton.h"
 #import "RenderElementInlines.h"
 #import "RenderMenuList.h"
 #import "RenderMeter.h"
@@ -438,7 +437,7 @@ void RenderThemeIOS::adjustRoundBorderRadius(Style::ComputedStyle& style, Render
     auto minDimension = std::min(box.borderBoxWidth(), box.borderBoxHeight());
     auto unzoomedMinDimension = minDimension / usedZoom.value;
 
-    if ((isAnyOf<RenderButton, RenderMenuList>(box)) && boxLogicalHeight >= largeButtonSize) {
+    if ((box.usesButtonLayout() || is<RenderMenuList>(box)) && boxLogicalHeight >= largeButtonSize) {
         auto largeButtonBorderRadius = Style::LengthPercentage<CSS::Nonnegative>::Dimension { unzoomedMinDimension * largeButtonBorderRadiusRatio };
         style.setBorderRadius({ largeButtonBorderRadius, largeButtonBorderRadius });
         return;

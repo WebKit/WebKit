@@ -32,10 +32,9 @@
 #include "HTMLSelectElement.h"
 #include "InputType.h"
 #include "RenderBlockFlow.h"
-#include "RenderBlockInlines.h"
-#include "RenderButton.h"
+#include "RenderIterator.h"
 #include "RenderMenuList.h"
-#include "RenderTreeBuilderBlock.h"
+#include "RenderTextFragment.h"
 #include "RenderTreeUpdaterGeneratedContent.h"
 #include "SelectPopoverElement.h"
 #include "Settings.h"
@@ -50,39 +49,12 @@ RenderTreeBuilder::FormControls::FormControls(RenderTreeBuilder& builder)
 {
 }
 
-void RenderTreeBuilder::FormControls::attach(RenderButton& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
-{
-    m_builder.blockBuilder().attach(findOrCreateParentForChild(parent), WTF::move(child), beforeChild);
-}
-
-RenderPtr<RenderObject> RenderTreeBuilder::FormControls::detach(RenderButton& parent, RenderObject& child, RenderTreeBuilder::WillBeDestroyed willBeDestroyed)
-{
-    auto* innerRenderer = parent.innerRenderer();
-    if (!innerRenderer || &child == innerRenderer || child.parent() == &parent) {
-        ASSERT(&child == innerRenderer || !innerRenderer);
-        return m_builder.blockBuilder().detach(parent, child, willBeDestroyed);
-    }
-    return m_builder.detach(*innerRenderer, child, willBeDestroyed);
-}
-
-
-RenderBlock& RenderTreeBuilder::FormControls::findOrCreateParentForChild(RenderButton& parent)
-{
-    auto* innerRenderer = parent.innerRenderer();
-    if (innerRenderer)
-        return *innerRenderer;
-
-    auto wrapper = Block::createAnonymousBlockWithStyle(protect(parent.document()), parent.style());
-    innerRenderer = wrapper.get();
-    m_builder.blockBuilder().attach(parent, WTF::move(wrapper), nullptr);
-    parent.setInnerRenderer(*innerRenderer);
-    return *innerRenderer;
-}
-
 void RenderTreeBuilder::FormControls::updateAfterDescendants(RenderElement& renderer)
 {
     if (RefPtr inputElement = dynamicDowncast<HTMLInputElement>(renderer.element())) {
-        if (inputElement->isCheckable())
+        if (renderer.usesButtonLayout())
+            updateInputButtonText(downcast<RenderBlockFlow>(renderer), inputElement->valueWithDefault());
+        else if (inputElement->isCheckable())
             updatePseudoElement(PseudoElementType::Checkmark, renderer, renderer.style().usedAppearance());
         return;
     }
@@ -104,6 +76,32 @@ void RenderTreeBuilder::FormControls::updateAfterDescendants(RenderElement& rend
         updatePseudoElement(PseudoElementType::PickerIcon, renderer, renderer.style().usedAppearance());
         return;
     }
+}
+
+void RenderTreeBuilder::FormControls::updateInputButtonText(RenderBlockFlow& inputButton, const String& text)
+{
+    // https://html.spec.whatwg.org/multipage/rendering.html#the-input-element-as-a-button
+    // "its contents are expected to be the text of the element's value attribute, if any, or text derived from the element's type attribute"
+    // The text is the only content of an input button.
+    WeakPtr textRenderer = RenderTraversal::firstWithin<RenderTextFragment>(inputButton);
+    if (text.isEmpty()) {
+        if (textRenderer) {
+            // Like RenderTreeUpdater::tearDownTextRenderer() does for text nodes.
+            textRenderer->repaint();
+            inputButton.setChildNeedsLayout();
+            inputButton.invalidateContentLogicalWidths();
+            // The renderer is destroyed by this call, so it cannot be protected.
+            SUPPRESS_UNCHECKED_ARG m_builder.destroy(*textRenderer);
+        }
+        return;
+    }
+
+    if (textRenderer) {
+        textRenderer->setText(text);
+        return;
+    }
+
+    m_builder.attach(inputButton, createRenderer<RenderTextFragment>(protect(inputButton.document()), text));
 }
 
 void RenderTreeBuilder::FormControls::updatePseudoElement(PseudoElementType type, RenderElement& renderer, StyleAppearance usedAppearance, PseudoElementPosition position)

@@ -334,10 +334,10 @@ bool FlexIntegrationUtils::flexItemHasPercentHeightDescendants(const RenderBox& 
     if (!renderBlock)
         return false;
 
-    // FlexibleBoxImpl's like RenderButton might wrap their children in anonymous blocks. Those anonymous blocks are
+    // FlexibleBoxImpl's might wrap their children in anonymous blocks. Those anonymous blocks are
     // skipped for percentage height calculations in RenderBox::computePercentageLogicalHeight() and thus
     // addPercentHeightDescendant() is never called for them. This means that this method would always wrongly
-    // return false for a child of a <button> with a percentage height.
+    // return false for a descendant of such an anonymous block with a percentage height.
     if (flexBox().hasPercentHeightDescendants()) {
         for (CheckedRef descendant : *flexBox().percentHeightDescendants()) {
             if (renderBlock->isContainingBlockAncestorFor(descendant))

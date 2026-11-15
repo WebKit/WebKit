@@ -219,7 +219,7 @@ Layout::Box::ElementAttributes elementAttributes(const RenderObject& renderer)
             return Layout::Box::NodeType::ListMarker;
         if (renderer.isRenderReplaced())
             return renderer.isRenderImage() && !renderer.isRenderMedia() ? Layout::Box::NodeType::Image : Layout::Box::NodeType::ReplacedElement;
-        if (renderer.isRenderButton() || renderer.isRenderMenuList() || renderer.isRenderTextControlInnerContainer() || renderer.isRenderSlider() || renderer.isRenderSliderContainer())
+        if (renderer.isRenderMenuList() || renderer.isRenderTextControlInnerContainer() || renderer.isRenderSlider() || renderer.isRenderSliderContainer())
             return Layout::Box::NodeType::ImplicitFlexBox;
         if (renderer.isRenderLineBreak())
             return renderer.isWBR() ? Layout::Box::NodeType::WordBreakOpportunity : Layout::Box::NodeType::LineBreak;

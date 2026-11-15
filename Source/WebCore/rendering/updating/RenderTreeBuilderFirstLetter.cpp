@@ -27,7 +27,6 @@
 #include "FontCascade.h"
 #include "NodeInlines.h"
 #include "RenderBlock.h"
-#include "RenderButton.h"
 #include "RenderObjectDocument.h"
 #include "RenderSVGText.h"
 #include "RenderTable.h"
@@ -198,8 +197,6 @@ static unsigned firstLetterLength(StringView text, const AtomString& locale)
 
 static bool supportsFirstLetter(RenderBlock& block)
 {
-    if (is<RenderButton>(block))
-        return true;
     if (!is<RenderBlockFlow>(block))
         return false;
     if (is<RenderSVGText>(block))

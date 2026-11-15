@@ -10,14 +10,12 @@ layer at (0,0) size 800x114
         RenderText {#text} at (60,0) size 355x19
           text run at (60,0) width 355: " REGRESSION: button after unclosed button gives trouble"
       RenderBlock {P} at (0,36) size 784x26
-        RenderButton {BUTTON} at (2,2) size 37x22 [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
-          RenderBlock (anonymous) at (8,3) size 21x16
-            RenderText {#text} at (0,0) size 21x16
-              text run at (0,0) width 21: "test"
-        RenderButton {BUTTON} at (43,2) size 44x22 [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
-          RenderBlock (anonymous) at (8,3) size 28x16
-            RenderText {#text} at (0,0) size 28x16
-              text run at (0,0) width 28: "test2"
+        RenderBlock {BUTTON} at (2,2) size 37x22 [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
+          RenderText {#text} at (8,3) size 21x16
+            text run at (8,3) width 21: "test"
+        RenderBlock {BUTTON} at (43,2) size 44x22 [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
+          RenderText {#text} at (8,3) size 28x16
+            text run at (8,3) width 28: "test2"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,78) size 784x20
         RenderText {#text} at (0,0) size 572x19

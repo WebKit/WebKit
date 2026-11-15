@@ -13,16 +13,14 @@ layer at (0,0) size 800x825
             text run at (0,1) width 66: "Password:"
           RenderTextControl {INPUT} at (67,2) size 137x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
         RenderBlock {DIV} at (10,60) size 800x24
-          RenderButton {INPUT} at (2,2) size 59x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
-            RenderBlock (anonymous) at (12,3) size 35x14
-              RenderText at (0,0) size 35x14
-                text run at (0,0) width 35: "Submit"
+          RenderBlock {INPUT} at (2,2) size 59x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+            RenderText at (12,3) size 35x14
+              text run at (12,3) width 35: "Submit"
           RenderText {#text} at (62,1) size 5x19
             text run at (62,1) width 5: " "
-          RenderButton {BUTTON} at (68,2) size 67x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
-            RenderBlock (anonymous) at (12,3) size 43x14
-              RenderText {#text} at (0,0) size 43x14
-                text run at (0,0) width 43: "Click Me"
+          RenderBlock {BUTTON} at (68,2) size 67x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+            RenderText {#text} at (12,3) size 43x14
+              text run at (12,3) width 43: "Click Me"
         RenderBlock {DIV} at (10,84) size 800x86
           RenderText {#text} at (0,0) size 55x19
             text run at (0,0) width 55: "Buttons:"
@@ -64,16 +62,14 @@ layer at (0,0) size 800x825
             text run at (0,1) width 66: "Password:"
           RenderTextControl {INPUT} at (67,2) size 137x22 [color=#000000] [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
         RenderBlock {DIV} at (10,60) size 800x24
-          RenderButton {INPUT} at (2,2) size 59x20 [color=#000000] [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
-            RenderBlock (anonymous) at (12,3) size 35x14
-              RenderText at (0,0) size 35x14
-                text run at (0,0) width 35: "Submit"
+          RenderBlock {INPUT} at (2,2) size 59x20 [color=#000000] [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+            RenderText at (12,3) size 35x14
+              text run at (12,3) width 35: "Submit"
           RenderText {#text} at (62,1) size 5x19
             text run at (62,1) width 5: " "
-          RenderButton {BUTTON} at (68,2) size 67x20 [color=#000000] [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
-            RenderBlock (anonymous) at (12,3) size 43x14
-              RenderText {#text} at (0,0) size 43x14
-                text run at (0,0) width 43: "Click Me"
+          RenderBlock {BUTTON} at (68,2) size 67x20 [color=#000000] [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+            RenderText {#text} at (12,3) size 43x14
+              text run at (12,3) width 43: "Click Me"
         RenderBlock {DIV} at (10,84) size 800x86
           RenderText {#text} at (0,0) size 55x19
             text run at (0,0) width 55: "Buttons:"
@@ -115,16 +111,14 @@ layer at (0,0) size 800x825
             text run at (0,1) width 66: "Password:"
           RenderTextControl {INPUT} at (67,2) size 137x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
         RenderBlock {DIV} at (10,60) size 800x24
-          RenderButton {INPUT} at (2,2) size 59x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
-            RenderBlock (anonymous) at (12,3) size 35x14
-              RenderText at (0,0) size 35x14
-                text run at (0,0) width 35: "Submit"
+          RenderBlock {INPUT} at (2,2) size 59x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+            RenderText at (12,3) size 35x14
+              text run at (12,3) width 35: "Submit"
           RenderText {#text} at (62,1) size 5x19
             text run at (62,1) width 5: " "
-          RenderButton {BUTTON} at (68,2) size 67x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
-            RenderBlock (anonymous) at (12,3) size 43x14
-              RenderText {#text} at (0,0) size 43x14
-                text run at (0,0) width 43: "Click Me"
+          RenderBlock {BUTTON} at (68,2) size 67x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+            RenderText {#text} at (12,3) size 43x14
+              text run at (12,3) width 43: "Click Me"
         RenderBlock {DIV} at (10,84) size 800x86
           RenderText {#text} at (0,0) size 55x19
             text run at (0,0) width 55: "Buttons:"

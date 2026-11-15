@@ -15,10 +15,9 @@ layer at (0,0) size 800x600
                   RenderTableRow {TR} at (0,2) size 69x46
                     RenderTableCell {TD} at (2,2) size 65x46 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
                       RenderBlock {FORM} at (2,2) size 61x26
-                        RenderButton {INPUT} at (2,2) size 57x22 [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
-                          RenderBlock (anonymous) at (8,3) size 41x16
-                            RenderText at (0,0) size 41x16
-                              text run at (0,0) width 41: "Submit"
+                        RenderBlock {INPUT} at (2,2) size 57x22 [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
+                          RenderText at (8,3) size 41x16
+                            text run at (8,3) width 41: "Submit"
                         RenderText {#text} at (0,0) size 0x0
           RenderTableRow {TR} at (0,60) size 407x24
             RenderTableCell {TD} at (2,60) size 404x24 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=2]

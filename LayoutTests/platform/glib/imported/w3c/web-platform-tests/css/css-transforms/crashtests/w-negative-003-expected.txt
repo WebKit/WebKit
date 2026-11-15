@@ -5,4 +5,4 @@ layer at (0,0) size 785x37
     RenderBody {BODY} at (8,8) size 769x21
       RenderText {#text} at (0,0) size 0x0
 layer at (10,18) size 16x9
-  RenderButton {BUTTON} at (2,10) size 16x9 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+  RenderBlock {BUTTON} at (2,10) size 16x9 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]

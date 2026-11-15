@@ -31,8 +31,7 @@ layer at (9,113) size 78x28
       text run at (5,5) width 191: "Lorem ipsum dolor sit amet"
 layer at (8,182) size 100x50 clip at (8,182) size 100x35 scrollWidth 199
   RenderBlock {DIV} at (0,174) size 100x50
-    RenderButton {BUTTON} at (0,0) size 80x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-      RenderBlock (anonymous) at (8,4) size 64x18
-        RenderText {#text} at (0,0) size 191x18
-          text run at (0,0) width 191: "Lorem ipsum dolor sit amet"
+    RenderBlock {BUTTON} at (0,0) size 80x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+      RenderText {#text} at (8,4) size 191x18
+        text run at (8,4) width 191: "Lorem ipsum dolor sit amet"
     RenderText {#text} at (0,0) size 0x0

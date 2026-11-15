@@ -17,9 +17,9 @@ layer at (0,0) size 800x248
         RenderText {#text} at (0,0) size 81x18
           text run at (0,0) width 81: "Simple case."
         RenderBR {BR} at (80,0) size 1x18
-        RenderButton {BUTTON} at (0,18) size 24x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+        RenderBlock {BUTTON} at (0,18) size 24x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
         RenderBR {BR} at (24,22) size 0x19
-        RenderButton {INPUT} at (0,40) size 24x21 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+        RenderBlock {INPUT} at (0,40) size 24x21 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
         RenderBR {BR} at (24,45) size 0x19
       RenderBlock (anonymous) at (0,135) size 784x97
         RenderText {#text} at (0,0) size 745x36
@@ -33,6 +33,6 @@ layer at (8,52) size 784x2 clip at (0,0) size 0x0
 layer at (8,133) size 784x2 clip at (0,0) size 0x0
   RenderBlock {HR} at (0,125) size 784x3 [color=#808080] [border: (1px inset #808080)]
 layer at (8,190) size 39x20 clip at (9,191) size 22x3
-  RenderButton {BUTTON} at (0,46) size 39x21 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+  RenderBlock {BUTTON} at (0,46) size 39x21 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
 layer at (8,210) size 39x30 clip at (9,211) size 22x13
-  RenderButton {INPUT} at (0,66) size 39x31 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+  RenderBlock {INPUT} at (0,66) size 39x31 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]

@@ -1,0 +1,11 @@
+
+PASS Content offset of button with style ""
+PASS Content offset of button with style "align-content: start"
+PASS Content offset of button with style "align-content: end"
+PASS Content offset of button with style "display: inline"
+PASS Content offset of button with style "display: block"
+PASS Content offset of button with style "display: table-cell"
+PASS Content offset of button with style "display: flex"
+PASS Content offset of button with style "display: grid"
+PASS Centering the content of buttons does not change their computed style
+

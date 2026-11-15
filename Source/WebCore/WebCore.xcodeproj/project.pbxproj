@@ -5691,7 +5691,6 @@
 		BCEA4860097D93020094C9E4 /* RenderBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4821097D93020094C9E4 /* RenderBlock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCEA4862097D93020094C9E4 /* RenderBox.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4823097D93020094C9E4 /* RenderBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCEA4864097D93020094C9E4 /* RenderLineBreak.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4825097D93020094C9E4 /* RenderLineBreak.h */; };
-		BCEA4866097D93020094C9E4 /* RenderButton.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4827097D93020094C9E4 /* RenderButton.h */; };
 		BCEA4868097D93020094C9E4 /* RenderView.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4829097D93020094C9E4 /* RenderView.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCEA486A097D93020094C9E4 /* RenderHTMLCanvas.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA482B097D93020094C9E4 /* RenderHTMLCanvas.h */; };
 		BCEA486E097D93020094C9E4 /* RenderDeprecatedFlexibleBox.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA482F097D93020094C9E4 /* RenderDeprecatedFlexibleBox.h */; };
@@ -20759,8 +20758,6 @@
 		BCEA4823097D93020094C9E4 /* RenderBox.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderBox.h; sourceTree = "<group>"; };
 		BCEA4824097D93020094C9E4 /* RenderLineBreak.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderLineBreak.cpp; sourceTree = "<group>"; };
 		BCEA4825097D93020094C9E4 /* RenderLineBreak.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderLineBreak.h; sourceTree = "<group>"; };
-		BCEA4826097D93020094C9E4 /* RenderButton.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderButton.cpp; sourceTree = "<group>"; };
-		BCEA4827097D93020094C9E4 /* RenderButton.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderButton.h; sourceTree = "<group>"; };
 		BCEA4828097D93020094C9E4 /* RenderView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderView.cpp; sourceTree = "<group>"; };
 		BCEA4829097D93020094C9E4 /* RenderView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderView.h; sourceTree = "<group>"; };
 		BCEA482A097D93020094C9E4 /* RenderHTMLCanvas.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderHTMLCanvas.cpp; sourceTree = "<group>"; };
@@ -42552,8 +42549,6 @@
 				BC96DB450F3A882200573CB3 /* RenderBoxModelObject.cpp */,
 				BC96DB420F3A880E00573CB3 /* RenderBoxModelObject.h */,
 				9331BABA29EC801300137ED2 /* RenderBoxModelObjectInlines.h */,
-				BCEA4826097D93020094C9E4 /* RenderButton.cpp */,
-				BCEA4827097D93020094C9E4 /* RenderButton.h */,
 				B56579B41824D12A00E79F23 /* RenderChildIterator.h */,
 				9392F1430AD185FE00691BD4 /* RenderCounter.cpp */,
 				9392F1410AD185F400691BD4 /* RenderCounter.h */,
@@ -48638,7 +48633,6 @@
 				9331BABF29EC853900137ED2 /* RenderBoxInlines.h in Headers */,
 				BC96DB430F3A880E00573CB3 /* RenderBoxModelObject.h in Headers */,
 				9331BABB29EC801400137ED2 /* RenderBoxModelObjectInlines.h in Headers */,
-				BCEA4866097D93020094C9E4 /* RenderButton.h in Headers */,
 				B56579B51824D12A00E79F23 /* RenderChildIterator.h in Headers */,
 				9392F1420AD185F400691BD4 /* RenderCounter.h in Headers */,
 				BCEA486E097D93020094C9E4 /* RenderDeprecatedFlexibleBox.h in Headers */,

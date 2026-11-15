@@ -54,8 +54,7 @@ layer at (0,0) size 800x773
               RenderFlexibleBox {DIV} at (20,0) size 292x92
                 RenderGrid {DIV} at (0,26) size 292x40
                   RenderBlock {DIV} at (252,0) size 40x40
-                    RenderButton {BUTTON} at (0,0) size 40x40 [bgcolor=#7676801F]
-                      RenderBlock (anonymous) at (0,0) size 40x40
+                    RenderBlock {BUTTON} at (0,0) size 40x40 [bgcolor=#7676801F]
       RenderBlock {DIV} at (0,470) size 784x96
         RenderText {#text} at (0,77) size 97x19
           text run at (0,77) width 97: "Zero progress: "

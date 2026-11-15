@@ -146,10 +146,9 @@ layer at (8,8) size 769x1429
                   RenderTextControl {INPUT} at (71,37) size 149x20 [color=#000000] [bgcolor=#FFFFFF] [border: (2px inset #808080)]
                 RenderText {#text} at (219,37) size 5x19
                   text run at (219,37) width 5: " "
-                RenderButton {INPUT} at (223,38) size 54x19 [color=#000000D8] [bgcolor=#C0C0C0] [border: none (2px outset #C0C0C0) none (2px outset #C0C0C0)]
-                  RenderBlock (anonymous) at (8,2) size 37x13
-                    RenderText at (0,0) size 37x13
-                      text run at (0,0) width 37: "Submit"
+                RenderBlock {INPUT} at (223,38) size 54x19 [color=#000000D8] [bgcolor=#C0C0C0] [border: none (2px outset #C0C0C0) none (2px outset #C0C0C0)]
+                  RenderText at (8,2) size 37x13
+                    text run at (8,2) width 37: "Submit"
                 RenderText {#text} at (0,0) size 0x0
             RenderBlock {P} at (21,1267) size 449x21 [border: (1px dotted #FFFF00)]
               RenderInline {A} at (1,1) size 162x18 [color=#0000EE]

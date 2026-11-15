@@ -35,7 +35,7 @@
 #include "HTMLNames.h"
 #include "HTMLSelectElement.h"
 #include "KeyboardEvent.h"
-#include "RenderButton.h"
+#include "RenderBlockFlow.h"
 #include "Settings.h"
 #include "StyleAppearance.h"
 #include "StyleComputedStyle+GettersInlines.h"
@@ -96,9 +96,12 @@ bool HTMLButtonElement::supportsBaseAppearance(StyleAppearance appearance) const
 RenderPtr<RenderElement> HTMLButtonElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition& position)
 {
     // https://html.spec.whatwg.org/multipage/rendering.html#button-layout
+    // "If the computed value of 'display' is 'inline-grid', 'grid', 'inline-flex', 'flex', 'none', or 'contents', then behave as the computed value."
     if (style.display().isFlexibleOrGridFormattingContextBox())
         return HTMLFormControlElement::createElementRenderer(WTF::move(style), position);
-    return createRenderer<RenderButton>(*this, WTF::move(style));
+    // "Otherwise, if the computed value of 'display' is a value such that the outer display type is 'inline', then behave as 'inline-block'.
+    // Otherwise, behave as 'flow-root'."
+    return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, *this, WTF::move(style), RenderObject::BlockFlowFlag::UsesButtonLayout);
 }
 
 int HTMLButtonElement::defaultTabIndex() const

@@ -38,6 +38,7 @@
 #include "FontCascadeInlines.h"
 #include "FrameSelection.h"
 #include "GraphicsContext.h"
+#include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLTextFormControlElement.h"
 #include "HitTestLocation.h"
@@ -55,6 +56,7 @@
 #include "Page.h"
 #include "PaintInfo.h"
 #include "PaintInfoInlines.h"
+#include "PlatformRenderTheme.h"
 #include "PositionedLayoutConstraints.h"
 #include "RelayoutScopeForScrollbarChange.h"
 #include "RenderBlockFlow.h"
@@ -62,7 +64,6 @@
 #include "RenderBlockInlines.h"
 #include "RenderBoxFragmentInfo.h"
 #include "RenderBoxInlines.h"
-#include "RenderButton.h"
 #include "RenderChildIterator.h"
 #include "RenderDeprecatedFlexibleBox.h"
 #include "RenderElementInlines.h"
@@ -565,6 +566,12 @@ void RenderBlock::layout()
     // If we have a lightweight clip, there can never be any overflow from children.
     if (hasControlClip() && m_overflow && !isDelayingUpdateScrollInfoAfterLayout(*this))
         clearLayoutOverflow();
+
+#if PLATFORM(IOS_FAMILY)
+    // FIXME: We should not be adjusting styles during layout. See <rdar://problem/7675493>.
+    if (usesButtonLayout())
+        RenderThemeIOS::adjustRoundBorderRadius(mutableStyle(), *this);
+#endif
 
     invalidateBackgroundObscurationStatus();
 }
@@ -1360,6 +1367,12 @@ bool RenderBlock::establishesIndependentFormattingContext() const
     if (style.display() == Style::DisplayType::BlockFlowRoot)
         return true;
 
+    // Buttons behave as 'flow-root' or 'inline-block' whatever their display type, and "the element is expected to establish
+    // a new formatting context for its contents".
+    // https://html.spec.whatwg.org/multipage/rendering.html#button-layout
+    if (usesButtonLayout())
+        return true;
+
     if (isGridItem()) {
         // Grid items establish a new independent formatting context, unless they're a subgrid
         // https://drafts.csswg.org/css-grid-2/#grid-item-display
@@ -1381,7 +1394,7 @@ bool RenderBlock::createsNewFormattingContext() const
     if (isWritingModeRoot() && isBlockContainer())
         return true;
     auto& style = this->style();
-    if (isBlockContainer() && !style.alignContent().isNormal())
+    if (isBlockContainer() && !usedStyle().alignContent().isNormal())
         return true;
     return isNonReplacedAtomicInlineLevelBox()
         || style.display().isFlexibleBoxIncludingDeprecatedOrGridFormattingContextBox()
@@ -1535,6 +1548,10 @@ GapRects RenderBlock::selectionGaps(RenderBlock& rootBlock, const LayoutPoint& r
         // FIXME: Make multi-column selection gap filling work someday.
         return { };
     }
+
+    // A button doesn't fill selection gaps, only its selected content is highlighted.
+    if (usesButtonLayout())
+        return { };
 
     if (isFlexItem() || isGridItem() || isDeprecatedFlexItem()) {
         // FIXME: Adding a selection gap to these blocks would produce correct (visual) result only if we could also paint selection gaps between them,
@@ -2408,7 +2425,12 @@ std::pair<LayoutUnit, LayoutUnit> RenderBlock::computeChildIntrinsicLogicalWidth
 bool RenderBlock::hasLineIfEmpty() const
 {
     RefPtr element = this->element();
-    return element && element->isRootEditableElement();
+    if (!element)
+        return false;
+    if (element->isRootEditableElement())
+        return true;
+    // An input button keeps a line for its value even when the value is empty.
+    return usesButtonLayout() && is<HTMLInputElement>(*element);
 }
 
 std::optional<LayoutUnit> RenderBlock::firstLineBaseline() const
@@ -2455,30 +2477,19 @@ std::optional<LayoutUnit> RenderBlock::lastLineBaseline() const
     return lastInFlowBaseline();
 }
 
-NODELETE static inline bool isRenderBlockFlowOrRenderButton(RenderElement& renderElement)
-{
-    // We include isRenderButton in this check because buttons are implemented
-    // using flex box but should still support first-line|first-letter.
-    // The flex box and specs require that flex box and grid do not support
-    // first-line|first-letter, though.
-    // FIXME: Remove when buttons are implemented with align-items instead of
-    // flex box.
-    return renderElement.isRenderBlockFlow() || renderElement.isRenderButton();
-}
-
 static inline RenderBlock* findFirstLetterBlock(RenderBlock* start)
 {
     RenderBlock* firstLetterBlock = start;
     while (true) {
         bool canHaveFirstLetterRenderer = firstLetterBlock->style().hasPseudoStyle(PseudoElementType::FirstLetter)
             && firstLetterBlock->canHaveGeneratedChildren()
-            && isRenderBlockFlowOrRenderButton(*firstLetterBlock);
+            && firstLetterBlock->isRenderBlockFlow();
         if (canHaveFirstLetterRenderer)
             return firstLetterBlock;
 
         RenderElement* parentBlock = firstLetterBlock->parent();
         if (firstLetterBlock->isBlockLevelReplacedOrAtomicInline() || !parentBlock || parentBlock->firstChild() != firstLetterBlock
-            || !isRenderBlockFlowOrRenderButton(*parentBlock))
+            || !parentBlock->isRenderBlockFlow())
             return nullptr;
         firstLetterBlock = downcast<RenderBlock>(parentBlock);
     } 
@@ -2518,7 +2529,7 @@ std::pair<RenderObject*, RenderElement*> RenderBlock::firstLetterAndContainer(Re
                 break;
             }
             firstLetter = current.nextSibling();
-        } else if (current.isBlockLevelReplacedOrAtomicInline() || isAnyOf<RenderButton, RenderMenuList>(current))
+        } else if (current.isBlockLevelReplacedOrAtomicInline() || current.usesButtonLayout() || is<RenderMenuList>(current))
             break;
         else if (current.isFlexibleBoxIncludingDeprecated() || current.isRenderGrid())
             return { };

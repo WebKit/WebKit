@@ -40,12 +40,12 @@
 #include "LocalFrameViewLayoutContext.h"
 #include "RenderBlockFlowInlines.h"
 #include "RenderBlockInlines.h"
-#include "RenderButton.h"
 #include "RenderCounter.h"
 #include "RenderDescendantIterator.h"
 #include "RenderElement.h"
 #include "RenderElementInlines.h"
 #include "RenderEmbeddedObject.h"
+#include "RenderFlexibleBox.h"
 #include "RenderGrid.h"
 #include "RenderHTMLCanvas.h"
 #include "RenderLayer.h"
@@ -380,11 +380,6 @@ void RenderTreeBuilder::attachInternal(RenderElement& parent, RenderPtr<RenderOb
         return;
     }
 
-    if (auto* button = dynamicDowncast<RenderButton>(parent)) {
-        formControlsBuilder().attach(*button, WTF::move(child), beforeChild);
-        return;
-    }
-
     if (auto* container = dynamicDowncast<LegacyRenderSVGContainer>(parent)) {
         svgBuilder().attach(*container, WTF::move(child), beforeChild);
         return;
@@ -445,9 +440,6 @@ RenderPtr<RenderObject> RenderTreeBuilder::detach(RenderElement& parent, RenderO
 
     if (auto* blockFlow = dynamicDowncast<RenderBlockFlow>(parent))
         return blockBuilder().detach(*blockFlow, child, willBeDestroyed, canCollapseAnonymousBlock);
-
-    if (auto* button = dynamicDowncast<RenderButton>(parent))
-        return formControlsBuilder().detach(*button, child, willBeDestroyed);
 
     if (auto* grid = dynamicDowncast<RenderGrid>(parent))
         return detachFromRenderGrid(*grid, child, willBeDestroyed);

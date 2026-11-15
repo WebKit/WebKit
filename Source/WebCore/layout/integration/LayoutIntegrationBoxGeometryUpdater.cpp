@@ -38,7 +38,6 @@
 #include "RenderAttachment.h"
 #include "RenderBlockFlowInlines.h"
 #include "RenderBoxInlines.h"
-#include "RenderButton.h"
 #include "RenderDeprecatedFlexibleBox.h"
 #include "RenderElementInlines.h"
 #include "RenderElementStyleInlines.h"
@@ -405,10 +404,13 @@ static std::optional<LayoutUnit> baselineForBox(const RenderBox& renderBox)
     }
 #endif
 
-    if (is<RenderButton>(renderBox)) {
-        // We cannot rely on RenderFlexibleBox::baselinePosition() because of flexboxes have some special behavior
-        // regarding baselines that shouldn't apply to buttons.
-        return renderBox.lastLineBaseline();
+    if (renderBox.usesButtonLayout()) {
+        // Buttons take their baseline from their content, even when they are scroll containers. Buttons without
+        // content have their baseline synthesized from the bottom of their content box, see setIntegrationBaseline().
+        CheckedRef button = downcast<RenderBlockFlow>(renderBox);
+        if (button->childrenInline() && !button->hasContentfulInlineOrBlockLine())
+            return { };
+        return button->lastLineBaseline();
     }
 
     if (CheckedPtr textControl = dynamicDowncast<RenderTextControlSingleLine>(renderBox)) {
@@ -562,15 +564,14 @@ static inline void setIntegrationBaseline(const RenderBox& renderBox, Layout::Bo
             RenderTable,
             RenderGrid,
             RenderFlexibleBox,
-            RenderDeprecatedFlexibleBox,
 #if ENABLE(ATTACHMENT_ELEMENT)
             RenderAttachment,
 #endif
 #if ENABLE(MATHML)
             RenderMathMLBlock,
 #endif
-            RenderButton
-        >(renderBox);
+            RenderDeprecatedFlexibleBox
+        >(renderBox) || renderBox.usesButtonLayout();
 
         if (overrideDefaultBaselineBehavior)
             return true;
@@ -598,7 +599,7 @@ static inline void setIntegrationBaseline(const RenderBox& renderBox, Layout::Bo
             if (renderBox.isFieldset())
                 return marginBoxLogicalHeight;
 
-            if (is<RenderButton>(renderBox)) {
+            if (renderBox.usesButtonLayout()) {
                 auto contentBoxBottom = rootWritingMode.isHorizontal() ? renderBox.borderTop() + renderBox.paddingTop() + renderBox.contentBoxHeight() : renderBox.borderRight() + renderBox.paddingRight() + renderBox.contentBoxWidth();
                 return marginBefore + contentBoxBottom;
             }

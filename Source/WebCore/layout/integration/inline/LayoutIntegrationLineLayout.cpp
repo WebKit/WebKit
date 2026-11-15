@@ -1700,6 +1700,10 @@ void LineLayout::shiftLinesByInBlockDirection(LayoutUnit blockShift)
     }
 
     for (CheckedRef layoutBox : formattingContextBoxes(rootLayoutBox())) {
+        // The geometry the formatting context computed for inline boxes moves with their display boxes (see enclosingBorderBoxRectFor()).
+        // It is logical, so the shift is in the block direction (vertical) in every writing mode.
+        if (layoutBox->isInlineBox() && !layoutBox->isLineBreakBox() && layoutState().hasBoxGeometry(layoutBox))
+            layoutState().ensureGeometryForBox(layoutBox).moveVertically(blockShift);
         if (layoutBox->isOutOfFlowPositioned() && layoutBox->style().hasStaticBlockPosition(isHorizontalWritingMode)) {
             if (auto* layerRenderer = dynamicDowncast<RenderLayerModelObject>(layoutBox->rendererForIntegration())) {
                 if (auto* layer = layerRenderer->layer())

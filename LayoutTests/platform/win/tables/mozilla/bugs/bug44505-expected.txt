@@ -108,10 +108,9 @@ layer at (167,205) size 138x24 clip at (168,206) size 136x22
 layer at (11,235) size 154x30 clip at (12,236) size 152x28 scrollWidth 201
   RenderTableCell {TD} at (2,2) size 154x30 [bgcolor=#0000FF] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
     RenderBlock {FORM} at (2,2) size 150x26
-      RenderButton {BUTTON} at (0,2) size 200x22 [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
-        RenderBlock (anonymous) at (8,3) size 184x16
-          RenderText {#text} at (74,0) size 36x16
-            text run at (74,0) width 36: "button"
+      RenderBlock {BUTTON} at (0,2) size 200x22 [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
+        RenderText {#text} at (82,3) size 36x16
+          text run at (82,3) width 36: "button"
 layer at (167,235) size 138x30 clip at (168,236) size 136x28
   RenderTableCell {TD} at (158,5) size 138x24 [bgcolor=#0000FF] [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
     RenderText {#text} at (2,2) size 4x19
@@ -127,10 +126,9 @@ layer at (167,267) size 138x24 clip at (168,268) size 136x22
 layer at (11,297) size 281x30 clip at (12,298) size 279x28
   RenderTableCell {TD} at (2,2) size 281x30 [bgcolor=#0000FF] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
     RenderBlock {FORM} at (2,2) size 277x26
-      RenderButton {BUTTON} at (0,2) size 200x22 [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
-        RenderBlock (anonymous) at (8,3) size 184x16
-          RenderText {#text} at (74,0) size 36x16
-            text run at (74,0) width 36: "button"
+      RenderBlock {BUTTON} at (0,2) size 200x22 [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
+        RenderText {#text} at (82,3) size 36x16
+          text run at (82,3) width 36: "button"
 layer at (294,297) size 11x30 clip at (295,298) size 9x28
   RenderTableCell {TD} at (284,5) size 13x24 [bgcolor=#0000FF] [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
     RenderText {#text} at (2,2) size 4x19
