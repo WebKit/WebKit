@@ -160,6 +160,41 @@ function test()
         }
     });
 
+    suite.addTestCase({
+        name: "HAR.Basic.Redirect",
+        description: "Test for HAR entry data of a redirected resource.",
+        async test() {
+            const redirectedURL = "https://example.com/redirected.js";
+            const redirectedAgainURL = "https://example.com/redirected-again.js";
+            const firstHopWalltime = requestSentWalltime + 1;
+            const secondHopWalltime = requestSentWalltime + 2;
+
+            let resource = new WI.Resource(url, {mimeType, type, requestMethod, requestHeaders, requestSentWalltime});
+            resource.updateForRedirectResponse(
+                {url: redirectedURL, method: "GET", headers: {"Test-Redirect-Header": "Redirect Header Value"}},
+                {status: 302, statusText: "Found", headers: {"Location": redirectedURL}},
+                1, firstHopWalltime);
+            resource.updateForRedirectResponse(
+                {url: redirectedAgainURL, method: "GET", headers: {"Test-Redirect-Header": "Redirect Header Value"}},
+                {status: 302, statusText: "Found", headers: {"Location": redirectedAgainURL}},
+                2, secondHopWalltime);
+            resource.markAsFinished(3);
+
+            let entries = resource.redirects.map((redirect) => ({redirect, parentResource: resource}));
+            entries.push(resource);
+
+            let har = await WI.HARBuilder.buildArchive(entries);
+            let [firstHopEntry, secondHopEntry, finalEntry] = har.log.entries;
+            InspectorTest.expectEqual(firstHopEntry.startedDateTime, new Date(requestSentWalltime * 1000).toISOString(), `First hop entry startedDateTime should be the request's wall-clock time ('${new Date(requestSentWalltime * 1000).toISOString()}').`);
+            InspectorTest.expectEqual(secondHopEntry.startedDateTime, new Date(firstHopWalltime * 1000).toISOString(), `Second hop entry startedDateTime should be the first hop's wall-clock time ('${new Date(firstHopWalltime * 1000).toISOString()}').`);
+            InspectorTest.expectEqual(firstHopEntry.request.method, requestMethod, `First hop entry request method should be '${requestMethod}'.`);
+            InspectorTest.expectEqual(firstHopEntry.request.url, url, `First hop entry request URL should be '${url}'.`);
+            InspectorTest.expectEqual(secondHopEntry.request.url, redirectedURL, `Second hop entry request URL should be '${redirectedURL}'.`);
+            InspectorTest.expectEqual(firstHopEntry.response.status, 302, "First hop entry response status should be 302.");
+            InspectorTest.expectEqual(finalEntry.startedDateTime, new Date(requestSentWalltime * 1000).toISOString(), `Final entry startedDateTime should be the request's wall-clock time ('${new Date(requestSentWalltime * 1000).toISOString()}').`);
+        }
+    });
+
     suite.runTestCasesAndFinish();
 }
 </script>

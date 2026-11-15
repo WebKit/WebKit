@@ -719,7 +719,7 @@ WI.Resource = class Resource extends WI.SourceCode
         this._requestHeaders = request.headers || {};
         this._requestCookies = null;
         this._requestMethod = request.method || null;
-        this._redirects.push(new WI.Redirect(oldURL, oldMethod, oldHeaders, response.status, response.statusText, response.headers, elapsedTime));
+        this._redirects.push(new WI.Redirect(oldURL, oldMethod, oldHeaders, response.status, response.statusText, response.headers, elapsedTime, walltime));
         this._referrerPolicy = request.referrerPolicy ?? null;
         this._integrity = request.integrity ?? null;
 
