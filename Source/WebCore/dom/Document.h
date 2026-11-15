@@ -423,15 +423,6 @@ enum class HttpEquivPolicy : uint8_t {
     DisabledByContentDispositionAttachmentSandbox
 };
 
-enum class CustomElementNameValidationStatus : uint8_t {
-    Valid,
-    FirstCharacterIsNotLowercaseASCIILetter,
-    ContainsNoHyphen,
-    ContainsUppercaseASCIILetter,
-    ContainsDisallowedCharacter,
-    ConflictsWithStandardElementName
-};
-
 enum class ClonedDocumentType : uint8_t { XMLDocument, XHTMLDocument, HTMLDocument, SVGDocument, Document };
 
 enum class TextScaleMeta : bool { Legacy, Scale };
@@ -611,7 +602,6 @@ public:
     WEBCORE_EXPORT Ref<Element> createElement(const QualifiedName&, bool createdByParser, CustomElementRegistry* = nullptr);
 
     NODELETE CustomElementRegistry* effectiveGlobalCustomElementRegistry();
-    static CustomElementNameValidationStatus validateCustomElementName(const AtomString&);
     void addCustomElementUpgradeCandidateLocalName(const AtomString& localName) { m_customElementUpgradeCandidateLocalNames.add(localName); }
     void removeCustomElementUpgradeCandidateLocalName(const AtomString& localName) { m_customElementUpgradeCandidateLocalNames.remove(localName); }
     bool mayHaveCustomElementUpgradeCandidate(const AtomString& localName) const { return m_customElementUpgradeCandidateLocalNames.contains(localName); }

@@ -25,14 +25,27 @@
 
 #pragma once
 
+#include <array>
 #include <utility>
 #include <wtf/ASCIICType.h>
 #include <wtf/Forward.h>
+#include <wtf/OptionSet.h>
+#include <wtf/text/Latin1Character.h>
+#include <wtf/text/StringView.h>
 
 namespace WebCore {
 
 class QualifiedName;
 template<typename> class ExceptionOr;
+
+enum class CustomElementNameValidationStatus : uint8_t {
+    Valid,
+    FirstCharacterIsNotLowercaseASCIILetter,
+    ContainsNoHyphen,
+    ContainsUppercaseASCIILetter,
+    ContainsDisallowedCharacter,
+    ConflictsWithStandardElementName
+};
 
 // https://dom.spec.whatwg.org/#validate-and-extract
 namespace NameValidation {
@@ -44,6 +57,75 @@ NODELETE constexpr bool isInvalidElementNameCharacterAfterAlphaStart(char16_t ch
     return !character || isASCIIWhitespace(character) || character == '/' || character == '>';
 }
 NODELETE bool isValidElementName(const QualifiedName&);
+
+enum class NameCharacterProperty : uint8_t {
+    InvalidAfterAlphaStart = 1 << 0,
+    Hyphen = 1 << 1,
+    ASCIIUpper = 1 << 2,
+};
+
+inline constexpr auto latin1NameCharacterProperties = [] {
+    std::array<OptionSet<NameCharacterProperty>, 256> properties { };
+    for (unsigned codeUnit = 0; codeUnit < properties.size(); ++codeUnit) {
+        if (isInvalidElementNameCharacterAfterAlphaStart(codeUnit))
+            properties[codeUnit].add(NameCharacterProperty::InvalidAfterAlphaStart);
+        if (codeUnit == '-')
+            properties[codeUnit].add(NameCharacterProperty::Hyphen);
+        if (isASCIIUpper(codeUnit))
+            properties[codeUnit].add(NameCharacterProperty::ASCIIUpper);
+    }
+    return properties;
+}();
+
+NODELETE constexpr OptionSet<NameCharacterProperty> nameCharacterProperties(Latin1Character character)
+{
+    return latin1NameCharacterProperties[character];
+}
+
+NODELETE constexpr OptionSet<NameCharacterProperty> nameCharacterProperties(char16_t character)
+{
+    // Only ASCII characters have properties.
+    return character < latin1NameCharacterProperties.size() ? latin1NameCharacterProperties[character] : OptionSet<NameCharacterProperty> { };
+}
+
+// Stops at the first character that isn't allowed after an ASCII alpha.
+template<typename CharacterType>
+NODELETE constexpr OptionSet<NameCharacterProperty> combinedNameCharacterProperties(std::span<const CharacterType> characters)
+{
+    OptionSet<NameCharacterProperty> combined;
+    for (auto character : characters) {
+        auto properties = nameCharacterProperties(character);
+        if (properties.contains(NameCharacterProperty::InvalidAfterAlphaStart))
+            return properties;
+        combined.add(properties);
+    }
+    return combined;
+}
+
+enum class ElementNameKind : uint8_t { Invalid, CustomElementName, OtherElementName };
+
+// Checks for a valid element name and a valid custom element name in one pass. Unlike validateCustomElementName(),
+// doesn't check for the standard element names that valid custom element names exclude.
+NODELETE ALWAYS_INLINE ElementNameKind classifyElementName(StringView name)
+{
+    if (name.isEmpty())
+        return ElementNameKind::Invalid;
+
+    auto firstCharacter = name[0];
+    if (!isASCIIAlpha(firstCharacter))
+        return isValidElementName(name) ? ElementNameKind::OtherElementName : ElementNameKind::Invalid;
+
+    auto properties = name.is8Bit() ? combinedNameCharacterProperties(name.span8()) : combinedNameCharacterProperties(name.span16());
+    if (properties.contains(NameCharacterProperty::InvalidAfterAlphaStart))
+        return ElementNameKind::Invalid;
+
+    if (isASCIILower(firstCharacter) && properties.contains(NameCharacterProperty::Hyphen) && !properties.contains(NameCharacterProperty::ASCIIUpper))
+        return ElementNameKind::CustomElementName;
+    return ElementNameKind::OtherElementName;
+}
+
+// https://html.spec.whatwg.org/#valid-custom-element-name
+CustomElementNameValidationStatus validateCustomElementName(const AtomString&);
 
 // https://dom.spec.whatwg.org/#valid-attribute-name
 NODELETE bool isValidAttributeName(StringView);

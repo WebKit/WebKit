@@ -35,6 +35,7 @@
 #include "JSDOMConvertSequences.h"
 #include "JSDOMConvertStrings.h"
 #include "JSDOMPromiseDeferred.h"
+#include "NameValidation.h"
 #include "Settings.h"
 #include <JavaScriptCore/JSObjectInlines.h>
 #include <wtf/SetForScope.h>
@@ -62,7 +63,7 @@ static JSObject* getCustomElementCallback(JSGlobalObject& lexicalGlobalObject, J
 static bool validateCustomElementNameAndThrowIfNeeded(JSGlobalObject& lexicalGlobalObject, const AtomString& name)
 {
     auto scope = DECLARE_THROW_SCOPE(lexicalGlobalObject.vm());
-    switch (Document::validateCustomElementName(name)) {
+    switch (NameValidation::validateCustomElementName(name)) {
     case CustomElementNameValidationStatus::Valid:
         return true;
     case CustomElementNameValidationStatus::FirstCharacterIsNotLowercaseASCIILetter:

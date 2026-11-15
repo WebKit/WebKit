@@ -29,10 +29,16 @@
 #include "CommonAtomStrings.h"
 #include "ExceptionOr.h"
 #include "QualifiedName.h"
+#include "SVGNames.h"
 #include "XMLNSNames.h"
 #include "XMLNames.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringView.h>
+
+#if ENABLE(MATHML)
+#include "MathMLNames.h"
+#endif
 
 namespace WebCore::NameValidation {
 
@@ -63,6 +69,16 @@ NODELETE static constexpr bool isValidASCIIXMLNamePart(char16_t c)
     return isASCIIAlphanumeric(c) || c == ':' || c == '_' || c == '-' || c == '.';
 }
 
+template<typename CharacterType>
+NODELETE static bool containsInvalidCharacterAfterAlphaStart(std::span<const CharacterType> characters)
+{
+    for (auto character : characters) {
+        if (nameCharacterProperties(character).contains(NameCharacterProperty::InvalidAfterAlphaStart))
+            return true;
+    }
+    return false;
+}
+
 // https://dom.spec.whatwg.org/#valid-element-name
 bool isValidElementName(StringView name)
 {
@@ -72,7 +88,7 @@ bool isValidElementName(StringView name)
     auto firstCharacter = name[0];
 
     if (isASCIIAlpha(firstCharacter))
-        return !name.contains(isInvalidElementNameCharacterAfterAlphaStart);
+        return name.is8Bit() ? !containsInvalidCharacterAfterAlphaStart(name.span8()) : !containsInvalidCharacterAfterAlphaStart(name.span16());
 
     if (firstCharacter == ':' || firstCharacter == '_' || firstCharacter >= 0x80)
         return name.containsOnly<isValidElementNameContinuationCharacter>();
@@ -83,6 +99,61 @@ bool isValidElementName(StringView name)
 bool isValidElementName(const QualifiedName& name)
 {
     return isValidElementName(name.localName());
+}
+
+template<typename CharacterType>
+NODELETE static CustomElementNameValidationStatus validateCustomElementNameCharacters(std::span<const CharacterType> characters)
+{
+    bool containsHyphen = false;
+    for (auto character : characters) {
+        auto properties = nameCharacterProperties(character);
+        if (properties.contains(NameCharacterProperty::InvalidAfterAlphaStart))
+            return CustomElementNameValidationStatus::ContainsDisallowedCharacter;
+        if (properties.contains(NameCharacterProperty::ASCIIUpper))
+            return CustomElementNameValidationStatus::ContainsUppercaseASCIILetter;
+        if (properties.contains(NameCharacterProperty::Hyphen))
+            containsHyphen = true;
+    }
+
+    if (!containsHyphen)
+        return CustomElementNameValidationStatus::ContainsNoHyphen;
+
+    return CustomElementNameValidationStatus::Valid;
+}
+
+static bool isStandardElementName(const AtomString& localName)
+{
+#if ENABLE(MATHML)
+    const auto& annotationXmlLocalName = MathMLNames::annotation_xmlTag->localName();
+#else
+    static MainThreadNeverDestroyed<const AtomString> annotationXmlLocalName("annotation-xml"_s);
+#endif
+    static MainThreadNeverDestroyed<const AtomString> colorProfileLocalName("color-profile"_s);
+
+    return localName == SVGNames::font_faceTag->localName()
+        || localName == SVGNames::font_face_formatTag->localName()
+        || localName == SVGNames::font_face_nameTag->localName()
+        || localName == SVGNames::font_face_srcTag->localName()
+        || localName == SVGNames::font_face_uriTag->localName()
+        || localName == SVGNames::missing_glyphTag->localName()
+        || localName == annotationXmlLocalName
+        || localName == colorProfileLocalName;
+}
+
+// https://html.spec.whatwg.org/#valid-custom-element-name
+CustomElementNameValidationStatus validateCustomElementName(const AtomString& localName)
+{
+    if (!isASCIILower(localName[0]))
+        return CustomElementNameValidationStatus::FirstCharacterIsNotLowercaseASCIILetter;
+
+    auto result = localName.is8Bit() ? validateCustomElementNameCharacters(localName.string().span8()) : validateCustomElementNameCharacters(localName.string().span16());
+    if (result != CustomElementNameValidationStatus::Valid)
+        return result;
+
+    if (isStandardElementName(localName))
+        return CustomElementNameValidationStatus::ConflictsWithStandardElementName;
+
+    return CustomElementNameValidationStatus::Valid;
 }
 
 // https://dom.spec.whatwg.org/#valid-attribute-name

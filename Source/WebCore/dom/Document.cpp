@@ -1635,14 +1635,22 @@ void Document::childrenChanged(const ChildChange& change)
     styleScope().clearResolver();
 }
 
-static ALWAYS_INLINE CustomElementNameValidationStatus validateCustomElementNameWithoutCheckingStandardElementNames(const AtomString&);
-static ALWAYS_INLINE bool isStandardElementName(const AtomString& localName);
-
-static ALWAYS_INLINE Ref<HTMLElement> createUpgradeCandidateElement(Document& document, CustomElementRegistry* registry, const QualifiedName& name)
+NODELETE static ALWAYS_INLINE NameValidation::ElementNameKind classifyUnknownElementName(const AtomString& localName)
 {
-    ASSERT(!isStandardElementName(name.localName())); // HTMLTagNames.in lists builtin SVG/MathML elements with "-" in their names explicitly as HTMLUnknownElement.
+    return NameValidation::classifyElementName(localName);
+}
 
-    if (validateCustomElementNameWithoutCheckingStandardElementNames(name.localName()) != CustomElementNameValidationStatus::Valid) {
+NODELETE static ALWAYS_INLINE NameValidation::ElementNameKind classifyUnknownElementName(const QualifiedName& name)
+{
+    return NameValidation::classifyElementName(name.localName());
+}
+
+static ALWAYS_INLINE Ref<HTMLElement> createUpgradeCandidateElement(Document& document, CustomElementRegistry* registry, const QualifiedName& name, NameValidation::ElementNameKind kind)
+{
+    // HTMLTagNames.in lists builtin SVG/MathML elements with "-" in their names explicitly as HTMLUnknownElement.
+    ASSERT(NameValidation::validateCustomElementName(name.localName()) != CustomElementNameValidationStatus::ConflictsWithStandardElementName);
+
+    if (kind != NameValidation::ElementNameKind::CustomElementName) {
         Ref element = HTMLUnknownElement::create(name, document);
         if (!registry && document.usesNullCustomElementRegistry())
             element->setUsesNullCustomElementRegistry();
@@ -1655,9 +1663,9 @@ static ALWAYS_INLINE Ref<HTMLElement> createUpgradeCandidateElement(Document& do
     return element;
 }
 
-static ALWAYS_INLINE Ref<HTMLElement> createUpgradeCandidateElement(Document& document, CustomElementRegistry* registry, const AtomString& localName)
+static ALWAYS_INLINE Ref<HTMLElement> createUpgradeCandidateElement(Document& document, CustomElementRegistry* registry, const AtomString& localName, NameValidation::ElementNameKind kind)
 {
-    return createUpgradeCandidateElement(document, registry, QualifiedName { nullAtom(), localName, xhtmlNamespaceURI });
+    return createUpgradeCandidateElement(document, registry, QualifiedName { nullAtom(), localName, xhtmlNamespaceURI }, kind);
 }
 
 template<typename NameType>
@@ -1675,10 +1683,11 @@ static ExceptionOr<Ref<Element>> createHTMLElementWithNameValidation(Document& d
             return elementInterface->constructElementWithFallback(document, *registry, name);
     }
 
-    if (!NameValidation::isValidElementName(name)) [[unlikely]]
+    auto kind = classifyUnknownElementName(name);
+    if (kind == NameValidation::ElementNameKind::Invalid) [[unlikely]]
         return Exception { ExceptionCode::InvalidCharacterError };
 
-    return Ref<Element> { createUpgradeCandidateElement(document, registry, name) };
+    return Ref<Element> { createUpgradeCandidateElement(document, registry, name, kind) };
 }
 
 ExceptionOr<Ref<Element>> Document::createElementForBindings(const AtomString& name, Variant<String, ElementCreationOptions>&& argument)
@@ -1854,7 +1863,7 @@ static Ref<HTMLElement> createFallbackHTMLElement(Document& document, CustomElem
             return element;
         }
     }
-    return createUpgradeCandidateElement(document, registry, name);
+    return createUpgradeCandidateElement(document, registry, name, classifyUnknownElementName(name));
 }
 
 // FIXME: This should really be in a possible ElementFactory class.
@@ -1896,104 +1905,6 @@ CustomElementRegistry* Document::effectiveGlobalCustomElementRegistry()
     if (!customElementRegistry() || customElementRegistry()->isScoped())
         return nullptr;
     return customElementRegistry();
-}
-
-// https://html.spec.whatwg.org/#valid-custom-element-name
-
-enum class CustomElementNameCharacterKind : uint8_t {
-    Invalid,
-    Valid,
-    Hyphen,
-    Upper,
-};
-
-// FIXME: Remove SUPPRESS_NODELETE once NoDeleteChecker stops treating local lambdas as possibly deleting (rdar://178617685).
-NODELETE SUPPRESS_NODELETE static ALWAYS_INLINE CustomElementNameCharacterKind customElementNameCharacterKind(Latin1Character character)
-{
-    using Kind = CustomElementNameCharacterKind;
-    static constexpr auto table = [] {
-        std::array<Kind, 256> kinds { };
-        for (unsigned codeUnit = 0; codeUnit < kinds.size(); ++codeUnit) {
-            if (isASCIIUpper(codeUnit))
-                kinds[codeUnit] = Kind::Upper;
-            else if (codeUnit == '-')
-                kinds[codeUnit] = Kind::Hyphen;
-            else if (NameValidation::isInvalidElementNameCharacterAfterAlphaStart(codeUnit))
-                kinds[codeUnit] = Kind::Invalid;
-            else
-                kinds[codeUnit] = Kind::Valid;
-        }
-        return kinds;
-    }();
-    return table[character];
-}
-
-NODELETE static ALWAYS_INLINE CustomElementNameValidationStatus validateCustomElementNameWithoutCheckingStandardElementNames(const AtomString& localName)
-{
-    if (!isASCIILower(localName[0]))
-        return CustomElementNameValidationStatus::FirstCharacterIsNotLowercaseASCIILetter;
-
-    bool containsHyphen = false;
-    if (localName.is8Bit()) [[likely]] {
-        for (auto character : localName.string().span8()) {
-            switch (customElementNameCharacterKind(character)) {
-            case CustomElementNameCharacterKind::Invalid:
-                return CustomElementNameValidationStatus::ContainsDisallowedCharacter;
-            case CustomElementNameCharacterKind::Valid:
-                break;
-            case CustomElementNameCharacterKind::Hyphen:
-                containsHyphen = true;
-                break;
-            case CustomElementNameCharacterKind::Upper:
-                return CustomElementNameValidationStatus::ContainsUppercaseASCIILetter;
-            }
-        }
-    } else {
-        for (auto character : localName.string().span16()) {
-            if (isASCIIUpper(character))
-                return CustomElementNameValidationStatus::ContainsUppercaseASCIILetter;
-            if (NameValidation::isInvalidElementNameCharacterAfterAlphaStart(character))
-                return CustomElementNameValidationStatus::ContainsDisallowedCharacter;
-            if (character == '-')
-                containsHyphen = true;
-        }
-    }
-
-    if (!containsHyphen)
-        return CustomElementNameValidationStatus::ContainsNoHyphen;
-
-    return CustomElementNameValidationStatus::Valid;
-}
-
-static ALWAYS_INLINE bool isStandardElementName(const AtomString& localName)
-{
-#if ENABLE(MATHML)
-    const auto& annotationXmlLocalName = MathMLNames::annotation_xmlTag->localName();
-#else
-    static MainThreadNeverDestroyed<const AtomString> annotationXmlLocalName("annotation-xml"_s);
-#endif
-    static MainThreadNeverDestroyed<const AtomString> colorProfileLocalName("color-profile"_s);
-
-    return localName == SVGNames::font_faceTag->localName()
-        || localName == SVGNames::font_face_formatTag->localName()
-        || localName == SVGNames::font_face_nameTag->localName()
-        || localName == SVGNames::font_face_srcTag->localName()
-        || localName == SVGNames::font_face_uriTag->localName()
-        || localName == SVGNames::missing_glyphTag->localName()
-        || localName == annotationXmlLocalName
-        || localName == colorProfileLocalName;
-}
-
-CustomElementNameValidationStatus Document::validateCustomElementName(const AtomString& localName)
-{
-    auto result = validateCustomElementNameWithoutCheckingStandardElementNames(localName);
-    if (result != CustomElementNameValidationStatus::Valid)
-        return result;
-
-    if (isStandardElementName(localName))
-        return CustomElementNameValidationStatus::ConflictsWithStandardElementName;
-
-    return CustomElementNameValidationStatus::Valid;
 }
 
 ExceptionOr<Ref<Element>> Document::createElementNS(const AtomString& namespaceURI, const AtomString& qualifiedName, Variant<String, ElementCreationOptions>&& argument)

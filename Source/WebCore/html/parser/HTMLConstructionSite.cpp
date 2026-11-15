@@ -53,6 +53,7 @@
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "LocalFrameLoaderClient.h"
+#include "NameValidation.h"
 #include "NodeName.h"
 #include "NotImplemented.h"
 #include "ProcessingInstruction.h"
@@ -902,7 +903,7 @@ std::tuple<RefPtr<HTMLElement>, RefPtr<JSCustomElementInterface>, RefPtr<CustomE
         }
         if (!element) {
             auto qualifiedName = qualifiedNameForHTMLTag(token);
-            if (Document::validateCustomElementName(token.name()) == CustomElementNameValidationStatus::Valid) {
+            if (NameValidation::validateCustomElementName(token.name()) == CustomElementNameValidationStatus::Valid) {
                 element = HTMLMaybeFormAssociatedCustomElement::create(qualifiedName, ownerDocument);
                 element->setIsCustomElementUpgradeCandidate();
             } else

@@ -29,6 +29,7 @@
 #include "Document.h"
 #include "ElementRareData.h"
 #include "FormAssociatedCustomElement.h"
+#include "NameValidation.h"
 #include "ShadowRoot.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -41,7 +42,7 @@ using namespace HTMLNames;
 HTMLMaybeFormAssociatedCustomElement::HTMLMaybeFormAssociatedCustomElement(const QualifiedName& tagName, Document& document)
     : HTMLElement { tagName, document, TypeFlag::HasDidMoveToNewDocument }
 {
-    ASSERT(Document::validateCustomElementName(tagName.localName()) == CustomElementNameValidationStatus::Valid);
+    ASSERT(NameValidation::validateCustomElementName(tagName.localName()) == CustomElementNameValidationStatus::Valid);
 }
 
 HTMLMaybeFormAssociatedCustomElement::~HTMLMaybeFormAssociatedCustomElement() = default;
