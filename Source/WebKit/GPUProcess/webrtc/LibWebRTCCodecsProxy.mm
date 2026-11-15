@@ -271,17 +271,28 @@ void LibWebRTCCodecsProxy::setDecoderColorSpaceOverride(VideoDecoderIdentifier i
     });
 }
 
-void LibWebRTCCodecsProxy::decodeFrame(VideoDecoderIdentifier identifier, int64_t timeStamp, std::span<const uint8_t> data, RefPtr<WebCore::VideoInfo>&& videoInfo, CompletionHandler<void(bool)>&& callback) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
+void LibWebRTCCodecsProxy::decodeFrame(VideoDecoderIdentifier identifier, int64_t timeStamp, std::span<const uint8_t> data, RefPtr<WebCore::VideoInfo>&& videoInfo, CompletionHandler<void(DecodeFrameResult)>&& callback) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     doDecoderTask(identifier, [identifier, connection = Ref { m_connection }, timeStamp, data, videoInfo = WTF::move(videoInfo), callback = WTF::move(callback)] (auto& decoder) mutable {
         if (decoder.frameRateMonitor)
             decoder.frameRateMonitor->update();
-        if (decoder.webrtcDecoder->decodeFrame(timeStamp, data, WTF::move(videoInfo))) {
+        switch (decoder.webrtcDecoder->decodeFrame(timeStamp, data, WTF::move(videoInfo))) {
+        case GPUVideoDecoder::DecodeResult::Success:
+            decoder.decodingCallbacks.append([callback = WTF::move(callback)](bool success) mutable {
+                callback(success ? DecodeFrameResult::Succeeded : DecodeFrameResult::DecodingFailed);
+            });
+            return;
+        case GPUVideoDecoder::DecodeResult::Failure:
             connection->send(Messages::LibWebRTCCodecs::FailedDecoding { identifier }, 0);
-            callback(false);
+            callback(DecodeFrameResult::DecodingFailed);
+            return;
+        case GPUVideoDecoder::DecodeResult::DecoderCreationFailed:
+            callback(DecodeFrameResult::DecoderCreationFailed);
+            return;
+        case GPUVideoDecoder::DecodeResult::MissingFormat:
+            callback(DecodeFrameResult::DecodingFailed);
             return;
         }
-        decoder.decodingCallbacks.append(WTF::move(callback));
     });
 }
 

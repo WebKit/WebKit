@@ -86,6 +86,8 @@ public:
     std::optional<WebCore::VideoCodecType> videoEncoderTypeFromWebCodec(const String&);
 
     using FramePromise = NativePromise<void, String>;
+    enum class DecodeFrameError : uint8_t { DidNotComplete, Failed, DecoderCreationFailed };
+    using DecodeFramePromise = NativePromise<void, DecodeFrameError>;
     using DecoderCallback = Function<void(RefPtr<WebCore::VideoFrame>&&, int64_t timestamp)>;
     struct Decoder {
         WTF_MAKE_TZONE_ALLOCATED(Decoder);
@@ -95,7 +97,7 @@ public:
             Ref<WebCore::SharedBuffer> data;
             uint16_t width { 0 };
             uint16_t height { 0 };
-            FramePromise::AutoRejectProducer producer;
+            DecodeFramePromise::AutoRejectProducer producer;
         };
 
         Decoder(VideoDecoderIdentifier identifier, WebCore::VideoCodecType type, const String& codec, bool isAnnexB, std::optional<WebCore::PlatformVideoColorSpace>&& colorSpaceOverride, WebCore::VideoFrameRotation rotation, bool isMirrored)
@@ -130,7 +132,7 @@ public:
     Ref<GenericPromise> flushDecoder(Decoder&);
     void setDecoderFormatDescription(Decoder&, std::span<const uint8_t>, uint16_t width, uint16_t height);
     int32_t decodeWebRTCFrame(Decoder&, int64_t timeStamp, std::span<const uint8_t>, uint16_t width, uint16_t height, std::optional<WebCore::PlatformVideoColorSpace>&& = std::nullopt);
-    Ref<FramePromise> decodeFrame(Decoder&, int64_t timeStamp, Ref<WebCore::SharedBuffer>&&);
+    Ref<DecodeFramePromise> decodeFrame(Decoder&, int64_t timeStamp, Ref<WebCore::SharedBuffer>&&);
     void registerDecodeFrameCallback(Decoder&, void* decodedImageCallback);
     void registerDecodedVideoFrameCallback(Decoder&, DecoderCallback&&);
 
@@ -237,6 +239,7 @@ private:
     NODELETE void gpuProcessConnectionMayNoLongerBeNeeded();
 
     void failedDecoding(VideoDecoderIdentifier);
+    void decoderCreationFailed(VideoDecoderIdentifier);
     void flushDecoderCompleted(VideoDecoderIdentifier);
     void completedDecoding(IPC::Connection&, VideoDecoderIdentifier, int64_t timeStamp, int64_t timeStampNs, RemoteVideoFrameReference, RemoteVideoFrameProxy::Properties&&);
     // FIXME: Will be removed once RemoteVideoFrameProxy providers are the only ones sending data.
@@ -265,8 +268,8 @@ private:
     template<typename Frame> RefPtr<FramePromise> encodeFrameInternal(Encoder&, const Frame&, bool shouldEncodeAsKeyFrame, WebCore::VideoFrameRotation, bool isMirrored, MediaTime, int64_t timestamp, std::optional<uint64_t> duration);
     template<typename Frame> RefPtr<FramePromise> encodeFrameInternalWithLock(Encoder&, const Frame&, bool shouldEncodeAsKeyFrame, WebCore::VideoFrameRotation, bool isMirrored, MediaTime, int64_t timestamp, std::optional<uint64_t> duration) WTF_REQUIRES_LOCK(m_encodersConnectionLock);
 
-    template<typename Data> RefPtr<FramePromise> decodeFrameInternal(Decoder&, int64_t timeStamp, Data&&, uint16_t width, uint16_t height);
-    Ref<FramePromise> sendFrameToDecode(Decoder&, int64_t timeStamp, std::span<const uint8_t>, uint16_t width, uint16_t height);
+    template<typename Data> RefPtr<DecodeFramePromise> decodeFrameInternal(Decoder&, int64_t timeStamp, Data&&, uint16_t width, uint16_t height);
+    Ref<DecodeFramePromise> sendFrameToDecode(Decoder&, int64_t timeStamp, std::span<const uint8_t>, uint16_t width, uint16_t height);
 
     HashMap<VideoDecoderIdentifier, std::unique_ptr<Decoder>> m_decoders WTF_GUARDED_BY_CAPABILITY(workQueue());
     Lock m_encodersConnectionLock;

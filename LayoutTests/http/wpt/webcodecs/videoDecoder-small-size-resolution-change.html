@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+const codecs = ['vp09.00.10.08', 'av01.0.04M.08'];
+const sizes = [[64, 48], [128, 128], [48, 64], [128, 128]];
+const framesPerSize = 3;
+
+function createFrame(width, height, timestamp)
+{
+    const lumaSize = width * height;
+    const chromaSize = (width / 2) * (height / 2);
+    const data = new Uint8Array(lumaSize + 2 * chromaSize);
+    data.fill(96, 0, lumaSize);
+    data.fill(155, lumaSize, lumaSize + chromaSize);
+    data.fill(104, lumaSize + chromaSize);
+    return new VideoFrame(data, { format: 'I420', timestamp, codedWidth: width, codedHeight: height });
+}
+
+async function encodeChunks(codec, width, height, firstTimestamp)
+{
+    const chunks = [];
+    let encoderError = null;
+    const encoder = new VideoEncoder({
+        output: chunk => chunks.push(chunk),
+        error: e => { encoderError = e; },
+    });
+    encoder.configure({ codec, width, height, bitrate: 1000000, framerate: 30 });
+    for (let index = 0; index < framesPerSize; ++index) {
+        const frame = createFrame(width, height, firstTimestamp + index);
+        encoder.encode(frame, { keyFrame: !index });
+        frame.close();
+    }
+    await encoder.flush();
+    encoder.close();
+    assert_equals(encoderError?.message ?? null, null, `encoder error for ${width}x${height}`);
+    return chunks;
+}
+
+for (const codec of codecs) {
+    promise_test(async t => {
+        const support = await VideoEncoder.isConfigSupported({ codec, width: 128, height: 128 });
+        assert_implements_optional(support.supported, `${codec} encoding is not supported`);
+
+        const chunks = [];
+        const expected = [];
+        for (const [width, height] of sizes) {
+            const segment = await encodeChunks(codec, width, height, expected.length);
+            assert_equals(segment.length, framesPerSize, `chunk count for ${width}x${height}`);
+            assert_equals(segment[0].type, 'key', `first chunk type for ${width}x${height}`);
+            chunks.push(...segment);
+            for (const chunk of segment)
+                expected.push({ timestamp: chunk.timestamp, width, height });
+        }
+
+        const decoded = [];
+        let decoderError = null;
+        const decoder = new VideoDecoder({
+            output: frame => {
+                decoded.push({ timestamp: frame.timestamp, width: frame.codedWidth, height: frame.codedHeight });
+                frame.close();
+            },
+            error: e => { decoderError = e; },
+        });
+        decoder.configure({ codec });
+        for (const chunk of chunks)
+            decoder.decode(chunk);
+        await decoder.flush().catch(() => { });
+        if (decoder.state !== 'closed')
+            decoder.close();
+
+        assert_equals(decoderError?.message ?? null, null, 'decoder error');
+        assert_array_equals(decoded.map(frame => frame.timestamp), expected.map(frame => frame.timestamp), 'timestamps');
+        for (let index = 0; index < expected.length; ++index) {
+            assert_equals(decoded[index].width, expected[index].width, `codedWidth of frame ${index}`);
+            assert_equals(decoded[index].height, expected[index].height, `codedHeight of frame ${index}`);
+        }
+    }, `${codec} decoder keeps decoding across resolution changes below and above 64x64`);
+}
+</script>

@@ -92,7 +92,7 @@ private:
     void flushDecoder(VideoDecoderIdentifier, CompletionHandler<void()>&&);
     void setDecoderFormatDescription(VideoDecoderIdentifier, std::span<const uint8_t>, RefPtr<WebCore::VideoInfo>&&, uint16_t width, uint16_t height);
     void setDecoderColorSpaceOverride(VideoDecoderIdentifier, std::optional<WebCore::PlatformVideoColorSpace>&&);
-    void decodeFrame(VideoDecoderIdentifier, int64_t timeStamp, std::span<const uint8_t>, RefPtr<WebCore::VideoInfo>&&, CompletionHandler<void(bool)>&&);
+    void decodeFrame(VideoDecoderIdentifier, int64_t timeStamp, std::span<const uint8_t>, RefPtr<WebCore::VideoInfo>&&, CompletionHandler<void(DecodeFrameResult)>&&);
     void setFrameSize(VideoDecoderIdentifier, uint16_t width, uint16_t height);
 
     void createEncoder(VideoEncoderIdentifier, WebCore::VideoCodecType, const String& codecString, const Vector<std::pair<String, String>>&, bool useLowLatency, bool useAnnexB, WebCore::VideoEncoderScalabilityMode, CompletionHandler<void(bool)>&&);

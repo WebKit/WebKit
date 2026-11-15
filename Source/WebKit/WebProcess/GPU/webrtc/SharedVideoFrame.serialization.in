@@ -33,4 +33,11 @@ using WebKit::SharedVideoFrame::Buffer = Variant<std::nullptr_t, WebKit::RemoteV
     WebKit::SharedVideoFrame::Buffer buffer;
 };
 
+header: "VideoDecoderIdentifier.h"
+enum class WebKit::DecodeFrameResult : uint8_t {
+    DecodingFailed,
+    DecoderCreationFailed,
+    Succeeded
+};
+
 #endif

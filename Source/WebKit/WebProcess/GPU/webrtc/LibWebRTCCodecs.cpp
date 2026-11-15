@@ -484,7 +484,7 @@ static Vector<uint8_t> convertAnnexBFrameToLengthPrefixed(WebCore::VideoCodecTyp
     return WebCore::convertHEVCAnnexBToLengthPrefixed(data, naluIndices);
 }
 
-Ref<LibWebRTCCodecs::FramePromise> LibWebRTCCodecs::sendFrameToDecode(Decoder& decoder, int64_t timeStamp, std::span<const uint8_t> data, uint16_t width, uint16_t height)
+Ref<LibWebRTCCodecs::DecodeFramePromise> LibWebRTCCodecs::sendFrameToDecode(Decoder& decoder, int64_t timeStamp, std::span<const uint8_t> data, uint16_t width, uint16_t height)
 {
     if (decoder.type == WebCore::VideoCodecType::VP9 && (width || height))
         Ref { *decoder.connection }->send(Messages::LibWebRTCCodecsProxy::SetFrameSize { decoder.identifier, width, height }, 0);
@@ -511,14 +511,21 @@ Ref<LibWebRTCCodecs::FramePromise> LibWebRTCCodecs::sendFrameToDecode(Decoder& d
         break;
     }
 
-    return Ref { *decoder.connection }->sendWithPromisedReply(Messages::LibWebRTCCodecsProxy::DecodeFrame { decoder.identifier, timeStamp, data, videoInfo }, 0)->whenSettled(workQueue(), [] (auto&& result) mutable {
+    return Ref { *decoder.connection }->sendWithPromisedReply(Messages::LibWebRTCCodecsProxy::DecodeFrame { decoder.identifier, timeStamp, data, videoInfo }, 0)->whenSettled(workQueue(), [protectedThis = Ref { *this }, identifier = decoder.identifier](auto&& result) mutable {
         if (!result)
-            return FramePromise::createAndReject("Decoding task did not complete"_s);
+            return DecodeFramePromise::createAndReject(DecodeFrameError::DidNotComplete);
 
-        if (!*result)
-            return FramePromise::createAndReject("Decoding task failed"_s);
-
-        return FramePromise::createAndResolve();
+        switch (*result) {
+        case DecodeFrameResult::DecodingFailed:
+            return DecodeFramePromise::createAndReject(DecodeFrameError::Failed);
+        case DecodeFrameResult::DecoderCreationFailed:
+            protectedThis->decoderCreationFailed(identifier);
+            return DecodeFramePromise::createAndReject(DecodeFrameError::DecoderCreationFailed);
+        case DecodeFrameResult::Succeeded:
+            return DecodeFramePromise::createAndResolve();
+        }
+        ASSERT_NOT_REACHED();
+        return DecodeFramePromise::createAndReject(DecodeFrameError::Failed);
     });
 }
 
@@ -537,10 +544,10 @@ int32_t LibWebRTCCodecs::decodeWebRTCFrame(Decoder& decoder, int64_t timeStamp, 
     return promise ? WEBRTC_VIDEO_CODEC_OK : WEBRTC_VIDEO_CODEC_ERROR;
 }
 
-Ref<LibWebRTCCodecs::FramePromise> LibWebRTCCodecs::decodeFrame(Decoder& decoder, int64_t timeStamp, Ref<WebCore::SharedBuffer>&& data)
+Ref<LibWebRTCCodecs::DecodeFramePromise> LibWebRTCCodecs::decodeFrame(Decoder& decoder, int64_t timeStamp, Ref<WebCore::SharedBuffer>&& data)
 {
     auto promise = decodeFrameInternal(decoder, timeStamp, WTF::move(data), 0, 0);
-    return promise ? promise.releaseNonNull() : FramePromise::createAndReject("Decoding task did not complete"_s);
+    return promise ? promise.releaseNonNull() : DecodeFramePromise::createAndReject(DecodeFrameError::DidNotComplete);
 }
 
 static std::span<const uint8_t> frameDataSpan(std::span<const uint8_t> data) { return data; }
@@ -550,7 +557,7 @@ static Ref<WebCore::SharedBuffer> frameDataBuffer(std::span<const uint8_t> data)
 static Ref<WebCore::SharedBuffer> frameDataBuffer(Ref<WebCore::SharedBuffer>&& data) { return WTF::move(data); }
 
 template<typename Data>
-RefPtr<LibWebRTCCodecs::FramePromise> LibWebRTCCodecs::decodeFrameInternal(Decoder& decoder, int64_t timeStamp, Data&& data, uint16_t width, uint16_t height)
+RefPtr<LibWebRTCCodecs::DecodeFramePromise> LibWebRTCCodecs::decodeFrameInternal(Decoder& decoder, int64_t timeStamp, Data&& data, uint16_t width, uint16_t height)
 {
     Locker locker { m_connectionLock };
     if (decoder.hasError) {
@@ -559,7 +566,7 @@ RefPtr<LibWebRTCCodecs::FramePromise> LibWebRTCCodecs::decodeFrameInternal(Decod
     }
 
     if (!decoder.connection) {
-        FramePromise::AutoRejectProducer producer;
+        DecodeFramePromise::AutoRejectProducer producer;
         auto promise = producer.promise();
 
         decoder.pendingFrames.append({ timeStamp, frameDataBuffer(std::forward<Data>(data)), width, height, WTF::move(producer) });
@@ -599,6 +606,24 @@ void LibWebRTCCodecs::failedDecoding(VideoDecoderIdentifier decoderIdentifier)
         if (decoder->decoderCallback)
             decoder->decoderCallback(nullptr, 0);
     }
+}
+
+void LibWebRTCCodecs::decoderCreationFailed(VideoDecoderIdentifier decoderIdentifier)
+{
+    assertIsCurrent(workQueue());
+
+    auto* decoder = m_decoders.get(decoderIdentifier);
+    if (!decoder)
+        return;
+
+    bool hasDecoderCallback = false;
+    {
+        Locker locker { decoder->decodedImageCallbackLock };
+        hasDecoderCallback = !!decoder->decoderCallback;
+    }
+    // WebCodecs decoders handle the failure through the decode promise.
+    if (!hasDecoderCallback)
+        failedDecoding(decoderIdentifier);
 }
 
 void LibWebRTCCodecs::completedDecoding(IPC::Connection& connection, VideoDecoderIdentifier decoderIdentifier, int64_t timeStamp, int64_t timeStampNs, RemoteVideoFrameReference reference, RemoteVideoFrameProxy::Properties&& properties)

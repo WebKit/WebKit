@@ -1872,6 +1872,7 @@ def headers_for_type(type, for_implementation_file=False):
         'WebKit::ContentWorldIdentifier': ['"ContentWorldShared.h"'],
         'WebKit::ContentWorldData': ['"ContentWorldData.h"'],
         'WebKit::ContentWorldOption': ['"ContentWorldShared.h"'],
+        'WebKit::DecodeFrameResult': ['"VideoDecoderIdentifier.h"'],
         'WebKit::DidCacheOutgoingDocument': ['"SessionState.h"'],
         'WebKit::DocumentEditingContextRequest': ['"DocumentEditingContext.h"'],
         'WebKit::DragEventForwardingData': ['"DragEventForwardingData.h"'],

@@ -1,0 +1,4 @@
+
+PASS vp09.00.10.08 decoder keeps decoding across resolution changes below and above 64x64
+PASS av01.0.04M.08 decoder keeps decoding across resolution changes below and above 64x64
+

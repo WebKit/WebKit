@@ -32,4 +32,6 @@ namespace WebKit {
 struct VideoDecoderIdentifierType;
 using VideoDecoderIdentifier = AtomicObjectIdentifier<VideoDecoderIdentifierType>;
 
+enum class DecodeFrameResult : uint8_t { DecodingFailed, DecoderCreationFailed, Succeeded };
+
 } // namespace WebKit

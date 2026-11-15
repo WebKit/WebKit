@@ -46,11 +46,11 @@ public:
 private:
     void flush() final;
     void setFormat(std::span<const uint8_t>, uint16_t width, uint16_t height, RefPtr<VideoInfo>&&) final;
-    int32_t decodeFrame(int64_t timeStamp, std::span<const uint8_t>, RefPtr<VideoInfo>&&) final;
+    DecodeResult decodeFrame(int64_t timeStamp, std::span<const uint8_t>, RefPtr<VideoInfo>&&) final;
     void setFrameSize(uint16_t width, uint16_t height) final;
     void colorSpaceOverrideChanged() final;
 
-    int32_t decodeFrameInternal(int64_t timeStamp, std::span<const uint8_t> data);
+    DecodeResult decodeFrameInternal(int64_t timeStamp, std::span<const uint8_t> data);
     void setVideoInfo(Ref<VideoInfo>&&);
 
     void updateFormat(const VideoInfo&);

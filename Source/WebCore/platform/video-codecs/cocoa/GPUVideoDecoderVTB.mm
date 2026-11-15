@@ -148,29 +148,29 @@ static VideoDecoderVTBSession::CallbackMultiImage createMultiImageCallback(GPUVi
     });
 }
 
-int32_t GPUVideoDecoderVTB::decodeFrameInternal(int64_t timeStamp, std::span<const uint8_t> data)
+auto GPUVideoDecoderVTB::decodeFrameInternal(int64_t timeStamp, std::span<const uint8_t> data) -> DecodeResult
 {
     assertIsCurrent(queue());
 
     if (!m_format)
-        return 0;
+        return DecodeResult::MissingFormat;
 
     RetainPtr sample = sampleBufferFromVideoData(data, m_format.get());
     if (!sample)
-        return -1;
+        return DecodeResult::Failure;
 
     if (!m_decoder || !protect(m_decoder)->canAccept(m_format.get())) {
         if (RefPtr decoder = std::exchange(m_decoder, { }))
             decoder->flush();
         m_decoder = VideoDecoderVTBSession::create(m_format.get(), createPixelBufferAttributes(m_format.get()).get());
         if (!m_decoder)
-            return -1;
+            return DecodeResult::DecoderCreationFailed;
     }
 
     PAL::CMSampleBufferSetOutputPresentationTimeStamp(sample.get(), PAL::CMTimeMake(timeStamp, 1));
     VTDecodeInfoFlags decodeInfoFlags = kVTDecodeFrame_EnableAsynchronousDecompression;
     protect(m_decoder)->decodeMultiImageFrame(sample.get(), decodeInfoFlags, createMultiImageCallback(m_callback.get(), m_queue.get(), m_reorderQueueMaxSize));
-    return 0;
+    return DecodeResult::Success;
 }
 
 void GPUVideoDecoderVTB::setVideoInfo(Ref<VideoInfo>&& videoInfo)
@@ -228,7 +228,7 @@ void GPUVideoDecoderVTB::setFormat(std::span<const uint8_t>, uint16_t width, uin
         setVideoInfo(videoInfo.releaseNonNull());
 }
 
-int32_t GPUVideoDecoderVTB::decodeFrame(int64_t timeStamp, std::span<const uint8_t> data, RefPtr<VideoInfo>&& videoInfo)
+auto GPUVideoDecoderVTB::decodeFrame(int64_t timeStamp, std::span<const uint8_t> data, RefPtr<VideoInfo>&& videoInfo) -> DecodeResult
 {
     assertIsCurrent(queue());
 
