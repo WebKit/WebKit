@@ -121,9 +121,9 @@ std::optional<IntOutsets> Filter::calculateOutsets(ZoomFactor zoom) const
 
 // MARK: (FilterValueList)
 
-auto ToCSS<FilterValueList>::operator()(const FilterValueList& value, const Style::ComputedStyle& style) -> CSS::FilterValueList
+auto ToCSS<FilterValueList>::operator()(const FilterValueList& value, const Style::ComputedStyle& style, PropertyValueType valueType) -> CSS::FilterValueList
 {
-    return CSS::FilterValueList::map(value, [&](const auto& x) -> CSS::FilterValue { return toCSS(x, style); });
+    return CSS::FilterValueList::map(value, [&](const auto& x) -> CSS::FilterValue { return toCSS(x, style, valueType); });
 }
 
 auto ToStyle<CSS::FilterValueList>::operator()(const CSS::FilterValueList& value, const BuilderState& state) -> FilterValueList
@@ -152,9 +152,9 @@ auto CSSValueConversion<Filter>::operator()(BuilderState& state, const CSSValue&
     return toStyle(filter->filter(), state);
 }
 
-Ref<CSSValue> CSSValueCreation<Filter>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const Filter& value)
+Ref<CSSValue> CSSValueCreation<Filter>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const Filter& value, PropertyValueType valueType)
 {
-    return CSSFilterValue::create(toCSS(value, style));
+    return CSSFilterValue::create(toCSS(value, style, valueType));
 }
 
 // MARK: - Blending

@@ -44,10 +44,10 @@ namespace Style {
 
 // MARK: - Conversion
 
-auto ToCSS<TextShadow>::operator()(const TextShadow& value, const Style::ComputedStyle& style) -> CSS::TextShadow
+auto ToCSS<TextShadow>::operator()(const TextShadow& value, const Style::ComputedStyle& style, PropertyValueType valueType) -> CSS::TextShadow
 {
     return {
-        .color = toCSS(value.color, style),
+        .color = toCSS(value.color, style, valueType),
         .location = toCSS(value.location, style),
         .blur = toCSS(value.blur, style),
     };
@@ -62,12 +62,12 @@ auto ToStyle<CSS::TextShadow>::operator()(const CSS::TextShadow& value, const Bu
     };
 }
 
-Ref<CSSValue> CSSValueCreation<TextShadowList>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const TextShadowList& value)
+Ref<CSSValue> CSSValueCreation<TextShadowList>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const TextShadowList& value, PropertyValueType valueType)
 {
     CSS::TextShadowProperty::List list;
 
     for (const auto& shadow : value | std::views::reverse)
-        list.value.append(toCSS(shadow, style));
+        list.value.append(toCSS(shadow, style, valueType));
 
     return CSSTextShadowPropertyValue::create(CSS::TextShadowProperty { WTF::move(list) });
 }
@@ -102,9 +102,9 @@ auto CSSValueConversion<TextShadows>::operator()(BuilderState& state, const CSSV
 
 // MARK: - Serialization
 
-void Serialize<TextShadowList>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const TextShadowList& value)
+void Serialize<TextShadowList>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const TextShadowList& value, PropertyValueType valueType)
 {
-    serializationForCSSOnRangeLike(builder, context, style, value | std::views::reverse, SerializationSeparatorString<TextShadowList>);
+    serializationForCSSOnRangeLike(builder, context, style, value | std::views::reverse, SerializationSeparatorString<TextShadowList>, valueType);
 }
 
 // MARK: - Blending
