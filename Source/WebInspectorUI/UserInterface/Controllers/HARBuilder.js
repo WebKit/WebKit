@@ -405,8 +405,15 @@ WI.HARBuilder = class HARBuilder
     static date(date)
     {
         // ISO 8601
-        if (!date)
+        if (!date || isNaN(date.getTime()))
             return "";
+
+        // HAR 1.2 dates cannot have a negative or 5-digit year, so clamp to the epoch and the end of year 9999.
+        const minTime = 0;
+        const maxTime = Date.UTC(9999, 11, 31, 23, 59, 59, 999);
+        let time = date.getTime();
+        if (time < minTime || time > maxTime)
+            return new Date(Math.min(Math.max(time, minTime), maxTime)).toISOString();
 
         return date.toISOString();
     }

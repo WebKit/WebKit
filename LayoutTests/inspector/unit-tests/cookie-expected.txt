@@ -269,6 +269,35 @@ PASS: cookie.httpOnly should be 'false'.
 PASS: cookie.sameSite should be 'None'.
 
 
+-- Running test case: WI.Cookie.session
+PASS: A cookie without Expires or Max-Age should be a session cookie.
+PASS: Session cookie expirationDate should be null.
+PASS: A cookie with Expires should be persistent.
+PASS: A cookie with Max-Age should be persistent.
+PASS: Max-Age cookie expirationDate should be requestSentDate + Max-Age.
+PASS: A cookie with Max-Age=0 should be persistent.
+PASS: cookie.maxAge should be 0 for Max-Age=0.
+PASS: Max-Age=0 cookie expirationDate should be the epoch.
+PASS: A cookie with a negative Max-Age should be persistent.
+PASS: cookie.maxAge should be -1 for Max-Age=-1.
+PASS: Max-Age=-1 cookie expirationDate should be the epoch.
+PASS: A cookie with a huge negative Max-Age should be persistent.
+PASS: A huge negative Max-Age should have the epoch as its expiration date.
+PASS: A cookie with a huge Max-Age should be persistent.
+PASS: A cookie whose Max-Age is beyond the date range should have no expiration date.
+PASS: A cookie with a Max-Age past year 9999 should be persistent.
+PASS: A Max-Age past year 9999 should not change its expiration date.
+PASS: A cookie with both attributes should still have its Expires date.
+PASS: Max-Age should take precedence over Expires for the expiration date.
+
+-- Running test case: WI.HARBuilder.date
+PASS: A missing date should be an empty string.
+PASS: An invalid date should be an empty string.
+PASS: A date should be an ISO 8601 string.
+PASS: A date before 1970 should clamp to the epoch.
+PASS: The end of year 9999 should not be clamped.
+PASS: A date past year 9999 should clamp to the end of year 9999.
+
 -- Running test case: WI.Cookie.url
 PASS: Cookie url should include domain.
 PASS: Cookie url should include domain and path.

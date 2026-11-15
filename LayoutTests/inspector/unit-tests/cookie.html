@@ -274,6 +274,66 @@ function test()
     });
 
     suite.addTestCase({
+        name: "WI.Cookie.session",
+        description: "Cookie session property.",
+        test() {
+            let sessionCookie = WI.Cookie.parseSetCookieResponseHeader(`name=value`);
+            InspectorTest.expectThat(sessionCookie.session, `A cookie without Expires or Max-Age should be a session cookie.`);
+            InspectorTest.expectNull(sessionCookie.expirationDate(new Date(0)), `Session cookie expirationDate should be null.`);
+
+            let expiresCookie = WI.Cookie.parseSetCookieResponseHeader(`name=value; expires=Fri 06-Oct-2017 03:20:27 GMT`);
+            InspectorTest.expectFalse(expiresCookie.session, `A cookie with Expires should be persistent.`);
+
+            let maxAgeCookie = WI.Cookie.parseSetCookieResponseHeader(`name=value; Max-Age=3600`);
+            InspectorTest.expectFalse(maxAgeCookie.session, `A cookie with Max-Age should be persistent.`);
+            InspectorTest.expectEqual(maxAgeCookie.expirationDate(new Date(0)).getTime(), 1000 * 60 * 60, `Max-Age cookie expirationDate should be requestSentDate + Max-Age.`);
+
+            let zeroMaxAgeCookie = WI.Cookie.parseSetCookieResponseHeader(`name=value; Max-Age=0`);
+            InspectorTest.expectFalse(zeroMaxAgeCookie.session, `A cookie with Max-Age=0 should be persistent.`);
+            InspectorTest.expectEqual(zeroMaxAgeCookie.maxAge, 0, `cookie.maxAge should be 0 for Max-Age=0.`);
+            InspectorTest.expectEqual(zeroMaxAgeCookie.expirationDate(new Date(1000)).getTime(), 0, `Max-Age=0 cookie expirationDate should be the epoch.`);
+
+            let negativeMaxAgeCookie = WI.Cookie.parseSetCookieResponseHeader(`name=value; Max-Age=-1`);
+            InspectorTest.expectFalse(negativeMaxAgeCookie.session, `A cookie with a negative Max-Age should be persistent.`);
+            InspectorTest.expectEqual(negativeMaxAgeCookie.maxAge, -1, `cookie.maxAge should be -1 for Max-Age=-1.`);
+            InspectorTest.expectEqual(negativeMaxAgeCookie.expirationDate(new Date(1000)).getTime(), 0, `Max-Age=-1 cookie expirationDate should be the epoch.`);
+
+            let hugeNegativeMaxAgeCookie = WI.Cookie.parseSetCookieResponseHeader(`name=value; Max-Age=-100000000000`);
+            InspectorTest.expectFalse(hugeNegativeMaxAgeCookie.session, `A cookie with a huge negative Max-Age should be persistent.`);
+            InspectorTest.expectEqual(hugeNegativeMaxAgeCookie.expirationDate(new Date(1000)).getTime(), 0, `A huge negative Max-Age should have the epoch as its expiration date.`);
+
+            let hugeMaxAgeCookie = WI.Cookie.parseSetCookieResponseHeader(`name=value; Max-Age=99999999999999999999`);
+            InspectorTest.expectFalse(hugeMaxAgeCookie.session, `A cookie with a huge Max-Age should be persistent.`);
+            InspectorTest.expectNull(hugeMaxAgeCookie.expirationDate(new Date(0)), `A cookie whose Max-Age is beyond the date range should have no expiration date.`);
+
+            let pastYear9999Cookie = WI.Cookie.parseSetCookieResponseHeader(`name=value; Max-Age=253402300800`);
+            InspectorTest.expectFalse(pastYear9999Cookie.session, `A cookie with a Max-Age past year 9999 should be persistent.`);
+            InspectorTest.expectEqual(pastYear9999Cookie.expirationDate(new Date(0)).getTime(), 253402300800 * 1000, `A Max-Age past year 9999 should not change its expiration date.`);
+
+            // Max-Age takes precedence over Expires.
+            let expiresAndMaxAgeCookie = WI.Cookie.parseSetCookieResponseHeader(`name=value; expires=Fri 06-Oct-2017 03:20:27 GMT; Max-Age=0`);
+            InspectorTest.expectThat(expiresAndMaxAgeCookie.expires instanceof Date, `A cookie with both attributes should still have its Expires date.`);
+            InspectorTest.expectEqual(expiresAndMaxAgeCookie.expirationDate(new Date(1000)).getTime(), 0, `Max-Age should take precedence over Expires for the expiration date.`);
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "WI.HARBuilder.date",
+        description: "HAR dates should be ISO 8601 with a 4-digit year.",
+        test() {
+            InspectorTest.expectEqual(WI.HARBuilder.date(null), "", `A missing date should be an empty string.`);
+            InspectorTest.expectEqual(WI.HARBuilder.date(new Date(NaN)), "", `An invalid date should be an empty string.`);
+            InspectorTest.expectEqual(WI.HARBuilder.date(new Date(1000)), "1970-01-01T00:00:01.000Z", `A date should be an ISO 8601 string.`);
+            InspectorTest.expectEqual(WI.HARBuilder.date(new Date(-1000)), "1970-01-01T00:00:00.000Z", `A date before 1970 should clamp to the epoch.`);
+            InspectorTest.expectEqual(WI.HARBuilder.date(new Date(Date.UTC(9999, 11, 31, 23, 59, 59, 999))), "9999-12-31T23:59:59.999Z", `The end of year 9999 should not be clamped.`);
+            InspectorTest.expectEqual(WI.HARBuilder.date(new Date(253402300800 * 1000)), "9999-12-31T23:59:59.999Z", `A date past year 9999 should clamp to the end of year 9999.`);
+            return true;
+        }
+    });
+
+    suite.addTestCase({
         name: "WI.Cookie.url",
         description: "Cookie url property.",
         test() {
