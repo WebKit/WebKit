@@ -97,11 +97,6 @@ std::pair<LayoutUnit, LayoutUnit> RenderSlider::computeIntrinsicLogicalWidthCont
     return computeIntrinsicLogicalWidths();
 }
 
-bool RenderSlider::inDragMode() const
-{
-    return protect(element())->sliderThumbElement()->active();
-}
-
 double RenderSlider::valueRatio() const
 {
     Ref element = this->element();
