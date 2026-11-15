@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Removing a focused element must not scroll the document</title>
+<link rel="help" href="https://drafts.csswg.org/cssom-view/#scrolling-events">
+<link rel="help" href="https://html.spec.whatwg.org/multipage/interaction.html#focus">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<div style="height: 200vh"></div>
+<div id="belowFold" style="height: 50px"></div>
+<div id="portal"></div>
+
+<script>
+const portal = document.getElementById("portal");
+
+function makeDialog() {
+  const dialog = document.createElement("div");
+  dialog.style.cssText = "position: absolute; top: 0; margin: 20px; padding: 20px;";
+  const input = document.createElement("input");
+  dialog.appendChild(input);
+  return dialog;
+}
+
+function twoFrames() {
+  return new Promise(resolve =>
+      requestAnimationFrame(() => requestAnimationFrame(resolve)));
+}
+
+promise_test(async t => {
+  window.scrollTo(0, 0);
+  assert_equals(window.scrollY, 0, "precondition: document starts at the top");
+
+  // Insert an absolutely-positioned element containing a programmatically
+  // focused input. Focusing schedules a deferred selection reveal that has not
+  // run yet (no user interaction, no rendering update has happened).
+  const dialog = makeDialog();
+  portal.append(dialog);
+  t.add_cleanup(() => dialog.remove());
+  dialog.querySelector("input").focus();
+
+  // Remove the element (as a key handler might) before the reveal runs. The
+  // caret is relocated by the removal, but that is not a user-initiated caret
+  // movement and must not scroll the document.
+  dialog.remove();
+
+  // Allow the rendering update / any deferred reveal to run.
+  await twoFrames();
+
+  assert_equals(window.scrollY, 0,
+      "removing the focused element must not scroll to the bottom");
+}, "Removing a programmatically-focused element does not scroll the document");
+</script>
