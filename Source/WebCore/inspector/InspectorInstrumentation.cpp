@@ -1747,6 +1747,18 @@ void InspectorInstrumentation::willApplyKeyframeEffectImpl(InstrumentingAgents& 
         animationAgent->willApplyKeyframeEffect(target, effect, computedTiming);
 }
 
+void InspectorInstrumentation::didChangeStyleOriginatedAnimationPhaseImpl(InstrumentingAgents& instrumentingAgents, StyleOriginatedAnimation& animation, AnimationEffectPhase phase)
+{
+    if (CheckedPtr animationAgent = instrumentingAgents.trackingAnimationAgent())
+        animationAgent->didChangeStyleOriginatedAnimationPhase(animation, phase);
+}
+
+void InspectorInstrumentation::willDestroyStyleOriginatedAnimationImpl(InstrumentingAgents& instrumentingAgents, StyleOriginatedAnimation& animation)
+{
+    if (CheckedPtr animationAgent = instrumentingAgents.trackingAnimationAgent())
+        animationAgent->willDestroyStyleOriginatedAnimation(animation);
+}
+
 void InspectorInstrumentation::didChangeWebAnimationNameImpl(InstrumentingAgents& instrumentingAgents, WebAnimation& animation)
 {
     if (CheckedPtr animationAgent = instrumentingAgents.enabledAnimationAgent())

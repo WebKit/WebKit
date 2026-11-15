@@ -32,6 +32,7 @@
 #include "Element.h"
 #include "EventNames.h"
 #include "EventTargetInlines.h"
+#include "InspectorInstrumentation.h"
 #include "KeyframeEffect.h"
 #include "Logging.h"
 #include "NodeDocument.h"
@@ -51,7 +52,10 @@ StyleOriginatedAnimation::StyleOriginatedAnimation(const Styleable& styleable)
 {
 }
 
-StyleOriginatedAnimation::~StyleOriginatedAnimation() = default;
+StyleOriginatedAnimation::~StyleOriginatedAnimation()
+{
+    InspectorInstrumentation::willDestroyStyleOriginatedAnimation(*this);
+}
 
 const std::optional<const Styleable> StyleOriginatedAnimation::owningElement() const
 {
@@ -219,6 +223,8 @@ void StyleOriginatedAnimation::cancel(WebAnimation::Silently silently)
             enqueueDOMEvent(eventNames().transitioncancelEvent, cancelationTime, cancelationTime);
     }
 
+    InspectorInstrumentation::didChangeStyleOriginatedAnimationPhase(*this, AnimationEffectPhase::Idle);
+
     m_wasPending = isPending;
     m_previousPhase = AnimationEffectPhase::Idle;
     m_previousIteration = 0;
@@ -382,6 +388,9 @@ void StyleOriginatedAnimation::invalidateDOMEvents(WebAnimationTime cancelationT
         } else if ((!wasIdle && !wasAfter) && isIdle)
             enqueueDOMEvent(eventNames().transitioncancelEvent, cancelationTime, cancelationTime);
     }
+
+    if (currentPhase != m_previousPhase)
+        InspectorInstrumentation::didChangeStyleOriginatedAnimationPhase(*this, currentPhase);
 
     m_wasPending = isPending;
     m_previousPhase = currentPhase;

@@ -1,0 +1,67 @@
+Tests that Animation.trackingUpdate reports when CSS animations and transitions end.
+
+
+== Running test suite: Animation.Tracking.Done
+-- Running test case: Animation.Tracking.Done.Start
+-- Running test case: Animation.Tracking.Done.Ended
+PASS: #no-fill should have one record.
+PASS: #no-fill should report "done" once.
+PASS: #no-fill should report "done" last.
+PASS: #fill-forwards should have one record.
+PASS: #fill-forwards should report "done" once.
+PASS: #fill-forwards should report "done" last.
+PASS: #delayed should have one record.
+PASS: #delayed should report "done" once.
+PASS: #delayed should report "done" last.
+PASS: #iterations should have one record.
+PASS: #iterations should report "done" once.
+PASS: #iterations should report "done" last.
+PASS: #transition should have one record.
+PASS: #transition should report "done" once.
+PASS: #transition should report "done" last.
+
+-- Running test case: Animation.Tracking.Done.ForwardsWithIterationsAfterStall
+PASS: #fill-forwards-iterations should have one record.
+PASS: #fill-forwards-iterations should report "done" once.
+PASS: #fill-forwards-iterations should report "done" last.
+
+-- Running test case: Animation.Tracking.Done.AcceleratedForwardsWithIterations
+PASS: #opacity-iterations should have one record.
+PASS: #opacity-iterations should report "done" once.
+PASS: #opacity-iterations should report "done" last.
+PASS: #transform-iterations should have one record.
+PASS: #transform-iterations should report "done" once.
+PASS: #transform-iterations should report "done" last.
+
+-- Running test case: Animation.Tracking.Done.DoneStaysLastAfterRemoval
+PASS: #no-fill should have one record.
+PASS: #no-fill should report "done" once.
+PASS: #no-fill should report "done" last.
+PASS: #fill-forwards should have one record.
+PASS: #fill-forwards should report "done" once.
+PASS: #fill-forwards should report "done" last.
+PASS: #fill-forwards-iterations should have one record.
+PASS: #fill-forwards-iterations should report "done" once.
+PASS: #fill-forwards-iterations should report "done" last.
+PASS: #opacity-iterations should have one record.
+PASS: #opacity-iterations should report "done" once.
+PASS: #opacity-iterations should report "done" last.
+
+-- Running test case: Animation.Tracking.Done.RepeatedTransitions
+PASS: Should have 6 records for #repeated.
+PASS: Every record should name the "width" transition.
+PASS: Every record should report "done" once and last.
+PASS: No record should lack its element.
+
+-- Running test case: Animation.Tracking.Done.Canceled
+PASS: #canceled should have one record.
+PASS: #canceled should report "canceled" once.
+PASS: #canceled should report "canceled" last.
+
+-- Running test case: Animation.Tracking.Done.CanceledBeforeFirstTick
+PASS: #canceled-before-tick should have one record.
+PASS: #canceled-before-tick should report "canceled" once.
+PASS: #canceled-before-tick should report "canceled" last.
+
+-- Running test case: Animation.Tracking.Done.Stop
+
