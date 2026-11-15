@@ -1,0 +1,8 @@
+2d.fillStyle.parse.current.stylesheet
+currentColor should take into account color set by CSS stylesheet
+Actual output:
+Expected output:
+
+
+PASS currentColor should take into account color set by CSS stylesheet
+
