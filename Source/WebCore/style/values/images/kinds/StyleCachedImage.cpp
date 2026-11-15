@@ -221,7 +221,7 @@ WebCore::CachedImage* CachedImage::cachedImage() const
     return m_cachedImage.get();
 }
 
-Ref<CSSValue> CachedImage::computedStyleValue(const Style::ComputedStyle& style) const
+Ref<CSSValue> CachedImage::computedStyleValue(const Style::ComputedStyle& style, PropertyValueType) const
 {
     return m_cssValue->copyForComputedStyle(toCSS(m_url, style));
 }

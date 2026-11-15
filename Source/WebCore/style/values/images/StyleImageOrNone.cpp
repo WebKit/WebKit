@@ -37,14 +37,14 @@ namespace Style {
 
 // MARK: - Conversion
 
-auto ToCSS<ImageOrNone>::operator()(const ImageOrNone& value, const Style::ComputedStyle& style) -> CSS::ImageOrNone
+auto ToCSS<ImageOrNone>::operator()(const ImageOrNone& value, const Style::ComputedStyle& style, PropertyValueType valueType) -> CSS::ImageOrNone
 {
     return value.switchOn(
         [](CSS::Keyword::None keyword) -> CSS::ImageOrNone {
             return keyword;
         },
         [&](const ImageWrapper& image) -> CSS::ImageOrNone {
-            return toCSS(image, style);
+            return toCSS(image, style, valueType);
         }
     );
 }

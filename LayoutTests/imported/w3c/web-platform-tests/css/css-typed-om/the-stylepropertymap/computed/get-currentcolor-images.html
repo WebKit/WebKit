@@ -1,0 +1,64 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Computed StylePropertyMap.get with currentcolor in image properties</title>
+<link rel="help" href="https://drafts.css-houdini.org/css-typed-om-1/#computed-stylepropertymapreadonly-objects">
+<link rel="help" href="https://drafts.csswg.org/css-color-4/#resolving-other-colors">
+<link rel="help" href="https://drafts.csswg.org/css-images-4/#color-stop-syntax">
+<link rel="help" href="https://drafts.csswg.org/css-images-4/#image-set-notation">
+<link rel="help" href="https://drafts.csswg.org/css-images-4/#cross-fade-function">
+<link rel="help" href="https://drafts.csswg.org/css-images-4/#image-notation">
+<link rel="help" href="https://drafts.fxtf.org/filter-effects-1/#FilterCSSImageValue">
+<link rel="help" href="https://drafts.csswg.org/css-color-5/#light-dark">
+<meta name="assert" content="The computed value of an image that uses currentcolor, such as in a gradient color stop, keeps currentcolor instead of using the value of the color property.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="../../resources/testhelper.js"></script>
+<body>
+<div id="log"></div>
+<script>
+'use strict';
+
+function testKeepsCurrentColor(property, value) {
+  test(t => {
+    const [element, styleMap] = createElementWithComputedStyleMap(t, `${property}: ${value}`);
+    assert_not_equals(element.style.getPropertyValue(property), '', `'${value}' is a valid value of '${property}'`);
+    element.style.color = 'rgb(0, 128, 0)';
+    const computedWithGreen = styleMap.getAll(property).map(String).join(', ');
+    element.style.color = 'rgb(0, 0, 255)';
+    const computedWithBlue = styleMap.getAll(property).map(String).join(', ');
+    assert_regexp_match(computedWithGreen, /currentcolor/i, 'The computed value keeps currentcolor');
+    assert_equals(computedWithBlue, computedWithGreen, 'The computed value does not depend on the color property');
+  }, `Computed '${property}: ${value}' keeps currentcolor`);
+}
+
+const images = [
+  'linear-gradient(currentcolor, red)',
+  'linear-gradient(color-mix(in srgb, currentcolor, red), red)',
+  'repeating-linear-gradient(currentcolor, red 10%)',
+  'radial-gradient(currentcolor, red)',
+  'repeating-radial-gradient(currentcolor, red 10%)',
+  'conic-gradient(currentcolor, red)',
+  'repeating-conic-gradient(currentcolor, red 10%)',
+  'image-set(linear-gradient(currentcolor, red) 1x)',
+];
+
+for (const property of ['background-image', 'mask-image', 'border-image-source', 'mask-border-source', 'list-style-image', 'shape-outside']) {
+  for (const image of images)
+    testKeepsCurrentColor(property, image);
+}
+
+for (const image of [
+  'image(currentcolor)',
+  'cross-fade(linear-gradient(currentcolor, red) 50%, linear-gradient(red, blue))',
+  'light-dark(linear-gradient(currentcolor, red), linear-gradient(red, blue))',
+  'filter(linear-gradient(red, blue), drop-shadow(1px 1px currentcolor))',
+])
+  testKeepsCurrentColor('background-image', image);
+
+testKeepsCurrentColor('background-image', 'none, linear-gradient(currentcolor, red)');
+testKeepsCurrentColor('mask-image', 'none, linear-gradient(currentcolor, red)');
+testKeepsCurrentColor('background', 'linear-gradient(currentcolor, red)');
+testKeepsCurrentColor('mask', 'linear-gradient(currentcolor, red)');
+testKeepsCurrentColor('list-style', 'linear-gradient(currentcolor, red)');
+
+</script>

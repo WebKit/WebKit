@@ -67,7 +67,7 @@ public:
 
     NODELETE WrappedImagePtr data() const final { return m_cachedImage.get(); }
 
-    Ref<CSSValue> computedStyleValue(const Style::ComputedStyle&) const final;
+    Ref<CSSValue> computedStyleValue(const Style::ComputedStyle&, PropertyValueType) const final;
     Ref<DeprecatedCSSOMValue> computedStyleDeprecatedCSSOMValue(CSSValuePool&, const Style::ComputedStyle&, CSSStyleDeclaration&) const final;
 
     bool canRender(const RenderElement*) const final;

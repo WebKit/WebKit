@@ -65,10 +65,10 @@ IntOutsets DropShadow::calculateOutsets(ZoomFactor zoom) const
 
 // MARK: - Conversion
 
-auto ToCSS<DropShadow>::operator()(const DropShadow& value, const Style::ComputedStyle& style) -> CSS::DropShadow
+auto ToCSS<DropShadow>::operator()(const DropShadow& value, const Style::ComputedStyle& style, PropertyValueType valueType) -> CSS::DropShadow
 {
     return {
-        .color = toCSS(value.color, style),
+        .color = toCSS(value.color, style, valueType),
         .location = toCSS(value.location, style),
         .stdDeviation = toCSS(value.stdDeviation, style),
     };
