@@ -26,6 +26,7 @@ from fakeredis import FakeStrictRedis
 from redis import StrictRedis
 from resultsdbpy.controller.api_routes import APIRoutes
 from resultsdbpy.flask_support.flask_testcase import FlaskTestCase
+from resultsdbpy.model import sub_suite_context_unittest
 from resultsdbpy.model.cassandra_context import CassandraContext
 from resultsdbpy.model.mock_cassandra_context import MockCassandraContext
 from resultsdbpy.model.mock_model_factory import MockModelFactory
@@ -36,7 +37,7 @@ class SuiteControllerTest(FlaskTestCase, WaitForDockerTestCase):
     KEYSPACE = 'suite_controller_test_keyspace'
 
     @classmethod
-    def setup_webserver(cls, app, redis=StrictRedis, cassandra=CassandraContext):
+    def setup_webserver(cls, app, redis=StrictRedis, cassandra=CassandraContext, api_test_results=None):
         with MockModelFactory.safari(), MockModelFactory.webkit():
             cassandra.drop_keyspace(keyspace=cls.KEYSPACE)
             model = MockModelFactory.create(redis=redis(), cassandra=cassandra(keyspace=cls.KEYSPACE, create_keyspace=True))
@@ -44,6 +45,9 @@ class SuiteControllerTest(FlaskTestCase, WaitForDockerTestCase):
 
             MockModelFactory.add_mock_results(model)
             MockModelFactory.process_results(model)
+            if api_test_results:
+                MockModelFactory.add_mock_results(model, suite='api-tests', test_results=api_test_results)
+                MockModelFactory.process_results(model, suite='api-tests')
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()
@@ -103,3 +107,78 @@ class SuiteControllerTest(FlaskTestCase, WaitForDockerTestCase):
         response = client.get(self.URL + f'/api/results/layout-tests?platform=ios&style=Debug&recent=False&after_time={time.time() + 1}')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), 0)
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    @FlaskTestCase.run_with_webserver(api_test_results=sub_suite_context_unittest.SubSuiteContextTest.api_test_results())
+    def test_results_by_sub_suite(self, client, **kwargs):
+        response = client.get(self.URL + '/api/results/api-tests?platform=ios&style=Debug&sub_suite=TestWebKitAPI.TextExtractionTests')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json()), 2)
+        stats = sub_suite_context_unittest.SubSuiteContextTest.stats(run=2, failed=1, unexpected_failed=1)
+        for i in range(2):
+            self.assertEqual(len(response.json()[i]['results']), 5)
+            self.assertEqual(response.json()[i]['results'][0]['stats'], stats)
+            self.assertEqual(sorted(response.json()[i]['results'][0]), ['details', 'start_time', 'stats', 'uuid'])
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    @FlaskTestCase.run_with_webserver()
+    def test_results_by_sub_suite_by_time(self, client, **kwargs):
+        response = client.get(f'{self.URL}/api/results/layout-tests?platform=ios&style=Debug&recent=False&after_time={time.time() - 60 * 60}&sub_suite=fast/encoding')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json()), 2)
+        for i in range(2):
+            self.assertEqual(len(response.json()[i]['results']), 5)
+            self.assertEqual(response.json()[i]['results'][0]['stats'], sub_suite_context_unittest.SubSuiteContextTest.stats(run=4))
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    @FlaskTestCase.run_with_webserver(api_test_results=sub_suite_context_unittest.SubSuiteContextTest.api_test_results())
+    def test_no_results_by_sub_suite(self, client, **kwargs):
+        response = client.get(self.URL + '/api/results/api-tests?platform=ios&style=Debug&sub_suite=TestWebKitAPI.Text')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), [])
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    @FlaskTestCase.run_with_webserver(api_test_results=sub_suite_context_unittest.SubSuiteContextTest.api_test_results())
+    def test_results_by_one_sub_suite_at_a_time(self, client, **kwargs):
+        stats = sub_suite_context_unittest.SubSuiteContextTest.stats
+        response = client.get(self.URL + '/api/results/api-tests?platform=ios&style=Debug&sub_suite=TestWTF&sub_suite=TestWTF&sub_suite=')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()[0]['results'][0]['stats'], stats(run=1, failed=1))
+
+        response = client.get(self.URL + '/api/results/api-tests?platform=ios&style=Debug&sub_suite=TestWebKitAPI.TextExtractionTests&sub_suite=TestWTF')
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json()['description'], 'One sub-suite at a time')
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    @FlaskTestCase.run_with_webserver()
+    def test_results_without_sub_suite(self, client, **kwargs):
+        response = client.get(self.URL + '/api/results/layout-tests?platform=ios&style=Debug')
+        self.assertEqual(response.status_code, 200)
+        for run in response.json()[0]['results']:
+            self.assertEqual(sorted(run), ['details', 'start_time', 'stats', 'uuid'])
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    @FlaskTestCase.run_with_webserver(api_test_results=sub_suite_context_unittest.SubSuiteContextTest.api_test_results())
+    def test_sub_suites(self, client, **kwargs):
+        response = client.get(self.URL + '/api/api-tests/sub-suites')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual([node['name'] for node in response.json()['sub_suites']], ['TestAuthentication', 'TestWTF', 'TestWebCore', 'TestWebKitAPI'])
+        self.assertEqual(response.json()['sub_suites'][1], dict(name='TestWTF', children=[dict(name='TestWTF:WTF_Deque', same_tests_as_parent=True)]))
+        self.assertEqual(response.json()['has_runs'], True)
+        self.assertEqual(response.json()['max_selected'], 10)
+
+        response = client.get(self.URL + '/api/layout-tests/sub-suites')
+        self.assertEqual([node['name'] for node in response.json()['sub_suites']], ['fast'])
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    @FlaskTestCase.run_with_webserver()
+    def test_sub_suites_of_a_suite_without_runs(self, client, **kwargs):
+        response = client.get(self.URL + '/api/api-tests/sub-suites')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), dict(suite='api-tests', sub_suites=[], has_runs=False, max_selected=10))
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    @FlaskTestCase.run_with_webserver()
+    def test_sub_suites_take_no_parameters(self, client, **kwargs):
+        response = client.get(self.URL + '/api/layout-tests/sub-suites?platform=mac')
+        self.assertEqual(response.status_code, 400)

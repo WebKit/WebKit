@@ -31,10 +31,10 @@
 
 <script type="module">
 import {CommitBank} from '/assets/js/commit.js';
-import {deepCompare, ErrorDisplay, queryToParams, paramsToQuery, escapeHTML} from '/assets/js/common.js';
+import {deepCompare, ErrorDisplay, queryToParams, paramsToQuery, QueryModifier, escapeHTML} from '/assets/js/common.js';
 import {Configuration} from '/assets/js/configuration.js';
 import {SUITES_LIMITS} from '/assets/js/constants.js';
-import {Drawer, BranchSelector, ConfigurationSelectors, LimitSlider, CommitRepresentation, CommitSearchBar} from '/assets/js/drawer.js';
+import {Drawer, BranchSelector, suitesOnShow, SubSuiteSelector, subSuitesInAddress, ConfigurationSelectors, LimitSlider, CommitRepresentation, CommitSearchBar} from '/assets/js/drawer.js';
 import {InvestigateDrawer} from '/assets/js/investigate.js';
 import {Legend, TimelineFromEndpoint} from '/assets/js/timeline.js';
 import {ToolTip} from '/assets/js/tooltip.js';
@@ -49,6 +49,8 @@ class MainView {
         this.currentParams = queryToParams(document.URL.split('?')[1]);
         this.currentLimit = this.currentParams.limit ? parseInt(this.currentParams.limit[this.currentParams.limit.length - 1]) : DEFAULT_LIMIT;
         delete this.currentParams.limit;
+        delete this.currentParams.sub_suite;
+        delete this.currentParams.suite;
 
         this.ref = REF.createRef({
             state: SUITES,
@@ -57,7 +59,9 @@ class MainView {
                     DOM.inject(element, this.placeholder());
                 else if (state.error)
                     DOM.inject(element, ErrorDisplay(state));
-                else if (state.length === 0)
+                else if (state.length && !suitesOnShow(state).length && new QueryModifier('suite').current().every(value => !value))
+                    DOM.inject(element, `<div class="text">No suites on show</div>`);
+                else if (!suitesOnShow(state).length)
                     DOM.inject(element, ErrorDisplay({
                         error: 'Not Found',
                         description: 'No suites matching the specified criteria',
@@ -68,13 +72,8 @@ class MainView {
         });
         this.latestDispatch = Date.now();
         this.children = {};
-
-        SUITES.forEach((suite) => {
-            this.children[suite] = new TimelineFromEndpoint('api/results/' + suite, {
-                suite,
-                searchEvent: onCommitSearch
-            });
-        });
+        this.cards = {};
+        this.makeCards(SUITES);
     }
     unpackSuites(suitesJson) {
         if (suitesJson.error)
@@ -88,22 +87,72 @@ class MainView {
         });
 
         let sortedSuites = [...suites].sort();
-        Object.keys(this.children).forEach(key => {this.children[key].teardown();});
+        this.makeCards(sortedSuites);
+        return sortedSuites;
+    }
+    makeCards(suites, {keepTimelines = false} = {}) {
+        const previousChildren = this.children;
         this.children = {};
-        sortedSuites.forEach((suite) => {
-            this.children[suite] = new TimelineFromEndpoint('api/results/' + suite, {
-                suite,
-                searchEvent: onCommitSearch
+        this.cards = {};
+        const onShow = suitesOnShow(suites);
+        const picked = subSuitesInAddress(suites);
+        this.pickedSuites = [...picked.keys()].filter(suite => onShow.includes(suite));
+        onShow.forEach((suite) => {
+            this.cards[suite] = (picked.get(suite) || [null]).map(subSuite => {
+                const title = subSuite ? `${suite} › ${subSuite}` : suite;
+                this.children[title] = (keepTimelines && previousChildren[title]) || new TimelineFromEndpoint('api/results/' + suite, {
+                    suite,
+                    subSuite,
+                    searchEvent: onCommitSearch
+                });
+                return title;
             });
         });
-        return sortedSuites;
+        Object.keys(previousChildren).forEach(title => {
+            if (previousChildren[title] !== this.children[title])
+                previousChildren[title].teardown();
+        });
+    }
+    updateCards() {
+        const element = this.ref.element;
+        const suites = this.ref.state;
+        if (!element || !Array.isArray(suites))
+            return;
+        const shownCards = new Map([...element.querySelectorAll(':scope > [data-card]')].map(card => [card.dataset.card, card]));
+        this.makeCards(suites, {keepTimelines: true});
+        const titles = this.cardTitles(suites);
+        if (!titles.length || !shownCards.size) {
+            this.ref.setState(suites);
+            return;
+        }
+        shownCards.forEach((card, title) => {
+            if (!titles.includes(title))
+                DOM.remove(card);
+        });
+        let place = element.firstElementChild;
+        titles.forEach(title => {
+            const card = shownCards.get(title);
+            if (card === place)
+                place = card.nextElementSibling;
+            else if (card)
+                place.before(card);
+            else if (place)
+                DOM.before(place, this.cardMarkup(title));
+            else
+                DOM.append(element, this.cardMarkup(title));
+        });
     }
     reload() {
         let params = queryToParams(document.URL.split('?')[1]);
         let limit = params.limit ? parseInt(params.limit[params.limit.length - 1]) : DEFAULT_LIMIT;
         delete params.limit;
+        delete params.sub_suite;
+        delete params.suite;
 
         if (deepCompare(params, this.currentParams)) {
+            this.updateCards();
+            if (Array.isArray(this.ref.state))
+                onSuitesChange.add(this.ref.state);
             if (limit === this.currentLimit)
                 return;
 
@@ -131,12 +180,14 @@ class MainView {
         });
         if (params.branch)
             suiteParams.branch = params.branch;
-        suiteParams['suite'] = SUITES;
         let query = paramsToQuery(suiteParams);
         fetch(query ? 'api/suites?' + query: 'api/suites').then(response => {
             response.json().then(json => {
-                if (myDispatch === this.latestDispatch)
-                    self.ref.setState(this.unpackSuites(json));
+                if (myDispatch !== this.latestDispatch)
+                    return;
+                self.ref.setState(this.unpackSuites(json));
+                if (Array.isArray(self.ref.state))
+                    onSuitesChange.add(self.ref.state);
             });
         }).catch(error => {
             if (myDispatch === self.latestDispatch)
@@ -153,16 +204,22 @@ class MainView {
     toString() {
         return `<div ref="${this.ref}"></div>`;
     }
-    render(suites) {
-        let children = this.children;
-        return suites.map(suite => {
-            return `<div class="section">
+    cardTitles(suites) {
+        const pickedFirst = [...this.pickedSuites, ...suitesOnShow(suites).filter(suite => !this.pickedSuites.includes(suite))];
+        return pickedFirst.flatMap(suite => this.cards[suite]);
+    }
+    cardMarkup(title) {
+        return `<div data-card="${escapeHTML(title)}">
+                <div class="section">
                     <div class="header">
-                        <div class="title">${escapeHTML(suite)}</div>
+                        <div class="title">${escapeHTML(title)}</div>
                     </div>
-                    ${children[suite]}
-                </div><br>`;
-        }).join('');
+                    ${this.children[title]}
+                </div><br>
+            </div>`;
+    }
+    render(suites) {
+        return this.cardTitles(suites).map(title => this.cardMarkup(title)).join('');
     }
     notifyTimelinesRender() {
         for (let suite in this.children) {
@@ -172,6 +229,7 @@ class MainView {
 }
 
 let view = new MainView();
+const onSuitesChange = new EventStream();
 const onLayoutChange = new EventStream();
 onLayoutChange.action(() => {
     view.notifyTimelinesRender();
@@ -190,6 +248,7 @@ ${Drawer([
         CommitBank.reload();
         view.reload();
     }),
+    SubSuiteSelector(SUITES, onSuitesChange, () => {view.reload()}),
     ConfigurationSelectors(() => {view.reload()}),
     CommitRepresentation(() => {
         view.ref.setState(view.ref.state);

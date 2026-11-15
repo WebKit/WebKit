@@ -27,6 +27,13 @@ from resultsdbpy.controller.configuration_controller import configuration_for_qu
 from webkitflaskpy.util import AssertRequest, query_as_kwargs, limit_for_query, boolean_query, unescape_argument
 
 
+def sub_suite_for_query(sub_suite):
+    values = {value for value in sub_suite or [] if value}
+    if len(values) > 1:
+        abort(400, description='One sub-suite at a time')
+    return values.pop() if values else None
+
+
 def time_range_for_query():
     def decorator(method):
         def real_method(self=None, method=method, **kwargs):
@@ -52,9 +59,10 @@ def time_range_for_query():
 class SuiteController(HasCommitContext):
     DEFAULT_LIMIT = 1000
 
-    def __init__(self, suite_context):
+    def __init__(self, suite_context, sub_suite_context):
         super(SuiteController, self).__init__(suite_context.commit_context)
         self.suite_context = suite_context
+        self.sub_suite_context = sub_suite_context
 
     @query_as_kwargs()
     @uuid_range_for_query()
@@ -66,7 +74,7 @@ class SuiteController(HasCommitContext):
         self, suite=None, configurations=None, recent=None,
         branch=None, begin=None, end=None,
         begin_query_time=None, end_query_time=None,
-        limit=None, **kwargs
+        limit=None, sub_suite=None, **kwargs
     ):
         AssertRequest.is_type(['GET'])
         AssertRequest.query_kwargs_empty(**kwargs)
@@ -76,6 +84,7 @@ class SuiteController(HasCommitContext):
         with self.suite_context:
             if not suite:
                 abort(400, description='No suite specified')
+            sub_suite = sub_suite_for_query(sub_suite)
 
             query_dict = dict(
                 suite=suite, configurations=configurations, recent=recent,
@@ -83,17 +92,21 @@ class SuiteController(HasCommitContext):
                 begin_query_time=begin_query_time, end_query_time=end_query_time,
                 limit=limit,
             )
+            context = self.suite_context
+            if sub_suite:
+                context = self.sub_suite_context
+                query_dict['sub_suite'] = sub_suite
             specified_commits = sum([1 if element else 0 for element in [begin, end]])
             specified_timestamps = sum([1 if element else 0 for element in [begin_query_time, end_query_time]])
 
             if specified_commits >= specified_timestamps:
-                find_function = self.suite_context.find_by_commit
+                find_function = context.find_by_commit
 
                 def sort_function(result):
                     return result['uuid']
 
             else:
-                find_function = self.suite_context.find_by_start_time
+                find_function = context.find_by_start_time
 
                 def sort_function(result):
                     return result['start_time']
@@ -105,3 +118,13 @@ class SuiteController(HasCommitContext):
                     results=sorted(results, key=sort_function),
                 ))
             return jsonify(response)
+
+    @query_as_kwargs()
+    @unescape_argument(suite=['?', '#'])
+    def list_sub_suites(self, suite=None, **kwargs):
+        AssertRequest.is_type(['GET'])
+        AssertRequest.query_kwargs_empty(**kwargs)
+
+        if not suite:
+            abort(400, description='No suite specified')
+        return jsonify(self.sub_suite_context.tree(suite))
