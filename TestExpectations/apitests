@@ -581,7 +581,6 @@ webkit.org/b/329142 [ mac release ] TestWebKitAPI.WKWebExtensionAPIExtensionTest
 webkit.org/b/318821 [ sequoia ] TestWebKitAPI.WKWebExtensionAPINamespaceTests/noNotificationsObjectWithoutPermission() [ Pass Timeout ]
 webkit.org/b/318821 [ sequoia ] TestWebKitAPI.WKWebExtensionAPINamespaceTests/noWebNavigationObjectWithoutPermission() [ Pass Timeout ]
 webkit.org/b/328511 TestWebKitAPI.WKWebExtensionAPITabs.ActiveTab [ Pass Timeout Failure ]
-webkit.org/b/326130 [ ios release siteisolation ] TestWebKitAPI.WKWebExtensionAPITabs.CaptureVisibleTab [ Pass Timeout ]
 webkit.org/b/331131 TestWebKitAPI.WKWebExtensionAPITestTests/assertRejectsRejectsReturnedPromiseOnFailure() [ Pass Timeout ]
 webkit.org/b/331131 TestWebKitAPI.WKWebExtensionAPITestTests/assertResolvesRejectsReturnedPromiseOnFailure() [ Pass Timeout ]
 webkit.org/b/331131 TestWebKitAPI.WKWebExtensionAPITestTests/assertSafeStopsTestOnFailure() [ Pass Timeout ]
