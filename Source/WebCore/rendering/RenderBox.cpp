@@ -1059,6 +1059,20 @@ ScrollbarWidth scrollbarWidth(const RenderObject& renderer)
     return Style::toPlatform(renderer.style().scrollbarWidth());
 }
 
+LayoutRect RenderBox::halfBorderBoxRect() const
+{
+    auto halfLeft = borderLeft() / 2;
+    auto halfTop = borderTop() / 2;
+    auto halfRight = borderRight() / 2;
+    auto halfBottom = borderBottom() / 2;
+    return {
+        halfLeft,
+        halfTop,
+        borderBoxWidth() - halfLeft - halfRight,
+        borderBoxHeight() - halfTop - halfBottom
+    };
+}
+
 LayoutRect RenderBox::paddingBoxRect() const
 {
     auto offsetForScrollbar = 0_lu;
@@ -1096,6 +1110,8 @@ FloatRect RenderBox::referenceBoxRect(CSSBoxType boxType) const
         return paddingBoxRect();
     case CSSBoxType::MarginBox:
         return marginBoxRect();
+    case CSSBoxType::HalfBorderBox:
+        return halfBorderBoxRect();
     // stroke-box, view-box compute to border-box for HTML elements.
     case CSSBoxType::StrokeBox:
     case CSSBoxType::ViewBox:

@@ -2875,6 +2875,7 @@ FloatRect RenderElement::referenceBoxRect(CSSBoxType boxType) const
         return alignReferenceBox(objectBoundingBox());
     case CSSBoxType::BoxMissing:
     case CSSBoxType::BorderBox:
+    case CSSBoxType::HalfBorderBox:
     case CSSBoxType::MarginBox:
     case CSSBoxType::StrokeBox:
         return alignReferenceBox(strokeBoundingBox());

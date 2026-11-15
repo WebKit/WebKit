@@ -770,6 +770,7 @@ bool RenderLayerModelObject::pointInSVGClippingArea(const FloatPoint& point) con
         FloatRect referenceBox;
         switch (boxType) {
         case CSSBoxType::BorderBox:
+        case CSSBoxType::HalfBorderBox:
         case CSSBoxType::MarginBox:
         case CSSBoxType::StrokeBox:
         case CSSBoxType::BoxMissing:

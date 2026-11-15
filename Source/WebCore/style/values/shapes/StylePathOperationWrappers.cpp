@@ -157,6 +157,8 @@ NODELETE static std::optional<AcceleratedEffectCoordBox> toAcceleratedEffectCoor
         return AcceleratedEffectCoordBox::MarginBox;
     case CSSBoxType::BorderBox:
         return AcceleratedEffectCoordBox::BorderBox;
+    case CSSBoxType::HalfBorderBox:
+        return AcceleratedEffectCoordBox::HalfBorderBox;
     case CSSBoxType::PaddingBox:
         return AcceleratedEffectCoordBox::PaddingBox;
     case CSSBoxType::ContentBox:

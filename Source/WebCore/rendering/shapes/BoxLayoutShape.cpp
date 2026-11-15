@@ -75,6 +75,42 @@ Vector<FloatPoint> BoxShapeGeometry::contour() const
     return edge == Edge::Inner ? borderShape.innerShapeAsPolygon() : borderShape.outerShapeAsPolygon();
 }
 
+static BoxShapeGeometry computeHalfBorderBoxGeometry(const RenderBox& renderer)
+{
+    auto borderShape = BorderShape::shapeForBorderRect(renderer.usedStyle(), renderer.borderBoxRect());
+    auto& borderWidths = borderShape.borderWidths();
+    auto halfTop = borderWidths.top() / 2;
+    auto halfRight = borderWidths.right() / 2;
+    auto halfBottom = borderWidths.bottom() / 2;
+    auto halfLeft = borderWidths.left() / 2;
+
+    auto borderRect = borderShape.borderRect();
+    LayoutRect halfRect { borderRect.x() + halfLeft, borderRect.y() + halfTop, borderRect.width() - halfLeft - halfRight, borderRect.height() - halfTop - halfBottom };
+    RectEdges<LayoutUnit> halfWidths { halfTop, halfRight, halfBottom, halfLeft };
+
+    if (!borderShape.hasNonZeroRadii())
+        return { BorderShape { halfRect, halfWidths }, BoxShapeGeometry::Edge::Outer };
+
+    // The radius at the half-border-box edge is midway between the outer and inner (padding edge) radii.
+    // FIXME: css-shapes-1 does not define the corner radii for half-border-box; this follows the
+    // padding-box rule. See https://github.com/w3c/csswg-drafts/issues/14794.
+    auto shrinkRadius = [](const LayoutSize& radius, LayoutUnit halfHorizontal, LayoutUnit halfVertical) {
+        return LayoutSize { std::max(0_lu, radius.width() - halfHorizontal), std::max(0_lu, radius.height() - halfVertical) };
+    };
+    auto& outerRadii = borderShape.radii();
+    LayoutRoundedRect::Radii radii {
+        shrinkRadius(outerRadii.topLeft(), halfLeft, halfTop),
+        shrinkRadius(outerRadii.topRight(), halfRight, halfTop),
+        shrinkRadius(outerRadii.bottomLeft(), halfLeft, halfBottom),
+        shrinkRadius(outerRadii.bottomRight(), halfRight, halfBottom)
+    };
+    auto cornerCurvatures = borderShape.cornerCurvatures();
+    radii.scale(BorderShape::constrainedRadiiScale(halfRect, radii, cornerCurvatures));
+    if (!radii.areRenderableInRect(halfRect))
+        radii.makeRenderableInRect(halfRect);
+    return { BorderShape { halfRect, halfWidths, radii, cornerCurvatures }, BoxShapeGeometry::Edge::Outer };
+}
+
 BoxShapeGeometry computeGeometryForBoxShape(CSSBoxType box, const RenderBox& renderer)
 {
     CheckedRef style = renderer.style();
@@ -94,6 +130,8 @@ BoxShapeGeometry computeGeometryForBoxShape(CSSBoxType box, const RenderBox& ren
             radii.makeRenderableInRect(marginBox);
         return { BorderShape { marginBox, { }, radii, cornerCurvatures }, BoxShapeGeometry::Edge::Outer };
     }
+    case CSSBoxType::HalfBorderBox:
+        return computeHalfBorderBoxGeometry(renderer);
     case CSSBoxType::PaddingBox:
         return { BorderShape::shapeForBorderRect(renderer.usedStyle(), renderer.borderBoxRect()), BoxShapeGeometry::Edge::Inner };
     // fill-box compute to content-box for HTML elements.
