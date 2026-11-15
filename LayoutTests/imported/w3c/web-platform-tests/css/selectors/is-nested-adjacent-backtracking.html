@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Selectors: deeply nested :is() with sibling combinators that need backtracking</title>
+<link rel="help" href="https://drafts.csswg.org/selectors-4/#matches">
+<link rel="help" href="https://drafts.csswg.org/selectors-4/#adjacent-sibling-combinators">
+<link rel="help" href="https://drafts.csswg.org/selectors-4/#general-sibling-combinators">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<div id="container"></div>
+<script>
+function buildSelector(depth) {
+  let selector = "a + b + b + b ~ *";
+  for (let i = 1; i < depth; ++i)
+    selector = `a:is(${selector}) + b + b + b ~ *`;
+  return selector.replace(/\*$/, "x");
+}
+
+function buildTree(groups) {
+  container.textContent = "";
+  for (let i = 0; i < groups; ++i) {
+    container.appendChild(document.createElement("a"));
+    for (let j = 0; j < 3; ++j)
+      container.appendChild(document.createElement("b"));
+  }
+  const target = document.createElement("x");
+  container.appendChild(target);
+  return target;
+}
+
+for (let depth = 1; depth <= 12; ++depth) {
+  const selector = buildSelector(depth);
+
+  test(() => {
+    assert_true(buildTree(depth).matches(selector));
+  }, `matches() with ${depth} level(s), ${depth} group(s)`);
+
+  test(() => {
+    assert_false(buildTree(depth - 1).matches(selector));
+  }, `matches() with ${depth} level(s), ${depth - 1} group(s)`);
+
+  test(t => {
+    const target = buildTree(depth);
+    const style = document.createElement("style");
+    style.textContent = `${selector} { color: rgb(0, 128, 0); }`;
+    document.head.appendChild(style);
+    t.add_cleanup(() => style.remove());
+    assert_equals(getComputedStyle(target).color, "rgb(0, 128, 0)");
+  }, `Style rule with ${depth} level(s), ${depth} group(s)`);
+}
+</script>
