@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>function f(){const s="日本語é";debugger;}
+//# sourceURL=utf8-generated.js
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjogMywgInNvdXJjZXMiOiBbImNhZsOpLW9yaWdpbmFsLmpzIl0sICJzb3VyY2VzQ29udGVudCI6IFsiZnVuY3Rpb24gZigpIHtcbiAgICBjb25zdCBzID0gXCLml6XmnKzoqp7DqVwiOyBkZWJ1Z2dlcjtcbn1cbiJdLCAibmFtZXMiOiBbXSwgIm1hcHBpbmdzIjogIkFBQUEsYUFDSSxlQUFrQiJ9
+</script>
+<script>function g(){const s="日本語é";debugger;}
+//# sourceURL=utf8-no-charset-generated.js
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjogMywgInNvdXJjZXMiOiBbImNhZsOpLW9yaWdpbmFsLmpzIl0sICJzb3VyY2VzQ29udGVudCI6IFsiZnVuY3Rpb24gZygpIHtcbiAgICBjb25zdCBzID0gXCLml6XmnKzoqp7DqVwiOyBkZWJ1Z2dlcjtcbn1cbiJdLCAibmFtZXMiOiBbXSwgIm1hcHBpbmdzIjogIkFBQUEsYUFDSSxlQUFrQiJ9
+</script>
+<script>function bad(){}
+//# sourceURL=utf8-bad-map-generated.js
+//# sourceMappingURL=data:application/json;base64,@@@@
+</script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("SourceMap.InlineScript.UTF8");
+
+    const originalContentF = 'function f() {\n    const s = "日本語é"; debugger;\n}\n';
+    const originalContentG = originalContentF.replace("function f() {", "function g() {");
+
+    function mainResource() {
+        return WI.networkManager.mainFrame.mainResource;
+    }
+
+    function sourceMapForSourceURL(sourceURL) {
+        return mainResource().sourceMaps
+            .find((sourceMap) => sourceMap.originalSourceCode.sourceURL === sourceURL) || null;
+    }
+
+    async function whenSourceMapsReady() {
+        for (let i = 0; i < 500; ++i) {
+            if (sourceMapForSourceURL("utf8-generated.js") && sourceMapForSourceURL("utf8-no-charset-generated.js"))
+                return;
+            await Promise.delay(10);
+        }
+        InspectorTest.fail("Timed out waiting for inline script source maps to load.");
+    }
+
+    // Under Site Isolation the page target's debugger does not attach, and its scripts belong to frame targets.
+    function scriptsForURL(url) {
+        let scripts = [];
+        for (let target of WI.targets) {
+            if (target.hasDomain("Debugger"))
+                scripts.pushAll(WI.debuggerManager.scriptsForURL(url, target));
+        }
+        return scripts;
+    }
+
+    function checkContent(sourceURL, expectedContent, description) {
+        let sourceMap = sourceMapForSourceURL(sourceURL);
+        InspectorTest.assert(sourceMap, `Should have found the source map for "${sourceURL}".`);
+        if (!sourceMap)
+            return;
+
+        let resource = sourceMap.resources[0];
+        InspectorTest.expectEqual(resource.displayName, "café-original.js", `Source name for ${description} should be decoded as UTF-8.`);
+        return resource.requestContent().then(({rawContent}) => {
+            InspectorTest.expectEqual(rawContent, expectedContent, `Source content for ${description} should be decoded as UTF-8.`);
+        });
+    }
+
+    suite.addTestCase({
+        name: "SourceMap.InlineScript.UTF8.Base64ContentIsUTF8",
+        description: "A base64 data URL source map should have its bytes decoded as UTF-8, not Latin-1.",
+        async test() {
+            await whenSourceMapsReady();
+            await checkContent("utf8-generated.js", originalContentF, "a data URL with charset=utf-8");
+            await checkContent("utf8-no-charset-generated.js", originalContentG, "a data URL without a charset");
+        },
+    });
+
+    suite.addTestCase({
+        name: "SourceMap.InlineScript.UTF8.PauseColumnAfterNonASCII",
+        description: "The original column after a non-ASCII character should point at the paused token.",
+        async test() {
+            await whenSourceMapsReady();
+            let sourceMap = sourceMapForSourceURL("utf8-generated.js");
+            let resource = sourceMap.resources[0];
+            let {rawContent} = await resource.requestContent();
+
+            let paused = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
+            InspectorTest.evaluateInPage("setTimeout(f)");
+            await paused;
+
+            let location = WI.debuggerManager.activeCallFrame.sourceCodeLocation;
+            InspectorTest.expectThat(location.displaySourceCode instanceof WI.SourceMapResource && location.displaySourceCode.displayName === "café-original.js", `Paused location should display "café-original.js" (got "${location.displaySourceCode.displayName}").`);
+            InspectorTest.expectEqual(location.displayLineNumber, 1, "Paused location should display original line 1.");
+            InspectorTest.expectEqual(location.displayColumnNumber, 22, "Paused location should display original column 22.");
+            let line = rawContent.split("\n")[location.displayLineNumber];
+            InspectorTest.expectTrue(line.substring(location.displayColumnNumber).startsWith("debugger"), "The displayed column should land on the `debugger` statement.");
+
+            await WI.debuggerManager.resume();
+        },
+    });
+
+    suite.addTestCase({
+        name: "SourceMap.InlineScript.UTF8.MalformedDataURLDoesNotHideScript",
+        description: "A malformed inline source map URL should fail the source map load without hiding the script.",
+        async test() {
+            let script = null;
+            for (let i = 0; i < 500 && !script; ++i) {
+                script = scriptsForURL("utf8-bad-map-generated.js").firstValue || null;
+                if (!script)
+                    await Promise.delay(10);
+            }
+            InspectorTest.expectNotNull(script, "The script with a malformed inline source map should still be known to the debugger.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that a base64 inline (data URL) source map is decoded as UTF-8.</p>
+</body>
+</html>

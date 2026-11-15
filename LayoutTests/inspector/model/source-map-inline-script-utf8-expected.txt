@@ -1,0 +1,19 @@
+Tests that a base64 inline (data URL) source map is decoded as UTF-8.
+
+
+== Running test suite: SourceMap.InlineScript.UTF8
+-- Running test case: SourceMap.InlineScript.UTF8.Base64ContentIsUTF8
+PASS: Source name for a data URL with charset=utf-8 should be decoded as UTF-8.
+PASS: Source content for a data URL with charset=utf-8 should be decoded as UTF-8.
+PASS: Source name for a data URL without a charset should be decoded as UTF-8.
+PASS: Source content for a data URL without a charset should be decoded as UTF-8.
+
+-- Running test case: SourceMap.InlineScript.UTF8.PauseColumnAfterNonASCII
+PASS: Paused location should display "café-original.js" (got "café-original.js").
+PASS: Paused location should display original line 1.
+PASS: Paused location should display original column 22.
+PASS: The displayed column should land on the `debugger` statement.
+
+-- Running test case: SourceMap.InlineScript.UTF8.MalformedDataURLDoesNotHideScript
+PASS: The script with a malformed inline source map should still be known to the debugger.
+
