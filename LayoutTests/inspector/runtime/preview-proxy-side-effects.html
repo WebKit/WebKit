@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+window.trapCalls = [];
+
+function countingHandler(label) {
+    let handler = {};
+    for (let trap of ["get", "has", "ownKeys", "getOwnPropertyDescriptor", "getPrototypeOf"]) {
+        handler[trap] = function(target, key, ...rest) {
+            trapCalls.push(arguments.length > 1 ? `${label}.${trap}(${String(key)})` : `${label}.${trap}`);
+            return Reflect[trap](target, key, ...rest);
+        };
+    }
+    return handler;
+}
+
+window.nestedProxy = {proxy: new Proxy({a: 1}, countingHandler("nestedProxy"))};
+
+window.nestedProxyInArray = {list: [new Proxy({b: 2}, countingHandler("nestedProxyInArray"))]};
+
+window.arrayOfProxies = [new Proxy({c: 3}, countingHandler("arrayOfProxies"))];
+
+let {proxy: revokedProxy, revoke} = Proxy.revocable({}, {});
+revoke();
+window.nestedRevokedProxy = {revoked: revokedProxy, after: 1};
+
+window.proxyPrototype = Object.create(new Proxy({inherited: 1}, countingHandler("proxyPrototype")));
+proxyPrototype.own = 1;
+
+window.nestedProxyPrototype = {child: Object.create(new Proxy({}, countingHandler("nestedProxyPrototype")))};
+
+let arrayWithIndexGetter = [1, 2];
+Object.defineProperty(arrayWithIndexGetter, 0, {
+    get() {
+        trapCalls.push("arrayWithIndexGetter.0");
+        return 1;
+    },
+    enumerable: true,
+    configurable: true,
+});
+window.nestedArrayWithIndexGetter = {array: arrayWithIndexGetter};
+
+window.arrayWithProxyPrototype = Object.setPrototypeOf([1, , 3], new Proxy([], countingHandler("arrayWithProxyPrototype")));
+
+window.ownProxyConstructor = {constructor: new Proxy(function() {}, countingHandler("ownProxyConstructor")), x: 1};
+
+window.nestedProxyInMap = new Map([["key", new Proxy({d: 4}, countingHandler("nestedProxyInMap"))]]);
+
+window.nestedThrowingRead = {
+    throwing: Object.defineProperty({}, "__proto__", {
+        get() {
+            throw new Error("Thrown by the __proto__ getter");
+        },
+    }),
+    after: 1,
+};
+
+function test()
+{
+    let suite = ProtocolTest.createAsyncSuite("Runtime.PreviewSideEffects.Proxy");
+
+    async function evaluate(expression) {
+        let {result} = await InspectorProtocol.awaitCommand({method: "Runtime.evaluate", params: {expression, objectGroup: "test", generatePreview: true, returnByValue: expression === "trapCalls.splice(0)"}});
+        return result;
+    }
+
+    async function takeTrapCalls() {
+        let result = await evaluate("trapCalls.splice(0)");
+        return result.value;
+    }
+
+    function previewString(preview) {
+        let items = (preview.properties ?? []).map((property) => {
+            let value = property.valuePreview ? previewString(property.valuePreview) : (property.type === "accessor" ? "<accessor>" : property.value);
+            return `${property.name}: ${value}`;
+        });
+        for (let entry of preview.entries ?? [])
+            items.push(`${entry.key ? entry.key.description + " => " : ""}${previewString(entry.value)}`);
+        return `${preview.description} {${items.join(", ")}}${preview.lossless ? "" : " (lossy)"}`;
+    }
+
+    function addTestCase(name, expression) {
+        suite.addTestCase({
+            name: `Runtime.PreviewSideEffects.Proxy.${name}`,
+            description: `Previewing and expanding '${expression}' should not run page code.`,
+            async test() {
+                await takeTrapCalls();
+
+                let remoteObject = await evaluate(expression);
+                ProtocolTest.log("Preview: " + previewString(remoteObject.preview));
+                ProtocolTest.expectEqual((await takeTrapCalls()).join(", "), "", "Preview should not run traps or getters.");
+
+                let {properties} = await InspectorProtocol.awaitCommand({method: "Runtime.getDisplayableProperties", params: {objectId: remoteObject.objectId, generatePreview: true}});
+                ProtocolTest.log("Displayable properties: " + properties.map((property) => property.name).join(", "));
+                ProtocolTest.expectEqual((await takeTrapCalls()).join(", "), "", "Displayable properties should not run traps or getters.");
+
+                await InspectorProtocol.awaitCommand({method: "Runtime.getProperties", params: {objectId: remoteObject.objectId, ownProperties: false, generatePreview: true}});
+                ProtocolTest.expectEqual((await takeTrapCalls()).join(", "), "", "All properties should not run traps or getters.");
+            }
+        });
+    }
+
+    addTestCase("NestedProxy", "nestedProxy");
+    addTestCase("NestedProxyInArray", "nestedProxyInArray");
+    addTestCase("ArrayOfProxies", "arrayOfProxies");
+    addTestCase("NestedRevokedProxy", "nestedRevokedProxy");
+    addTestCase("ProxyPrototype", "proxyPrototype");
+    addTestCase("NestedProxyPrototype", "nestedProxyPrototype");
+    addTestCase("NestedArrayWithIndexGetter", "nestedArrayWithIndexGetter");
+    addTestCase("ArrayWithProxyPrototype", "arrayWithProxyPrototype");
+    addTestCase("OwnProxyConstructor", "ownProxyConstructor");
+    addTestCase("NestedProxyInMap", "nestedProxyInMap");
+
+    suite.addTestCase({
+        name: "Runtime.PreviewSideEffects.Proxy.NestedThrowingRead",
+        description: "A nested value whose `__proto__` getter throws should not end the whole preview.",
+        async test() {
+            let remoteObject = await evaluate("nestedThrowingRead");
+            ProtocolTest.log("Preview: " + previewString(remoteObject.preview));
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that previews do not run the traps of Proxies nested in or inherited by the previewed object, or array index getters.</p>
+</body>
+</html>

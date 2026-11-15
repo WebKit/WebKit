@@ -5,14 +5,17 @@
 <script>
 function logObjectThatLogsRecursively()
 {
-    var object = {
-        array: [],
-    };
+    // The preview describes a nested error with its `toString`, which logs the object again.
+    class RecursiveError extends Error {
+        toString() {
+            console.log(object);
+            return "RecursiveError";
+        }
+    }
 
-    object.array.__defineGetter__(0,()=>{
-        console.log(object);
-        return object;
-    });
+    var object = {
+        error: new RecursiveError,
+    };
 
     console.log(object);
 }
@@ -25,8 +28,19 @@ function test()
         name: "WI.Console.MessageAdded.Recursive",
         description: "Test that logging an object that recursively logs itself does not crash the page's web content process.",
         async test() {
+            let messages = [];
+            let listener = (event) => {
+                messages.push(event.data.message);
+            };
+            WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, listener);
+
             await InspectorTest.evaluateInPage(`logObjectThatLogsRecursively()`);
             InspectorTest.log("The test passed if evaluating `logObjectThatLogsRecursively` on the page did not crash.")
+
+            WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, listener);
+            InspectorTest.expectEqual(messages.length, 2, "Should add the logged message and the message logged while making its preview.");
+            InspectorTest.expectFalse(messages[0]?.parameters[0].preview, "The message logged while making the preview should not have a preview.");
+            InspectorTest.expectThat(messages[1]?.parameters[0].preview, "The logged message should have a preview.");
         }
     });
 
