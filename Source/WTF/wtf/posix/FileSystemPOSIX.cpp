@@ -31,7 +31,6 @@
 
 #include <errno.h>
 #include <fcntl.h>
-#include <stdio.h>
 #include <sys/stat.h>
 #include <sys/statvfs.h>
 #include <unistd.h>
@@ -42,6 +41,10 @@
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
+
+#if !HAVE(MKOSTEMPS)
+#include <wtf/UniStdExtras.h>
+#endif
 
 #if USE(GLIB)
 #include <glib.h>
@@ -149,44 +152,72 @@ UTF8CString fileSystemRepresentation(const String& path)
 #endif
 
 #if !PLATFORM(COCOA)
-static const char* temporaryFileDirectory()
-{
 #if USE(GLIB)
-    return g_get_tmp_dir();
-#elif OS(HAIKU)
-    static char buffer[B_PATH_NAME_LENGTH];
-    static std::once_flag once;
-    std::call_once(once, [] {
-        BPath path;
-        if (find_directory(B_SYSTEM_TEMP_DIRECTORY, &path) == B_OK)
-            strlcpy(buffer, path.Path(), sizeof(buffer));
-        else
-            strlcpy(buffer, "/tmp", sizeof(buffer));
-    });
-    return buffer;
-#else
-    if (auto* tmpDir = getenv("TMPDIR"))
-        return tmpDir;
-
-    return "/tmp";
-#endif
+static inline UTF8CStringView defaultTemporaryDirectory()
+{
+    return UTF8CStringView::unsafeFromUTF8(g_get_tmp_dir());
 }
+#else
+static UTF8CString defaultTemporaryDirectory()
+{
+    UTF8CString directoryPath;
+
+#if OS(HAIKU)
+    BPath path;
+    if (find_directory(B_SYSTEM_TEMP_DIRECTORY, &path) == B_OK)
+        directoryPath = UTF8CString::unsafeFromUTF8(path.Path());
+#else
+    static const char* tmpDir = getenv("TMPDIR");
+    if (tmpDir)
+        directoryPath = UTF8CString::unsafeFromUTF8(tmpDir);
+#endif
+
+    if (!directoryPath.isEmpty())
+        return directoryPath;
+
+    return "/tmp"_s;
+}
+#endif // USE(GLIB)
 
 std::pair<String, FileHandle> openTemporaryFile(StringView prefix, StringView suffix, const String& temporaryDirectory)
 {
-    // Suffix is not supported because that's incompatible with mkostemp, mkostemps would be needed for that.
-    // This is OK for now since the code using it is built on macOS only.
+#if PLATFORM(PLAYSTATION)
+    // Suffix is not supported because there is no mkostemps() nor mkstemps() in the PlayStation libc.
     ASSERT_UNUSED(suffix, suffix.isEmpty());
 
-    auto directory = !temporaryDirectory.isEmpty() ? temporaryDirectory : String::fromUTF8(temporaryFileDirectory());
-    // mkostemp overwrites the XXXXXX in place, so this needs to be a mutable buffer.
-    auto path = makeString(directory, '/', prefix, "-XXXXXX"_s).utf8();
+    // In release builds, fall back to not using the suffix.
+    suffix = ""_s;
+#endif // PLATFORM(PLAYSTATION)
 
-    auto handle = FileHandle::adopt(mkostemp(byteCast<char>(path.mutableSpan()).data(), O_CLOEXEC));
+    auto templatePath = temporaryDirectory.isEmpty()
+        ? makeString(defaultTemporaryDirectory(), "/"_s, prefix, "-XXXXXX"_s, suffix)
+        : makeString(temporaryDirectory, "/"_s, prefix, "-XXXXXX"_s, suffix);
+    UTF8CString templatePathUTF8 = templatePath.utf8();
+    UTF8CString suffixUTF8 = suffix.utf8();
+
+#if HAVE(MKOSTEMPS)
+    auto handle = FileHandle::adopt(mkostemps(byteCast<char>(templatePathUTF8.mutableSpanIncludingNullTerminator().data()), suffixUTF8.length(), O_CLOEXEC));
+#else
+    static const auto openTemporaryFileWithSuffixTemplate = [](char* templatePathBuffer, int suffixLength) -> int {
+        if (!suffixLength)
+            return mkostemp(templatePathBuffer, O_CLOEXEC);
+
+#if !PLATFORM(PLAYSTATION)
+        int fd = mkstemps(templatePathBuffer, suffixLength);
+        if (fd >= 0 && setCloseOnExec(fd))
+            return fd;
+
+        closeWithRetry(fd);
+#endif // !PLATFORM(PLAYSTATION)
+
+        return -1;
+    };
+    auto handle = FileHandle::adopt(openTemporaryFileWithSuffixTemplate(byteCast<char>(templatePathUTF8.mutableSpanIncludingNullTerminator().data()), suffixUTF8.length()));
+#endif // HAVE(MKOSTEMPS)
     if (!handle)
         return { String(), FileHandle() };
 
-    return { String { path }, WTF::move(handle) };
+    return { String::fromUTF8(templatePathUTF8.span()), WTF::move(handle) };
 }
 #endif // !PLATFORM(COCOA)
 
