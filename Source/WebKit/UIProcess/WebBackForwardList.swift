@@ -1191,7 +1191,13 @@ final class WebBackForwardList {
             )
             .ptr()
         item.setResourceDirectoryURL(consuming: webPageProxy.currentResourceDirectoryURL())
-        item.setEnhancedSecurity(process.ptr().enhancedSecurity())
+        var enhancedSecurity = process.ptr().enhancedSecurity()
+        if !targetFrame.isMainFrame() && webPageProxy.preferences().siteIsolationSharedProcessEnhancedSecurityEnabled(),
+            let mainFrame = webPageProxy.mainFrame()
+        {
+            enhancedSecurity = frameProcessEnhancedSecurity(mainFrame)
+        }
+        item.setEnhancedSecurity(enhancedSecurity)
         if loadedWebArchive == WebKit.LoadedWebArchive.Yes {
             item.setDataStoreForWebArchive(process.ptr().websiteDataStore())
         }

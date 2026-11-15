@@ -818,7 +818,8 @@ void WebBackForwardList::backForwardAddItemShared(IPC::Connection& connection, R
     if (!messageCheckItemURLs(navigatedFrameState, process))
         return;
 
-    if (RefPtr targetFrame = WebFrameProxy::webFrame(navigatedFrameState->frameID)) {
+    RefPtr targetFrame = WebFrameProxy::webFrame(navigatedFrameState->frameID);
+    if (targetFrame) {
         MESSAGE_CHECK(process, targetFrame->page() == m_page.get());
         if (targetFrame->isPendingInitialHistoryItem()) {
             targetFrame->setIsPendingInitialHistoryItem(false);
@@ -838,7 +839,12 @@ void WebBackForwardList::backForwardAddItemShared(IPC::Connection& connection, R
         auto navigatedFrameID = navigatedFrameState->frameID;
         Ref item = WebBackForwardListItem::create(completeFrameStateForNavigation(WTF::move(navigatedFrameState)), webPageProxy->identifier(), navigatedFrameID, &browsingContextGroup);
         item->setResourceDirectoryURL(webPageProxy->currentResourceDirectoryURL());
-        item->setEnhancedSecurity(process->enhancedSecurity());
+        auto enhancedSecurity = process->enhancedSecurity();
+        if (!targetFrame->isMainFrame() && webPageProxy->preferences().siteIsolationSharedProcessEnhancedSecurityEnabled()) {
+            if (RefPtr mainFrame = webPageProxy->mainFrame())
+                enhancedSecurity = mainFrame->process().enhancedSecurity();
+        }
+        item->setEnhancedSecurity(enhancedSecurity);
         if (loadedWebArchive == LoadedWebArchive::Yes)
             item->setDataStoreForWebArchive(protect(process->websiteDataStore()));
         addItem(WTF::move(item));
