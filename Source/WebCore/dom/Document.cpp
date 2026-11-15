@@ -1847,12 +1847,13 @@ static Ref<HTMLElement> createFallbackHTMLElement(Document& document, CustomElem
     if (registry) {
         if (RefPtr elementInterface = registry->findInterface(name)) {
             Ref element = elementInterface->createElement(document);
+            if (!name.prefix().isEmpty())
+                element->setPrefixForCustomElementUpgrade(name.prefix());
             element->setIsCustomElementUpgradeCandidate();
             element->enqueueToUpgrade(*elementInterface);
             return element;
         }
     }
-    // FIXME: Should we also check the equality of prefix between the custom element and name?
     return createUpgradeCandidateElement(document, registry, name);
 }
 
