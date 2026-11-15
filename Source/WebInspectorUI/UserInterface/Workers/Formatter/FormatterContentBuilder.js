@@ -37,6 +37,7 @@ FormatterContentBuilder = class FormatterContentBuilder
         this.lastTokenWasNewline = false;
         this.lastTokenWasWhitespace = false;
         this.lastNewlineAppendWasMultiple = false;
+        this.avoidTokenFusing = false;
 
         this._indent = 0;
         this._indentString = indentString;
@@ -137,6 +138,8 @@ FormatterContentBuilder = class FormatterContentBuilder
     {
         if (this._startOfLine)
             this._appendIndent();
+        else if (this.avoidTokenFusing && !this.lastTokenWasWhitespace && this._wouldFuseWithLastToken(string))
+            this._append(" ");
 
         this._addMappingIfNeeded(originalPosition);
 
@@ -278,6 +281,18 @@ FormatterContentBuilder = class FormatterContentBuilder
     }
 
     // Private
+
+    _wouldFuseWithLastToken(string)
+    {
+        let lastToken = this.lastToken;
+        let firstCharacter = string.charAt(0);
+        if (!lastToken || !firstCharacter)
+            return false;
+        // A space is needed to keep `+ +`, `- -` and `1 .` from fusing into `++`, `--` and `1.`.
+        if ((firstCharacter === "+" || firstCharacter === "-") && (lastToken === "+" || lastToken === "-" || lastToken === "++" || lastToken === "--") && lastToken.charAt(0) === firstCharacter)
+            return true;
+        return firstCharacter === "." && /^[0-9][0-9_]*$/.test(lastToken);
+    }
 
     _popFormattedContent()
     {
