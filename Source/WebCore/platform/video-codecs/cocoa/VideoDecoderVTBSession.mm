@@ -37,9 +37,10 @@
 
 namespace WebCore {
 
-RefPtr<VideoDecoderVTBSession> VideoDecoderVTBSession::create(CMVideoFormatDescriptionRef videoFormatDescription, CFDictionaryRef pixelBufferAttributes)
+RefPtr<VideoDecoderVTBSession> VideoDecoderVTBSession::create(CMVideoFormatDescriptionRef videoFormatDescription, CFDictionaryRef pixelBufferAttributes, HardwareDecoder hardwareDecoder)
 {
-    auto videoDecoderSpecification = @{ (__bridge NSString *)kVTVideoDecoderSpecification_EnableHardwareAcceleratedVideoDecoder: @YES };
+    auto specificationKey = hardwareDecoder == HardwareDecoder::Required ? kVTVideoDecoderSpecification_RequireHardwareAcceleratedVideoDecoder : kVTVideoDecoderSpecification_EnableHardwareAcceleratedVideoDecoder;
+    auto videoDecoderSpecification = @{ (__bridge NSString *)specificationKey: @YES };
 
     VTDecompressionSessionRef decompressionSession = nullptr;
     auto result = VTDecompressionSessionCreate(kCFAllocatorDefault, videoFormatDescription, (__bridge CFDictionaryRef)videoDecoderSpecification, pixelBufferAttributes, nullptr, &decompressionSession);

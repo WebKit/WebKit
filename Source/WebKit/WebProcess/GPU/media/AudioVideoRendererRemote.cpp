@@ -819,14 +819,22 @@ AudioVideoRendererRemote::TrackState& AudioVideoRendererRemote::trackStateForFor
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+static MediaSamplesDecoder::Filters contentProcessDecoderFilters()
+{
+    return { MediaSamplesDecoder::Filter::InProcess, MediaSamplesDecoder::Filter::SoftwareAllowed, MediaSamplesDecoder::Filter::UseSharedMemory };
+}
+
 AudioVideoRendererRemote::TrackState& AudioVideoRendererRemote::createTrackState(TrackIdentifier trackIdentifier, Ref<const TrackInfo>&& info, bool isProtected)
 {
     assertIsCurrent(queueSingleton());
 
-    if (!shouldDecodeInContentProcess(info, isProtected))
+    bool hardwareUnavailable = !isProtected && info->isVideo() && m_hardwareUnavailableVideoCodecs.contains(info->codecName());
+    if (!hardwareUnavailable && !shouldDecodeInContentProcess(info, isProtected))
         return setTrackState(trackIdentifier, makeUniqueRef<TrackState>(WTF::move(info), isProtected, ++m_nextTrackStateGeneration, TrackState::Mode::Compressed));
 
-    MediaSamplesDecoder::Filters filters { MediaSamplesDecoder::Filter::InProcess, MediaSamplesDecoder::Filter::SoftwareAllowed, MediaSamplesDecoder::Filter::UseSharedMemory };
+    auto filters = contentProcessDecoderFilters();
+    if (hardwareUnavailable)
+        filters.add(MediaSamplesDecoder::Filter::ForceSoftware);
     if (!MediaSamplesDecoder::canDecode(info, filters)) {
         ERROR_LOG(LOGIDENTIFIER, "track ", trackIdentifier.toUInt64(), " codec ", info->codecName(), " cannot be decoded in the content process");
         failTrack(trackIdentifier, WTF::move(info), isProtected, PlatformMediaError::NotSupportedError, 0);
@@ -879,6 +887,14 @@ RefPtr<GPUProcessConnection> AudioVideoRendererRemote::activeConnection()
 void AudioVideoRendererRemote::processSample(TrackIdentifier trackIdentifier, Ref<MediaSample>&& mediaSample, std::optional<MediaTime> expectedMinimum)
 {
     assertIsCurrent(queueSingleton());
+
+    if (isVideoTrack(trackIdentifier)) {
+        if (m_videoAwaitingFlush || (m_videoAwaitingKeyframe && !mediaSample->isSync())) {
+            removePendingSamples(trackIdentifier);
+            return;
+        }
+        m_videoAwaitingKeyframe = false;
+    }
 
     auto& converter = m_mediaSampleConverters.ensure(trackIdentifier, [] {
         return MediaSampleConverter();
@@ -1046,6 +1062,74 @@ void AudioVideoRendererRemote::failTrack(TrackIdentifier trackIdentifier, Ref<co
     removePendingSamples(trackIdentifier, droppedSamples);
 }
 
+void AudioVideoRendererRemote::hardwareDecoderUnavailable()
+{
+    assertIsCurrent(queueSingleton());
+
+    if (!m_videoTrackIdentifier)
+        return;
+    auto trackIdentifier = *m_videoTrackIdentifier;
+    auto* state = trackStateIfExists(trackIdentifier);
+    if (!state || state->mode != TrackState::Mode::Compressed)
+        return;
+    auto iterator = m_lastSentInfos.find(trackIdentifier);
+    if (iterator == m_lastSentInfos.end())
+        return;
+
+    Ref info = iterator->value;
+    if (!MediaSamplesDecoder::canDecode(info, contentProcessDecoderFilters() | MediaSamplesDecoder::Filter::ForceSoftware)) {
+        if (m_errorCallback)
+            m_errorCallback(PlatformMediaError::VideoDecodingError);
+        return;
+    }
+
+    ERROR_LOG(LOGIDENTIFIER, "track ", trackIdentifier.toUInt64(), " codec ", info->codecName(), " has no hardware decoder, decoding in the content process");
+    if (!m_hardwareUnavailableVideoCodecs.contains(info->codecName()))
+        m_hardwareUnavailableVideoCodecs.append(info->codecName());
+    // The next sample creates a new state that decodes in the content process.
+    dropWaitingSamples(trackIdentifier);
+    if (auto removedState = takeTrackState(trackIdentifier))
+        releaseDecoder(*removedState);
+    updateDecoderReadiness(trackIdentifier);
+    sendFlushTrack(trackIdentifier);
+    requestVideoReenqueue(trackIdentifier);
+    resolveRequestMediaDataWhenReadyIfNeeded(trackIdentifier);
+}
+
+void AudioVideoRendererRemote::requestVideoReenqueue(TrackIdentifier trackIdentifier)
+{
+    assertIsCurrent(queueSingleton());
+
+    if (!m_notifyWhenRequiresFlushToResumeCallback) {
+        m_videoAwaitingKeyframe = true;
+        return;
+    }
+    setVideoAwaitingFlush(trackIdentifier, true);
+    m_notifyWhenRequiresFlushToResumeCallback();
+}
+
+void AudioVideoRendererRemote::setVideoAwaitingFlush(TrackIdentifier trackIdentifier, bool awaitingFlush)
+{
+    assertIsCurrent(queueSingleton());
+
+    m_videoAwaitingFlush = awaitingFlush;
+    Locker locker { m_lock };
+    if (auto iterator = m_readyForMoreDataStates.find(trackIdentifier); iterator != m_readyForMoreDataStates.end())
+        iterator->value.setAwaitingFlush(awaitingFlush);
+}
+
+void AudioVideoRendererRemote::resetVideoFallbackState()
+{
+    assertIsCurrent(queueSingleton());
+
+    m_hardwareUnavailableVideoCodecs.clear();
+    m_videoAwaitingKeyframe = false;
+    if (m_videoTrackIdentifier)
+        setVideoAwaitingFlush(*m_videoTrackIdentifier, false);
+    else
+        m_videoAwaitingFlush = false;
+}
+
 void AudioVideoRendererRemote::removePendingSamples(TrackIdentifier trackIdentifier, size_t count)
 {
     assertIsCurrent(queueSingleton());
@@ -1112,6 +1196,8 @@ void AudioVideoRendererRemote::willFlushTrack(TrackIdentifier trackIdentifier)
 {
     assertIsCurrent(queueSingleton());
 
+    if (isVideoTrack(trackIdentifier) && m_videoAwaitingFlush)
+        setVideoAwaitingFlush(trackIdentifier, false);
     dropWaitingSamples(trackIdentifier);
     auto* state = trackStateIfExists(trackIdentifier);
     if (!state)
@@ -1144,8 +1230,10 @@ void AudioVideoRendererRemote::releaseTrackState(TrackIdentifier trackIdentifier
         if (auto state = takeTrackState(trackIdentifier))
             releaseDecoder(*state);
     }
-    if (isVideoTrack(trackIdentifier))
+    if (isVideoTrack(trackIdentifier)) {
+        resetVideoFallbackState();
         m_videoTrackIdentifier = std::nullopt;
+    }
     if (!hasTrackState)
         return;
     m_lastSentInfos.remove(trackIdentifier);
@@ -1167,6 +1255,7 @@ void AudioVideoRendererRemote::releaseAllDecoders()
     if (auto videoTrackState = std::exchange(m_videoTrackState, nullptr))
         releaseDecoder(*videoTrackState);
     m_lastSentInfos.clear();
+    resetVideoFallbackState();
     Locker locker { m_lock };
     for (auto& readyState : m_readyForMoreDataStates.values())
         readyState.setDecoderReadyForMoreData(true);
@@ -1773,6 +1862,10 @@ void AudioVideoRendererRemote::MessageReceiver::errorOccurred(WebCore::PlatformM
 {
     if (RefPtr parent = m_parent.get()) {
         assertIsCurrent(queueSingleton());
+        if (error == PlatformMediaError::HardwareDecoderUnavailable) {
+            parent->hardwareDecoderUnavailable();
+            return;
+        }
         if (parent->m_errorCallback)
             parent->m_errorCallback(error);
     }

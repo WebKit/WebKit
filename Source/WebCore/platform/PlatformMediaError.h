@@ -51,6 +51,8 @@ enum class PlatformMediaError : uint8_t {
     Shutdown,
     // Protected content can't be decoded here; it isn't an error.
     ProtectedContent,
+    // A hardware decoder was required and none was available.
+    HardwareDecoderUnavailable,
 };
 
 using MediaPromise = NativePromise<void, PlatformMediaError>;
