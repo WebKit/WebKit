@@ -26,7 +26,26 @@
 #include "config.h"
 #include "CanvasElementImage.h"
 
+#include "HTMLCanvasElement.h"
+#include "OffscreenCanvas.h"
+
 namespace WebCore {
+
+FloatSize CanvasElementSnapshot::sizeInCanvasGrid(const FloatSize& size, const IntSize& canvasSize) const
+{
+    // The canvas grid is stretched over the canvas's replaced content rect.
+    auto scaleAxis = [](float length, int gridLength, float contentLength) -> float {
+        if (!gridLength)
+            return 0;
+        if (contentLength <= 0)
+            return length;
+        return length * gridLength / contentLength;
+    };
+    return {
+        scaleAxis(size.width(), canvasSize.width(), canvasContentSize.width()),
+        scaleAxis(size.height(), canvasSize.height(), canvasContentSize.height()),
+    };
+}
 
 Ref<CanvasElementImage> CanvasElementImage::create(CanvasElementSnapshot&& snapshot)
 {
@@ -40,6 +59,48 @@ CanvasElementImage::CanvasElementImage(CanvasElementSnapshot&& snapshot)
 
 void CanvasElementImage::close()
 {
+    m_snapshot = std::nullopt;
+}
+
+// The canvas whose ElementImages can be drawn into `canvas`.
+static std::optional<NodeIdentifier> elementImageCanvasIdentifier(CanvasBase& canvas)
+{
+    if (RefPtr canvasElement = dynamicDowncast<HTMLCanvasElement>(canvas))
+        return canvasElement->nodeIdentifier();
+#if ENABLE(OFFSCREEN_CANVAS)
+    if (RefPtr offscreenCanvas = dynamicDowncast<OffscreenCanvas>(canvas))
+        return offscreenCanvas->placeholderCanvasIdentifier();
+#endif
+    return std::nullopt;
+}
+
+std::expected<CanvasElementSnapshot, ASCIILiteral> canvasElementSnapshotOrError(CanvasBase& canvas, const CanvasElementImageSource& source, ASCIILiteral missingSnapshotMessage)
+{
+    return WTF::switchOn(source,
+        [&](const Ref<Element>& element) -> std::expected<CanvasElementSnapshot, ASCIILiteral> {
+            if (RefPtr canvasElement = dynamicDowncast<HTMLCanvasElement>(canvas)) {
+                if (auto snapshot = canvasElement->canvasDrawableSnapshot(element.get()))
+                    return WTF::move(*snapshot);
+            }
+            return makeUnexpected(missingSnapshotMessage);
+        },
+        [&](const Ref<CanvasElementImage>& elementImage) -> std::expected<CanvasElementSnapshot, ASCIILiteral> {
+            auto* snapshot = elementImage->snapshot();
+            if (!snapshot)
+                return makeUnexpected("The ElementImage has been closed."_s);
+            if (snapshot->canvasIdentifier != elementImageCanvasIdentifier(canvas))
+                return makeUnexpected("The ElementImage was captured from a different canvas."_s);
+            return *snapshot;
+        }
+    );
+}
+
+ExceptionOr<CanvasElementSnapshot> canvasElementSnapshot(CanvasBase& canvas, const CanvasElementImageSource& source, ASCIILiteral missingSnapshotMessage)
+{
+    auto snapshot = canvasElementSnapshotOrError(canvas, source, missingSnapshotMessage);
+    if (!snapshot)
+        return Exception { ExceptionCode::InvalidStateError, snapshot.error() };
+    return WTF::move(*snapshot);
 }
 
 } // namespace WebCore

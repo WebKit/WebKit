@@ -579,6 +579,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasDrawPath.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasDrawPath.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasElementImage.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasElementImage.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasElementImageDefaultSize.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasElementImageDefaultSize.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasFillRule.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasFillRule.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasFillStrokeStyles.cpp

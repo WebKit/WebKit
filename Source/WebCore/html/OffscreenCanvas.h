@@ -42,6 +42,7 @@
 #include <WebCore/WritingMode.h>
 #include <wtf/FixedVector.h>
 #include <wtf/Forward.h>
+#include <wtf/Markable.h>
 #include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -70,6 +71,7 @@ class WebGLRenderingContextBase;
 
 template<typename> class ExceptionOr;
 
+struct CanvasElementImageDefaultSize;
 struct UpdateElementGeometryOptions;
 
 using OffscreenRenderingContext = Variant<
@@ -151,6 +153,10 @@ public:
 
     ExceptionOr<void> updateElementGeometry(const CanvasElementImageSource&, std::optional<UpdateElementGeometryOptions>);
     ExceptionOr<void> clearElementGeometry(const CanvasElementImageSource&);
+    ExceptionOr<CanvasElementImageDefaultSize> getElementImageDefaultSize(const CanvasElementImageSource&);
+
+    // The canvas element this OffscreenCanvas was transferred from, whose ElementImages it can draw.
+    std::optional<NodeIdentifier> placeholderCanvasIdentifier() const { return m_placeholderCanvasIdentifier; }
 
     CanvasRenderingContext* renderingContext() const final { return m_context.get(); }
 
@@ -202,6 +208,8 @@ private:
 
     std::unique_ptr<CanvasRenderingContext> m_context;
     RefPtr<PlaceholderRenderingContextSource> m_placeholderSource;
+    // FIXME: Carry this through DetachedOffscreenCanvas once ElementImage can be transferred to workers.
+    Markable<NodeIdentifier> m_placeholderCanvasIdentifier;
     AtomString m_inheritedLanguage;
     TextDirection m_inheritedDirection { TextDirection::LTR };
     bool m_detached { false };

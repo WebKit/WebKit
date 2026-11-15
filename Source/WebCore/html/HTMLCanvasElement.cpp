@@ -30,6 +30,7 @@
 
 #include "Blob.h"
 #include "BlobCallback.h"
+#include "CanvasElementImageDefaultSize.h"
 #include "CanvasGradient.h"
 #include "CanvasPaintEvent.h"
 #include "CanvasPattern.h"
@@ -295,6 +296,16 @@ ExceptionOr<void> HTMLCanvasElement::clearElementGeometry(const CanvasElementIma
 ExceptionOr<Ref<DOMMatrix>> HTMLCanvasElement::getElementTransform(const Element&)
 {
     return Exception { ExceptionCode::NotSupportedError };
+}
+
+ExceptionOr<CanvasElementImageDefaultSize> HTMLCanvasElement::getElementImageDefaultSize(const CanvasElementImageSource& source)
+{
+    auto snapshot = canvasElementSnapshot(*this, source, "getElementImageDefaultSize: the element has no snapshot in this canvas."_s);
+    if (snapshot.hasException())
+        return snapshot.releaseException();
+
+    auto defaultSize = snapshot.returnValue().defaultSize(size());
+    return CanvasElementImageDefaultSize { defaultSize.width(), defaultSize.height() };
 }
 
 void HTMLCanvasElement::setSizeForControllingContext(IntSize newSize)

@@ -4186,19 +4186,13 @@ ExceptionOr<void> WebGLRenderingContextBase::texElementSubImage2D(GCGLenum targe
         return { };
     }
 
-    return WTF::switchOn(*source,
-        [&](Ref<Element>& element) -> ExceptionOr<void> {
-            if (RefPtr canvasElement = dynamicDowncast<HTMLCanvasElement>(canvasBase())) {
-                if (auto snapshot = canvasElement->canvasDrawableSnapshot(element))
-                    return texElementSnapshot2D(target, level, xoffset, yoffset, *snapshot, config);
-            }
-            synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "texElementSubImage2D"_s, "element is not a direct child of the drawable canvas"_s);
-            return { };
-        },
-        [&](Ref<CanvasElementImage>& elementImage) -> ExceptionOr<void> {
-            return texElementSnapshot2D(target, level, xoffset, yoffset, elementImage->snapshot(), config);
-        }
-    );
+    Ref canvas = canvasBase();
+    auto snapshot = canvasElementSnapshotOrError(canvas, *source, "element is not a direct child of the drawable canvas"_s);
+    if (!snapshot) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "texElementSubImage2D"_s, snapshot.error());
+        return { };
+    }
+    return texElementSnapshot2D(target, level, xoffset, yoffset, *snapshot, config);
 }
 
 bool WebGLRenderingContextBase::validateTypeAndArrayBufferType(ASCIILiteral functionName, ArrayBufferViewFunctionType functionType, GCGLenum type, ArrayBufferView* pixels)

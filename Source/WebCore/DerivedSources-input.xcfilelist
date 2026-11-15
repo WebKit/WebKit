@@ -1808,6 +1808,7 @@ $(PROJECT_DIR)/html/canvas/CanvasDrawElementImageOptions.idl
 $(PROJECT_DIR)/html/canvas/CanvasDrawImage.idl
 $(PROJECT_DIR)/html/canvas/CanvasDrawPath.idl
 $(PROJECT_DIR)/html/canvas/CanvasElementImage.idl
+$(PROJECT_DIR)/html/canvas/CanvasElementImageDefaultSize.idl
 $(PROJECT_DIR)/html/canvas/CanvasFillRule.idl
 $(PROJECT_DIR)/html/canvas/CanvasFillStrokeStyles.idl
 $(PROJECT_DIR)/html/canvas/CanvasFilters.idl

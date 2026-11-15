@@ -1,0 +1,78 @@
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLInCanvasEnabled=true ] -->
+<title>getElementImageDefaultSize and drawElementImage validation and degenerate canvas sizes</title>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<canvas id="canvas1" content="drawable" width="200" height="200">
+    <div id="child1" drawable style="width: 80px; height: 50px; background: green;"></div>
+</canvas>
+<canvas id="canvas2" content="drawable" width="200" height="200">
+    <div id="child2" drawable style="width: 40px; height: 30px; background: blue;"></div>
+</canvas>
+<canvas id="transferSource" content="drawable" width="200" height="200">
+    <div id="transferChild" drawable style="width: 60px; height: 40px; background: purple;"></div>
+</canvas>
+<canvas id="otherTransferSource" content="drawable" width="200" height="200"></canvas>
+<canvas id="zeroWidthCssCanvas" content="drawable" width="200" height="400" style="width: 0px; height: 100px;">
+    <div id="zeroWidthCssChild" drawable style="width: 70px; height: 25px; background: orange;"></div>
+</canvas>
+<script>
+function waitForPaint() {
+    return new Promise(resolve => requestAnimationFrame(() => setTimeout(resolve, 0)));
+}
+
+promise_test(async () => {
+    await waitForPaint();
+    await waitForPaint();
+
+    const image1 = canvas1.captureElementImage(child1);
+    assert_false('width' in image1);
+    assert_false('height' in image1);
+
+    const ctx2 = canvas2.getContext('2d');
+    assert_throws_dom('InvalidStateError', () => canvas2.getElementImageDefaultSize(image1));
+    assert_throws_dom('InvalidStateError', () => ctx2.drawElementImage(image1, 0, 0));
+
+    const standalone = new OffscreenCanvas(200, 200);
+    const standaloneCtx = standalone.getContext('2d');
+    assert_throws_dom('InvalidStateError', () => standalone.getElementImageDefaultSize(image1));
+    assert_throws_dom('InvalidStateError', () => standaloneCtx.drawElementImage(image1, 0, 0));
+
+    const otherOffscreen = otherTransferSource.transferControlToOffscreen();
+    const otherOffscreenCtx = otherOffscreen.getContext('2d');
+    assert_throws_dom('InvalidStateError', () => otherOffscreen.getElementImageDefaultSize(image1));
+    assert_throws_dom('InvalidStateError', () => otherOffscreenCtx.drawElementImage(image1, 0, 0));
+}, 'Rejects ElementImage captured from a different canvas');
+
+promise_test(async () => {
+    await waitForPaint();
+
+    const transferImage = transferSource.captureElementImage(transferChild);
+    const offscreen = transferSource.transferControlToOffscreen();
+    const initialSize = offscreen.getElementImageDefaultSize(transferImage);
+    assert_equals(initialSize.width, 60);
+    assert_equals(initialSize.height, 40);
+
+    structuredClone(offscreen, { transfer: [offscreen] });
+    assert_throws_dom('InvalidStateError', () => offscreen.getElementImageDefaultSize(transferImage));
+}, 'Rejects getElementImageDefaultSize on a detached OffscreenCanvas');
+
+promise_test(async t => {
+    await waitForPaint();
+
+    t.add_cleanup(() => {
+        canvas1.width = 200;
+        canvas1.height = 200;
+    });
+
+    const image1 = canvas1.captureElementImage(child1);
+    canvas1.width = 0;
+
+    const zeroGridSize = canvas1.getElementImageDefaultSize(image1);
+    assert_equals(zeroGridSize.width, 0);
+    assert_equals(zeroGridSize.height, 50);
+
+    const partialCssSize = zeroWidthCssCanvas.getElementImageDefaultSize(zeroWidthCssChild);
+    assert_equals(partialCssSize.width, 70);
+    assert_equals(partialCssSize.height, 100);
+}, 'Handles zero-width canvas grid and single-axis zero CSS content size cleanly');
+</script>

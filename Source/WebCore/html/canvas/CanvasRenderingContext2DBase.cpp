@@ -1875,20 +1875,6 @@ static inline FloatSize size(ImageBitmap& imageBitmap)
     return FloatSize { static_cast<float>(imageBitmap.width()), static_cast<float>(imageBitmap.height()) };
 }
 
-static inline FloatSize size(CanvasElementImageSource& source)
-{
-    return WTF::switchOn(source,
-        [&](Ref<Element>& element) -> FloatSize {
-            if (CheckedPtr renderer = element->renderer())
-                return renderer->absoluteBoundingBoxRect().size();
-            return FloatSize();
-        },
-        [&](Ref<CanvasElementImage>& elementImage) {
-            return elementImage->size();
-        }
-    );
-}
-
 #if ENABLE(VIDEO)
 
 static inline FloatSize size(HTMLVideoElement& video)
@@ -2474,55 +2460,36 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(ImageBitmap& imageBitm
 
 ExceptionOr<void> CanvasRenderingContext2DBase::drawElementImage(CanvasElementImageSource&& source, float dx, float dy, std::optional<CanvasDrawElementImageOptions> options)
 {
-    FloatSize sourceSize = size(source);
-    return drawElementImage(
-        WTF::move(source),
-        FloatRect { 0.0f, 0.0f, sourceSize.width(), sourceSize.height() },
-        FloatRect { dx, dy, sourceSize.width(), sourceSize.height() },
-        options);
+    return drawElementImage(source, std::nullopt, { dx, dy }, std::nullopt, options);
 }
 
 ExceptionOr<void> CanvasRenderingContext2DBase::drawElementImage(CanvasElementImageSource&& source, float dx, float dy, float dwidth, float dheight, std::optional<CanvasDrawElementImageOptions> options)
 {
-    FloatSize sourceSize = size(source);
-    return drawElementImage(
-        WTF::move(source),
-        FloatRect { 0.0f, 0.0f, sourceSize.width(), sourceSize.height() },
-        FloatRect { dx, dy, dwidth, dheight }, options);
+    return drawElementImage(source, std::nullopt, { dx, dy }, FloatSize { dwidth, dheight }, options);
 }
 
 ExceptionOr<void> CanvasRenderingContext2DBase::drawElementImage(CanvasElementImageSource&& source, float sx, float sy, float swidth, float sheight, float dx, float dy, std::optional<CanvasDrawElementImageOptions> options)
 {
-    return drawElementImage(
-        WTF::move(source),
-        FloatRect { sx, sy, swidth, sheight },
-        FloatRect { dx, dy, swidth, sheight },
-        options);
+    return drawElementImage(source, FloatRect { sx, sy, swidth, sheight }, { dx, dy }, std::nullopt, options);
 }
 
 ExceptionOr<void> CanvasRenderingContext2DBase::drawElementImage(CanvasElementImageSource&& source, float sx, float sy, float swidth, float sheight, float dx, float dy, float dwidth, float dheight, std::optional<CanvasDrawElementImageOptions> options)
 {
-    return drawElementImage(
-        WTF::move(source),
-        FloatRect { sx, sy, swidth, sheight },
-        FloatRect { dx, dy, dwidth, dheight },
-        options);
+    return drawElementImage(source, FloatRect { sx, sy, swidth, sheight }, { dx, dy }, FloatSize { dwidth, dheight }, options);
 }
 
-ExceptionOr<void> CanvasRenderingContext2DBase::drawElementImage(CanvasElementImageSource&& source, const FloatRect& srcRect, const FloatRect& dstRect, std::optional<CanvasDrawElementImageOptions> options)
+ExceptionOr<void> CanvasRenderingContext2DBase::drawElementImage(const CanvasElementImageSource& source, std::optional<FloatRect> srcRect, const FloatPoint& dstLocation, std::optional<FloatSize> dstSize, std::optional<CanvasDrawElementImageOptions> options)
 {
-    return WTF::switchOn(source,
-        [&](Ref<Element>& element) -> ExceptionOr<void> {
-            if (RefPtr canvasElement = dynamicDowncast<HTMLCanvasElement>(canvasBase())) {
-                if (auto snapshot = canvasElement->canvasDrawableSnapshot(element))
-                    return drawSnapshot(*snapshot, srcRect, dstRect, options);
-            }
-            return Exception { ExceptionCode::InvalidStateError, "CanvasRenderingContext2DBase failed to get a snapshot for a drawableElement."_s };
-        },
-        [&](Ref<CanvasElementImage>& elementImage) -> ExceptionOr<void> {
-            return drawSnapshot(elementImage->snapshot(), srcRect, dstRect, options);
-        }
-    );
+    Ref canvas = canvasBase();
+    auto snapshotOrException = canvasElementSnapshot(canvas, source, "CanvasRenderingContext2DBase failed to get a snapshot for a drawableElement."_s);
+    if (snapshotOrException.hasException())
+        return snapshotOrException.releaseException();
+
+    auto& snapshot = snapshotOrException.returnValue();
+    auto sourceRect = srcRect.value_or(FloatRect { { }, snapshot.borderBoxSize });
+    // With no source rect this is snapshot.defaultSize(), which getElementImageDefaultSize() returns.
+    auto destinationSize = dstSize.value_or(snapshot.sizeInCanvasGrid(sourceRect.size(), canvas->size()));
+    return drawSnapshot(snapshot, sourceRect, { dstLocation, destinationSize }, options);
 }
 
 ExceptionOr<void> CanvasRenderingContext2DBase::drawSnapshot(const CanvasElementSnapshot& snapshot, const FloatRect& srcRect, const FloatRect& dstRect, std::optional<CanvasDrawElementImageOptions>)

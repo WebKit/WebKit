@@ -168,8 +168,13 @@ DisplayList::RecorderImpl* RenderHTMLCanvas::canvasDrawableRecorder(RenderElemen
     Ref snapshotRecorder = DisplayList::RecorderImpl::create(initialState, elementRelativeBounds, AffineTransform { }, context.colorSpace());
     snapshotRecorder->translate(-elementRelativeBounds.x(), -elementRelativeBounds.y());
 
-    m_canvasDrawableRecorderMap.set(element, WTF::move(snapshotRecorder));
-    return m_canvasDrawableRecorderMap.get(element);
+    // https://github.com/WICG/html-in-canvas: "The rendering starts at the element's border box, before CSS transformations."
+    FloatSize borderBoxSize = elementRelativeBounds.size();
+    if (CheckedPtr boxModelObject = dynamicDowncast<RenderBoxModelObject>(element))
+        borderBoxSize = boxModelObject->borderBoundingBox().size();
+
+    auto result = m_canvasDrawableRecorderMap.set(element, CanvasDrawableRecording { WTF::move(snapshotRecorder), borderBoxSize, replacedContentRect().size() });
+    return result.iterator->value.recorder.ptr();
 }
 
 std::optional<CanvasElementSnapshot> RenderHTMLCanvas::canvasDrawableSnapshot(RenderElement& element) const
@@ -177,10 +182,18 @@ std::optional<CanvasElementSnapshot> RenderHTMLCanvas::canvasDrawableSnapshot(Re
     if (!element.isCanvasDrawable())
         return std::nullopt;
 
-    if (RefPtr snapshotRecorder = m_canvasDrawableRecorderMap.get(element))
-        return { { snapshotRecorder->copyDisplayList(), snapshotRecorder->initialClip().size() } };
+    auto it = m_canvasDrawableRecorderMap.find(element);
+    if (it == m_canvasDrawableRecorderMap.end())
+        return std::nullopt;
 
-    return std::nullopt;
+    auto& recording = it->value;
+    return { {
+        recording.recorder->copyDisplayList(),
+        recording.recorder->initialClip().size(),
+        recording.borderBoxSize,
+        recording.canvasContentSize,
+        protect(canvasElement())->nodeIdentifier(),
+    } };
 }
 
 void RenderHTMLCanvas::requestPaintEventIfNeeded(const RenderElement& repaintedRenderer) const

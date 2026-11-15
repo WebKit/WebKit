@@ -14450,6 +14450,8 @@
 		7224293A301AB8B700856621 /* WebGLCopyElementImageConfig.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGLCopyElementImageConfig.idl; sourceTree = "<group>"; };
 		7224293B301ABB3600856621 /* CanvasElementImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CanvasElementImage.h; sourceTree = "<group>"; };
 		7224293C301ABB3600856621 /* CanvasElementImage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CanvasElementImage.cpp; sourceTree = "<group>"; };
+		3FFC3AF0B9C86EE4D49ED885 /* CanvasElementImageDefaultSize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CanvasElementImageDefaultSize.h; sourceTree = "<group>"; };
+		A604F27F1C5EFE5D531B8A71 /* CanvasElementImageDefaultSize.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CanvasElementImageDefaultSize.idl; sourceTree = "<group>"; };
 		7224293D301ACFD400856621 /* GPUDrawElementImageDestination.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPUDrawElementImageDestination.idl; sourceTree = "<group>"; };
 		7224293E301ACFD400856621 /* GPUDrawElementImageSource.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPUDrawElementImageSource.idl; sourceTree = "<group>"; };
 		7224293D301ABB3600856621 /* CanvasToneMapping.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CanvasToneMapping.h; sourceTree = "<group>"; };
@@ -28537,6 +28539,8 @@
 				7224293C301ABB3600856621 /* CanvasElementImage.cpp */,
 				7224293B301ABB3600856621 /* CanvasElementImage.h */,
 				72242937301AA86900856621 /* CanvasElementImage.idl */,
+				3FFC3AF0B9C86EE4D49ED885 /* CanvasElementImageDefaultSize.h */,
+				A604F27F1C5EFE5D531B8A71 /* CanvasElementImageDefaultSize.idl */,
 				7C193BA11F5E0EAB0088F3E6 /* CanvasFillRule.h */,
 				7C193BA51F5E0EAE0088F3E6 /* CanvasFillRule.idl */,
 				7C193BA01F5E0EAA0088F3E6 /* CanvasFillStrokeStyles.idl */,

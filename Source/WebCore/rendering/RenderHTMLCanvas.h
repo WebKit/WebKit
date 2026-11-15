@@ -78,7 +78,14 @@ private:
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
 
     SingleThreadWeakPtr<RenderBlock> m_innerRenderer;
-    mutable HashMap<SingleThreadWeakRef<RenderElement>, Ref<DisplayList::RecorderImpl>> m_canvasDrawableRecorderMap;
+
+    struct CanvasDrawableRecording {
+        Ref<DisplayList::RecorderImpl> recorder;
+        // Geometry at paint time; see CanvasElementSnapshot.
+        FloatSize borderBoxSize;
+        FloatSize canvasContentSize;
+    };
+    mutable HashMap<SingleThreadWeakRef<RenderElement>, CanvasDrawableRecording> m_canvasDrawableRecorderMap;
 };
 
 } // namespace WebCore

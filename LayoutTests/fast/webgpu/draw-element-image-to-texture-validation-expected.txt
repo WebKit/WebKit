@@ -12,6 +12,7 @@ PASS missing source: TypeError
 PASS null source: TypeError
 PASS non-element source: TypeError
 PASS element which is not a drawable child of a canvas: InvalidStateError
+PASS closed ElementImage: InvalidStateError
 PASS only sourceX: InvalidStateError
 PASS only sourceY: InvalidStateError
 PASS only sourceWidth: InvalidStateError

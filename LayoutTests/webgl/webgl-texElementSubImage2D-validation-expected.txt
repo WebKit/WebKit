@@ -7,9 +7,13 @@ PASS no texture bound generated INVALID_OPERATION
 PASS undefined level generated INVALID_OPERATION
 PASS texImage2D generated NO_ERROR
 PASS valid call generated NO_ERROR
+PASS valid call with ElementImage generated NO_ERROR
 PASS valid call with empty config generated NO_ERROR
 PASS valid call with full source rect generated NO_ERROR
 PASS valid call with size generated NO_ERROR
+PASS element from another canvas generated INVALID_OPERATION
+PASS ElementImage from another canvas generated INVALID_OPERATION
+PASS closed ElementImage generated INVALID_OPERATION
 PASS invalid target generated INVALID_ENUM
 PASS negative level generated INVALID_VALUE
 PASS negative xoffset generated INVALID_VALUE
