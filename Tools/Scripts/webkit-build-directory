@@ -52,6 +52,9 @@ Usage: $programName [options]
   --top-level           Show the top-level build directory
 
   --asan                Select the ASan (AddressSanitizer) build tree (with CMake: WebKitBuild/cmake-mac/ASan)
+  --no-asan             Ignore a saved ASan setting from set-webkit-configuration or build-webkit
+  --tsan                Select the TSan (ThreadSanitizer) build tree (with CMake: WebKitBuild/cmake-mac/TSan)
+  --no-tsan             Ignore a saved TSan setting from set-webkit-configuration or build-webkit
   --cmake               Select the CMake build tree, overriding set-webkit-configuration
   --xcode               Select the Xcode build tree, overriding set-webkit-configuration
   --gtk                 Find the build directory for the GTK+ port
