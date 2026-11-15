@@ -1,0 +1,77 @@
+CONSOLE MESSAGE: [object Object]
+CONSOLE MESSAGE: [object Object]
+CONSOLE MESSAGE: [object DocumentFragment]
+CONSOLE MESSAGE: [object Object]
+CONSOLE MESSAGE: [object Object]
+CONSOLE MESSAGE: [object Object]
+CONSOLE MESSAGE: [object Object]
+CONSOLE MESSAGE: [object Object]
+CONSOLE MESSAGE: ,
+CONSOLE MESSAGE: [object HTMLDivElement]
+CONSOLE MESSAGE: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+Tests that console.table() previews its rows in full, and the objects in its cells like a normal preview.
+
+Enabling Console domain...
+
+== Running test suite: Console.table.NestedObjects
+-- Running test case: Console.table.RowWithElement
+PASS: Should add a table message for 'console.table([{name: "a", element: document.createElement("div")}])'.
+PASS: Row 0 should have a preview.
+PASS: Cell 'name' should be 'a'.
+PASS: Cell 'element' should be a node.
+PASS: Cell 'element' should be described as '<div>'.
+PASS: Cell 'element' should not have a preview.
+
+-- Running test case: Console.table.RowWithBody
+PASS: Should add a table message for 'console.table([{body: document.body}])'.
+PASS: Row 0 should have a preview.
+PASS: Cell 'body' should be described as '<body>'.
+
+-- Running test case: Console.table.DocumentFragment
+PASS: Should add a table message for 'console.table(new Range().extractContents())'.
+PASS: Table should have rows.
+PASS: Row 'ownerDocument' should have a preview.
+
+-- Running test case: Console.table.CyclicRow
+PASS: Should add a table message for '(function() { let a = {name: "a"}; a.wrapper = {a}; console.table([a]); })()'.
+PASS: Row 0 should have a preview.
+PASS: Cell 'wrapper' should be described as 'Object'.
+PASS: Cell 'wrapper' should not have a preview.
+
+-- Running test case: Console.table.CellPreviews
+PASS: Should add a table message for 'console.table([{point: {x: 1, y: 2}, list: [1, 2], big: {a: 1, b: 2, c: 3, d: 4}}])'.
+PASS: Row 0 should have a preview.
+PASS: Cell 'point' should have a preview with 'x' and 'y'.
+PASS: Cell 'list' should have a preview with 2 items.
+PASS: Cell 'big' should be described as 'Object'.
+
+-- Running test case: Console.table.WideRow
+PASS: Should add a table message for 'console.table([{c1: 1, c2: 2, c3: 3, c4: 4, c5: 5, c6: 6, c7: 7, c8: 8}])'.
+PASS: Row 0 should have a preview.
+PASS: Row should have 8 cells.
+
+-- Running test case: Console.table.WideRowWithoutColumns
+PASS: Should add a table message for 'console.table([Object.fromEntries(Array.from({length: 20}, (_, i) => ["c" + i, i]))])'.
+PASS: Row 0 should have a preview.
+PASS: Row should have 15 cells.
+
+-- Running test case: Console.table.WideRowWithColumns
+PASS: Should add a table message for 'console.table([Object.fromEntries(Array.from({length: 20}, (_, i) => ["c" + i, i]))], ["c19"])'.
+PASS: Row 0 should have a preview.
+PASS: Cell 'c19' should be '19'.
+
+-- Running test case: Console.table.ElementRows
+PASS: Should add a table message for 'console.table([document.createElement("a"), document.createElement("a")])'.
+PASS: Table should have 2 rows.
+PASS: Row 0 should have a preview.
+PASS: Row 0 should have 15 cells.
+
+-- Running test case: Console.table.ElementRowsWithColumns
+PASS: Should add a table message for '(function() { let div = document.createElement("div"); div.id = "row"; console.table([div], ["id"]); })()'.
+PASS: Row 0 should have a preview.
+PASS: Cell 'id' should be 'row'.
+
+-- Running test case: Console.table.ManyRows
+PASS: Should add a table message for 'console.table(Array.from({length: 20}, (_, i) => ({i, element: document.body})))'.
+PASS: Table should have 20 rows.
+

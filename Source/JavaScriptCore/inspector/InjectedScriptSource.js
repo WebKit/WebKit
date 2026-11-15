@@ -1047,7 +1047,7 @@ var injectedScript = new InjectedScript;
 
 let RemoteObject = class RemoteObject extends PrototypelessObjectBase
 {
-    constructor(object, objectGroupName, forceValueType, generatePreview, columnNames, descriptionHint)
+    constructor(object, objectGroupName, forceValueType, generatePreview, columnNames, descriptionHint, tableRowPropertyLimit)
     {
         super();
 
@@ -1103,7 +1103,7 @@ let RemoteObject = class RemoteObject extends PrototypelessObjectBase
                 this.preview = this._generatePreview(InjectedScriptHost.weakRefTargetValue(object));
                 this.preview.lossless = false;
             } else
-                this.preview = this._generatePreview(object, @undefined, columnNames);
+                this.preview = this._generatePreview(object, @undefined, columnNames, tableRowPropertyLimit);
         }
     }
 
@@ -1125,9 +1125,9 @@ let RemoteObject = class RemoteObject extends PrototypelessObjectBase
         }
     }
 
-    static createObjectPreviewForValue(value, generatePreview, columnNames)
+    static createObjectPreviewForValue(value, generatePreview, tableRowPropertyLimit)
     {
-        let remoteObject = new RemoteObject(value, @undefined, false, generatePreview, columnNames);
+        let remoteObject = new RemoteObject(value, @undefined, false, generatePreview, @undefined, @undefined, tableRowPropertyLimit);
         if (remoteObject.objectId)
             injectedScript.releaseObject(remoteObject.objectId);
         if (remoteObject.classPrototype && remoteObject.classPrototype.objectId)
@@ -1280,15 +1280,15 @@ let RemoteObject = class RemoteObject extends PrototypelessObjectBase
         return preview;
     }
 
-    _generatePreview(object, firstLevelKeys, secondLevelKeys)
+    _generatePreview(object, firstLevelKeys, secondLevelKeys, tableRowPropertyLimit)
     {
         let preview = this._initialPreview();
         let isTableRowsRequest = secondLevelKeys === null || secondLevelKeys;
         let firstLevelKeysCount = firstLevelKeys ? firstLevelKeys.length : 0;
 
         let propertiesThreshold = @createObjectWithoutPrototype(
-            "properties", isTableRowsRequest ? 1000 : max(5, firstLevelKeysCount),
-            "indexes", isTableRowsRequest ? 1000 : max(10, firstLevelKeysCount),
+            "properties", isTableRowsRequest ? 1000 : tableRowPropertyLimit || max(5, firstLevelKeysCount),
+            "indexes", isTableRowsRequest ? 1000 : tableRowPropertyLimit || max(10, firstLevelKeysCount),
         );
 
         try {
@@ -1448,9 +1448,13 @@ let RemoteObject = class RemoteObject extends PrototypelessObjectBase
             property.subtype = subtype;
 
         // Second level.
-        if ((secondLevelKeys === null || secondLevelKeys) || this._isPreviewableObject(value, object)) {
+        // The rows of a table get a larger preview. The values in a row get a normal preview.
+        let valueIsTableRow = secondLevelKeys === null || !!secondLevelKeys;
+        if (valueIsTableRow || this._isPreviewableObject(value, object)) {
+            // Without given columns, the frontend shows at most 15 columns, and the first 15 properties of each row are enough for that.
+            let tableRowPropertyLimit = valueIsTableRow ? (secondLevelKeys?.length ? 1000 : 15) : @undefined;
             // FIXME: If we want secondLevelKeys filter to continue we would need some refactoring.
-            let subPreview = RemoteObject.createObjectPreviewForValue(value, value !== object, secondLevelKeys);
+            let subPreview = RemoteObject.createObjectPreviewForValue(value, value !== object, tableRowPropertyLimit);
             property.valuePreview = subPreview;
             if (!subPreview.lossless)
                 preview.lossless = false;
