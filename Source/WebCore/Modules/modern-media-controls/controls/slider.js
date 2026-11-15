@@ -71,8 +71,15 @@ class Slider extends SliderBase
     {
         super.commit();
 
-        this._primaryFill.element.style.flexGrow = 100 * this.value;
-        this._trackFill.element.style.flexGrow = 100 * (1 - this.value);
+        // commit() runs whenever any property is dirty (x, width, disabled…), but the fills
+        // only depend on the value, so avoid touching the DOM unless the value actually changed.
+        const value = this.value;
+        if (value === this._committedValue)
+            return;
+        this._committedValue = value;
+
+        this._primaryFill.element.style.flexGrow = 100 * value;
+        this._trackFill.element.style.flexGrow = 100 * (1 - value);
     }
 
 }
