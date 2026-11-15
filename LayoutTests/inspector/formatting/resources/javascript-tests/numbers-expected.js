@@ -58,3 +58,11 @@ Infinity;
 0O223n;
 0b101n;
 0B101n;
+
+// Member Access
+(1).toString();
+1 .toString();
+1 .toFixed(1);
+0x1.toString();
+1n.toString();
+1_2 .toString();

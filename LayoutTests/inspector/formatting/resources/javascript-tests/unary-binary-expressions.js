@@ -74,3 +74,20 @@ x instanceof(x);
 0===123n;
 +123n===-123n;
 -123n===+123n;
+
+// Adjacent operators that would fuse into another operator if the space were dropped.
+x - -x;
+x + +x;
+- -x;
++ +x;
+- --x;
++ ++x;
+x - - -x;
+x + + +x;
+x++ + ++x;
+x-- - --x;
+x - -1;
++ +1;
+// Pairs of different signs do not fuse, and keep no space.
++-x;
+-+x;
