@@ -1,0 +1,11 @@
+Summary Element - HTML-AAM Contextual-Specific Role Verification Tests
+
+Tests contextual computedrole mappings for summary defined in summary (HTML spec) and HTML-AAM summary mapping
+
+x
+x
+
+PASS orphan summary has generic role
+PASS descendant summary of details, that is not the first descendant summary, has generic role
+PASS descendant summary of details with intervening element, has generic role
+

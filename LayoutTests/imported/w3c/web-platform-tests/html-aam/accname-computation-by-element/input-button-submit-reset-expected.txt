@@ -1,0 +1,209 @@
+Accname computation tests for element: <input type="submit"> and <input type="reset">
+
+HTML-AAM computation steps
+
+input[type="button"] expecting name from 2 aria-labelledby refs
+
+associated label #1 text contentsassociated label #2 text contents
+aria-labelledby ref element #1 text contents
+
+aria-labelledby ref element #2 text contents
+
+
+<h2>input[type="button"] expecting name from 2 aria-labelledby refs</h2>
+<label for="el-1">associated label #1 text contents</label>
+<label for="el-1">associated label #2 text contents</label>
+<p id="el-1-label-1">aria-labelledby ref element #1 text contents</p>
+<p id="el-1-label-2">aria-labelledby ref element #2 text contents</p>
+<input type="button" id="el-1" class="ex-label" data-testname="input[type=&quot;button&quot;] expecting name from 2 aria-labelledby refs" aria-labelledby="el-1-label-1 el-1-label-2" aria-label="input aria-label attribute value" value="input value attribute value" title="input title attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents aria-labelledby ref element #2 text contents">
+input[type="button"] expecting name from 1 aria-labelledby ref
+
+associated label #1 text contentsassociated label #2 text contents
+aria-labelledby ref element #1 text contents
+
+
+<h2>input[type="button"] expecting name from 1 aria-labelledby ref</h2>
+<label for="el-2">associated label #1 text contents</label>
+<label for="el-2">associated label #2 text contents</label>
+<p id="el-2-label-1">aria-labelledby ref element #1 text contents</p>
+<input type="button" id="el-2" class="ex-label" data-testname="input[type=&quot;button&quot;] expecting name from 1 aria-labelledby ref" aria-labelledby="el-2-label-1" aria-label="input aria-label attribute value" value="input value attribute value" title="input title attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents">
+input[type="button"] expecting name from aria-label
+
+associated label #1 text contentsassociated label #2 text contents
+<h2>input[type="button"] expecting name from aria-label</h2>
+<label for="el-3">associated label #1 text contents</label>
+<label for="el-3">associated label #2 text contents</label>
+<input type="button" id="el-3" class="ex-label" data-testname="input[type=&quot;button&quot;] expecting name from aria-label" aria-label="input aria-label attribute value" value="input value attribute value" title="input title attribute value" data-expectedlabel="input aria-label attribute value">
+input[type="button"] expecting name from 2 labels
+
+associated label #1 text contentsassociated label #2 text contents
+<h2>input[type="button"] expecting name from 2 labels</h2>
+<label for="el-4">associated label #1 text contents</label>
+<label for="el-4">associated label #2 text contents</label>
+<input type="button" id="el-4" class="ex-label" data-testname="input[type=&quot;button&quot;] expecting name from 2 labels" value="input value attribute value" title="input title attribute value" data-expectedlabel="associated label #1 text contents associated label #2 text contents">
+input[type="button"] expecting name from 1 label
+
+associated label #1 text contents
+<h2>input[type="button"] expecting name from 1 label</h2>
+<label for="el-5">associated label #1 text contents</label>
+<input type="button" id="el-5" class="ex-label" data-testname="input[type=&quot;button&quot;] expecting name from 1 label" value="input value attribute value" title="input title attribute value" data-expectedlabel="associated label #1 text contents">
+input[type="button"] expecting name from encapsulating label
+
+encapsulating label text contents
+<h2>input[type="button"] expecting name from encapsulating label</h2>
+<label>encapsulating label text contents<input type="button" id="el-6" class="ex-label" data-testname="input[type=&quot;button&quot;] expecting name from encapsulating label" value="input value attribute value" title="input title attribute value" data-expectedlabel="encapsulating label text contents">
+</label>
+input[type="button"] expecting name from value
+
+
+<h2>input[type="button"] expecting name from value</h2>
+<input type="button" id="el-7" class="ex-label" data-testname="input[type=&quot;button&quot;] expecting name from value" value="input value attribute value" title="input title attribute value" data-expectedlabel="input value attribute value">
+input[type="button"] expecting name from title
+
+
+<h2>input[type="button"] expecting name from title</h2>
+<input type="button" id="el-8" class="ex-label" data-testname="input[type=&quot;button&quot;] expecting name from title" title="input title attribute value" data-expectedlabel="input title attribute value">
+input[type="button"] expecting name to be empty
+
+
+<h2>input[type="button"] expecting name to be empty</h2>
+<input type="button" id="el-9" class="ex-label" data-testname="input[type=&quot;button&quot;] expecting name to be empty" data-expectedlabel="">
+HTML-AAM computation steps
+
+input[type="submit"] expecting name from 2 aria-labelledby refs
+
+associated label #1 text contentsassociated label #2 text contents
+aria-labelledby ref element #1 text contents
+
+aria-labelledby ref element #2 text contents
+
+
+<h2>input[type="submit"] expecting name from 2 aria-labelledby refs</h2>
+<label for="el-10">associated label #1 text contents</label>
+<label for="el-10">associated label #2 text contents</label>
+<p id="el-10-label-1">aria-labelledby ref element #1 text contents</p>
+<p id="el-10-label-2">aria-labelledby ref element #2 text contents</p>
+<input type="submit" id="el-10" class="ex-label" data-testname="input[type=&quot;submit&quot;] expecting name from 2 aria-labelledby refs" aria-labelledby="el-10-label-1 el-10-label-2" aria-label="input aria-label attribute value" value="input value attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents aria-labelledby ref element #2 text contents">
+input[type="submit"] expecting name from 1 aria-labelledby ref
+
+associated label #1 text contentsassociated label #2 text contents
+aria-labelledby ref element #1 text contents
+
+
+<h2>input[type="submit"] expecting name from 1 aria-labelledby ref</h2>
+<label for="el-11">associated label #1 text contents</label>
+<label for="el-11">associated label #2 text contents</label>
+<p id="el-11-label-1">aria-labelledby ref element #1 text contents</p>
+<input type="submit" id="el-11" class="ex-label" data-testname="input[type=&quot;submit&quot;] expecting name from 1 aria-labelledby ref" aria-labelledby="el-11-label-1" aria-label="input aria-label attribute value" value="input value attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents">
+input[type="submit"] expecting name from aria-label
+
+associated label #1 text contentsassociated label #2 text contents
+<h2>input[type="submit"] expecting name from aria-label</h2>
+<label for="el-12">associated label #1 text contents</label>
+<label for="el-12">associated label #2 text contents</label>
+<input type="submit" id="el-12" class="ex-label" data-testname="input[type=&quot;submit&quot;] expecting name from aria-label" aria-label="input aria-label attribute value" value="input value attribute value" data-expectedlabel="input aria-label attribute value">
+input[type="submit"] expecting name from 2 labels
+
+associated label #1 text contentsassociated label #2 text contents
+<h2>input[type="submit"] expecting name from 2 labels</h2>
+<label for="el-13">associated label #1 text contents</label>
+<label for="el-13">associated label #2 text contents</label>
+<input type="submit" id="el-13" class="ex-label" data-testname="input[type=&quot;submit&quot;] expecting name from 2 labels" value="input value attribute value" data-expectedlabel="associated label #1 text contents associated label #2 text contents">
+input[type="submit"] expecting name from 1 label
+
+associated label #1 text contents
+<h2>input[type="submit"] expecting name from 1 label</h2>
+<label for="el-14">associated label #1 text contents</label>
+<input type="submit" id="el-14" class="ex-label" data-testname="input[type=&quot;submit&quot;] expecting name from 1 label" value="input value attribute value" data-expectedlabel="associated label #1 text contents">
+input[type="submit"] expecting name from encapsulating label
+
+encapsulating label text contents
+<h2>input[type="submit"] expecting name from encapsulating label</h2>
+<label>encapsulating label text contents<input type="submit" id="el-15" class="ex-label" data-testname="input[type=&quot;submit&quot;] expecting name from encapsulating label" value="input value attribute value" data-expectedlabel="encapsulating label text contents">
+</label>
+input[type="submit"] expecting name from value
+
+
+<h2>input[type="submit"] expecting name from value</h2>
+<input type="submit" id="el-16" class="ex-label" data-testname="input[type=&quot;submit&quot;] expecting name from value" value="input value attribute value" data-expectedlabel="input value attribute value">
+input[type="reset"] expecting name from 2 aria-labelledby refs
+
+associated label #1 text contentsassociated label #2 text contents
+aria-labelledby ref element #1 text contents
+
+aria-labelledby ref element #2 text contents
+
+
+<h2>input[type="reset"] expecting name from 2 aria-labelledby refs</h2>
+<label for="el-17">associated label #1 text contents</label>
+<label for="el-17">associated label #2 text contents</label>
+<p id="el-17-label-1">aria-labelledby ref element #1 text contents</p>
+<p id="el-17-label-2">aria-labelledby ref element #2 text contents</p>
+<input type="reset" id="el-17" class="ex-label" data-testname="input[type=&quot;reset&quot;] expecting name from 2 aria-labelledby refs" aria-labelledby="el-17-label-1 el-17-label-2" aria-label="input aria-label attribute value" value="input value attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents aria-labelledby ref element #2 text contents">
+input[type="reset"] expecting name from 1 aria-labelledby ref
+
+associated label #1 text contentsassociated label #2 text contents
+aria-labelledby ref element #1 text contents
+
+
+<h2>input[type="reset"] expecting name from 1 aria-labelledby ref</h2>
+<label for="el-18">associated label #1 text contents</label>
+<label for="el-18">associated label #2 text contents</label>
+<p id="el-18-label-1">aria-labelledby ref element #1 text contents</p>
+<input type="reset" id="el-18" class="ex-label" data-testname="input[type=&quot;reset&quot;] expecting name from 1 aria-labelledby ref" aria-labelledby="el-18-label-1" aria-label="input aria-label attribute value" value="input value attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents">
+input[type="reset"] expecting name from aria-label
+
+associated label #1 text contentsassociated label #2 text contents
+<h2>input[type="reset"] expecting name from aria-label</h2>
+<label for="el-19">associated label #1 text contents</label>
+<label for="el-19">associated label #2 text contents</label>
+<input type="reset" id="el-19" class="ex-label" data-testname="input[type=&quot;reset&quot;] expecting name from aria-label" aria-label="input aria-label attribute value" value="input value attribute value" data-expectedlabel="input aria-label attribute value">
+input[type="reset"] expecting name from 2 labels
+
+associated label #1 text contentsassociated label #2 text contents
+<h2>input[type="reset"] expecting name from 2 labels</h2>
+<label for="el-20">associated label #1 text contents</label>
+<label for="el-20">associated label #2 text contents</label>
+<input type="reset" id="el-20" class="ex-label" data-testname="input[type=&quot;reset&quot;] expecting name from 2 labels" value="input value attribute value" data-expectedlabel="associated label #1 text contents associated label #2 text contents">
+input[type="reset"] expecting name from 1 label
+
+associated label #1 text contents
+<h2>input[type="reset"] expecting name from 1 label</h2>
+<label for="el-21">associated label #1 text contents</label>
+<input type="reset" id="el-21" class="ex-label" data-testname="input[type=&quot;reset&quot;] expecting name from 1 label" value="input value attribute value" data-expectedlabel="associated label #1 text contents">
+input[type="reset"] expecting name from encapsulating label
+
+encapsulating label text contents
+<h2>input[type="reset"] expecting name from encapsulating label</h2>
+<label>encapsulating label text contents<input type="reset" id="el-22" class="ex-label" data-testname="input[type=&quot;reset&quot;] expecting name from encapsulating label" value="input value attribute value" data-expectedlabel="encapsulating label text contents">
+</label>
+input[type="reset"] expecting name from value
+
+
+<h2>input[type="reset"] expecting name from value</h2>
+<input type="reset" id="el-23" class="ex-label" data-testname="input[type=&quot;reset&quot;] expecting name from value" value="input value attribute value" data-expectedlabel="input value attribute value">
+
+PASS input[type="button"] expecting name from 2 aria-labelledby refs
+PASS input[type="button"] expecting name from 1 aria-labelledby ref
+PASS input[type="button"] expecting name from aria-label
+PASS input[type="button"] expecting name from 2 labels
+PASS input[type="button"] expecting name from 1 label
+PASS input[type="button"] expecting name from encapsulating label
+PASS input[type="button"] expecting name from value
+FAIL input[type="button"] expecting name from title assert_equals: <input type="button" id="el-8" class="ex-label" data-testname="input[type=&quot;button&quot;] expecting name from title" title="input title attribute value" data-expectedlabel="input title attribute value"> expected "input title attribute value" but got ""
+PASS input[type="button"] expecting name to be empty
+PASS input[type="submit"] expecting name from 2 aria-labelledby refs
+PASS input[type="submit"] expecting name from 1 aria-labelledby ref
+PASS input[type="submit"] expecting name from aria-label
+PASS input[type="submit"] expecting name from 2 labels
+PASS input[type="submit"] expecting name from 1 label
+PASS input[type="submit"] expecting name from encapsulating label
+PASS input[type="submit"] expecting name from value
+PASS input[type="reset"] expecting name from 2 aria-labelledby refs
+PASS input[type="reset"] expecting name from 1 aria-labelledby ref
+PASS input[type="reset"] expecting name from aria-label
+PASS input[type="reset"] expecting name from 2 labels
+PASS input[type="reset"] expecting name from 1 label
+PASS input[type="reset"] expecting name from encapsulating label
+PASS input[type="reset"] expecting name from value
+

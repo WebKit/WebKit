@@ -1,0 +1,420 @@
+Accname computation tests for <tr>
+
+HTML-AAM computation steps
+
+tr expecting name from 2 aria-labelledby refs
+
+aria-labelledby ref element #1 text contents
+
+aria-labelledby ref element #2 text contents
+
+td text node contents
+<h2>tr expecting name from 2 aria-labelledby refs</h2>
+<p id="el-1-label-1">aria-labelledby ref element #1 text contents</p>
+<p id="el-1-label-2">aria-labelledby ref element #2 text contents</p>
+<table>
+<tbody>
+<tr id="el-1" class="ex-label" data-testname="tr expecting name from 2 aria-labelledby refs" aria-labelledby="el-1-label-1 el-1-label-2" aria-label="tr aria-label attribute value" title="tr title attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents aria-labelledby ref element #2 text contents">
+<td>td text node contents</td>
+</tr>
+</tbody>
+</table>
+tr expecting name from 1 aria-labelledby ref
+
+aria-labelledby ref element #1 text contents
+
+td text node contents
+<h2>tr expecting name from 1 aria-labelledby ref</h2>
+<p id="el-2-label-1">aria-labelledby ref element #1 text contents</p>
+<table>
+<tbody>
+<tr id="el-2" class="ex-label" data-testname="tr expecting name from 1 aria-labelledby ref" aria-labelledby="el-2-label-1" aria-label="tr aria-label attribute value" title="tr title attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents">
+<td>td text node contents</td>
+</tr>
+</tbody>
+</table>
+tr expecting name from aria-label
+
+td text node contents
+<h2>tr expecting name from aria-label</h2>
+<table>
+<tbody>
+<tr id="el-3" class="ex-label" data-testname="tr expecting name from aria-label" aria-label="tr aria-label attribute value" title="tr title attribute value" data-expectedlabel="tr aria-label attribute value">
+<td>td text node contents</td>
+</tr>
+</tbody>
+</table>
+tr expecting name from title
+
+td text node contents
+<h2>tr expecting name from title</h2>
+<table>
+<tbody>
+<tr id="el-4" class="ex-label" data-testname="tr expecting name from title" title="tr title attribute value" data-expectedlabel="tr title attribute value">
+<td>td text node contents</td>
+</tr>
+</tbody>
+</table>
+tr expecting name to be empty
+
+td text node contents
+<h2>tr expecting name to be empty</h2>
+<table>
+<tbody>
+<tr id="el-5" class="ex-label" data-testname="tr expecting name to be empty" data-expectedlabel="">
+<td>td text node contents</td>
+</tr>
+</tbody>
+</table>
+th expecting name from 2 aria-labelledby refs
+
+aria-labelledby ref element #1 text contents
+
+aria-labelledby ref element #2 text contents
+
+th text node contents
+<h2>th expecting name from 2 aria-labelledby refs</h2>
+<p id="el-6-label-1">aria-labelledby ref element #1 text contents</p>
+<p id="el-6-label-2">aria-labelledby ref element #2 text contents</p>
+<table>
+<thead>
+<tr>
+<th id="el-6" class="ex-label" data-testname="th expecting name from 2 aria-labelledby refs" aria-labelledby="el-6-label-1 el-6-label-2" aria-label="th aria-label attribute value" title="th title attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents aria-labelledby ref element #2 text contents">th text node contents</th>
+</tr>
+</thead>
+</table>
+th expecting name from 1 aria-labelledby ref
+
+aria-labelledby ref element #1 text contents
+
+th text node contents
+<h2>th expecting name from 1 aria-labelledby ref</h2>
+<p id="el-7-label-1">aria-labelledby ref element #1 text contents</p>
+<table>
+<thead>
+<tr>
+<th id="el-7" class="ex-label" data-testname="th expecting name from 1 aria-labelledby ref" aria-labelledby="el-7-label-1" aria-label="th aria-label attribute value" title="th title attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents">th text node contents</th>
+</tr>
+</thead>
+</table>
+th expecting name from aria-label
+
+th text node contents
+<h2>th expecting name from aria-label</h2>
+<table>
+<thead>
+<tr>
+<th id="el-8" class="ex-label" data-testname="th expecting name from aria-label" aria-label="th aria-label attribute value" title="th title attribute value" data-expectedlabel="th aria-label attribute value">th text node contents</th>
+</tr>
+</thead>
+</table>
+th expecting name from title
+
+th text node contents
+<h2>th expecting name from title</h2>
+<table>
+<thead>
+<tr>
+<th id="el-9" class="ex-label" data-testname="th expecting name from title" title="th title attribute value" data-expectedlabel="th title attribute value">th text node contents</th>
+</tr>
+</thead>
+</table>
+th expecting name to be empty
+
+th text node contents
+<h2>th expecting name to be empty</h2>
+<table>
+<thead>
+<tr>
+<th id="el-10" class="ex-label" data-testname="th expecting name to be empty" data-expectedlabel="">th text node contents</th>
+</tr>
+</thead>
+</table>
+td expecting name from 2 aria-labelledby refs
+
+aria-labelledby ref element #1 text contents
+
+aria-labelledby ref element #2 text contents
+
+td text node contents
+<h2>td expecting name from 2 aria-labelledby refs</h2>
+<p id="el-11-label-1">aria-labelledby ref element #1 text contents</p>
+<p id="el-11-label-2">aria-labelledby ref element #2 text contents</p>
+<table>
+<tbody>
+<tr>
+<td id="el-11" class="ex-label" data-testname="td expecting name from 2 aria-labelledby refs" aria-labelledby="el-11-label-1 el-11-label-2" aria-label="td aria-label attribute value" title="td title attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents aria-labelledby ref element #2 text contents">td text node contents</td>
+</tr>
+</tbody>
+</table>
+td expecting name from 1 aria-labelledby ref
+
+aria-labelledby ref element #1 text contents
+
+td text node contents
+<h2>td expecting name from 1 aria-labelledby ref</h2>
+<p id="el-12-label-1">aria-labelledby ref element #1 text contents</p>
+<table>
+<tbody>
+<tr>
+<td id="el-12" class="ex-label" data-testname="td expecting name from 1 aria-labelledby ref" aria-labelledby="el-12-label-1" aria-label="td aria-label attribute value" title="td title attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents">td text node contents</td>
+</tr>
+</tbody>
+</table>
+td expecting name from aria-label
+
+td text node contents
+<h2>td expecting name from aria-label</h2>
+<table>
+<tbody>
+<tr>
+<td id="el-13" class="ex-label" data-testname="td expecting name from aria-label" aria-label="td aria-label attribute value" title="td title attribute value" data-expectedlabel="td aria-label attribute value">td text node contents</td>
+</tr>
+</tbody>
+</table>
+td expecting name from title
+
+td text node contents
+<h2>td expecting name from title</h2>
+<table>
+<tbody>
+<tr>
+<td id="el-14" class="ex-label" data-testname="td expecting name from title" title="td title attribute value" data-expectedlabel="td title attribute value">td text node contents</td>
+</tr>
+</tbody>
+</table>
+td expecting name to be empty
+
+td text node contents
+<h2>td expecting name to be empty</h2>
+<table>
+<tbody>
+<tr>
+<td id="el-15" class="ex-label" data-testname="td expecting name to be empty" data-expectedlabel="">td text node contents</td>
+</tr>
+</tbody>
+</table>
+thead expecting name from 2 aria-labelledby refs
+
+aria-labelledby ref element #1 text contents
+
+aria-labelledby ref element #2 text contents
+
+th text node contents
+<h2>thead expecting name from 2 aria-labelledby refs</h2>
+<p id="el-16-label-1">aria-labelledby ref element #1 text contents</p>
+<p id="el-16-label-2">aria-labelledby ref element #2 text contents</p>
+<table>
+<thead id="el-16" class="ex-label" data-testname="thead expecting name from 2 aria-labelledby refs" aria-labelledby="el-16-label-1 el-16-label-2" aria-label="thead aria-label attribute value" title="thead title attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents aria-labelledby ref element #2 text contents">
+<tr>
+<th>th text node contents</th>
+</tr>
+</thead>
+</table>
+thead expecting name from 1 aria-labelledby ref
+
+aria-labelledby ref element #1 text contents
+
+th text node contents
+<h2>thead expecting name from 1 aria-labelledby ref</h2>
+<p id="el-17-label-1">aria-labelledby ref element #1 text contents</p>
+<table>
+<thead id="el-17" class="ex-label" data-testname="thead expecting name from 1 aria-labelledby ref" aria-labelledby="el-17-label-1" aria-label="thead aria-label attribute value" title="thead title attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents">
+<tr>
+<th>th text node contents</th>
+</tr>
+</thead>
+</table>
+thead expecting name from aria-label
+
+th text node contents
+<h2>thead expecting name from aria-label</h2>
+<table>
+<thead id="el-18" class="ex-label" data-testname="thead expecting name from aria-label" aria-label="thead aria-label attribute value" title="thead title attribute value" data-expectedlabel="thead aria-label attribute value">
+<tr>
+<th>th text node contents</th>
+</tr>
+</thead>
+</table>
+thead expecting name from title
+
+th text node contents
+<h2>thead expecting name from title</h2>
+<table>
+<thead id="el-19" class="ex-label" data-testname="thead expecting name from title" title="thead title attribute value" data-expectedlabel="thead title attribute value">
+<tr>
+<th>th text node contents</th>
+</tr>
+</thead>
+</table>
+thead expecting name to be empty
+
+th text node contents
+<h2>thead expecting name to be empty</h2>
+<table>
+<thead id="el-20" class="ex-label" data-testname="thead expecting name to be empty" data-expectedlabel="">
+<tr>
+<th>th text node contents</th>
+</tr>
+</thead>
+</table>
+tbody expecting name from 2 aria-labelledby refs
+
+aria-labelledby ref element #1 text contents
+
+aria-labelledby ref element #2 text contents
+
+td text node contents
+<h2>tbody expecting name from 2 aria-labelledby refs</h2>
+<p id="el-21-label-1">aria-labelledby ref element #1 text contents</p>
+<p id="el-21-label-2">aria-labelledby ref element #2 text contents</p>
+<table>
+<tbody id="el-21" class="ex-label" data-testname="tbody expecting name from 2 aria-labelledby refs" aria-labelledby="el-21-label-1 el-21-label-2" aria-label="tbody aria-label attribute value" title="tbody title attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents aria-labelledby ref element #2 text contents">
+<tr>
+<td>td text node contents</td>
+</tr>
+</tbody>
+</table>
+tbody expecting name from 1 aria-labelledby ref
+
+aria-labelledby ref element #1 text contents
+
+td text node contents
+<h2>tbody expecting name from 1 aria-labelledby ref</h2>
+<p id="el-22-label-1">aria-labelledby ref element #1 text contents</p>
+<table>
+<tbody id="el-22" class="ex-label" data-testname="tbody expecting name from 1 aria-labelledby ref" aria-labelledby="el-22-label-1" aria-label="tbody aria-label attribute value" title="tbody title attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents">
+<tr>
+<td>td text node contents</td>
+</tr>
+</tbody>
+</table>
+tbody expecting name from aria-label
+
+td text node contents
+<h2>tbody expecting name from aria-label</h2>
+<table>
+<tbody id="el-23" class="ex-label" data-testname="tbody expecting name from aria-label" aria-label="tbody aria-label attribute value" title="tbody title attribute value" data-expectedlabel="tbody aria-label attribute value">
+<tr>
+<td>td text node contents</td>
+</tr>
+</tbody>
+</table>
+tbody expecting name from title
+
+td text node contents
+<h2>tbody expecting name from title</h2>
+<table>
+<tbody id="el-24" class="ex-label" data-testname="tbody expecting name from title" title="tbody title attribute value" data-expectedlabel="tbody title attribute value">
+<tr>
+<td>td text node contents</td>
+</tr>
+</tbody>
+</table>
+tbody expecting name to be empty
+
+td text node contents
+<h2>tbody expecting name to be empty</h2>
+<table>
+<tbody id="el-25" class="ex-label" data-testname="tbody expecting name to be empty" data-expectedlabel="">
+<tr>
+<td>td text node contents</td>
+</tr>
+</tbody>
+</table>
+tfoot expecting name from 2 aria-labelledby refs
+
+aria-labelledby ref element #1 text contents
+
+aria-labelledby ref element #2 text contents
+
+td text node contents
+<h2>tfoot expecting name from 2 aria-labelledby refs</h2>
+<p id="el-26-label-1">aria-labelledby ref element #1 text contents</p>
+<p id="el-26-label-2">aria-labelledby ref element #2 text contents</p>
+<table>
+<tfoot id="el-26" class="ex-label" data-testname="tfoot expecting name from 2 aria-labelledby refs" aria-labelledby="el-26-label-1 el-26-label-2" aria-label="tfoot aria-label attribute value" title="tfoot title attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents aria-labelledby ref element #2 text contents">
+<tr>
+<td>td text node contents</td>
+</tr>
+</tfoot>
+</table>
+tfoot expecting name from 1 aria-labelledby ref
+
+aria-labelledby ref element #1 text contents
+
+td text node contents
+<h2>tfoot expecting name from 1 aria-labelledby ref</h2>
+<p id="el-27-label-1">aria-labelledby ref element #1 text contents</p>
+<table>
+<tfoot id="el-27" class="ex-label" data-testname="tfoot expecting name from 1 aria-labelledby ref" aria-labelledby="el-27-label-1" aria-label="tfoot aria-label attribute value" title="tfoot title attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents">
+<tr>
+<td>td text node contents</td>
+</tr>
+</tfoot>
+</table>
+tfoot expecting name from aria-label
+
+td text node contents
+<h2>tfoot expecting name from aria-label</h2>
+<table>
+<tfoot id="el-28" class="ex-label" data-testname="tfoot expecting name from aria-label" aria-label="tfoot aria-label attribute value" title="tfoot title attribute value" data-expectedlabel="tfoot aria-label attribute value">
+<tr>
+<td>td text node contents</td>
+</tr>
+</tfoot>
+</table>
+tfoot expecting name from title
+
+td text node contents
+<h2>tfoot expecting name from title</h2>
+<table>
+<tfoot id="el-29" class="ex-label" data-testname="tfoot expecting name from title" title="tfoot title attribute value" data-expectedlabel="tfoot title attribute value">
+<tr>
+<td>td text node contents</td>
+</tr>
+</tfoot>
+</table>
+tfoot expecting name to be empty
+
+td text node contents
+<h2>tfoot expecting name to be empty</h2>
+<table>
+<tfoot id="el-30" class="ex-label" data-testname="tfoot expecting name to be empty" data-expectedlabel="">
+<tr>
+<td>td text node contents</td>
+</tr>
+</tfoot>
+</table>
+
+PASS tr expecting name from 2 aria-labelledby refs
+PASS tr expecting name from 1 aria-labelledby ref
+PASS tr expecting name from aria-label
+PASS tr expecting name from title
+PASS tr expecting name to be empty
+PASS th expecting name from 2 aria-labelledby refs
+PASS th expecting name from 1 aria-labelledby ref
+PASS th expecting name from aria-label
+PASS th expecting name from title
+PASS th expecting name to be empty
+PASS td expecting name from 2 aria-labelledby refs
+PASS td expecting name from 1 aria-labelledby ref
+PASS td expecting name from aria-label
+PASS td expecting name from title
+PASS td expecting name to be empty
+PASS thead expecting name from 2 aria-labelledby refs
+PASS thead expecting name from 1 aria-labelledby ref
+PASS thead expecting name from aria-label
+PASS thead expecting name from title
+PASS thead expecting name to be empty
+PASS tbody expecting name from 2 aria-labelledby refs
+PASS tbody expecting name from 1 aria-labelledby ref
+PASS tbody expecting name from aria-label
+PASS tbody expecting name from title
+PASS tbody expecting name to be empty
+PASS tfoot expecting name from 2 aria-labelledby refs
+PASS tfoot expecting name from 1 aria-labelledby ref
+PASS tfoot expecting name from aria-label
+PASS tfoot expecting name from title
+PASS tfoot expecting name to be empty
+

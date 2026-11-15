@@ -1,0 +1,85 @@
+Accname computation tests for <button>
+
+HTML-AAM computation steps
+
+button expecting name from 2 aria-labelledby refs
+
+associated label #1 text contentsassociated label #2 text contents
+aria-labelledby ref element #1 text contents
+
+aria-labelledby ref element #2 text contents
+
+button subtree text contents
+<h2>button expecting name from 2 aria-labelledby refs</h2>
+<label for="el-1">associated label #1 text contents</label>
+<label for="el-1">associated label #2 text contents</label>
+<p id="el-1-label-1">aria-labelledby ref element #1 text contents</p>
+<p id="el-1-label-2">aria-labelledby ref element #2 text contents</p>
+<button id="el-1" class="ex-label" data-testname="button expecting name from 2 aria-labelledby refs" aria-labelledby="el-1-label-1 el-1-label-2" aria-label="button aria-label attribute value" title="button title attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents aria-labelledby ref element #2 text contents">button subtree text contents</button>
+button expecting name from 1 aria-labelledby ref
+
+associated label #1 text contentsassociated label #2 text contents
+aria-labelledby ref element #1 text contents
+
+button subtree text contents
+<h2>button expecting name from 1 aria-labelledby ref</h2>
+<label for="el-2">associated label #1 text contents</label>
+<label for="el-2">associated label #2 text contents</label>
+<p id="el-2-label-1">aria-labelledby ref element #1 text contents</p>
+<button id="el-2" class="ex-label" data-testname="button expecting name from 1 aria-labelledby ref" aria-labelledby="el-2-label-1" aria-label="button aria-label attribute value" title="button title attribute value" data-expectedlabel="aria-labelledby ref element #1 text contents">button subtree text contents</button>
+button expecting name from aria-label
+
+associated label #1 text contentsassociated label #2 text contentsbutton subtree text contents
+<h2>button expecting name from aria-label</h2>
+<label for="el-3">associated label #1 text contents</label>
+<label for="el-3">associated label #2 text contents</label>
+<button id="el-3" class="ex-label" data-testname="button expecting name from aria-label" aria-label="button aria-label attribute value" title="button title attribute value" data-expectedlabel="button aria-label attribute value">button subtree text contents</button>
+button expecting name from 2 labels
+
+associated label #1 text contentsassociated label #2 text contentsbutton subtree text contents
+<h2>button expecting name from 2 labels</h2>
+<label for="el-4">associated label #1 text contents</label>
+<label for="el-4">associated label #2 text contents</label>
+<button id="el-4" class="ex-label" data-testname="button expecting name from 2 labels" title="button title attribute value" data-expectedlabel="associated label #1 text contents associated label #2 text contents">button subtree text contents</button>
+button expecting name from 1 label
+
+associated label #1 text contentsbutton subtree text contents
+<h2>button expecting name from 1 label</h2>
+<label for="el-5">associated label #1 text contents</label>
+<button id="el-5" class="ex-label" data-testname="button expecting name from 1 label" title="button title attribute value" data-expectedlabel="associated label #1 text contents">button subtree text contents</button>
+button expecting name from encapsulating label
+
+encapsulating label text contentsbutton subtree text contents
+<h2>button expecting name from encapsulating label</h2>
+<label>encapsulating label text contents<button id="el-6" class="ex-label" data-testname="button expecting name from encapsulating label" title="button title attribute value" data-expectedlabel="encapsulating label text contents">button subtree text contents</button>
+</label>
+button expecting name from subtree
+
+button subtree text contents
+<h2>button expecting name from subtree</h2>
+<button id="el-7" class="ex-label" data-testname="button expecting name from subtree" title="button title attribute value" data-expectedlabel="button subtree text contents">button subtree text contents</button>
+button expecting name from title
+
+
+<h2>button expecting name from title</h2>
+<button id="el-8" class="ex-label" data-testname="button expecting name from title" title="button title attribute value" data-expectedlabel="button title attribute value">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAP1BMVEWqAKoAAACrAKuqAKqrAKuvAK+vAK+nAKepAKmsAKyrAKutAK2oAKixALGqAKqqAKqqAKqqAKqqAKqqAKqqAKqx+4SNAAAAFHRSTlMzAL9gQBAgIKCfKxQZBu/fr4BwUHCcwvYAAAEASURBVEjHvdbLEoMgDAVQbkKg9f3I/39rpdiZutHAgrtywZkxESEOxTmJCLwqA6SK9PgCXqoeUCWAVR3kQvZpRbwnETzzHyFd8BhS+iNxG4fO3aYLI8cfYQronSE9Au1fMisnYTGbTnIQYRqdMVhWybVEKxlyLS6gs5IOwR9EFc4cqNYRZjvJqwGUEKCOEJUQojYda1a+9yXEt9sw77edpNVtOlbxYm06VvEp23SsTfkVP3Kb8iuOvnYbpuyycLn8wUpCLl/WBVYyEksik269TQysMw6CnaL1Eo/EiaQEHuPTqDBgC5eBhPCY5TKQ8MzPY8867SfJEbh74iGCkxTnA3SZDugOkmV1AAAAAElFTkSuQmCC">
+</button>
+button expecting name to be empty
+
+
+<h2>button expecting name to be empty</h2>
+<button id="el-9" class="ex-label" data-testname="button expecting name to be empty" data-expectedlabel="">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAP1BMVEWqAKoAAACrAKuqAKqrAKuvAK+vAK+nAKepAKmsAKyrAKutAK2oAKixALGqAKqqAKqqAKqqAKqqAKqqAKqqAKqx+4SNAAAAFHRSTlMzAL9gQBAgIKCfKxQZBu/fr4BwUHCcwvYAAAEASURBVEjHvdbLEoMgDAVQbkKg9f3I/39rpdiZutHAgrtywZkxESEOxTmJCLwqA6SK9PgCXqoeUCWAVR3kQvZpRbwnETzzHyFd8BhS+iNxG4fO3aYLI8cfYQronSE9Au1fMisnYTGbTnIQYRqdMVhWybVEKxlyLS6gs5IOwR9EFc4cqNYRZjvJqwGUEKCOEJUQojYda1a+9yXEt9sw77edpNVtOlbxYm06VvEp23SsTfkVP3Kb8iuOvnYbpuyycLn8wUpCLl/WBVYyEksik269TQysMw6CnaL1Eo/EiaQEHuPTqDBgC5eBhPCY5TKQ8MzPY8867SfJEbh74iGCkxTnA3SZDugOkmV1AAAAAElFTkSuQmCC">
+</button>
+
+PASS button expecting name from 2 aria-labelledby refs
+PASS button expecting name from 1 aria-labelledby ref
+PASS button expecting name from aria-label
+PASS button expecting name from 2 labels
+PASS button expecting name from 1 label
+PASS button expecting name from encapsulating label
+PASS button expecting name from subtree
+PASS button expecting name from title
+PASS button expecting name to be empty
+

@@ -10,15 +10,16 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html-aam/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/html-aam/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/html-aam/area-role.html
+/LayoutTests/imported/w3c/web-platform-tests/html-aam/aside-in-prefixed-article.html
 /LayoutTests/imported/w3c/web-platform-tests/html-aam/dir-role.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html-aam/figure-name-no-figcaption.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html-aam/hidden-names.html
+/LayoutTests/imported/w3c/web-platform-tests/html-aam/img-src-srcset-roles.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html-aam/names.html
 /LayoutTests/imported/w3c/web-platform-tests/html-aam/optgroup-role.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html-aam/roles-contextual.html
@@ -29,4 +30,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html-aam/roles-minimum.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html-aam/roles.html
 /LayoutTests/imported/w3c/web-platform-tests/html-aam/roles.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html-aam/summary.html
 /LayoutTests/imported/w3c/web-platform-tests/html-aam/table-roles.html

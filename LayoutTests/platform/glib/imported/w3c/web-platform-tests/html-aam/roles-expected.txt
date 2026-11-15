@@ -10,7 +10,7 @@ x
 x
 x
 x
-x
+x x
 x
 x
 x x
@@ -62,6 +62,7 @@ PASS el-dd
 PASS el-del
 PASS el-details
 PASS el-dfn
+PASS el-dialog-non-modal
 PASS el-dt
 PASS el-em
 PASS el-fieldset

@@ -1,4 +1,14 @@
+Tests contextual computedrole mappings for the LI element defined in HTML-AAM, where the returned computed role is expected to change based on whether the LI element is an accessibility child of a list element, or not.
+
+x
+x
+x
+x
 x
 
+PASS el-li-within-generic-within-list-parent
+PASS el-li-orphaned-in-dom-but-owned-by-list-element
+PASS el-li-within-explicit-role-list-parent
 FAIL el-li-orphaned assert_false: Computed Role: "listitem" does not match any of the acceptable role strings in ["generic", "", "none"]: <li data-testname="el-li-orphaned" class="ex-generic">x</li> expected false got true
+FAIL el-li-orphaned-within-list-role-none assert_false: Computed Role: "listitem" does not match any of the acceptable role strings in ["generic", "", "none"]: <li data-testname="el-li-orphaned-within-list-role-none" class="ex-generic">x</li> expected false got true
 
