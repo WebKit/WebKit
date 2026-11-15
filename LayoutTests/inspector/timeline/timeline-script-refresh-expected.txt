@@ -1,0 +1,11 @@
+Test that WI.ScriptTimeline.refresh() dispatches WI.ScriptTimeline.Event.Refreshed.
+
+
+== Running test suite: Timeline.ScriptTimelineRefresh
+-- Running test case: Timeline.ScriptTimelineRefresh.Refresh
+PASS: refresh() should dispatch WI.ScriptTimeline.Event.Refreshed.
+
+-- Running test case: Timeline.ScriptTimelineRefresh.RefreshWhenCaptureStops
+Stopping Capture...
+PASS: Stopping the capture should refresh the Script timeline at least once, once per target that tracked the ScriptProfiler.
+
