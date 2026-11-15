@@ -594,6 +594,7 @@ RenderElement* RenderObject::markContainingBlocksForLayout(RenderElement* layout
     if (is<RenderView>(*this))
         return downcast<RenderElement>(this);
 
+    CheckedPtr<const RenderObject> descendant = this;
     CheckedPtr ancestor = container();
 
     bool simplifiedNormalFlowLayout = needsSimplifiedNormalFlowLayout() && !selfNeedsLayout() && !normalChildNeedsLayout();
@@ -615,14 +616,14 @@ RenderElement* RenderObject::markContainingBlocksForLayout(RenderElement* layout
             simplifiedNormalFlowLayout = false;
 
         if (hasOutOfFlowPosition) {
-            bool willSkipRelativelyPositionedInlines = !ancestor->isRenderBlock() || ancestor->isAnonymousBlock();
-            // Skip relatively positioned inlines and anonymous blocks to get to the enclosing RenderBlock.
-            while (ancestor && (!ancestor->isRenderBlock() || ancestor->isAnonymousBlock()))
-                ancestor = ancestor->container();
-            if (!ancestor || ancestor->outOfFlowChildNeedsLayout())
+            // The containing block keeps the out-of-flow box, and it is not always the container (e.g. a transformed table section).
+            CheckedPtr containingBlock = descendant->containingBlock();
+            if (!containingBlock || containingBlock->outOfFlowChildNeedsLayout())
                 return { };
-            if (willSkipRelativelyPositionedInlines)
+            if (containingBlock != ancestor) {
+                ancestor = containingBlock.get();
                 container = ancestor->container();
+            }
             ancestor->setOutOfFlowChildNeedsLayoutBit(true);
             simplifiedNormalFlowLayout = true;
         } else if (simplifiedNormalFlowLayout) {
@@ -647,6 +648,7 @@ RenderElement* RenderObject::markContainingBlocksForLayout(RenderElement* layout
             simplifiedNormalFlowLayout = true;
 
         hasOutOfFlowPosition = ancestor->isOutOfFlowPositioned();
+        descendant = ancestor.get();
         ancestor = WTF::move(container);
     }
     return { };

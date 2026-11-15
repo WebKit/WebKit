@@ -1,0 +1,3 @@
+This tests that an out-of-flow box inside an absolutely positioned drawable canvas is laid out after its width changes.
+
+PASS
