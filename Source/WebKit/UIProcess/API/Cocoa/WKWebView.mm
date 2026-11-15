@@ -678,7 +678,6 @@ static void addBrowsingContextControllerMethodStubsIfNeeded()
     _findInteractionEnabled = NO;
     _needsToPresentLockdownModeMessage = YES;
     _allowsMagnification = YES;
-    _avoidsUnsafeArea = YES;
 
     auto fastClickingEnabled = []() {
         if (NSNumber *enabledValue = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitFastClickingDisabled"])
