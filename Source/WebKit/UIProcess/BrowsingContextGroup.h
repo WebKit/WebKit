@@ -68,13 +68,14 @@ enum class BrowsingContextGroupUpdate : uint8_t { None, AddProcess, AddProcessAn
 
 class BrowsingContextGroup : public RefCountedAndCanMakeWeakPtr<BrowsingContextGroup> {
 public:
-    static Ref<BrowsingContextGroup> create(WebCore::CrossOriginMode crossOriginMode, WebsiteDataStore& websiteDataStore, EnhancedSecurity enhancedSecurity) { return adoptRef(*new BrowsingContextGroup(crossOriginMode, websiteDataStore, enhancedSecurity)); }
+    static Ref<BrowsingContextGroup> create(WebCore::CrossOriginMode crossOriginMode, WebsiteDataStore& websiteDataStore, WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity) { return adoptRef(*new BrowsingContextGroup(crossOriginMode, websiteDataStore, lockdownMode, enhancedSecurity)); }
     ~BrowsingContextGroup();
 
     WebCore::BrowsingContextGroupIdentifier identifier() const { return m_identifier; }
 
     WebCore::CrossOriginMode crossOriginMode() const { return m_crossOriginMode; }
     WebsiteDataStore* websiteDataStore() const { return m_websiteDataStore.get(); }
+    WebProcessProxy::LockdownMode lockdownMode() const { return m_lockdownMode; }
     EnhancedSecurity enhancedSecurity() const { return m_enhancedSecurity; }
     NODELETE bool canUseProcessForCrossOriginIsolation(const WebProcessProxy&) const;
     NODELETE bool canUseProcessForEnhancedSecurity(const WebProcessProxy&, const WebPreferences&) const;
@@ -120,7 +121,7 @@ private:
     void removeAgentClusterKeyingReservation(const AgentClusterKeyingReservation&);
     WebCore::AgentClusterIdentifier agentClusterIdentifier(const WebCore::SecurityOriginData&, WebCore::OriginKeyed, const std::optional<WebCore::SecurityOriginData>& crossOriginIsolationKey);
 
-    BrowsingContextGroup(WebCore::CrossOriginMode, WebsiteDataStore&, EnhancedSecurity);
+    BrowsingContextGroup(WebCore::CrossOriginMode, WebsiteDataStore&, WebProcessProxy::LockdownMode, EnhancedSecurity);
 
     RefPtr<FrameProcess> liveSharedProcess();
     void clearSharedProcess();
@@ -128,6 +129,7 @@ private:
     WebCore::BrowsingContextGroupIdentifier m_identifier { WebCore::BrowsingContextGroupIdentifier::generate() };
     const WebCore::CrossOriginMode m_crossOriginMode;
     const WeakPtr<WebsiteDataStore> m_websiteDataStore;
+    const WebProcessProxy::LockdownMode m_lockdownMode;
     const EnhancedSecurity m_enhancedSecurity;
 
     WeakPtr<FrameProcess> m_sharedProcess;

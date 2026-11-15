@@ -4063,6 +4063,100 @@ TEST(SiteIsolation, PopupUsesWebsiteDataStoreOfOpenerWithoutSiteIsolation)
     checkPopupUsesWebsiteDataStoreOfOpener(false);
 }
 
+static NSString * const lockdownModeSettingsCheck = @"(!!window.WebGL2RenderingContext) + ',' + (!!window.Gamepad)";
+
+TEST(SiteIsolation, PopupWithOtherLockdownModeStartsNewBrowsingContextGroup)
+{
+    HTTPServer server({
+        { "/opener"_s, { "<script>w = window.open('https://webkit.org/popup')</script>"_s } },
+        { "/popup"_s, { "popup"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration.get());
+    auto [opener, opened] = openerAndOpenedViewsWithMainFramePolicies(configuration.get(), nil, ^(WKWebpagePreferences *preferences) {
+        preferences.lockdownModeEnabled = YES;
+    });
+    EXPECT_WK_STREQ([opened.webView stringByEvaluatingJavaScript:lockdownModeSettingsCheck], "false,false");
+
+    [opened.webView evaluateJavaScript:@"alert(!!window.opener)" completionHandler:nil];
+    EXPECT_WK_STREQ([opened.uiDelegate waitForAlert], "false");
+
+    [opener.webView evaluateJavaScript:@"alert(w.closed)" completionHandler:nil];
+    EXPECT_WK_STREQ([opener.uiDelegate waitForAlert], "true");
+}
+
+TEST(SiteIsolation, PopupWithSameLockdownModeKeepsOpener)
+{
+    HTTPServer server({
+        { "/opener"_s, { "<script>w = window.open('https://webkit.org/popup')</script>"_s } },
+        { "/popup"_s, { "popup"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration.get());
+    MainFramePolicy enableLockdownMode = ^(WKWebpagePreferences *preferences) {
+        preferences.lockdownModeEnabled = YES;
+    };
+    auto [opener, opened] = openerAndOpenedViewsWithMainFramePolicies(configuration.get(), enableLockdownMode, enableLockdownMode);
+    EXPECT_WK_STREQ([opened.webView stringByEvaluatingJavaScript:lockdownModeSettingsCheck], "false,false");
+
+    [opened.webView evaluateJavaScript:@"alert(!!window.opener)" completionHandler:nil];
+    EXPECT_WK_STREQ([opened.uiDelegate waitForAlert], "true");
+
+    [opener.webView evaluateJavaScript:@"alert(w.closed)" completionHandler:nil];
+    EXPECT_WK_STREQ([opener.uiDelegate waitForAlert], "false");
+}
+
+TEST(SiteIsolation, PopupInLockdownModeDoesNotUseSharedProcessOfOpener)
+{
+    HTTPServer server({
+        { "/opener"_s, { "<iframe src='https://apple.com/frame' onload='w = window.open(`https://webkit.org/popup`)'></iframe>"_s } },
+        { "/popup"_s, { "<iframe src='https://apple.com/frame'></iframe>"_s } },
+        { "/frame"_s, { "frame"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration.get());
+    setFeatureEnabled(configuration.get(), @"SiteIsolationSharedProcessEnabled", true);
+    auto [opener, opened] = openerAndOpenedViewsWithMainFramePolicies(configuration.get(), nil, ^(WKWebpagePreferences *preferences) {
+        preferences.lockdownModeEnabled = YES;
+    });
+    while (![[opened.webView firstChildFrame].securityOrigin.host isEqualToString:@"apple.com"])
+        Util::spinRunLoop();
+
+    EXPECT_NE([opened.webView firstChildFrame]._processIdentifier, [opener.webView firstChildFrame]._processIdentifier);
+    EXPECT_WK_STREQ([opened.webView stringByEvaluatingJavaScript:lockdownModeSettingsCheck inFrame:[opened.webView firstChildFrame]], "false,false");
+}
+
+TEST(SiteIsolation, GoingBackInLockdownModeDoesNotRestorePageWithoutLockdownMode)
+{
+    HTTPServer server({
+        { "/first"_s, { "first"_s } },
+        { "/second"_s, { "second"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/first"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    auto firstProcess = [webView _webProcessIdentifier];
+    [webView objectByEvaluatingJavaScript:@"window.marker = 'first'"];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://webkit.org/second"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    setMainFramePolicy(navigationDelegate.get(), ^(WKWebpagePreferences *preferences) {
+        preferences.lockdownModeEnabled = YES;
+    });
+    [webView goBack];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    EXPECT_WK_STREQ([webView URL].absoluteString, "https://example.com/first");
+    EXPECT_NE([webView _webProcessIdentifier], firstProcess);
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:lockdownModeSettingsCheck], "false,false");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"typeof window.marker"], "undefined");
+}
+
 TEST(SiteIsolation, PopupNavigationWithWebsiteDataStoreOfOpenerKeepsOpener)
 {
     auto server = popupDataStoreServer();

@@ -49,9 +49,10 @@ namespace WebKit {
 
 using namespace WebCore;
 
-BrowsingContextGroup::BrowsingContextGroup(CrossOriginMode crossOriginMode, WebsiteDataStore& websiteDataStore, EnhancedSecurity enhancedSecurity)
+BrowsingContextGroup::BrowsingContextGroup(CrossOriginMode crossOriginMode, WebsiteDataStore& websiteDataStore, WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity)
     : m_crossOriginMode(crossOriginMode)
     , m_websiteDataStore(websiteDataStore)
+    , m_lockdownMode(lockdownMode)
     , m_enhancedSecurity(enhancedSecurity)
 {
 }
@@ -69,6 +70,7 @@ void BrowsingContextGroup::sharedProcessForSite(WebsiteDataStore& websiteDataSto
     WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, API::PageConfiguration& pageConfiguration, IsMainFrame isMainFrame, CompletionHandler<void(FrameProcess*)>&& completionHandler)
 {
     ASSERT(&websiteDataStore == m_websiteDataStore.get());
+    ASSERT(lockdownMode == m_lockdownMode);
 
     if (!preferences.siteIsolationEnabled() || !preferences.siteIsolationSharedProcessEnabled())
         return completionHandler(nullptr);
@@ -158,6 +160,7 @@ Ref<FrameProcess> BrowsingContextGroup::ensureProcessForSite(const Site& site, c
 {
     ASSERT(process.isDummyProcessProxy() || canUseProcessForCrossOriginIsolation(process));
     ASSERT(process.isDummyProcessProxy() || process.websiteDataStore() == m_websiteDataStore.get());
+    ASSERT(process.isDummyProcessProxy() || process.lockdownMode() == m_lockdownMode);
     ASSERT(process.isDummyProcessProxy() || canUseProcessForEnhancedSecurity(process, preferences));
 
     if (preferences.siteIsolationEnabled()) {

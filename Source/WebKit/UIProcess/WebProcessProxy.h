@@ -195,6 +195,7 @@ enum WebProcessWithMediaStreamingCounterType { };
 using WebProcessWithMediaStreamingCounter = RefCounter<WebProcessWithMediaStreamingCounterType>;
 using WebProcessWithMediaStreamingToken = WebProcessWithMediaStreamingCounter::Token;
 enum class CheckBackForwardList : bool { No, Yes };
+enum class LockdownMode : bool { Disabled, Enabled };
 
 class WebProcessProxy final : public AuxiliaryProcessProxy {
     WTF_MAKE_TZONE_ALLOCATED(WebProcessProxy);
@@ -207,7 +208,7 @@ public:
     enum class IsPrewarmed : bool { No, Yes };
 
     enum class ShouldLaunchProcess : bool { No, Yes };
-    enum class LockdownMode : bool { Disabled, Enabled };
+    using LockdownMode = WebKit::LockdownMode;
     enum class EnableWebAssemblyDebugger : bool { No, Yes };
     enum class CreateSandboxExtensionForNetworkingProcess : bool { No, Yes };
 

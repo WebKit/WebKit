@@ -277,9 +277,11 @@ BrowsingContextGroup* PageConfiguration::preferredBrowsingContextGroup() const
     if (auto opener = openerInfo())
         return opener->browsingContextGroup.ptr();
 
-    // Only an opener can bring a page into a cross-origin-isolated group.
-    if (auto relatedPage = this->relatedPage()) {
-        if (!relatedPage->isClosed() && relatedPage->browsingContextGroup().crossOriginMode() == WebCore::CrossOriginMode::Shared)
+    // Without an opener, a page only joins a group whose cross-origin isolation and Lockdown Mode match its own.
+    // FIXME: Also match its Enhanced Security and data store.
+    auto lockdownMode = lockdownModeEnabled() ? WebKit::WebProcessProxy::LockdownMode::Enabled : WebKit::WebProcessProxy::LockdownMode::Disabled;
+    if (auto* relatedPage = this->relatedPage()) {
+        if (!relatedPage->isClosed() && relatedPage->browsingContextGroup().crossOriginMode() == WebCore::CrossOriginMode::Shared && relatedPage->browsingContextGroup().lockdownMode() == lockdownMode)
             return &relatedPage->browsingContextGroup();
     }
 
