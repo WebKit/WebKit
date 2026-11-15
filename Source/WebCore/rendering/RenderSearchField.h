@@ -23,13 +23,10 @@
 #pragma once
 
 #include "RenderTextControlSingleLine.h"
-#include "SearchPopupMenu.h"
 
 namespace WebCore {
 
-class FontSelector;
 class HTMLInputElement;
-class HostWindow;
 
 class RenderSearchField final : public RenderTextControlSingleLine {
     WTF_MAKE_TZONE_ALLOCATED(RenderSearchField);
@@ -38,38 +35,15 @@ public:
     RenderSearchField(HTMLInputElement&, Style::ComputedStyle&&);
     virtual ~RenderSearchField();
 
-    void updateCancelButtonVisibility() const;
-
-    bool popupIsVisible() const { return m_searchPopupIsVisible; }
-    void showPopup();
-    void hidePopup();
-    NODELETE void popupDidHide();
-    WEBCORE_EXPORT std::span<const RecentSearch> recentSearches();
-
-    void updatePopup(const AtomString& name, const Vector<WebCore::RecentSearch>& searchItems);
 #if PLATFORM(WIN)
     int clientInsetRight() const;
     int clientInsetLeft() const;
     LayoutUnit clientPaddingRight() const;
     LayoutUnit clientPaddingLeft() const;
-    FontSelector* fontSelector() const;
-    HostWindow* hostWindow() const;
 #endif
 
 private:
-    void willBeDestroyed() override;
     LayoutUnit computeControlLogicalHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const override;
-    void updateFromElement() override;
-    Visibility visibilityForCancelButton() const;
-    NODELETE const AtomString& autosaveName() const;
-
-    SearchPopupMenu* searchPopup() const { return m_searchPopup.get(); }
-
-    HTMLElement* resultsButtonElement() const;
-    HTMLElement* cancelButtonElement() const;
-
-    bool m_searchPopupIsVisible;
-    RefPtr<SearchPopupMenu> m_searchPopup;
 };
 
 } // namespace WebCore

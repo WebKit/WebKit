@@ -137,7 +137,7 @@ public:
 
     NODELETE bool isPresentingAttachedView() const;
 
-    NODELETE RefPtr<InputType> inputType() const;
+    NODELETE WEBCORE_EXPORT RefPtr<InputType> inputType() const;
 
     NODELETE bool isSteppable() const; // stepUp()/stepDown() for user-interaction.
     NODELETE WEBCORE_EXPORT bool isTextButton() const;
