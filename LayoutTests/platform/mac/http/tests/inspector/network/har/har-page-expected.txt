@@ -3,6 +3,9 @@ HAR Page Test.
 
 == Running test suite: HAR.Page
 -- Running test case: HAR.Basic.Page
+PASS: PageTimings.onContentLoad should be milliseconds since the page started (non-negative).
+PASS: PageTimings.onLoad should not come before onContentLoad.
+PASS: PageTimings.onLoad should be less than 60 seconds after the page started.
 {
   "log": {
     "version": "1.2",
