@@ -32,17 +32,9 @@ WI.SourceMap = class SourceMap
         this._sourceRoot = sourceRoot;
         this._mappings = mappings;
 
-        this._generatedPositionForOriginalLineForURL = new Map;
-        for (let [index, [generatedLine, generatedColumn, sourceURL, originalLine, originalColumn, isRangeMapping]] of this._mappings.entries()) {
-            if (!sourceURL)
-                continue;
-            let generatedPositionForOriginalLine = this._generatedPositionForOriginalLineForURL.getOrInsert(sourceURL, new Map);
-            // For range mappings we need to compute the line span of the range here, because it is difficult to compute later.
-            let rangeMappingSpan = 0;
-            if (isRangeMapping && (index + 1 < this._mappings.length))
-                rangeMappingSpan = this._mappings[index + 1][0] - generatedLine;
-            generatedPositionForOriginalLine.getOrInsert(originalLine, [generatedLine, generatedColumn, rangeMappingSpan]);
-        }
+        // Built lazily by `_generatedPositionsForOriginalLine`, since only a few gestures ever need it.
+        this._generatedPositionsForOriginalLineForURL = new Map;
+        this._maximumOriginalLineForURL = new Map;
 
         this._sourceMapResourceForURL = new Map;
         for (let [sourceURL, data] of dataForSourceMapResourceURL)
@@ -383,29 +375,73 @@ WI.SourceMap = class SourceMap
         return [sourceMapResource, originalLine, originalColumn];
     }
 
-    findGeneratedPosition(sourceURL, lineNumber)
+    findGeneratedPosition(sourceURL, lineNumber, columnNumber = 0)
     {
-        let generatedPositionForOriginalLine = this._generatedPositionForOriginalLineForURL.get(sourceURL);
+        let generatedPositionsForOriginalLine = this._generatedPositionsForOriginalLine(sourceURL);
+
         // Search backwards in case the queried line is in the span of a range mapping.
         for (let currentLine = lineNumber; currentLine >= 0; --currentLine) {
-            let generatedPosition = generatedPositionForOriginalLine.get(currentLine);
-            if (!generatedPosition)
+            let generatedPositions = generatedPositionsForOriginalLine.get(currentLine);
+            if (!generatedPositions)
                 continue;
 
-            let rangeMappingSpan = generatedPosition[2];
             let offset = lineNumber - currentLine;
-            if (!rangeMappingSpan || offset >= rangeMappingSpan)
-                break;
+            for (let [generatedLine, generatedColumn, originalColumn, rangeMappingSpan] of generatedPositions) {
+                if (offset === 0 && columnNumber < originalColumn)
+                    continue;
+                if (!rangeMappingSpan || offset >= rangeMappingSpan)
+                    continue;
+                return [generatedLine + offset, offset === 0 ? generatedColumn : 0];
+            }
+            break;
+        }
 
-            let generatedColumn = (offset === 0) ? generatedPosition[1] : 0;
-            return [generatedPosition[0] + offset, generatedColumn];
+        // Use the mapping at or before the queried column, or the first mapping of the queried line.
+        // When several mappings share the same original column, the first one in generated order wins.
+        let generatedPositions = generatedPositionsForOriginalLine.get(lineNumber);
+        if (generatedPositions) {
+            let generatedPosition = generatedPositions[0];
+            for (let position of generatedPositions) {
+                if (position[2] > columnNumber)
+                    break;
+                if (position[2] > generatedPosition[2])
+                    generatedPosition = position;
+            }
+            return [generatedPosition[0], generatedPosition[1]];
         }
-        for (let lastLineNumber = generatedPositionForOriginalLine.lastKey; lineNumber <= lastLineNumber; ++lineNumber) {
-            let generatedPosition = generatedPositionForOriginalLine.get(lineNumber);
-            if (generatedPosition)
-                return generatedPosition;
+
+        // Search forwards for the first mapping of a later line.
+        let maximumOriginalLine = this._maximumOriginalLineForURL.get(sourceURL);
+        for (let currentLine = lineNumber + 1; currentLine <= maximumOriginalLine; ++currentLine) {
+            let generatedPositions = generatedPositionsForOriginalLine.get(currentLine);
+            if (generatedPositions)
+                return [generatedPositions[0][0], generatedPositions[0][1]];
         }
-        return generatedPositionForOriginalLine.firstValue;
+        return null;
+    }
+
+    _generatedPositionsForOriginalLine(sourceURL)
+    {
+        let generatedPositionsForOriginalLine = this._generatedPositionsForOriginalLineForURL.get(sourceURL);
+        if (!generatedPositionsForOriginalLine) {
+            generatedPositionsForOriginalLine = new Map;
+            let maximumOriginalLine = -1;
+            for (let [index, [generatedLine, generatedColumn, url, originalLine, originalColumn, isRangeMapping]] of this._mappings.entries()) {
+                if (url !== sourceURL)
+                    continue;
+                // For range mappings we need to compute the line span of the range here, because it is difficult to compute later.
+                let rangeMappingSpan = 0;
+                if (isRangeMapping && (index + 1 < this._mappings.length))
+                    rangeMappingSpan = this._mappings[index + 1][0] - generatedLine;
+                generatedPositionsForOriginalLine.getOrInsert(originalLine, []).push([generatedLine, generatedColumn, originalColumn, rangeMappingSpan]);
+                maximumOriginalLine = Math.max(maximumOriginalLine, originalLine);
+            }
+            for (let generatedPositions of generatedPositionsForOriginalLine.values())
+                generatedPositions.sort((a, b) => a[2] - b[2]);
+            this._generatedPositionsForOriginalLineForURL.set(sourceURL, generatedPositionsForOriginalLine);
+            this._maximumOriginalLineForURL.set(sourceURL, maximumOriginalLine);
+        }
+        return generatedPositionsForOriginalLine;
     }
 };
 
