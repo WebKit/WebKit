@@ -111,7 +111,7 @@ public:
 
     WEBCORE_EXPORT FloatRect fastBoundingRect() const;
     WEBCORE_EXPORT FloatRect boundingRect() const;
-    FloatRect strokeBoundingRect(NOESCAPE const Function<void(GraphicsContext&)>& strokeStyleApplier = { }) const;
+    WEBCORE_EXPORT FloatRect strokeBoundingRect(NOESCAPE const Function<void(GraphicsContext&)>& strokeStyleApplier = { }) const;
 
     WEBCORE_EXPORT void ensureImplForTesting();
     NODELETE WEBCORE_EXPORT const PathImpl* asImpl() const;
