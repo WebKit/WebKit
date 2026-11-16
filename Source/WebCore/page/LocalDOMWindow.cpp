@@ -129,6 +129,7 @@
 #include "ResourceLoadObserver.h"
 #include "ScheduledAction.h"
 #include "Screen.h"
+#include "ScriptDisallowedScope.h"
 #include "ScrollAnimator.h"
 #include "ScrollToOptions.h"
 #include "SecurityOrigin.h"
@@ -664,6 +665,7 @@ CustomElementRegistry& LocalDOMWindow::ensureCustomElementRegistry()
 {
     if (!m_customElementRegistry) {
         m_customElementRegistry = CustomElementRegistry::create(*scriptExecutionContext(), *this);
+        ScriptDisallowedScope::InMainThread scriptDisallowedScope;
         for (Ref shadowRoot : document()->inDocumentShadowRoots()) {
             if (shadowRoot->mode() == ShadowRootMode::UserAgent || shadowRoot->hasScopedCustomElementRegistry())
                 continue;
