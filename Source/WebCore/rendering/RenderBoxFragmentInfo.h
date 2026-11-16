@@ -34,19 +34,14 @@ class RenderBoxFragmentInfo {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(RenderBoxFragmentInfo);
     WTF_MAKE_NONCOPYABLE(RenderBoxFragmentInfo);
 public:
-    RenderBoxFragmentInfo(LayoutUnit logicalLeft, LayoutUnit logicalWidth, bool isShifted)
+    RenderBoxFragmentInfo(LayoutUnit logicalLeft, LayoutUnit logicalWidth)
         : m_logicalLeft(logicalLeft)
         , m_logicalWidth(logicalWidth)
-        , m_isShifted(isShifted)
     { }
 
     LayoutUnit logicalLeft() const { return m_logicalLeft; }
     LayoutUnit logicalWidth() const { return m_logicalWidth; }
     
-    void shiftLogicalLeft(LayoutUnit delta) { m_logicalLeft += delta; m_isShifted = true; }
-
-    bool isShifted() const { return m_isShifted; }
-
     void createOverflow(const LayoutRect& layoutOverflow, const LayoutRect& visualOverflow) { m_overflow = makeUnique<RenderOverflow>(layoutOverflow, visualOverflow, LayoutRect { }); }
     RenderOverflow* overflow() const { return m_overflow.get(); }
     void clearOverflow() { m_overflow = { }; }
@@ -54,7 +49,6 @@ public:
 private:
     LayoutUnit m_logicalLeft;
     LayoutUnit m_logicalWidth;
-    bool m_isShifted;
     std::unique_ptr<RenderOverflow> m_overflow;
 };
 

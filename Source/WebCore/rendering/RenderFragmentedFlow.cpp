@@ -180,7 +180,7 @@ void RenderFragmentedFlow::updateLogicalWidth()
         LayoutUnit fragmentLogicalWidth = fragment.pageLogicalWidth();
         LayoutUnit logicalLeft = writingMode().isLogicalLeftInlineStart() ? 0_lu
             : logicalWidth - fragmentLogicalWidth;
-        fragment.setRenderBoxFragmentInfo(*this, logicalLeft, fragmentLogicalWidth, false);
+        fragment.setRenderBoxFragmentInfo(*this, logicalLeft, fragmentLogicalWidth);
     }
 }
 
