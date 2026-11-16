@@ -152,23 +152,21 @@ static std::optional<TextDirection> computeTextDirection(const Element& element,
     return std::nullopt;
 }
 
+// Specs: Skip bdi, script, style, text form controls and elements whose dir attribute
+// is not in the undefined state.
+static bool isExcludedFromContainedTextAutoDirection(const Element& element)
+{
+    return element.hasTagName(HTMLNames::bdiTag) || element.hasTagName(HTMLNames::scriptTag) || element.hasTagName(HTMLNames::styleTag)
+        || element.isTextField() || elementHasValidTextDirectionState(element);
+}
+
 // Specs: https://html.spec.whatwg.org/multipage/dom.html#contained-text-auto-directionality
 static std::optional<TextDirection> computeContainedTextAutoDirection(const Element& element)
 {
     for (RefPtr child = element.firstChild(); child; ) {
-        // Specs: Skip bdi, script, style nodes.
-        if (child->hasTagName(HTMLNames::bdiTag) || child->hasTagName(HTMLNames::scriptTag) || child->hasTagName(HTMLNames::styleTag)) {
+        if (RefPtr childElement = dynamicDowncast<Element>(*child); childElement && isExcludedFromContainedTextAutoDirection(*childElement)) {
             child = NodeTraversal::nextSkippingChildren(*child, &element);
             continue;
-        }
-
-        if (RefPtr childElement = dynamicDowncast<Element>(*child)) {
-            // Specs: Skip text form controls
-            // Specs: Skip the element whose dir attribute is not in the undefined state
-            if (childElement->isTextField() || elementHasValidTextDirectionState(*childElement)) {
-                child = NodeTraversal::nextSkippingChildren(*child, &element);
-                continue;
-            }
         }
 
         // Specs: If child is a slot element whose root is a shadow root,
@@ -212,9 +210,10 @@ static std::optional<TextDirection> computeTextDirectionOfSlotElement(const HTML
                 return direction;
         }
 
-        if (RefPtr element = dynamicDowncast<Element>(child.get())) {
-            // Specs: If child direction is not null, then return child direction.
-            if (auto direction = computeAutoDirectionality(*element))
+        // Specs: Set childDirection to the contained text auto directionality of child
+        // with canExcludeRoot set to true.
+        if (RefPtr element = dynamicDowncast<Element>(child); element && !isExcludedFromContainedTextAutoDirection(*element)) {
+            if (auto direction = computeContainedTextAutoDirection(*element))
                 return direction;
         }
     }
@@ -250,6 +249,26 @@ std::optional<TextDirection> computeTextDirectionIfDirIsAuto(const Element& elem
     return computeTextDirection(element, elementTextDirectionState(element));
 }
 
+static std::optional<TextDirection> updateEffectiveTextDirectionOfElementAndDescendants(Element&, TextDirectionState, Element* initiator = nullptr);
+
+// Returns true if element's directionality does not come from its parent, in which case
+// it and its descendants must be skipped when propagating a parent's direction.
+static bool skipElementWithOwnDirectionality(Element& element)
+{
+    auto textDirectionState = elementTextDirectionState(element);
+    bool isBDI = is<HTMLBDIElement>(element);
+    if (textDirectionState == TextDirectionState::Undefined && !isBDI) {
+        RefPtr input = dynamicDowncast<HTMLInputElement>(element);
+        return input && input->isTelephoneField();
+    }
+
+    // Auto directionality in a shadow tree can depend on a slot, which takes the
+    // directionality of the shadow host, so it has to be recomputed.
+    if (element.isInShadowTree() && (textDirectionState == TextDirectionState::Auto || (isBDI && textDirectionState == TextDirectionState::Undefined)))
+        updateEffectiveTextDirectionOfElementAndDescendants(element, textDirectionState);
+    return true;
+}
+
 static void updateEffectiveTextDirectionOfElementAndShadowTree(Element& element, std::optional<TextDirection> direction, Element* initiator = nullptr)
 {
     bool usesEffectiveTextDirection = !!direction;
@@ -261,7 +280,7 @@ static void updateEffectiveTextDirectionOfElementAndShadowTree(Element& element,
 
     if (RefPtr shadowRoot = element.shadowRoot()) {
         for (Ref child : childrenOfType<Element>(*shadowRoot)) {
-            if (child.ptr() == initiator)
+            if (child.ptr() == initiator || skipElementWithOwnDirectionality(child))
                 continue;
 
             updateEffectiveTextDirectionOfElementAndShadowTree(child, direction);
@@ -273,7 +292,7 @@ static void updateEffectiveTextDirectionOfElementAndShadowTree(Element& element,
         element.invalidateStyleForSubtree();
 }
 
-static std::optional<TextDirection> updateEffectiveTextDirectionOfElementAndDescendants(Element& element, TextDirectionState textDirectionState, Element* initiator = nullptr)
+static std::optional<TextDirection> updateEffectiveTextDirectionOfElementAndDescendants(Element& element, TextDirectionState textDirectionState, Element* initiator)
 {
     updateElementHasDirAutoFlag(element, textDirectionState);
 
@@ -319,21 +338,7 @@ void updateEffectiveTextDirectionOfDescendants(Element& element, std::optional<T
     for (auto it = descendantsOfType<Element>(element).begin(); it; ) {
         Ref child = *it;
 
-        if (child.ptr() == initiator) {
-            it.traverseNextSkippingChildren();
-            continue;
-        }
-
-        if (elementHasValidTextDirectionState(child)) {
-            // Slot elements with dir=auto depend on slotted light DOM content,
-            // so recompute their direction when propagating changes through the shadow tree.
-            if (RefPtr slotElement = dynamicDowncast<HTMLSlotElement>(child.get()); slotElement && slotElement->isInShadowTree() && elementHasAutoTextDirectionState(child))
-                updateEffectiveTextDirectionOfElementAndDescendants(child, TextDirectionState::Auto);
-            it.traverseNextSkippingChildren();
-            continue;
-        }
-
-        if (is<HTMLBDIElement>(child)) {
+        if (child.ptr() == initiator || skipElementWithOwnDirectionality(child)) {
             it.traverseNextSkippingChildren();
             continue;
         }

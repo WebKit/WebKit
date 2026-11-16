@@ -1,0 +1,10 @@
+
+PASS dir=auto slot ignores text in textarea assigned nodes
+PASS dir=auto slot continues past textarea assigned nodes
+PASS dir=auto slot ignores text in script assigned nodes
+PASS dir=auto slot continues past script assigned nodes
+PASS dir=auto slot ignores text in style assigned nodes
+PASS dir=auto slot continues past style assigned nodes
+PASS dir=auto slot ignores text in dir=auto assigned nodes
+PASS dir=auto slot continues past dir=auto assigned nodes
+
