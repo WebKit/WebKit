@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<title>webkit.org/b/319962: skipping RenderLayer::paintOutlineForFragments() when the layer's own renderer has no outline must not affect outlines painted by its positioned (z-order list) children or its in-flow descendants</title>
+<style>
+    body { margin: 0; }
+    .stack {
+        position: relative;
+        width: 150px;
+        height: 200px;
+        padding-top: 80px;
+        background: white;
+    }
+    .positioned-child {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        width: 50px;
+        height: 50px;
+        background: silver;
+        outline: 10px solid blue;
+    }
+    .inflow-child {
+        margin-left: 10px;
+        width: 50px;
+        height: 30px;
+        background: silver;
+        outline: 10px solid green;
+    }
+</style>
+<div class="stack">
+    <div class="positioned-child"></div>
+    <div class="inflow-child"></div>
+</div>
