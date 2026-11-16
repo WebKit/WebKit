@@ -34,6 +34,8 @@ Length = 33
 PASS bytesToHexString(cipherText) is expectedCipherText
 Length = 63
 PASS bytesToHexString(cipherText) is expectedCipherText
+Length = 8, overflow, counter with leading zero bytes
+PASS bytesToHexString(cipherText) is expectedCipherText16
 PASS successfullyParsed is true
 
 TEST COMPLETE
