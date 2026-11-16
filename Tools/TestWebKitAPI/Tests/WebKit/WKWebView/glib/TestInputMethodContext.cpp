@@ -1972,8 +1972,8 @@ static void testWebKitInputMethodContextViewFocusOutAndIn(InputMethodTest* test,
         return;
 
     // A field focused by a user interaction gets the input method back, with the cursor area and the surrounding text.
-    // The page getting the focus back is not a user interaction, so the on-screen keyboard is inhibited until the user
-    // taps the field again.
+    // The page getting the focus back is not a user interaction, so by default the on-screen keyboard is inhibited
+    // until the user taps the field again.
     clickFieldAndWaitUntilInputMethodEnabled(test);
     test->runJavaScriptAndWaitUntilFinished("editable.value = 'abc'; editable.setSelectionRange(3, 3)", nullptr);
     hideViewAndWaitUntilPageUnfocused(test);
@@ -2052,6 +2052,27 @@ static void testWebKitInputMethodContextViewFocusOutAndInVisibleContentEditable(
     g_assert_true(test->isInputMethodEnabled());
     g_assert_cmpuint(test->focusInCount(), ==, 1);
     waitForCursorAreaAndSurroundingText(test);
+}
+
+static void testWebKitInputMethodContextViewFocusOutAndInShowOnScreenKeyboard(InputMethodTest* test, gconstpointer)
+{
+    webkit_settings_set_show_on_screen_keyboard_on_view_focus(webkit_web_view_get_settings(test->webView()), TRUE);
+    if (!loadFieldForViewFocusTest(test))
+        return;
+
+    // With show-on-screen-keyboard-on-view-focus, the field gets the on-screen keyboard back, even if a script
+    // focused it.
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+    g_assert_cmpuint(test->hints(), ==, WEBKIT_INPUT_HINT_INHIBIT_OSK);
+    hideViewAndWaitUntilPageUnfocused(test);
+    g_assert_false(test->isInputMethodEnabled());
+
+    test->clearInputMethodCounters();
+    showViewAndWaitUntilPageFocused(test);
+    test->assertJavaScriptBecomesTrue("document.activeElement.id === 'editable'");
+    g_assert_true(test->isInputMethodEnabled());
+    g_assert_cmpuint(test->focusInCount(), ==, 1);
+    g_assert_cmpuint(test->hints(), ==, WEBKIT_INPUT_HINT_NONE);
 }
 
 static void testWebKitInputMethodContextViewFocusOutRefocus(InputMethodTest* test, gconstpointer)
@@ -2800,6 +2821,7 @@ void beforeAll()
     InputMethodTest::add("WebKitInputMethodContext", "view-focus-out-and-in-script-focus", testWebKitInputMethodContextViewFocusOutAndInScriptFocus);
     InputMethodTest::add("WebKitInputMethodContext", "view-focus-out-and-in-visible", testWebKitInputMethodContextViewFocusOutAndInVisible);
     InputMethodTest::add("WebKitInputMethodContext", "view-focus-out-and-in-visible-contenteditable", testWebKitInputMethodContextViewFocusOutAndInVisibleContentEditable);
+    InputMethodTest::add("WebKitInputMethodContext", "view-focus-out-and-in-show-on-screen-keyboard", testWebKitInputMethodContextViewFocusOutAndInShowOnScreenKeyboard);
     InputMethodTest::add("WebKitInputMethodContext", "view-focus-out-refocus", testWebKitInputMethodContextViewFocusOutRefocus);
     InputMethodTest::add("WebKitInputMethodContext", "view-focus-out-focus-change", testWebKitInputMethodContextViewFocusOutFocusChange);
     InputMethodTest::add("WebKitInputMethodContext", "view-focus-out-window-focus-handler", testWebKitInputMethodContextViewFocusOutWindowFocusHandler);

@@ -589,6 +589,13 @@ WEBKIT_API void
 webkit_settings_set_webrtc_udp_ports_range                     (WebKitSettings *settings,
                                                                 const gchar    *udp_port_range);
 
+WEBKIT_API gboolean
+webkit_settings_get_show_on_screen_keyboard_on_view_focus      (WebKitSettings *settings);
+
+WEBKIT_API void
+webkit_settings_set_show_on_screen_keyboard_on_view_focus      (WebKitSettings *settings,
+                                                                gboolean        enabled);
+
 G_END_DECLS
 
 #endif /* WebKitSettings_h */

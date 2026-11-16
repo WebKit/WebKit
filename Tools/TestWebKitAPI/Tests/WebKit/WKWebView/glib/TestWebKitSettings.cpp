@@ -417,6 +417,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     webkit_settings_set_disable_web_security(settings, TRUE);
     g_assert_true(webkit_settings_get_disable_web_security(settings));
 
+    // The on-screen keyboard is not shown again on view focus by default.
+    g_assert_false(webkit_settings_get_show_on_screen_keyboard_on_view_focus(settings));
+    webkit_settings_set_show_on_screen_keyboard_on_view_focus(settings, TRUE);
+    g_assert_true(webkit_settings_get_show_on_screen_keyboard_on_view_focus(settings));
+
 #if ENABLE(WEB_RTC)
     g_assert_cmpstr("", ==, webkit_settings_get_webrtc_udp_ports_range(settings));
     webkit_settings_set_webrtc_udp_ports_range(settings, "20000:30000");
