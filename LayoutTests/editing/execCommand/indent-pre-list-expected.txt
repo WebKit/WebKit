@@ -36,7 +36,7 @@ yields:
 |     <ul>
 |       <li>
 |         "<#selection-anchor>hello"
-|       <li>
+|         "\n"
 |         "world<#selection-focus>"
 |     "\n"
 | "\n"
