@@ -20,6 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import re
 import secrets
 
 
@@ -27,6 +28,19 @@ def getWorkerPassword(worker_name, passwords, is_test_mode_enabled):
     if is_test_mode_enabled:
         return 'password'
     password = passwords.get(worker_name)
+    if not password:
+        # Allow many machines to share the same password
+        matches = []
+        for pattern in passwords:
+            try:
+                if re.fullmatch(pattern, worker_name):
+                    matches.append(pattern)
+            except re.error as e:
+                print(f'WARNING: Invalid pattern {pattern!r} in passwords.json: {e}')
+        if len(matches) > 1:
+            raise ValueError(f'Worker {worker_name} matches multiple patterns in passwords.json: {", ".join(matches)}')
+        if matches:
+            password = passwords[matches[0]]
     if password:
         return password
     print(f'WARNING: No password found for worker {worker_name} in passwords.json, it will not be able to connect.')
