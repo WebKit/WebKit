@@ -187,15 +187,11 @@ WI.DOMObserver = class DOMObserver extends InspectorBackend.Dispatcher
 
     didFireEvent(nodeId, eventName, timestamp, data)
     {
-        if (this._target instanceof WI.FrameTarget)
-            return;
-        WI.domManager.didFireEvent(nodeId, eventName, timestamp, data);
+        WI.domManager.didFireEvent(nodeId, eventName, timestamp, data, this._target);
     }
 
     powerEfficientPlaybackStateChanged(nodeId, timestamp, isPowerEfficient)
     {
-        if (this._target instanceof WI.FrameTarget)
-            return;
-        WI.domManager.powerEfficientPlaybackStateChanged(nodeId, timestamp, isPowerEfficient);
+        WI.domManager.powerEfficientPlaybackStateChanged(nodeId, timestamp, isPowerEfficient, this._target);
     }
 };

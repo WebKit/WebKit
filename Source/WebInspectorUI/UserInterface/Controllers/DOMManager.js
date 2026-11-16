@@ -1145,18 +1145,18 @@ WI.DOMManager = class DOMManager extends WI.Object
         node.dispatchEventToListeners(WI.DOMNode.Event.EventListenersChanged);
     }
 
-    didFireEvent(nodeId, eventName, timestamp, data)
+    didFireEvent(nodeId, eventName, timestamp, data, target)
     {
-        let node = this._idToDOMNode[nodeId];
+        let node = target instanceof WI.FrameTarget ? this.nodeForIdInFrameTarget(nodeId, target) : this._idToDOMNode[nodeId];
         if (!node)
             return;
 
         node.didFireEvent(eventName, timestamp, data);
     }
 
-    powerEfficientPlaybackStateChanged(nodeId, timestamp, isPowerEfficient)
+    powerEfficientPlaybackStateChanged(nodeId, timestamp, isPowerEfficient, target)
     {
-        let node = this._idToDOMNode[nodeId];
+        let node = target instanceof WI.FrameTarget ? this.nodeForIdInFrameTarget(nodeId, target) : this._idToDOMNode[nodeId];
         if (!node)
             return;
 

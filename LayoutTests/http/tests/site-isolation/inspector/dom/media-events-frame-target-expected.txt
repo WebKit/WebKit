@@ -1,0 +1,98 @@
+Tests that DOM.didFireEvent for media elements is sent from frame targets, and that main-frame and same-origin media events are not reported twice.
+
+
+
+== Running test suite: SiteIsolation.DOM.FrameDOMAgent.MediaEvents
+-- Running test case: Setup
+PASS: Should find the cross-origin frame target.
+PASS: Should find the nested frame target.
+PASS: Should find the main frame target.
+PASS: Should find the main frame video.
+PASS: Should find the same-origin frame video.
+PASS: Cross-origin frame document should be spliced into the page tree.
+PASS: Should find the cross-origin frame video.
+PASS: Cross-origin video should be owned by the frame target.
+PASS: Should find the nested frame video.
+
+-- Running test case: CrossOriginFrame
+Playing then pausing video in the cross-origin frame...
+PASS: Cross-origin video should receive a "play" event.
+PASS: Cross-origin video should receive a "playing" event.
+PASS: Cross-origin video should receive a "pause" event.
+PASS: Cross-origin video "play" should be reported exactly once.
+PASS: Cross-origin video "playing" should be reported exactly once.
+PASS: Cross-origin video "pause" should be reported exactly once.
+
+-- Running test case: MainFrame
+Playing then pausing video in the main frame...
+PASS: Main frame video should receive a "play" event.
+PASS: Main frame video should receive a "playing" event.
+PASS: Main frame video should receive a "pause" event.
+PASS: Main frame video "play" should be reported exactly once.
+PASS: Main frame video "playing" should be reported exactly once.
+PASS: Main frame video "pause" should be reported exactly once.
+
+-- Running test case: SameOriginFrame
+Playing then pausing video in the same-origin frame...
+PASS: Same-origin frame video should receive a "play" event.
+PASS: Same-origin frame video should receive a "playing" event.
+PASS: Same-origin frame video should receive a "pause" event.
+PASS: Same-origin frame video "play" should be reported exactly once.
+PASS: Same-origin frame video "playing" should be reported exactly once.
+PASS: Same-origin frame video "pause" should be reported exactly once.
+
+-- Running test case: NestedFrame
+Playing then pausing video in the nested frame...
+PASS: Nested frame video should receive a "play" event.
+PASS: Nested frame video should receive a "playing" event.
+PASS: Nested frame video should receive a "pause" event.
+PASS: Nested frame video "play" should be reported exactly once.
+PASS: Nested frame video "playing" should be reported exactly once.
+PASS: Nested frame video "pause" should be reported exactly once.
+
+-- Running test case: DynamicCrossOriginFrame
+Dynamic cross-origin video: playing then pausing...
+PASS: Dynamic cross-origin video "play" should be reported exactly once.
+PASS: Dynamic cross-origin video "playing" should be reported exactly once.
+PASS: Dynamic cross-origin video "pause" should be reported exactly once.
+
+-- Running test case: DynamicMainFrame
+Dynamic main frame video: playing then pausing...
+PASS: Dynamic main frame video "play" should be reported exactly once.
+PASS: Dynamic main frame video "playing" should be reported exactly once.
+PASS: Dynamic main frame video "pause" should be reported exactly once.
+
+-- Running test case: SameProcessChildOfCrossOriginFrame
+PASS: Should find the same-process child frame target.
+Same-process child frame video: playing then pausing...
+PASS: Same-process child frame video "play" should be reported exactly once.
+PASS: Same-process child frame video "playing" should be reported exactly once.
+PASS: Same-process child frame video "pause" should be reported exactly once.
+
+-- Running test case: ThirdProcessFrame
+PASS: Should find the third-process frame target.
+Third-process frame video: playing then pausing...
+PASS: Third-process frame video "play" should be reported exactly once.
+PASS: Third-process frame video "playing" should be reported exactly once.
+PASS: Third-process frame video "pause" should be reported exactly once.
+
+-- Running test case: AdoptedIntoNestedFrame
+Adopted video: playing then pausing...
+PASS: Adopted video "play" should be reported exactly once.
+PASS: Adopted video "playing" should be reported exactly once.
+PASS: Adopted video "pause" should be reported exactly once.
+
+-- Running test case: NavigateWithinCrossOriginFrame
+PASS: Should find the frame target after navigating.
+Video after in-process navigation: playing then pausing...
+PASS: Video after in-process navigation "play" should be reported exactly once.
+PASS: Video after in-process navigation "playing" should be reported exactly once.
+PASS: Video after in-process navigation "pause" should be reported exactly once.
+
+-- Running test case: NavigateCrossOriginFrameToAnotherProcess
+PASS: Should find the frame target in the other process.
+Video after cross-process navigation: playing then pausing...
+PASS: Video after cross-process navigation "play" should be reported exactly once.
+PASS: Video after cross-process navigation "playing" should be reported exactly once.
+PASS: Video after cross-process navigation "pause" should be reported exactly once.
+
