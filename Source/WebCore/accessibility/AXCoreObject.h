@@ -901,13 +901,13 @@ public:
 
     // Helpers that run on any platform and return children and parents, calling the cross frame functions if needed
     // to walk between LocalFrames.
-    AccessibilityChildrenVector crossFrameUnignoredChildren();
+    WEBCORE_EXPORT AccessibilityChildrenVector crossFrameUnignoredChildren();
     size_t crossFrameUnignoredChildrenCount();
     // Whether this object hosts a cross-frame subtree that crossFrameUnignoredChildren() hoists.
     // Returns std::nullopt when the implementation can not cheaply determine (i.e. from a cache)
     // whether a cross-frame child is present.
     virtual std::optional<bool> cachedHasCrossFrameChild();
-    AXCoreObject* crossFrameParentObjectUnignored() const;
+    WEBCORE_EXPORT AXCoreObject* crossFrameParentObjectUnignored() const;
     AccessibilityChildrenVector crossFrameChildrenIncludingIgnored(bool updateChildrenIfNeeded = true);
     bool crossFrameIsAncestorOfObject(const AXCoreObject&) const;
     bool crossFrameIsDescendantOfObject(const AXCoreObject&) const;

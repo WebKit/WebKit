@@ -15,4 +15,5 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/wai-aria/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/wai-aria/accessibility_properties_basic.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/wai-aria/idlharness.window.js
