@@ -74,7 +74,7 @@ def send_email(to_emails, subject, text, reference=''):
     server.quit()
 
 
-def send_email_to_patch_author(author_email, subject, text, reference=''):
+def send_email_to_change_author(author_email, subject, text, reference=''):
     if not author_email:
         return
     if author_email in get_email_ids('EMAIL_IDS_TO_UNSUBSCRIBE'):

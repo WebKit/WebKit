@@ -146,7 +146,7 @@ def loadBuilderConfig(c, is_test_mode_enabled=False, setup_main_schedulers=True,
                    branch=FixedParameter(name='branch', default=''))],
         # Add custom properties needed
         properties=[StringParameter(name='pr_number', label='Pull Request number (not bug number)', regex=r'^[0-9]{5,6}$', required=True, maxsize=6),
-                    StringParameter(name='ews_revision', label='WebKit git hash to checkout before trying patch (optional)', required=False, maxsize=40)],
+                    StringParameter(name='ews_revision', label='WebKit git hash to checkout before trying change (optional)', required=False, maxsize=40)],
     )
     if setup_force_schedulers is True:
         c['schedulers'].append(forceScheduler)
