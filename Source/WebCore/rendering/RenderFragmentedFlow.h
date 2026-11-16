@@ -39,7 +39,6 @@
 
 namespace WebCore {
 
-class CurrentRenderFragmentContainerMaintainer;
 class RenderFragmentedFlow;
 class RenderFragmentContainer;
 
@@ -63,14 +62,13 @@ class RenderFragmentedFlow : public RenderBlockFlow {
 public:
     virtual ~RenderFragmentedFlow();
 
-    virtual void removeFlowChildInfo(RenderElement&);
+    void removeFlowChildInfo(RenderElement&);
 
     virtual void addFragmentToThread(RenderFragmentContainer*) = 0;
     void removeFragmentFromThread(RenderFragmentContainer&);
     const RenderFragmentContainerList& renderFragmentContainerList() const LIFETIME_BOUND { return m_fragmentList; }
 
     void updateLogicalWidth() final;
-    LogicalExtentComputedValues computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const override;
 
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 
@@ -81,7 +79,7 @@ public:
     bool hasValidFragmentInfo() const { return !m_fragmentsInvalidated && !m_fragmentList.computeIsEmpty(); }
     
     // Called when a descendant box's layout is finished and it has been positioned within its container.
-    virtual void fragmentedFlowDescendantBoxLaidOut(RenderBox*) { }
+    virtual void fragmentedFlowDescendantBoxLaidOut(RenderBox*) = 0;
 
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
 
@@ -91,16 +89,16 @@ public:
     LayoutUnit pageLogicalHeightForOffset(LayoutUnit) const;
     LayoutUnit pageRemainingLogicalHeightForOffset(LayoutUnit, PageBoundaryRule = IncludePageBoundary) const;
 
-    virtual void setPageBreak(const RenderBlock*, LayoutUnit /*offset*/, LayoutUnit /*spaceShortage*/) { }
-    virtual void updateMinimumPageHeight(const RenderBlock*, LayoutUnit /*offset*/, LayoutUnit /*minHeight*/) { }
+    virtual void setPageBreak(const RenderBlock*, LayoutUnit offset, LayoutUnit spaceShortage) = 0;
+    virtual void updateMinimumPageHeight(const RenderBlock*, LayoutUnit offset, LayoutUnit minHeight) = 0;
 
-    virtual void updateSpaceShortageForSizeContainment(const RenderBlock*, LayoutUnit /*offset*/, LayoutUnit /*shortage*/) { }
+    virtual void updateSpaceShortageForSizeContainment(const RenderBlock*, LayoutUnit offset, LayoutUnit shortage) = 0;
 
     virtual RenderFragmentContainer* fragmentAtBlockOffset(const RenderBox*, LayoutUnit, bool extendLastFragment = false) const;
 
     bool fragmentsHaveUniformLogicalHeight() const { return m_fragmentsHaveUniformLogicalHeight; }
 
-    virtual RenderFragmentContainer* mapFromFlowToFragment(TransformState&) const;
+    virtual RenderFragmentContainer* mapFromFlowToFragment(TransformState&) const = 0;
 
     void logicalWidthChangedInFragmentsForBlock(const RenderBlock&, RelayoutChildren&);
 
@@ -118,9 +116,9 @@ public:
     // Check if the object should be painted in this fragment and if the fragment is part of this flow thread.
     bool objectShouldFragmentInFlowFragment(const RenderObject*, const RenderFragmentContainer*) const;
 
-    virtual bool addForcedFragmentBreak(const RenderBlock*, LayoutUnit, RenderBox* breakChild, bool isBefore, LayoutUnit* offsetBreakAdjustment = 0);
+    virtual bool addForcedFragmentBreak(const RenderBlock*, LayoutUnit, RenderBox* breakChild, bool isBefore, LayoutUnit* offsetBreakAdjustment = 0) = 0;
 
-    virtual bool isPageLogicalHeightKnown() const { return true; }
+    virtual bool isPageLogicalHeightKnown() const = 0;
     bool pageLogicalSizeChanged() const { return m_pageLogicalSizeChanged; }
 
     void collectLayerFragments(LayerFragments&, const LayoutRect& layerBoundingBox, const LayoutRect& dirtyRect) const;
@@ -153,13 +151,10 @@ public:
 
     void layout() override;
 
-    void setCurrentFragmentMaintainer(CurrentRenderFragmentContainerMaintainer* currentFragmentMaintainer) { m_currentFragmentMaintainer = currentFragmentMaintainer; }
-    NODELETE RenderFragmentContainer* currentFragment() const;
-
     bool cachedEnclosingFragmentedFlowNeedsUpdate() const override { return false; }
 
     // FIXME: Eventually as column and fragment flow threads start nesting, this may end up changing.
-    virtual bool shouldCheckColumnBreaks() const { return false; }
+    virtual bool shouldCheckColumnBreaks() const = 0;
 
 private:
     // Always create a RenderLayer for the RenderFragmentedFlow so that we
@@ -173,9 +168,8 @@ protected:
 
     ASCIILiteral renderName() const override = 0;
 
-    // Overridden by columns/pages to set up an initial logical width of the page width even when
-    // no fragments have been generated yet.
-    virtual LayoutUnit initialLogicalWidth() const { return 0_lu; };
+    // The initial logical width of the page, used even when no fragments have been generated yet.
+    virtual LayoutUnit initialLogicalWidth() const = 0;
     
     void mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState&, OptionSet<MapCoordinatesMode>, bool* wasFixed) const override;
 
@@ -221,8 +215,6 @@ protected:
     RenderFragmentContainerRangeMap m_fragmentRangeMap;
 
     FragmentIntervalTree m_fragmentIntervalTree;
-
-    CurrentRenderFragmentContainerMaintainer* m_currentFragmentMaintainer;
 
     bool m_fragmentsInvalidated : 1;
     bool m_fragmentsHaveUniformLogicalHeight : 1;

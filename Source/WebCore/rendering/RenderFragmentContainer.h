@@ -51,8 +51,8 @@ public:
     LayoutRect fragmentedFlowPortionRect() const { return m_fragmentedFlowPortionRect; }
     LayoutRect fragmentedFlowPortionOverflowRect() const;
 
-    virtual void attachFragment();
-    virtual void detachFragment();
+    void attachFragment();
+    void detachFragment();
 
     RenderFragmentedFlow* fragmentedFlow() const { return m_fragmentedFlow.get(); }
 
@@ -69,30 +69,25 @@ public:
     bool isFirstFragment() const;
     bool isLastFragment() const;
 
-    // These methods represent the width and height of a "page" and for a RenderFragmentContainer they are just the
-    // content width and content height of a fragment. For RenderMultiColumnSets, however, they will be the width and
-    // height of a single column or page in the set.
-    virtual LayoutUnit pageLogicalWidth() const;
-    virtual LayoutUnit pageLogicalHeight() const;
+    // The width and height of a single column or page in the set.
+    virtual LayoutUnit pageLogicalWidth() const = 0;
+    virtual LayoutUnit pageLogicalHeight() const = 0;
 
     NODELETE LayoutUnit logicalTopOfFragmentedFlowContentRect(const LayoutRect&) const;
     NODELETE LayoutUnit logicalBottomOfFragmentedFlowContentRect(const LayoutRect&) const;
     LayoutUnit logicalTopForFragmentedFlowContent() const { return logicalTopOfFragmentedFlowContentRect(fragmentedFlowPortionRect()); };
     LayoutUnit logicalBottomForFragmentedFlowContent() const { return logicalBottomOfFragmentedFlowContentRect(fragmentedFlowPortionRect()); };
 
-    // This method represents the logical height of the entire flow thread portion used by the fragment or set.
-    // For RenderFragmentContainers it matches logicalPaginationHeight(), but for sets it is the height of all the pages
+    // The logical height of the entire flow thread portion used by the set, i.e. the height of all the pages
     // or columns added together.
-    virtual LayoutUnit logicalHeightOfAllFragmentedFlowContent() const;
+    virtual LayoutUnit logicalHeightOfAllFragmentedFlowContent() const = 0;
 
-    // The top of the nearest page inside the fragment. For RenderFragmentContainers, this is just the logical top of the
-    // flow thread portion we contain. For sets, we have to figure out the top of the nearest column or
-    // page.
-    virtual LayoutUnit pageLogicalTopForOffset(LayoutUnit offset) const;
+    // The top of the nearest column or page inside the set.
+    virtual LayoutUnit pageLogicalTopForOffset(LayoutUnit offset) const = 0;
 
-    virtual void repaintFragmentedFlowContent(const LayoutRect& repaintRect) const;
+    virtual void repaintFragmentedFlowContent(const LayoutRect& repaintRect) const = 0;
 
-    virtual void collectLayerFragments(LayerFragments&, const LayoutRect&, const LayoutRect&) const { }
+    virtual void collectLayerFragments(LayerFragments&, const LayoutRect&, const LayoutRect&) const = 0;
 
     void addLayoutOverflowForBox(const RenderBox&, const LayoutRect&);
     void addVisualOverflowForBox(const RenderBox&, const LayoutRect&);
@@ -104,10 +99,9 @@ public:
 
     bool canHaveChildren() const override { return false; }
     bool canHaveGeneratedChildren() const override { return true; }
-    PositionWithAffinity positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*) override;
 
-    virtual Vector<LayoutRect> fragmentRectsForFlowContentRect(const LayoutRect&) const;
-    virtual bool contentRectSpansFragments(const LayoutRect&) const { return false; }
+    virtual Vector<LayoutRect> fragmentRectsForFlowContentRect(const LayoutRect&) const = 0;
+    virtual bool contentRectSpansFragments(const LayoutRect&) const = 0;
 
 protected:
     RenderFragmentContainer(Type, Element&, Style::ComputedStyle&&, RenderFragmentedFlow*);
@@ -130,7 +124,6 @@ private:
     void insertedIntoTree() override;
     void willBeRemovedFromTree() override;
 
-    NODELETE LayoutPoint mapFragmentPointIntoFragmentedFlowCoordinates(const LayoutPoint&);
     LayoutRect computedVisualOverflowRectForBox(const RenderBox&) const;
     LayoutRect computedLayoutOverflowRectForBox(const RenderBox&) const;
 
@@ -148,17 +141,6 @@ private:
     RenderBoxFragmentInfoMap m_renderBoxFragmentInfo;
 
     bool m_isValid { false };
-};
-
-class CurrentRenderFragmentContainerMaintainer {
-    WTF_MAKE_NONCOPYABLE(CurrentRenderFragmentContainerMaintainer);
-public:
-    CurrentRenderFragmentContainerMaintainer(RenderFragmentContainer&);
-    ~CurrentRenderFragmentContainerMaintainer();
-
-    RenderFragmentContainer& fragment() const { return m_fragment; }
-private:
-    RenderFragmentContainer& m_fragment;
 };
 
 #ifndef NDEBUG

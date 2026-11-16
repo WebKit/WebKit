@@ -73,7 +73,6 @@ static void forEachFragmentInRange(FragmentList& fragmentList, const RenderFragm
 
 RenderFragmentedFlow::RenderFragmentedFlow(Type type, Document& document, Style::ComputedStyle&& style)
     : RenderBlockFlow(type, document, WTF::move(style), BlockFlowFlag::IsFragmentedFlow)
-    , m_currentFragmentMaintainer(nullptr)
     , m_fragmentsInvalidated(false)
     , m_fragmentsHaveUniformLogicalHeight(true)
     , m_pageLogicalSizeChanged(false)
@@ -174,24 +173,6 @@ void RenderFragmentedFlow::updateLogicalWidth()
             : logicalWidth - fragmentLogicalWidth;
         fragment.setRenderBoxFragmentInfo(*this, logicalLeft, fragmentLogicalWidth);
     }
-}
-
-RenderBox::LogicalExtentComputedValues RenderFragmentedFlow::computeLogicalHeight(LayoutUnit, LayoutUnit logicalTop) const
-{
-    LogicalExtentComputedValues computedValues;
-    computedValues.position = logicalTop;
-    computedValues.extent = 0;
-
-    const LayoutUnit maxFlowSize = RenderFragmentedFlow::maxLogicalHeight();
-    for (auto& fragment : m_fragmentList) {
-        LayoutUnit distanceToMaxSize = maxFlowSize - computedValues.extent;
-        computedValues.extent += std::min(distanceToMaxSize, fragment.logicalHeightOfAllFragmentedFlowContent());
-
-        // If we reached the maximum size there's no point in going further.
-        if (computedValues.extent == maxFlowSize)
-            return computedValues;
-    }
-    return computedValues;
 }
 
 bool RenderFragmentedFlow::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
@@ -353,30 +334,6 @@ LayoutUnit RenderFragmentedFlow::pageRemainingLogicalHeightForOffset(LayoutUnit 
         remainingHeight = pageLogicalHeight;
     }
     return remainingHeight;
-}
-
-RenderFragmentContainer* RenderFragmentedFlow::mapFromFlowToFragment(TransformState& transformState) const
-{
-    if (!hasValidFragmentInfo())
-        return nullptr;
-
-    RenderFragmentContainer* RenderFragmentContainer = currentFragment();
-    if (!RenderFragmentContainer) {
-        LayoutRect boxRect = transformState.mappedQuad().enclosingBoundingBox();
-        physicalToBlockStartRelative(boxRect);
-
-        LayoutPoint center = boxRect.center();
-        RenderFragmentContainer = fragmentAtBlockOffset(this, isHorizontalWritingMode() ? center.y() : center.x(), true);
-        if (!RenderFragmentContainer)
-            return nullptr;
-    }
-
-    LayoutRect physicalFragmentRect(RenderFragmentContainer->fragmentedFlowPortionRect());
-    blockStartRelativeToPhysical(physicalFragmentRect);
-
-    transformState.move(RenderFragmentContainer->contentBoxRect().location() - physicalFragmentRect.location());
-
-    return RenderFragmentContainer;
 }
 
 void RenderFragmentedFlow::removeRenderBoxFragmentInfo(const RenderBox& box)
@@ -654,31 +611,6 @@ void RenderFragmentedFlow::updateFragmentsFragmentedFlowPortionRect()
     }
 }
 
-// Even if we require the break to occur at offsetBreakInFragmentedFlow, because fragments may have min/max-height values,
-// it is possible that the break will occur at a different offset than the original one required.
-// offsetBreakAdjustment measures the different between the requested break offset and the current break offset.
-bool RenderFragmentedFlow::addForcedFragmentBreak(const RenderBlock* block, LayoutUnit offsetBreakInFragmentedFlow, RenderBox*, bool, LayoutUnit* offsetBreakAdjustment)
-{
-    // We need to update the fragments flow thread portion rect because we are going to process
-    // a break on these fragments.
-    updateFragmentsFragmentedFlowPortionRect();
-
-    // Simulate a fragment break at offsetBreakInFragmentedFlow. If it points inside an auto logical height fragment,
-    // then it determines the fragment computed auto height.
-    RenderFragmentContainer* fragment = fragmentAtBlockOffset(block, offsetBreakInFragmentedFlow);
-    if (!fragment)
-        return false;
-
-    LayoutUnit currentFragmentOffsetInFragmentedFlow = isHorizontalWritingMode() ? fragment->fragmentedFlowPortionRect().y() : fragment->fragmentedFlowPortionRect().x();
-
-    currentFragmentOffsetInFragmentedFlow += isHorizontalWritingMode() ? fragment->fragmentedFlowPortionRect().height() : fragment->fragmentedFlowPortionRect().width();
-
-    if (offsetBreakAdjustment)
-        *offsetBreakAdjustment = std::max<LayoutUnit>(0, currentFragmentOffsetInFragmentedFlow - offsetBreakInFragmentedFlow);
-
-    return false;
-}
-
 void RenderFragmentedFlow::collectLayerFragments(LayerFragments& layerFragments, const LayoutRect& layerBoundingBox, const LayoutRect& dirtyRect) const
 {
     ASSERT(!m_fragmentsInvalidated || isSkippedContent());
@@ -758,16 +690,6 @@ void RenderFragmentedFlow::mapLocalToContainer(const RenderLayerModelObject* anc
         // If the repaint container is nullptr, we have to climb up to the RenderView, otherwise swap
         // it with the fragment's repaint container.
         ancestorContainer = ancestorContainer ? fragment->containerForRepaint().renderer.unsafeGet() : nullptr;
-
-        if (RenderFragmentedFlow* fragmentFragmentedFlow = fragment->enclosingFragmentedFlow()) {
-            RenderFragmentContainer* startFragment = nullptr;
-            RenderFragmentContainer* endFragment = nullptr;
-            if (fragmentFragmentedFlow->getFragmentRangeForBox(*fragment, startFragment, endFragment)) {
-                CurrentRenderFragmentContainerMaintainer fragmentMaintainer(*startFragment);
-                fragmentObject->mapLocalToContainer(ancestorContainer, transformState, mode, wasFixed);
-                return;
-            }
-        }
 
         fragmentObject->mapLocalToContainer(ancestorContainer, transformState, mode, wasFixed);
     }
@@ -927,11 +849,6 @@ void RenderFragmentedFlow::clearFragmentsOverflow(const RenderBox& box)
         if (boxInfo && boxInfo->overflow())
             boxInfo->clearOverflow();
     });
-}
-
-RenderFragmentContainer* RenderFragmentedFlow::currentFragment() const
-{
-    return m_currentFragmentMaintainer ? &m_currentFragmentMaintainer->fragment() : nullptr;
 }
 
 } // namespace WebCore
