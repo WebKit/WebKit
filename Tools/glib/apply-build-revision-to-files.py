@@ -24,19 +24,12 @@ from urllib.parse import urlparse
 
 WEBKIT_TOP_LEVEL = Path(__file__).parent.parent.parent.resolve()
 
+# Downstream builds often apply their own patches as commits on top of an
+# upstream commit. Look this many commits back for the upstream one.
+MAX_COMMITS_TO_SEARCH = 100
 
-def get_revision_from_most_recent_git_commit():
-    try:
-        commit_message = subprocess.run(
-            ('git', 'log', '-1', '--pretty=%B', 'HEAD'),
-            stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, check=True,
-        ).stdout
-    except subprocess.CalledProcessError:
-        # This may happen with shallow checkouts whose HEAD has been
-        # modified; there is no origin reference anymore, and git
-        # will fail - let's pretend that this is not a repo at all
-        return None
 
+def get_revision_from_commit_message(commit_message):
     trailer_output = subprocess.run(
         ['git',
          '-c', 'trailer.Canonical-link.key=Canonical-link',
@@ -44,7 +37,7 @@ def get_revision_from_most_recent_git_commit():
          '-c', 'trailer.git-svn-id.key=git-svn-id',
          'interpret-trailers', '--parse', '--no-divider'],
         input=commit_message.replace(b'\nCanonical link:', b'\nCanonical-link:'),
-        stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, check=True,
+        stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, check=True, cwd=WEBKIT_TOP_LEVEL,
     ).stdout
     for line in trailer_output.splitlines():
         if line.startswith(b'Canonical-link:'):
@@ -52,6 +45,42 @@ def get_revision_from_most_recent_git_commit():
             revision = urlparse(url).path[1:]  # strip leading /
             return revision
     return None
+
+
+def get_revision_from_most_recent_git_commit():
+    try:
+        commit_message = subprocess.run(
+            ('git', 'log', '-1', '--pretty=%B', 'HEAD'),
+            stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, check=True, cwd=WEBKIT_TOP_LEVEL,
+        ).stdout
+    except subprocess.CalledProcessError:
+        # This may happen with shallow checkouts whose HEAD has been
+        # modified; there is no origin reference anymore, and git
+        # will fail - let's pretend that this is not a repo at all
+        return None
+
+    revision = get_revision_from_commit_message(commit_message)
+    if revision:
+        return revision
+
+    # HEAD has no canonical link, for example a downstream patch. Report the
+    # newest commit below it that has one, followed by "+" to say that there
+    # are commits on top of it.
+    try:
+        commit_messages = subprocess.run(
+            ('git', 'log', f'--max-count={MAX_COMMITS_TO_SEARCH}', '--skip=1', '-z', '--pretty=%B', 'HEAD'),
+            stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, check=True, cwd=WEBKIT_TOP_LEVEL,
+        ).stdout
+        for commit_message in commit_messages.split(b'\0'):
+            if b'Canonical link:' not in commit_message:
+                continue
+            revision = get_revision_from_commit_message(commit_message)
+            if revision:
+                return f'{revision}+'
+    except (subprocess.CalledProcessError, UnicodeDecodeError):
+        return None
+    return None
+
 
 def get_build_revision():
     git_path = str(WEBKIT_TOP_LEVEL.joinpath('.git'))
@@ -61,13 +90,14 @@ def get_build_revision():
 
     return None
 
+
 def main(args):
     build_revision = get_build_revision() or "unknown"
 
     for in_file in args:
         file = Path(in_file)
         if file.name == "BuildRevision.h":
-            with open("Source/WebKit/Shared/glib/BuildRevision.h.in") as template:
+            with open(WEBKIT_TOP_LEVEL / "Source/WebKit/Shared/glib/BuildRevision.h.in") as template:
                 template = template.read()
         elif file.suffix == '.pc':
             # Restore a valid BUILD_REVISION template.
