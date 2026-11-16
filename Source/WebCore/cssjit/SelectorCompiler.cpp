@@ -1471,6 +1471,10 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
                 if (localFunctionType == FunctionType::CannotCompile)
                     return FunctionType::CannotCompile;
 
+                // Since this fragment never matches against the element, don't insert it to matchesList.
+                if (localFunctionType == FunctionType::CannotMatchAnything)
+                    continue;
+
                 // Standalone pseudo-element (like ::before) are invalid, fallback to SelectorChecker.
                 if (selectorFragments->isEmpty())
                     return FunctionType::CannotCompile;
@@ -1478,10 +1482,6 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
                 // Pseudo-element in functional pseudo-classes are invalid, fallback to SelectorChecker.
                 if (selectorFragments->first().pseudoElementSelector)
                     return FunctionType::CannotCompile;
-
-                // Since this fragment never matches against the element, don't insert it to matchesList.
-                if (localFunctionType == FunctionType::CannotMatchAnything)
-                    continue;
 
                 functionType = mostRestrictiveFunctionType(functionType, localFunctionType);
                 selectorFragments = nullptr;
