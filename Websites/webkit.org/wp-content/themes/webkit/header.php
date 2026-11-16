@@ -38,12 +38,21 @@
     <header aria-label="WebKit.org Header" id="header">
         <div class="page-width">
         <a href="/"><div id="logo" class="site-logo">WebKit</div></a>
-        <nav id="site-nav" aria-label="Site Menu">
-<?php wp_nav_menu( array(
+        <nav id="site-nav" aria-label="Site Menu"><?php
+$webkit_append_search_form = function ($items, $args) {
+    if (($args->theme_location ?? '') !== 'site-nav')
+        return $items;
+    return $items . '<li><form action="/" method="get"><input type="search" name="s" class="search-input" value="' . get_search_query(true) . '"></form></li>';
+};
+
+add_filter('wp_nav_menu_items', $webkit_append_search_form, 10, 2);
+wp_nav_menu( array(
 'walker'          => new Responsive_Toggle_Walker_Nav_Menu(),
 'theme_location'  => 'site-nav',
-'items_wrap'      => '<input type="checkbox" id="%1$s-toggle" class="menu-toggle" /><label for="%1$s-toggle" class="label-toggle main-menu" data-open="Main Menu" data-close="Close Menu"></label><ul id="%1$s" class="%2$s" role="menubar">%3$s<li><form action="/" method="get"><input type="search" name="s" class="search-input" value="'.get_search_query(true).'"></form></li></ul>',
-) ); ?></nav>
+'items_wrap'      => '<input type="checkbox" id="%1$s-toggle" class="menu-toggle" /><label for="%1$s-toggle" class="label-toggle main-menu" data-open="Main Menu" data-close="Close Menu"></label><ul id="%1$s" class="%2$s" role="menubar">%3$s</ul>',
+) );
+remove_filter('wp_nav_menu_items', $webkit_append_search_form, 10);
+?></nav>
         </div>
     </header>
 
