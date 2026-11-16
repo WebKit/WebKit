@@ -176,6 +176,8 @@ private:
     bool scrollAnimationEnabled() const final;
 #endif
 
+    ScrollAxisLock scrollAxisLock() const final;
+
 protected:
     WeakRef<ScrollableArea> m_scrollableArea;
     RefPtr<WheelEventTestMonitor> m_wheelEventTestMonitor;
