@@ -64,7 +64,6 @@ REAL_FILTER_RESULTS_USING_RESULTS_DB = FindUnexpectedStaticAnalyzerResults.filte
 REAL_WRITE_UNEXPECTED_RESULTS_FILE_TO_MASTER = FindUnexpectedStaticAnalyzerResults.write_unexpected_results_file_to_master
 
 # Prevent unit-tests from talking to live bugzilla and github servers
-BugzillaMixin.fetch_data_from_url_with_authentication_bugzilla = lambda x, y: None
 GitHubMixin.fetch_data_from_url_with_authentication_github = lambda x, y: None
 
 # Prevent unit tests from having huge amounts of logging from alembic.
@@ -6966,7 +6965,7 @@ class TestCheckChangeRelevance(BuildStepMixinAdditions, unittest.TestCase):
         self.assertEqual(CheckChangeRelevance.flunkOnFailure, True)
         for file_name in file_names:
             CheckChangeRelevance._get_patch = lambda x: f'Sample patch; file: {file_name}'
-            self.expect_outcome(result=SUCCESS, state_string='Patch contains relevant changes')
+            self.expect_outcome(result=SUCCESS, state_string='Pull request contains relevant changes')
             rc = self.run_step()
         return rc
 
@@ -6985,7 +6984,7 @@ class TestCheckChangeRelevance(BuildStepMixinAdditions, unittest.TestCase):
         self.assertEqual(CheckChangeRelevance.flunkOnFailure, True)
         for file_name in file_names:
             CheckChangeRelevance._get_patch = lambda x: f'Sample patch; file: {file_name}'
-            self.expect_outcome(result=SUCCESS, state_string='Patch contains relevant changes')
+            self.expect_outcome(result=SUCCESS, state_string='Pull request contains relevant changes')
             rc = self.run_step()
         return rc
 
@@ -6997,7 +6996,7 @@ class TestCheckChangeRelevance(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('buildername', 'macOS-Catalina-Release-WK1-Tests-EWS')
         for file_name in file_names:
             CheckChangeRelevance._get_patch = lambda x: f'Sample patch; file: {file_name}'
-            self.expect_outcome(result=SUCCESS, state_string='Patch contains relevant changes')
+            self.expect_outcome(result=SUCCESS, state_string='Pull request contains relevant changes')
             rc = self.run_step()
         return rc
 
@@ -7008,7 +7007,7 @@ class TestCheckChangeRelevance(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('buildername', 'macOS-Monterey-Release-Build-EWS')
         for file_name in file_names:
             CheckChangeRelevance._get_patch = lambda x: f'Sample patch; file: {file_name}'
-            self.expect_outcome(result=SUCCESS, state_string='Patch contains relevant changes')
+            self.expect_outcome(result=SUCCESS, state_string='Pull request contains relevant changes')
             rc = self.run_step()
         return rc
 
@@ -7016,7 +7015,7 @@ class TestCheckChangeRelevance(BuildStepMixinAdditions, unittest.TestCase):
         CheckChangeRelevance._get_patch = lambda x: b'Sample patch; file: Source/WebKitLegacy'
         self.setup_step(CheckChangeRelevance())
         self.setProperty('buildername', 'macOS-Monterey-Release-WK1-Tests-EWS')
-        self.expect_outcome(result=SUCCESS, state_string='Patch contains relevant changes')
+        self.expect_outcome(result=SUCCESS, state_string='Pull request contains relevant changes')
         return self.run_step()
 
     @skipTest("This should be expectedFailure, except https://github.com/twisted/twisted/issues/10969")
@@ -7026,7 +7025,7 @@ class TestCheckChangeRelevance(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('buildername', 'WebKitPy-Tests-EWS')
         for file_name in file_names:
             CheckChangeRelevance._get_patch = lambda x: f'Sample patch; file: {file_name}'
-            self.expect_outcome(result=SUCCESS, state_string='Patch contains relevant changes')
+            self.expect_outcome(result=SUCCESS, state_string='Pull request contains relevant changes')
             rc = self.run_step()
         return rc
 
@@ -7038,7 +7037,7 @@ class TestCheckChangeRelevance(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('buildername', 'Services-EWS')
         for file_name in file_names:
             CheckChangeRelevance._get_patch = lambda x: f'Sample patch; file: {file_name}'
-            self.expect_outcome(result=SUCCESS, state_string='Patch contains relevant changes')
+            self.expect_outcome(result=SUCCESS, state_string='Pull request contains relevant changes')
             rc = self.run_step()
         return rc
 
@@ -7085,7 +7084,7 @@ class TestCheckChangeRelevance(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('buildername', 'Bindings-Tests-EWS')
         for file_name in file_names:
             CheckChangeRelevance._get_patch = lambda x: f'Sample patch; file: {file_name}'
-            self.expect_outcome(result=SUCCESS, state_string='Patch contains relevant changes')
+            self.expect_outcome(result=SUCCESS, state_string='Pull request contains relevant changes')
             rc = self.run_step()
         return rc
 
@@ -7111,7 +7110,7 @@ class TestCheckChangeRelevance(BuildStepMixinAdditions, unittest.TestCase):
         for queue in queues:
             self.setup_step(CheckChangeRelevance())
             self.setProperty('buildername', queue)
-            self.expect_outcome(result=SUCCESS, state_string='Patch contains relevant changes')
+            self.expect_outcome(result=SUCCESS, state_string='Pull request contains relevant changes')
             rc = self.run_step()
         return rc
 
@@ -7123,7 +7122,7 @@ class TestCheckChangeRelevance(BuildStepMixinAdditions, unittest.TestCase):
         for queue in queues:
             self.setup_step(CheckChangeRelevance())
             self.setProperty('buildername', queue)
-            self.expect_outcome(result=FAILURE, state_string='Patch doesn\'t have relevant changes')
+            self.expect_outcome(result=FAILURE, state_string='Pull request doesn\'t have relevant changes')
             rc = self.run_step()
         return rc
 
@@ -7258,7 +7257,7 @@ class TestFindModifiedLayoutTests(BuildStepMixinAdditions, unittest.TestCase):
         self.assertEqual(FindModifiedLayoutTests.haltOnFailure, True)
         self.assertEqual(FindModifiedLayoutTests.flunkOnFailure, True)
         FindModifiedLayoutTests._get_patch = lambda x: b'+++ LayoutTests/http/tests/events/device-orientation-motion-insecure-context.html'
-        self.expect_outcome(result=SUCCESS, state_string='Patch contains relevant changes')
+        self.expect_outcome(result=SUCCESS, state_string='Pull request contains relevant changes')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir', log_environ=False, command=['bash', '-c', 'diff -u -w base-expectations.txt new-expectations.txt | grep "^+[^+]" | grep -v "\\[.SKIP.\\]" | head -n 1000 || true']).exit(0)
         )
@@ -7271,7 +7270,7 @@ class TestFindModifiedLayoutTests(BuildStepMixinAdditions, unittest.TestCase):
         self.assertEqual(FindModifiedLayoutTests.haltOnFailure, True)
         self.assertEqual(FindModifiedLayoutTests.flunkOnFailure, True)
         FindModifiedLayoutTests._get_patch = lambda x: b'+++ LayoutTests/svg/filters/feConvolveMatrix-clipped.svg'
-        self.expect_outcome(result=SUCCESS, state_string='Patch contains relevant changes')
+        self.expect_outcome(result=SUCCESS, state_string='Pull request contains relevant changes')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir', log_environ=False, command=['bash', '-c', 'diff -u -w base-expectations.txt new-expectations.txt | grep "^+[^+]" | grep -v "\\[.SKIP.\\]" | head -n 1000 || true']).exit(0)
         )
@@ -7284,7 +7283,7 @@ class TestFindModifiedLayoutTests(BuildStepMixinAdditions, unittest.TestCase):
         self.assertEqual(FindModifiedLayoutTests.haltOnFailure, True)
         self.assertEqual(FindModifiedLayoutTests.flunkOnFailure, True)
         FindModifiedLayoutTests._get_patch = lambda x: b'+++ LayoutTests/fast/table/037.xml'
-        self.expect_outcome(result=SUCCESS, state_string='Patch contains relevant changes')
+        self.expect_outcome(result=SUCCESS, state_string='Pull request contains relevant changes')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir', log_environ=False, command=['bash', '-c', 'diff -u -w base-expectations.txt new-expectations.txt | grep "^+[^+]" | grep -v "\\[.SKIP.\\]" | head -n 1000 || true']).exit(0)
         )
@@ -7297,7 +7296,7 @@ class TestFindModifiedLayoutTests(BuildStepMixinAdditions, unittest.TestCase):
         self.setup_step(FindModifiedLayoutTests())
         dir_names = ['reference', 'reftest', 'resources', 'support', 'script-tests', 'tools']
         FindModifiedLayoutTests._get_patch = lambda x: f'+++ LayoutTests/reference/test-name.html'.encode('utf-8')
-        self.expect_outcome(result=SKIPPED, state_string='Patch doesn\'t have relevant changes')
+        self.expect_outcome(result=SKIPPED, state_string='Pull request doesn\'t have relevant changes')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir', log_environ=False, command=['bash', '-c', 'diff -u -w base-expectations.txt new-expectations.txt | grep "^+[^+]" | grep -v "\\[.SKIP.\\]" | head -n 1000 || true']).exit(0)
         )
@@ -7310,7 +7309,7 @@ class TestFindModifiedLayoutTests(BuildStepMixinAdditions, unittest.TestCase):
         self.setup_step(FindModifiedLayoutTests())
         dir_names = ['reference', 'reftest', 'resources', 'support', 'script-tests', 'tools']
         FindModifiedLayoutTests._get_patch = lambda x: f'+++ LayoutTests/reference/test-name.svg'.encode('utf-8')
-        self.expect_outcome(result=SKIPPED, state_string='Patch doesn\'t have relevant changes')
+        self.expect_outcome(result=SKIPPED, state_string='Pull request doesn\'t have relevant changes')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir', log_environ=False, command=['bash', '-c', 'diff -u -w base-expectations.txt new-expectations.txt | grep "^+[^+]" | grep -v "\\[.SKIP.\\]" | head -n 1000 || true']).exit(0)
         )
@@ -7323,7 +7322,7 @@ class TestFindModifiedLayoutTests(BuildStepMixinAdditions, unittest.TestCase):
         self.setup_step(FindModifiedLayoutTests())
         dir_names = ['reference', 'reftest', 'resources', 'support', 'script-tests', 'tools']
         FindModifiedLayoutTests._get_patch = lambda x: f'+++ LayoutTests/reference/test-name.xml'.encode('utf-8')
-        self.expect_outcome(result=SKIPPED, state_string='Patch doesn\'t have relevant changes')
+        self.expect_outcome(result=SKIPPED, state_string='Pull request doesn\'t have relevant changes')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir', log_environ=False, command=['bash', '-c', 'diff -u -w base-expectations.txt new-expectations.txt | grep "^+[^+]" | grep -v "\\[.SKIP.\\]" | head -n 1000 || true']).exit(0)
         )
@@ -7335,7 +7334,7 @@ class TestFindModifiedLayoutTests(BuildStepMixinAdditions, unittest.TestCase):
     def test_ignore_certain_suffixes(self):
         self.setup_step(FindModifiedLayoutTests())
         FindModifiedLayoutTests._get_patch = lambda x: f'+++ LayoutTests/http/tests/events/device-motion-expected-mismatch.html'.encode('utf-8')
-        self.expect_outcome(result=SKIPPED, state_string='Patch doesn\'t have relevant changes')
+        self.expect_outcome(result=SKIPPED, state_string='Pull request doesn\'t have relevant changes')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir', log_environ=False, command=['bash', '-c', 'diff -u -w base-expectations.txt new-expectations.txt | grep "^+[^+]" | grep -v "\\[.SKIP.\\]" | head -n 1000 || true']).exit(0)
         )
@@ -7347,7 +7346,7 @@ class TestFindModifiedLayoutTests(BuildStepMixinAdditions, unittest.TestCase):
     def test_ignore_non_layout_test_in_html_directory(self):
         self.setup_step(FindModifiedLayoutTests())
         FindModifiedLayoutTests._get_patch = lambda x: '+++ LayoutTests/html/test.txt'.encode('utf-8')
-        self.expect_outcome(result=SKIPPED, state_string='Patch doesn\'t have relevant changes')
+        self.expect_outcome(result=SKIPPED, state_string='Pull request doesn\'t have relevant changes')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir', log_environ=False, command=['bash', '-c', 'diff -u -w base-expectations.txt new-expectations.txt | grep "^+[^+]" | grep -v "\\[.SKIP.\\]" | head -n 1000 || true']).exit(0)
         )
@@ -7359,7 +7358,7 @@ class TestFindModifiedLayoutTests(BuildStepMixinAdditions, unittest.TestCase):
     def test_non_relevant_patch(self):
         self.setup_step(FindModifiedLayoutTests())
         FindModifiedLayoutTests._get_patch = lambda x: b'Sample patch which does not modify any layout test'
-        self.expect_outcome(result=SKIPPED, state_string='Patch doesn\'t have relevant changes')
+        self.expect_outcome(result=SKIPPED, state_string='Pull request doesn\'t have relevant changes')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir', log_environ=False, command=['bash', '-c', 'diff -u -w base-expectations.txt new-expectations.txt | grep "^+[^+]" | grep -v "\\[.SKIP.\\]" | head -n 1000 || true']).exit(0)
         )
@@ -7371,7 +7370,7 @@ class TestFindModifiedLayoutTests(BuildStepMixinAdditions, unittest.TestCase):
     def test_non_accessible_patch(self):
         self.setup_step(FindModifiedLayoutTests())
         FindModifiedLayoutTests._get_patch = lambda x: b''
-        self.expect_outcome(result=WARNINGS, state_string='Patch could not be accessed')
+        self.expect_outcome(result=WARNINGS, state_string='Pull request could not be accessed')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir', log_environ=False, command=['bash', '-c', 'diff -u -w base-expectations.txt new-expectations.txt | grep "^+[^+]" | grep -v "\\[.SKIP.\\]" | head -n 1000 || true']).exit(0)
         )
@@ -9526,7 +9525,6 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
         return [
             *stale_commands,
             ExpectShell(command=[shell, '--posix', '-o', 'pipefail', '-c', f'git rebase --abort || {exit_0}'], workdir='wkdir', timeout=300, log_environ=False).exit(0).log('stdio', stdout=''),
-            ExpectShell(command=[shell, '--posix', '-o', 'pipefail', '-c', f'git am --abort || {exit_0}'], workdir='wkdir', timeout=300, log_environ=False).exit(0).log('stdio', stdout=''),
             ExpectShell(command=[shell, '--posix', '-o', 'pipefail', '-c', f'git cherry-pick --abort || {exit_0}'], workdir='wkdir', timeout=300, log_environ=False).exit(0).log('stdio', stdout=''),
             ExpectShell(command=['git', 'clean', '-f', '-d'], workdir='wkdir', timeout=300, log_environ=False).exit(0).log('stdio', stdout=''),
             ExpectShell(command=[shell, '--posix', '-o', 'pipefail', '-c', f'git switch --progress -d --discard-changes {remote}/{branch} || git switch --progress -d --discard-changes {branch} || git switch --progress -d --discard-changes'], workdir='wkdir', timeout=300, log_environ=False).exit(switch_exit).log('stdio', stdout='' if switch_exit else 'HEAD is now at 57015967fef9'),
@@ -9624,17 +9622,6 @@ class TestValidateChange(BuildStepMixinAdditions, unittest.TestCase):
 
     def tearDown(self):
         return self.tear_down_test_build_step()
-
-    def get_patch(self, title='Patch', obsolete=0):
-        return json.loads('''{{"bug_id": 224460,
-                     "creator":"reviewer@apple.com",
-                     "data": "patch-contents",
-                     "file_name":"bug-224460-20210412192105.patch",
-                     "flags": [{{"creation_date" : "2021-04-12T23:21:06Z", "id": 445872, "modification_date": "2021-04-12T23:55:36Z", "name": "review", "setter": "ap@webkit.org", "status": "+", "type_id": 1}}],
-                     "id": 425806,
-                     "is_obsolete": {},
-                     "is_patch": 1,
-                     "summary": "{}"}}'''.format(obsolete, title))
 
     def get_pr(self, pr_number, title='Sample pull request', closed=False, labels=None, draft=False):
         return dict(

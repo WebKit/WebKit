@@ -1452,21 +1452,13 @@ class AnalyzeChange(buildstep.BuildStep, AddToLogMixin):
         sourcestamp = self.build.getSourceStamp(self.getProperty('codebase', ''))
         if sourcestamp and sourcestamp.changes:
             return '\n'.join(sourcestamp.changes[0].files).encode('utf-8')
-        if sourcestamp and sourcestamp.patch:
-            return sourcestamp.patch[1]
         return None
-
-    @property
-    def change_type(self):
-        if self.getProperty('github.number', False):
-            return 'Pull request'
-        return 'Patch'
 
     def getResultSummary(self):
         if self.results in [FAILURE, SKIPPED]:
-            return {'step': '{} doesn\'t have relevant changes'.format(self.change_type)}
+            return {'step': "Pull request doesn't have relevant changes"}
         if self.results == SUCCESS:
-            return {'step': '{} contains relevant changes'.format(self.change_type)}
+            return {'step': 'Pull request contains relevant changes'}
         return buildstep.BuildStep.getResultSummary(self)
 
 
@@ -1603,15 +1595,12 @@ class CheckChangeRelevance(AnalyzeChange):
             defer.returnValue(SUCCESS)
 
         if self._patch_is_relevant(patch, self.getProperty('buildername', '')):
-            yield self._addToLog('stdio', f'This {self.change_type.lower()} contains relevant changes.')
+            yield self._addToLog('stdio', 'This pull request contains relevant changes.')
             defer.returnValue(SUCCESS)
 
-        yield self._addToLog('stdio', f'This {self.change_type.lower()} does not have relevant changes.')
+        yield self._addToLog('stdio', 'This pull request does not have relevant changes.')
         self.build.results = SKIPPED
-        self.build.buildFinished(['{} {} doesn\'t have relevant changes'.format(
-            self.change_type,
-            self.getProperty('github.number', ''),
-        )], SKIPPED)
+        self.build.buildFinished([f"Pull request {self.getProperty('github.number', '')} doesn't have relevant changes"], SKIPPED)
         defer.returnValue(FAILURE)
 
 
@@ -1710,13 +1699,10 @@ class FindModifiedLayoutTests(shell.ShellCommand, AnalyzeChange):
 
         patch = self._get_patch()
         if not patch:
-            yield self._addToLog('stdio', 'Unable to access the patch/PR content.\n')
+            yield self._addToLog('stdio', 'Unable to access the PR content.\n')
             self.results = WARNINGS
             if self.skipBuildIfNoResult:
-                self.build.buildFinished(['{} {} could not be accessed'.format(
-                    self.change_type,
-                    self.getProperty('github.number', ''),
-                )], WARNINGS)
+                self.build.buildFinished([f"Pull request {self.getProperty('github.number', '')} could not be accessed"], WARNINGS)
             return defer.returnValue(self.results)
 
         yield self._addToLog('stdio', '\nLooking for layout test changes...\n')
@@ -1736,10 +1722,7 @@ class FindModifiedLayoutTests(shell.ShellCommand, AnalyzeChange):
             self.results = SKIPPED
             if self.skipBuildIfNoResult:
                 self.build.results = SKIPPED
-                self.build.buildFinished(['{} {} doesn\'t have relevant changes'.format(
-                    self.change_type,
-                    self.getProperty('github.number', ''),
-                )], SKIPPED)
+                self.build.buildFinished([f"Pull request {self.getProperty('github.number', '')} doesn't have relevant changes"], SKIPPED)
         return defer.returnValue(self.results)
 
     def find_test_names_from_patch(self, patch):
@@ -1757,30 +1740,12 @@ class FindModifiedLayoutTests(shell.ShellCommand, AnalyzeChange):
 
     def getResultSummary(self):
         if self.results == WARNINGS:
-            return {'step': '{} could not be accessed'.format(self.change_type)}
+            return {'step': 'Pull request could not be accessed'}
         return super().getResultSummary()
 
 
 class BugzillaMixin(AddToLogMixin):
     addURLs = False
-
-    @defer.inlineCallbacks
-    def fetch_data_from_url_with_authentication_bugzilla(self, url):
-        response = None
-        try:
-            response = yield TwistedAdditions.request(
-                url, type=b'GET', timeout=60,
-                params={'Bugzilla_api_key': self.get_bugzilla_api_key()},
-                logger=lambda content: self._addToLog('stdio', content),
-            )
-            if response.status_code != 200:
-                yield self._addToLog('stdio', 'Accessed {url} with unexpected status code {status_code}.\n'.format(url=url, status_code=response.status_code))
-                return defer.returnValue(None)
-        except Exception as e:
-            # Catching all exceptions here to safeguard api key.
-            yield self._addToLog('stdio', 'Failed to access {url}.\n'.format(url=url))
-            return defer.returnValue(None)
-        return defer.returnValue(response)
 
     def send_email_for_infrastructure_issue(self, infrastructure_issue_text):
         try:
@@ -6640,10 +6605,7 @@ class FindModifiedAPITests(shell.ShellCommand, AnalyzeChange):
             self.setProperty('modified_api_tests', [])
             if self.skipBuildIfNoResult:
                 self.build.results = SKIPPED
-                self.build.buildFinished(['{} {} doesn\'t modify any API tests'.format(
-                    self.change_type,
-                    self.getProperty('github.number', ''),
-                )], SKIPPED)
+                self.build.buildFinished([f"Pull request {self.getProperty('github.number', '')} doesn't modify any API tests"], SKIPPED)
             return defer.returnValue(SKIPPED)
 
         yield self._addToLog('stdio', f'Found {len(changed_files)} modified API test file(s):\n')
@@ -7162,7 +7124,6 @@ class PrintConfiguration(steps.ShellSequence, ShellMixin):
         return {'step': configuration}
 
 
-# FIXME: We should be able to remove this step once abandoning patch workflows
 class CleanGitRepo(steps.ShellSequence, ShellMixin):
     name = 'clean-up-git-repo'
     haltOnFailure = False
@@ -7188,7 +7149,6 @@ class CleanGitRepo(steps.ShellSequence, ShellMixin):
 
         for command in [
             self.shell_command('git rebase --abort || {}'.format(self.shell_exit_0())),
-            self.shell_command('git am --abort || {}'.format(self.shell_exit_0())),
             self.shell_command('git cherry-pick --abort || {}'.format(self.shell_exit_0())),
             ['git', 'clean', '-f', '-d'],  # Remove any left-over layout test results, added files, etc.
             self.shell_command(f'git switch --progress -d --discard-changes {self.git_remote}/{self.default_branch} || git switch --progress -d --discard-changes {self.default_branch} || git switch --progress -d --discard-changes'),  # Detach to either origin/main or main or HEAD
@@ -7857,7 +7817,6 @@ class ValidateCommitMessage(steps.ShellSequence, ShellMixin, AddToLogMixin):
         'Unreviewed',
         'Versioning.',
     )
-    RE_CHANGELOG = br'^(\+\+\+)\s+(.*/ChangeLog.*)'
     BY_RE = re.compile(r'.+\s+by\s+(.+)$')
     SPLIT_RE = re.compile(r'\s+and\s+|,\s*and\s*|,\s*')
 
@@ -7887,13 +7846,6 @@ class ValidateCommitMessage(steps.ShellSequence, ShellMixin, AddToLogMixin):
         sourcestamp = self.build.getSourceStamp(self.getProperty('codebase', ''))
         if sourcestamp and sourcestamp.changes:
             return sourcestamp.changes[0].files
-        if sourcestamp and sourcestamp.patch:
-            files = []
-            for line in sourcestamp.patch[1].splitlines():
-                match = re.search(self.RE_CHANGELOG, line)
-                if match:
-                    files.append(match.group(1).decode('utf-8'))
-            return files
         return []
 
     @defer.inlineCallbacks
@@ -9114,7 +9066,7 @@ class DisplaySaferCPPResults(buildstep.BuildStep, AddToLogMixin):
         if num_passes:
             pluralSuffix = 's' if num_passes > 1 else ''
             pluralCommand = 's' if len(commands_for_comment) > 1 else ''
-            comment += f'\n:warning: Found {num_passes} fixed file{pluralSuffix}! Please update expectations in `Source/[Project]/SaferCPPExpectations` by running the following command{pluralCommand} and update your {self.change_type}:\n'
+            comment += f'\n:warning: Found {num_passes} fixed file{pluralSuffix}! Please update expectations in `Source/[Project]/SaferCPPExpectations` by running the following command{pluralCommand} and update your pull request:\n'
             comment += '\n'.join([f"- `{c}`" for c in commands_for_comment])
         if not self.formattedPlatform:
             comment += '\nUnable to find associated platform. See build for details.'
@@ -9129,12 +9081,6 @@ class DisplaySaferCPPResults(buildstep.BuildStep, AddToLogMixin):
         elif self.getProperty('platform', '').lower() == 'mac':
             return 'macOS'
         return ''
-
-    @property
-    def change_type(self):
-        if self.getProperty('github.number', False):
-            return 'pull request'
-        return 'patch'
 
     def doStepIf(self, step):
         return self.getProperty('num_failing_files', 0) or self.getProperty('num_passing_files', 0) or self.getProperty('num_unexpected_issues', 0)
