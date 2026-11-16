@@ -80,7 +80,7 @@ JSValueRef jscExceptionGetJSValue(JSCException* exception)
     return toRef(exception->priv->jsException.get());
 }
 
-void jscExceptionEnsureProperties(JSCException* exception)
+static void jscExceptionEnsureProperties(JSCException* exception)
 {
     JSCExceptionPrivate* priv = exception->priv;
     if (priv->cached)
@@ -88,6 +88,7 @@ void jscExceptionEnsureProperties(JSCException* exception)
 
     priv->cached = true;
 
+    ASSERT(priv->context);
     auto value = jscContextGetOrCreateValue(priv->context.get(), toRef(priv->jsException.get()));
     auto propertyValue = adoptGRef(jsc_value_object_get_property(value.get(), "name"));
     if (!jsc_value_is_undefined(propertyValue.get()))
@@ -253,7 +254,8 @@ const char* jsc_exception_get_name(JSCException* exception)
     g_return_val_if_fail(JSC_IS_EXCEPTION(exception), nullptr);
 
     JSCExceptionPrivate* priv = exception->priv;
-    g_return_val_if_fail(priv->context, nullptr);
+    if (!priv->context)
+        return nullptr;
 
     jscExceptionEnsureProperties(exception);
     return priv->errorName.get();
@@ -272,7 +274,8 @@ const char* jsc_exception_get_message(JSCException* exception)
     g_return_val_if_fail(JSC_IS_EXCEPTION(exception), nullptr);
 
     JSCExceptionPrivate* priv = exception->priv;
-    g_return_val_if_fail(priv->context, nullptr);
+    if (!priv->context)
+        return nullptr;
 
     jscExceptionEnsureProperties(exception);
     return priv->message.get();
@@ -291,7 +294,8 @@ guint jsc_exception_get_line_number(JSCException* exception)
     g_return_val_if_fail(JSC_IS_EXCEPTION(exception), 0);
 
     JSCExceptionPrivate* priv = exception->priv;
-    g_return_val_if_fail(priv->context, 0);
+    if (!priv->context)
+        return 0;
 
     jscExceptionEnsureProperties(exception);
     return priv->lineNumber;
@@ -310,7 +314,8 @@ guint jsc_exception_get_column_number(JSCException* exception)
     g_return_val_if_fail(JSC_IS_EXCEPTION(exception), 0);
 
     JSCExceptionPrivate* priv = exception->priv;
-    g_return_val_if_fail(priv->context, 0);
+    if (!priv->context)
+        return 0;
 
     jscExceptionEnsureProperties(exception);
     return priv->columnNumber;
@@ -329,7 +334,8 @@ const char* jsc_exception_get_source_uri(JSCException* exception)
     g_return_val_if_fail(JSC_IS_EXCEPTION(exception), nullptr);
 
     JSCExceptionPrivate* priv = exception->priv;
-    g_return_val_if_fail(priv->context, nullptr);
+    if (!priv->context)
+        return nullptr;
 
     jscExceptionEnsureProperties(exception);
     return priv->sourceURI.get();
@@ -348,7 +354,8 @@ const char* jsc_exception_get_backtrace_string(JSCException* exception)
     g_return_val_if_fail(JSC_IS_EXCEPTION(exception), nullptr);
 
     JSCExceptionPrivate* priv = exception->priv;
-    g_return_val_if_fail(priv->context, nullptr);
+    if (!priv->context)
+        return nullptr;
 
     jscExceptionEnsureProperties(exception);
     return priv->backtrace.get();
@@ -367,7 +374,8 @@ char* jsc_exception_to_string(JSCException* exception)
     g_return_val_if_fail(JSC_IS_EXCEPTION(exception), nullptr);
 
     JSCExceptionPrivate* priv = exception->priv;
-    g_return_val_if_fail(priv->context, nullptr);
+    if (!priv->context)
+        return g_strdup("");
 
     auto value = jscContextGetOrCreateValue(priv->context.get(), toRef(priv->jsException.get()));
     return jsc_value_to_string(value.get());
@@ -387,7 +395,8 @@ char* jsc_exception_report(JSCException* exception)
     g_return_val_if_fail(JSC_IS_EXCEPTION(exception), nullptr);
 
     JSCExceptionPrivate* priv = exception->priv;
-    g_return_val_if_fail(priv->context, nullptr);
+    if (!priv->context)
+        return g_strdup("");
 
     jscExceptionEnsureProperties(exception);
     auto report = StringBuilder();
