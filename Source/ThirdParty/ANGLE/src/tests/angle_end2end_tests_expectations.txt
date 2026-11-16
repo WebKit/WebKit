@@ -2712,6 +2712,7 @@
 42266907 WGPU : UnpackAlignmentTest.Alignment8LUByte/* = SKIP
 42266907 WGPU : VertexAttributeCachingTest.BufferMulticaching/* = SKIP
 42266907 WGPU : VertexAttributeCachingTest.BufferMulticachingWithOneUnchangedAttrib/* = SKIP
+42266907 WGPU : VertexAttributeOORTest.FormatOnlyChangeRefreshesElementLimit/* = SKIP
 42266907 WGPU : VertexAttributeTest.AliasingVectorAttribLocationsDifferingPrecisions/* = SKIP
 42266907 WGPU : VertexAttributeTest.DisabledAttribArrays/* = SKIP
 42266907 WGPU : VertexAttributeTest.DisabledAttribUpdates/* = SKIP
