@@ -29,6 +29,7 @@
 #include <WebCore/Quirks.h>
 #include <WebCore/QuirksData.h>
 #include <optional>
+#include <wtf/Function.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -77,6 +78,9 @@ enum class QuirkTableParseErrorKind : uint8_t {
     DuplicateBehavior,
     InvalidBugs,
     DuplicateBug,
+    ScriptAndScriptFile,
+    InvalidScriptFile,
+    UnloadableScriptFile,
 };
 
 struct QuirkTableParseError {
@@ -100,9 +104,13 @@ struct QuirkTableParseResult {
     Vector<QuirkTableParseError> errors;
 };
 
-WEBCORE_EXPORT QuirkTableParseResult parseQuirkTable(StringView json);
+using QuirkScriptLoader = Function<String(StringView fileName)>;
+
+WEBCORE_EXPORT QuirkTableParseResult parseQuirkTable(StringView json, const QuirkScriptLoader& = { });
 
 WEBCORE_EXPORT String loadQuirkTableJSON();
+
+WEBCORE_EXPORT String loadQuirkScript(StringView fileName);
 
 WEBCORE_EXPORT const QuirkTable& quirkTable();
 
