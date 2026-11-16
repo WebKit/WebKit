@@ -1,0 +1,15 @@
+
+PASS parent: (none), target: (none),
+PASS parent: (none), target: |header(cross-origin-embedder-policy,credentialless),
+PASS parent: |header(cross-origin-embedder-policy,credentialless), target: |header(cross-origin-embedder-policy,credentialless),
+PASS parent: |header(cross-origin-embedder-policy,credentialless), target: (none),
+PASS parent: (none), target: |header(cross-origin-resource-policy,cross-origin),
+PASS parent: |header(cross-origin-embedder-policy,credentialless), target: |header(cross-origin-resource-policy,cross-origin),
+PASS parent: (none), target: |header(cross-origin-embedder-policy,credentialless)|header(cross-origin-resource-policy,cross-origin),
+PASS parent: |header(cross-origin-embedder-policy,credentialless), target: |header(cross-origin-embedder-policy,credentialless)|header(cross-origin-resource-policy,cross-origin),
+PASS parent: |header(cross-origin-embedder-policy-report-only,credentialless), target: |header(cross-origin-embedder-policy,credentialless),
+PASS parent: |header(cross-origin-embedder-policy-report-only,credentialless), target: (none),
+PASS parent: |header(cross-origin-embedder-policy-report-only,credentialless), target: |header(cross-origin-resource-policy,cross-origin),
+PASS parent: |header(cross-origin-embedder-policy-report-only,credentialless), target: |header(cross-origin-embedder-policy,credentialless)|header(cross-origin-resource-policy,cross-origin),
+PASS parent: |header(cross-origin-embedder-policy,credentialless), target: |header(cross-origin-embedder-policy-report-only,credentialless)|header(cross-origin-resource-policy,cross-origin),
+

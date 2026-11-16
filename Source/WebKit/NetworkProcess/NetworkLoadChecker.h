@@ -112,7 +112,7 @@ public:
     NetworkProcess& networkProcess();
 
     const URL& url() const LIFETIME_BOUND { return m_url; }
-    WebCore::StoredCredentialsPolicy storedCredentialsPolicy() const { return m_storedCredentialsPolicy; }
+    NODELETE WebCore::StoredCredentialsPolicy storedCredentialsPolicy() const;
 
     WebCore::NetworkLoadInformation takeNetworkLoadInformation() { return WTF::move(m_loadInformation); }
     void storeRedirectionIfNeeded(const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
@@ -127,6 +127,7 @@ public:
     bool timingAllowFailedFlag() const { return m_timingAllowFailedFlag; }
     bool navigationTAOCheckPassed() const { return m_navigationTAOCheckPassed; }
     bool isSameOriginRequest() const { return m_isSameOriginRequest; }
+    NODELETE bool crossOriginEmbedderPolicyAllowsCredentials() const;
 
 private:
     NetworkLoadChecker(NetworkResourceLoader*, NetworkSchemeRegistry*, WebCore::FetchOptions&&, PAL::SessionID, std::optional<WebPageProxyIdentifier>, WebCore::HTTPHeaderMap&&, URL&&, DocumentURL&&,  RefPtr<WebCore::SecurityOrigin>&&, RefPtr<WebCore::SecurityOrigin>&& topOrigin, RefPtr<WebCore::SecurityOrigin>&& parentOrigin, WebCore::PreflightPolicy, String&& referrer, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>, bool shouldCaptureExtraNetworkLoadMetrics, LoadType requestLoadType);

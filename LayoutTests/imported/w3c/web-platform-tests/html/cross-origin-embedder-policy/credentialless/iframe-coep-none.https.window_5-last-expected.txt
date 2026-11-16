@@ -1,0 +1,4 @@
+
+PASS COEP:none embeds same-origin COEP:require-corp
+PASS COEP:none embeds cross-origin COEP:require-corp
+

@@ -1,0 +1,8 @@
+
+PASS video same-origin + undefined
+PASS video same-origin + anonymous
+PASS video same-origin + use-credentials
+PASS video cross-origin + undefined
+PASS video cross-origin + anonymous
+PASS video cross-origin + use-credentials
+

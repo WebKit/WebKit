@@ -248,6 +248,11 @@ bool NetworkResourceLoader::canUseCache(const ResourceRequest& request) const
     return true;
 }
 
+bool NetworkResourceLoader::isAllowedToAskUserForCredentials() const
+{
+    return m_isAllowedToAskUserForCredentials && (!m_networkLoadChecker || m_networkLoadChecker->crossOriginEmbedderPolicyAllowsCredentials());
+}
+
 bool NetworkResourceLoader::canUseCachedRedirect(const ResourceRequest& request) const
 {
     if (!canUseCache(request) || m_cacheEntryForMaxAgeCapValidation)
@@ -475,6 +480,12 @@ void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoa
     parameters.networkActivityTracker = m_networkActivityTracker;
     if (parameters.storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::Use && m_networkLoadChecker)
         parameters.storedCredentialsPolicy = m_networkLoadChecker->storedCredentialsPolicy();
+    // NetworkLoadChecker::check() normally turns cookies off, but it doesn't run when
+    // serviceWorkerDidNotHandle() restarts a load because its service worker didn't respond.
+    // FIXME: Restart those loads through NetworkLoadChecker::check() instead, so that their
+    // credentials are handled as for any other load.
+    if (m_networkLoadChecker && !m_networkLoadChecker->crossOriginEmbedderPolicyAllowsCredentials())
+        request.setAllowCookies(false);
 
     parameters.siteIsolationEnabled = connectionToWebProcess().sharedPreferencesForWebProcess()->siteIsolationEnabled;
 

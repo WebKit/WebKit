@@ -1,0 +1,6 @@
+
+PASS COEP:require-corp embeds same-origin COEP:credentialless, CORP:cross-origin
+PASS COEP:require-corp embeds cross-origin COEP:credentialless, CORP:cross-origin
+PASS COEP:require-corp embeds same-origin COEP:require-corp, CORP:cross-origin
+PASS COEP:require-corp embeds cross-origin COEP:require-corp, CORP:cross-origin
+
