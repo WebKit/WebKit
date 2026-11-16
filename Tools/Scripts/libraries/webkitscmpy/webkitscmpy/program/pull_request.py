@@ -48,6 +48,7 @@ class PullRequest(Command):
     TITLE_STYLE_TOP_COMMIT = 'top-commit'
     TITLE_STYLE_COMMON_PREFIX = 'common-prefix'
     TITLE_STYLES = [TITLE_STYLE_TOP_COMMIT, TITLE_STYLE_COMMON_PREFIX]
+    PRIORITY_LABELS = ['ews-priority-high', 'ews-priority-urgent']
 
     @classmethod
     def parser(cls, parser, loggers=None):
@@ -706,7 +707,7 @@ class PullRequest(Command):
             labels = pr_issue.labels
             did_change = False
             labels_to_add = []
-            labels_to_remove = cls.MERGE_LABELS + cls.UNSAFE_MERGE_LABELS
+            labels_to_remove = cls.MERGE_LABELS + cls.UNSAFE_MERGE_LABELS + cls.PRIORITY_LABELS
             if unblock:
                 labels_to_remove.append(cls.BLOCKED_LABEL)
             if args.ews:

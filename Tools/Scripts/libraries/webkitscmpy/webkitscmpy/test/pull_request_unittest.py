@@ -596,6 +596,57 @@ No pre-PR checks to run""")
             ],
         )
 
+    def test_github_update_removes_priority_labels(self):
+        with mocks.remote.GitHub(labels={
+            'ews-priority-urgent': dict(color='d93f0b', description='Prioritize this pull request on EWS'),
+        }) as remote, mocks.local.Git(
+            self.path, remote=f'https://{remote.remote}',
+            remotes=dict(fork=f'https://{remote.hosts[0]}/Contributor/WebKit'),
+        ) as repo, mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []):
+            with OutputCapture():
+                repo.staged['added.txt'] = 'added'
+                self.assertEqual(0, program.main(
+                    args=('pull-request', '-i', 'pr-branch'),
+                    path=self.path,
+                ))
+
+            github_tracker = github.Tracker(f'https://{remote.remote}')
+            self.assertEqual(github_tracker.issue(1).labels, [])
+            github_tracker.issue(1).set_labels(['ews-priority-urgent'])
+
+            with OutputCapture(level=logging.INFO) as captured:
+                repo.staged['added.txt'] = 'diff'
+                self.assertEqual(0, program.main(
+                    args=('pull-request', '-v', '--no-history'),
+                    path=self.path,
+                ))
+
+            self.assertEqual(github_tracker.issue(1).labels, [])
+
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            "Updated 'PR 1 | [Testing] Amending commits'!\n"
+            "https://github.example.com/WebKit/WebKit/pull/1\n",
+        )
+        self.assertEqual(captured.stderr.getvalue(), '')
+        log = captured.root.log.getvalue().splitlines()
+        self.assertEqual(
+            [line for line in log if 'Mock process' not in line], [
+                "Amending commit...",
+                "Rebasing 'eng/pr-branch' on 'main'...",
+                "Rebased 'eng/pr-branch' on 'main!'",
+                'Running pre-PR checks...',
+                'No pre-PR checks to run',
+                'Checking if PR already exists...',
+                'PR #1 found.',
+                'Checking PR labels for active labels...',
+                "Removing 'ews-priority-urgent' from PR #1...",
+                "Updating 'main' on 'https://github.example.com/Contributor/WebKit'",
+                "Pushing 'eng/pr-branch' to 'fork'...",
+                "Updating pull-request for 'eng/pr-branch'...",
+            ],
+        )
+
     def test_github_update_no_update_title(self):
         """Test that --no-update-title preserves the original PR title"""
         with mocks.remote.GitHub() as remote, mocks.local.Git(
