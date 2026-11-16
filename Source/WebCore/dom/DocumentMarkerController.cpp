@@ -431,7 +431,7 @@ bool DocumentMarkerController::addMarker(Node& node, DocumentMarker&& newMarker)
     if (CheckedPtr renderer = node.renderer())
         renderer->repaint();
 
-#if ENABLE(WRITING_TOOLS)
+#if ENABLE(WRITING_TOOLS) && !ENABLE(SIMPLIFIED_SUGGESTION_UNDERLINE)
     if (newMarker.type() == DocumentMarkerType::WritingToolsTextSuggestion) {
         if (!m_writingToolsTextSuggestionAnimationTimer.isActive())
             m_writingToolsTextSuggestionAnimationTimer.startRepeating(1_s / markerAnimationFrameRate);
