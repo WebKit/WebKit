@@ -177,7 +177,9 @@ public:
 
     void clear()
     {
-        ASSERT(isMainThread());
+        if (!isMainThread())
+            return;
+
         m_singleCharMap.clear();
         m_map.clear();
     }
