@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.create1.basic.html
@@ -36,6 +34,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.create2.round.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.create2.zero.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.create2.zero.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.createImageBitmap.p3.rgba.unorm8.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.createImageBitmap.p3.rgba.unorm8.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.createImageBitmap.srgb.rgba.float16.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.createImageBitmap.srgb.rgba.float16.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.createImageBitmap.srgb.rgba.unorm8.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.createImageBitmap.srgb.rgba.unorm8.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.get.basic.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.get.basic.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.get.clamp.html
@@ -91,9 +95,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.object.undefined.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.object.undefined.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.put.alpha.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.put.alpha.png
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.put.alpha.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.put.basic.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.put.basic.rgba.float16.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.put.basic.rgba.float16.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.put.basic.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.put.clip.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.put.clip.worker.js
