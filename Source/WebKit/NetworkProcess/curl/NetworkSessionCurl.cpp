@@ -39,8 +39,8 @@ namespace WebKit {
 
 using namespace WebCore;
 
-NetworkSessionCurl::NetworkSessionCurl(NetworkProcess& networkProcess, const NetworkSessionCreationParameters& parameters)
-    : NetworkSession(networkProcess, parameters)
+NetworkSessionCurl::NetworkSessionCurl(const NetworkSessionCreationParameters& parameters)
+    : NetworkSession(parameters)
 {
     if (auto* storageSession = networkStorageSession()) {
         if (!parameters.cookiePersistentStorageFile.isEmpty())
@@ -70,7 +70,7 @@ RefPtr<WebSocketTask> NetworkSessionCurl::createWebSocketTask(WebPageProxyIdenti
 
 void NetworkSessionCurl::didReceiveChallenge(WebSocketTask& webSocketTask, WebCore::AuthenticationChallenge&& challenge, CompletionHandler<void(WebKit::AuthenticationChallengeDisposition, const WebCore::Credential&)>&& challengeCompletionHandler)
 {
-    protect(networkProcess().authenticationManager())->didReceiveAuthenticationChallenge(sessionID(), webSocketTask.webPageProxyID(), !webSocketTask.topOrigin().isNull() ? &webSocketTask.topOrigin() : nullptr, challenge, NegotiatedLegacyTLS::No, WTF::move(challengeCompletionHandler));
+    protect(protect(NetworkProcess::singleton())->authenticationManager())->didReceiveAuthenticationChallenge(sessionID(), webSocketTask.webPageProxyID(), !webSocketTask.topOrigin().isNull() ? &webSocketTask.topOrigin() : nullptr, challenge, NegotiatedLegacyTLS::No, WTF::move(challengeCompletionHandler));
 }
 
 } // namespace WebKit

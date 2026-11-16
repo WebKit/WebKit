@@ -33,9 +33,8 @@
 
 namespace WebKit {
 
-RTCDataChannelRemoteManagerProxy::RTCDataChannelRemoteManagerProxy(NetworkProcess& networkProcess)
+RTCDataChannelRemoteManagerProxy::RTCDataChannelRemoteManagerProxy()
     : m_queue(WorkQueue::create("RTCDataChannelRemoteManagerProxy"_s))
-    , m_networkProcess(networkProcess)
 {
 }
 

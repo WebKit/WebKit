@@ -274,11 +274,6 @@ std::optional<WebCore::PageIdentifier> NetworkLoad::webPageID() const
     return std::nullopt;
 }
 
-NetworkProcess& NetworkLoad::networkProcess()
-{
-    return NetworkProcess::singleton();
-}
-
 void NetworkLoad::start()
 {
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)

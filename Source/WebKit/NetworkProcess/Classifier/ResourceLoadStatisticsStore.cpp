@@ -752,13 +752,13 @@ void ResourceLoadStatisticsStore::debugBroadcastConsoleMessage(MessageSource sou
     if (!RunLoop::isMain()) {
         RunLoop::mainSingleton().dispatch([store = Ref { store() }, source = crossThreadCopy(source), level = crossThreadCopy(level), message = crossThreadCopy(message)]() {
             if (CheckedPtr networkSession = store->networkSession())
-                networkSession->networkProcess().broadcastConsoleMessage(networkSession->sessionID(), source, level, message);
+                protect(NetworkProcess::singleton())->broadcastConsoleMessage(networkSession->sessionID(), source, level, message);
         });
         return;
     }
 
     if (CheckedPtr networkSession = m_store->networkSession())
-        networkSession->networkProcess().broadcastConsoleMessage(networkSession->sessionID(), source, level, message);
+        protect(NetworkProcess::singleton())->broadcastConsoleMessage(networkSession->sessionID(), source, level, message);
 }
 
 void ResourceLoadStatisticsStore::debugLogDomainsInBatches(ASCIILiteral action, const RegistrableDomainsToBlockCookiesFor& domainsToBlock)

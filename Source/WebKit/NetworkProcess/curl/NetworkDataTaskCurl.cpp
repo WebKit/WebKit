@@ -140,7 +140,7 @@ Ref<CurlRequest> NetworkDataTaskCurl::createCurlRequest(ResourceRequest&& reques
     const auto captureMetrics = shouldCaptureExtraNetworkLoadMetrics() ? CurlRequest::CaptureNetworkLoadMetrics::Extended : CurlRequest::CaptureNetworkLoadMetrics::Basic;
     auto curlRequest = CurlRequest::create(request, *this, captureMetrics);
 
-    if (m_session->networkProcess().localhostAliasesForTesting().contains<StringViewHashTranslator>(curlRequest->resourceRequest().url().host()))
+    if (protect(NetworkProcess::singleton())->localhostAliasesForTesting().contains<StringViewHashTranslator>(curlRequest->resourceRequest().url().host()))
         curlRequest->enableLocalhostAlias();
 
     return curlRequest;
@@ -194,7 +194,7 @@ void NetworkDataTaskCurl::curlDidReceiveData(CurlRequest&, Ref<SharedBuffer>&& b
         return;
 
     if (isDownload()) {
-        auto* download = m_session->networkProcess().downloadManager().download(*m_pendingDownloadID);
+        auto* download = protect(NetworkProcess::singleton())->downloadManager().download(*m_pendingDownloadID);
         RELEASE_ASSERT(download);
         uint64_t bytesWritten = 0;
         for (auto& segment : buffer.get()) {
@@ -219,7 +219,7 @@ void NetworkDataTaskCurl::curlDidComplete(CurlRequest&, NetworkLoadMetrics&& net
         return;
 
     if (isDownload()) {
-        auto* download = m_session->networkProcess().downloadManager().download(*m_pendingDownloadID);
+        auto* download = protect(NetworkProcess::singleton())->downloadManager().download(*m_pendingDownloadID);
         RELEASE_ASSERT(download);
         m_downloadDestinationFile = { };
         download->didFinish();
@@ -246,7 +246,7 @@ void NetworkDataTaskCurl::curlDidFailWithError(CurlRequest& request, ResourceErr
         if (m_client)
             m_client->didCompleteWithError(resourceError);
         else {
-            auto* download = m_session->networkProcess().downloadManager().download(*m_pendingDownloadID);
+            auto* download = protect(NetworkProcess::singleton())->downloadManager().download(*m_pendingDownloadID);
             RELEASE_ASSERT(download);
             download->didFail(resourceError, { });
         }
@@ -315,7 +315,7 @@ void NetworkDataTaskCurl::invokeDidReceiveResponse()
                 return;
             }
 
-            auto& downloadManager = m_session->networkProcess().downloadManager();
+            auto& downloadManager = protect(NetworkProcess::singleton())->downloadManager();
             Ref download = Download::create(downloadManager, *m_pendingDownloadID, *this, *m_session, suggestedFilename());
             downloadManager.dataTaskBecameDownloadTask(*m_pendingDownloadID, download.copyRef());
             download->didCreateDestination(m_pendingDownloadLocation);
@@ -577,7 +577,7 @@ bool NetworkDataTaskCurl::shouldBlockCookies(const WebCore::ResourceRequest& req
     bool shouldBlockCookies = m_storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::EphemeralStateless;
 
     if (!shouldBlockCookies && m_session->networkStorageSession())
-        shouldBlockCookies = protect(m_session->networkStorageSession())->shouldBlockCookies(request, m_frameID, m_webPageProxyID, m_session->networkProcess().shouldRelaxThirdPartyCookieBlockingForPage(m_webPageProxyID), WebCore::IsKnownCrossSiteTracker::No);
+        shouldBlockCookies = protect(m_session->networkStorageSession())->shouldBlockCookies(request, m_frameID, m_webPageProxyID, protect(NetworkProcess::singleton())->shouldRelaxThirdPartyCookieBlockingForPage(m_webPageProxyID), WebCore::IsKnownCrossSiteTracker::No);
 
     if (shouldBlockCookies)
         return true;

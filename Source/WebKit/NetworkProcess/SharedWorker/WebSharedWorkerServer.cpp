@@ -161,7 +161,7 @@ void WebSharedWorkerServer::createContextConnection(const WebCore::Site& site, s
     RELEASE_LOG(SharedWorker, "WebSharedWorkerServer::createContextConnection will create a connection");
 
     m_pendingContextConnectionDomains.add(key);
-    protect(m_session->networkProcess().parentProcessConnection())->sendWithAsyncReply(Messages::NetworkProcessProxy::EstablishRemoteWorkerContextConnectionToNetworkProcess { RemoteWorkerType::SharedWorker, site, requestingProcessIdentifier, std::nullopt, m_session->sessionID(), workerCrossOriginEmbedderPolicy }, [weakThis = WeakPtr { *this }, site, workerCrossOriginEmbedderPolicy] (auto remoteProcessIdentifier) {
+    protect(protect(NetworkProcess::singleton())->parentProcessConnection())->sendWithAsyncReply(Messages::NetworkProcessProxy::EstablishRemoteWorkerContextConnectionToNetworkProcess { RemoteWorkerType::SharedWorker, site, requestingProcessIdentifier, std::nullopt, m_session->sessionID(), workerCrossOriginEmbedderPolicy }, [weakThis = WeakPtr { *this }, site, workerCrossOriginEmbedderPolicy](auto remoteProcessIdentifier) {
         CheckedPtr checkedThis = weakThis.get();
         if (!checkedThis)
             return;

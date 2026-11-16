@@ -109,7 +109,6 @@ public:
     }
 #endif
 
-    NetworkProcess& networkProcess();
 
     const URL& url() const LIFETIME_BOUND { return m_url; }
     NODELETE WebCore::StoredCredentialsPolicy storedCredentialsPolicy() const;

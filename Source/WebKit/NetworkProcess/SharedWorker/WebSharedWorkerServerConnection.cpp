@@ -48,14 +48,13 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSharedWorkerServerConnection);
 
-Ref<WebSharedWorkerServerConnection> WebSharedWorkerServerConnection::create(NetworkProcess& networkProcess, WebSharedWorkerServer& server, IPC::Connection& connection, WebCore::ProcessIdentifier webProcessIdentifier)
+Ref<WebSharedWorkerServerConnection> WebSharedWorkerServerConnection::create(WebSharedWorkerServer& server, IPC::Connection& connection, WebCore::ProcessIdentifier webProcessIdentifier)
 {
-    return adoptRef(*new WebSharedWorkerServerConnection(networkProcess, server, connection, webProcessIdentifier));
+    return adoptRef(*new WebSharedWorkerServerConnection(server, connection, webProcessIdentifier));
 }
 
-WebSharedWorkerServerConnection::WebSharedWorkerServerConnection(NetworkProcess& networkProcess, WebSharedWorkerServer& server, IPC::Connection& connection, WebCore::ProcessIdentifier webProcessIdentifier)
+WebSharedWorkerServerConnection::WebSharedWorkerServerConnection(WebSharedWorkerServer& server, IPC::Connection& connection, WebCore::ProcessIdentifier webProcessIdentifier)
     : m_contentConnection(connection)
-    , m_networkProcess(networkProcess)
     , m_server(server)
     , m_webProcessIdentifier(webProcessIdentifier)
 {
@@ -87,7 +86,7 @@ NetworkSession* WebSharedWorkerServerConnection::session()
     CheckedPtr server = m_server.get();
     if (!server)
         return nullptr;
-    return m_networkProcess->networkSession(server->sessionID());
+    return NetworkProcess::singleton().networkSession(server->sessionID());
 }
 
 void WebSharedWorkerServerConnection::requestSharedWorker(WebCore::SharedWorkerKey&& sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, WebCore::TransferredMessagePort&& port, WebCore::WorkerOptions&& workerOptions)
@@ -102,7 +101,7 @@ void WebSharedWorkerServerConnection::requestSharedWorker(WebCore::SharedWorkerK
     // CSP has an opaque origin and may name a data: worker script.
     WebCore::Site topSite { sharedWorkerKey.origin.topOrigin };
     if (!topSite.protocol().isEmpty())
-        MESSAGE_CHECK(m_networkProcess->allowsFirstPartySite(m_webProcessIdentifier, topSite));
+        MESSAGE_CHECK(NetworkProcess::singleton().allowsFirstPartySite(m_webProcessIdentifier, topSite));
 
     MESSAGE_CHECK(sharedWorkerObjectIdentifier.processIdentifier() == m_webProcessIdentifier);
     MESSAGE_CHECK(port.first.processIdentifier == m_webProcessIdentifier);
@@ -157,7 +156,7 @@ void WebSharedWorkerServerConnection::postErrorToWorkerObject(WebCore::SharedWor
 
 std::optional<SharedPreferencesForWebProcess> WebSharedWorkerServerConnection::sharedPreferencesForWebProcess(const IPC::Connection& connection) const
 {
-    auto* webProcessConnection = m_networkProcess->webProcessConnection(connection);
+    auto* webProcessConnection = NetworkProcess::singleton().webProcessConnection(connection);
     if (!webProcessConnection)
         return std::nullopt;
     return webProcessConnection->sharedPreferencesForWebProcess();

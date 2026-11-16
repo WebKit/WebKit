@@ -80,7 +80,6 @@ public:
 
 #if PLATFORM(COCOA)
     void registerProtocolClass(NSURLSessionConfiguration*);
-    static void networkProcessCreated(NetworkProcess&);
 #endif
 
 private:

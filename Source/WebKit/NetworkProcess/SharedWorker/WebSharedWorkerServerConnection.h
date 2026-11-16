@@ -58,7 +58,7 @@ class NetworkSession;
 class WebSharedWorkerServerConnection : public IPC::MessageSender, public IPC::MessageReceiver, public RefCounted<WebSharedWorkerServerConnection> {
     WTF_MAKE_TZONE_ALLOCATED(WebSharedWorkerServerConnection);
 public:
-    static Ref<WebSharedWorkerServerConnection> create(NetworkProcess&, WebSharedWorkerServer&, IPC::Connection&, WebCore::ProcessIdentifier);
+    static Ref<WebSharedWorkerServerConnection> create(WebSharedWorkerServer&, IPC::Connection&, WebCore::ProcessIdentifier);
 
     ~WebSharedWorkerServerConnection();
 
@@ -84,7 +84,7 @@ public:
 #endif
 
 private:
-    WebSharedWorkerServerConnection(NetworkProcess&, WebSharedWorkerServer&, IPC::Connection&, WebCore::ProcessIdentifier);
+    WebSharedWorkerServerConnection(WebSharedWorkerServer&, IPC::Connection&, WebCore::ProcessIdentifier);
 
     // IPC::MessageSender.
     IPC::Connection* messageSenderConnection() const final;
@@ -97,7 +97,6 @@ private:
     void resumeForBackForwardCache(WebCore::SharedWorkerKey&&, WebCore::SharedWorkerObjectIdentifier);
 
     const Ref<IPC::Connection> m_contentConnection;
-    const Ref<NetworkProcess> m_networkProcess;
     WeakPtr<WebSharedWorkerServer> m_server;
     WebCore::ProcessIdentifier m_webProcessIdentifier;
 };

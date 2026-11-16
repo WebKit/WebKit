@@ -44,7 +44,7 @@ class NetworkProcess;
 class NetworkBroadcastChannelRegistry : public RefCounted<NetworkBroadcastChannelRegistry> {
     WTF_MAKE_TZONE_ALLOCATED(NetworkBroadcastChannelRegistry);
 public:
-    static Ref<NetworkBroadcastChannelRegistry> create(NetworkProcess&);
+    static Ref<NetworkBroadcastChannelRegistry> create();
     ~NetworkBroadcastChannelRegistry();
 
     void removeConnection(IPC::Connection&);
@@ -57,11 +57,10 @@ public:
 
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess(const IPC::Connection&) const;
 private:
-    explicit NetworkBroadcastChannelRegistry(NetworkProcess&);
+    NetworkBroadcastChannelRegistry();
 
     bool isOriginAllowedForConnection(IPC::Connection&, const WebCore::ClientOrigin&) const;
 
-    const Ref<NetworkProcess> m_networkProcess;
     using NameToConnectionIdentifiersMap = HashMap<String, Vector<IPC::Connection::UniqueID>>;
     HashMap<WebCore::ClientOrigin, NameToConnectionIdentifiersMap> m_broadcastChannels;
 };

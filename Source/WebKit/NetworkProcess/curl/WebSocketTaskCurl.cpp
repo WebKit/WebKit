@@ -58,7 +58,7 @@ WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, WebPageProxyIdentifi
         m_topOrigin = clientOrigin.topOrigin;
 
     auto localhostAlias = WebCore::CurlStream::LocalhostAlias::Disable;
-    if (networkSession() && networkSession()->networkProcess().localhostAliasesForTesting().contains<StringViewHashTranslator>(m_request.url().host()))
+    if (networkSession() && protect(NetworkProcess::singleton())->localhostAliasesForTesting().contains<StringViewHashTranslator>(m_request.url().host()))
         localhostAlias = WebCore::CurlStream::LocalhostAlias::Enable;
 
     m_streamID = m_scheduler.createStream(request.url(), *this, WebCore::CurlStream::ServerTrustEvaluation::Enable, localhostAlias);
@@ -274,7 +274,7 @@ void WebSocketTask::tryServerTrustEvaluation(WebCore::AuthenticationChallenge&& 
     networkSession()->didReceiveChallenge(*this, WTF::move(challenge), [this, errorReason = WTF::move(errorReason)](WebKit::AuthenticationChallengeDisposition disposition, const WebCore::Credential& credential) mutable {
         if (disposition == AuthenticationChallengeDisposition::UseCredential && !credential.isEmpty()) {
             auto localhostAlias = WebCore::CurlStream::LocalhostAlias::Disable;
-            if (networkSession() && networkSession()->networkProcess().localhostAliasesForTesting().contains<StringViewHashTranslator>(m_request.url().host()))
+            if (networkSession() && protect(NetworkProcess::singleton())->localhostAliasesForTesting().contains<StringViewHashTranslator>(m_request.url().host()))
                 localhostAlias = WebCore::CurlStream::LocalhostAlias::Enable;
 
             m_streamID = m_scheduler.createStream(m_request.url(), *this, WebCore::CurlStream::ServerTrustEvaluation::Disable, localhostAlias);
