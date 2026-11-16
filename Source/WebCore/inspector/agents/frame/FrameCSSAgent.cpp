@@ -417,12 +417,14 @@ Inspector::CommandResult<void> FrameCSSAgent::setStyleSheetText(const Inspector:
     if (!inspectorStyleSheet)
         return makeUnexpected(errorString);
 
-    // FIXME <https://webkit.org/b/314244>: Integrate with InspectorHistory for undo/redo support.
-    auto result = inspectorStyleSheet->setText(text);
-    if (result.hasException())
-        return makeUnexpected(InspectorDOMAgent::toErrorString(result.releaseException()));
+    CheckedPtr domAgent = protect(m_instrumentingAgents)->persistentFrameDOMAgent();
+    if (!domAgent)
+        return makeUnexpected("DOM domain must be enabled"_s);
 
-    inspectorStyleSheet->reparseStyleSheet(text);
+    auto performResult = domAgent->history()->perform(makeUnique<SetStyleSheetTextAction>(inspectorStyleSheet.get(), text));
+    if (performResult.hasException())
+        return makeUnexpected(InspectorDOMAgent::toErrorString(performResult.releaseException()));
+
     return { };
 }
 
