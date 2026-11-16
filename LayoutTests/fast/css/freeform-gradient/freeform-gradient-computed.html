@@ -1,0 +1,22 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CSSFreeformGradientsEnabled=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<title>CSS Images Module Level 5: getComputedStyle().backgroundImage with freeform-gradient()</title>
+<link rel="help" href="https://github.com/w3c/csswg-drafts/pull/14655">
+<meta name="assert" content="freeform-gradient() computed value resolves colors, lengths, and numbers.">
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<script src="../../../imported/w3c/web-platform-tests/css/support/computed-testcommon.js"></script>
+</head>
+<body>
+<div id="target" style="color: lime"></div>
+<script>
+test_computed_value("background-image", "freeform-gradient(red center center)", "freeform-gradient(rgb(255, 0, 0) 50% 50%)");
+test_computed_value("background-image", "freeform-gradient(red left top, currentcolor right bottom)", "freeform-gradient(rgb(255, 0, 0) 0% 0%, rgb(0, 255, 0) 100% 100%)");
+test_computed_value("background-image", "freeform-gradient(red 1in calc(10px + 10%), blue 2px 3px / 0.5)", "freeform-gradient(rgb(255, 0, 0) 96px calc(10% + 10px), rgb(0, 0, 255) 2px 3px / 0.5)");
+test_computed_value("background-image", "freeform-gradient(in oklab, red left top, blue right bottom)", "freeform-gradient(in oklab, rgb(255, 0, 0) 0% 0%, rgb(0, 0, 255) 100% 100%)");
+test_computed_value("background-image", "freeform-gradient(in hsl longer hue, red left top, blue right bottom)", "freeform-gradient(in hsl longer hue, rgb(255, 0, 0) 0% 0%, rgb(0, 0, 255) 100% 100%)");
+</script>
+</body>
+</html>

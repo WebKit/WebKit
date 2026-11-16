@@ -1,0 +1,7 @@
+
+PASS Property background-image value 'freeform-gradient(red center center)'
+PASS Property background-image value 'freeform-gradient(red left top, currentcolor right bottom)'
+PASS Property background-image value 'freeform-gradient(red 1in calc(10px + 10%), blue 2px 3px / 0.5)'
+PASS Property background-image value 'freeform-gradient(in oklab, red left top, blue right bottom)'
+PASS Property background-image value 'freeform-gradient(in hsl longer hue, red left top, blue right bottom)'
+
