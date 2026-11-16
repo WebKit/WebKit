@@ -1350,7 +1350,8 @@ static bool fillBufferWithContentsOfFile(const String& fileName, Vector<char>& b
     struct stat statBuf;
     auto fileNameUTF = fileName.tryGetUTF8();
     if (!fileNameUTF.has_value()) {
-        SAFE_FPRINTF(stderr, "Error when parsing file name: %s\n", fileName.utf8());
+        constexpr unsigned maxLength = 256;
+        SAFE_FPRINTF(stderr, "Error when parsing file name: %s%s\n", StringView(fileName).left(maxLength).utf8(), fileName.length() > maxLength ? "..."_s : ""_s);
         return false;
     }
     if (FileSystem::statFile(fileNameUTF->spanIncludingNullTerminator(), statBuf) == -1) {
