@@ -5,7 +5,6 @@ dom/Document.cpp
 dom/Element.cpp
 dom/MutationObserver.cpp
 dom/ShadowRoot.cpp
-rendering/BackgroundPainter.cpp
 rendering/MarkedText.cpp
 rendering/RenderBlock.cpp
 rendering/RenderBox.cpp
@@ -26,6 +25,7 @@ rendering/RenderTextControl.cpp
 rendering/RenderTextControlSingleLine.h
 rendering/RenderView.cpp
 rendering/RenderViewTransitionCapture.cpp
+rendering/paint/BackgroundPainter.cpp
 [ macOS ] rendering/cocoa/RenderThemeCocoa.mm
 rendering/shapes/ShapeOutsideInfo.h
 rendering/style/BorderData.cpp

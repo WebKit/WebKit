@@ -246,7 +246,7 @@ void BorderPainter::paintBorder(const LayoutRect& rect, const UsedStyle& usedSty
     if (paintNinePieceImage(rect, usedStyle, style.borderImage()))
         return;
 
-    auto [shape, edges] = [&]() {
+    auto [shape, edges] = [&] {
         switch (bleedAvoidance) {
         case BleedAvoidance::None:
         case BleedAvoidance::ShrinkBackground:
@@ -340,7 +340,7 @@ void BorderPainter::paintSides(const BorderShape& borderShape, const Sides& side
             haveAllDoubleEdges = false;
     }
 
-    auto drawUniformRoundedOrAlphaBorders = [&]() {
+    auto drawUniformRoundedOrAlphaBorders = [&] {
         ASSERT(numEdgesVisible == 4);
         ASSERT(allEdgesShareColor);
         ASSERT(sides.haveAllSolidEdges);
@@ -354,7 +354,7 @@ void BorderPainter::paintSides(const BorderShape& borderShape, const Sides& side
         graphicsContext.fillPath(path);
     };
 
-    auto drawUniformDoubleBorders = [&]() {
+    auto drawUniformDoubleBorders = [&] {
         ASSERT(numEdgesVisible == 4);
         ASSERT(allEdgesShareColor);
         ASSERT(haveAllDoubleEdges);
@@ -970,15 +970,13 @@ void BorderPainter::clipBorderSidePolygon(const BorderShape& borderShape, BoxSid
 
 void BorderPainter::drawLineForBoxSide(GraphicsContext& graphicsContext, const Document& document, const FloatRect& rect, BoxSide side, Color color, BorderStyle borderStyle, float adjacentWidth1, float adjacentWidth2, bool antialias)
 {
-    auto drawBorderRect = [&graphicsContext](const FloatRect& rect)
-    {
+    auto drawBorderRect = [&graphicsContext](const FloatRect& rect) {
         if (rect.isEmpty())
             return;
         graphicsContext.drawRect(rect);
     };
 
-    auto drawLineFor = [&graphicsContext, protectedDocument = Ref { document }, color, antialias](const FloatRect& rect, BoxSide side, BorderStyle borderStyle, const FloatSize& adjacent)
-    {
+    auto drawLineFor = [&graphicsContext, protectedDocument = Ref { document }, color, antialias](const FloatRect& rect, BoxSide side, BorderStyle borderStyle, const FloatSize& adjacent) {
         if (rect.isEmpty())
             return;
         drawLineForBoxSide(graphicsContext, protectedDocument, rect, side, color, borderStyle, adjacent.width(), adjacent.height(), antialias);

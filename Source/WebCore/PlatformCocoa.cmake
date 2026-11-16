@@ -1060,13 +1060,14 @@ list(REMOVE_ITEM WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     platform/xr/XRHitTestSourceIdentifier.h
 
-    rendering/EllipsisBoxPainter.h
     rendering/LineClampUpdater.h
     rendering/RenderFrame.h
     rendering/RenderLayoutState.h
     rendering/RenderListItem.h
     rendering/RenderMediaInlines.h
     rendering/RenderModel.h
+
+    rendering/paint/EllipsisBoxPainter.h
 
     rendering/shapes/PolygonLayoutShape.h
 

@@ -6914,6 +6914,7 @@
 		E444B0A128C7437900CA560E /* BorderPainter.h in Headers */ = {isa = PBXBuildFile; fileRef = E444B0A028C7437900CA560E /* BorderPainter.h */; };
 		9E73BBA26303CDD5AC0FC2BD /* BoxDecorationPainter.h in Headers */ = {isa = PBXBuildFile; fileRef = E9EFE3E593EFEB8A7D082769 /* BoxDecorationPainter.h */; };
 		DED455D86AFC6F27CAED7FD0 /* MaskPainter.h in Headers */ = {isa = PBXBuildFile; fileRef = 67DCCCAC39DA40C5774677AC /* MaskPainter.h */; };
+		3A257E33CCFA0AF52DD3E2CF /* TransformPaintScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 43C6D41BC4AA85D259FF1215 /* TransformPaintScope.h */; };
 		E444B0A928C8B19A00CA560E /* BackgroundPainter.h in Headers */ = {isa = PBXBuildFile; fileRef = E444B0A828C8B19900CA560E /* BackgroundPainter.h */; };
 		E44613A20CD6331000FADA75 /* HTMLAudioElement.h in Headers */ = {isa = PBXBuildFile; fileRef = E44613900CD6331000FADA75 /* HTMLAudioElement.h */; };
 		E44613A50CD6331000FADA75 /* HTMLMediaElement.h in Headers */ = {isa = PBXBuildFile; fileRef = E44613930CD6331000FADA75 /* HTMLMediaElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -22899,6 +22900,7 @@
 		E9EFE3E593EFEB8A7D082769 /* BoxDecorationPainter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BoxDecorationPainter.h; sourceTree = "<group>"; };
 		D14F6BB279C841B98039C41A /* MaskPainter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MaskPainter.cpp; sourceTree = "<group>"; };
 		67DCCCAC39DA40C5774677AC /* MaskPainter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MaskPainter.h; sourceTree = "<group>"; };
+		43C6D41BC4AA85D259FF1215 /* TransformPaintScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TransformPaintScope.h; sourceTree = "<group>"; };
 		E444B0A828C8B19900CA560E /* BackgroundPainter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackgroundPainter.h; sourceTree = "<group>"; };
 		E444B0AA28C8B1A800CA560E /* BackgroundPainter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BackgroundPainter.cpp; sourceTree = "<group>"; };
 		E4451077202C7E0100657D33 /* CompiledSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompiledSelector.h; sourceTree = "<group>"; };
@@ -28112,6 +28114,46 @@
 				439046D612DA25E800AF80A2 /* RenderMathMLUnderOver.h */,
 			);
 			path = mathml;
+			sourceTree = "<group>";
+		};
+		0F2C19BD7B60E7DBB0BD11A4 /* paint */ = {
+			isa = PBXGroup;
+			children = (
+				E444B0AA28C8B1A800CA560E /* BackgroundPainter.cpp */,
+				E444B0A828C8B19900CA560E /* BackgroundPainter.h */,
+				E444B0A228C7438400CA560E /* BorderPainter.cpp */,
+				E444B0A028C7437900CA560E /* BorderPainter.h */,
+				8F270972C8C362869283E6B3 /* BoxDecorationPainter.cpp */,
+				E9EFE3E593EFEB8A7D082769 /* BoxDecorationPainter.h */,
+				C11FFA7E5C09E00000000001 /* ClipPathPaintScope.cpp */,
+				C11FFA7E5C09E00000000002 /* ClipPathPaintScope.h */,
+				CA7E9B4824361DC5004E89F6 /* ContentfulPaintChecker.cpp */,
+				CA7E9B4724361DC5004E89F6 /* ContentfulPaintChecker.h */,
+				6FD1EBC128AEECDA00FFF5D2 /* EllipsisBoxPainter.cpp */,
+				6FD1EBBF28AEECC700FFF5D2 /* EllipsisBoxPainter.h */,
+				E4F819C226FB4EAF0094E162 /* InlineBoxPainter.cpp */,
+				E4F819C526FB4EBF0094E162 /* InlineBoxPainter.h */,
+				D14F6BB279C841B98039C41A /* MaskPainter.cpp */,
+				67DCCCAC39DA40C5774677AC /* MaskPainter.h */,
+				BCEF43DF0E674110001C1287 /* NinePieceImagePainter.cpp */,
+				BCEF43DC0E674012001C1287 /* NinePieceImagePainter.h */,
+				E48359572ED73A1700F72EF6 /* OutlinePainter.cpp */,
+				E48359552ED73A0D00F72EF6 /* OutlinePainter.h */,
+				55EC95972069C92D007DD0A9 /* PaintFrequencyTracker.h */,
+				0885067D11DA045B00182B98 /* PaintInfo.h */,
+				CD671C932F5BA34F00B387A2 /* PaintInfoInlines.h */,
+				0885067E11DA045B00182B98 /* PaintPhase.h */,
+				E440DF5726EB53EA004AF06B /* TextBoxPainter.cpp */,
+				E440DF5426EB53DF004AF06B /* TextBoxPainter.h */,
+				582DE3221C30C85400BE02A8 /* TextDecorationPainter.cpp */,
+				582DE3231C30C85400BE02A8 /* TextDecorationPainter.h */,
+				1C18DA56181AF6A500C4EF22 /* TextPainter.cpp */,
+				1C18DA57181AF6A500C4EF22 /* TextPainter.h */,
+				E4C91A0F1802343900A17F6D /* TextPaintStyle.cpp */,
+				E4C91A0D1802343100A17F6D /* TextPaintStyle.h */,
+				43C6D41BC4AA85D259FF1215 /* TransformPaintScope.h */,
+			);
+			path = paint;
 			sourceTree = "<group>";
 		};
 		441AF0A70EBA7BBF0044ED4B /* ios */ = {
@@ -42423,6 +42465,7 @@
 				D255137C2B67C93300153272 /* ios */,
 				D255137D2B67C93E00153272 /* mac */,
 				439046C212DA25CE00AF80A2 /* mathml */,
+				0F2C19BD7B60E7DBB0BD11A4 /* paint */,
 				FD08A879175D3926002CD360 /* shapes */,
 				BC8C8FAA0DDCD2F200B592F4 /* style */,
 				088C2F7412390080003D65CE /* svg */,
@@ -42435,8 +42478,6 @@
 				1A33AE4028F9F478009804B4 /* AttachmentLayout.mm */,
 				A8CFF04B0A154F09000A4234 /* AutoTableLayout.cpp */,
 				A8CFF0490A154F09000A4234 /* AutoTableLayout.h */,
-				E444B0AA28C8B1A800CA560E /* BackgroundPainter.cpp */,
-				E444B0A828C8B19900CA560E /* BackgroundPainter.h */,
 				A56621732A0EFE2900FF32E4 /* BaselineAlignment.cpp */,
 				A56621742A0EFE2900FF32E4 /* BaselineAlignment.h */,
 				A53B87992A32443900D5A08B /* BaselineAlignmentInlines.h */,
@@ -42444,29 +42485,19 @@
 				A5441C4E2D00CD21009A2937 /* BlockStepSizing.h */,
 				58AEE2F318D4BCCF0022E7FE /* BorderEdge.cpp */,
 				589556EC18D4A44000764B03 /* BorderEdge.h */,
-				E444B0A228C7438400CA560E /* BorderPainter.cpp */,
-				E444B0A028C7437900CA560E /* BorderPainter.h */,
 				0F29D8742C6EFE3C00CEA122 /* BorderShape.cpp */,
 				0F29D8732C6EFE3B00CEA122 /* BorderShape.h */,
-				8F270972C8C362869283E6B3 /* BoxDecorationPainter.cpp */,
-				E9EFE3E593EFEB8A7D082769 /* BoxDecorationPainter.h */,
 				BCEA4815097D93020094C9E4 /* BreakablePositions.cpp */,
 				BCEA4816097D93020094C9E4 /* BreakablePositions.h */,
 				E4F0BE3025710A76009E7431 /* CaretRectComputation.cpp */,
 				E4F0BE2E25710A75009E7431 /* CaretRectComputation.h */,
-				C11FFA7E5C09E00000000001 /* ClipPathPaintScope.cpp */,
-				C11FFA7E5C09E00000000002 /* ClipPathPaintScope.h */,
 				5803715F1A66F00A00BAF519 /* ClipRect.cpp */,
 				580371601A66F00A00BAF519 /* ClipRect.h */,
-				CA7E9B4824361DC5004E89F6 /* ContentfulPaintChecker.cpp */,
-				CA7E9B4724361DC5004E89F6 /* ContentfulPaintChecker.h */,
 				9392F14F0AD1862300691BD4 /* CounterNode.cpp */,
 				9392F14B0AD1861B00691BD4 /* CounterNode.h */,
 				0F53FB81213B1BB800C40D34 /* CSSFilterRenderer.cpp */,
 				0F53FB83213B1BB800C40D34 /* CSSFilterRenderer.h */,
 				E3BBC2452383551A006EC39F /* CSSValueKey.h */,
-				6FD1EBC128AEECDA00FFF5D2 /* EllipsisBoxPainter.cpp */,
-				6FD1EBBF28AEECC700FFF5D2 /* EllipsisBoxPainter.h */,
 				E4A8D21522578DA000A8463C /* EventRegion.cpp */,
 				E4A8D21422578DA000A8463C /* EventRegion.h */,
 				A8CFF0480A154F09000A4234 /* FixedTableLayout.cpp */,
@@ -42499,8 +42530,6 @@
 				F4DADD362BACC3F3008B398F /* HitTestSource.h */,
 				B51A2F4017D7D5DA0072517A /* ImageQualityController.cpp */,
 				B51A2F3E17D7D3A40072517A /* ImageQualityController.h */,
-				E4F819C226FB4EAF0094E162 /* InlineBoxPainter.cpp */,
-				E4F819C526FB4EBF0094E162 /* InlineBoxPainter.h */,
 				E47CEBC72706EF5100B8D8F5 /* InlineWalker.h */,
 				0FEC120B22BF2CC7004E9D35 /* LayerAncestorClippingStack.cpp */,
 				0FEC120922BF2CC7004E9D35 /* LayerAncestorClippingStack.h */,
@@ -42518,23 +42547,13 @@
 				CD9E01762E860CCA002B5029 /* LogicalSelectionOffsetCachesInlines.h */,
 				CE1866421F72E5B400A0CAB6 /* MarkedText.cpp */,
 				CE1866431F72E5B400A0CAB6 /* MarkedText.h */,
-				D14F6BB279C841B98039C41A /* MaskPainter.cpp */,
-				67DCCCAC39DA40C5774677AC /* MaskPainter.h */,
 				1A897BC22A903B1D00C12DAA /* MotionPath.cpp */,
 				1A897BC12A903B1C00C12DAA /* MotionPath.h */,
 				424D1B489B71DA74BDCDF10C /* NinePieceGeometry.h */,
-				BCEF43DF0E674110001C1287 /* NinePieceImagePainter.cpp */,
-				BCEF43DC0E674012001C1287 /* NinePieceImagePainter.h */,
 				CDE7FC42181904B1002BBB77 /* OrderIterator.cpp */,
 				CDE7FC43181904B1002BBB77 /* OrderIterator.h */,
-				E48359572ED73A1700F72EF6 /* OutlinePainter.cpp */,
-				E48359552ED73A0D00F72EF6 /* OutlinePainter.h */,
 				3774ABA30FA21EB400AD7DE9 /* OverlapTestRequestClient.h */,
 				9377AB9F15DEFEEF0031FD04 /* Pagination.h */,
-				55EC95972069C92D007DD0A9 /* PaintFrequencyTracker.h */,
-				0885067D11DA045B00182B98 /* PaintInfo.h */,
-				CD671C932F5BA34F00B387A2 /* PaintInfoInlines.h */,
-				0885067E11DA045B00182B98 /* PaintPhase.h */,
 				1ABC260327FD02140064F68F /* PathOperation.cpp */,
 				FB92DF4915FED08700994433 /* PathOperation.h */,
 				2B17072C67B7410700BE6FB9 /* PlatformRenderTheme.h */,
@@ -42743,17 +42762,9 @@
 				A8CFF04C0A154F09000A4234 /* TableLayout.h */,
 				0F54DCE31881051D003EEDBB /* TextAutoSizing.cpp */,
 				0F54DCE41881051D003EEDBB /* TextAutoSizing.h */,
-				E440DF5726EB53EA004AF06B /* TextBoxPainter.cpp */,
-				E440DF5426EB53DF004AF06B /* TextBoxPainter.h */,
 				E447F5B1266CF63D00133F00 /* TextBoxSelectableRange.h */,
 				DDD5F55A2C703DF200E1C692 /* TextBoxTrimmer.cpp */,
 				DDD5F55B2C703DFC00E1C692 /* TextBoxTrimmer.h */,
-				582DE3221C30C85400BE02A8 /* TextDecorationPainter.cpp */,
-				582DE3231C30C85400BE02A8 /* TextDecorationPainter.h */,
-				1C18DA56181AF6A500C4EF22 /* TextPainter.cpp */,
-				1C18DA57181AF6A500C4EF22 /* TextPainter.h */,
-				E4C91A0F1802343900A17F6D /* TextPaintStyle.cpp */,
-				E4C91A0D1802343100A17F6D /* TextPaintStyle.h */,
 				4970AD7F2AE59BCD00AD3909 /* TransformOperationData.cpp */,
 				4970AD802AE59BCE00AD3909 /* TransformOperationData.h */,
 				BCAE82292E7C6F8A00F30967 /* VisibleRectContext.h */,
@@ -50144,6 +50155,7 @@
 				49E911CE0EF86D47009D0CAF /* TransformOperation.h in Headers */,
 				4970AD822AE59BCE00AD3909 /* TransformOperationData.h in Headers */,
 				49E911D00EF86D47009D0CAF /* TransformOperations.h in Headers */,
+				3A257E33CCFA0AF52DD3E2CF /* TransformPaintScope.h in Headers */,
 				5DB1BC6A10715A6400EFAA49 /* TransformSource.h in Headers */,
 				4945BFD413CF809000CC3B38 /* TransformState.h in Headers */,
 				416E6FE81BBD12DF000A3F74 /* TransformStreamInternalsBuiltins.h in Headers */,

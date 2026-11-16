@@ -1,11 +1,8 @@
 dom/CollectionIndexCache.h
 dom/Node.cpp
 dom/Node.h
-rendering/BackgroundPainter.h
-rendering/InlineBoxPainter.h
 rendering/LayoutRepainter.h
 rendering/LogicalSelectionOffsetCaches.h
-rendering/PaintInfo.h
 rendering/PositionedLayoutConstraints.h
 rendering/RenderAncestorIterator.h
 rendering/RenderDeprecatedFlexibleBox.cpp
@@ -22,7 +19,10 @@ rendering/RenderLayoutState.h
 rendering/RenderSelectionGeometry.h
 rendering/RenderTableSection.h
 rendering/RenderText.cpp
-rendering/TextDecorationPainter.h
+rendering/paint/BackgroundPainter.h
+rendering/paint/InlineBoxPainter.h
+rendering/paint/PaintInfo.h
+rendering/paint/TextDecorationPainter.h
 [ iOS ] rendering/cocoa/RenderThemeCocoa.mm
 [ iOS ] rendering/ios/RenderThemeIOS.mm
 rendering/shapes/ShapeOutsideInfo.h

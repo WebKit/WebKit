@@ -429,7 +429,7 @@ void OutlinePainter::collectFocusRingRectsForInline(const RenderBoxModelObject& 
         // FIXME: This doesn't work correctly with transforms.
         if (child->hasLayer())
             pos = child->localToContainerPoint(FloatPoint(), paintContainer);
-        else if (auto* box = dynamicDowncast<RenderBox>(child.get()))
+        else if (CheckedPtr box = dynamicDowncast<RenderBox>(child))
             pos.move(box->locationOffset());
         collectFocusRingRects(child, rects, flooredIntPoint(pos), paintContainer);
     }

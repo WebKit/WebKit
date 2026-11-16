@@ -82,7 +82,7 @@ static std::optional<bool> emphasisMarkExistsAndIsAbove(const RenderText& render
     if (style.writingMode().isVerticalTypographic())
         isAbove = !emphasisPosition.contains(Style::TextEmphasisPositionValue::Left);
 
-    auto findRubyAnnotation = [&]() -> RenderBlockFlow* {
+    auto findRubyAnnotation = [&] -> RenderBlockFlow* {
         for (auto* baseCandidate = renderer.parent(); baseCandidate; baseCandidate = baseCandidate->parent()) {
             if (!baseCandidate->isInline())
                 return { };
@@ -304,7 +304,7 @@ void TextBoxPainter::paint()
 
         protect(m_renderer->page())->addRelevantRepaintedObject(m_renderer, enclosingLayoutRect(m_paintRect));
 
-        bool isOnlyTextBoxForElement = [&]() {
+        bool isOnlyTextBoxForElement = [&] {
             if (m_textBox.boxIndex() != 1)
                 return false;
             auto& content = m_textBox.inlineContent().displayContent();
@@ -337,7 +337,7 @@ MarkedText TextBoxPainter::createMarkedTextFromSelectionInBox()
 
 void TextBoxPainter::paintCompositionForeground(const StyledMarkedText& markedText)
 {
-    auto hasCompositionCustomHighlights = [&]() {
+    auto hasCompositionCustomHighlights = [&] {
         if (!m_containsComposition)
             return false;
 
@@ -486,7 +486,7 @@ void TextBoxPainter::paintForegroundAndDecorations()
 
     // ... now remove the selection marked text if we are excluding selection.
     if (!m_isPrinting && m_paintInfo.paintBehavior.contains(PaintBehavior::ExcludeSelection)) {
-        styledMarkedTexts.removeAllMatching([] (const StyledMarkedText& markedText) {
+        styledMarkedTexts.removeAllMatching([](const StyledMarkedText& markedText) {
             return markedText.type == MarkedText::Type::Selection;
         });
     }
@@ -715,9 +715,8 @@ void TextBoxPainter::paintSynthesizedGlyph()
 
         bool shouldFlip = (*contentGlyph == SynthesizedGlyph::PickerDown) == textBox().writingMode().isLineInverted();
         GraphicsContextStateSaver stateSaver(context);
-        if (shouldFlip) {
+        if (shouldFlip)
             context.concatCTM(AffineTransform { }.translate(center.x(), center.y()).rotate(180).translate(-center.x(), -center.y()));
-        }
 
         context.setLineCap(LineCap::Butt);
         context.setLineJoin(LineJoin::Miter);
@@ -972,7 +971,7 @@ void TextBoxPainter::collectDecoratingBoxesForBackgroundPainting(DecoratingBoxLi
         return;
     }
 
-    auto appendIfIsDecoratingBoxForBackground = [&] (auto& inlineBox) {
+    auto appendIfIsDecoratingBoxForBackground = [&](auto& inlineBox) {
         CheckedRef style = decoratingBoxStyleForInlineBox(*inlineBox, m_isFirstLine);
         auto computedDecorationStyle = TextDecorationPainter::stylesForRenderer(inlineBox->renderer(), style->textDecorationLineInEffect(), m_isFirstLine);
         auto isParentInlineBox = &inlineBox == &parentInlineBox;
@@ -1208,7 +1207,7 @@ void TextBoxPainter::collectDecoratingBoxesForForegroundPainting(DecoratingBoxLi
         return;
     }
 
-    auto appendIfIsDecoratingBoxForForeground = [&] (auto& inlineBox) {
+    auto appendIfIsDecoratingBoxForForeground = [&](auto& inlineBox) {
         CheckedRef style = decoratingBoxStyleForInlineBox(*inlineBox, m_isFirstLine);
         auto computedDecorationStyle = TextDecorationPainter::stylesForRenderer(inlineBox->renderer(), style->textDecorationLineInEffect(), m_isFirstLine);
         auto isParentInlineBox = &inlineBox == &parentInlineBox;
@@ -1435,7 +1434,7 @@ void TextBoxPainter::fillCompositionUnderline(float start, float width, const Co
 }
 
 void TextBoxPainter::paintCompositionUnderlines()
-{        
+{
     Ref protectedFrame = m_renderer->frame();
     auto& underlines = protectedFrame->editor().customCompositionUnderlines();
     auto underlineCount = underlines.size();
@@ -1518,7 +1517,7 @@ static void removeMarkersPaintedByTextDecorationPainter(const RenderText& render
     // unless its text-decoration-line is spelling-error itself. In the latter case we should paint decoration with our native spelling error markers.
     auto spellingErrorPseudoStyle = renderer.spellingErrorPseudoStyle();
     if (spellingErrorPseudoStyle && !spellingErrorPseudoStyle->textDecorationLineInEffect().isSpellingError()) {
-        markedTexts.removeAllMatching([] (auto&& markedText) {
+        markedTexts.removeAllMatching([](auto&& markedText) {
             return markedText.type == MarkedText::Type::SpellingError;
         });
     }
@@ -1526,7 +1525,7 @@ static void removeMarkersPaintedByTextDecorationPainter(const RenderText& render
     // GrammarError marked text that is styled via ::grammar-error is removed from being painted here and it is painted as regular text-decoration at TextDecorationPainter
     auto grammarErrorPseudoStyle = renderer.grammarErrorPseudoStyle();
     if (grammarErrorPseudoStyle && !grammarErrorPseudoStyle->textDecorationLineInEffect().isNone()) {
-        markedTexts.removeAllMatching([] (auto&& markedText) {
+        markedTexts.removeAllMatching([](auto&& markedText) {
             return markedText.type == MarkedText::Type::GrammarError;
         });
     }

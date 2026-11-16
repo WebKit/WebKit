@@ -8,17 +8,13 @@ dom/PendingScript.cpp
 dom/ShadowRoot.cpp
 [ macOS ] rendering/AccessibilityRegionContext.cpp
 rendering/AutoTableLayout.cpp
-rendering/BackgroundPainter.cpp
 rendering/CSSFilterRenderer.cpp
 rendering/CaretRectComputation.cpp
-rendering/ContentfulPaintChecker.cpp
 rendering/CounterNode.cpp
-rendering/EllipsisBoxPainter.cpp
 rendering/FloatingObjects.cpp
 rendering/GridTrackSizingAlgorithm.cpp
 rendering/HitTestResult.cpp
 rendering/ImageQualityController.cpp
-rendering/InlineBoxPainter.cpp
 rendering/LayoutRepainter.cpp
 rendering/LogicalSelectionOffsetCachesInlines.h
 rendering/PositionedLayoutConstraints.cpp
@@ -71,10 +67,14 @@ rendering/RenderView.cpp
 rendering/RenderViewTransitionCapture.cpp
 rendering/RenderWidget.cpp
 rendering/TextAutoSizing.cpp
-rendering/TextBoxPainter.cpp
 rendering/TextBoxTrimmer.cpp
-rendering/TextDecorationPainter.cpp
 rendering/cocoa/RenderThemeCocoa.mm
+rendering/paint/BackgroundPainter.cpp
+rendering/paint/ContentfulPaintChecker.cpp
+rendering/paint/EllipsisBoxPainter.cpp
+rendering/paint/InlineBoxPainter.cpp
+rendering/paint/TextBoxPainter.cpp
+rendering/paint/TextDecorationPainter.cpp
 [ iOS ] rendering/ios/RenderThemeIOS.mm
 rendering/shapes/ShapeOutsideInfo.cpp
 rendering/svg/RenderSVGBlock.cpp

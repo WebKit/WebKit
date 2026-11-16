@@ -1,12 +1,10 @@
 dom/Position.cpp
 rendering/AutoTableLayout.cpp
-rendering/BackgroundPainter.cpp
 rendering/CounterNode.cpp
 rendering/FixedTableLayout.cpp
 rendering/GridLayoutFunctions.cpp
 rendering/GridTrackSizingAlgorithm.cpp
 rendering/HitTestResult.cpp
-rendering/InlineBoxPainter.cpp
 rendering/PositionedLayoutConstraints.cpp
 rendering/RenderBlock.cpp
 rendering/RenderBlockFlow.cpp
@@ -46,10 +44,12 @@ rendering/RenderTextControlSingleLine.cpp
 rendering/RenderView.cpp
 rendering/StyledMarkedText.cpp
 rendering/TextAutoSizing.cpp
-rendering/TextBoxPainter.cpp
 rendering/TextBoxTrimmer.cpp
-rendering/TextDecorationPainter.cpp
 rendering/cocoa/RenderThemeCocoa.mm
+rendering/paint/BackgroundPainter.cpp
+rendering/paint/InlineBoxPainter.cpp
+rendering/paint/TextBoxPainter.cpp
+rendering/paint/TextDecorationPainter.cpp
 [ iOS ] rendering/ios/RenderThemeIOS.mm
 rendering/shapes/ShapeOutsideInfo.cpp
 rendering/svg/RenderSVGInline.cpp

@@ -2971,7 +2971,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/CSSValueKey.h
     rendering/CaretRectComputation.h
     rendering/ClipRect.h
-    rendering/EllipsisBoxPainter.h
     rendering/EventRegion.h
     rendering/FloatingObjects.h
     rendering/GapRects.h
@@ -2990,9 +2989,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/OrderIterator.h
     rendering/OverlapTestRequestClient.h
     rendering/Pagination.h
-    rendering/PaintFrequencyTracker.h
-    rendering/PaintInfo.h
-    rendering/PaintPhase.h
     rendering/PathOperation.h
     rendering/PlatformRenderTheme.h
     rendering/RegionContext.h
@@ -3056,6 +3052,10 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/TransformOperationData.h
     rendering/VisibleRectContext.h
 
+    rendering/paint/EllipsisBoxPainter.h
+    rendering/paint/PaintFrequencyTracker.h
+    rendering/paint/PaintInfo.h
+    rendering/paint/PaintPhase.h
 
     rendering/shapes/LayoutShape.h
     rendering/shapes/PathLayoutShape.h

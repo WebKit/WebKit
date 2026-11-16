@@ -376,7 +376,6 @@ rendering/FixedTableLayout.cpp
 rendering/Grid.cpp
 rendering/GridTrackSizingAlgorithm.cpp
 rendering/LayerOverlapMap.cpp
-rendering/OutlinePainter.cpp
 rendering/RegionContext.cpp
 rendering/RenderDeprecatedFlexibleBox.cpp
 rendering/RenderFlexibleBox.cpp
@@ -388,8 +387,9 @@ rendering/RenderTable.cpp
 rendering/RenderTableSection.cpp
 rendering/RenderText.cpp
 rendering/StyledMarkedText.cpp
-rendering/TextBoxPainter.cpp
-rendering/TextDecorationPainter.cpp
+rendering/paint/OutlinePainter.cpp
+rendering/paint/TextBoxPainter.cpp
+rendering/paint/TextDecorationPainter.cpp
 rendering/shapes/BoxLayoutShape.cpp
 rendering/shapes/PathLayoutShape.cpp
 rendering/svg/SVGPathFromElement.cpp

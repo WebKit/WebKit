@@ -3023,21 +3023,15 @@ plugins/PluginInfoProvider.cpp
 rendering/AccessibilityRegionContext.cpp @header:RenderStyleGetters @cost:6
 rendering/AncestorSubgridIterator.cpp @header:RenderStyleGetters @cost:5
 rendering/AutoTableLayout.cpp @header:RenderStyleGetters @cost:6
-rendering/BackgroundPainter.cpp @header:RenderStyleGetters @cost:7
 rendering/BaselineAlignment.cpp @header:RenderStyleGetters @cost:4
 rendering/BlockStepSizing.cpp @header:RenderStyleGetters @cost:4
 rendering/BorderEdge.cpp @header:RenderStyleGetters @cost:4
-rendering/BorderPainter.cpp @header:RenderStyleGetters @cost:6
 rendering/BorderShape.cpp @header:RenderStyleGetters @cost:5
-rendering/BoxDecorationPainter.cpp @header:RenderStyleGetters @cost:5
 rendering/BreakablePositions.cpp
 rendering/CSSFilterRenderer.cpp @header:RenderStyleGetters @cost:6
 rendering/CaretRectComputation.cpp @header:RenderStyleGetters @cost:6
-rendering/ClipPathPaintScope.cpp
 rendering/ClipRect.cpp
-rendering/ContentfulPaintChecker.cpp
 rendering/CounterNode.cpp
-rendering/EllipsisBoxPainter.cpp @header:RenderStyleGetters @cost:5
 rendering/EventRegion.cpp @header:RenderStyleGetters @cost:5
 rendering/FixedTableLayout.cpp @header:RenderStyleGetters @cost:5
 rendering/FloatingObjects.cpp @header:RenderStyleGetters @cost:5
@@ -3054,7 +3048,6 @@ rendering/HitTestRequest.cpp @header:RenderStyleGetters @cost:4
 rendering/HitTestResult.cpp @header:RenderStyleGetters @cost:7
 rendering/HitTestingTransformState.cpp
 rendering/ImageQualityController.cpp @header:RenderStyleGetters @cost:5
-rendering/InlineBoxPainter.cpp @header:RenderStyleGetters @cost:6
 rendering/LayerAncestorClippingStack.cpp
 rendering/LayerOverlapMap.cpp
 rendering/LayoutScope.cpp
@@ -3065,11 +3058,8 @@ rendering/LayoutRepainter.cpp
 rendering/LegacyLineClampUpdater.cpp
 rendering/LineClampUpdater.cpp
 rendering/MarkedText.cpp @header:RenderStyleGetters @cost:6
-rendering/MaskPainter.cpp @header:RenderStyleGetters @cost:4
 rendering/MotionPath.cpp @header:RenderStyleGetters @cost:5
-rendering/NinePieceImagePainter.cpp @header:RenderStyleGetters @cost:5
 rendering/OrderIterator.cpp @header:RenderStyleGetters @cost:4
-rendering/OutlinePainter.cpp @header:RenderStyleGetters @cost:6
 rendering/PathOperation.cpp
 rendering/PointerEventsHitRules.cpp
 rendering/PositionedLayoutConstraints.cpp @header:RenderStyleGetters @cost:6
@@ -3156,11 +3146,7 @@ rendering/SubtreeScrollbarChangesState.cpp
 rendering/StyledMarkedText.cpp @header:RenderStyleGetters
 rendering/TableLayout.cpp @header:RenderStyleGetters
 rendering/TextAutoSizing.cpp @header:RenderStyleGetters
-rendering/TextBoxPainter.cpp @header:RenderStyleGetters
 rendering/TextBoxTrimmer.cpp @header:RenderStyleGetters
-rendering/TextDecorationPainter.cpp @header:RenderStyleGetters
-rendering/TextPaintStyle.cpp @header:RenderStyleGetters
-rendering/TextPainter.cpp @header:RenderStyleGetters
 rendering/TransformOperationData.cpp
 rendering/mathml/MathMLStyle.cpp @header:RenderStyleGetters
 rendering/mathml/MathOperator.cpp @header:RenderStyleGetters
@@ -3179,6 +3165,20 @@ rendering/mathml/RenderMathMLSpace.cpp @header:RenderStyleGetters
 rendering/mathml/RenderMathMLToken.cpp @header:RenderStyleGetters
 rendering/mathml/RenderMathMLUnderOver.cpp @header:RenderStyleGetters
 rendering/mathml/MathVariant.cpp
+rendering/paint/BackgroundPainter.cpp @header:RenderStyleGetters @cost:7
+rendering/paint/BorderPainter.cpp @header:RenderStyleGetters @cost:6
+rendering/paint/BoxDecorationPainter.cpp @header:RenderStyleGetters @cost:5
+rendering/paint/ClipPathPaintScope.cpp
+rendering/paint/ContentfulPaintChecker.cpp
+rendering/paint/EllipsisBoxPainter.cpp @header:RenderStyleGetters @cost:5
+rendering/paint/InlineBoxPainter.cpp @header:RenderStyleGetters @cost:6
+rendering/paint/MaskPainter.cpp @header:RenderStyleGetters @cost:4
+rendering/paint/NinePieceImagePainter.cpp @header:RenderStyleGetters @cost:5
+rendering/paint/OutlinePainter.cpp @header:RenderStyleGetters @cost:6
+rendering/paint/TextBoxPainter.cpp @header:RenderStyleGetters
+rendering/paint/TextDecorationPainter.cpp @header:RenderStyleGetters
+rendering/paint/TextPaintStyle.cpp @header:RenderStyleGetters
+rendering/paint/TextPainter.cpp @header:RenderStyleGetters
 rendering/shapes/BoxLayoutShape.cpp @header:RenderStyleGetters
 rendering/shapes/LayoutShape.cpp
 rendering/shapes/PathLayoutShape.cpp

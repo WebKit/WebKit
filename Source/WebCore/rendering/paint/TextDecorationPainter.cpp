@@ -197,7 +197,7 @@ TextDecorationPainter::TextDecorationPainter(GraphicsContext& context, const Fon
 // Paint text-shadow, underline, overline
 void TextDecorationPainter::paintBackgroundDecorations(const Style::ComputedStyle& style, const TextRun& textRun, const BackgroundDecorationGeometry& decorationGeometry, Style::TextDecorationLine decorationType, const Styles& decorationStyle, float deviceScaleFactor)
 {
-    auto paintDecoration = [&] (auto decoration, auto underlineStyle, auto& color, auto& rect) {
+    auto paintDecoration = [&](auto decoration, auto underlineStyle, auto& color, auto& rect) {
         m_context.setStrokeColor(color);
 
         auto strokeStyle = textDecorationStyleToStrokeStyle(underlineStyle);
@@ -325,7 +325,7 @@ void TextDecorationPainter::paintLineThrough(const ForegroundDecorationGeometry&
 
 static void collectStylesForRenderer(TextDecorationPainter::Styles& result, const RenderObject& renderer, Style::TextDecorationLine remainingDecorations, bool firstLineStyle, OptionSet<PaintBehavior> paintBehavior, std::optional<PseudoElementType> pseudoElementType)
 {
-    auto extractDecorations = [&] (const Style::ComputedStyle& style, Style::TextDecorationLine decorations) {
+    auto extractDecorations = [&](const Style::ComputedStyle& style, Style::TextDecorationLine decorations) {
         if (!decorations.containsAny({ Style::TextDecorationLine::Flag::Underline, Style::TextDecorationLine::Flag::Overline, Style::TextDecorationLine::Flag::LineThrough }))
             return;
 
@@ -365,7 +365,7 @@ static void collectStylesForRenderer(TextDecorationPainter::Styles& result, cons
         return downcast<RenderElement>(renderer);
     };
 
-    auto styleForRenderer = [&] (const RenderObject& renderer) -> CheckedRef<const Style::ComputedStyle> {
+    auto styleForRenderer = [&](const RenderObject& renderer) -> CheckedRef<const Style::ComputedStyle> {
         auto& elementRenderer = styleRenderer(renderer);
         if (pseudoElementType && elementRenderer.style().hasPseudoStyle(*pseudoElementType)) {
             if (auto textRenderer = dynamicDowncast<RenderText>(renderer))

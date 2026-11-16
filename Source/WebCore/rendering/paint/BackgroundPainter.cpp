@@ -347,7 +347,7 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
         return;
     }
 
-    auto clipForBorder = [&]() -> std::optional<FillBox> {
+    auto clipForBorder = [&] -> std::optional<FillBox> {
         if (!hasRoundedBorder)
             return { };
 
@@ -1002,7 +1002,7 @@ void BackgroundPainter::paintBoxShadow(const LayoutRect& paintRect, const UsedSt
         auto shadowColor = colorResolver.colorResolvingCurrentColorApplyingColorFilter(shadow.color);
 #endif
 
-        auto shouldInflateBorderRect = [&]() {
+        auto shouldInflateBorderRect = [&] {
             if (!hasOpaqueBackground)
                 return false;
 
@@ -1205,9 +1205,8 @@ bool BackgroundPainter::boxShadowShouldBeAppliedToBackground(const RenderBoxMode
     if (is<RenderTableCell>(renderer))
         return false;
 
-    if (auto* imageRenderer = dynamicDowncast<RenderImage>(renderer)) {
+    if (auto* imageRenderer = dynamicDowncast<RenderImage>(renderer))
         return !const_cast<RenderImage&>(*imageRenderer).backgroundIsKnownToBeObscured(paintOffset);
-    }
 
     return true;
 }

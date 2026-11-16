@@ -641,7 +641,6 @@ rendering/GridTrackSizingAlgorithm.cpp
 rendering/LayerAncestorClippingStack.cpp
 rendering/LayerOverlapMap.cpp
 rendering/MarkedText.cpp
-rendering/OutlinePainter.cpp
 rendering/ReferencedSVGResources.cpp
 rendering/RenderBlock.cpp
 rendering/RenderBoxModelObject.cpp
@@ -669,8 +668,9 @@ rendering/RenderTreeAsText.cpp
 rendering/RenderView.cpp
 rendering/StyledMarkedText.cpp
 rendering/SubtreeScrollbarChangesState.cpp
-rendering/TextBoxPainter.cpp
 rendering/cocoa/RenderThemeCocoa.mm
+rendering/paint/OutlinePainter.cpp
+rendering/paint/TextBoxPainter.cpp
 [ iOS ] rendering/ios/RenderThemeIOS.mm
 rendering/mathml/MathOperator.cpp
 rendering/shapes/PathLayoutShape.cpp
